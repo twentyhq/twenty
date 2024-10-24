@@ -4,15 +4,15 @@ import { useRecoilValue } from 'recoil';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
-import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
+import { useGenerateCombinedSearchRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedSearchRecordsQuery';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
 import {
   MultiObjectRecordQueryResult,
   useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray,
 } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
-import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
-import { useSearchFilterPerMetadataItem } from '@/object-record/relation-picker/hooks/useSearchFilterPerMetadataItem';
+import { formatSearchResults } from '@/object-record/relation-picker/hooks/useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery';
+import { isObjectMetadataItemSearchableInCombinedRequest } from '@/object-record/utils/isObjectMetadataItemSearchableInCombinedRequest';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
@@ -36,13 +36,10 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
     .filter(({ isSystem, isRemote }) => !isSystem && !isRemote)
     .filter(({ nameSingular }) => {
       return !excludedObjects?.includes(nameSingular as CoreObjectNameSingular);
-    });
-
-  const { searchFilterPerMetadataItemNameSingular } =
-    useSearchFilterPerMetadataItem({
-      objectMetadataItems: selectableObjectMetadataItems,
-      searchFilterValue,
-    });
+    })
+    .filter((object) =>
+      isObjectMetadataItemSearchableInCombinedRequest(object),
+    );
 
   const objectRecordsToSelectAndMatchesSearchFilterTextFilterPerMetadataItem =
     Object.fromEntries(
@@ -65,29 +62,19 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
             ? { not: { id: { in: excludedIdsUnion } } }
             : undefined;
 
-          const searchFilters = [
-            searchFilterPerMetadataItemNameSingular[nameSingular],
-            excludedIdsFilter,
-          ];
-
           return [
             `filter${capitalize(nameSingular)}`,
-            makeAndFilterVariables(searchFilters),
+            makeAndFilterVariables([excludedIdsFilter]),
           ];
         })
         .filter(isDefined),
     );
-
-  const { orderByFieldPerMetadataItem } = useOrderByFieldPerMetadataItem({
-    objectMetadataItems: selectableObjectMetadataItems,
-  });
-
   const { limitPerMetadataItem } = useLimitPerMetadataItem({
     objectMetadataItems: selectableObjectMetadataItems,
     limit,
   });
 
-  const multiSelectQuery = useGenerateCombinedFindManyRecordsQuery({
+  const multiSelectQuery = useGenerateCombinedSearchRecordsQuery({
     operationSignatures: selectableObjectMetadataItems.map(
       (objectMetadataItem) => ({
         objectNameSingular: objectMetadataItem.nameSingular,
@@ -101,8 +88,8 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
     data: toSelectAndMatchesSearchFilterObjectRecordsQueryResult,
   } = useQuery<MultiObjectRecordQueryResult>(multiSelectQuery ?? EMPTY_QUERY, {
     variables: {
+      search: searchFilterValue,
       ...objectRecordsToSelectAndMatchesSearchFilterTextFilterPerMetadataItem,
-      ...orderByFieldPerMetadataItem,
       ...limitPerMetadataItem,
     },
     skip: !isDefined(multiSelectQuery),
@@ -111,8 +98,9 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
   const {
     objectRecordForSelectArray: toSelectAndMatchesSearchFilterObjectRecords,
   } = useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray({
-    multiObjectRecordsQueryResult:
+    multiObjectRecordsQueryResult: formatSearchResults(
       toSelectAndMatchesSearchFilterObjectRecordsQueryResult,
+    ),
   });
 
   return {

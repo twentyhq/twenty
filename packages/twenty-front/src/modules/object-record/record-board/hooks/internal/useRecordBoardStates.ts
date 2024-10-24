@@ -1,6 +1,4 @@
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
-import { isFirstRecordBoardColumnComponentFamilyState } from '@/object-record/record-board/states/isFirstRecordBoardColumnComponentFamilyState';
-import { isLastRecordBoardColumnComponentFamilyState } from '@/object-record/record-board/states/isLastRecordBoardColumnComponentFamilyState';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { isRecordBoardFetchingRecordsByColumnFamilyState } from '@/object-record/record-board/states/isRecordBoardFetchingRecordsByColumnFamilyState';
@@ -49,14 +47,6 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
     ),
     columnIdsState: extractComponentState(
       recordBoardColumnIdsComponentState,
-      scopeId,
-    ),
-    isFirstColumnFamilyState: extractComponentFamilyState(
-      isFirstRecordBoardColumnComponentFamilyState,
-      scopeId,
-    ),
-    isLastColumnFamilyState: extractComponentFamilyState(
-      isLastRecordBoardColumnComponentFamilyState,
       scopeId,
     ),
     columnsFamilySelector: extractComponentFamilyState(

@@ -34,6 +34,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   const {
     scopeId,
     availableTableColumnsState,
+    tableViewFilterGroupsState,
     tableFiltersState,
     tableSortsState,
     tableColumnsState,
@@ -66,6 +67,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   );
 
   const setOnEntityCountChange = useSetRecoilState(onEntityCountChangeState);
+
+  const setTableViewFilterGroups = useSetRecoilState(
+    tableViewFilterGroupsState,
+  );
 
   const setTableFilters = useSetRecoilState(tableFiltersState);
 
@@ -203,6 +208,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     scopeId,
     onColumnsChange,
     setAvailableTableColumns,
+    setTableViewFilterGroups,
     setTableFilters,
     setTableSorts,
     setOnEntityCountChange,

@@ -31,16 +31,21 @@ const StyledContainer = styled.div`
 
 const StyledColumnContainer = styled.div`
   display: flex;
+  & > *:not(:first-child) {
+    border-left: 1px solid ${({ theme }) => theme.border.color.light};
+  }
 `;
 
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 const StyledBoardContentContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: calc(100% - 48px);
 `;
 
 const RecordBoardScrollRestoreEffect = () => {
@@ -136,6 +141,12 @@ export const RecordBoard = () => {
       updateOneRecord,
     ],
   );
+
+  // FixMe: Check if we really need this as it depends on the times it takes to update the view groups
+  // if (isPersistingViewGroups) {
+  //   // TODO: Add skeleton state
+  //   return null;
+  // }
 
   return (
     <RecordBoardScope

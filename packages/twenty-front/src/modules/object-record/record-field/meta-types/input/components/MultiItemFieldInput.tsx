@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
 import React, { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconCheck, IconPlus } from 'twenty-ui';
+import { IconCheck, IconPlus, LightIconButton } from 'twenty-ui';
 
 import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import {
   DropdownMenuInput,

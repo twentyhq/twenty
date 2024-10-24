@@ -17,6 +17,7 @@ import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useC
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { useRecoilCallback } from 'recoil';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -45,7 +46,7 @@ export const RecordIndexPage = () => {
     createNewTableRecord();
   };
 
-  const { handleIndexIdentifierClick } = useHandleIndexIdentifierClick({
+  const { indexIdentifierUrl } = useHandleIndexIdentifierClick({
     objectMetadataItem,
     recordIndexId,
   });
@@ -68,30 +69,39 @@ export const RecordIndexPage = () => {
           objectNameSingular,
           objectMetadataItem,
           onIndexRecordsLoaded: handleIndexRecordsLoaded,
-          onIndexIdentifierClick: handleIndexIdentifierClick,
+          indexIdentifierUrl,
           onCreateRecord: handleCreateRecord,
         }}
       >
         <PageTitle title={`${capitalize(objectNamePlural)}`} />
         <RecordIndexPageHeader />
-        <PageBody>
-          <StyledIndexContainer>
-            <ContextStoreComponentInstanceContext.Provider
-              value={{
-                instanceId: `record-index-${objectMetadataItem.id}`,
-              }}
-            >
-              <ActionMenuComponentInstanceContext.Provider
-                value={{ instanceId: `record-index-${objectMetadataItem.id}` }}
+
+        <ViewComponentInstanceContext.Provider
+          value={{ instanceId: recordIndexId }}
+        >
+          <PageTitle title={`${capitalize(objectNamePlural)}`} />
+          <RecordIndexPageHeader />
+          <PageBody>
+            <StyledIndexContainer>
+              <ContextStoreComponentInstanceContext.Provider
+                value={{
+                  instanceId: `record-index-${objectMetadataItem.id}`,
+                }}
               >
-                <RecordIndexContainerContextStoreObjectMetadataEffect />
-                <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                <MainContextStoreComponentInstanceIdSetterEffect />
-                <RecordIndexContainer />
-              </ActionMenuComponentInstanceContext.Provider>
-            </ContextStoreComponentInstanceContext.Provider>
-          </StyledIndexContainer>
-        </PageBody>
+                <ActionMenuComponentInstanceContext.Provider
+                  value={{
+                    instanceId: `record-index-${objectMetadataItem.id}`,
+                  }}
+                >
+                  <RecordIndexContainerContextStoreObjectMetadataEffect />
+                  <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+                  <MainContextStoreComponentInstanceIdSetterEffect />
+                  <RecordIndexContainer />
+                </ActionMenuComponentInstanceContext.Provider>
+              </ContextStoreComponentInstanceContext.Provider>
+            </StyledIndexContainer>
+          </PageBody>
+        </ViewComponentInstanceContext.Provider>
       </RecordIndexRootPropsContext.Provider>
     </PageContainer>
   );

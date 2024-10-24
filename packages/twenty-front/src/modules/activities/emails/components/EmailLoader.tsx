@@ -1,9 +1,9 @@
-import { Loader } from '@/ui/feedback/loader/components/Loader';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
+  Loader,
 } from 'twenty-ui';
 
 export const EmailLoader = ({ loadingText }: { loadingText?: string }) => (
