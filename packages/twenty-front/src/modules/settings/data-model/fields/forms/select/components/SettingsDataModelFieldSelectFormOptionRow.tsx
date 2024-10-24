@@ -8,6 +8,7 @@ import {
   IconGripVertical,
   IconTrash,
   IconX,
+  LightIconButton,
   MAIN_COLOR_NAMES,
 } from 'twenty-ui';
 import { v4 } from 'uuid';
@@ -16,7 +17,6 @@ import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataIt
 import { EXPANDED_WIDTH_ANIMATION_VARIANTS } from '@/settings/constants/ExpandedWidthAnimationVariants';
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
 import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/select/utils/getOptionValueFromLabel';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';

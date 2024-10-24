@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ChangeEvent, useRef } from 'react';
 
-import { Button } from '@/ui/input/button/components/Button';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
+import { Button } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 

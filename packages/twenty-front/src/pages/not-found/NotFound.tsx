@@ -1,15 +1,19 @@
-import styled from '@emotion/styled';
-
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
+<<<<<<< HEAD
 import { MainButton } from '@/ui/input/button/components/MainButton';
 
+=======
+import { AppPath } from '@/types/AppPath';
+>>>>>>> main
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import styled from '@emotion/styled';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderErrorContainer,
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
+  MainButton,
   UndecoratedLink,
   AppPath,
 } from 'twenty-ui';

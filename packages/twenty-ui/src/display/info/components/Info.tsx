@@ -1,11 +1,12 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconInfoCircle } from '@ui/display/icon/components/TablerIcons';
 
-import { AppPath } from '@ui/utilities/types/AppPath';
 import { Button } from '@ui/input/button/components/Button';
+import { AppPath } from '@ui/utilities/types/AppPath';
+import React from 'react';
+import { Link } from 'react-router-dom';
+
 
 export type InfoAccent = 'blue' | 'danger';
 export type InfoProps = {

@@ -1,3 +1,14 @@
+import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
+import { Logo } from '@/auth/components/Logo';
+import { Title } from '@/auth/components/Title';
+import { useAuth } from '@/auth/hooks/useAuth';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
+import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,21 +19,8 @@ import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
+import { AnimatedEaseIn, AppPath, MainButton } from 'twenty-ui';
 import { z } from 'zod';
-
-import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { Logo } from '@/auth/components/Logo';
-import { Title } from '@/auth/components/Title';
-import { useAuth } from '@/auth/hooks/useAuth';
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { MainButton } from '@/ui/input/button/components/MainButton';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
-import { AnimatedEaseIn, AppPath } from 'twenty-ui';
 import {
   useUpdatePasswordViaResetTokenMutation,
   useValidatePasswordResetTokenQuery,

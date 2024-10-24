@@ -10,6 +10,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { SearchModule } from 'src/engine/metadata-modules/search/search.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/workspace-sync-metadata-commands.module';
+import { CopyWebhookOperationIntoOperationsCommand } from 'src/database/commands/upgrade-version/0-32/0-32-copy-webhook-operation-into-operations-command';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
   providers: [
     UpgradeTo0_32Command,
     EnforceUniqueConstraintsCommand,
+    CopyWebhookOperationIntoOperationsCommand,
     SimplifySearchVectorExpressionCommand,
   ],
 })
