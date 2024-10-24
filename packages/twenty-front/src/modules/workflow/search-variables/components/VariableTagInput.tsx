@@ -29,8 +29,8 @@ const StyledInputContainer = styled.div<{ multiline: boolean }>`
   flex-direction: row;
   position: relative;
   line-height: ${({ multiline }) => (multiline ? '24px' : 'auto')};
-  min-height: ${({ multiline }) => (multiline ? '64px' : 'auto')};
-  max-height: ${({ multiline }) => (multiline ? '80px' : 'auto')};
+  min-height: ${({ multiline }) => (multiline ? '72px' : 'auto')};
+  max-height: ${({ multiline }) => (multiline ? '120px' : 'auto')};
 `;
 
 const StyledSearchVariablesDropdownOutsideContainer = styled.div`
@@ -77,12 +77,12 @@ const StyledEditor = styled.div<{ multiline: boolean }>`
 
   .tiptap {
     display: flex;
-    align-items: center;
     height: 100%;
     color: ${({ theme }) => theme.font.color.primary};
     font-family: ${({ theme }) => theme.font.family};
     font-weight: ${({ theme }) => theme.font.weight.regular};
     border: none !important;
+    align-items: ${({ multiline }) => (multiline ? 'top' : 'center')};
     white-space: ${({ multiline }) => (multiline ? 'pre-wrap' : 'nowrap')};
     word-wrap: ${({ multiline }) => (multiline ? 'break-word' : 'normal')};
 
@@ -150,7 +150,7 @@ export const VariableTagInput = ({
       ...(multiline
         ? [
             HardBreak.configure({
-              keepMarks: true,
+              keepMarks: false,
             }),
           ]
         : []),
@@ -169,11 +169,14 @@ export const VariableTagInput = ({
         if (event.key === 'Enter' && !event.shiftKey) {
           event.preventDefault();
 
-          // Insert hard break using the view's state and dispatch
           const { state } = view;
-          const transaction = state.tr.replaceSelectionWith(
+          const { tr } = state;
+
+          // Insert hard break using the view's state and dispatch
+          const transaction = tr.replaceSelectionWith(
             state.schema.nodes.hardBreak.create(),
           );
+
           view.dispatch(transaction);
 
           return true;
