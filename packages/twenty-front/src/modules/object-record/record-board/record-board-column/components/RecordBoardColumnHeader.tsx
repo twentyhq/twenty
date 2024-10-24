@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
-import { IconDotsVertical, IconPlus, Tag } from 'twenty-ui';
+import { IconDotsVertical, IconPlus, LightIconButton, Tag } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
@@ -12,7 +12,6 @@ import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-b
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordBoardColumnDefinitionType } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 const StyledHeader = styled.div`

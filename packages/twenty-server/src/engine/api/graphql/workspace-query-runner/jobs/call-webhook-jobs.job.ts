@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 
-import { Like } from 'typeorm';
+import { ArrayContains } from 'typeorm';
 
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
@@ -54,10 +54,10 @@ export class CallWebhookJobsJob {
 
     const webhooks = await webhookRepository.find({
       where: [
-        { operation: Like(`%${eventName}%`) },
-        { operation: Like(`%*.${operation}%`) },
-        { operation: Like(`%${nameSingular}.*%`) },
-        { operation: Like('%*.*%') },
+        { operations: ArrayContains([eventName]) },
+        { operations: ArrayContains([`*.${operation}`]) },
+        { operations: ArrayContains([`${nameSingular}.*`]) },
+        { operations: ArrayContains(['*.*']) },
       ],
     });
 
@@ -80,12 +80,9 @@ export class CallWebhookJobsJob {
       );
     });
 
-    if (webhooks.length) {
+    webhooks.length > 0 &&
       this.logger.log(
-        `CallWebhookJobsJob on eventName '${eventName}' called on webhooks ids [\n"${webhooks
-          .map((webhook) => webhook.id)
-          .join('",\n"')}"\n]`,
+        `CallWebhookJobsJob on eventName '${eventName}' triggered webhooks with ids [\n"${webhooks.map((webhook) => webhook.id).join('",\n"')}"\n]`,
       );
-    }
   }
 }

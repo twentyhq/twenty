@@ -7,7 +7,6 @@ import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/
 import { RecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/components/RecordIndexPageKanbanAddMenuItem';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -15,7 +14,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import styled from '@emotion/styled';
 import { useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconPlus } from 'twenty-ui';
+import { IconButton, IconPlus } from 'twenty-ui';
 
 const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   width: 100%;

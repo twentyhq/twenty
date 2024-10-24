@@ -7,13 +7,13 @@ import {
   IconInfoCircle,
   IconSquareRoundedCheck,
   IconX,
+  LightButton,
+  LightIconButton,
   MOBILE_VIEWPORT,
   ProgressBar,
   useProgressAnimation,
 } from 'twenty-ui';
 
-import { LightButton } from '@/ui/input/button/components/LightButton';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { isDefined } from '~/utils/isDefined';
 
 export enum SnackBarVariant {
