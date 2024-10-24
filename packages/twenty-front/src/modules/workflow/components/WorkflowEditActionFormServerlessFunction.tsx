@@ -57,7 +57,7 @@ export const WorkflowEditActionFormServerlessFunction = (
           value={props.action.settings.input.serverlessFunctionId}
           options={availableFunctions}
           disabled={props.readonly}
-          onChange={(updatedFunction) => {
+          onChange={(serverlessFunctionId) => {
             if (props.readonly === true) {
               return;
             }
@@ -67,7 +67,11 @@ export const WorkflowEditActionFormServerlessFunction = (
               settings: {
                 ...props.action.settings,
                 input: {
-                  serverlessFunctionId: updatedFunction,
+                  serverlessFunctionId,
+                  serverlessFunctionVersion:
+                    serverlessFunctions.find(
+                      (f) => f.id === serverlessFunctionId,
+                    )?.latestVersion || 'latest',
                 },
               },
             });

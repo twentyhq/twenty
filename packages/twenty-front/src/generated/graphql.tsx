@@ -155,6 +155,11 @@ export type ClientConfig = {
   support: Support;
 };
 
+export type ComputeStepSettingOutputSchemaInput = {
+  /** Step JSON format */
+  step: Scalars['JSON'];
+};
+
 export type CreateServerlessFunctionInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
@@ -424,6 +429,7 @@ export type Mutation = {
   authorizeApp: AuthorizeApp;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
+  computeStepSettingOutputSchema: Scalars['JSON'];
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
   createOneObject: Object;
@@ -506,6 +512,11 @@ export type MutationChallengeArgs = {
 export type MutationCheckoutSessionArgs = {
   recurringInterval: SubscriptionInterval;
   successUrlPath?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationComputeStepSettingOutputSchemaArgs = {
+  input: ComputeStepSettingOutputSchemaInput;
 };
 
 
@@ -1818,6 +1829,13 @@ export type ActivateWorkflowVersionMutationVariables = Exact<{
 
 
 export type ActivateWorkflowVersionMutation = { __typename?: 'Mutation', activateWorkflowVersion: boolean };
+
+export type ComputeStepSettingOutputSchemaMutationVariables = Exact<{
+  input: ComputeStepSettingOutputSchemaInput;
+}>;
+
+
+export type ComputeStepSettingOutputSchemaMutation = { __typename?: 'Mutation', computeStepSettingOutputSchema: any };
 
 export type DeactivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['String'];
@@ -3439,6 +3457,37 @@ export function useActivateWorkflowVersionMutation(baseOptions?: Apollo.Mutation
 export type ActivateWorkflowVersionMutationHookResult = ReturnType<typeof useActivateWorkflowVersionMutation>;
 export type ActivateWorkflowVersionMutationResult = Apollo.MutationResult<ActivateWorkflowVersionMutation>;
 export type ActivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
+export const ComputeStepSettingOutputSchemaDocument = gql`
+    mutation ComputeStepSettingOutputSchema($input: ComputeStepSettingOutputSchemaInput!) {
+  computeStepSettingOutputSchema(input: $input)
+}
+    `;
+export type ComputeStepSettingOutputSchemaMutationFn = Apollo.MutationFunction<ComputeStepSettingOutputSchemaMutation, ComputeStepSettingOutputSchemaMutationVariables>;
+
+/**
+ * __useComputeStepSettingOutputSchemaMutation__
+ *
+ * To run a mutation, you first call `useComputeStepSettingOutputSchemaMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useComputeStepSettingOutputSchemaMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [computeStepSettingOutputSchemaMutation, { data, loading, error }] = useComputeStepSettingOutputSchemaMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useComputeStepSettingOutputSchemaMutation(baseOptions?: Apollo.MutationHookOptions<ComputeStepSettingOutputSchemaMutation, ComputeStepSettingOutputSchemaMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ComputeStepSettingOutputSchemaMutation, ComputeStepSettingOutputSchemaMutationVariables>(ComputeStepSettingOutputSchemaDocument, options);
+      }
+export type ComputeStepSettingOutputSchemaMutationHookResult = ReturnType<typeof useComputeStepSettingOutputSchemaMutation>;
+export type ComputeStepSettingOutputSchemaMutationResult = Apollo.MutationResult<ComputeStepSettingOutputSchemaMutation>;
+export type ComputeStepSettingOutputSchemaMutationOptions = Apollo.BaseMutationOptions<ComputeStepSettingOutputSchemaMutation, ComputeStepSettingOutputSchemaMutationVariables>;
 export const DeactivateWorkflowVersionDocument = gql`
     mutation DeactivateWorkflowVersion($workflowVersionId: String!) {
   deactivateWorkflowVersion(workflowVersionId: $workflowVersionId)

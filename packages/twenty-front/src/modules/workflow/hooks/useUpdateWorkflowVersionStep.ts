@@ -8,6 +8,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { replaceStep } from '@/workflow/utils/replaceStep';
 import { isDefined } from 'twenty-ui';
+import { useComputeStepSettingOutputSchema } from '@/workflow/hooks/useComputeStepSettingOutputSchema';
 
 export const useUpdateWorkflowVersionStep = ({
   workflow,
@@ -22,11 +23,24 @@ export const useUpdateWorkflowVersionStep = ({
     });
 
   const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
+  const { computeStepSettingOutputSchema } =
+    useComputeStepSettingOutputSchema();
 
   const updateStep = async <T extends WorkflowStep>(updatedStep: T) => {
     if (!isDefined(workflow.currentVersion)) {
       throw new Error('Can not update an undefined workflow version.');
     }
+
+    const outputSchema = (
+      await computeStepSettingOutputSchema({
+        step: updatedStep,
+      })
+    )?.data?.computeStepSettingOutputSchema;
+
+    updatedStep.settings = {
+      ...updatedStep.settings,
+      outputSchema: outputSchema || {},
+    };
 
     const updatedSteps = replaceStep({
       steps: workflow.currentVersion.steps ?? [],

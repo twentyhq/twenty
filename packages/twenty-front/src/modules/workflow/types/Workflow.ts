@@ -1,10 +1,6 @@
-type OutputType = 'string' | 'number' | 'boolean' | 'undefined' | 'null';
-
-type OutputSchema = { [key: string]: OutputType | OutputSchema };
-
 type BaseWorkflowStepSettings = {
   input: object;
-  outputSchema: OutputSchema;
+  outputSchema: object;
   errorHandlingOptions: {
     retryOnFailure: {
       value: boolean;
@@ -18,6 +14,7 @@ type BaseWorkflowStepSettings = {
 export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
   input: {
     serverlessFunctionId: string;
+    serverlessFunctionVersion: string;
   };
 };
 
@@ -27,9 +24,6 @@ export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
     email: string;
     subject?: string;
     body?: string;
-  };
-  outputSchema: {
-    success: OutputType;
   };
 };
 
@@ -62,7 +56,7 @@ export type WorkflowTriggerType = 'DATABASE_EVENT';
 type BaseTrigger = {
   type: WorkflowTriggerType;
   input?: object;
-  outputSchema: OutputSchema;
+  outputSchema: object;
 };
 
 export type WorkflowDatabaseEventTrigger = BaseTrigger & {

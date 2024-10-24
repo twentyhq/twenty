@@ -42,9 +42,7 @@ export const getStepDefaultDefinition = (
             subject: '',
             body: '',
           },
-          outputSchema: {
-            success: 'boolean',
-          },
+          outputSchema: {},
           errorHandlingOptions: {
             continueOnFailure: {
               value: false,
