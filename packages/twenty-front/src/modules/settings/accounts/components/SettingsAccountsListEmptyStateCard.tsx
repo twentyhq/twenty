@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
-import { IconGoogle, Card, CardContent, CardHeader } from 'twenty-ui';
+import { Card, CardContent, CardHeader, IconGoogle } from 'twenty-ui';
 
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
-import { Button } from '@/ui/input/button/components/Button';
 
 const StyledHeader = styled(CardHeader)`
   align-items: center;

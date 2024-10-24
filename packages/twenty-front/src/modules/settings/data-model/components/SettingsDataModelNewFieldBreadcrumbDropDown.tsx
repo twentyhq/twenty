@@ -1,5 +1,4 @@
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { Button } from '@/ui/input/button/components/Button';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -13,7 +12,7 @@ import {
   useParams,
   useSearchParams,
 } from 'react-router-dom';
-import { IconChevronDown, isDefined } from 'twenty-ui';
+import { Button, IconChevronDown, isDefined } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   align-items: center;

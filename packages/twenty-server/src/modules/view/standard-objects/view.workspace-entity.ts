@@ -18,6 +18,7 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
+import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.view,
@@ -112,6 +113,18 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   viewFields: Relation<ViewFieldWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: VIEW_STANDARD_FIELD_IDS.viewGroups,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'View Groups',
+    description: 'View Groups',
+    icon: 'IconTag',
+    inverseSideTarget: () => ViewGroupWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @WorkspaceIsNullable()
+  viewGroups: Relation<ViewGroupWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewFilters,
