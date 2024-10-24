@@ -1,6 +1,6 @@
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
-import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
+import { ErrorBoundaryWrapper } from '@/error-handler/components/ErrorBoundaryWrapper';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
@@ -10,11 +10,11 @@ import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/S
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useScreenSize } from 'twenty-ui';
 import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
+import { useScreenSize } from 'twenty-ui';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -107,9 +107,9 @@ export const DefaultLayout = () => {
                 </AnimatePresence>
               </>
             ) : (
-              <AppErrorBoundary>
+              <ErrorBoundaryWrapper>
                 <Outlet />
-              </AppErrorBoundary>
+              </ErrorBoundaryWrapper>
             )}
           </StyledMainContainer>
         </StyledPageContainer>
