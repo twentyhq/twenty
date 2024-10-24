@@ -114,6 +114,7 @@ export const WorkflowEditTriggerForm = ({
           fullWidth
           disabled={readonly}
           value={triggerEvent?.objectType}
+          emptyOption={{ label: 'Select an option', value: '' }}
           options={availableMetadata}
           onChange={(updatedRecordType) => {
             if (readonly === true) {
@@ -143,6 +144,7 @@ export const WorkflowEditTriggerForm = ({
           label="Event type"
           fullWidth
           value={triggerEvent?.event}
+          emptyOption={{ label: 'Select an option', value: '' }}
           options={OBJECT_EVENT_TRIGGERS}
           disabled={readonly}
           onChange={(updatedEvent) => {
