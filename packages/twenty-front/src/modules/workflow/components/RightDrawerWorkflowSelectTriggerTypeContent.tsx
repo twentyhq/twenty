@@ -34,27 +34,25 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
 
   return (
-    <>
-      <StyledActionListContainer>
-        {TRIGGER_TYPES.map((action) => (
-          <MenuItem
-            LeftIcon={action.icon}
-            text={action.label}
-            onClick={async () => {
-              await updateTrigger(
-                getTriggerDefaultDefinition({
-                  type: action.type,
-                  activeObjectMetadataItems,
-                }),
-              );
+    <StyledActionListContainer>
+      {TRIGGER_TYPES.map((action) => (
+        <MenuItem
+          LeftIcon={action.icon}
+          text={action.label}
+          onClick={async () => {
+            await updateTrigger(
+              getTriggerDefaultDefinition({
+                type: action.type,
+                activeObjectMetadataItems,
+              }),
+            );
 
-              setWorkflowSelectedNode(TRIGGER_STEP_ID);
+            setWorkflowSelectedNode(TRIGGER_STEP_ID);
 
-              openRightDrawer(RightDrawerPages.WorkflowStepEdit);
-            }}
-          />
-        ))}
-      </StyledActionListContainer>
-    </>
+            openRightDrawer(RightDrawerPages.WorkflowStepEdit);
+          }}
+        />
+      ))}
+    </StyledActionListContainer>
   );
 };
