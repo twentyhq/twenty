@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
@@ -17,7 +18,6 @@ type UseLoadRecordIndexBoardProps = {
   objectNameSingular: string;
   boardFieldMetadataId: string | null;
   recordBoardId: string;
-  columnFieldSelectValue: string | null;
   columnId: string;
 };
 
@@ -25,13 +25,13 @@ export const useLoadRecordIndexBoardColumn = ({
   objectNameSingular,
   boardFieldMetadataId,
   recordBoardId,
-  columnFieldSelectValue,
   columnId,
 }: UseLoadRecordIndexBoardProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
   const { setRecordIdsForColumn } = useRecordBoard(recordBoardId);
+  const { columnsFamilySelector } = useRecordBoardStates(recordBoardId);
   const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const recordIndexViewFilterGroups = useRecoilValue(
@@ -39,6 +39,8 @@ export const useLoadRecordIndexBoardColumn = ({
   );
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
   const recordIndexSorts = useRecoilValue(recordIndexSortsState);
+  const columnDefinition = useRecoilValue(columnsFamilySelector(columnId));
+
   const requestFilters = computeViewRecordGqlOperationFilter(
     recordIndexFilters,
     objectMetadataItem?.fields ?? [],
@@ -58,9 +60,9 @@ export const useLoadRecordIndexBoardColumn = ({
   const filter = {
     ...requestFilters,
     [recordIndexKanbanFieldMetadataItem?.name ?? '']: isDefined(
-      columnFieldSelectValue,
+      columnDefinition?.value,
     )
-      ? { in: [columnFieldSelectValue] }
+      ? { in: [columnDefinition?.value] }
       : { is: 'NULL' },
   };
 

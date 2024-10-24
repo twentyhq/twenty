@@ -282,6 +282,7 @@ export const NOTE_STANDARD_FIELD_IDS = {
   attachments: '20202020-4986-4c92-bf19-39934b149b16',
   timelineActivities: '20202020-7030-42f8-929c-1a57b25d6bce',
   favorites: '20202020-4d1d-41ac-b13b-621631298d67',
+  searchVector: '20202020-7ea8-44d4-9d4c-51dd2a757950',
 };
 
 export const NOTE_TARGET_STANDARD_FIELD_IDS = {
@@ -367,6 +368,14 @@ export const VIEW_FIELD_STANDARD_FIELD_IDS = {
   view: '20202020-e8da-4521-afab-d6d231f9fa18',
 };
 
+export const VIEW_GROUP_STANDARD_FIELD_IDS = {
+  fieldMetadataId: '20202020-8f26-46ae-afed-fdacd7778682',
+  fieldValue: '20202020-175e-4596-b7a4-1cd9d14e5a30',
+  isVisible: '20202020-0fed-4b44-88fd-a064c4fcfce4',
+  position: '20202020-748e-4645-8f32-84aae7726c04',
+  view: '20202020-5bc7-4110-b23f-fb851fb133b4',
+};
+
 export const VIEW_FILTER_STANDARD_FIELD_IDS = {
   fieldMetadataId: '20202020-c9aa-4c94-8d0e-9592f5008fb0',
   operand: '20202020-bd23-48c4-9fab-29d1ffb80310',
@@ -400,6 +409,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',
+  viewGroups: '20202020-e1a1-419f-ac81-1986a5ea59a8',
   viewFilters: '20202020-ff23-4154-b63c-21fb36cd0967',
   viewFilterGroups: '20202020-0318-474a-84a1-bac895ceaa5a',
   viewSorts: '20202020-891b-45c3-9fe1-80a75b4aa043',
@@ -409,6 +419,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
 export const WEBHOOK_STANDARD_FIELD_IDS = {
   targetUrl: '20202020-1229-45a8-8cf4-85c9172aae12',
   operation: '20202020-15b7-458e-bf30-74770a54410c',
+  operations: '20202020-15b7-458e-bf30-74770a54411c',
   description: '20202020-15b7-458e-bf30-74770a54410d',
 };
 

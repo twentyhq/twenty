@@ -29,6 +29,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
+import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
@@ -57,6 +58,7 @@ export const standardObjectMetadataDefinitions = [
   FavoriteWorkspaceEntity,
   TimelineActivityWorkspaceEntity,
   ViewFieldWorkspaceEntity,
+  ViewGroupWorkspaceEntity,
   ViewFilterWorkspaceEntity,
   ViewFilterGroupWorkspaceEntity,
   ViewSortWorkspaceEntity,

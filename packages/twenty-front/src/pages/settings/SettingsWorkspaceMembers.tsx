@@ -1,18 +1,3 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { isNonEmptyArray } from '@sniptt/guards';
-import { useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-  AppTooltip,
-  Avatar,
-  H2Title,
-  IconMail,
-  IconReload,
-  IconTrash,
-  TooltipDelay,
-} from 'twenty-ui';
-
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -23,7 +8,6 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -32,7 +16,22 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { isNonEmptyArray } from '@sniptt/guards';
 import { formatDistanceToNow } from 'date-fns';
+import { useState } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  AppTooltip,
+  Avatar,
+  H2Title,
+  IconButton,
+  IconMail,
+  IconReload,
+  IconTrash,
+  TooltipDelay,
+} from 'twenty-ui';
 import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { Status } from '../../modules/ui/display/status/components/Status';

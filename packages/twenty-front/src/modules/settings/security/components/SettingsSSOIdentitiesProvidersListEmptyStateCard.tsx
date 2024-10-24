@@ -1,14 +1,12 @@
 /* @license Enterprise */
 
-import styled from '@emotion/styled';
-
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Button } from '@/ui/input/button/components/Button';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { CardHeader } from '@/ui/layout/card/components/CardHeader';
-import { IconKey } from 'twenty-ui';
+import styled from '@emotion/styled';
+import { Button, IconKey } from 'twenty-ui';
 
 const StyledHeader = styled(CardHeader)`
   align-items: center;
