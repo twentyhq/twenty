@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconComponent } from '@ui/display';
 import React from 'react';
-import { IconComponent } from 'twenty-ui';
 
 export type MainButtonVariant = 'primary' | 'secondary';
 

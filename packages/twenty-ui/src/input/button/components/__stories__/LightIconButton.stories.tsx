@@ -1,30 +1,31 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { IconSearch } from '@ui/display';
 import {
   CatalogDecorator,
   CatalogStory,
   ComponentDecorator,
-  IconSearch,
-} from 'twenty-ui';
+} from '@ui/testing';
+import {
+  LightIconButton,
+  LightIconButtonAccent,
+  LightIconButtonSize,
+} from '../LightIconButton';
 
-import { FloatingButton, FloatingButtonSize } from '../FloatingButton';
-
-const meta: Meta<typeof FloatingButton> = {
-  title: 'UI/Input/Button/FloatingButton',
-  component: FloatingButton,
+const meta: Meta<typeof LightIconButton> = {
+  title: 'UI/Input/Button/LightIconButton',
+  component: LightIconButton,
 };
 
 export default meta;
-type Story = StoryObj<typeof FloatingButton>;
+type Story = StoryObj<typeof LightIconButton>;
 
 export const Default: Story = {
   args: {
     title: 'Filter',
-    size: 'small',
+    accent: 'secondary',
     disabled: false,
+    active: false,
     focus: false,
-    applyBlur: true,
-    applyShadow: true,
-    position: 'standalone',
     Icon: IconSearch,
   },
   argTypes: {
@@ -33,12 +34,12 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: CatalogStory<Story, typeof FloatingButton> = {
+export const Catalog: CatalogStory<Story, typeof LightIconButton> = {
   args: { title: 'Filter', Icon: IconSearch },
   argTypes: {
-    size: { control: false },
+    accent: { control: false },
     disabled: { control: false },
-    position: { control: false },
+    active: { control: false },
     focus: { control: false },
   },
   parameters: {
@@ -46,19 +47,16 @@ export const Catalog: CatalogStory<Story, typeof FloatingButton> = {
     catalog: {
       dimensions: [
         {
-          name: 'sizes',
-          values: ['small', 'medium'] satisfies FloatingButtonSize[],
-          props: (size: FloatingButtonSize) => ({ size }),
-        },
-        {
           name: 'states',
           values: [
             'default',
             'hover',
             'pressed',
             'disabled',
+            'active',
             'focus',
             'disabled+focus',
+            'disabled+active',
           ],
           props: (state: string) => {
             switch (state) {
@@ -71,12 +69,26 @@ export const Catalog: CatalogStory<Story, typeof FloatingButton> = {
                 return { focus: true };
               case 'disabled':
                 return { disabled: true };
+              case 'active':
+                return { active: true };
               case 'disabled+focus':
                 return { disabled: true, focus: true };
+              case 'disabled+active':
+                return { disabled: true, active: true };
               default:
                 return {};
             }
           },
+        },
+        {
+          name: 'accents',
+          values: ['secondary', 'tertiary'] satisfies LightIconButtonAccent[],
+          props: (accent: LightIconButtonAccent) => ({ accent }),
+        },
+        {
+          name: 'sizes',
+          values: ['small', 'medium'] satisfies LightIconButtonSize[],
+          props: (size: LightIconButtonSize) => ({ size }),
         },
       ],
     },

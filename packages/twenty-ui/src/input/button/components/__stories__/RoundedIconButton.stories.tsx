@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
-import { ComponentDecorator, IconArrowRight } from 'twenty-ui';
-
+import { IconArrowRight } from '@ui/display';
+import { ComponentDecorator } from '@ui/testing';
 import { RoundedIconButton } from '../RoundedIconButton';
 
 const clickJestFn = fn();

@@ -1,8 +1,8 @@
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconComponent } from '@ui/display';
 import { Link } from 'react-router-dom';
-import { IconComponent } from 'twenty-ui';
 
 export type FloatingButtonSize = 'small' | 'medium';
 export type FloatingButtonPosition = 'standalone' | 'left' | 'middle' | 'right';

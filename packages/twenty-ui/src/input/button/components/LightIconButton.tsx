@@ -1,32 +1,36 @@
-import { MouseEvent } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from '@ui/display';
+import { ComponentProps, MouseEvent } from 'react';
 
-export type LightButtonAccent = 'secondary' | 'tertiary';
+export type LightIconButtonAccent = 'secondary' | 'tertiary';
+export type LightIconButtonSize = 'small' | 'medium';
 
-export type LightButtonProps = {
+export type LightIconButtonProps = {
   className?: string;
+  testId?: string;
   Icon?: IconComponent;
   title?: string;
-  accent?: LightButtonAccent;
+  size?: LightIconButtonSize;
+  accent?: LightIconButtonAccent;
   active?: boolean;
   disabled?: boolean;
   focus?: boolean;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
-};
+} & Pick<ComponentProps<'button'>, 'aria-label' | 'title'>;
 
 const StyledButton = styled.button<
-  Pick<LightButtonProps, 'accent' | 'active' | 'focus'>
+  Pick<LightIconButtonProps, 'accent' | 'active' | 'size' | 'focus'>
 >`
   align-items: center;
   background: transparent;
-  border: ${({ theme, focus }) =>
-    focus ? `1px solid ${theme.color.blue}` : 'none'};
+  border: none;
 
+  border: ${({ disabled, theme, focus }) =>
+    !disabled && focus ? `1px solid ${theme.color.blue}` : 'none'};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ theme, focus }) =>
-    focus ? `0 0 0 3px  ${theme.color.blue10}` : 'none'};
+  box-shadow: ${({ disabled, theme, focus }) =>
+    !disabled && focus ? `0 0 0 3px ${theme.color.blue10}` : 'none'};
   color: ${({ theme, accent, active, disabled, focus }) => {
     switch (accent) {
       case 'secondary':
@@ -50,14 +54,14 @@ const StyledButton = styled.button<
   font-family: ${({ theme }) => theme.font.family};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   gap: ${({ theme }) => theme.spacing(1)};
-  height: 24px;
-  padding: ${({ theme }) => {
-    return `0 ${theme.spacing(2)}`;
-  }};
-
+  height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
+  justify-content: center;
+  padding: 0;
   transition: background 0.1s ease;
 
   white-space: nowrap;
+  width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
+  min-width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
 
   &:hover {
     background: ${({ theme, disabled }) =>
@@ -74,29 +78,34 @@ const StyledButton = styled.button<
   }
 `;
 
-export const LightButton = ({
+export const LightIconButton = ({
+  'aria-label': ariaLabel,
   className,
+  testId,
   Icon,
-  title,
   active = false,
+  size = 'small',
   accent = 'secondary',
   disabled = false,
   focus = false,
   onClick,
-}: LightButtonProps) => {
+  title,
+}: LightIconButtonProps) => {
   const theme = useTheme();
-
   return (
     <StyledButton
+      data-testid={testId}
+      aria-label={ariaLabel}
       onClick={onClick}
       disabled={disabled}
       focus={focus && !disabled}
       accent={accent}
       className={className}
+      size={size}
       active={active}
+      title={title}
     >
-      {!!Icon && <Icon size={theme.icon.size.md} />}
-      {title}
+      {Icon && <Icon size={theme.icon.size.sm} />}
     </StyledButton>
   );
 };
