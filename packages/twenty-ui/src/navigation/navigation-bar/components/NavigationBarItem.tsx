@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
 
 const StyledIconButton = styled.div<{ isActive?: boolean }>`
   align-items: center;

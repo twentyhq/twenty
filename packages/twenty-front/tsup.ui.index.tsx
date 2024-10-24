@@ -25,7 +25,6 @@ export * from './src/modules/ui/navigation/menu-item/components/MenuItemSelect';
 export * from './src/modules/ui/navigation/menu-item/components/MenuItemSelectAvatar';
 export * from './src/modules/ui/navigation/menu-item/components/MenuItemSelectColor';
 export * from './src/modules/ui/navigation/menu-item/components/MenuItemToggle';
-export * from './src/modules/ui/navigation/navigation-bar/components/NavigationBar';
 export * from './src/modules/ui/navigation/step-bar/components/StepBar';
 
 declare module '@emotion/react' {
