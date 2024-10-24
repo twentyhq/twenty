@@ -9,20 +9,18 @@ import {
 
 import { Response } from 'express';
 
-import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { MicrosoftOAuthGuard } from 'src/engine/core-modules/auth/guards/microsoft-oauth.guard';
 import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/microsoft-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
 export class MicrosoftAuthController {
   constructor(
-    private readonly tokenService: TokenService,
-    private readonly typeORMService: TypeORMService,
+    private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
   ) {}
 
@@ -58,8 +56,10 @@ export class MicrosoftAuthController {
       fromSSO: true,
     });
 
-    const loginToken = await this.tokenService.generateLoginToken(user.email);
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+    );
 
-    return res.redirect(this.tokenService.computeRedirectURI(loginToken.token));
+    return res.redirect(this.authService.computeRedirectURI(loginToken.token));
   }
 }

@@ -24,7 +24,7 @@ import { OIDCAuthGuard } from 'src/engine/core-modules/auth/guards/oidc-auth.gua
 import { SAMLAuthGuard } from 'src/engine/core-modules/auth/guards/saml-auth.guard';
 import { SSOProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/sso-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import {
@@ -38,7 +38,7 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 @UseFilters(AuthRestApiExceptionFilter)
 export class SSOAuthController {
   constructor(
-    private readonly tokenService: TokenService,
+    private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly environmentService: EnvironmentService,
@@ -84,7 +84,7 @@ export class SSOAuthController {
       const loginToken = await this.generateLoginToken(req.user);
 
       return res.redirect(
-        this.tokenService.computeRedirectURI(loginToken.token),
+        this.authService.computeRedirectURI(loginToken.token),
       );
     } catch (err) {
       // TODO: improve error management
@@ -99,7 +99,7 @@ export class SSOAuthController {
       const loginToken = await this.generateLoginToken(req.user);
 
       return res.redirect(
-        this.tokenService.computeRedirectURI(loginToken.token),
+        this.authService.computeRedirectURI(loginToken.token),
       );
     } catch (err) {
       // TODO: improve error management
@@ -156,6 +156,6 @@ export class SSOAuthController {
       );
     }
 
-    return this.tokenService.generateLoginToken(user.email);
+    return this.loginTokenService.generateLoginToken(user.email);
   }
 }

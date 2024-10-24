@@ -42,26 +42,11 @@ spec:
               value: "redis"
             - name: "REDIS_URL"
               value: "redis://twentycrm-redis.twentycrm.svc.cluster.local:6379"
-            - name: ACCESS_TOKEN_SECRET
+            - name: APP_SECRET
               valueFrom:
                 secretKeyRef:
                   name: tokens
                   key: accessToken
-            - name: LOGIN_TOKEN_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: tokens
-                  key: loginToken
-            - name: REFRESH_TOKEN_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: tokens
-                  key: refreshToken
-            - name: FILE_TOKEN_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: tokens
-                  key: fileToken
           command:
             - yarn
             - worker:prod

@@ -8,8 +8,8 @@ import { v4 as uuidV4 } from 'uuid';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { settings } from 'src/engine/constants/settings';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { getCropSize } from 'src/utils/image';
 
 @Injectable()
@@ -83,7 +83,7 @@ export class FileUploadService {
     });
 
     const signedPayload = await this.fileService.encodeFileToken({
-      workspace_id: workspaceId,
+      workspaceId: workspaceId,
     });
 
     return {

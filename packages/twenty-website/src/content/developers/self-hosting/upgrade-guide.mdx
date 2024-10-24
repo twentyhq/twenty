@@ -103,7 +103,7 @@ The `yarn command:prod upgrade-0.31` takes care of the data migration of all wor
 
 ### Environment Variables
 
-The following environment variables have been changed:
+We have updated the way we handle the Redis connection.
 
 - Removed: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
 - Added: `REDIS_URL`
@@ -111,3 +111,10 @@ The following environment variables have been changed:
 Update your `.env` file to use the new `REDIS_URL` variable instead of the individual Redis connection parameters.
 
 <ArticleEditContent></ArticleEditContent>
+
+We have also simplifed the way we handle the JWT tokens.
+
+- Removed: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
+- Added: `APP_SECRET`
+
+Update your `.env` file to use the new `APP_SECRET` variable instead of the individual tokens secrets (you can use the same secret as before or generate a new random string)

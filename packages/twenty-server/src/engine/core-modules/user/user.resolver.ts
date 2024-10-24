@@ -110,8 +110,8 @@ export class UserResolver {
 
     if (workspaceMember && workspaceMember.avatarUrl) {
       const avatarUrlToken = await this.fileService.encodeFileToken({
-        workspace_member_id: workspaceMember.id,
-        workspace_id: user.defaultWorkspaceId,
+        workspaceMemberId: workspaceMember.id,
+        workspaceId: user.defaultWorkspaceId,
       });
 
       workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
@@ -132,8 +132,8 @@ export class UserResolver {
     for (const workspaceMember of workspaceMembers) {
       if (workspaceMember.avatarUrl) {
         const avatarUrlToken = await this.fileService.encodeFileToken({
-          workspace_member_id: workspaceMember.id,
-          workspace_id: user.defaultWorkspaceId,
+          workspaceMemberId: workspaceMember.id,
+          workspaceId: user.defaultWorkspaceId,
         });
 
         workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
@@ -189,7 +189,7 @@ export class UserResolver {
     });
 
     const fileToken = await this.fileService.encodeFileToken({
-      workspace_id: workspaceId,
+      workspaceId: workspaceId,
     });
 
     return `${paths[0]}?token=${fileToken}`;

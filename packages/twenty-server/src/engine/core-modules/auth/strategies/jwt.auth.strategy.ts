@@ -12,6 +12,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -28,6 +29,7 @@ export type JwtPayload = {
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     private readonly environmentService: EnvironmentService,
+    private readonly jwtWrapperService: JwtWrapperService,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
     @InjectRepository(Workspace, 'core')
@@ -38,7 +40,22 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: environmentService.get('ACCESS_TOKEN_SECRET'),
+      secretOrKeyProvider: async (request, rawJwtToken, done) => {
+        try {
+          const decodedToken = this.jwtWrapperService.decode(
+            rawJwtToken,
+          ) as JwtPayload;
+          const workspaceId = decodedToken.workspaceId;
+          const secret = this.jwtWrapperService.generateAppSecret(
+            'ACCESS',
+            workspaceId,
+          );
+
+          done(null, secret);
+        } catch (error) {
+          done(error, null);
+        }
+      },
     });
   }
 

@@ -55,26 +55,11 @@ spec:
               value: "7d"
             - name: "LOGIN_TOKEN_EXPIRES_IN"
               value: "1h"
-            - name: ACCESS_TOKEN_SECRET
+            - name: APP_SECRET
               valueFrom:
                 secretKeyRef:
                   name: tokens
                   key: accessToken
-            - name: LOGIN_TOKEN_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: tokens
-                  key: loginToken
-            - name: REFRESH_TOKEN_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: tokens
-                  key: refreshToken
-            - name: FILE_TOKEN_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: tokens
-                  key: fileToken
           ports:
             - containerPort: 3000
               name: http-tcp

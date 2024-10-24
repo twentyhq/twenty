@@ -17,8 +17,8 @@ export class AttachmentQueryResultGetterHandler
     }
 
     const signedPayload = await this.fileService.encodeFileToken({
-      attachment_id: attachment.id,
-      workspace_id: workspaceId,
+      attachmentId: attachment.id,
+      workspaceId: workspaceId,
     });
 
     return {

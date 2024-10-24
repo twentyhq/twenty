@@ -10,8 +10,14 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { AuthResolver } from './auth.resolver';
 
+import { ApiKeyService } from './services/api-key.service';
 import { AuthService } from './services/auth.service';
-import { TokenService } from './token/services/token.service';
+import { OAuthService } from './services/oauth.service';
+import { ResetPasswordService } from './services/reset-password.service';
+import { SwitchWorkspaceService } from './services/switch-workspace.service';
+import { LoginTokenService } from './token/services/login-token.service';
+import { RenewTokenService } from './token/services/renew-token.service';
+import { TransientTokenService } from './token/services/transient-token.service';
 
 describe('AuthResolver', () => {
   let resolver: AuthResolver;
@@ -34,15 +40,39 @@ describe('AuthResolver', () => {
           useValue: {},
         },
         {
-          provide: TokenService,
-          useValue: {},
-        },
-        {
           provide: UserService,
           useValue: {},
         },
         {
           provide: UserWorkspaceService,
+          useValue: {},
+        },
+        {
+          provide: RenewTokenService,
+          useValue: {},
+        },
+        {
+          provide: ApiKeyService,
+          useValue: {},
+        },
+        {
+          provide: ResetPasswordService,
+          useValue: {},
+        },
+        {
+          provide: LoginTokenService,
+          useValue: {},
+        },
+        {
+          provide: SwitchWorkspaceService,
+          useValue: {},
+        },
+        {
+          provide: TransientTokenService,
+          useValue: {},
+        },
+        {
+          provide: OAuthService,
           useValue: {},
         },
       ],
