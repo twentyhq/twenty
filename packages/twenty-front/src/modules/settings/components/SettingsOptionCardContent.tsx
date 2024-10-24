@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
 
-import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent, CardContent } from 'twenty-ui';
 import { ReactNode } from 'react';
 
 type SettingsOptionCardContentProps = {

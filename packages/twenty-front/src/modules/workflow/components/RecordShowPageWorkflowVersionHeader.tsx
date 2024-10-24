@@ -1,7 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { Button } from '@/ui/input/button/components/Button';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
 import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
@@ -10,7 +9,13 @@ import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
 import { useSetRecoilState } from 'recoil';
-import { IconPencil, IconPlayerStop, IconPower, isDefined } from 'twenty-ui';
+import {
+  Button,
+  IconPencil,
+  IconPlayerStop,
+  IconPower,
+  isDefined,
+} from 'twenty-ui';
 
 export const RecordShowPageWorkflowVersionHeader = ({
   workflowVersionId,

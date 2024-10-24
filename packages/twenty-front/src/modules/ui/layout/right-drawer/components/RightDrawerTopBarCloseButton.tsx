@@ -1,6 +1,4 @@
-import { IconX } from 'twenty-ui';
-
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { IconX, LightIconButton } from 'twenty-ui';
 
 import { useRightDrawer } from '../hooks/useRightDrawer';
 

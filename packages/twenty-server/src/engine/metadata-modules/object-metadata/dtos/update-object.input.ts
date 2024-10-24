@@ -61,6 +61,11 @@ export class UpdateObjectPayload {
   @IsOptional()
   @Field({ nullable: true })
   imageIdentifierFieldMetadataId?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  shouldSyncLabelAndName?: boolean;
 }
 
 @InputType()

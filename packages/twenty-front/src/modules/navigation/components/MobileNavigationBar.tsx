@@ -1,9 +1,14 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { NavigationBar } from '@/ui/navigation/navigation-bar/components/NavigationBar';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useRecoilState } from 'recoil';
-import { IconComponent, IconList, IconSearch, IconSettings } from 'twenty-ui';
+import {
+  IconComponent,
+  IconList,
+  IconSearch,
+  IconSettings,
+  NavigationBar,
+} from 'twenty-ui';
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 
