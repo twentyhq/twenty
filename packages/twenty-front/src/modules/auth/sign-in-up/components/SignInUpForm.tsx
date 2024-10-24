@@ -15,7 +15,10 @@ import {
   SignInUpStep,
   useSignInUp,
 } from '@/auth/sign-in-up/hooks/useSignInUp';
-import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import {
+  useSignInUpForm,
+  validationSchema,
+} from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
@@ -26,7 +29,6 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import { isDefined } from '~/utils/isDefined';
-import { emailSchema } from '@/object-record/record-field/validation-schemas/emailSchema';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -106,14 +108,10 @@ export const SignInUpForm = () => {
     isDefined(captchaProvider?.provider) &&
     isRequestingCaptchaToken;
 
-  const isEmailValid = useMemo(() => {
-    const email = form.watch('email');
-    return emailSchema.safeParse(email).success;
-  }, [form.watch('email')]);
-
   const isEmailStepSubmitButtonDisabledCondition =
     signInUpStep === SignInUpStep.Email &&
-    (!isEmailValid || shouldWaitForCaptchaToken);
+    (!validationSchema.shape.email.safeParse(form.watch('email')).success ||
+      shouldWaitForCaptchaToken);
 
   // TODO: isValid is actually a proxy function. If it is not rendered the first time, react might not trigger re-renders
   // We make the isValid check synchronous and update a reactState to make sure this does not happen
