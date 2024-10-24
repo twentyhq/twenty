@@ -66,7 +66,8 @@ const StyledContainer = withTheme(styled.div<
   display: inline-flex;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(4)};
+  height: ${({ theme, size }) =>
+    size === ChipSize.Large ? theme.spacing(4) : theme.spacing(3)};
   max-width: ${({ maxWidth }) =>
     maxWidth
       ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
@@ -141,10 +142,7 @@ export const Chip = ({
       className={className}
     >
       {leftComponent}
-      <OverflowingTextWithTooltip
-        size={size === ChipSize.Large ? 'large' : 'small'}
-        text={label}
-      />
+      <OverflowingTextWithTooltip size={size} text={label} />
       {rightComponent}
     </StyledContainer>
   );

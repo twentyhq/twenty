@@ -1,8 +1,8 @@
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 import {
+  IconButton,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
 } from 'twenty-ui';
