@@ -1593,11 +1593,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     await workspaceDataSource?.query(
       `UPDATE ${dataSourceMetadata.schema}."view"
-    SET "name"=$1, "icon"=$2 WHERE "objectMetadataId"=$3`,
+    SET "name"=$1, "icon"=$2 WHERE "objectMetadataId"=$3 AND "key"=$4`,
       [
         `All ${updatedObjectMetadata.labelPlural}`,
         updatedObjectMetadata.icon,
         updatedObjectMetadata.id,
+        'INDEX',
       ],
     );
   }
