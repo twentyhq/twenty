@@ -18,4 +18,6 @@ Your turn 👇
 
 » 02-October-2024 by [yourhandle](https://oss.gg/yourhandle) video Link: [video](https://twenty.com/)
 
+» 24-October-2024 by [Thefool76](https://oss.gg/thefool76) video Link: [video](https://youtube.com/shorts/lC4oqm7UlCI?si=Md-nsfK9F6Shzjkv)
+
 ---

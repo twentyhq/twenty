@@ -5,14 +5,15 @@ import { StyledHoverableMenuItemBase } from '../internals/components/StyledMenuI
 import { MenuItemAccent } from '../types/MenuItemAccent';
 
 import { MenuItemIconButton } from './MenuItem';
+import { ReactNode } from 'react';
 
 export type MenuItemDraggableProps = {
-  LeftIcon: IconComponent | undefined;
+  LeftIcon?: IconComponent | undefined;
   accent?: MenuItemAccent;
   iconButtons?: MenuItemIconButton[];
   isTooltipOpen?: boolean;
   onClick?: () => void;
-  text: string;
+  text: ReactNode;
   className?: string;
   isIconDisplayedOnHoverOnly?: boolean;
   showGrip?: boolean;

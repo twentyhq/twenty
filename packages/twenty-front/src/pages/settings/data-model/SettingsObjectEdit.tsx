@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
-
+import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
+import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
@@ -20,13 +21,16 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
+import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
 import { Button, H2Title, IconArchive } from 'twenty-ui';
 import { z } from 'zod';
+import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 const objectEditFormSchema = z
   .object({})
@@ -45,6 +49,9 @@ export const SettingsObjectEdit = () => {
   const { findActiveObjectMetadataItemBySlug } =
     useFilteredObjectMetadataItems();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
+  const { lastVisitedObjectMetadataItemId } =
+    useLastVisitedObjectMetadataItem();
+  const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
@@ -56,6 +63,10 @@ export const SettingsObjectEdit = () => {
     resolver: zodResolver(objectEditFormSchema),
   });
 
+  const setNavigationMemorizedUrl = useSetRecoilState(
+    navigationMemorizedUrlState,
+  );
+
   useEffect(() => {
     if (!activeObjectMetadataItem) navigate(AppPath.NotFound);
   }, [activeObjectMetadataItem, navigate]);
@@ -65,25 +76,72 @@ export const SettingsObjectEdit = () => {
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isDirty && isValid && !isSubmitting;
 
-  const handleSave = async (
+  const getUpdatePayload = (
     formValues: SettingsDataModelObjectEditFormValues,
   ) => {
+    let values = formValues;
+    if (
+      formValues.shouldSyncLabelAndName ??
+      activeObjectMetadataItem.shouldSyncLabelAndName
+    ) {
+      values = {
+        ...values,
+        ...(values.labelSingular
+          ? {
+              nameSingular: computeMetadataNameFromLabelOrThrow(
+                formValues.labelSingular,
+              ),
+            }
+          : {}),
+        ...(values.labelPlural
+          ? {
+              namePlural: computeMetadataNameFromLabelOrThrow(
+                formValues.labelPlural,
+              ),
+            }
+          : {}),
+      };
+    }
+
     const dirtyFieldKeys = Object.keys(
       formConfig.formState.dirtyFields,
     ) as (keyof SettingsDataModelObjectEditFormValues)[];
 
+    return settingsUpdateObjectInputSchema.parse(
+      pick(values, [
+        ...dirtyFieldKeys,
+        ...(values.namePlural ? ['namePlural'] : []),
+        ...(values.nameSingular ? ['nameSingular'] : []),
+      ]),
+    );
+  };
+
+  const handleSave = async (
+    formValues: SettingsDataModelObjectEditFormValues,
+  ) => {
     try {
+      const updatePayload = getUpdatePayload(formValues);
       await updateOneObjectMetadataItem({
         idToUpdate: activeObjectMetadataItem.id,
-        updatePayload: settingsUpdateObjectInputSchema.parse(
-          pick(formValues, dirtyFieldKeys),
-        ),
+        updatePayload,
       });
+
+      const objectNamePluralForRedirection =
+        updatePayload.namePlural ?? activeObjectMetadataItem.namePlural;
+
+      if (lastVisitedObjectMetadataItemId === activeObjectMetadataItem.id) {
+        const lastVisitedView = getLastVisitedViewIdFromObjectMetadataItemId(
+          activeObjectMetadataItem.id,
+        );
+        setNavigationMemorizedUrl(
+          `/objects/${objectNamePluralForRedirection}?view=${lastVisitedView}`,
+        );
+      }
 
       navigate(
         `${settingsObjectsPagePath}/${getObjectSlug({
-          ...formValues,
-          namePlural: formValues.labelPlural,
+          ...updatePayload,
+          namePlural: objectNamePluralForRedirection,
         })}`,
       );
     } catch (error) {
@@ -142,7 +200,7 @@ export const SettingsObjectEdit = () => {
               />
               <SettingsDataModelObjectAboutForm
                 disabled={!activeObjectMetadataItem.isCustom}
-                disableNameEdit
+                disableNameEdit={!activeObjectMetadataItem.isCustom}
                 objectMetadataItem={activeObjectMetadataItem}
               />
             </Section>

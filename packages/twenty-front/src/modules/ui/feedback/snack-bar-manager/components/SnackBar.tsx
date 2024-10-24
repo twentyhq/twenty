@@ -10,10 +10,10 @@ import {
   LightButton,
   LightIconButton,
   MOBILE_VIEWPORT,
+  ProgressBar,
+  useProgressAnimation,
 } from 'twenty-ui';
 
-import { ProgressBar } from '@/ui/feedback/progress-bar/components/ProgressBar';
-import { useProgressAnimation } from '@/ui/feedback/progress-bar/hooks/useProgressAnimation';
 import { isDefined } from '~/utils/isDefined';
 
 export enum SnackBarVariant {

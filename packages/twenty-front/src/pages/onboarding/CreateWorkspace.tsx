@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { H2Title, MainButton } from 'twenty-ui';
+import { H2Title, Loader, MainButton } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -14,7 +14,6 @@ import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queri
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
-import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
