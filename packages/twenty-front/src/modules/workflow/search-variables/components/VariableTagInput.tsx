@@ -12,6 +12,8 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import { isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
+const LINE_HEIGHT = 24;
+
 const StyledContainer = styled.div`
   display: inline-flex;
   flex-direction: column;
@@ -28,9 +30,11 @@ const StyledInputContainer = styled.div<{ multiline: boolean }>`
   display: flex;
   flex-direction: row;
   position: relative;
-  line-height: ${({ multiline }) => (multiline ? '24px' : 'auto')};
-  min-height: ${({ multiline }) => (multiline ? '72px' : 'auto')};
-  max-height: ${({ multiline }) => (multiline ? '120px' : 'auto')};
+  line-height: ${({ multiline }) => (multiline ? `${LINE_HEIGHT}px` : 'auto')};
+  min-height: ${({ multiline }) =>
+    multiline ? `${3 * LINE_HEIGHT}px` : 'auto'};
+  max-height: ${({ multiline }) =>
+    multiline ? `${5 * LINE_HEIGHT}px` : 'auto'};
 `;
 
 const StyledSearchVariablesDropdownOutsideContainer = styled.div`
@@ -60,7 +64,7 @@ const StyledEditor = styled.div<{ multiline: boolean }>`
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
   background-color: ${({ theme }) => theme.background.transparent.lighter};
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
   border-bottom-right-radius: ${({ multiline, theme }) =>
     multiline ? theme.border.radius.sm : 'none'};
   border-top-right-radius: ${({ multiline, theme }) =>
@@ -69,7 +73,7 @@ const StyledEditor = styled.div<{ multiline: boolean }>`
   padding-right: ${({ multiline, theme }) =>
     multiline ? theme.spacing(6) : theme.spacing(2)};
   overflow: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
-  height: ${({ multiline }) => (multiline ? 'auto' : '32px')};
+  height: ${({ multiline }) => (multiline ? 'auto' : `${1.5 * LINE_HEIGHT}px`)};
 
   .editor-content {
     width: 100%;

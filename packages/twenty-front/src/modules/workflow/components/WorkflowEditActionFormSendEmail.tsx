@@ -231,16 +231,16 @@ export const WorkflowEditActionFormSendEmail = (
           control={form.control}
           render={({ field }) => (
             <VariableTagInput
-                inputId="email-body-input"
-                label="Body"
-                placeholder="Enter email body (use {{variable}} for dynamic content)"
-                value={field.value}
-                onChange={(email) => {
-                  field.onChange(email);
-                  handleSave();
-                }}
-                multiline
-              />
+              inputId="email-body-input"
+              label="Body"
+              placeholder="Enter email body (use {{variable}} for dynamic content)"
+              value={field.value}
+              onChange={(email) => {
+                field.onChange(email);
+                handleSave();
+              }}
+              multiline
+            />
           )}
         />
       </WorkflowEditGenericFormBase>
