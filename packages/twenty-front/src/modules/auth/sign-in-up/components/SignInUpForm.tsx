@@ -17,7 +17,14 @@ import { useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { ActionLink, IconGoogle, IconKey, IconMicrosoft } from 'twenty-ui';
+import {
+  ActionLink,
+  IconGoogle,
+  IconKey,
+  IconMicrosoft,
+  Loader,
+  MainButton,
+} from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledContentContainer = styled.div`

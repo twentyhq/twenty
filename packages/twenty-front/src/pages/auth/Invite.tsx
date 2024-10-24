@@ -10,7 +10,7 @@ import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { AnimatedEaseIn } from 'twenty-ui';
+import { AnimatedEaseIn, Loader, MainButton } from 'twenty-ui';
 import {
   useAddUserToWorkspaceByInviteTokenMutation,
   useAddUserToWorkspaceMutation,
