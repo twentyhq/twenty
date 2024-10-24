@@ -27,13 +27,14 @@ export const useCurrentViewViewFilterGroup = ({
 
   const childViewFilters =
     currentViewWithCombinedFiltersAndSorts?.viewFilters.filter(
-      (viewFilter) => viewFilter.viewFilterGroupId === viewFilterGroup.id,
+      (viewFilterToFilter) =>
+        viewFilterToFilter.viewFilterGroupId === viewFilterGroup.id,
     );
 
   const childViewFilterGroups =
     currentViewWithCombinedFiltersAndSorts?.viewFilterGroups.filter(
-      (viewFilterGroup) =>
-        viewFilterGroup.parentViewFilterGroupId === viewFilterGroup.id,
+      (viewFilterGroupToFilter) =>
+        viewFilterGroupToFilter.parentViewFilterGroupId === viewFilterGroup.id,
     );
 
   const childViewFiltersAndViewFilterGroups = [
