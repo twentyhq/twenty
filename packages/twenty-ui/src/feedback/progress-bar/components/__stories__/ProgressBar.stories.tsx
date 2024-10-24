@@ -1,9 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
-
-import { useProgressAnimation } from '@/ui/feedback/progress-bar/hooks/useProgressAnimation';
-
 import { ProgressBar } from '../ProgressBar';
+import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
+import { useProgressAnimation } from '@ui/feedback/progress-bar/hooks/useProgressAnimation';
 
 const meta: Meta<typeof ProgressBar> = {
   title: 'UI/Feedback/ProgressBar/ProgressBar',

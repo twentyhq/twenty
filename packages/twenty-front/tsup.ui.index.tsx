@@ -2,8 +2,7 @@ import { ThemeType } from 'twenty-ui';
 
 export { ThemeProvider } from '@emotion/react';
 export * from 'twenty-ui';
-export * from './src/modules/ui/feedback/progress-bar/components/CircularProgressBar';
-export * from './src/modules/ui/feedback/progress-bar/components/ProgressBar';
+
 export * from './src/modules/ui/input/components/AutosizeTextInput';
 export * from './src/modules/ui/input/components/Checkbox';
 export * from './src/modules/ui/input/components/EntityTitleDoubleTextInput';
