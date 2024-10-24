@@ -5,6 +5,7 @@ import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metad
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { FAVORITE_FOLDER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -18,6 +19,7 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
   description: 'A Folder of favorites',
   icon: 'IconFolder',
 })
+@WorkspaceIsSystem()
 export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.position,
@@ -37,15 +39,6 @@ export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconText',
   })
   name: string;
-
-  @WorkspaceField({
-    standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.icon,
-    type: FieldMetadataType.TEXT,
-    label: 'Icon',
-    description: 'Icon for the favorite folder',
-    icon: 'IconFolder',
-  })
-  icon: string;
 
   @WorkspaceRelation({
     standardId: FAVORITE_FOLDER_STANDARD_FIELD_IDS.favorites,

@@ -219,7 +219,6 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
 export const FAVORITE_FOLDER_STANDARD_FIELD_IDS = {
   position: '20202020-5278-4bde-8909-2cec74d43744',
   name: '20202020-82a3-4537-8ff0-dbce7eec35d6',
-  icon: '20202020-c2d4-4b44-86a4-4ce54fab8e01',
   favorites: '20202020-b5e3-4b42-8af2-03cd4fd2e4d2',
 };
 
