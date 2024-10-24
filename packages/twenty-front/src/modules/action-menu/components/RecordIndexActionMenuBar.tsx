@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { RecordIndexActionMenuBarAllActionsButton } from '@/action-menu/components/RecordIndexActionMenuBarAllActionsButton';
 import { RecordIndexActionMenuBarEntry } from '@/action-menu/components/RecordIndexActionMenuBarEntry';
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
@@ -45,6 +46,7 @@ export const RecordIndexActionMenuBar = () => {
       {actionMenuEntries.map((entry, index) => (
         <RecordIndexActionMenuBarEntry key={index} entry={entry} />
       ))}
+      <RecordIndexActionMenuBarAllActionsButton />
     </BottomBar>
   );
 };
