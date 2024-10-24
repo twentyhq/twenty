@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { H2Title, Loader } from 'twenty-ui';
+import { H2Title, Loader, MainButton } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -16,7 +16,6 @@ import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import {
   OnboardingStatus,

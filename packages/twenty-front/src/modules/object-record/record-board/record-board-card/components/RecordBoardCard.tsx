@@ -17,7 +17,6 @@ import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
@@ -30,8 +29,10 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   AnimatedEaseInOut,
   AvatarChipVariant,
+  ChipSize,
   IconEye,
   IconEyeOff,
+  LightIconButton,
 } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
@@ -295,6 +296,7 @@ export const RecordBoardCard = ({
               objectNameSingular={objectMetadataItem.nameSingular}
               record={record as ObjectRecord}
               variant={AvatarChipVariant.Transparent}
+              size={ChipSize.Large}
             />
           )}
 

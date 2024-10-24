@@ -5,13 +5,12 @@ import { SignInUpForm } from '@/auth/sign-in-up/components/SignInUpForm';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { MainButton } from '@/ui/input/button/components/MainButton';
 import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { AnimatedEaseIn, Loader } from 'twenty-ui';
+import { AnimatedEaseIn } from 'twenty-ui';
 import {
   useAddUserToWorkspaceByInviteTokenMutation,
   useAddUserToWorkspaceMutation,
