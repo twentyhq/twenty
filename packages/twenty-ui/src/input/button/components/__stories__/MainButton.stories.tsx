@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
-import { ComponentDecorator, IconBrandGoogle } from 'twenty-ui';
-
+import { IconBrandGoogle } from '@ui/display';
+import { ComponentDecorator } from '@ui/testing';
 import { MainButton } from '../MainButton';
 
 const clickJestFn = fn();

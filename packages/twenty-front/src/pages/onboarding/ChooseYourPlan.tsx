@@ -1,8 +1,3 @@
-import styled from '@emotion/styled';
-import { isNonEmptyString, isNumber } from '@sniptt/guards';
-import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
-
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -13,9 +8,12 @@ import { AppPath } from '@/types/AppPath';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { MainButton } from '@/ui/input/button/components/MainButton';
 import { CardPicker } from '@/ui/input/components/CardPicker';
-import { ActionLink, CAL_LINK } from 'twenty-ui';
+import styled from '@emotion/styled';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
+import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { ActionLink, CAL_LINK, MainButton } from 'twenty-ui';
 import {
   ProductPriceEntity,
   SubscriptionInterval,

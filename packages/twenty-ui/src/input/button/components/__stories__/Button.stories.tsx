@@ -1,11 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { IconSearch } from '@ui/display';
 import {
   CatalogDecorator,
   CatalogStory,
   ComponentDecorator,
-  IconSearch,
-} from 'twenty-ui';
-
+} from '@ui/testing';
 import {
   Button,
   ButtonAccent,

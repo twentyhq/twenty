@@ -1,7 +1,3 @@
-import styled from '@emotion/styled';
-import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
-
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
@@ -10,10 +6,12 @@ import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
-import { MainButton } from '@/ui/input/button/components/MainButton';
 import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
+import styled from '@emotion/styled';
+import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { AnimatedEaseIn } from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
+import { AnimatedEaseIn, MainButton } from 'twenty-ui';
 import {
   useAddUserToWorkspaceByInviteTokenMutation,
   useAddUserToWorkspaceMutation,

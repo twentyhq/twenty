@@ -1,6 +1,6 @@
-import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent } from '@ui/display';
+import { MouseEvent } from 'react';
 
 import { IconButton, IconButtonPosition, IconButtonProps } from './IconButton';
 

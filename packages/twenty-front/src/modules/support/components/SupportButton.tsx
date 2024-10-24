@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
-import { IconHelpCircle } from 'twenty-ui';
+import { Button, IconHelpCircle } from 'twenty-ui';
 
 import { SupportButtonSkeletonLoader } from '@/support/components/SupportButtonSkeletonLoader';
 import { useSupportChat } from '@/support/hooks/useSupportChat';
-import { Button } from '@/ui/input/button/components/Button';
 
 const StyledButtonContainer = styled.div`
   display: flex;

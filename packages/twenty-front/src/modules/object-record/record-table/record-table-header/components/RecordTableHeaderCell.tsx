@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
-import { IconPlus } from 'twenty-ui';
+import { IconPlus, LightIconButton } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
@@ -12,7 +12,6 @@ import { useTableColumns } from '@/object-record/record-table/hooks/useTableColu
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';

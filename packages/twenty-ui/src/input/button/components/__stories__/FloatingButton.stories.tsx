@@ -1,26 +1,23 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { IconSearch } from '@ui/display';
 import {
   CatalogDecorator,
   CatalogStory,
   ComponentDecorator,
-  IconSearch,
-} from 'twenty-ui';
+} from '@ui/testing';
+import { FloatingButton, FloatingButtonSize } from '../FloatingButton';
 
-import {
-  FloatingIconButton,
-  FloatingIconButtonSize,
-} from '../FloatingIconButton';
-
-const meta: Meta<typeof FloatingIconButton> = {
-  title: 'UI/Input/Button/FloatingIconButton',
-  component: FloatingIconButton,
+const meta: Meta<typeof FloatingButton> = {
+  title: 'UI/Input/Button/FloatingButton',
+  component: FloatingButton,
 };
 
 export default meta;
-type Story = StoryObj<typeof FloatingIconButton>;
+type Story = StoryObj<typeof FloatingButton>;
 
 export const Default: Story = {
   args: {
+    title: 'Filter',
     size: 'small',
     disabled: false,
     focus: false,
@@ -35,11 +32,12 @@ export const Default: Story = {
   decorators: [ComponentDecorator],
 };
 
-export const Catalog: CatalogStory<Story, typeof FloatingIconButton> = {
-  args: { Icon: IconSearch },
+export const Catalog: CatalogStory<Story, typeof FloatingButton> = {
+  args: { title: 'Filter', Icon: IconSearch },
   argTypes: {
     size: { control: false },
     disabled: { control: false },
+    position: { control: false },
     focus: { control: false },
   },
   parameters: {
@@ -48,8 +46,8 @@ export const Catalog: CatalogStory<Story, typeof FloatingIconButton> = {
       dimensions: [
         {
           name: 'sizes',
-          values: ['small', 'medium'] satisfies FloatingIconButtonSize[],
-          props: (size: FloatingIconButtonSize) => ({ size }),
+          values: ['small', 'medium'] satisfies FloatingButtonSize[],
+          props: (size: FloatingButtonSize) => ({ size }),
         },
         {
           name: 'states',

@@ -1,9 +1,10 @@
 import isPropValid from '@emotion/is-prop-valid';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Pill } from '@ui/components';
+import { IconComponent } from '@ui/display';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { IconComponent, Pill } from 'twenty-ui';
 
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
