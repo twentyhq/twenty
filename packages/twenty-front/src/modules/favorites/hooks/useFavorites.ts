@@ -69,7 +69,6 @@ export const useFavorites = () => {
 
   const getObjectRecordIdentifierByNameSingular =
     useGetObjectRecordIdentifierByNameSingular();
-  // console.log('favorites', favorites);
   const favoritesSorted = useMemo(() => {
     return sortFavorites(
       favorites,
@@ -173,8 +172,7 @@ export const useFavorites = () => {
       },
     });
   };
-  // console.log(favoritesSorted);
-  // console.log(favorites);
+
   return {
     favorites: favoritesSorted,
     workspaceFavorites: workspaceFavoritesSorted,

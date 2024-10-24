@@ -31,7 +31,7 @@ export const FavoriteFoldersDropdown = ({
           clickableComponent={<PageFavoriteButton isFavorite={isFavorite} />}
           dropdownComponents={
             <>
-              <FavoriteFoldersMultiSelectEffect />
+              <FavoriteFoldersMultiSelectEffect record={record} />
               <FavoriteFoldersMultiSelect
                 onSubmit={closeDropdown}
                 record={record}

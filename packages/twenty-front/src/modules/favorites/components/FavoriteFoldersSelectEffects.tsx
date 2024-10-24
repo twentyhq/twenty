@@ -1,19 +1,32 @@
 import { useEffect } from 'react';
-import { useRecoilCallback, useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
+import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useFavoriteFoldersScopedStates } from '../hooks/useFavoriteFoldersScopedStates';
 
-export const FavoriteFoldersMultiSelectEffect = () => {
+type FavoriteFoldersMultiSelectEffectProps = {
+  record?: ObjectRecord;
+};
+
+export const FavoriteFoldersMultiSelectEffect = ({
+  record,
+}: FavoriteFoldersMultiSelectEffectProps) => {
   const {
     favoriteFoldersIdsMultiSelectState,
     favoriteFolderMultiSelectFamilyState,
+    favoriteFoldersMultiSelectCheckedState,
   } = useFavoriteFoldersScopedStates();
 
   const { favoriteFolder } = useFavoriteFolders();
+  const { favorites } = useFavorites();
+  const setCheckedState = useSetRecoilState(
+    favoriteFoldersMultiSelectCheckedState,
+  );
 
   const [favoriteFoldersIdsMultiSelect, setFavoriteFoldersIdsMultiSelect] =
     useRecoilState(favoriteFoldersIdsMultiSelectState);
@@ -49,6 +62,14 @@ export const FavoriteFoldersMultiSelectEffect = () => {
     setFavoriteFoldersIdsMultiSelect,
     updateFolders,
   ]);
+
+  useEffect(() => {
+    const checkedFolderIds = favorites
+      .filter((favorite) => favorite.recordId === record?.id)
+      .map((favorite) => favorite.favoriteFolderId || 'no-folder');
+
+    setCheckedState(checkedFolderIds);
+  }, [favorites, setCheckedState, record]);
 
   return null;
 };

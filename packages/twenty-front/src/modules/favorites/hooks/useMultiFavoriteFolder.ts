@@ -1,7 +1,7 @@
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import { useFavoriteFoldersScopedStates } from './useFavoriteFoldersScopedStates';
 
@@ -13,6 +13,7 @@ type useMultiFavoriteFolderProps = {
 type FolderOperations = {
   getFoldersByIds: () => FavoriteFolder[];
   toggleFolderSelection: (folderId: string) => Promise<void>;
+  syncCheckedFavoriteState: () => void;
 };
 
 export const useMultiFavoriteFolder = ({
@@ -28,8 +29,22 @@ export const useMultiFavoriteFolder = ({
   const favoriteFoldersIdsMultiSelect = useRecoilValue(
     favoriteFoldersIdsMultiSelectState,
   );
+  const setCheckedState = useSetRecoilState(
+    favoriteFoldersMultiSelectCheckedState,
+  );
 
   const { createFavorite, deleteFavorite, favorites } = useFavorites();
+  const syncCheckedFavoriteState = () => {
+    if (!record?.id) return;
+
+    // Get all folders that have favorites for this record
+    const checkedFolderIds = favorites
+      .filter((favorite) => favorite.recordId === record.id)
+      .map((favorite) => favorite.favoriteFolderId || 'no-folder');
+
+    // Update the checked state
+    setCheckedState(checkedFolderIds);
+  };
 
   const getFoldersByIds = useRecoilCallback(
     ({ snapshot }) =>
@@ -115,5 +130,6 @@ export const useMultiFavoriteFolder = ({
   return {
     getFoldersByIds,
     toggleFolderSelection,
+    syncCheckedFavoriteState,
   };
 };

@@ -17,7 +17,7 @@ export const RecordShowPageBaseHeader = ({
   objectMetadataItem,
   objectNameSingular,
 }: RecordShowPageBaseHeaderProps) => {
-  const dropdownId = `favorite-folders-dropdown-${record?.id ?? '0'}`;
+  const dropdownId = `favorite-folders-dropdown`;
 
   return (
     <>

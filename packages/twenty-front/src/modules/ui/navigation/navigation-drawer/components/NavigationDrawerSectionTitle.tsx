@@ -1,3 +1,4 @@
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import React from 'react';
 import { isDefined } from 'twenty-ui';
@@ -23,9 +24,19 @@ const StyledLabel = styled.div`
   flex-grow: 1;
 `;
 
-const StyledRightIcon = styled.div`
+type StyledRightIconProps = {
+  isMobile: boolean;
+};
+
+const StyledRightIcon = styled.div<StyledRightIconProps>`
   cursor: pointer;
   margin-left: ${({ theme }) => theme.spacing(2)};
+  transition: opacity 150ms ease-in-out;
+  opacity: ${({ isMobile }) => (isMobile ? 1 : 0)};
+
+  .title-container:hover & {
+    opacity: 1;
+  }
 
   &:active {
     cursor: pointer;
@@ -45,6 +56,8 @@ export const NavigationDrawerSectionTitle = ({
   label,
   rightIcon,
 }: NavigationDrawerSectionTitleProps) => {
+  const isMobile = useIsMobile();
+
   const handleTitleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     if (isDefined(onClick)) {
@@ -60,10 +73,10 @@ export const NavigationDrawerSectionTitle = ({
   };
 
   return (
-    <StyledTitle onClick={handleTitleClick}>
+    <StyledTitle className="title-container" onClick={handleTitleClick}>
       <StyledLabel>{label}</StyledLabel>
       {rightIcon && (
-        <StyledRightIcon onClick={handleRightIconClick}>
+        <StyledRightIcon isMobile={isMobile} onClick={handleRightIconClick}>
           {rightIcon}
         </StyledRightIcon>
       )}

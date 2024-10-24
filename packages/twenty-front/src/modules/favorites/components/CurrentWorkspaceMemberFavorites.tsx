@@ -8,11 +8,13 @@ import {
   AvatarType,
   IconDotsVertical,
   IconFolder,
+  IconHeartOff,
   IconPencil,
   IconTrash,
 } from 'twenty-ui';
 
 import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
+import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -23,6 +25,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledAvatar = styled(Avatar)`
   :hover {
@@ -33,7 +36,24 @@ const StyledAvatar = styled(Avatar)`
 const StyledDropdownContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
+const StyledIconDotsVertical = styled(IconDotsVertical)<{ isMobile: boolean }>`
+  visibility: ${({ isMobile }) => (isMobile ? 'visible' : 'hidden')};
+  color: ${({ theme }) => theme.color.gray50};
 
+  .navigation-drawer-item:hover &,
+  .navigation-drawer-sub-item:hover & {
+    visibility: visible;
+  }
+`;
+
+const StyledIconHeartOff = styled(IconHeartOff)<{ isMobile: boolean }>`
+  visibility: ${({ isMobile }) => (isMobile ? 'visible' : 'hidden')};
+  color: ${({ theme }) => theme.color.red};
+
+  .navigation-drawer-sub-item:hover & {
+    visibility: visible;
+  }
+`;
 type CurrentWorkspaceMemberFavoritesProps = {
   folder: {
     folderId: string;
@@ -62,6 +82,8 @@ export const CurrentWorkspaceMemberFavorites = ({
 }: CurrentWorkspaceMemberFavoritesProps) => {
   const currentPath = useLocation().pathname;
   const theme = useTheme();
+  const isMobile = useIsMobile();
+
   const [isRenaming, setIsRenaming] = useState(false);
   const [folderName, setFolderName] = useState(folder.folderName);
   const { renameFolder, deleteFolder } = useFavoriteFolders();
@@ -69,6 +91,7 @@ export const CurrentWorkspaceMemberFavorites = ({
   const selectedFavoriteIndex = folder.favorites.findIndex(
     (favorite) => favorite.link === currentPath,
   );
+  const { deleteFavorite } = useFavorites();
 
   const subItemArrayLength = folder.favorites.length;
 
@@ -111,10 +134,7 @@ export const CurrentWorkspaceMemberFavorites = ({
       }}
       data-select-disable
       clickableComponent={
-        <IconDotsVertical
-          size={theme.icon.size.sm}
-          color={theme.color.gray50}
-        />
+        <StyledIconDotsVertical isMobile={isMobile} size={theme.icon.size.sm} />
       }
       dropdownPlacement="right"
       dropdownComponents={
@@ -165,6 +185,7 @@ export const CurrentWorkspaceMemberFavorites = ({
           onClick={() => onToggle(folder.folderId)}
           active={isOpen}
           rightOptions={rightOptions}
+          className="navigation-drawer-item"
         />
       )}
 
@@ -182,6 +203,7 @@ export const CurrentWorkspaceMemberFavorites = ({
                     itemComponent={
                       <NavigationDrawerSubItem
                         key={favorite.id}
+                        className="navigation-drawer-sub-item"
                         label={favorite.labelIdentifier}
                         Icon={() => (
                           <StyledAvatar
@@ -199,6 +221,13 @@ export const CurrentWorkspaceMemberFavorites = ({
                           arrayLength: subItemArrayLength,
                           selectedIndex: selectedFavoriteIndex,
                         })}
+                        rightOptions={
+                          <StyledIconHeartOff
+                            isMobile={isMobile}
+                            size={theme.icon.size.sm}
+                            onClick={() => deleteFavorite(favorite.id)}
+                          />
+                        }
                       />
                     }
                   />

@@ -11,12 +11,19 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { Avatar, IconFolder, IconFolderPlus, isDefined } from 'twenty-ui';
+import {
+  Avatar,
+  IconFolder,
+  IconFolderPlus,
+  IconHeartOff,
+  isDefined,
+} from 'twenty-ui';
 
 const StyledContainer = styled(NavigationDrawerSection)`
   width: 100%;
@@ -38,9 +45,20 @@ const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
   }
 `;
 
+const StyledIconHeartOff = styled(IconHeartOff)<{ isMobile: boolean }>`
+  visibility: ${({ isMobile }) => (isMobile ? 'visible' : 'hidden')};
+  color: ${({ theme }) => theme.color.red};
+
+  .navigation-drawer-item:hover & {
+    visibility: visible;
+  }
+`;
+
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
-  const { createFolder } = useFavoriteFolders();
+  const { createFolder, favoriteFolder } = useFavoriteFolders();
+  const { deleteFavorite } = useFavorites();
+  const isMobile = useIsMobile();
   const [folderName, setFolderName] = useState('');
   const currentPath = useLocation().pathname;
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
@@ -102,8 +120,9 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   );
 
   if (
-    !currentWorkspaceMemberFavorites ||
-    currentWorkspaceMemberFavorites.length === 0
+    (!currentWorkspaceMemberFavorites ||
+      currentWorkspaceMemberFavorites.length === 0) &&
+    (!favoriteFolder || favoriteFolder.length === 0)
   ) {
     return <></>;
   }
@@ -154,6 +173,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
             unorganisedFavorites.map((favorite) => (
               <StyledNavigationDrawerItem
                 key={favorite.id}
+                className="navigation-drawer-item"
                 label={favorite.labelIdentifier}
                 Icon={() => (
                   <StyledAvatar
@@ -166,6 +186,13 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
                 )}
                 active={favorite.link === currentPath}
                 to={favorite.link}
+                rightOptions={
+                  <StyledIconHeartOff
+                    isMobile={isMobile}
+                    size={theme.icon.size.sm}
+                    onClick={() => deleteFavorite(favorite.id)}
+                  />
+                }
               />
             ))}
         </>
