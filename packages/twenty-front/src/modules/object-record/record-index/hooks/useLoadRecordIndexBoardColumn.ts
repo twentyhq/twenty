@@ -11,12 +11,12 @@ import { recordIndexFiltersState } from '@/object-record/record-index/states/rec
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { isDefined } from '~/utils/isDefined';
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 
 type UseLoadRecordIndexBoardProps = {
   objectNameSingular: string;
   boardFieldMetadataId: string | null;
   recordBoardId: string;
-  columnFieldSelectValue: string | null;
   columnId: string;
 };
 
@@ -24,17 +24,18 @@ export const useLoadRecordIndexBoardColumn = ({
   objectNameSingular,
   boardFieldMetadataId,
   recordBoardId,
-  columnFieldSelectValue,
   columnId,
 }: UseLoadRecordIndexBoardProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
   const { setRecordIdsForColumn } = useRecordBoard(recordBoardId);
+  const { columnsFamilySelector } = useRecordBoardStates(recordBoardId);
   const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
   const recordIndexSorts = useRecoilValue(recordIndexSortsState);
+  const columnDefinition = useRecoilValue(columnsFamilySelector(columnId));
   const requestFilters = turnFiltersIntoQueryFilter(
     recordIndexFilters,
     objectMetadataItem?.fields ?? [],
@@ -53,9 +54,9 @@ export const useLoadRecordIndexBoardColumn = ({
   const filter = {
     ...requestFilters,
     [recordIndexKanbanFieldMetadataItem?.name ?? '']: isDefined(
-      columnFieldSelectValue,
+      columnDefinition?.value,
     )
-      ? { in: [columnFieldSelectValue] }
+      ? { in: [columnDefinition?.value] }
       : { is: 'NULL' },
   };
 

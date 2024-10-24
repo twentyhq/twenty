@@ -29,6 +29,7 @@ initialize({
       with payload ${JSON.stringify(requestBody)}\n
       This request should be mocked with MSW`);
   },
+  quiet: true,
 });
 
 const preview: Preview = {

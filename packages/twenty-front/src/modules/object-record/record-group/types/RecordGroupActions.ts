@@ -1,6 +1,6 @@
 import { IconComponent } from 'twenty-ui';
 
-export type RecordBoardColumnAction = {
+export type RecordGroupAction = {
   id: string;
   label: string;
   icon: IconComponent;
