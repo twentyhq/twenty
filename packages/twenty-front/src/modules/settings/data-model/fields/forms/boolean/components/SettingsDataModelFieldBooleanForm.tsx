@@ -1,12 +1,11 @@
-import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
-import { IconCheck, IconX } from 'twenty-ui';
+import { Controller, useFormContext } from 'react-hook-form';
+import { IconCheck, IconX, CardContent } from 'twenty-ui';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { isDefined } from '~/utils/isDefined';
 
 export const settingsDataModelFieldBooleanFormSchema = z.object({

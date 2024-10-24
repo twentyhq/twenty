@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 
 import {
-  SettingsDataModelFieldPreview,
+  // eslint-disable-next-line prettier/prettier
+    SettingsDataModelFieldPreview,
   SettingsDataModelFieldPreviewProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreview';
 import { SettingsDataModelObjectSummary } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { Card, CardContent } from 'twenty-ui';
 
 export type SettingsDataModelFieldPreviewCardProps =
   SettingsDataModelFieldPreviewProps & {

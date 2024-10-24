@@ -9,7 +9,6 @@ import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
-import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -23,6 +22,7 @@ import {
   IconGoogle,
   IconKey,
   IconMicrosoft,
+  Loader,
   MainButton,
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';

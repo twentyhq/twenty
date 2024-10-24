@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
-import { FloatingButton, IconEye } from 'twenty-ui';
-
-import { Card } from '@/ui/layout/card/components/Card';
+import { Card, FloatingButton, IconEye } from 'twenty-ui';
 
 import { SettingsPath } from '@/types/SettingsPath';
 import DarkCoverImage from '../../assets/cover-dark.png';
