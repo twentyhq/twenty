@@ -1,14 +1,13 @@
-import React from 'react';
 import styled from '@emotion/styled';
+import { Checkmark } from '@ui/display/checkmark/components/Checkmark';
+import { ColorScheme } from '@ui/input/types/ColorScheme';
 import {
   AnimatePresence,
   AnimationControls,
   motion,
   useAnimation,
 } from 'framer-motion';
-import { Checkmark } from 'twenty-ui';
-
-import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import React from 'react';
 
 const StyledColorSchemeBackground = styled.div<
   Pick<ColorSchemeCardProps, 'variant'>

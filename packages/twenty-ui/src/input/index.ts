@@ -12,4 +12,7 @@ export * from './button/components/LightIconButton';
 export * from './button/components/LightIconButtonGroup';
 export * from './button/components/MainButton';
 export * from './button/components/RoundedIconButton';
+export * from './color-scheme/components/ColorSchemeCard';
+export * from './color-scheme/components/ColorSchemePicker';
 export * from './components/Toggle';
+export * from './types/ColorScheme';
