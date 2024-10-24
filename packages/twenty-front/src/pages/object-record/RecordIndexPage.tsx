@@ -44,7 +44,7 @@ export const RecordIndexPage = () => {
     createNewTableRecord();
   };
 
-  const { handleIndexIdentifierClick } = useHandleIndexIdentifierClick({
+  const { indexIdentifierUrl } = useHandleIndexIdentifierClick({
     objectMetadataItem,
     recordIndexId,
   });
@@ -67,7 +67,7 @@ export const RecordIndexPage = () => {
           objectNameSingular,
           objectMetadataItem,
           onIndexRecordsLoaded: handleIndexRecordsLoaded,
-          onIndexIdentifierClick: handleIndexIdentifierClick,
+          indexIdentifierUrl,
           onCreateRecord: handleCreateRecord,
         }}
       >

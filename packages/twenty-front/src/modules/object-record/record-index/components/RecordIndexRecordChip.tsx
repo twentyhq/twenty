@@ -18,15 +18,11 @@ export const RecordIdentifierChip = ({
   variant,
   size,
 }: RecordIdentifierChipProps) => {
-  const { onIndexIdentifierClick } = useContext(RecordIndexRootPropsContext);
+  const { indexIdentifierUrl } = useContext(RecordIndexRootPropsContext);
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
     record,
   });
-
-  const handleAvatarChipClick = () => {
-    onIndexIdentifierClick(record.id);
-  };
 
   const { Icon: LeftIcon, IconColor: LeftIconColor } =
     useGetStandardObjectIcon(objectNameSingular);
@@ -36,7 +32,7 @@ export const RecordIdentifierChip = ({
       name={recordChipData.name}
       avatarType={recordChipData.avatarType}
       avatarUrl={recordChipData.avatarUrl ?? ''}
-      onClick={handleAvatarChipClick}
+      to={indexIdentifierUrl(record.id)}
       variant={variant}
       LeftIcon={LeftIcon}
       LeftIconColor={LeftIconColor}
