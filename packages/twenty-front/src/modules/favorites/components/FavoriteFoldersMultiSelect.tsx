@@ -8,6 +8,7 @@ import { useFavoriteFoldersScopedStates } from '@/favorites/hooks/useFavoriteFol
 import { useMultiFavoriteFolder } from '@/favorites/hooks/useMultiFavoriteFolder';
 import { FavoriteFoldersScopeInternalContext } from '@/favorites/scopes/scope-internal-context/favoritesScopeInternalContext';
 
+import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox } from '@/ui/input/components/Checkbox';
@@ -62,11 +63,12 @@ export const FavoriteFoldersMultiSelect = ({
     favoriteFoldersMultiSelectCheckedState,
   } = useFavoriteFoldersScopedStates();
 
-  const { getFoldersByIds, toggleFolderSelection, createFolder } =
-    useMultiFavoriteFolder({
-      record,
-      objectNameSingular,
-    });
+  const { getFoldersByIds, toggleFolderSelection } = useMultiFavoriteFolder({
+    record,
+    objectNameSingular,
+  });
+
+  const { createFolder } = useFavoriteFolders();
 
   const favoriteFoldersSearchFilter = useRecoilValue(
     favoriteFoldersSearchFilterState,

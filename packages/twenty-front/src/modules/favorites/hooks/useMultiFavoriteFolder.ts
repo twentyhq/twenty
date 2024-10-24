@@ -1,5 +1,3 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -12,24 +10,26 @@ type useMultiFavoriteFolderProps = {
   objectNameSingular: string;
 };
 
+type FolderOperations = {
+  getFoldersByIds: () => FavoriteFolder[];
+  toggleFolderSelection: (folderId: string) => Promise<void>;
+};
+
 export const useMultiFavoriteFolder = ({
   record,
   objectNameSingular,
-}: useMultiFavoriteFolderProps) => {
+}: useMultiFavoriteFolderProps): FolderOperations => {
   const {
     favoriteFoldersIdsMultiSelectState,
     favoriteFolderMultiSelectFamilyState,
     favoriteFoldersMultiSelectCheckedState,
   } = useFavoriteFoldersScopedStates();
 
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-
   const favoriteFoldersIdsMultiSelect = useRecoilValue(
     favoriteFoldersIdsMultiSelectState,
   );
 
   const { createFavorite, deleteFavorite, favorites } = useFavorites();
-  const { createFavoriteFolder, favoriteFolder } = useFavoriteFolders();
 
   const getFoldersByIds = useRecoilCallback(
     ({ snapshot }) =>
@@ -42,7 +42,7 @@ export const useMultiFavoriteFolder = ({
 
             return folderValue;
           })
-          .filter((folder): folder is FavoriteFolder => folder !== undefined);
+          .filter((folder): folder is FavoriteFolder => isDefined(folder));
       },
     [favoriteFoldersIdsMultiSelect, favoriteFolderMultiSelectFamilyState],
   );
@@ -50,43 +50,57 @@ export const useMultiFavoriteFolder = ({
   const toggleFolderSelection = useRecoilCallback(
     ({ snapshot, set }) =>
       async (folderId: string) => {
+        const handleNoFolderDeletion = async () => {
+          const favoritesToDelete = favorites.filter(
+            (favorite) =>
+              !favorite.favoriteFolderId && favorite.recordId === record?.id,
+          );
+
+          for (const favorite of favoritesToDelete) {
+            await deleteFavorite(favorite.id);
+          }
+        };
+
+        const handleFolderDeletion = async (folderId: string) => {
+          const favoriteToDelete = favorites.find(
+            (favorite) => favorite.favoriteFolderId === folderId,
+          );
+
+          if (!isDefined(favoriteToDelete)) {
+            return;
+          }
+
+          await deleteFavorite(favoriteToDelete.id);
+        };
+
         const checkedIds = snapshot
           .getLoadable(favoriteFoldersMultiSelectCheckedState)
           .getValue();
 
-        if (checkedIds.includes(folderId)) {
+        const isAlreadyChecked = checkedIds.includes(folderId);
+
+        if (isAlreadyChecked) {
           if (folderId === 'no-folder') {
-            const favoritesToDelete = favorites.filter(
-              (favorite) =>
-                !favorite.favoriteFolderId && favorite.recordId === record?.id,
-            );
-
-            for (const favorite of favoritesToDelete) {
-              await deleteFavorite(favorite.id);
-            }
+            await handleNoFolderDeletion();
           } else {
-            const favoriteToDelete = favorites.find(
-              (favorite) => favorite.favoriteFolderId === folderId,
-            );
-
-            if (isDefined(favoriteToDelete)) {
-              await deleteFavorite(favoriteToDelete.id);
-            }
+            await handleFolderDeletion(folderId);
           }
 
           set(
             favoriteFoldersMultiSelectCheckedState,
             checkedIds.filter((id) => id !== folderId),
           );
-        } else if (isDefined(record)) {
-          const folderIdToUse = folderId === 'no-folder' ? undefined : folderId;
-          await createFavorite(record, objectNameSingular, folderIdToUse);
-
-          set(favoriteFoldersMultiSelectCheckedState, [
-            ...checkedIds,
-            folderId,
-          ]);
+          return;
         }
+
+        if (!isDefined(record)) {
+          return;
+        }
+
+        const folderIdToUse = folderId === 'no-folder' ? undefined : folderId;
+        await createFavorite(record, objectNameSingular, folderIdToUse);
+
+        set(favoriteFoldersMultiSelectCheckedState, [...checkedIds, folderId]);
       },
     [
       favoriteFoldersMultiSelectCheckedState,
@@ -98,19 +112,8 @@ export const useMultiFavoriteFolder = ({
     ],
   );
 
-  const createFolder = async (name: string) => {
-    if (!name.trim()) return;
-
-    await createFavoriteFolder({
-      workspaceMemberId: currentWorkspaceMember?.id,
-      name: name.trim(),
-      position: (favoriteFolder?.length || 0) + 1,
-    });
-  };
-
   return {
     getFoldersByIds,
     toggleFolderSelection,
-    createFolder,
   };
 };

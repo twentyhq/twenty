@@ -1,19 +1,37 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
-import { Avatar, AvatarType, IconFolder } from 'twenty-ui';
+import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import {
+  Avatar,
+  AvatarType,
+  IconDotsVertical,
+  IconFolder,
+  IconPencil,
+  IconTrash,
+} from 'twenty-ui';
 
+import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
-import { useLocation } from 'react-router-dom';
 
 const StyledAvatar = styled(Avatar)`
   :hover {
     cursor: grab;
   }
+`;
+
+const StyledDropdownContainer = styled.div`
+  padding: ${({ theme }) => theme.spacing(1)};
 `;
 
 type CurrentWorkspaceMemberFavoritesProps = {
@@ -43,25 +61,113 @@ export const CurrentWorkspaceMemberFavorites = ({
   onToggle,
 }: CurrentWorkspaceMemberFavoritesProps) => {
   const currentPath = useLocation().pathname;
-
+  const theme = useTheme();
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [folderName, setFolderName] = useState(folder.folderName);
+  const { renameFolder, deleteFolder } = useFavoriteFolders();
+  const { closeDropdown } = useDropdown(`favorite-folder-${folder.folderId}`);
   const selectedFavoriteIndex = folder.favorites.findIndex(
     (favorite) => favorite.link === currentPath,
   );
 
   const subItemArrayLength = folder.favorites.length;
 
+  const handleSubmitRename = async (value: string) => {
+    const trimmedValue = value.trim();
+    if (!trimmedValue) return false;
+
+    await renameFolder(folder.folderId, trimmedValue);
+    setIsRenaming(false);
+    return true;
+  };
+
+  const handleCancelRename = () => {
+    setFolderName(folder.folderName);
+    setIsRenaming(false);
+  };
+
+  const handleClickOutside = async (
+    event: MouseEvent | TouchEvent,
+    value: string,
+  ) => {
+    const trimmedValue = value.trim();
+    if (!trimmedValue) {
+      setIsRenaming(false);
+      return;
+    }
+
+    await renameFolder(folder.folderId, trimmedValue);
+    setIsRenaming(false);
+  };
+
+  const handleDelete = async () => {
+    await deleteFolder(folder.folderId);
+  };
+  const rightOptions = (
+    <Dropdown
+      dropdownId={`favorite-folder-${folder.folderId}`}
+      dropdownHotkeyScope={{
+        scope: 'favorite-folder',
+      }}
+      data-select-disable
+      clickableComponent={
+        <IconDotsVertical
+          size={theme.icon.size.sm}
+          color={theme.color.gray50}
+        />
+      }
+      dropdownPlacement="right"
+      dropdownComponents={
+        <StyledDropdownContainer>
+          <MenuItem
+            LeftIcon={IconPencil}
+            onClick={() => {
+              setIsRenaming(true);
+              closeDropdown();
+            }}
+            accent={'default'}
+            text={'Rename'}
+          />
+          <MenuItem
+            LeftIcon={IconTrash}
+            onClick={() => {
+              handleDelete();
+              closeDropdown();
+            }}
+            accent={'danger'}
+            text={'Delete'}
+          />
+        </StyledDropdownContainer>
+      }
+    />
+  );
+
   return (
     <NavigationDrawerItemsCollapsedContainer
       key={folder.folderId}
       isGroup={isGroup}
     >
-      <NavigationDrawerItem
-        key={folder.folderId}
-        label={folder.folderName}
-        Icon={IconFolder}
-        onClick={() => onToggle(folder.folderId)}
-        active={isOpen}
-      />
+      {isRenaming ? (
+        <NavigationDrawerInput
+          Icon={IconFolder}
+          value={folderName}
+          onChange={setFolderName}
+          onSubmit={handleSubmitRename}
+          onCancel={handleCancelRename}
+          onClickOutside={handleClickOutside}
+          hotkeyScope="favorites-folder-input"
+        />
+      ) : (
+        <NavigationDrawerItem
+          key={folder.folderId}
+          label={folder.folderName}
+          Icon={IconFolder}
+          onClick={() => onToggle(folder.folderId)}
+          active={isOpen}
+          rightOptions={rightOptions}
+        />
+      )}
+
       {isOpen && (
         <NavigationDrawerItemsCollapsedContainer isGroup={isGroup}>
           <DraggableList

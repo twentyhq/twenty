@@ -4,7 +4,6 @@ import { favoriteFoldersIdsMultiSelectComponentState } from '@/favorites/states/
 import { favoriteFoldersLoadingComponentState } from '@/favorites/states/favoriteFoldersLoadingComponentState';
 import { favoriteFoldersMultiSelectCheckedComponentState } from '@/favorites/states/favoriteFoldersMultiSelectCheckedComponentState';
 import { favoriteFoldersSearchFilterComponentState } from '@/favorites/states/favoriteFoldersSearchFilterComponentState';
-
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';

@@ -1,22 +1,15 @@
-import { useRecoilValue } from 'recoil';
-
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { useRecoilValue } from 'recoil';
 
 export const useFavoriteFolders = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-
-  const { objectMetadataItem: favoriteFolderObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
-    });
 
   const { deleteOneRecord } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
@@ -39,8 +32,58 @@ export const useFavoriteFolders = () => {
     },
   );
 
+  const createFolder = async (name: string): Promise<void> => {
+    const trimmedName = name.trim();
+
+    if (!trimmedName) {
+      return;
+    }
+
+    if (!currentWorkspaceMember?.id) {
+      return;
+    }
+
+    await createFavoriteFolder({
+      workspaceMemberId: currentWorkspaceMember.id,
+      name: trimmedName,
+      position: (favoriteFolder?.length || 0) + 1,
+    });
+  };
+
+  const renameFolder = async (
+    folderId: string,
+    newName: string,
+  ): Promise<void> => {
+    const trimmedName = newName.trim();
+
+    if (!trimmedName) {
+      return;
+    }
+
+    if (!currentWorkspaceMember?.id) {
+      return;
+    }
+
+    await updateOneFavorite({
+      idToUpdate: folderId,
+      updateOneRecordInput: {
+        name: trimmedName,
+      },
+    });
+  };
+
+  const deleteFolder = async (folderId: string): Promise<void> => {
+    if (!currentWorkspaceMember?.id) {
+      return;
+    }
+
+    await deleteOneRecord(folderId);
+  };
+
   return {
     favoriteFolder,
-    createFavoriteFolder,
+    createFolder,
+    renameFolder,
+    deleteFolder,
   };
 };

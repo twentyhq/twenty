@@ -1,18 +1,22 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
+import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
+import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
-import { Avatar, IconFolderPlus, isDefined } from 'twenty-ui';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { Avatar, IconFolder, IconFolderPlus, isDefined } from 'twenty-ui';
 
 const StyledContainer = styled(NavigationDrawerSection)`
   width: 100%;
@@ -36,8 +40,12 @@ const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
+  const { createFolder } = useFavoriteFolders();
+  const [folderName, setFolderName] = useState('');
   const currentPath = useLocation().pathname;
-  const [isCreatingNewFolder, setIsCreatingNewFolder] = useState(false);
+  const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
+    useRecoilState(isFavoriteFolderCreatingState);
+  const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { favorites, handleReorderFavorite, favoritesByFolder } =
     useFavorites();
@@ -45,7 +53,45 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Favorites');
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
-  const toggleNewFolder = () => setIsCreatingNewFolder((current) => !current);
+
+  const handleFolderNameChange = (value: string) => {
+    setFolderName(value);
+  };
+
+  const handleSubmitFolder = async (value: string) => {
+    const trimmedValue = value.trim();
+    if (!trimmedValue) return false;
+
+    setIsFavoriteFolderCreating(false);
+    setFolderName('');
+    await createFolder(trimmedValue);
+    return true;
+  };
+
+  const handleClickOutside = async (
+    event: MouseEvent | TouchEvent,
+    value: string,
+  ) => {
+    const trimmedValue = value.trim();
+    if (!trimmedValue) {
+      setIsFavoriteFolderCreating(false);
+      return;
+    }
+
+    setIsFavoriteFolderCreating(false);
+    setFolderName('');
+    await createFolder(trimmedValue);
+  };
+
+  const handleCancel = () => {
+    setFolderName('');
+    setIsFavoriteFolderCreating(false);
+  };
+
+  const toggleNewFolder = () => {
+    setIsFavoriteFolderCreating((current) => !current);
+    setFolderName('');
+  };
 
   if (loading && isDefined(currentWorkspaceMember)) {
     return <FavoritesSkeletonLoader />;
@@ -61,6 +107,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   ) {
     return <></>;
   }
+
   const unorganisedFavorites = currentWorkspaceMemberFavorites.filter(
     (favorite) => !favorite.favoriteFolderId,
   );
@@ -72,13 +119,23 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
         <NavigationDrawerSectionTitle
           label="Favorites"
           onClick={() => toggleNavigationSection()}
-          rightIcon={<IconFolderPlus size={14} />}
+          rightIcon={<IconFolderPlus size={theme.icon.size.sm} />}
           onRightIconClick={toggleNewFolder}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
       {isNavigationSectionOpen && (
         <>
-          {isCreatingNewFolder && <></>}
+          {isFavoriteFolderCreating && (
+            <NavigationDrawerInput
+              Icon={IconFolder}
+              value={folderName}
+              onChange={handleFolderNameChange}
+              onSubmit={handleSubmitFolder}
+              onCancel={handleCancel}
+              onClickOutside={handleClickOutside}
+              hotkeyScope="favorites-folder-input"
+            />
+          )}
           {favoritesByFolder.map((folder) => (
             <CurrentWorkspaceMemberFavorites
               key={folder.folderId}
