@@ -27,6 +27,7 @@ import { tableFiltersComponentState } from '@/object-record/record-table/states/
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
 import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
+import { tableViewFilterGroupsComponentState } from '@/object-record/record-table/states/tableViewFilterGroupsComponentState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
 import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
@@ -43,6 +44,10 @@ export const useRecordTableStates = (recordTableId?: string) => {
     scopeId,
     availableTableColumnsState: extractComponentState(
       availableTableColumnsComponentState,
+      scopeId,
+    ),
+    tableViewFilterGroupsState: extractComponentState(
+      tableViewFilterGroupsComponentState,
       scopeId,
     ),
     tableFiltersState: extractComponentState(

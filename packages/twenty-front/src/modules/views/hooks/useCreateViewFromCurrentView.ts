@@ -4,9 +4,11 @@ import { RecordIndexRootPropsContext } from '@/object-record/record-index/contex
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
+import { usePersistViewFilterGroupRecords } from '@/views/hooks/internal/usePersistViewFilterGroupRecords';
 import { usePersistViewFilterRecords } from '@/views/hooks/internal/usePersistViewFilterRecords';
 import { usePersistViewGroupRecords } from '@/views/hooks/internal/usePersistViewGroupRecords';
 import { usePersistViewSortRecords } from '@/views/hooks/internal/usePersistViewSortRecords';
+import { useGetViewFilterGroupsCombined } from '@/views/hooks/useGetCombinedViewFilterGroups';
 import { useGetViewFiltersCombined } from '@/views/hooks/useGetCombinedViewFilters';
 import { useGetViewSortsCombined } from '@/views/hooks/useGetCombinedViewSorts';
 import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
@@ -45,12 +47,16 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
   const { getViewSortsCombined } = useGetViewSortsCombined(viewBarComponentId);
   const { getViewFiltersCombined } =
     useGetViewFiltersCombined(viewBarComponentId);
+  const { getViewFilterGroupsCombined } =
+    useGetViewFilterGroupsCombined(viewBarComponentId);
 
   const { createViewSortRecords } = usePersistViewSortRecords();
 
   const { createViewGroupRecords } = usePersistViewGroupRecords();
 
   const { createViewFilterRecords } = usePersistViewFilterRecords();
+
+  const { createViewFilterGroupRecords } = usePersistViewFilterGroupRecords();
 
   const { objectMetadataItem } = useContext(RecordIndexRootPropsContext);
 
@@ -143,11 +149,18 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         }
 
         if (shouldCopyFiltersAndSorts === true) {
+          const sourceViewCombinedFilterGroups = getViewFilterGroupsCombined(
+            view.id,
+          );
           const sourceViewCombinedFilters = getViewFiltersCombined(view.id);
           const sourceViewCombinedSorts = getViewSortsCombined(view.id);
 
           await createViewSortRecords(sourceViewCombinedSorts, view);
           await createViewFilterRecords(sourceViewCombinedFilters, view);
+          await createViewFilterGroupRecords(
+            sourceViewCombinedFilterGroups,
+            view,
+          );
         }
 
         set(isPersistingViewFieldsCallbackState, false);
@@ -160,10 +173,12 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
       createViewFieldRecords,
       getViewSortsCombined,
       getViewFiltersCombined,
+      getViewFilterGroupsCombined,
       currentViewIdCallbackState,
       getViewFromCache,
       isPersistingViewFieldsCallbackState,
       createViewGroupRecords,
+      createViewFilterGroupRecords,
     ],
   );
 

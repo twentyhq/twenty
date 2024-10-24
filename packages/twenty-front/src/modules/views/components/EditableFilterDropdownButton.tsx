@@ -1,6 +1,5 @@
 import { useCallback, useEffect } from 'react';
 
-import { MultipleFiltersDropdownContent } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownContent';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterOperand } from '@/object-record/object-filter-dropdown/types/FilterOperand';
@@ -11,6 +10,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { EditableFilterChip } from '@/views/components/EditableFilterChip';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
+import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterOperandSelectAndInput';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { isDefined } from '~/utils/isDefined';
@@ -98,7 +98,7 @@ export const EditableFilterDropdownButton = ({
         <EditableFilterChip viewFilter={viewFilter} onRemove={handleRemove} />
       }
       dropdownComponents={
-        <MultipleFiltersDropdownContent
+        <ObjectFilterOperandSelectAndInput
           filterDropdownId={viewFilterDropdownId}
         />
       }

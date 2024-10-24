@@ -4,14 +4,15 @@ import { useRecoilValue } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
-import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/turnFiltersIntoQueryFilter';
+import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
+import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { isDefined } from '~/utils/isDefined';
-import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 
 type UseLoadRecordIndexBoardProps = {
   objectNameSingular: string;
@@ -33,12 +34,17 @@ export const useLoadRecordIndexBoardColumn = ({
   const { columnsFamilySelector } = useRecordBoardStates(recordBoardId);
   const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
 
+  const recordIndexViewFilterGroups = useRecoilValue(
+    recordIndexViewFilterGroupsState,
+  );
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
   const recordIndexSorts = useRecoilValue(recordIndexSortsState);
   const columnDefinition = useRecoilValue(columnsFamilySelector(columnId));
-  const requestFilters = turnFiltersIntoQueryFilter(
+
+  const requestFilters = computeViewRecordGqlOperationFilter(
     recordIndexFilters,
     objectMetadataItem?.fields ?? [],
+    recordIndexViewFilterGroups,
   );
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, recordIndexSorts);
 
