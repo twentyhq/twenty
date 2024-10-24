@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { objectRecordMultiSelectMatchesFilterRecordsIdsComponentState } from '@/object-record/record-field/states/objectRecordMultiSelectMatchesFilterRecordsIdsComponentState';
 import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
@@ -13,12 +12,6 @@ export const ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect =
   () => {
     const scopeId = useAvailableScopeIdOrThrow(
       RelationPickerScopeInternalContext,
-    );
-    const { recordMultiSelectIsLoadingState } =
-      useObjectRecordMultiSelectScopedStates(scopeId);
-
-    const setRecordMultiSelectIsLoading = useSetRecoilState(
-      recordMultiSelectIsLoadingState,
     );
 
     const setRecordMultiSelectMatchesFilterRecords = useSetRecoilState(
@@ -38,17 +31,15 @@ export const ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect =
       relationPickerSearchFilterState,
     );
 
-    const {
-      matchesSearchFilterObjectRecords,
-      matchesSearchFilterObjectRecordsLoading: loading,
-    } = useMultiObjectSearchMatchesSearchFilterQuery({
-      excludedObjects: [
-        CoreObjectNameSingular.Task,
-        CoreObjectNameSingular.Note,
-      ],
-      searchFilterValue: relationPickerSearchFilter,
-      limit: 10,
-    });
+    const { matchesSearchFilterObjectRecords } =
+      useMultiObjectSearchMatchesSearchFilterQuery({
+        excludedObjects: [
+          CoreObjectNameSingular.Task,
+          CoreObjectNameSingular.Note,
+        ],
+        searchFilterValue: relationPickerSearchFilter,
+        limit: 10,
+      });
 
     useEffect(() => {
       setRecordMultiSelectMatchesFilterRecords(
@@ -58,10 +49,6 @@ export const ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect =
       setRecordMultiSelectMatchesFilterRecords,
       matchesSearchFilterObjectRecords,
     ]);
-
-    useEffect(() => {
-      setRecordMultiSelectIsLoading(loading);
-    }, [loading, setRecordMultiSelectIsLoading]);
 
     return <></>;
   };
