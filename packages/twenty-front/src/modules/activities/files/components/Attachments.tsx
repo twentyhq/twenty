@@ -6,6 +6,7 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
+  Button,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   IconPlus,
 } from 'twenty-ui';
@@ -16,7 +17,6 @@ import { DropZone } from '@/activities/files/components/DropZone';
 import { useAttachments } from '@/activities/files/hooks/useAttachments';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { Button } from '@/ui/input/button/components/Button';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledAttachmentsContainer = styled.div`

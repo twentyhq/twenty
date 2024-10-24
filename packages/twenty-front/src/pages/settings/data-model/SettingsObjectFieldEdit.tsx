@@ -1,13 +1,3 @@
-import { useApolloClient } from '@apollo/client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import omit from 'lodash.omit';
-import pick from 'lodash.pick';
-import { useEffect } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconArchive, IconArchiveOff } from 'twenty-ui';
-import { z } from 'zod';
-
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
@@ -31,9 +21,17 @@ import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
+import { useApolloClient } from '@apollo/client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import omit from 'lodash.omit';
+import pick from 'lodash.pick';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Button, H2Title, IconArchive, IconArchiveOff } from 'twenty-ui';
+import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 

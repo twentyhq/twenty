@@ -1,13 +1,3 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import {
-  H2Title,
-  IconChevronRight,
-  IconPlus,
-  IconSearch,
-  UndecoratedLink,
-} from 'twenty-ui';
-
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
@@ -23,7 +13,6 @@ import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/object
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -32,8 +21,18 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
+import {
+  Button,
+  H2Title,
+  IconChevronRight,
+  IconPlus,
+  IconSearch,
+  UndecoratedLink,
+} from 'twenty-ui';
 import { SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 
