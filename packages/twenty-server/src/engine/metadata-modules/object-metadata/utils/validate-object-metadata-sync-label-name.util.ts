@@ -8,9 +8,11 @@ export const validateNameAndLabelAreSyncOrThrow = (
   label: string,
   name: string,
 ) => {
-  if (name !== computeMetadataNameFromLabelOrThrow(label)) {
+  const computedName = computeMetadataNameFromLabelOrThrow(label);
+
+  if (name !== computedName) {
     throw new ObjectMetadataException(
-      `Name is not synced with label. Expected name: "${computeMetadataNameFromLabelOrThrow(label)}", got ${name}`,
+      `Name is not synced with label. Expected name: "${computedName}", got ${name}`,
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
     );
   }

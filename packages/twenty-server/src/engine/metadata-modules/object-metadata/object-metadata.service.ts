@@ -460,7 +460,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-      fullObjectMetadataAfterUpdate.workspaceId,
+      workspaceId,
     );
     if (input.update.labelIdentifierFieldMetadataId) {
       const labelIdentifierFieldMetadata =
@@ -1416,6 +1416,21 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     objectMetadataForUpdate: ObjectMetadataEntity,
     input: UpdateOneObjectInput,
   ) {
+    if (
+      isDefined(input.update.nameSingular) ||
+      isDefined(input.update.namePlural)
+    ) {
+      if (
+        objectMetadataForUpdate.nameSingular ===
+        objectMetadataForUpdate.namePlural
+      ) {
+        throw new ObjectMetadataException(
+          'The singular and plural name cannot be the same for an object',
+          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+        );
+      }
+    }
+
     const newTargetTableName = computeObjectTargetTable(
       objectMetadataForUpdate,
     );
