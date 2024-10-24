@@ -92,4 +92,15 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceIsNullable()
   positionInViewFilterGroup: number | null;
+
+  @WorkspaceField({
+    standardId: VIEW_FILTER_STANDARD_FIELD_IDS.subFieldName,
+    type: FieldMetadataType.TEXT,
+    label: 'Sub field name for composite field filtering',
+    description: 'Sub field name for composite field filtering',
+    icon: 'IconFilterBolt',
+  })
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
+  subFieldName: string | null;
 }
