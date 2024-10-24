@@ -2,7 +2,7 @@ import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { AppPath } from 'twenty-ui';
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 
 const SettingsAccountsCalendars = lazy(() =>

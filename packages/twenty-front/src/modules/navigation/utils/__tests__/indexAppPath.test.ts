@@ -1,5 +1,4 @@
-import { AppPath } from 'twenty-ui';
-
+import { AppPath } from '@/types/AppPath';
 import indexAppPath from '../indexAppPath';
 
 describe('getIndexAppPath', () => {

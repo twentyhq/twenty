@@ -4,7 +4,7 @@ import { ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { AppPath } from 'twenty-ui';
+import { AppPath } from '@/types/AppPath';
 import { View } from '@/views/types/View';
 import { useCallback, useMemo } from 'react';
 import { useRecoilValue } from 'recoil';

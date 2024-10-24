@@ -1,12 +1,12 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { AppPath } from 'twenty-ui';
+import { AppPath } from '@/types/AppPath';
 import { useImpersonateMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 

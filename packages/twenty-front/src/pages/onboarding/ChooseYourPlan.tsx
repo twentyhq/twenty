@@ -4,6 +4,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionCard } from '@/billing/components/SubscriptionCard';
 import { billingState } from '@/client-config/states/billingState';
+import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CardPicker } from '@/ui/input/components/CardPicker';
@@ -11,7 +12,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { ActionLink, AppPath, CAL_LINK, Loader, MainButton } from 'twenty-ui';
+import { ActionLink, CAL_LINK, Loader, MainButton } from 'twenty-ui';
 import {
   ProductPriceEntity,
   SubscriptionInterval,

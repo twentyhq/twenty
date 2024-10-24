@@ -1,4 +1,4 @@
-import { AppPath } from 'twenty-ui';
+import { AppPath } from '@/types/AppPath';
 
 const getIndexAppPath = () => {
   return AppPath.Index;

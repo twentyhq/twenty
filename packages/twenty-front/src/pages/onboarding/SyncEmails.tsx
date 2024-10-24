@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { ActionLink, AppPath, IconGoogle, MainButton } from 'twenty-ui';
+import { ActionLink, IconGoogle, MainButton } from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
@@ -14,6 +14,7 @@ import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerG
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
+import { AppPath } from '@/types/AppPath';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,

@@ -2,7 +2,6 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconInfoCircle } from '@ui/display/icon/components/TablerIcons';
 
-import { AppPath } from '@/types/AppPath';
 import { Button } from '@ui/input/button/components/Button';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -13,7 +12,7 @@ export type InfoProps = {
   text: string;
   buttonTitle?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  to?: AppPath;
+  to?: string;
 };
 
 const StyledTextContainer = styled.div`

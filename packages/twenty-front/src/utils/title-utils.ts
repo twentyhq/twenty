@@ -1,5 +1,5 @@
 import { AppBasePath } from '@/types/AppBasePath';
-import { AppPath } from 'twenty-ui';
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 
 export enum SettingsPageTitles {

@@ -4,7 +4,7 @@ import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { AppPath, Button, H2Title, IconArchive } from 'twenty-ui';
+import { Button, H2Title, IconArchive } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
@@ -23,6 +23,7 @@ import { settingsDataModelObjectIdentifiersFormSchema } from '@/settings/data-mo
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsUpdateObjectInputSchema';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';

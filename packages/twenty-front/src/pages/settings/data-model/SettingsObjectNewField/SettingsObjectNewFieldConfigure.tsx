@@ -13,6 +13,7 @@ import { SettingsDataModelFieldIconLabelForm } from '@/settings/data-model/field
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
+import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -25,7 +26,7 @@ import pick from 'lodash.pick';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { H2Title, AppPath } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constants/DefaultIconsByFieldType';

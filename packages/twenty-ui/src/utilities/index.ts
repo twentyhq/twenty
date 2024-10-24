@@ -1,4 +1,3 @@
-export * from '../../../twenty-front/src/modules/types/AppPath';
 export * from './animation/components/AnimatedContainer';
 export * from './animation/components/AnimatedEaseIn';
 export * from './animation/components/AnimatedEaseInOut';
@@ -13,4 +12,3 @@ export * from './screen-size/hooks/useScreenSize';
 export * from './state/utils/createState';
 export * from './types/Nullable';
 export * from './utils/getDisplayValueByUrlType';
-

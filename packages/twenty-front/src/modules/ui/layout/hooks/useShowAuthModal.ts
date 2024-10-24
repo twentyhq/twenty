@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
-import { AppPath } from 'twenty-ui';
+import { AppPath } from '@/types/AppPath';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';

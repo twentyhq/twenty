@@ -1,9 +1,9 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/testing-library';
-import { graphql, HttpResponse } from 'msw';
+import { HttpResponse, graphql } from 'msw';
 
-import { AppPath } from 'twenty-ui';
+import { AppPath } from '@/types/AppPath';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { OnboardingStatus } from '~/generated/graphql';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';

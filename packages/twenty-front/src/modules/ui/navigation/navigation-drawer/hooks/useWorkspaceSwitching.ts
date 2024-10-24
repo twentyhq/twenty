@@ -1,18 +1,18 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { tokenPairState } from '@/auth/states/tokenPairState';
-import { AppPath } from 'twenty-ui';
-import { useGenerateJwtMutation } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
-import { sleep } from '~/utils/sleep';
+import { useAuth } from '@/auth/hooks/useAuth';
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
+import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
-import { useAuth } from '@/auth/hooks/useAuth';
+import { tokenPairState } from '@/auth/states/tokenPairState';
+import { AppPath } from '@/types/AppPath';
+import { useGenerateJwtMutation } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
+import { sleep } from '~/utils/sleep';
 
 export const useWorkspaceSwitching = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);

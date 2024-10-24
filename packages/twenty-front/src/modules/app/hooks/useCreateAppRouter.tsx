@@ -2,7 +2,7 @@ import { AppRouterProviders } from '@/app/components/AppRouterProviders';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import indexAppPath from '@/navigation/utils/indexAppPath';
-import { AppPath } from 'twenty-ui';
+import { AppPath } from '@/types/AppPath';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import {

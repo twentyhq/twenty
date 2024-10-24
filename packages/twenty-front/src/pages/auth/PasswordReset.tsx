@@ -5,6 +5,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
@@ -19,7 +20,7 @@ import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { AnimatedEaseIn, AppPath, MainButton } from 'twenty-ui';
+import { AnimatedEaseIn, MainButton } from 'twenty-ui';
 import { z } from 'zod';
 import {
   useUpdatePasswordViaResetTokenMutation,

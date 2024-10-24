@@ -1,12 +1,12 @@
+import { WatchQueryFetchPolicy } from '@apollo/client';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { WatchQueryFetchPolicy } from '@apollo/client';
 
 import { useGetDatabaseConnection } from '@/databases/hooks/useGetDatabaseConnection';
 import { useGetDatabaseConnectionTables } from '@/databases/hooks/useGetDatabaseConnectionTables';
 import { useIsSettingsIntegrationEnabled } from '@/settings/integrations/hooks/useIsSettingsIntegrationEnabled';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
-import { AppPath } from 'twenty-ui';
+import { AppPath } from '@/types/AppPath';
 
 export const useDatabaseConnection = ({
   fetchPolicy,
