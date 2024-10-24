@@ -1,5 +1,5 @@
 import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
-import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
+import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
@@ -20,7 +20,6 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
@@ -28,7 +27,13 @@ import styled from '@emotion/styled';
 import { ReactNode, useContext, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { AvatarChipVariant, IconEye, IconEyeOff } from 'twenty-ui';
+import {
+  AnimatedEaseInOut,
+  AvatarChipVariant,
+  ChipSize,
+  IconEye,
+  IconEyeOff,
+} from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
 
@@ -184,7 +189,7 @@ export const RecordBoardCard = ({
 
   const setActionMenuDropdownPosition = useSetRecoilState(
     extractComponentState(
-      actionMenuDropdownPositionComponentState,
+      recordIndexActionMenuDropdownPositionComponentState,
       `action-menu-dropdown-${recordBoardId}`,
     ),
   );
@@ -291,6 +296,7 @@ export const RecordBoardCard = ({
               objectNameSingular={objectMetadataItem.nameSingular}
               record={record as ObjectRecord}
               variant={AvatarChipVariant.Transparent}
+              size={ChipSize.Large}
             />
           )}
 

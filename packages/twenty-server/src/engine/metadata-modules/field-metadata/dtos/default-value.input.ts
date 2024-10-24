@@ -189,3 +189,9 @@ export class FieldMetadataDefaultValuePhones {
   @IsObject()
   additionalPhones: object | null;
 }
+
+export class FieldMetadataDefaultArray {
+  @ValidateIf((_object, value) => value !== null)
+  @IsArray()
+  value: string[] | null;
+}

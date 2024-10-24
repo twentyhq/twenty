@@ -7,7 +7,7 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
-import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
@@ -15,6 +15,7 @@ import { useRecordBoardStates } from '@/object-record/record-board/hooks/interna
 import { useFindManyParams } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-index/options/constants/ExportTableDataDefaultPageSize';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 
 export const sleep = (ms: number) =>
@@ -75,8 +76,8 @@ export const useRecordData = ({
   );
   const columns = useRecoilValue(visibleTableColumnsSelector());
 
-  const contextStoreTargetedRecordsRule = useRecoilValue(
-    contextStoreTargetedRecordsRuleState,
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+    contextStoreTargetedRecordsRuleComponentState,
   );
 
   const queryFilter = computeContextStoreFilters(

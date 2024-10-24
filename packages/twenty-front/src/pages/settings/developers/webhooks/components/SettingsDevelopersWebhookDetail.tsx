@@ -1,7 +1,16 @@
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconTrash } from 'twenty-ui';
+import {
+  H2Title,
+  IconBox,
+  IconNorthStar,
+  IconPlus,
+  IconRefresh,
+  IconTrash,
+  isDefined,
+  useIcons,
+} from 'twenty-ui';
 
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -17,7 +26,8 @@ import { SettingsDevelopersWebhookUsageGraphEffect } from '@/settings/developers
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Button } from '@/ui/input/button/components/Button';
-import { Select } from '@/ui/input/components/Select';
+import { IconButton } from '@/ui/input/button/components/IconButton';
+import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -25,11 +35,23 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { Section } from '@/ui/layout/section/components/Section';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
+import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
+import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types/WebhookOperationsType';
+
+const OBJECT_DROPDOWN_WIDTH = 340;
+const ACTION_DROPDOWN_WIDTH = 140;
 
 const StyledFilterRow = styled.div`
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: ${OBJECT_DROPDOWN_WIDTH}px ${ACTION_DROPDOWN_WIDTH}px auto;
   gap: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  align-items: center;
+`;
+
+const StyledPlaceholder = styled.div`
+  height: ${({ theme }) => theme.spacing(8)};
+  width: ${({ theme }) => theme.spacing(8)};
 `;
 
 export const SettingsDevelopersWebhooksDetail = () => {
@@ -41,20 +63,33 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
     useState(false);
-
   const [description, setDescription] = useState<string>('');
-  const [operationObjectSingularName, setOperationObjectSingularName] =
-    useState<string>('');
-  const [operationAction, setOperationAction] = useState('');
+  const [operations, setOperations] = useState<WebhookOperationType[]>([
+    WEBHOOK_EMPTY_OPERATION,
+  ]);
   const [isDirty, setIsDirty] = useState<boolean>(false);
+  const { getIcon } = useIcons();
 
   const { record: webhookData } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.Webhook,
     objectRecordId: webhookId,
     onCompleted: (data) => {
       setDescription(data?.description ?? '');
-      setOperationObjectSingularName(data?.operation.split('.')[0] ?? '');
-      setOperationAction(data?.operation.split('.')[1] ?? '');
+      const baseOperations = data?.operations
+        ? data.operations.map((op: string) => {
+            const [object, action] = op.split('.');
+            return { object, action };
+          })
+        : data?.operation
+          ? [
+              {
+                object: data.operation.split('.')[0],
+                action: data.operation.split('.')[1],
+              },
+            ]
+          : [];
+
+      setOperations(addEmptyOperationIfNecessary(baseOperations));
       setIsDirty(false);
     },
   });
@@ -72,28 +107,85 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const isAnalyticsV2Enabled = useIsFeatureEnabled('IS_ANALYTICS_V2_ENABLED');
 
-  const fieldTypeOptions = [
-    { value: '*', label: 'All Objects' },
-    ...objectMetadataItems.map((item) => ({
-      value: item.nameSingular,
-      label: item.labelSingular,
-    })),
+  const fieldTypeOptions: SelectOption<string>[] = useMemo(
+    () => [
+      { value: '*', label: 'All Objects', Icon: IconNorthStar },
+      ...objectMetadataItems.map((item) => ({
+        value: item.nameSingular,
+        label: item.labelPlural,
+        Icon: getIcon(item.icon),
+      })),
+    ],
+    [objectMetadataItems, getIcon],
+  );
+
+  const actionOptions: SelectOption<string>[] = [
+    { value: '*', label: 'All Actions', Icon: IconNorthStar },
+    { value: 'create', label: 'Created', Icon: IconPlus },
+    { value: 'update', label: 'Updated', Icon: IconRefresh },
+    { value: 'delete', label: 'Deleted', Icon: IconTrash },
   ];
 
   const { updateOneRecord } = useUpdateOneRecord<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
 
+  const cleanAndFormatOperations = (operations: WebhookOperationType[]) => {
+    return Array.from(
+      new Set(
+        operations
+          .filter((op) => isDefined(op.object) && isDefined(op.action))
+          .map((op) => `${op.object}.${op.action}`),
+      ),
+    );
+  };
+
   const handleSave = async () => {
+    const cleanedOperations = cleanAndFormatOperations(operations);
     setIsDirty(false);
     await updateOneRecord({
       idToUpdate: webhookId,
       updateOneRecordInput: {
-        operation: `${operationObjectSingularName}.${operationAction}`,
+        operation: cleanedOperations?.[0],
+        operations: cleanedOperations,
         description: description,
       },
     });
     navigate(developerPath);
+  };
+
+  const addEmptyOperationIfNecessary = (
+    newOperations: WebhookOperationType[],
+  ) => {
+    if (
+      !newOperations.some((op) => op.object === '*' && op.action === '*') &&
+      !newOperations.some((op) => op.object === null)
+    ) {
+      return [...newOperations, WEBHOOK_EMPTY_OPERATION];
+    }
+    return newOperations;
+  };
+
+  const updateOperation = (
+    index: number,
+    field: 'object' | 'action',
+    value: string | null,
+  ) => {
+    const newOperations = [...operations];
+
+    newOperations[index] = {
+      ...newOperations[index],
+      [field]: value,
+    };
+
+    setOperations(addEmptyOperationIfNecessary(newOperations));
+    setIsDirty(true);
+  };
+
+  const removeOperation = (index: number) => {
+    const newOperations = operations.filter((_, i) => i !== index);
+    setOperations(addEmptyOperationIfNecessary(newOperations));
+    setIsDirty(true);
   };
 
   if (!webhookData?.targetUrl) {
@@ -108,10 +200,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
           children: 'Workspace',
           href: getSettingsPagePath(SettingsPath.Workspace),
         },
-        {
-          children: 'Developers',
-          href: developerPath,
-        },
+        { children: 'Developers', href: developerPath },
         { children: 'Webhook' },
       ]}
       actionButton={
@@ -152,43 +241,50 @@ export const SettingsDevelopersWebhooksDetail = () => {
         <Section>
           <H2Title
             title="Filters"
-            description="Select the event you wish to send to this endpoint"
+            description="Select the events you wish to send to this endpoint"
           />
-          <StyledFilterRow>
-            <Select
-              fullWidth
-              dropdownId="object-webhook-type-select"
-              value={operationObjectSingularName}
-              onChange={(objectSingularName) => {
-                setIsDirty(true);
-                setOperationObjectSingularName(objectSingularName);
-              }}
-              options={fieldTypeOptions}
-            />
-            <Select
-              fullWidth
-              dropdownId="operation-webhook-type-select"
-              value={operationAction}
-              onChange={(operationAction) => {
-                setIsDirty(true);
-                setOperationAction(operationAction);
-              }}
-              options={[
-                { value: '*', label: 'All Actions' },
-                { value: 'create', label: 'Create' },
-                { value: 'update', label: 'Update' },
-                { value: 'delete', label: 'Delete' },
-              ]}
-            />
-          </StyledFilterRow>
+          {operations.map((operation, index) => (
+            <StyledFilterRow key={index}>
+              <Select
+                withSearchInput
+                dropdownWidth={OBJECT_DROPDOWN_WIDTH}
+                dropdownId={`object-webhook-type-select-${index}`}
+                value={operation.object}
+                onChange={(object) => updateOperation(index, 'object', object)}
+                options={fieldTypeOptions}
+                emptyOption={{
+                  value: null,
+                  label: 'Choose an object',
+                  Icon: IconBox,
+                }}
+              />
+
+              <Select
+                dropdownWidth={ACTION_DROPDOWN_WIDTH}
+                dropdownId={`operation-webhook-type-select-${index}`}
+                value={operation.action}
+                onChange={(action) => updateOperation(index, 'action', action)}
+                options={actionOptions}
+              />
+
+              {index < operations.length - 1 ? (
+                <IconButton
+                  onClick={() => removeOperation(index)}
+                  variant="tertiary"
+                  size="medium"
+                  Icon={IconTrash}
+                />
+              ) : (
+                <StyledPlaceholder />
+              )}
+            </StyledFilterRow>
+          ))}
         </Section>
-        {isAnalyticsEnabled && isAnalyticsV2Enabled ? (
+        {isAnalyticsEnabled && isAnalyticsV2Enabled && (
           <>
             <SettingsDevelopersWebhookUsageGraphEffect webhookId={webhookId} />
             <SettingsDevelopersWebhookUsageGraph webhookId={webhookId} />
           </>
-        ) : (
-          <></>
         )}
         <Section>
           <H2Title title="Danger zone" description="Delete this integration" />
