@@ -18,6 +18,7 @@ export const findAllViewsOperationSignatureFactory: RecordGqlOperationSignatureF
       icon: true,
       key: true,
       viewFilters: true,
+      viewFilterGroups: true,
       viewSorts: true,
       viewFields: true,
       viewGroups: true,

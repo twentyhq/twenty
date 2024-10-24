@@ -1,5 +1,5 @@
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/turnFiltersIntoQueryFilter';
+import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
@@ -16,7 +16,7 @@ const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
 
 jest.useFakeTimers().setSystemTime(new Date('2020-01-01'));
 
-describe('turnFiltersIntoQueryFilter', () => {
+describe('computeViewRecordGqlOperationFilter', () => {
   it('should work as expected for single filter', () => {
     const companyMockNameFieldMetadataId =
       companyMockObjectMetadataItem.fields.find(
@@ -37,9 +37,10 @@ describe('turnFiltersIntoQueryFilter', () => {
       },
     };
 
-    const result = turnFiltersIntoQueryFilter(
+    const result = computeViewRecordGqlOperationFilter(
       [nameFilter],
       companyMockObjectMetadataItem.fields,
+      [],
     );
 
     expect(result).toEqual({
@@ -88,9 +89,10 @@ describe('turnFiltersIntoQueryFilter', () => {
       },
     };
 
-    const result = turnFiltersIntoQueryFilter(
+    const result = computeViewRecordGqlOperationFilter(
       [nameFilter, employeesFilter],
       companyMockObjectMetadataItem.fields,
+      [],
     );
 
     expect(result).toEqual({
@@ -173,7 +175,7 @@ describe('should work as expected for the different field types', () => {
       },
     };
 
-    const result = turnFiltersIntoQueryFilter(
+    const result = computeViewRecordGqlOperationFilter(
       [
         addressFilterContains,
         addressFilterDoesNotContain,
@@ -181,6 +183,7 @@ describe('should work as expected for the different field types', () => {
         addressFilterIsNotEmpty,
       ],
       companyMockObjectMetadataItem.fields,
+      [],
     );
 
     expect(result).toEqual({
@@ -554,7 +557,7 @@ describe('should work as expected for the different field types', () => {
       },
     };
 
-    const result = turnFiltersIntoQueryFilter(
+    const result = computeViewRecordGqlOperationFilter(
       [
         phonesFilterContains,
         phonesFilterDoesNotContain,
@@ -562,6 +565,7 @@ describe('should work as expected for the different field types', () => {
         phonesFilterIsNotEmpty,
       ],
       personMockObjectMetadataItem.fields,
+      [],
     );
 
     expect(result).toEqual({
@@ -754,7 +758,7 @@ describe('should work as expected for the different field types', () => {
       },
     };
 
-    const result = turnFiltersIntoQueryFilter(
+    const result = computeViewRecordGqlOperationFilter(
       [
         emailsFilterContains,
         emailsFilterDoesNotContain,
@@ -762,6 +766,7 @@ describe('should work as expected for the different field types', () => {
         emailsFilterIsNotEmpty,
       ],
       personMockObjectMetadataItem.fields,
+      [],
     );
 
     expect(result).toEqual({
@@ -908,7 +913,7 @@ describe('should work as expected for the different field types', () => {
       },
     };
 
-    const result = turnFiltersIntoQueryFilter(
+    const result = computeViewRecordGqlOperationFilter(
       [
         dateFilterIsAfter,
         dateFilterIsBefore,
@@ -917,6 +922,7 @@ describe('should work as expected for the different field types', () => {
         dateFilterIsNotEmpty,
       ],
       companyMockObjectMetadataItem.fields,
+      [],
     );
 
     expect(result).toEqual({
@@ -1023,7 +1029,7 @@ describe('should work as expected for the different field types', () => {
       },
     };
 
-    const result = turnFiltersIntoQueryFilter(
+    const result = computeViewRecordGqlOperationFilter(
       [
         employeesFilterIsGreaterThan,
         employeesFilterIsLessThan,
@@ -1031,6 +1037,7 @@ describe('should work as expected for the different field types', () => {
         employeesFilterIsNotEmpty,
       ],
       companyMockObjectMetadataItem.fields,
+      [],
     );
 
     expect(result).toEqual({
