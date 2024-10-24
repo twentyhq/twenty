@@ -1,6 +1,5 @@
+import { Loader } from '@/ui/display/loader/components/Loader';
 import styled from '@emotion/styled';
-
-import { Loader } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   align-items: center;
