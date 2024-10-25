@@ -5,4 +5,8 @@ export * from './animated-placeholder/constants/Background';
 export * from './animated-placeholder/constants/DarkBackground';
 export * from './animated-placeholder/constants/DarkMovingImage';
 export * from './animated-placeholder/constants/MovingImage';
+export * from './card/components/Card';
+export * from './card/components/CardContent';
+export * from './card/components/CardFooter';
+export * from './card/components/CardHeader';
 export * from './expandableContainer/components/ExpandableContainer';

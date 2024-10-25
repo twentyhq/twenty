@@ -1,6 +1,6 @@
+import { AppPath } from '@/types/AppPath';
 import { useCallback } from 'react';
 
-import { AppPath } from '@/types/AppPath';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   CalendarChannelVisibility,

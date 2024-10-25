@@ -1,12 +1,14 @@
-import styled from '@emotion/styled';
-import { IconGoogle, IconMicrosoft } from 'twenty-ui';
-
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
-import { Button } from '@/ui/input/button/components/Button';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { CardHeader } from '@/ui/layout/card/components/CardHeader';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import styled from '@emotion/styled';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  IconGoogle,
+  IconMicrosoft,
+} from 'twenty-ui';
 
 const StyledHeader = styled(CardHeader)`
   align-items: center;

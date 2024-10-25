@@ -1,3 +1,18 @@
+import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
+import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
+import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
+import { SignInUpMode, useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
+import {
+  useSignInUpForm,
+  validationSchema,
+} from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
+import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
+import { SignInUpStep } from '@/auth/states/signInUpStepState';
+import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { captchaProviderState } from '@/client-config/states/captchaProviderState';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -5,22 +20,14 @@ import { useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { ActionLink, IconGoogle, IconKey, IconMicrosoft } from 'twenty-ui';
-
-import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
-import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
-import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
-import { SignInUpMode, useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
-import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
-import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
-import { SignInUpStep } from '@/auth/states/signInUpStepState';
-import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
-import { captchaProviderState } from '@/client-config/states/captchaProviderState';
-import { Loader } from '@/ui/feedback/loader/components/Loader';
-import { MainButton } from '@/ui/input/button/components/MainButton';
-import { TextInput } from '@/ui/input/components/TextInput';
+import {
+  ActionLink,
+  IconGoogle,
+  IconKey,
+  IconMicrosoft,
+  Loader,
+  MainButton,
+} from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledContentContainer = styled.div`
@@ -123,7 +130,8 @@ export const SignInUpForm = () => {
 
   const isEmailStepSubmitButtonDisabledCondition =
     signInUpStep === SignInUpStep.Email &&
-    (form.watch('email')?.length === 0 || shouldWaitForCaptchaToken);
+    (!validationSchema.shape.email.safeParse(form.watch('email')).success ||
+      shouldWaitForCaptchaToken);
 
   // TODO: isValid is actually a proxy function. If it is not rendered the first time, react might not trigger re-renders
   // We make the isValid check synchronous and update a reactState to make sure this does not happen

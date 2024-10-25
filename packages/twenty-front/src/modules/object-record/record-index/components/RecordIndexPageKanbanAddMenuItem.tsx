@@ -1,4 +1,4 @@
-import { RecordBoardColumnDefinitionType } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
+import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/hooks/useRecordIndexPageKanbanAddMenuItem';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import styled from '@emotion/styled';
@@ -32,18 +32,18 @@ export const RecordIndexPageKanbanAddMenuItem = ({
       text={
         <Tag
           variant={
-            columnDefinition.type === RecordBoardColumnDefinitionType.Value
+            columnDefinition.type === RecordGroupDefinitionType.Value
               ? 'solid'
               : 'outline'
           }
           color={
-            columnDefinition.type === RecordBoardColumnDefinitionType.Value
+            columnDefinition.type === RecordGroupDefinitionType.Value
               ? columnDefinition.color
               : 'transparent'
           }
           text={columnDefinition.title}
           weight={
-            columnDefinition.type === RecordBoardColumnDefinitionType.Value
+            columnDefinition.type === RecordGroupDefinitionType.Value
               ? 'regular'
               : 'medium'
           }

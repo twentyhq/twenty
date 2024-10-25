@@ -57,5 +57,6 @@ const config: StorybookConfig = {
       },
     });
   },
+  logLevel: 'error',
 };
 export default config;
