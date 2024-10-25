@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { Radio } from '@/ui/input/components/Radio';
+import { Radio } from './Radio';
 
 const StyledSubscriptionCardContainer = styled.button`
   background-color: ${({ theme }) => theme.background.secondary};
