@@ -69,6 +69,9 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ default: true })
   isAuditLogged: boolean;
 
+  @Column({ nullable: true })
+  shortcut: string;
+
   @Column({ nullable: true, type: 'uuid' })
   labelIdentifierFieldMetadataId?: string | null;
 

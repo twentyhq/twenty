@@ -31,6 +31,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   labelPlural: 'Tasks',
   description: 'A task',
   icon: 'IconCheckbox',
+  shortcut: 'T',
   labelIdentifierStandardId: TASK_STANDARD_FIELD_IDS.title,
 })
 export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
