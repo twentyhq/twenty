@@ -9,7 +9,7 @@ import { useMultiFavoriteFolder } from '@/favorites/hooks/useMultiFavoriteFolder
 import { FavoriteFoldersScopeInternalContext } from '@/favorites/scopes/scope-internal-context/favoritesScopeInternalContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-import { FAVORITE_FOLDERS_DROPDOWN_ID } from '@/favorites/constants/favoriteFoldersDropdownId';
+import { FAVORITE_FOLDERS_DROPDOWN_ID } from '@/favorites/constants/FavoriteFoldersDropdownId';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';

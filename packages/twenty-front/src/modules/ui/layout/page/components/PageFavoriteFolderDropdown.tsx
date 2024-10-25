@@ -7,19 +7,19 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { PageFavoriteButton } from '@/ui/layout/page/components/PageFavoriteButton';
 
-type FavoriteFoldersDropdownProps = {
+type PageFavoriteFoldersDropdownProps = {
   dropdownId: string;
   isFavorite: boolean;
   record?: ObjectRecord;
   objectNameSingular: string;
 };
 
-export const FavoriteFoldersDropdown = ({
+export const PageFavoriteFoldersDropdown = ({
   dropdownId,
   isFavorite,
   record,
   objectNameSingular,
-}: FavoriteFoldersDropdownProps) => {
+}: PageFavoriteFoldersDropdownProps) => {
   const { closeDropdown } = useDropdown(dropdownId);
 
   return (

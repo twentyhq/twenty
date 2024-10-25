@@ -1,7 +1,7 @@
-import { FAVORITE_FOLDERS_DROPDOWN_ID } from '@/favorites/constants/favoriteFoldersDropdownId';
+import { FAVORITE_FOLDERS_DROPDOWN_ID } from '@/favorites/constants/FavoriteFoldersDropdownId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { FavoriteFoldersDropdown } from '@/ui/layout/page/components/PageFavoriteFolderDropdown';
+import { PageFavoriteFoldersDropdown } from '@/ui/layout/page/components/PageFavoriteFolderDropdown';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
 import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMoreButton';
 
@@ -20,7 +20,7 @@ export const RecordShowPageBaseHeader = ({
 }: RecordShowPageBaseHeaderProps) => {
   return (
     <>
-      <FavoriteFoldersDropdown
+      <PageFavoriteFoldersDropdown
         dropdownId={FAVORITE_FOLDERS_DROPDOWN_ID}
         isFavorite={isFavorite}
         record={record}
