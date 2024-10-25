@@ -350,6 +350,7 @@ export const TASK_STANDARD_FIELD_IDS = {
   assignee: '20202020-065a-4f42-a906-e20422c1753f',
   timelineActivities: '20202020-c778-4278-99ee-23a2837aee64',
   favorites: '20202020-4d1d-41ac-b13b-621631298d65',
+  searchVector: '20202020-4746-4e2f-870c-52b02c67c90d',
 };
 
 export const TASK_TARGET_STANDARD_FIELD_IDS = {
@@ -490,6 +491,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   timeZone: '20202020-2d33-4c21-a86e-5943b050dd54',
   dateFormat: '20202020-af13-4e11-b1e7-b8cf5ea13dc0',
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
+  searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
 };
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
