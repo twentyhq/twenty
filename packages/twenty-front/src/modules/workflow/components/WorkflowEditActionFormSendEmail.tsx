@@ -194,7 +194,9 @@ export const WorkflowEditActionFormSendEmail = (
                 options={connectedAccountOptions}
                 callToActionButton={{
                   onClick: () =>
-                    triggerGoogleApisOAuth({ redirectLocation: redirectUrl }),
+                    triggerApisOAuth('google', {
+                      redirectLocation: redirectUrl,
+                    }),
                   Icon: IconPlus,
                   text: 'Add account',
                 }}
