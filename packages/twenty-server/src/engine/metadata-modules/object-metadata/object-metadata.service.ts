@@ -9,7 +9,6 @@ import { isDefined } from 'class-validator';
 import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import {
   FieldMetadataEntity,
@@ -26,12 +25,10 @@ import { ObjectMetadataRelationService } from 'src/engine/metadata-modules/objec
 import { buildMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/build-migrations-for-custom-object-relations.util';
 import { validateObjectMetadataInputOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-sync-label-name.util';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { SearchService } from 'src/engine/metadata-modules/search/search.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
-import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   WorkspaceMigrationColumnActionType,
@@ -49,6 +46,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -64,22 +62,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
 
-    @InjectRepository(RelationMetadataEntity, 'metadata')
-    private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
-
     private readonly remoteTableRelationsService: RemoteTableRelationsService,
-
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly searchService: SearchService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
-    private readonly objectMetadataMigrationService: ObjectMetadataMigrationService,
     private readonly objectMetadataRelationService: ObjectMetadataRelationService,
+    private readonly objectMetadataMigrationService: ObjectMetadataMigrationService,
   ) {
     super(objectMetadataRepository);
   }
@@ -147,15 +140,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         'view',
       );
 
-    const views = await viewRepository.find({
-      where: {
-        objectMetadataId: objectMetadata.id,
-      },
+    await viewRepository.delete({
+      objectMetadataId: objectMetadata.id,
     });
-
-    if (views.length > 0) {
-      await viewRepository.delete(views.map((view) => view.id));
-    }
 
     // DELETE OBJECT
     await this.objectMetadataRepository.delete(objectMetadata.id);
@@ -220,8 +207,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isRemote: objectMetadataInput.isRemote,
       fields: isCustom
         ? // Creating default fields.
-          // No need to create a custom migration for this though as the default columns are already
-          // created with default values which is not supported yet by workspace migrations.
           [
             {
               standardId: BASE_OBJECT_STANDARD_FIELD_IDS.id,
@@ -324,15 +309,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           [],
     });
 
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        createdObjectMetadata.workspaceId,
+    if (objectMetadataInput.isRemote) {
+      await this.remoteTableRelationsService.createForeignKeysMetadataAndMigrations(
+        objectMetadataInput.workspaceId,
+        createdObjectMetadata,
+        objectMetadataInput.primaryKeyFieldMetadataSettings,
+        objectMetadataInput.primaryKeyColumnType,
       );
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    if (isCustom) {
+    } else {
       await this.createObjectRelationsMetadataAndMigrations(
         objectMetadataInput,
         createdObjectMetadata,
@@ -342,45 +326,45 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput,
         createdObjectMetadata,
       );
-    } else {
-      await this.remoteTableRelationsService.createForeignKeysMetadataAndMigrations(
-        objectMetadataInput.workspaceId,
-        createdObjectMetadata,
-        objectMetadataInput.primaryKeyFieldMetadataSettings,
-        objectMetadataInput.primaryKeyColumnType,
-      );
     }
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       createdObjectMetadata.workspaceId,
     );
 
-    const view = await workspaceDataSource?.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."view"
-      ("objectMetadataId", "type", "name", "key", "icon")
-      VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [
-        createdObjectMetadata.id,
-        'table',
-        `All ${createdObjectMetadata.labelPlural}`,
-        'INDEX',
-        createdObjectMetadata.icon,
-      ],
-    );
-
-    createdObjectMetadata.fields.map(async (field, index) => {
-      if (field.name === 'id' || field.name === 'deletedAt') {
-        return;
-      }
-
-      await workspaceDataSource?.query(
-        `INSERT INTO ${dataSourceMetadata.schema}."viewField"
-      ("fieldMetadataId", "position", "isVisible", "size", "viewId")
-      VALUES ('${field.id}', '${index - 1}', true, 180, '${
-        view[0].id
-      }') RETURNING *`,
+    const viewRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
+        createdObjectMetadata.workspaceId,
+        'view',
       );
+
+    const view = await viewRepository.save({
+      objectMetadataId: createdObjectMetadata.id,
+      type: 'table',
+      name: `All ${createdObjectMetadata.labelPlural}`,
+      key: 'INDEX',
+      icon: createdObjectMetadata.icon,
     });
+
+    const viewFieldRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewFieldWorkspaceEntity>(
+        createdObjectMetadata.workspaceId,
+        'viewField',
+      );
+
+    await viewFieldRepository.insert(
+      createdObjectMetadata.fields
+        .filter((field) => field.name !== 'id' && field.name !== 'deletedAt')
+        .map((field, index) =>
+          viewFieldRepository.create({
+            fieldMetadataId: field.id,
+            position: index,
+            isVisible: true,
+            size: 180,
+            viewId: view.id,
+          }),
+        ),
+    );
 
     await this.createViewWorkspaceFavorite(
       objectMetadataInput.workspaceId,
@@ -443,7 +427,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
 
     if (input.update.isActive !== undefined) {
-      await this.updateObjectRelationships(input.id, input.update.isActive);
+      await this.objectMetadataRelationService.updateObjectRelationships(
+        input.id,
+        input.update.isActive,
+      );
     }
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
@@ -546,7 +533,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     objectMetadataInput: CreateObjectInput,
     createdObjectMetadata: ObjectMetadataEntity,
   ) {
-    const { timelineActivityObjectMetadata } =
+    const timelineActivityObjectMetadata =
       await this.objectMetadataRelationService.createTimelineActivityRelation(
         objectMetadataInput.workspaceId,
         createdObjectMetadata,
@@ -556,7 +543,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput.primaryKeyFieldMetadataSettings,
       );
 
-    const { activityTargetObjectMetadata } =
+    const activityTargetObjectMetadata =
       await this.objectMetadataRelationService.createActivityTargetRelation(
         objectMetadataInput.workspaceId,
         createdObjectMetadata,
@@ -566,7 +553,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput.primaryKeyFieldMetadataSettings,
       );
 
-    const { favoriteObjectMetadata } =
+    const favoriteObjectMetadata =
       await this.objectMetadataRelationService.createFavoriteRelation(
         objectMetadataInput.workspaceId,
         createdObjectMetadata,
@@ -576,7 +563,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput.primaryKeyFieldMetadataSettings,
       );
 
-    const { attachmentObjectMetadata } =
+    const attachmentObjectMetadata =
       await this.objectMetadataRelationService.createAttachmentRelation(
         objectMetadataInput.workspaceId,
         createdObjectMetadata,
@@ -586,7 +573,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput.primaryKeyFieldMetadataSettings,
       );
 
-    const { noteTargetObjectMetadata } =
+    const noteTargetObjectMetadata =
       await this.objectMetadataRelationService.createNoteTargetRelation(
         objectMetadataInput.workspaceId,
         createdObjectMetadata,
@@ -596,7 +583,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput.primaryKeyFieldMetadataSettings,
       );
 
-    const { taskTargetObjectMetadata } =
+    const taskTargetObjectMetadata =
       await this.objectMetadataRelationService.createTaskTargetRelation(
         objectMetadataInput.workspaceId,
         createdObjectMetadata,
@@ -651,34 +638,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
   }
 
-  private async updateObjectRelationships(
-    objectMetadataId: string,
-    isActive: boolean,
-  ) {
-    const affectedRelations = await this.relationMetadataRepository.find({
-      where: [
-        { fromObjectMetadataId: objectMetadataId },
-        { toObjectMetadataId: objectMetadataId },
-      ],
-    });
-
-    const affectedFieldIds = affectedRelations.reduce(
-      (acc, { fromFieldMetadataId, toFieldMetadataId }) => {
-        acc.push(fromFieldMetadataId, toFieldMetadataId);
-
-        return acc;
-      },
-      [] as string[],
-    );
-
-    if (affectedFieldIds.length > 0) {
-      await this.fieldMetadataRepository.update(
-        { id: In(affectedFieldIds) },
-        { isActive: isActive },
-      );
-    }
-  }
-
   private async createViewWorkspaceFavorite(
     workspaceId: string,
     viewId: string,
@@ -727,12 +686,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
 
     if (!(newTargetTableName === existingTargetTableName)) {
-      await this.createRenameTableMigration(
+      await this.objectMetadataMigrationService.createRenameTableMigration(
         existingObjectMetadata,
         objectMetadataForUpdate,
       );
 
-      await this.createRelationsUpdatesMigrations(
+      await this.objectMetadataMigrationService.createRelationsUpdatesMigrations(
         existingObjectMetadata,
         objectMetadataForUpdate,
       );
@@ -751,143 +710,22 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
   }
 
-  private async createRenameTableMigration(
-    existingObjectMetadata: ObjectMetadataEntity,
-    objectMetadataForUpdate: ObjectMetadataEntity,
-  ) {
-    const newTargetTableName = computeObjectTargetTable(
-      objectMetadataForUpdate,
-    );
-    const existingTargetTableName = computeObjectTargetTable(
-      existingObjectMetadata,
-    );
-
-    this.workspaceMigrationService.createCustomMigration(
-      generateMigrationName(`rename-${existingObjectMetadata.nameSingular}`),
-      objectMetadataForUpdate.workspaceId,
-      [
-        {
-          name: existingTargetTableName,
-          newName: newTargetTableName,
-          action: WorkspaceMigrationTableActionType.ALTER,
-        },
-      ],
-    );
-  }
-
-  private async createRelationsUpdatesMigrations(
-    existingObjectMetadata: ObjectMetadataEntity,
-    updatedObjectMetadata: ObjectMetadataEntity,
-  ) {
-    const existingTableName = computeObjectTargetTable(existingObjectMetadata);
-    const newTableName = computeObjectTargetTable(updatedObjectMetadata);
-
-    if (existingTableName !== newTableName) {
-      const searchCriteria = {
-        isCustom: false,
-        settings: {
-          isForeignKey: true,
-        },
-        name: `${existingObjectMetadata.nameSingular}Id`,
-      };
-
-      const fieldsWihStandardRelation = await this.fieldMetadataRepository.find(
-        {
-          where: {
-            isCustom: false,
-            settings: {
-              isForeignKey: true,
-            },
-            name: `${existingObjectMetadata.nameSingular}Id`,
-          },
-        },
-      );
-
-      await this.fieldMetadataRepository.update(searchCriteria, {
-        name: `${updatedObjectMetadata.nameSingular}Id`,
-      });
-
-      await Promise.all(
-        fieldsWihStandardRelation.map(async (fieldWihStandardRelation) => {
-          const relatedObject = await this.objectMetadataRepository.findOneBy({
-            id: fieldWihStandardRelation.objectMetadataId,
-            workspaceId: updatedObjectMetadata.workspaceId,
-          });
-
-          if (relatedObject) {
-            await this.fieldMetadataRepository.update(
-              {
-                name: existingObjectMetadata.nameSingular,
-                label: existingObjectMetadata.labelSingular,
-              },
-              {
-                name: updatedObjectMetadata.nameSingular,
-                label: updatedObjectMetadata.labelSingular,
-              },
-            );
-
-            const relationTableName = computeObjectTargetTable(relatedObject);
-            const columnName = `${existingObjectMetadata.nameSingular}Id`;
-            const columnType = fieldMetadataTypeToColumnType(
-              fieldWihStandardRelation.type,
-            );
-
-            await this.workspaceMigrationService.createCustomMigration(
-              generateMigrationName(
-                `rename-${existingObjectMetadata.nameSingular}-to-${updatedObjectMetadata.nameSingular}-in-${relatedObject.nameSingular}`,
-              ),
-              updatedObjectMetadata.workspaceId,
-              [
-                {
-                  name: relationTableName,
-                  action: WorkspaceMigrationTableActionType.ALTER,
-                  columns: [
-                    {
-                      action: WorkspaceMigrationColumnActionType.ALTER,
-                      currentColumnDefinition: {
-                        columnName,
-                        columnType,
-                        isNullable: true,
-                        defaultValue: null,
-                      },
-                      alteredColumnDefinition: {
-                        columnName: `${updatedObjectMetadata.nameSingular}Id`,
-                        columnType,
-                        isNullable: true,
-                        defaultValue: null,
-                      },
-                    },
-                  ],
-                },
-              ],
-            );
-          }
-        }),
-      );
-    }
-  }
-
   private async updateObjectView(
     updatedObjectMetadata: ObjectMetadataEntity,
     workspaceId: string,
   ) {
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+    const viewRepository =
+      await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
         workspaceId,
+        'view',
       );
 
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    await workspaceDataSource?.query(
-      `UPDATE ${dataSourceMetadata.schema}."view"
-    SET "name"=$1, "icon"=$2 WHERE "objectMetadataId"=$3 AND "key"=$4`,
-      [
-        `All ${updatedObjectMetadata.labelPlural}`,
-        updatedObjectMetadata.icon,
-        updatedObjectMetadata.id,
-        'INDEX',
-      ],
+    await viewRepository.update(
+      { objectMetadataId: updatedObjectMetadata.id, key: 'INDEX' },
+      {
+        name: `All ${updatedObjectMetadata.labelPlural}`,
+        icon: updatedObjectMetadata.icon,
+      },
     );
   }
 

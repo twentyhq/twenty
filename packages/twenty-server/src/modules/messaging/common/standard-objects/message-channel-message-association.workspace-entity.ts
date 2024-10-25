@@ -26,7 +26,7 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
   labelSingular: 'Message Channel Message Association',
   labelPlural: 'Message Channel Message Associations',
   description: 'Message Synced with a Message Channel',
-  icon: STANDARD_OBJECT_ICONS.message,
+  icon: STANDARD_OBJECT_ICONS.messageChannelMessageAssociation,
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()

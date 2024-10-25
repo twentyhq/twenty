@@ -16,14 +16,10 @@ import {
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import {
-  ACTIVITY_TARGET_STANDARD_FIELD_IDS,
-  ATTACHMENT_STANDARD_FIELD_IDS,
   CUSTOM_OBJECT_STANDARD_FIELD_IDS,
-  FAVORITE_STANDARD_FIELD_IDS,
-  NOTE_TARGET_STANDARD_FIELD_IDS,
-  TASK_TARGET_STANDARD_FIELD_IDS,
-  TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
+  STANDARD_OBJECT_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import {
   createForeignKeyDeterministicUuid,
   createRelationDeterministicUuid,
@@ -48,11 +44,11 @@ export class ObjectMetadataRelationService {
     objectPrimaryKeyFieldSettings:
       | FieldMetadataSettings<FieldMetadataType | 'default'>
       | undefined,
-    relationType: string,
+    relatedObjectMetadataName: string,
   ) {
     const relatedObjectMetadata =
       await this.objectMetadataRepository.findOneByOrFail({
-        nameSingular: relationType,
+        nameSingular: relatedObjectMetadataName,
         workspaceId: workspaceId,
       });
 
@@ -68,7 +64,6 @@ export class ObjectMetadataRelationService {
       workspaceId,
       createdObjectMetadata,
       relatedObjectMetadata,
-      relationType,
     );
 
     await this.createRelationMetadata(
@@ -78,7 +73,7 @@ export class ObjectMetadataRelationService {
       relationFieldMetadata,
     );
 
-    return { [relationType + 'ObjectMetadata']: relatedObjectMetadata };
+    return relatedObjectMetadata;
   }
 
   private async createForeignKey(
@@ -90,10 +85,19 @@ export class ObjectMetadataRelationService {
       | FieldMetadataSettings<FieldMetadataType | 'default'>
       | undefined,
   ) {
+    const customStandardFieldId =
+      STANDARD_OBJECT_FIELD_IDS[relatedObjectMetadata.nameSingular].custom;
+
+    if (!customStandardFieldId) {
+      throw new Error(
+        `Custom standard field ID not found for ${relatedObjectMetadata.nameSingular}`,
+      );
+    }
+
     await this.fieldMetadataRepository.save({
       standardId: createForeignKeyDeterministicUuid({
         objectId: createdObjectMetadata.id,
-        standardId: this.getStandardFieldId(relatedObjectMetadata.nameSingular),
+        standardId: customStandardFieldId,
       }),
       objectMetadataId: relatedObjectMetadata.id,
       workspaceId: workspaceId,
@@ -115,15 +119,17 @@ export class ObjectMetadataRelationService {
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
     relatedObjectMetadata: ObjectMetadataEntity,
-    relationType: string,
   ) {
     return await this.fieldMetadataRepository.save([
-      this.createFromField(workspaceId, createdObjectMetadata, relationType),
+      this.createFromField(
+        workspaceId,
+        createdObjectMetadata,
+        relatedObjectMetadata,
+      ),
       this.createToField(
         workspaceId,
         createdObjectMetadata,
         relatedObjectMetadata,
-        relationType,
       ),
     ]);
   }
@@ -131,20 +137,26 @@ export class ObjectMetadataRelationService {
   private createFromField(
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
-    relationType: string,
+    relatedObjectMetadata: ObjectMetadataEntity,
   ) {
+    const relationObjectMetadataNamePlural =
+      relatedObjectMetadata.nameSingular + 's';
+
     return {
-      standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS[relationType + 's'],
+      standardId:
+        CUSTOM_OBJECT_STANDARD_FIELD_IDS[relationObjectMetadataNamePlural],
       objectMetadataId: createdObjectMetadata.id,
       workspaceId: workspaceId,
       isCustom: false,
       isActive: true,
       isSystem: true,
       type: FieldMetadataType.RELATION,
-      name: relationType + 's',
-      label: capitalize(relationType + 's'),
-      description: `${capitalize(relationType + 's')} tied to the ${createdObjectMetadata.labelSingular}`,
-      icon: this.getIconForRelationType(relationType),
+      name: relationObjectMetadataNamePlural,
+      label: capitalize(relationObjectMetadataNamePlural),
+      description: `${capitalize(relationObjectMetadataNamePlural)} tied to the ${createdObjectMetadata.labelSingular}`,
+      icon:
+        STANDARD_OBJECT_ICONS[relatedObjectMetadata.nameSingular] ||
+        'IconBuildingSkyscraper',
       isNullable: true,
     };
   }
@@ -153,12 +165,20 @@ export class ObjectMetadataRelationService {
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
     relatedObjectMetadata: ObjectMetadataEntity,
-    relationType: string,
   ) {
+    const customStandardFieldId =
+      STANDARD_OBJECT_FIELD_IDS[relatedObjectMetadata.nameSingular].custom;
+
+    if (!customStandardFieldId) {
+      throw new Error(
+        `Custom standard field ID not found for ${relatedObjectMetadata.nameSingular}`,
+      );
+    }
+
     return {
       standardId: createRelationDeterministicUuid({
         objectId: createdObjectMetadata.id,
-        standardId: this.getStandardFieldId(relationType),
+        standardId: customStandardFieldId,
       }),
       objectMetadataId: relatedObjectMetadata.id,
       workspaceId: workspaceId,
@@ -168,7 +188,7 @@ export class ObjectMetadataRelationService {
       type: FieldMetadataType.RELATION,
       name: createdObjectMetadata.nameSingular,
       label: createdObjectMetadata.labelSingular,
-      description: `${capitalize(relationType)} ${createdObjectMetadata.labelSingular}`,
+      description: `${capitalize(relatedObjectMetadata.nameSingular)} ${createdObjectMetadata.labelSingular}`,
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
     };
@@ -229,32 +249,6 @@ export class ObjectMetadataRelationService {
         { isActive: isActive },
       );
     }
-  }
-
-  private getStandardFieldId(relationType: string) {
-    const standardFieldIds = {
-      timelineActivity: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
-      favorite: FAVORITE_STANDARD_FIELD_IDS,
-      activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,
-      attachment: ATTACHMENT_STANDARD_FIELD_IDS,
-      noteTarget: NOTE_TARGET_STANDARD_FIELD_IDS,
-      taskTarget: TASK_TARGET_STANDARD_FIELD_IDS,
-    };
-
-    return standardFieldIds[relationType]?.custom;
-  }
-
-  private getIconForRelationType(relationType: string) {
-    const icons = {
-      timelineActivity: 'IconTimelineEvent',
-      favorite: 'IconHeart',
-      activityTarget: 'IconCheckbox',
-      attachment: 'IconFileImport',
-      noteTarget: 'IconNotes',
-      taskTarget: 'IconCheckbox',
-    };
-
-    return icons[relationType] || 'IconBuildingSkyscraper';
   }
 
   async createTimelineActivityRelation(
