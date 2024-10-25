@@ -31,7 +31,7 @@ export class ObjectMetadataMigrationService {
     private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}
 
-  async createRenameTableMigration(
+  public async createRenameTableMigration(
     existingObjectMetadata: ObjectMetadataEntity,
     objectMetadataForUpdate: ObjectMetadataEntity,
   ) {
@@ -55,7 +55,7 @@ export class ObjectMetadataMigrationService {
     );
   }
 
-  async createRelationsUpdatesMigrations(
+  public async createRelationsUpdatesMigrations(
     existingObjectMetadata: ObjectMetadataEntity,
     updatedObjectMetadata: ObjectMetadataEntity,
   ) {
@@ -147,7 +147,7 @@ export class ObjectMetadataMigrationService {
     }
   }
 
-  async deleteAllRelationsAndDropTable(
+  public async deleteAllRelationsAndDropTable(
     objectMetadata: ObjectMetadataEntity,
     workspaceId: string,
   ) {

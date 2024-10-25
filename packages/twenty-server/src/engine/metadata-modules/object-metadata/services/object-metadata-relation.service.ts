@@ -37,7 +37,7 @@ export class ObjectMetadataRelationService {
     private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
   ) {}
 
-  async createRelation(
+  public async createMetadata(
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
     objectPrimaryKeyType: FieldMetadataType,
@@ -52,7 +52,7 @@ export class ObjectMetadataRelationService {
         workspaceId: workspaceId,
       });
 
-    await this.createForeignKey(
+    await this.createForeignKeyFieldMetadata(
       workspaceId,
       createdObjectMetadata,
       relatedObjectMetadata,
@@ -76,7 +76,7 @@ export class ObjectMetadataRelationService {
     return relatedObjectMetadata;
   }
 
-  private async createForeignKey(
+  private async createForeignKeyFieldMetadata(
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
     relatedObjectMetadata: ObjectMetadataEntity,
@@ -249,107 +249,5 @@ export class ObjectMetadataRelationService {
         { isActive: isActive },
       );
     }
-  }
-
-  async createTimelineActivityRelation(
-    workspaceId: string,
-    createdObjectMetadata: ObjectMetadataEntity,
-    objectPrimaryKeyType: FieldMetadataType,
-    objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
-      | undefined,
-  ) {
-    return this.createRelation(
-      workspaceId,
-      createdObjectMetadata,
-      objectPrimaryKeyType,
-      objectPrimaryKeyFieldSettings,
-      'timelineActivity',
-    );
-  }
-
-  async createFavoriteRelation(
-    workspaceId: string,
-    createdObjectMetadata: ObjectMetadataEntity,
-    objectPrimaryKeyType: FieldMetadataType,
-    objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
-      | undefined,
-  ) {
-    return this.createRelation(
-      workspaceId,
-      createdObjectMetadata,
-      objectPrimaryKeyType,
-      objectPrimaryKeyFieldSettings,
-      'favorite',
-    );
-  }
-
-  async createActivityTargetRelation(
-    workspaceId: string,
-    createdObjectMetadata: ObjectMetadataEntity,
-    objectPrimaryKeyType: FieldMetadataType,
-    objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
-      | undefined,
-  ) {
-    return this.createRelation(
-      workspaceId,
-      createdObjectMetadata,
-      objectPrimaryKeyType,
-      objectPrimaryKeyFieldSettings,
-      'activityTarget',
-    );
-  }
-
-  async createAttachmentRelation(
-    workspaceId: string,
-    createdObjectMetadata: ObjectMetadataEntity,
-    objectPrimaryKeyType: FieldMetadataType,
-    objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
-      | undefined,
-  ) {
-    return this.createRelation(
-      workspaceId,
-      createdObjectMetadata,
-      objectPrimaryKeyType,
-      objectPrimaryKeyFieldSettings,
-      'attachment',
-    );
-  }
-
-  async createNoteTargetRelation(
-    workspaceId: string,
-    createdObjectMetadata: ObjectMetadataEntity,
-    objectPrimaryKeyType: FieldMetadataType,
-    objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
-      | undefined,
-  ) {
-    return this.createRelation(
-      workspaceId,
-      createdObjectMetadata,
-      objectPrimaryKeyType,
-      objectPrimaryKeyFieldSettings,
-      'noteTarget',
-    );
-  }
-
-  async createTaskTargetRelation(
-    workspaceId: string,
-    createdObjectMetadata: ObjectMetadataEntity,
-    objectPrimaryKeyType: FieldMetadataType,
-    objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
-      | undefined,
-  ) {
-    return this.createRelation(
-      workspaceId,
-      createdObjectMetadata,
-      objectPrimaryKeyType,
-      objectPrimaryKeyFieldSettings,
-      'taskTarget',
-    );
   }
 }

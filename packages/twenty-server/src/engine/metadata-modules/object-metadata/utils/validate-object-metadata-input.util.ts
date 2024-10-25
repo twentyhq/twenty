@@ -99,24 +99,20 @@ const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
 };
 
 const validateNameCamelCasedOrThrow = (name?: string) => {
-  if (name) {
-    if (name !== camelCase(name)) {
-      throw new ObjectMetadataException(
-        `Name should be in camelCase: ${name}`,
-        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      );
-    }
+  if (name && name !== camelCase(name)) {
+    throw new ObjectMetadataException(
+      `Name should be in camelCase: ${name}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
   }
 };
 
 const validateNameIsNotTooLongThrow = (name?: string) => {
-  if (name) {
-    if (exceedsDatabaseIdentifierMaximumLength(name)) {
-      throw new ObjectMetadataException(
-        `Name exceeds 63 characters: ${name}`,
-        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      );
-    }
+  if (name && exceedsDatabaseIdentifierMaximumLength(name)) {
+    throw new ObjectMetadataException(
+      `Name exceeds 63 characters: ${name}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
   }
 };
 

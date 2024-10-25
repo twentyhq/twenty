@@ -17,6 +17,7 @@ import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metada
 import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/object-metadata-graphql-api-exception.interceptor';
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
 import { ObjectMetadataMigrationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-migration.service';
+import { ObjectMetadataRelatedRecordsService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-related-records.service';
 import { ObjectMetadataRelationService } from 'src/engine/metadata-modules/object-metadata/services/object-metadata-relation.service';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
@@ -53,6 +54,7 @@ import { UpdateObjectPayload } from './dtos/update-object.input';
         ObjectMetadataService,
         ObjectMetadataMigrationService,
         ObjectMetadataRelationService,
+        ObjectMetadataRelatedRecordsService,
       ],
       resolvers: [
         {
