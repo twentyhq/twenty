@@ -2,20 +2,6 @@ import { ThemeType } from 'twenty-ui';
 
 export { ThemeProvider } from '@emotion/react';
 export * from 'twenty-ui';
-export * from './src/modules/ui/feedback/progress-bar/components/CircularProgressBar';
-export * from './src/modules/ui/feedback/progress-bar/components/ProgressBar';
-export * from './src/modules/ui/input/button/components/Button';
-export * from './src/modules/ui/input/button/components/ButtonGroup';
-export * from './src/modules/ui/input/button/components/FloatingButton';
-export * from './src/modules/ui/input/button/components/FloatingButtonGroup';
-export * from './src/modules/ui/input/button/components/FloatingIconButton';
-export * from './src/modules/ui/input/button/components/FloatingIconButtonGroup';
-export * from './src/modules/ui/input/button/components/LightButton';
-export * from './src/modules/ui/input/button/components/LightIconButton';
-export * from './src/modules/ui/input/button/components/MainButton';
-export * from './src/modules/ui/input/button/components/RoundedIconButton';
-export * from './src/modules/ui/input/color-scheme/components/ColorSchemeCard';
-export * from './src/modules/ui/input/color-scheme/components/ColorSchemePicker';
 export * from './src/modules/ui/input/components/AutosizeTextInput';
 export * from './src/modules/ui/input/components/Checkbox';
 export * from './src/modules/ui/input/components/EntityTitleDoubleTextInput';
@@ -37,7 +23,6 @@ export * from './src/modules/ui/navigation/menu-item/components/MenuItemSelect';
 export * from './src/modules/ui/navigation/menu-item/components/MenuItemSelectAvatar';
 export * from './src/modules/ui/navigation/menu-item/components/MenuItemSelectColor';
 export * from './src/modules/ui/navigation/menu-item/components/MenuItemToggle';
-export * from './src/modules/ui/navigation/navigation-bar/components/NavigationBar';
 export * from './src/modules/ui/navigation/step-bar/components/StepBar';
 
 declare module '@emotion/react' {

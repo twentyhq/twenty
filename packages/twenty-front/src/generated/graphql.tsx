@@ -1171,6 +1171,7 @@ export type UpdateObjectPayload = {
   labelSingular?: InputMaybe<Scalars['String']>;
   namePlural?: InputMaybe<Scalars['String']>;
   nameSingular?: InputMaybe<Scalars['String']>;
+  shouldSyncLabelAndName?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdateOneObjectInput = {
@@ -1487,6 +1488,7 @@ export type Object = {
   labelSingular: Scalars['String'];
   namePlural: Scalars['String'];
   nameSingular: Scalars['String'];
+  shouldSyncLabelAndName: Scalars['Boolean'];
   updatedAt: Scalars['DateTime'];
 };
 

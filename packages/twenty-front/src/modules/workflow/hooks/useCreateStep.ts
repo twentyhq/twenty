@@ -1,8 +1,11 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/states/workflowCreateStepFromParentStepIdState';
 import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/states/workflowDiagramTriggerNodeSelectionState';
+import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
 import {
   WorkflowStep,
   WorkflowStepType,
@@ -20,6 +23,9 @@ export const useCreateStep = ({
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
+  const { openRightDrawer } = useRightDrawer();
+  const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
+
   const workflowCreateStepFromParentStepId = useRecoilValue(
     workflowCreateStepFromParentStepIdState,
   );
@@ -98,6 +104,9 @@ export const useCreateStep = ({
       parentNodeId: workflowCreateStepFromParentStepId,
       nodeToAdd: newStep,
     });
+
+    setWorkflowSelectedNode(newStep.id);
+    openRightDrawer(RightDrawerPages.WorkflowStepEdit);
 
     /**
      * After the step has been created, select it.

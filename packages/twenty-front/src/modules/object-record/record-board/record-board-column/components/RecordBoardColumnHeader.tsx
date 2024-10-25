@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
-import { IconDotsVertical, IconPlus, Tag } from 'twenty-ui';
+import { IconDotsVertical, IconPlus, LightIconButton, Tag } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
@@ -10,9 +10,8 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
 import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
-import { RecordBoardColumnDefinitionType } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
+import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 const StyledHeader = styled.div`
@@ -60,11 +59,8 @@ const StyledRightContainer = styled.div`
   display: flex;
 `;
 
-const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
+const StyledColumn = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
-  border-left: 1px solid
-    ${({ theme, isFirstColumn }) =>
-      isFirstColumn ? 'none' : theme.border.color.light};
   display: flex;
   flex-direction: column;
   max-width: 200px;
@@ -76,7 +72,7 @@ const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
 `;
 
 export const RecordBoardColumnHeader = () => {
-  const { columnDefinition, isFirstColumn, recordCount } = useContext(
+  const { columnDefinition, recordCount } = useContext(
     RecordBoardColumnContext,
   );
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
@@ -121,7 +117,7 @@ export const RecordBoardColumnHeader = () => {
     !isOpportunitiesCompanyFieldDisabled;
 
   return (
-    <StyledColumn isFirstColumn={isFirstColumn}>
+    <StyledColumn>
       <StyledHeader
         onMouseEnter={() => setIsHeaderHovered(true)}
         onMouseLeave={() => setIsHeaderHovered(false)}
@@ -131,18 +127,18 @@ export const RecordBoardColumnHeader = () => {
             <Tag
               onClick={handleBoardColumnMenuOpen}
               variant={
-                columnDefinition.type === RecordBoardColumnDefinitionType.Value
+                columnDefinition.type === RecordGroupDefinitionType.Value
                   ? 'solid'
                   : 'outline'
               }
               color={
-                columnDefinition.type === RecordBoardColumnDefinitionType.Value
+                columnDefinition.type === RecordGroupDefinitionType.Value
                   ? columnDefinition.color
                   : 'transparent'
               }
               text={columnDefinition.title}
               weight={
-                columnDefinition.type === RecordBoardColumnDefinitionType.Value
+                columnDefinition.type === RecordGroupDefinitionType.Value
                   ? 'regular'
                   : 'medium'
               }
@@ -155,13 +151,11 @@ export const RecordBoardColumnHeader = () => {
           <StyledRightContainer>
             {isHeaderHovered && (
               <StyledHeaderActions>
-                {columnDefinition.actions.length > 0 && (
-                  <LightIconButton
-                    accent="tertiary"
-                    Icon={IconDotsVertical}
-                    onClick={handleBoardColumnMenuOpen}
-                  />
-                )}
+                <LightIconButton
+                  accent="tertiary"
+                  Icon={IconDotsVertical}
+                  onClick={handleBoardColumnMenuOpen}
+                />
 
                 <LightIconButton
                   accent="tertiary"
@@ -173,7 +167,7 @@ export const RecordBoardColumnHeader = () => {
           </StyledRightContainer>
         </StyledHeaderContainer>
       </StyledHeader>
-      {isBoardColumnMenuOpen && columnDefinition.actions.length > 0 && (
+      {isBoardColumnMenuOpen && (
         <RecordBoardColumnDropdownMenu
           onClose={handleBoardColumnMenuClose}
           stageId={columnDefinition.id}

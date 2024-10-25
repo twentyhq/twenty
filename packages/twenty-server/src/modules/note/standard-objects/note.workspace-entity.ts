@@ -44,6 +44,7 @@ export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
   labelPlural: 'Notes',
   description: 'A note',
   icon: 'IconNotes',
+  shortcut: 'N',
   labelIdentifierStandardId: NOTE_STANDARD_FIELD_IDS.title,
 })
 export class NoteWorkspaceEntity extends BaseWorkspaceEntity {
