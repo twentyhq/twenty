@@ -23,5 +23,6 @@ export const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProp
 
   &:hover {
     filter: brightness(0.95);
+    background:  ${({ theme }) => theme.background.transparent.light};
   }
 `;
