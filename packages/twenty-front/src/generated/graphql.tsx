@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -1160,6 +1160,7 @@ export type UpdateObjectPayload = {
   labelSingular?: InputMaybe<Scalars['String']>;
   namePlural?: InputMaybe<Scalars['String']>;
   nameSingular?: InputMaybe<Scalars['String']>;
+  shortcut?: InputMaybe<Scalars['String']>;
   shouldSyncLabelAndName?: InputMaybe<Scalars['Boolean']>;
 };
 
@@ -1477,6 +1478,7 @@ export type Object = {
   labelSingular: Scalars['String'];
   namePlural: Scalars['String'];
   nameSingular: Scalars['String'];
+  shortcut?: Maybe<Scalars['String']>;
   shouldSyncLabelAndName: Scalars['Boolean'];
   updatedAt: Scalars['DateTime'];
 };
