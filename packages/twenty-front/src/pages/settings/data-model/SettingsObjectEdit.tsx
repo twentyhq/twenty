@@ -82,8 +82,8 @@ export const SettingsObjectEdit = () => {
   ) => {
     let values = formValues;
     if (
-      formValues.shouldSyncLabelAndName === true ||
-      activeObjectMetadataItem.shouldSyncLabelAndName === true
+      formValues.isLabelSyncedWithName === true ||
+      activeObjectMetadataItem.isLabelSyncedWithName === true
     ) {
       values = {
         ...values,

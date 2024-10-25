@@ -36,7 +36,7 @@ export const settingsDataModelObjectAboutFormSchema = objectMetadataItemSchema
       .pick({
         nameSingular: true,
         namePlural: true,
-        shouldSyncLabelAndName: true,
+        isLabelSyncedWithName: true,
       })
       .partial(),
   );
@@ -115,10 +115,10 @@ export const SettingsDataModelObjectAboutForm = ({
     isAdvancedModeEnabled,
   );
 
-  const shouldSyncLabelAndName = watch('shouldSyncLabelAndName');
+  const isLabelSyncedWithName = watch('isLabelSyncedWithName');
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
-  const apiNameTooltipText = shouldSyncLabelAndName
+  const apiNameTooltipText = isLabelSyncedWithName
     ? 'Deactivate "Synchronize Objects Labels and API Names" to set a custom API name'
     : 'Input must be in camel case and cannot start with a number';
 
@@ -129,7 +129,7 @@ export const SettingsDataModelObjectAboutForm = ({
     setValue('labelPlural', newLabelPluralValue, {
       shouldDirty: isDefined(labelSingular) ? true : false,
     });
-    if (shouldSyncLabelAndName === true) {
+    if (isLabelSyncedWithName === true) {
       fillNamePluralFromLabelPlural(newLabelPluralValue);
     }
   };
@@ -182,7 +182,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 onChange={(value) => {
                   onChange(value);
                   fillLabelPlural(value);
-                  if (shouldSyncLabelAndName === true) {
+                  if (isLabelSyncedWithName === true) {
                     fillNameSingularFromLabelSingular(value);
                   }
                 }}
@@ -204,7 +204,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 value={value}
                 onChange={(value) => {
                   onChange(value);
-                  if (shouldSyncLabelAndName === true) {
+                  if (isLabelSyncedWithName === true) {
                     fillNamePluralFromLabelPlural(value);
                   }
                 }}
@@ -251,7 +251,7 @@ export const SettingsDataModelObjectAboutForm = ({
                     placeholder: 'listing',
                     defaultValue: objectMetadataItem?.nameSingular,
                     disabled:
-                      disabled || disableNameEdit || shouldSyncLabelAndName,
+                      disabled || disableNameEdit || isLabelSyncedWithName,
                     tooltip: apiNameTooltipText,
                   },
                   {
@@ -260,7 +260,7 @@ export const SettingsDataModelObjectAboutForm = ({
                     placeholder: 'listings',
                     defaultValue: objectMetadataItem?.namePlural,
                     disabled:
-                      disabled || disableNameEdit || shouldSyncLabelAndName,
+                      disabled || disableNameEdit || isLabelSyncedWithName,
                     tooltip: apiNameTooltipText,
                   },
                 ].map(
@@ -318,10 +318,10 @@ export const SettingsDataModelObjectAboutForm = ({
                   ),
                 )}
                 <Controller
-                  name="shouldSyncLabelAndName"
+                  name="isLabelSyncedWithName"
                   control={control}
                   defaultValue={
-                    objectMetadataItem?.shouldSyncLabelAndName ?? true
+                    objectMetadataItem?.isLabelSyncedWithName ?? true
                   }
                   render={({ field: { onChange, value } }) => (
                     <SyncObjectLabelAndNameToggle
