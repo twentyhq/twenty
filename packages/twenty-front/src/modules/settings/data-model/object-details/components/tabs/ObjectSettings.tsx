@@ -83,8 +83,8 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   ) => {
     let values = formValues;
     if (
-      formValues.shouldSyncLabelAndName ??
-      objectMetadataItem.shouldSyncLabelAndName
+      formValues.shouldSyncLabelAndName === true ||
+      objectMetadataItem.shouldSyncLabelAndName === true
     ) {
       values = {
         ...values,
