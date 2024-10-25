@@ -1,20 +1,16 @@
-import { faker } from '@faker-js/faker';
-
 export const generateFakeValue = (valueType: string): any => {
   if (valueType === 'string') {
-    return faker.lorem.word();
+    return 'generated-string-value';
   } else if (valueType === 'number') {
-    return faker.number.int();
+    return 1;
   } else if (valueType === 'boolean') {
-    return faker.datatype.boolean();
+    return true;
   } else if (valueType === 'Date') {
-    return faker.date.recent();
+    return new Date();
   } else if (valueType.endsWith('[]')) {
     const elementType = valueType.replace('[]', '');
 
-    return Array.from({ length: faker.number.int({ min: 2, max: 5 }) }, () =>
-      generateFakeValue(elementType),
-    );
+    return Array.from({ length: 3 }, () => generateFakeValue(elementType));
   } else if (valueType.startsWith('{') && valueType.endsWith('}')) {
     const objData: Record<string, any> = {};
 
@@ -32,6 +28,6 @@ export const generateFakeValue = (valueType: string): any => {
 
     return objData;
   } else {
-    return faker.lorem.word();
+    return 'generated-string-value';
   }
 };
