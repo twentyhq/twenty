@@ -158,7 +158,7 @@ export const RecordTableCellSoftFocusMode = ({
     (!isFirstColumn || !isEmpty) &&
     !isCellReadOnly;
 
-  const dontShowContent = isEmpty || isCellReadOnly;
+  const dontShowContent = isEmpty && isCellReadOnly;
 
   return (
     <>
