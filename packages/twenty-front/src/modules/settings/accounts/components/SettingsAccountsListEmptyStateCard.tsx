@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui';
 
-import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTrigerApiOauth';
+import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { Button } from '@/ui/input/button/components/Button';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { CardHeader } from '@/ui/layout/card/components/CardHeader';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledHeader = styled(CardHeader)`
   align-items: center;
@@ -27,6 +28,9 @@ export const SettingsAccountsListEmptyStateCard = ({
   label,
 }: SettingsAccountsListEmptyStateCardProps) => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
+  const isMicrosoftSyncEnabled = useIsFeatureEnabled(
+    'IS_MICROSOFT_SYNC_ENABLED',
+  );
 
   return (
     <Card>
@@ -38,12 +42,14 @@ export const SettingsAccountsListEmptyStateCard = ({
           variant="secondary"
           onClick={() => triggerApisOAuth('google')}
         />
-        <Button
-          Icon={IconMicrosoft}
-          title="Connect with Microsoft"
-          variant="secondary"
-          onClick={() => triggerApisOAuth('microsoft')}
-        />
+        {isMicrosoftSyncEnabled && (
+          <Button
+            Icon={IconMicrosoft}
+            title="Connect with Microsoft"
+            variant="secondary"
+            onClick={() => triggerApisOAuth('microsoft')}
+          />
+        )}
       </StyledBody>
     </Card>
   );

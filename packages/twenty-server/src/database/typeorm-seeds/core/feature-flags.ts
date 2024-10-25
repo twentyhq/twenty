@@ -75,6 +75,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: false,
       },
+      {
+        key: FeatureFlagKey.IsMicrosoftSyncEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

@@ -2,7 +2,7 @@ import { GMAIL_SEND_SCOPE } from '@/accounts/constants/GmailSendScope';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTrigerApiOauth';
+import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { WorkflowEditActionFormBase } from '@/workflow/components/WorkflowEditActionFormBase';
