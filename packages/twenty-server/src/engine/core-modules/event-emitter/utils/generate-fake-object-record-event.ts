@@ -56,7 +56,6 @@ export const generateFakeObjectRecordEvent = <Entity>(
       workspaceMemberId,
       objectMetadata: objectMetadataEntity,
       properties: {
-        updatedFields: objectMetadataEntity.fields.map((f) => f.name),
         before: after as Entity,
         after: before as Entity,
         diff: after as Entity,

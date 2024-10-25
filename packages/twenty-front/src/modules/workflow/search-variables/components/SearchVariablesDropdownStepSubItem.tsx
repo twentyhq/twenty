@@ -46,17 +46,12 @@ const SearchVariablesDropdownStepSubItem = ({
 
   const headerLabel = currentPath.length === 0 ? step.name : currentPath.at(-1);
 
-  const selectedObject = getSelectedObject();
-  const entries = Array.isArray(selectedObject)
-    ? selectedObject.map((item) => [item, item])
-    : Object.entries(selectedObject);
-
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={goBack}>
         {headerLabel}
       </DropdownMenuHeader>
-      {entries.map(([key, value]) => (
+      {Object.entries(getSelectedObject()).map(([key, value]) => (
         <MenuItemSelect
           key={key}
           selected={false}
