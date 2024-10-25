@@ -3,9 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { getGoogleApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes';
+import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -95,12 +94,7 @@ export class MicrosoftAPIsService {
     const workspaceDataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(workspaceId);
 
-    const isGmailSendEmailScopeEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsGmailSendEmailScopeEnabled,
-        workspaceId,
-      );
-    const scopes = getGoogleApisOauthScopes(isGmailSendEmailScopeEnabled);
+    const scopes = getMicrosoftApisOauthScopes();
 
     await workspaceDataSource.transaction(async (manager: EntityManager) => {
       if (!existingAccountId) {
