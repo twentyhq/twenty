@@ -20,6 +20,7 @@ const StyledContainer = styled.div`
 `;
 const StyledSingleWorkspaceContainer = styled(StyledContainer)`
   gap: ${({ theme }) => theme.spacing(2)};
+  padding: 4px;
 `;
 
 const StyledLogo = styled.div<{ logo: string }>`
