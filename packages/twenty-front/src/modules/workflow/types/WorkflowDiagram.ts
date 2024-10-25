@@ -14,10 +14,6 @@ export type WorkflowDiagram = {
 
 export type WorkflowDiagramStepNodeData =
   | {
-      nodeType: 'condition';
-      label: string;
-    }
-  | {
       nodeType: 'trigger';
       triggerType: WorkflowTriggerType;
       label: string;

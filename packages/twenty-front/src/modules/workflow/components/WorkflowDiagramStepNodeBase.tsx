@@ -51,9 +51,6 @@ export const WorkflowDiagramStepNodeBase = ({
 
         return assertUnreachable(data.triggerType);
       }
-      case 'condition': {
-        return null;
-      }
       case 'action': {
         switch (data.actionType) {
           case 'CODE': {
