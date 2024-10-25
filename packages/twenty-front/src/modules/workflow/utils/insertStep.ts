@@ -1,6 +1,5 @@
 import { WorkflowStep } from '@/workflow/types/Workflow';
 import { findStepPositionOrThrow } from '@/workflow/utils/findStepPositionOrThrow';
-import { useComputeStepSettingOutputSchema } from '@/workflow/hooks/useComputeStepSettingOutputSchema';
 
 export const insertStep = ({
   steps: stepsInitial,
