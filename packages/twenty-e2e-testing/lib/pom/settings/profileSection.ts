@@ -1,4 +1,4 @@
-import { Locator, Page, expect } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 
 export class ProfileSection {
   private readonly uploadImage: Locator;
@@ -26,7 +26,7 @@ export class ProfileSection {
 
   async addProfileImage() {
     await this.uploadImage.click();
-    // fix once utils are merged
+    // TODO: fix once utils are merged
   }
 
   async removeProfileImage() {
@@ -43,15 +43,12 @@ export class ProfileSection {
     await this.lastNameField.fill(lastName);
   }
 
-  async checkEmailField(email: string) {
-    await expect(this.emailField).toHaveValue(email);
-  }
-
   async sendChangePasswordEmail() {
     await this.changePasswordButton.click();
   }
 
   async deleteAccount() {
     await this.deleteAccountButton.click();
+    // TODO: finish
   }
 }

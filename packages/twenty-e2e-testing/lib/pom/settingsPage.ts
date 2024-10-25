@@ -12,6 +12,7 @@ export class SettingsPage {
   private readonly dataModelLink: Locator;
   private readonly developersLink: Locator;
   private readonly functionsLink: Locator;
+  private readonly securityLink: Locator;
   private readonly integrationsLink: Locator;
   private readonly releasesLink: Locator;
   private readonly logoutLink: Locator;
@@ -31,6 +32,7 @@ export class SettingsPage {
     this.developersLink = page.getByRole('link', { name: 'Developers' });
     this.functionsLink = page.getByRole('link', { name: 'Functions' });
     this.integrationsLink = page.getByRole('link', { name: 'Integrations' });
+    this.securityLink = page.getByRole('link', { name: 'Security' });
     this.releasesLink = page.getByRole('link', { name: 'Releases' });
     this.logoutLink = page.getByText('Logout');
     this.advancedToggle = page.locator('input[type="checkbox"]').first();
@@ -78,6 +80,10 @@ export class SettingsPage {
 
   async goToFunctionsSection() {
     await this.functionsLink.click();
+  }
+
+  async goToSecuritySection() {
+    await this.securityLink.click();
   }
 
   async goToIntegrationsSection() {

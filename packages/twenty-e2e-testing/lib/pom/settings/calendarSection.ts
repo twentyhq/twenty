@@ -13,7 +13,7 @@ export class CalendarSection {
     this.eventVisibilityMetadataOption = page.locator(
       'input[value="METADATA"]',
     );
-    this.contactAutoCreation = page.locator('input[type="checkbox"]').nth(1);
+    this.contactAutoCreation = page.getByRole('checkbox').nth(1);
   }
 
   async changeVisibilityToEverything() {

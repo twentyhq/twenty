@@ -79,7 +79,7 @@ export class LoginPage {
 
   async loginWithGoogle() {
     await this.loginWithGoogleButton.click();
-    // cover it fully later
+    // TODO: finish
   }
 
   async clickLoginWithEmail() {
@@ -114,7 +114,7 @@ export class LoginPage {
     await this.signUpButton.click();
   }
 
-  async clickForgotPasswordButton() {
+  async clickForgotPassword() {
     await this.forgotPasswordButton.click();
   }
 
@@ -128,7 +128,7 @@ export class LoginPage {
 
   async clickUploadImage() {
     await this.uploadImageButton.click();
-    //finish once utils are merged
+    // TODO: finish once utils are merged
   }
 
   async deleteImage() {
@@ -161,6 +161,7 @@ export class LoginPage {
 
   async clickSyncWithGoogleButton() {
     await this.syncWithGoogleButton.click();
+    // TODO: finish
   }
 
   async noSyncWithGoogle() {

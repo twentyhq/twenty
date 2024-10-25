@@ -1,10 +1,9 @@
-import { Locator, Page, expect } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 
 export class MembersSection {
   private readonly inviteMembersField: Locator;
   private readonly inviteMembersButton: Locator;
   private readonly inviteLinkButton: Locator;
-  private deleteMemberButton: Locator;
 
   constructor(public readonly page: Page) {
     this.page = page;
@@ -15,17 +14,35 @@ export class MembersSection {
     this.inviteLinkButton = page.getByRole('button', { name: 'Copy link' });
   }
 
-  async sendInviteLink(email: string) {
-    await this.inviteMembersField.click();
-    await this.inviteMembersField.fill(email);
+  async copyInviteLink() {
     await this.inviteLinkButton.click();
   }
 
+  async sendInviteEmail(email: string) {
+    await this.inviteMembersField.click();
+    await this.inviteMembersField.fill(email);
+    await this.inviteMembersButton.click();
+  }
+
   async deleteMember(email: string) {
-    this.deleteMemberButton = this.page
-      .locator('div')
-      .filter({ hasText: email })
-      .getByRole('button');
-    await this.deleteMemberButton.click();
+    await this.page
+      .locator(`//div[contains(., '${email}')]/../../div[last()]/div/button`)
+      .click();
+  }
+
+  async deleteInviteEmail(email: string) {
+    await this.page
+      .locator(
+        `//div[contains(., '${email}')]/../../div[last()]/div/button[first()]`,
+      )
+      .click();
+  }
+
+  async refreshInviteEmail(email: string) {
+    await this.page
+      .locator(
+        `//div[contains(., '${email}')]/../../div[last()]/div/button[last()]`,
+      )
+      .click();
   }
 }

@@ -6,6 +6,7 @@ export class AccountsSection {
   private readonly addBlocklistField: Locator;
   private readonly addBlocklistButton: Locator;
   private removeFromBlocklistButton: Locator;
+  private readonly connectWithGoogleButton: Locator;
 
   constructor(public readonly page: Page) {
     this.page = page;
@@ -17,6 +18,9 @@ export class AccountsSection {
     this.addBlocklistButton = page.getByRole('button', {
       name: 'Add to blocklist',
     });
+    this.connectWithGoogleButton = page.getByRole('button', {
+      name: 'Connect with Google',
+    });
   }
 
   async clickAddAccount() {
@@ -24,22 +28,27 @@ export class AccountsSection {
   }
 
   async deleteAccount(email: string) {
-    // needs fixing
-    await this.page.locator('div').filter({ hasText: email }).hover();
+    await this.page
+      .locator(`//span[contains(., "${email}")]/../div/div/div/button`)
+      .click();
     await this.deleteAccountButton.click();
+    // TODO: finish
   }
 
   async addToBlockList(domain: string) {
-    await this.addBlocklistField.click();
     await this.addBlocklistField.fill(domain);
     await this.addBlocklistButton.click();
   }
 
   async removeFromBlocklist(domain: string) {
-    this.removeFromBlocklistButton = this.page
-      .locator('div')
-      .filter({ hasText: domain })
-      .getByRole('button'); // needs fixing
+    this.removeFromBlocklistButton = this.page.locator(
+      `//div[@data-testid='tooltip' and contains(., '${domain}')]/../../div[last()]/button`,
+    );
     await this.removeFromBlocklistButton.click();
+  }
+
+  async linkGoogleAccount() {
+    await this.connectWithGoogleButton.click();
+    // TODO: finish
   }
 }

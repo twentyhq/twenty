@@ -22,11 +22,9 @@ export class EmailsSection {
     );
     this.autoCreationSentRadio = page.locator('input[value="SENT"]');
     this.autoCreationNoneRadio = page.locator('input[value="NONE"]');
-    // first checkbox is advanced toggle
-    this.excludeNonProfessionalToggle = page
-      .locator('input[type="checkbox"]')
-      .nth(1);
-    this.excludeGroupToggle = page.locator('input[type="checkbox"]').nth(2);
+    // first checkbox is advanced settings toggle
+    this.excludeNonProfessionalToggle = page.getByRole('checkbox').nth(1);
+    this.excludeGroupToggle = page.getByRole('checkbox').nth(2);
   }
 
   async changeVisibilityToEverything() {

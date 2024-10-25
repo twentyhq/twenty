@@ -1,16 +1,16 @@
-import { Locator, Page, Expect } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 
 export class DevelopersSection {
   private readonly readDocumentationButton: Locator;
   private readonly createAPIKeyButton: Locator;
   private readonly regenerateAPIKeyButton: Locator;
-  private readonly nameOfAPIKey: Locator;
-  private readonly expirationDateAPIKey: Locator;
+  private readonly nameOfAPIKeyInput: Locator;
+  private readonly expirationDateAPIKeySelect: Locator;
   private readonly createWebhookButton: Locator;
-  private readonly webhookUrl: Locator;
+  private readonly webhookURLInput: Locator;
   private readonly webhookDescription: Locator;
-  private readonly webhookFilterObjectDropdown: Locator;
-  private readonly webhookFilterActionDropdown: Locator;
+  private readonly webhookFilterObjectSelect: Locator;
+  private readonly webhookFilterActionSelect: Locator;
   private readonly cancelButton: Locator;
   private readonly saveButton: Locator;
   private readonly deleteButton: Locator;
@@ -26,26 +26,26 @@ export class DevelopersSection {
     this.createWebhookButton = page.getByRole('link', {
       name: 'Create Webhook',
     });
-    this.nameOfAPIKey = page
+    this.nameOfAPIKeyInput = page
       .getByPlaceholder('E.g. backoffice integration')
       .first();
-    this.expirationDateAPIKey = page
+    this.expirationDateAPIKeySelect = page
       .locator('div')
       .filter({ hasText: /^Never$/ })
-      .nth(3);
+      .nth(3); // good enough if expiration date will change only 1 time
     this.regenerateAPIKeyButton = page.getByRole('button', {
       name: 'Regenerate Key',
     });
-    this.webhookUrl = page.getByPlaceholder('URL');
+    this.webhookURLInput = page.getByPlaceholder('URL');
     this.webhookDescription = page.getByPlaceholder('Write a description');
-    this.webhookFilterObjectDropdown = page
+    this.webhookFilterObjectSelect = page
       .locator('div')
       .filter({ hasText: /^All Objects$/ })
-      .nth(3);
-    this.webhookFilterActionDropdown = page
+      .nth(3); // works only for first filter
+    this.webhookFilterActionSelect = page
       .locator('div')
       .filter({ hasText: /^All Actions$/ })
-      .nth(3);
+      .nth(3); // works only for first filter
     this.cancelButton = page.getByRole('button', { name: 'Cancel' });
     this.saveButton = page.getByRole('button', { name: 'Save' });
     this.deleteButton = page.getByRole('button', { name: 'Delete' });
@@ -55,8 +55,18 @@ export class DevelopersSection {
     await this.readDocumentationButton.click();
   }
 
-  async createNewAPIKey() {
+  async createAPIKey() {
     await this.createAPIKeyButton.click();
+  }
+
+  async typeAPIKeyName(name: string) {
+    await this.nameOfAPIKeyInput.clear();
+    await this.nameOfAPIKeyInput.fill(name);
+  }
+
+  async selectAPIExpirationDate(date: string) {
+    await this.expirationDateAPIKeySelect.click();
+    await this.page.getByText(date, { exact: true }).click();
   }
 
   async regenerateAPIKey() {
@@ -65,6 +75,36 @@ export class DevelopersSection {
 
   async deleteAPIKey() {
     await this.deleteButton.click();
+    // TODO: finish
+  }
+
+  async deleteWebhook() {
+    await this.deleteButton.click();
+    // TODO: finish
+  }
+
+  async createWebhook() {
+    await this.createWebhookButton.click();
+  }
+
+  async typeWebhookURL(url: string) {
+    await this.webhookURLInput.fill(url);
+  }
+
+  async typeWebhookDescription(description: string) {
+    await this.webhookDescription.fill(description);
+  }
+
+  async selectWebhookObject(object: string) {
+    // TODO: finish
+  }
+
+  async selectWebhookAction(action: string) {
+    // TODO: finish
+  }
+
+  async deleteWebhookFilter() {
+    // TODO: finish
   }
 
   async clickCancelButton() {
@@ -74,6 +114,4 @@ export class DevelopersSection {
   async clickSaveButton() {
     await this.saveButton.click();
   }
-
-
 }
