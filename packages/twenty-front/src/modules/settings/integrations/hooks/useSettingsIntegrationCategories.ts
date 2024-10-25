@@ -2,6 +2,7 @@ import { MOCK_REMOTE_DATABASES } from '@/settings/integrations/constants/MockRem
 import { SETTINGS_INTEGRATION_REQUEST_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationRequest';
 import { SETTINGS_INTEGRATION_WINDMILL_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationWindmill';
 import { SETTINGS_INTEGRATION_ZAPIER_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationZapier';
+import { SETTINGS_INTEGRATION_RAYCAST_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationRaycast';
 import { SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
 import { getSettingsIntegrationAll } from '@/settings/integrations/utils/getSettingsIntegrationAll';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -42,6 +43,7 @@ export const useSettingsIntegrationCategories =
       ...(allIntegrations.integrations.length > 0 ? [allIntegrations] : []),
       SETTINGS_INTEGRATION_ZAPIER_CATEGORY,
       SETTINGS_INTEGRATION_WINDMILL_CATEGORY,
+      SETTINGS_INTEGRATION_RAYCAST_CATEGORY,
       SETTINGS_INTEGRATION_REQUEST_CATEGORY,
     ];
   };
