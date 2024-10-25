@@ -1,6 +1,4 @@
-TAGS MV
-
-NODE webhooksEvent_mv
+NODE mv
 SQL >
 
     SELECT
@@ -13,10 +11,9 @@ SQL >
         JSONExtractString(payload, 'eventName') as eventName,
         version
 
-    FROM event
+    FROM event 
     WHERE action = 'webhook.response'
 
 TYPE materialized
-DATASOURCE webhooksEventMV
-
+DATASOURCE webhookEventMV
 

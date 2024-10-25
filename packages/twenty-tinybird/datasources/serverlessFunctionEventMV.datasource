@@ -1,4 +1,4 @@
-# Data Source created from Pipe 'serverlessFunctionsEventMv'
+# Data Source created from Pipe 'materializeServerlessFunctionEvent'
 
 SCHEMA >
     `timestamp` DateTime64(3),

@@ -1,4 +1,4 @@
-NODE serverlessFunctionsEvent_mv
+NODE mv
 SQL >
 
     SELECT
@@ -13,6 +13,6 @@ SQL >
     WHERE action = 'serverlessFunction.executed'
 
 TYPE materialized
-DATASOURCE serverlessFunctionsEventMV
+DATASOURCE serverlessFunctionEventMV
 
 

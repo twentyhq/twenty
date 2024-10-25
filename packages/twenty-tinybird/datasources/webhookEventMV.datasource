@@ -1,4 +1,4 @@
-# Data Source created from Pipe 'webhooksEventMv'
+# Data Source created from Pipe 'materializeWebhookEvent
 
 SCHEMA >
     `timestamp` DateTime64(3),

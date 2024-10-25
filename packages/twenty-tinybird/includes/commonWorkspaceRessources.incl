@@ -1,0 +1,19 @@
+NODE workspaceServerlessFunctions
+SQL >
+
+    %
+    SELECT functionId
+    from serverlessFunctionEventMV
+    WHERE
+        workspaceId
+        = {{
+            String(
+                workspaceId,
+                '20202020-1c25-4d02-bf25-6aeccf7ea419',
+                description="The ID of the workspace",
+                required=True,
+            )
+        }}
+
+
+

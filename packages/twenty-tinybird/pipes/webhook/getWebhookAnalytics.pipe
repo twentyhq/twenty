@@ -1,0 +1,62 @@
+INCLUDE "../../includes/timeSeries.incl"
+
+NODE workspaceWebhooks
+SQL >
+
+    %
+    SELECT webhookId
+    from webhookEventMV
+    WHERE
+        workspaceId
+        = {{
+            String(
+                workspaceId,
+                '20202020-1c25-4d02-bf25-6aeccf7ea419',
+                description="The ID of the workspace",
+                required=True,
+            )
+        }}
+
+NODE timeSeriesWebhookData
+SQL >
+
+    %
+
+    SELECT
+        {% if granularity == "hour" %} toStartOfHour(timestamp, {{ String(timezone, 'UTC') }})
+        {% elif granularity == "custom" %}
+            toDateTime64(
+                toStartOfMinute(timestamp, {{ String(timezone, 'UTC') }}),
+                3,
+                {{ String(timezone, 'UTC') }}
+            )
+        {% else %} toDateTime64(toStartOfDay(timestamp, {{ String(timezone, 'UTC') }}), 3)
+        {% end %} AS interval,
+        uniqIf(*, success=true) as success_count,
+        uniqIf(*, success=false) as failure_count
+    FROM
+        webhookEventMV
+        {% if not defined(webhookId) and defined(workspaceId) %}
+            PREWHERE webhookId in (SELECT webhookId from workspaceWebhooks)
+        {% end %}
+    WHERE
+        true
+        {% if defined(webhookId) %} AND webhookId = {{ String(webhookId) }} {% end %}
+        AND workspaceId={{ String(workspaceId) }}
+        AND timestamp >= {{ DateTime(start, '2024-10-22 00:00:00') }}
+        AND timestamp < {{ DateTime(end, '2024-10-23 00:00:00') }}
+    GROUP BY interval
+    ORDER BY interval
+
+NODE endpoint
+SQL >
+
+    %
+
+    SELECT formatDateTime(interval, '%FT%T.000%z') as start, success_count, failure_count
+    FROM
+        {% if granularity == "custom" %} customIntervals
+        {% elif granularity == "hour" %} hourIntervals
+        {% else %} dayIntervals
+        {% end %}
+    LEFT JOIN timeSeriesWebhookData USING interval

@@ -6,7 +6,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install tinybird-cli
 ```
-Authenticate using your admin token from your workspace
+Authenticate using your admin token from your workspace (twenty_analytics_cli_playground)
 ```sh
 tb auth -i
 
@@ -18,7 +18,7 @@ tb auth -i
 [5] eu-central-1 (aws) (https://app.tinybird.co/aws/eu-central-1) <- this
 [0] Cancel
 
-Use region [1]:
+Use region [5]:
 Copy the "admin your@email" token from from https://app.tinybird.co/tokens and paste it here: <pasted Token>
 ** Auth successful!
 ** Configuration written to .tinyb file, consider adding it to .gitignore
@@ -31,3 +31,10 @@ To pull data from Tinybird use:
 ```sh
 tb pull
 ```
+Things I learned:
+
+When creating a MV think about populating it first using the files from the fixtures
+When pushing your pipes prefer to push one by one so you can have more coherent error messages
+The Include files will be nodes that will be added at the start of your node in Tinybird UI
+It's best to stick only with only the CLI or the UI when developping in Tinybird
+

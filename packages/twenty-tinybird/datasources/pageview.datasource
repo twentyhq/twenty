@@ -8,7 +8,7 @@ SCHEMA >
     `timeZone` String `json:$.timeZone`,
     `timestamp` DateTime64(3) `json:$.timestamp`,
     `userAgent` String `json:$.userAgent`,
-    `userId` String `json:$.userId`,
+    `userId` String `json:$.userId` DEFAULT '',
     `version` String `json:$.version`,
     `workspaceId` String `json:$.workspaceId`
 

@@ -1,0 +1,47 @@
+INCLUDE "../../includes/timeSeries.incl"
+INCLUDE "../../includes/commonWorkspaceRessources.incl"
+
+NODE timeSeriesServerlessFunctionDurationData
+SQL >
+
+    %
+
+    SELECT
+        {% if granularity == "hour" %} toStartOfHour(timestamp, {{ String(timezone, 'UTC') }})
+        {% elif granularity == "custom" %}
+            toDateTime64(
+                toStartOfMinute(timestamp, {{ String(timezone, 'UTC') }}),
+                3,
+                {{ String(timezone, 'UTC') }}
+            )
+        {% else %} toDateTime64(toStartOfDay(timestamp, {{ String(timezone, 'UTC') }}), 3)
+        {% end %} AS interval,
+        avg(CAST(durationInMs AS Float64)) as average,
+        min(durationInMs) as minimum,
+        max(durationInMs) as maximum
+    FROM
+        serverlessFunctionEventMV
+        {% if not defined(functionId) and defined(workspaceId) %}
+            PREWHERE functionId in (SELECT functionId from workspaceServerlessFunctions)
+        {% end %}
+    WHERE
+        true
+        {% if defined(functionId) %} AND functionId = {{ String(functionId) }} {% end %}
+        AND workspaceId ={{ String(workspaceId) }}
+        AND timestamp >= {{ DateTime(start, '2024-10-22 00:00:00') }}
+        AND timestamp < {{ DateTime(end, '2024-10-23 00:00:00') }}
+    GROUP BY interval
+    ORDER BY interval
+
+NODE endpoint
+SQL >
+
+    %
+
+    SELECT formatDateTime(interval, '%FT%T.000%z') as start, minimum, maximum, average
+    FROM
+        {% if granularity == "custom" %} customIntervals
+        {% elif granularity == "hour" %} hourIntervals
+        {% else %} dayIntervals
+        {% end %}
+    LEFT JOIN timeSeriesServerlessFunctionDurationData USING interval
