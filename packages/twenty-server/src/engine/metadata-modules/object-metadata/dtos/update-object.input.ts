@@ -70,7 +70,7 @@ export class UpdateObjectPayload {
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
-  isLabelSyncedWithName?: boolean;
+  shouldSyncLabelAndName?: boolean;
 }
 
 @InputType()

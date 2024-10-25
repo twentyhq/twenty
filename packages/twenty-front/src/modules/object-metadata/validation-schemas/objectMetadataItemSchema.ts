@@ -27,5 +27,5 @@ export const objectMetadataItemSchema = z.object({
   nameSingular: camelCaseStringSchema,
   updatedAt: z.string().datetime(),
   shortcut: z.string().nullable().optional(),
-  isLabelSyncedWithName: z.boolean(),
+  shouldSyncLabelAndName: z.boolean(),
 }) satisfies z.ZodType<ObjectMetadataItem>;

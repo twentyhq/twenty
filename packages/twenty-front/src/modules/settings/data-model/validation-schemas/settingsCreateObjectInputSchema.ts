@@ -12,6 +12,6 @@ export const settingsCreateObjectInputSchema =
       namePlural:
         values.namePlural ??
         computeMetadataNameFromLabelOrThrow(values.labelPlural),
-      isLabelSyncedWithName: values.isLabelSyncedWithName ?? true,
+      shouldSyncLabelAndName: values.shouldSyncLabelAndName ?? true,
     }),
   );
