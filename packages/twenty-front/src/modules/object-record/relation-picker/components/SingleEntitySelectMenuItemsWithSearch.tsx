@@ -8,6 +8,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { Placement } from '@floating-ui/react';
 import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export type SingleEntitySelectMenuItemsWithSearchProps = {
   excludedRelationRecordIds?: string[];
@@ -97,7 +98,8 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
         </>
       )}
       <DropdownMenuSearchInput onChange={handleSearchFilterChange} autoFocus />
-      {dropdownPlacement?.includes('start') && (
+      {(dropdownPlacement?.includes('start') ||
+        isUndefinedOrNull(dropdownPlacement)) && (
         <>
           <DropdownMenuSeparator />
           {results}
