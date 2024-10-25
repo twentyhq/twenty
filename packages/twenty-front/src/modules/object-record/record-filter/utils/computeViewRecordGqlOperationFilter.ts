@@ -24,6 +24,7 @@ import {
   convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { isCurrencyCodeCompositeFilter } from '@/object-record/object-filter-dropdown/utils/isCurrencyCodeCompositeFilter';
 import { getEmptyRecordGqlOperationFilter } from '@/object-record/record-filter/utils/getEmptyRecordGqlOperationFilter';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
@@ -39,9 +40,9 @@ const computeFilterRecordGqlOperationFilter = (
     (field) => field.id === filter.fieldMetadataId,
   );
 
-  const compositeFieldName = filter.definition.compositeFieldName;
+  const subFieldName = filter.definition.subFieldName;
 
-  const isCompositeFieldFiter = isNonEmptyString(compositeFieldName);
+  const isCompositeFieldFiter = isNonEmptyString(subFieldName);
 
   const isEmptyOperand = [
     ViewFilterOperand.IsEmpty,
@@ -351,32 +352,68 @@ const computeFilterRecordGqlOperationFilter = (
       }
       break;
     }
-    case 'CURRENCY':
-      switch (filter.operand) {
-        case ViewFilterOperand.GreaterThan:
-          return {
-            [correspondingField.name]: {
-              amountMicros: { gte: parseFloat(filter.value) * 1000000 },
-            } as CurrencyFilter,
-          };
-        case ViewFilterOperand.LessThan:
-          return {
-            [correspondingField.name]: {
-              amountMicros: { lte: parseFloat(filter.value) * 1000000 },
-            } as CurrencyFilter,
-          };
-        case ViewFilterOperand.IsEmpty:
-        case ViewFilterOperand.IsNotEmpty:
-          return getEmptyRecordGqlOperationFilter(
-            filter.operand,
-            correspondingField,
-            filter.definition,
-          );
-        default:
-          throw new Error(
-            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
-          );
+    case 'CURRENCY': {
+      console.log({
+        filter,
+        isCompositeFieldFiter,
+        subFieldName,
+      });
+      if (
+        isCurrencyCodeCompositeFilter(filter.definition) ||
+        filter.operand === ViewFilterOperand.Contains
+      ) {
+        switch (filter.operand) {
+          case ViewFilterOperand.Contains:
+            return {
+              [correspondingField.name]: {
+                currencyCode: {
+                  ilike: `%${filter.value}%`,
+                } as StringFilter,
+              },
+            };
+          case ViewFilterOperand.DoesNotContain:
+            return {
+              not: {
+                [correspondingField.name]: {
+                  currencyCode: {
+                    ilike: `%${filter.value}%`,
+                  } as StringFilter,
+                },
+              },
+            };
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            );
+        }
+      } else {
+        switch (filter.operand) {
+          case ViewFilterOperand.GreaterThan:
+            return {
+              [correspondingField.name]: {
+                amountMicros: { gte: parseFloat(filter.value) * 1000000 },
+              } as CurrencyFilter,
+            };
+          case ViewFilterOperand.LessThan:
+            return {
+              [correspondingField.name]: {
+                amountMicros: { lte: parseFloat(filter.value) * 1000000 },
+              } as CurrencyFilter,
+            };
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            return getEmptyRecordGqlOperationFilter(
+              filter.operand,
+              correspondingField,
+              filter.definition,
+            );
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            );
+        }
       }
+    }
     case 'LINKS': {
       const linksFilters = generateILikeFiltersForCompositeFields(
         filter.value,
@@ -393,7 +430,7 @@ const computeFilterRecordGqlOperationFilter = (
           } else {
             return {
               [correspondingField.name]: {
-                [compositeFieldName]: {
+                [subFieldName]: {
                   ilike: `%${filter.value}%`,
                 },
               },
@@ -412,7 +449,7 @@ const computeFilterRecordGqlOperationFilter = (
             return {
               not: {
                 [correspondingField.name]: {
-                  [compositeFieldName]: {
+                  [subFieldName]: {
                     ilike: `%${filter.value}%`,
                   },
                 },
@@ -447,7 +484,7 @@ const computeFilterRecordGqlOperationFilter = (
           } else {
             return {
               [correspondingField.name]: {
-                [compositeFieldName]: {
+                [subFieldName]: {
                   ilike: `%${filter.value}%`,
                 },
               },
@@ -466,7 +503,7 @@ const computeFilterRecordGqlOperationFilter = (
             return {
               not: {
                 [correspondingField.name]: {
-                  [compositeFieldName]: {
+                  [subFieldName]: {
                     ilike: `%${filter.value}%`,
                   },
                 },
@@ -539,7 +576,7 @@ const computeFilterRecordGqlOperationFilter = (
           } else {
             return {
               [correspondingField.name]: {
-                [compositeFieldName]: {
+                [subFieldName]: {
                   ilike: `%${filter.value}%`,
                 } as AddressFilter,
               },
@@ -576,13 +613,40 @@ const computeFilterRecordGqlOperationFilter = (
                     } as AddressFilter,
                   },
                 },
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      addressState: {
+                        ilike: `%${filter.value}%`,
+                      },
+                    } as AddressFilter,
+                  },
+                },
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      addressCountry: {
+                        ilike: `%${filter.value}%`,
+                      },
+                    } as AddressFilter,
+                  },
+                },
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      addressPostcode: {
+                        ilike: `%${filter.value}%`,
+                      },
+                    } as AddressFilter,
+                  },
+                },
               ],
             };
           } else {
             return {
               not: {
                 [correspondingField.name]: {
-                  [compositeFieldName]: {
+                  [subFieldName]: {
                     ilike: `%${filter.value}%`,
                   } as AddressFilter,
                 },

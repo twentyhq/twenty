@@ -1,9 +1,10 @@
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { isActorSourceCompositeFilter } from '@/object-record/object-filter-dropdown/utils/isActorSourceCompositeFilter';
+import { isCurrencyCodeCompositeFilter } from '@/object-record/object-filter-dropdown/utils/isCurrencyCodeCompositeFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 export const getOperandsForFilterDefinition = (
-  filterDefinition: Pick<FilterDefinition, 'type' | 'compositeFieldName'>,
+  filterDefinition: Pick<FilterDefinition, 'type' | 'subFieldName'>,
 ): ViewFilterOperand[] => {
   const emptyOperands = [
     ViewFilterOperand.IsEmpty,
@@ -24,7 +25,21 @@ export const getOperandsForFilterDefinition = (
         ViewFilterOperand.DoesNotContain,
         ...emptyOperands,
       ];
-    case 'CURRENCY':
+    case 'CURRENCY': {
+      if (isCurrencyCodeCompositeFilter(filterDefinition)) {
+        return [
+          ViewFilterOperand.Contains,
+          ViewFilterOperand.DoesNotContain,
+          ...emptyOperands,
+        ];
+      } else {
+        return [
+          ViewFilterOperand.GreaterThan,
+          ViewFilterOperand.LessThan,
+          ...emptyOperands,
+        ];
+      }
+    }
     case 'NUMBER':
       return [
         ViewFilterOperand.GreaterThan,

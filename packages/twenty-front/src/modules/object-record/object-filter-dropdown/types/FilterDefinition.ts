@@ -11,5 +11,5 @@ export type FilterDefinition = {
   relationObjectMetadataNameSingular?: string;
   selectAllLabel?: string;
   SelectAllIcon?: IconComponent;
-  compositeFieldName?: string;
+  subFieldName?: string;
 };

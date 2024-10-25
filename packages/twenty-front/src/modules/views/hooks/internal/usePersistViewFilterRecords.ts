@@ -57,6 +57,7 @@ export const usePersistViewFilterRecords = () => {
                 displayValue: viewFilter.displayValue,
                 operand: viewFilter.operand,
                 viewFilterGroupId: viewFilter.viewFilterGroupId,
+                subFieldName: viewFilter.definition?.subFieldName,
               },
             },
             update: (cache, { data }) => {

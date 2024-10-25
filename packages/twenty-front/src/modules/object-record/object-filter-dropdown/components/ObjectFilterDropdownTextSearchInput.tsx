@@ -39,29 +39,39 @@ export const ObjectFilterDropdownTextSearchInput = () => {
     },
     [hasFocused],
   );
-  return (
-    filterDefinitionUsedInDropdown &&
-    selectedOperandInDropdown && (
-      <DropdownMenuSearchInput
-        ref={handleInputRef}
-        autoFocus
-        type="text"
-        placeholder={filterDefinitionUsedInDropdown.label}
-        value={selectedFilter?.value ?? objectFilterDropdownSearchInput}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => {
-          setObjectFilterDropdownSearchInput(event.target.value);
 
-          selectFilter?.({
-            id: selectedFilter?.id ?? filterId,
-            fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
-            value: event.target.value,
-            operand: selectedOperandInDropdown,
-            displayValue: event.target.value,
-            definition: filterDefinitionUsedInDropdown,
-            viewFilterGroupId: selectedFilter?.viewFilterGroupId,
-          });
-        }}
-      />
-    )
+  console.log({
+    filterDefinitionUsedInDropdown,
+    selectedOperandInDropdown,
+  });
+
+  const shouldNotRender =
+    !filterDefinitionUsedInDropdown || !selectedOperandInDropdown;
+
+  if (shouldNotRender) {
+    return null;
+  }
+
+  return (
+    <DropdownMenuSearchInput
+      ref={handleInputRef}
+      autoFocus
+      type="text"
+      placeholder={filterDefinitionUsedInDropdown.label}
+      value={selectedFilter?.value ?? objectFilterDropdownSearchInput}
+      onChange={(event: ChangeEvent<HTMLInputElement>) => {
+        setObjectFilterDropdownSearchInput(event.target.value);
+
+        selectFilter?.({
+          id: selectedFilter?.id ?? filterId,
+          fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
+          value: event.target.value,
+          operand: selectedOperandInDropdown,
+          displayValue: event.target.value,
+          definition: filterDefinitionUsedInDropdown,
+          viewFilterGroupId: selectedFilter?.viewFilterGroupId,
+        });
+      }}
+    />
   );
 };

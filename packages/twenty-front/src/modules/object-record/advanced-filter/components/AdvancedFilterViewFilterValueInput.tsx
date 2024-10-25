@@ -51,10 +51,11 @@ export const AdvancedFilterViewFilterValueInput = ({
         />
       }
       onOpen={() => {
-        setFilterDefinitionUsedInDropdown(filter.definition);
-        setSelectedOperandInDropdown(filter.operand);
-        setIsObjectFilterDropdownOperandSelectUnfolded(true);
-        setSelectedFilter(filter);
+        console.log({ filter });
+        // setFilterDefinitionUsedInDropdown(filter.definition);
+        // setSelectedOperandInDropdown(filter.operand);
+        // setIsObjectFilterDropdownOperandSelectUnfolded(true);
+        // setSelectedFilter(filter);
       }}
       dropdownComponents={
         <DropdownMenuItemsContainer>

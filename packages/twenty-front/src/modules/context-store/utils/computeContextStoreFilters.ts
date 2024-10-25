@@ -10,6 +10,10 @@ export const computeContextStoreFilters = (
 ) => {
   let queryFilter: RecordGqlOperationFilter | undefined;
 
+  console.log({
+    contextStoreTargetedRecordsRule,
+  });
+
   if (contextStoreTargetedRecordsRule.mode === 'exclusion') {
     queryFilter = makeAndFilterVariables([
       computeViewRecordGqlOperationFilter(

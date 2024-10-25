@@ -1,17 +1,17 @@
 import {
-  ActorFilter,
-  AddressFilter,
-  ArrayFilter,
-  CurrencyFilter,
-  DateFilter,
-  EmailsFilter,
-  FloatFilter,
-  RawJsonFilter,
-  RecordGqlOperationFilter,
-  RelationFilter,
-  StringFilter,
-  URLFilter,
-  UUIDFilter,
+    ActorFilter,
+    AddressFilter,
+    ArrayFilter,
+    CurrencyFilter,
+    DateFilter,
+    EmailsFilter,
+    FloatFilter,
+    RawJsonFilter,
+    RecordGqlOperationFilter,
+    RelationFilter,
+    StringFilter,
+    URLFilter,
+    UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -26,7 +26,7 @@ export const getEmptyRecordGqlOperationFilter = (
 ) => {
   let emptyRecordFilter: RecordGqlOperationFilter = {};
 
-  const compositeFieldName = definition.compositeFieldName;
+  const compositeFieldName = definition.subFieldName;
 
   const isCompositeField = isNonEmptyString(compositeFieldName);
 

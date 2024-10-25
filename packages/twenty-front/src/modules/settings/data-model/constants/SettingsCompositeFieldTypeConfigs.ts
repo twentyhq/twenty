@@ -1,3 +1,4 @@
+import { FilterableFieldType } from '@/object-record/object-filter-dropdown/types/FilterableFieldType';
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
   FieldActorValue,
@@ -26,6 +27,7 @@ export type SettingsCompositeFieldTypeConfig<T> = SettingsFieldTypeConfig<T> & {
   filterableSubFields: (keyof T)[];
   labelBySubField: Record<keyof T, string>;
   exampleValue: T;
+  filterTypeBySubField?: Record<keyof T, FilterableFieldType>;
 };
 
 type SettingsCompositeFieldTypeConfigArray = Record<
@@ -37,11 +39,15 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.Currency]: {
     label: 'Currency',
     Icon: IllustrationIconCurrency,
-    subFields: ['amountMicros'],
-    filterableSubFields: ['amountMicros'],
+    subFields: ['amountMicros', 'currencyCode'],
+    filterableSubFields: ['amountMicros', 'currencyCode'],
     labelBySubField: {
       amountMicros: 'Amount',
-      currencyCode: 'Currency',
+      currencyCode: 'Currency Code',
+    },
+    filterTypeBySubField: {
+      amountMicros: 'NUMBER',
+      currencyCode: 'TEXT',
     },
     exampleValue: {
       amountMicros: 2000000000,

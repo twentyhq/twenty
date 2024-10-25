@@ -11,6 +11,5 @@ export type Filter = {
   displayAvatarUrl?: string;
   operand: ViewFilterOperand;
   positionInViewFilterGroup?: number | null;
-  subFieldName?: string;
   definition: FilterDefinition;
 };

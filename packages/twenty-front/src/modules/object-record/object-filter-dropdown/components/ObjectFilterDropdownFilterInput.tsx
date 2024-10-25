@@ -9,91 +9,96 @@ import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-d
 import { ObjectFilterDropdownSourceSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSourceSelect';
 import { ObjectFilterDropdownTextSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownTextSearchInput';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { isActorSourceCompositeFilter } from '@/object-record/object-filter-dropdown/utils/isActorSourceCompositeFilter';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-ui';
 
-import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
-import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
-import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
+import { getFilterInputTypeToUse } from '@/object-record/object-filter-dropdown/utils/getFilterInputTypeToUse';
 
 type ObjectFilterDropdownFilterInputProps = {
   filterDropdownId?: string;
 };
 
-export const ObjectFilterDropdownFilterInput = ({
-  filterDropdownId,
-}: ObjectFilterDropdownFilterInputProps) => {
-  const {
-    filterDefinitionUsedInDropdownState,
-    selectedOperandInDropdownState,
-  } = useFilterDropdown({ filterDropdownId });
+export const ObjectFilterDropdownFilterInput =
+  ({}: ObjectFilterDropdownFilterInputProps) => {
+    const {
+      filterDefinitionUsedInDropdownState,
+      selectedOperandInDropdownState,
+    } = useFilterDropdown();
 
-  const filterDefinitionUsedInDropdown = useRecoilValue(
-    filterDefinitionUsedInDropdownState,
-  );
+    const filterDefinitionUsedInDropdown = useRecoilValue(
+      filterDefinitionUsedInDropdownState,
+    );
 
-  const selectedOperandInDropdown = useRecoilValue(
-    selectedOperandInDropdownState,
-  );
+    const selectedOperandInDropdown = useRecoilValue(
+      selectedOperandInDropdownState,
+    );
 
-  const isConfigurable =
-    selectedOperandInDropdown &&
-    [
-      ViewFilterOperand.Is,
-      ViewFilterOperand.IsNotNull,
-      ViewFilterOperand.IsNot,
-      ViewFilterOperand.LessThan,
-      ViewFilterOperand.GreaterThan,
-      ViewFilterOperand.IsBefore,
-      ViewFilterOperand.IsAfter,
-      ViewFilterOperand.Contains,
-      ViewFilterOperand.DoesNotContain,
-      ViewFilterOperand.IsRelative,
-    ].includes(selectedOperandInDropdown);
+    const isConfigurable =
+      selectedOperandInDropdown &&
+      [
+        ViewFilterOperand.Is,
+        ViewFilterOperand.IsNotNull,
+        ViewFilterOperand.IsNot,
+        ViewFilterOperand.LessThan,
+        ViewFilterOperand.GreaterThan,
+        ViewFilterOperand.IsBefore,
+        ViewFilterOperand.IsAfter,
+        ViewFilterOperand.Contains,
+        ViewFilterOperand.DoesNotContain,
+        ViewFilterOperand.IsRelative,
+      ].includes(selectedOperandInDropdown);
 
-  if (!isDefined(filterDefinitionUsedInDropdown)) {
-    return null;
-  }
+    if (!isDefined(filterDefinitionUsedInDropdown)) {
+      return null;
+    }
 
-  return (
-    <>
-      {isConfigurable && selectedOperandInDropdown && (
-        <>
-          {TEXT_FILTER_TYPES.includes(filterDefinitionUsedInDropdown.type) &&
-            !isActorSourceCompositeFilter(filterDefinitionUsedInDropdown) && (
+    const filterInputTypeToUse = getFilterInputTypeToUse(
+      filterDefinitionUsedInDropdown,
+    );
+
+    console.log({
+      filterDefinitionUsedInDropdown,
+
+      filterInputTypeToUse,
+    });
+
+    return (
+      <>
+        {isConfigurable && selectedOperandInDropdown && (
+          <>
+            {filterInputTypeToUse === 'text' && (
               <ObjectFilterDropdownTextSearchInput />
             )}
-          {NUMBER_FILTER_TYPES.includes(
-            filterDefinitionUsedInDropdown.type,
-          ) && <ObjectFilterDropdownNumberInput />}
-          {filterDefinitionUsedInDropdown.type === 'RATING' && (
-            <ObjectFilterDropdownRatingInput />
-          )}
-          {DATE_FILTER_TYPES.includes(filterDefinitionUsedInDropdown.type) && (
-            <ObjectFilterDropdownDateInput />
-          )}
-          {filterDefinitionUsedInDropdown.type === 'RELATION' && (
-            <>
-              <ObjectFilterDropdownSearchInput />
-              <ObjectFilterDropdownRecordSelect />
-            </>
-          )}
-          {isActorSourceCompositeFilter(filterDefinitionUsedInDropdown) && (
-            <>
-              <DropdownMenuSeparator />
-              <ObjectFilterDropdownSourceSelect />
-            </>
-          )}
-          {filterDefinitionUsedInDropdown.type === 'SELECT' && (
-            <>
-              <ObjectFilterDropdownSearchInput />
-              <ObjectFilterDropdownOptionSelect />
-            </>
-          )}
-        </>
-      )}
-    </>
-  );
-};
+            {filterInputTypeToUse === 'number' && (
+              <ObjectFilterDropdownNumberInput />
+            )}
+            {filterInputTypeToUse === 'rating' && (
+              <ObjectFilterDropdownRatingInput />
+            )}
+            {filterInputTypeToUse === 'date' && (
+              <ObjectFilterDropdownDateInput />
+            )}
+            {filterInputTypeToUse === 'relation' && (
+              <>
+                <ObjectFilterDropdownSearchInput />
+                <ObjectFilterDropdownRecordSelect />
+              </>
+            )}
+            {filterInputTypeToUse === 'source' && (
+              <>
+                <DropdownMenuSeparator />
+                <ObjectFilterDropdownSourceSelect />
+              </>
+            )}
+            {filterInputTypeToUse === 'select' && (
+              <>
+                <ObjectFilterDropdownSearchInput />
+                <ObjectFilterDropdownOptionSelect />
+              </>
+            )}
+          </>
+        )}
+      </>
+    );
+  };

@@ -17,6 +17,8 @@ export const mapViewFiltersToFilters = (
 
       if (!availableFilterDefinition) return null;
 
+      const subFieldName = viewFilter.subFieldName;
+
       return {
         id: viewFilter.id,
         fieldMetadataId: viewFilter.fieldMetadataId,
@@ -25,8 +27,10 @@ export const mapViewFiltersToFilters = (
         operand: viewFilter.operand,
         viewFilterGroupId: viewFilter.viewFilterGroupId,
         positionInViewFilterGroup: viewFilter.positionInViewFilterGroup,
-        subFieldName: viewFilter.subFieldName,
-        definition: viewFilter.definition ?? availableFilterDefinition,
+        definition: {
+          ...(viewFilter.definition ?? availableFilterDefinition),
+          subFieldName,
+        },
       } satisfies Filter;
     })
     .filter(isDefined);
