@@ -1,56 +1,119 @@
-import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsObjectSummaryCard } from '@/settings/data-model/object-details/components/SettingsObjectSummaryCard';
+import { ObjectFields } from '@/settings/data-model/object-details/components/tabs/ObjectFields';
+import { ObjectIndexes } from '@/settings/data-model/object-details/components/tabs/ObjectIndexes';
+import { ObjectSettings } from '@/settings/data-model/object-details/components/tabs/ObjectSettings';
+import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/components/SettingsDataModelObjectTypeTag';
+import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
+import { TabList } from '@/ui/layout/tab/components/TabList';
+import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
-import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { Button, H2Title, IconPlus, UndecoratedLink } from 'twenty-ui';
-import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
-import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
+import {
+  Button,
+  H3Title,
+  IconCodeCircle,
+  IconListDetails,
+  IconPlus,
+  IconSettings,
+  IconTool,
+  MAIN_COLORS,
+  UndecoratedLink,
+} from 'twenty-ui';
 
-const StyledDiv = styled.div`
+const StyledTabListContainer = styled.div`
+  align-items: center;
+  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
+  box-sizing: border-box;
   display: flex;
-  justify-content: flex-end;
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(10)};
+  padding-left: ${({ theme }) => theme.spacing(8)};
+  .tab-list {
+    padding-left: 0px;
+  }
+  .tab-list > div {
+    padding: ${({ theme }) => theme.spacing(3) + ' 0'};
+  }
+`;
+
+const StyledContentContainer = styled.div`
+  flex: 1;
+  overflow-y: auto;
+`;
+
+const StyledObjectTypeTag = styled(SettingsDataModelObjectTypeTag)`
+  box-sizing: border-box;
+  height: ${({ theme }) => theme.spacing(5)};
+  margin-left: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledTitleContainer = styled.div`
+  display: flex;
+  padding-left: ${({ theme }) => theme.spacing(8)};
 `;
 
 export type SettingsObjectDetailPageContentProps = {
   objectMetadataItem: ObjectMetadataItem;
 };
 
+const TAB_LIST_COMPONENT_ID = 'object-details-tab-list';
+
 export const SettingsObjectDetailPageContent = ({
   objectMetadataItem,
 }: SettingsObjectDetailPageContentProps) => {
-  const navigate = useNavigate();
-
-  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
-
-  const handleDisableObject = async () => {
-    await updateOneObjectMetadataItem({
-      idToUpdate: objectMetadataItem.id,
-      updatePayload: { isActive: false },
-    });
-    navigate(getSettingsPagePath(SettingsPath.Objects));
-  };
-
-  const shouldDisplayAddFieldButton = !objectMetadataItem.isRemote;
+  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const activeTabId = useRecoilValue(activeTabIdState);
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
-
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
     'IS_UNIQUE_INDEXES_ENABLED',
   );
 
+  const tabs = [
+    {
+      id: 'fields',
+      title: 'Fields',
+      Icon: IconListDetails,
+      hide: false,
+    },
+    {
+      id: 'settings',
+      title: 'Settings',
+      Icon: IconSettings,
+      hide: false,
+    },
+    {
+      id: 'indexes',
+      title: 'Indexes',
+      Icon: IconCodeCircle,
+      hide: !isAdvancedModeEnabled || !isUniqueIndexesEnabled,
+      pill: <IconTool size={12} color={MAIN_COLORS.yellow} />,
+    },
+  ];
+
+  const renderActiveTabContent = () => {
+    switch (activeTabId) {
+      case 'fields':
+        return <ObjectFields objectMetadataItem={objectMetadataItem} />;
+      case 'settings':
+        return <ObjectSettings objectMetadataItem={objectMetadataItem} />;
+      case 'indexes':
+        return <ObjectIndexes objectMetadataItem={objectMetadataItem} />;
+      default:
+        return <></>;
+    }
+  };
+
+  const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
+
   return (
     <SubMenuTopBarContainer
-      title={objectMetadataItem.labelPlural}
       links={[
         {
           children: 'Workspace',
@@ -59,49 +122,35 @@ export const SettingsObjectDetailPageContent = ({
         { children: 'Objects', href: '/settings/objects' },
         { children: objectMetadataItem.labelPlural },
       ]}
-    >
-      <SettingsPageContainer>
-        <Section>
-          <H2Title title="About" description="Manage your object" />
-          <SettingsObjectSummaryCard
-            iconKey={objectMetadataItem.icon ?? undefined}
-            name={objectMetadataItem.labelPlural || ''}
-            objectMetadataItem={objectMetadataItem}
-            onDeactivate={handleDisableObject}
-            onEdit={() => navigate('./edit')}
-          />
-        </Section>
-        <Section>
-          <H2Title
-            title="Fields"
-            description={`Customise the fields available in the ${objectMetadataItem.labelSingular} views and their display order in the ${objectMetadataItem.labelSingular} detail view and menus.`}
-          />
-          <SettingsObjectFieldTable
-            objectMetadataItem={objectMetadataItem}
-            mode="view"
-          />
-          {shouldDisplayAddFieldButton && (
-            <StyledDiv>
-              <UndecoratedLink to={'./new-field/select'}>
-                <Button
-                  Icon={IconPlus}
-                  title="Add Field"
-                  size="small"
-                  variant="secondary"
-                />
-              </UndecoratedLink>
-            </StyledDiv>
-          )}
-        </Section>
-        {isAdvancedModeEnabled && isUniqueIndexesEnabled && (
-          <Section>
-            <H2Title
-              title="Indexes"
-              description={`Advanced feature to improve the performance of queries and to enforce unicity constraints.`}
+      actionButton={
+        activeTabId === 'fields' && (
+          <UndecoratedLink to={'./new-field/select'}>
+            <Button
+              title="New Field"
+              variant="primary"
+              size="small"
+              accent="blue"
+              Icon={IconPlus}
             />
-            <SettingsObjectIndexTable objectMetadataItem={objectMetadataItem} />
-          </Section>
-        )}
+          </UndecoratedLink>
+        )
+      }
+    >
+      <SettingsPageContainer removeLeftPadding>
+        <StyledTitleContainer>
+          <H3Title title={objectMetadataItem.labelPlural} />
+          <StyledObjectTypeTag objectTypeLabel={objectTypeLabel} />
+        </StyledTitleContainer>
+        <StyledTabListContainer>
+          <TabList
+            tabListId={TAB_LIST_COMPONENT_ID}
+            tabs={tabs}
+            className="tab-list"
+          />
+        </StyledTabListContainer>
+        <StyledContentContainer>
+          {renderActiveTabContent()}
+        </StyledContentContainer>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

@@ -176,7 +176,7 @@ export const SettingsDataModelObjectAboutForm = ({
             defaultValue={objectMetadataItem?.labelSingular}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                label={'Singular'}
+                label={'Label Singular'}
                 placeholder={'Listing'}
                 value={value}
                 onChange={(value) => {
@@ -199,7 +199,7 @@ export const SettingsDataModelObjectAboutForm = ({
             defaultValue={objectMetadataItem?.labelPlural}
             render={({ field: { onChange, value } }) => (
               <TextInput
-                label={'Plural'}
+                label={'Label Plural'}
                 placeholder={'Listings'}
                 value={value}
                 onChange={(value) => {

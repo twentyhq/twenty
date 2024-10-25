@@ -1503,8 +1503,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         name: `${existingObjectMetadata.nameSingular}Id`,
       };
 
-      const fieldsWihStandardRelation = await this.fieldMetadataRepository.find(
-        {
+      const fieldsWithStandardRelation =
+        await this.fieldMetadataRepository.find({
           where: {
             isCustom: false,
             settings: {
@@ -1512,17 +1512,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             },
             name: `${existingObjectMetadata.nameSingular}Id`,
           },
-        },
-      );
+        });
 
       await this.fieldMetadataRepository.update(searchCriteria, {
         name: `${updatedObjectMetadata.nameSingular}Id`,
       });
 
       await Promise.all(
-        fieldsWihStandardRelation.map(async (fieldWihStandardRelation) => {
+        fieldsWithStandardRelation.map(async (fieldWithStandardRelation) => {
           const relatedObject = await this.objectMetadataRepository.findOneBy({
-            id: fieldWihStandardRelation.objectMetadataId,
+            id: fieldWithStandardRelation.objectMetadataId,
             workspaceId: updatedObjectMetadata.workspaceId,
           });
 
@@ -1541,7 +1540,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             const relationTableName = computeObjectTargetTable(relatedObject);
             const columnName = `${existingObjectMetadata.nameSingular}Id`;
             const columnType = fieldMetadataTypeToColumnType(
-              fieldWihStandardRelation.type,
+              fieldWithStandardRelation.type,
             );
 
             await this.workspaceMigrationService.createCustomMigration(
