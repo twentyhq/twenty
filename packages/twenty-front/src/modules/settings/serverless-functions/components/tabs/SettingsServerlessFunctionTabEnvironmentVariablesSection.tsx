@@ -1,7 +1,6 @@
 import { SettingsServerlessFunctionTabEnvironmentVariableTableRow } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariableTableRow';
 import { ServerlessFunctionFormValues } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -15,6 +14,7 @@ import {
   IconPlus,
   IconSearch,
   MOBILE_VIEWPORT,
+  Section,
 } from 'twenty-ui';
 import { v4 } from 'uuid';
 
