@@ -55,14 +55,14 @@ export type WorkflowTriggerType = 'DATABASE_EVENT';
 
 type BaseTrigger = {
   type: WorkflowTriggerType;
-  input?: object;
-  outputSchema: object;
 };
 
 export type WorkflowDatabaseEventTrigger = BaseTrigger & {
   type: 'DATABASE_EVENT';
   settings: {
     eventName: string;
+    input?: object;
+    outputSchema: object;
   };
 };
 

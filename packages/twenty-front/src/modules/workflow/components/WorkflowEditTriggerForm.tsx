@@ -133,6 +133,7 @@ export const WorkflowEditTriggerForm = ({
                     type: 'DATABASE_EVENT',
                     settings: {
                       eventName: `${updatedRecordType}.${OBJECT_EVENT_TRIGGERS[0].value}`,
+                      outputSchema: {},
                     },
                   },
             );
@@ -163,6 +164,7 @@ export const WorkflowEditTriggerForm = ({
                     type: 'DATABASE_EVENT',
                     settings: {
                       eventName: `${availableMetadata[0].value}.${updatedEvent}`,
+                      outputSchema: {},
                     },
                   },
             );

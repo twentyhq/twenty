@@ -130,7 +130,7 @@ export class CodeIntrospectionService {
     } else if (type.startsWith('{') && type.endsWith('}')) {
       return this.generateFakeObjectFromTypeString(type);
     } else {
-      return null;
+      return faker.lorem.word();
     }
   }
 
