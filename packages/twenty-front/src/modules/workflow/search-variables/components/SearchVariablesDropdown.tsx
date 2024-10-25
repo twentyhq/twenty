@@ -36,6 +36,7 @@ const SearchVariablesDropdown = ({
   const { isDropdownOpen } = useDropdown(dropdownId);
   const availableVariablesInWorkflowStep =
     useAvailableVariablesInWorkflowStep();
+
   const [selectedStep, setSelectedStep] = useState<
     StepOutputSchema | undefined
   >(undefined);

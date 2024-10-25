@@ -1,5 +1,5 @@
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
-import { ApolloClient, useApolloClient, useMutation } from '@apollo/client';
+import { ApolloClient, useMutation } from '@apollo/client';
 import {
   ComputeStepSettingOutputSchemaInput,
   ComputeStepSettingOutputSchemaMutation,

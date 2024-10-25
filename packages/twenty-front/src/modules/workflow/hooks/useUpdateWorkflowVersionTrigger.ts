@@ -36,14 +36,15 @@ export const useUpdateWorkflowVersionTrigger = ({
         })
       )?.data?.computeStepSettingOutputSchema;
 
-      const trigger = outputSchema
-        ? { ...updatedTrigger, outputSchema }
-        : updatedTrigger;
+      updatedTrigger.settings = {
+        ...updatedTrigger.settings,
+        outputSchema: outputSchema || {},
+      };
 
       await updateOneWorkflowVersion({
         idToUpdate: workflow.currentVersion.id,
         updateOneRecordInput: {
-          trigger,
+          trigger: updatedTrigger,
         },
       });
 

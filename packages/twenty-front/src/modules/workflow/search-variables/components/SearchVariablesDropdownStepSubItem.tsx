@@ -28,6 +28,7 @@ const SearchVariablesDropdownStepSubItem = ({
 
   const handleSelect = (key: string) => {
     const selectedObject = getSelectedObject();
+
     if (isObject(selectedObject[key])) {
       setCurrentPath([...currentPath, key]);
     } else {
@@ -45,12 +46,17 @@ const SearchVariablesDropdownStepSubItem = ({
 
   const headerLabel = currentPath.length === 0 ? step.name : currentPath.at(-1);
 
+  const selectedObject = getSelectedObject();
+  const entries = Array.isArray(selectedObject)
+    ? selectedObject.map((item) => [item, item])
+    : Object.entries(selectedObject);
+
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={goBack}>
         {headerLabel}
       </DropdownMenuHeader>
-      {Object.entries(getSelectedObject()).map(([key, value]) => (
+      {entries.map(([key, value]) => (
         <MenuItemSelect
           key={key}
           selected={false}

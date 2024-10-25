@@ -21,10 +21,7 @@ import { CodeIntrospectionService } from 'src/modules/code-introspection/code-in
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { ComputeStepSettingOutputSchemaInput } from 'src/engine/core-modules/workflow/dtos/compute-step-setting-output-schema-input.dto';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
-import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
-import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
-import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
+import { generateFakeObjectRecordEvent } from 'src/engine/core-modules/event-emitter/utils/generate-fake-object-record-event';
 
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
@@ -47,32 +44,28 @@ export class WorkflowResolver {
     switch (stepType) {
       case WorkflowTriggerType.DATABASE_EVENT: {
         const [nameSingular, action] = step.settings.eventName.split('.');
-        const objectMetadata = await this.objectMetadataRepository.findOneBy({
-          nameSingular,
-        });
+
+        if (!['created', 'updated', 'deleted', 'destroyed'].includes(action)) {
+          return {};
+        }
+
+        const objectMetadata =
+          await this.objectMetadataRepository.findOneOrFail({
+            where: {
+              nameSingular,
+              workspaceId,
+            },
+            relations: ['fields'],
+          });
 
         if (!isDefined(objectMetadata)) {
           return {};
         }
 
-        const objectRecordEvent =
-          action === 'created'
-            ? new ObjectRecordCreateEvent()
-            : action === 'updated'
-              ? new ObjectRecordUpdateEvent()
-              : action === 'deleted'
-                ? new ObjectRecordDeleteEvent()
-                : action === 'destroyed'
-                  ? new ObjectRecordDestroyEvent()
-                  : null;
-
-        if (!isDefined(objectRecordEvent)) {
-          return {};
-        }
-
-        objectRecordEvent.objectMetadata = objectMetadata;
-
-        return {};
+        return generateFakeObjectRecordEvent(
+          objectMetadata,
+          action as 'created' | 'updated' | 'deleted' | 'destroyed',
+        );
       }
       case WorkflowActionType.SEND_EMAIL: {
         return { success: true };
