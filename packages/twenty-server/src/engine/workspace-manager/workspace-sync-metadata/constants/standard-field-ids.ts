@@ -490,6 +490,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   timeZone: '20202020-2d33-4c21-a86e-5943b050dd54',
   dateFormat: '20202020-af13-4e11-b1e7-b8cf5ea13dc0',
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
+  searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
 };
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
