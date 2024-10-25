@@ -6,6 +6,7 @@ import { useEntitySelectSearch } from '@/object-record/relation-picker/hooks/use
 import { useRelationPickerEntitiesOptions } from '@/object-record/relation-picker/hooks/useRelationPickerEntitiesOptions';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { Placement } from '@floating-ui/react';
 import { isDefined } from '~/utils/isDefined';
 
 export type SingleEntitySelectMenuItemsWithSearchProps = {
@@ -14,6 +15,7 @@ export type SingleEntitySelectMenuItemsWithSearchProps = {
   relationObjectNameSingular: string;
   relationPickerScopeId?: string;
   selectedRelationRecordIds: string[];
+  dropdownPlacement?: Placement | null;
 } & Pick<
   SingleEntitySelectMenuItemsProps,
   | 'EmptyIcon'
@@ -34,6 +36,7 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
   relationPickerScopeId = 'relation-picker',
   selectedEntity,
   selectedRelationRecordIds,
+  dropdownPlacement,
 }: SingleEntitySelectMenuItemsWithSearchProps) => {
   const { handleSearchFilterChange } = useEntitySelectSearch({
     relationPickerScopeId,
@@ -62,29 +65,44 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
     };
   }
 
+  const results = (
+    <SingleEntitySelectMenuItems
+      entitiesToSelect={entities.entitiesToSelect}
+      loading={entities.loading}
+      selectedEntity={
+        selectedEntity ??
+        (entities.selectedEntities.length === 1
+          ? entities.selectedEntities[0]
+          : undefined)
+      }
+      hotkeyScope={relationPickerScopeId}
+      onCreate={onCreateWithInput}
+      isFiltered={!!relationPickerSearchFilter}
+      {...{
+        EmptyIcon,
+        emptyLabel,
+        onCancel,
+        onEntitySelected,
+        showCreateButton,
+      }}
+    />
+  );
+
   return (
     <>
+      {dropdownPlacement?.includes('end') && (
+        <>
+          {results}
+          <DropdownMenuSeparator />
+        </>
+      )}
       <DropdownMenuSearchInput onChange={handleSearchFilterChange} autoFocus />
-      <DropdownMenuSeparator />
-      <SingleEntitySelectMenuItems
-        entitiesToSelect={entities.entitiesToSelect}
-        loading={entities.loading}
-        selectedEntity={
-          selectedEntity ??
-          (entities.selectedEntities.length === 1
-            ? entities.selectedEntities[0]
-            : undefined)
-        }
-        hotkeyScope={relationPickerScopeId}
-        onCreate={onCreateWithInput}
-        {...{
-          EmptyIcon,
-          emptyLabel,
-          onCancel,
-          onEntitySelected,
-          showCreateButton,
-        }}
-      />
+      {dropdownPlacement?.includes('start') && (
+        <>
+          <DropdownMenuSeparator />
+          {results}
+        </>
+      )}
     </>
   );
 };
