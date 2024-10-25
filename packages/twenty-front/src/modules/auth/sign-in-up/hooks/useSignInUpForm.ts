@@ -1,13 +1,13 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 
-const validationSchema = z
+export const validationSchema = z
   .object({
     exist: z.boolean(),
     email: z.string().trim().email('Email must be a valid email'),
