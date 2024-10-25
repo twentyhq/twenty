@@ -1,11 +1,9 @@
-import { Meta, StoryObj } from '@storybook/react';
-import { IconPlus } from 'twenty-ui';
-
-import { Button } from '@/ui/input/button/components/Button';
 import { BottomBar } from '@/ui/layout/bottom-bar/components/BottomBar';
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import styled from '@emotion/styled';
+import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
+import { Button, IconPlus } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   display: flex;

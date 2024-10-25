@@ -2,8 +2,7 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 
 import { StyledFormCardTitle } from '@/settings/data-model/fields/components/StyledFormCardTitle';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { Card, CardContent } from 'twenty-ui';
 
 type SettingsDataModelPreviewFormCardProps = {
   className?: string;

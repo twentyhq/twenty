@@ -4,17 +4,31 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
-import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
+import { useGenerateCombinedSearchRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedSearchRecordsQuery';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
 import {
   MultiObjectRecordQueryResult,
   useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray,
 } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
-import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
-import { useSearchFilterPerMetadataItem } from '@/object-record/relation-picker/hooks/useSearchFilterPerMetadataItem';
+import { useMemo } from 'react';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
+
+export const formatSearchResults = (
+  searchResults: MultiObjectRecordQueryResult | undefined,
+): MultiObjectRecordQueryResult => {
+  if (!searchResults) {
+    return {};
+  }
+
+  return Object.entries(searchResults).reduce((acc, [key, value]) => {
+    let newKey = key.replace(/^search/, '');
+    newKey = newKey.charAt(0).toLowerCase() + newKey.slice(1);
+    acc[newKey] = value;
+    return acc;
+  }, {} as MultiObjectRecordQueryResult);
+};
 
 export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
   selectedObjectRecordIds,
@@ -27,18 +41,14 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const { searchFilterPerMetadataItemNameSingular } =
-    useSearchFilterPerMetadataItem({
-      objectMetadataItems,
-      searchFilterValue,
-    });
-
-  const objectMetadataItemsUsedInSelectedIdsQuery = objectMetadataItems.filter(
-    ({ nameSingular }) => {
-      return selectedObjectRecordIds.some(({ objectNameSingular }) => {
-        return objectNameSingular === nameSingular;
-      });
-    },
+  const objectMetadataItemsUsedInSelectedIdsQuery = useMemo(
+    () =>
+      objectMetadataItems.filter(({ nameSingular }) => {
+        return selectedObjectRecordIds.some(({ objectNameSingular }) => {
+          return objectNameSingular === nameSingular;
+        });
+      }),
+    [objectMetadataItems, selectedObjectRecordIds],
   );
 
   const selectedAndMatchesSearchFilterTextFilterPerMetadataItem =
@@ -53,38 +63,25 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
 
           if (!isNonEmptyArray(selectedIds)) return null;
 
-          const searchFilter =
-            searchFilterPerMetadataItemNameSingular[nameSingular] ?? {};
           return [
             `filter${capitalize(nameSingular)}`,
             {
-              and: [
-                {
-                  ...searchFilter,
-                },
-                {
-                  id: {
-                    in: selectedIds,
-                  },
-                },
-              ],
+              id: {
+                in: selectedIds,
+              },
             },
           ];
         })
         .filter(isDefined),
     );
 
-  const { orderByFieldPerMetadataItem } = useOrderByFieldPerMetadataItem({
-    objectMetadataItems: objectMetadataItemsUsedInSelectedIdsQuery,
-  });
-
   const { limitPerMetadataItem } = useLimitPerMetadataItem({
     objectMetadataItems: objectMetadataItemsUsedInSelectedIdsQuery,
     limit,
   });
 
-  const multiSelectQueryForSelectedIds =
-    useGenerateCombinedFindManyRecordsQuery({
+  const multiSelectSearchQueryForSelectedIds =
+    useGenerateCombinedSearchRecordsQuery({
       operationSignatures: objectMetadataItemsUsedInSelectedIdsQuery.map(
         (objectMetadataItem) => ({
           objectNameSingular: objectMetadataItem.nameSingular,
@@ -97,22 +94,23 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
     loading: selectedAndMatchesSearchFilterObjectRecordsLoading,
     data: selectedAndMatchesSearchFilterObjectRecordsQueryResult,
   } = useQuery<MultiObjectRecordQueryResult>(
-    multiSelectQueryForSelectedIds ?? EMPTY_QUERY,
+    multiSelectSearchQueryForSelectedIds ?? EMPTY_QUERY,
     {
       variables: {
+        search: searchFilterValue,
         ...selectedAndMatchesSearchFilterTextFilterPerMetadataItem,
-        ...orderByFieldPerMetadataItem,
         ...limitPerMetadataItem,
       },
-      skip: !isDefined(multiSelectQueryForSelectedIds),
+      skip: !isDefined(multiSelectSearchQueryForSelectedIds),
     },
   );
 
   const {
     objectRecordForSelectArray: selectedAndMatchesSearchFilterObjectRecords,
   } = useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray({
-    multiObjectRecordsQueryResult:
+    multiObjectRecordsQueryResult: formatSearchResults(
       selectedAndMatchesSearchFilterObjectRecordsQueryResult,
+    ),
   });
 
   return {

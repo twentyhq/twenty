@@ -52,12 +52,13 @@ export const ObjectFilterDropdownTextSearchInput = () => {
           setObjectFilterDropdownSearchInput(event.target.value);
 
           selectFilter?.({
-            id: selectedFilter?.id ? selectedFilter.id : filterId,
+            id: selectedFilter?.id ?? filterId,
             fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
             value: event.target.value,
             operand: selectedOperandInDropdown,
             displayValue: event.target.value,
             definition: filterDefinitionUsedInDropdown,
+            viewFilterGroupId: selectedFilter?.viewFilterGroupId,
           });
         }}
       />

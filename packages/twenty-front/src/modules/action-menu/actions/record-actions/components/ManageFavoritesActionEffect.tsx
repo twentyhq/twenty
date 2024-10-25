@@ -1,8 +1,9 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconHeart, IconHeartOff, isDefined } from 'twenty-ui';
@@ -16,8 +17,8 @@ export const ManageFavoritesActionEffect = ({
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
-  const contextStoreTargetedRecordsRule = useRecoilValue(
-    contextStoreTargetedRecordsRuleState,
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+    contextStoreTargetedRecordsRuleComponentState,
   );
 
   const { favorites, createFavorite, deleteFavorite } = useFavorites();

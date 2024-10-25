@@ -24,6 +24,7 @@ export const USER_QUERY_FRAGMENT = gql`
       inviteHash
       allowImpersonation
       activationStatus
+      isPublicInviteLinkEnabled
       featureFlags {
         id
         key

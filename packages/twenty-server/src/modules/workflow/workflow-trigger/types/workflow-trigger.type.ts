@@ -1,5 +1,6 @@
 export enum WorkflowTriggerType {
   DATABASE_EVENT = 'DATABASE_EVENT',
+  MANUAL = 'MANUAL',
 }
 
 type BaseTrigger = {
@@ -15,4 +16,20 @@ export type WorkflowDatabaseEventTrigger = BaseTrigger & {
   };
 };
 
-export type WorkflowTrigger = WorkflowDatabaseEventTrigger;
+export enum WorkflowManualTriggerAvailability {
+  EVERYWHERE = 'EVERYWHERE',
+  WHEN_RECORD_SELECTED = 'WHEN_RECORD_SELECTED',
+}
+
+export type WorkflowManualTrigger = BaseTrigger & {
+  type: WorkflowTriggerType.MANUAL;
+  settings: {
+    objectType?: string;
+  };
+};
+
+export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
+
+export type WorkflowTrigger =
+  | WorkflowDatabaseEventTrigger
+  | WorkflowManualTrigger;

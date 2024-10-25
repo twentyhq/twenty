@@ -1,3 +1,7 @@
+import { SettingsDataModelOverviewEffect } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewEffect';
+import { SettingsDataModelOverviewObject } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewObject';
+import { SettingsDataModelOverviewRelationMarkers } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewRelationMarkers';
+import { calculateHandlePosition } from '@/settings/data-model/graph-overview/utils/calculateHandlePosition';
 import styled from '@emotion/styled';
 import { useCallback, useState } from 'react';
 import ReactFlow, {
@@ -13,6 +17,8 @@ import ReactFlow, {
   useReactFlow,
 } from 'reactflow';
 import {
+  Button,
+  IconButtonGroup,
   IconLock,
   IconLockOpen,
   IconMaximize,
@@ -20,16 +26,7 @@ import {
   IconPlus,
   IconX,
 } from 'twenty-ui';
-
-import { SettingsDataModelOverviewEffect } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewEffect';
-import { SettingsDataModelOverviewObject } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewObject';
-import { SettingsDataModelOverviewRelationMarkers } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewRelationMarkers';
-import { calculateHandlePosition } from '@/settings/data-model/graph-overview/utils/calculateHandlePosition';
-import { Button } from '@/ui/input/button/components/Button';
-import { IconButtonGroup } from '@/ui/input/button/components/IconButtonGroup';
 import { isDefined } from '~/utils/isDefined';
-
-import 'reactflow/dist/style.css';
 
 const NodeTypes = {
   object: SettingsDataModelOverviewObject,

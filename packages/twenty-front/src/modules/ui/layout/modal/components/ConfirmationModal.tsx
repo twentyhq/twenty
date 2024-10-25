@@ -1,13 +1,12 @@
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { ReactNode, useState } from 'react';
-import { H1Title, H1TitleFontColor } from 'twenty-ui';
+import { Button, ButtonAccent, H1Title, H1TitleFontColor } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { Button, ButtonAccent } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 
-import { Modal } from '@/ui/layout/modal/components/Modal';
+import { Modal, ModalVariants } from '@/ui/layout/modal/components/Modal';
 import {
   Section,
   SectionAlignment,
@@ -26,6 +25,7 @@ export type ConfirmationModalProps = {
   confirmationValue?: string;
   confirmButtonAccent?: ButtonAccent;
   AdditionalButtons?: React.ReactNode;
+  modalVariant?: ModalVariants;
 };
 
 const StyledConfirmationModal = styled(Modal)`
@@ -71,6 +71,7 @@ export const ConfirmationModal = ({
   confirmationPlaceholder,
   confirmButtonAccent = 'danger',
   AdditionalButtons,
+  modalVariant = 'primary',
 }: ConfirmationModalProps) => {
   const [inputConfirmationValue, setInputConfirmationValue] =
     useState<string>('');
@@ -113,6 +114,7 @@ export const ConfirmationModal = ({
             onEnter={handleEnter}
             isClosable={true}
             padding="large"
+            modalVariant={modalVariant}
           >
             <StyledCenteredTitle>
               <H1Title title={title} fontColor={H1TitleFontColor.Primary} />

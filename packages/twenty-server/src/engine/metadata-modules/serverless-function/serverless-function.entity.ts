@@ -29,6 +29,9 @@ export class ServerlessFunctionEntity {
   @Column({ nullable: true })
   latestVersion: string;
 
+  @Column({ nullable: false, type: 'jsonb', default: [] })
+  publishedVersions: string[];
+
   @Column({ nullable: false, default: ServerlessFunctionRuntime.NODE18 })
   runtime: ServerlessFunctionRuntime;
 
