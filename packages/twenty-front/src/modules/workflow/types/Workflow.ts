@@ -62,20 +62,16 @@ export type WorkflowDatabaseEventTrigger = BaseTrigger & {
 
 export type WorkflowManualTrigger = BaseTrigger & {
   type: 'MANUAL';
-  settings:
-    | {
-        availability: 'EVERYWHERE';
-      }
-    | {
-        availability: 'WHEN_RECORD_SELECTED';
-        objectType: string;
-      };
+  settings: {
+    objectType?: string;
+  };
 };
 
 export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
 
 export type WorkflowManualTriggerAvailability =
-  WorkflowManualTrigger['settings']['availability'];
+  | 'EVERYWHERE'
+  | 'WHEN_RECORD_SELECTED';
 
 export type WorkflowTrigger =
   | WorkflowDatabaseEventTrigger

@@ -2,10 +2,13 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
 import { MANUAL_TRIGGER_AVAILABILITY_OPTIONS } from '@/workflow/constants/ManualTriggerAvailabilityOptions';
-import { WorkflowManualTrigger } from '@/workflow/types/Workflow';
+import {
+  WorkflowManualTrigger,
+  WorkflowManualTriggerAvailability,
+} from '@/workflow/types/Workflow';
 import { getManualTriggerDefaultSettings } from '@/workflow/utils/getManualTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
-import { IconHandMove } from 'twenty-ui';
+import { IconHandMove, isDefined } from 'twenty-ui';
 
 type WorkflowEditTriggerManualFormProps =
   | {
@@ -34,6 +37,11 @@ export const WorkflowEditTriggerManualForm = ({
       value: item.nameSingular,
     }));
 
+  const manualTriggerAvailability: WorkflowManualTriggerAvailability =
+    isDefined(trigger.settings.objectType)
+      ? 'WHEN_RECORD_SELECTED'
+      : 'EVERYWHERE';
+
   return (
     <WorkflowEditGenericFormBase
       HeaderIcon={<IconHandMove color={theme.font.color.tertiary} />}
@@ -45,7 +53,7 @@ export const WorkflowEditTriggerManualForm = ({
         label="Available"
         fullWidth
         disabled={readonly}
-        value={trigger.settings.availability}
+        value={manualTriggerAvailability}
         options={MANUAL_TRIGGER_AVAILABILITY_OPTIONS}
         onChange={(updatedTriggerType) => {
           if (readonly === true) {
@@ -62,7 +70,7 @@ export const WorkflowEditTriggerManualForm = ({
         }}
       />
 
-      {trigger.settings.availability === 'WHEN_RECORD_SELECTED' ? (
+      {manualTriggerAvailability === 'WHEN_RECORD_SELECTED' ? (
         <Select
           dropdownId="workflow-edit-manual-trigger-object"
           label="Object"
@@ -78,7 +86,6 @@ export const WorkflowEditTriggerManualForm = ({
             onTriggerUpdate({
               ...trigger,
               settings: {
-                availability: 'WHEN_RECORD_SELECTED',
                 objectType: updatedObject,
               },
             });

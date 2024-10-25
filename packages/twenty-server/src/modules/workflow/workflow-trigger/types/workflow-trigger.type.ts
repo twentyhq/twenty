@@ -23,14 +23,9 @@ export enum WorkflowManualTriggerAvailability {
 
 export type WorkflowManualTrigger = BaseTrigger & {
   type: WorkflowTriggerType.MANUAL;
-  settings:
-    | {
-        availability: WorkflowManualTriggerAvailability.EVERYWHERE;
-      }
-    | {
-        availability: WorkflowManualTriggerAvailability.WHEN_RECORD_SELECTED;
-        objectType: string;
-      };
+  settings: {
+    objectType?: string;
+  };
 };
 
 export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
