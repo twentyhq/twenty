@@ -9,28 +9,28 @@ image: /images/user-guide/create-workspace/workspace-cover.png
 ### Starting the app
 
 ```bash
- nx start twenty-front
+ yarn nx start twenty-front
  ```
 
 ### Regenerate graphql schema based on API graphql schema
 
 ```bash
-nx graphql:generate twenty-front
+yarn nx graphql:generate twenty-front
 ```
 
 ### Lint
 
 ```bash
-nx lint twenty-front
+yarn nx lint twenty-front
 ```
 
 ### Test
 
 ```bash
-nx test twenty-front# run jest tests
-nx storybook:serve:dev twenty-front# run storybook
-nx storybook:test twenty-front# run tests # (needs yarn storybook:serve:dev to be running)
-nx storybook:coverage twenty-front # (needs yarn storybook:serve:dev to be running)
+yarn nx test twenty-front# run jest tests
+yarn nx storybook:serve:dev twenty-front# run storybook
+yarn nx storybook:test twenty-front# run tests # (needs yarn storybook:serve:dev to be running)
+yarn nx storybook:coverage twenty-front # (needs yarn storybook:serve:dev to be running)
 ```
 
 ## Tech Stack
