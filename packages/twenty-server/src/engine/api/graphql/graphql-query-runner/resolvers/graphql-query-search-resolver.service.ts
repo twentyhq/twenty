@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
+import { Brackets } from 'typeorm';
 
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import {
@@ -81,18 +82,22 @@ export class GraphqlQuerySearchResolverService
       args.filter ?? ({} as Filter),
     );
 
-    const searchTermsWhereCondition = `((${
-      searchTerms === ''
-        ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
-        : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTerms)`
-    }) OR (${
-      searchTermsOr === ''
-        ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
-        : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTermsOr)`
-    }))`;
-
     const resultsWithTsVector = (await queryBuilderWithFilter
-      .andWhere(searchTermsWhereCondition)
+      .andWhere(
+        new Brackets((qb) => {
+          qb.where(
+            searchTerms === ''
+              ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
+              : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTerms)`,
+            searchTerms === '' ? {} : { searchTerms },
+          ).orWhere(
+            searchTermsOr === ''
+              ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
+              : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTermsOr)`,
+            searchTermsOr === '' ? {} : { searchTermsOr },
+          );
+        }),
+      )
       .orderBy(
         `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
         'DESC',
