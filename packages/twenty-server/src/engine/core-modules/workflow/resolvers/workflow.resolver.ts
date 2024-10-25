@@ -93,11 +93,15 @@ export class WorkflowResolver {
         const fakeFunctionInput =
           this.codeIntrospectionService.generateInputData(sourceCode);
 
+        // handle the case when event parameter is destructured:
+        // (event: {param1: string; param2: number}) VS ({param1, param2}: {param1: string; param2: number})
+        const formattedInput = Object.values(fakeFunctionInput)[0];
+
         const resultFromFakeInput =
           await this.serverlessFunctionService.executeOneServerlessFunction(
             serverlessFunctionId,
             workspaceId,
-            fakeFunctionInput,
+            formattedInput,
             serverlessFunctionVersion,
           );
 
