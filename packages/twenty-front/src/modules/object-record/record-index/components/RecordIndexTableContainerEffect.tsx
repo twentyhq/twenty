@@ -1,14 +1,14 @@
 import { useContext, useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 
 export const RecordIndexTableContainerEffect = () => {
@@ -24,17 +24,11 @@ export const RecordIndexTableContainerEffect = () => {
     selectedRowIdsSelector,
     setOnToggleColumnFilter,
     setOnToggleColumnSort,
+    hasUserSelectedAllRowsState,
+    unselectedRowIdsSelector,
   } = useRecordTable({
     recordTableId: recordIndexId,
   });
-
-  const setContextStoreTargetedRecordIds = useSetRecoilState(
-    contextStoreTargetedRecordIdsState,
-  );
-
-  const setContextStoreCurrentObjectMetadataItem = useSetRecoilState(
-    contextStoreCurrentObjectMetadataIdState,
-  );
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -49,8 +43,6 @@ export const RecordIndexTableContainerEffect = () => {
   useEffect(() => {
     setAvailableTableColumns(columnDefinitions);
   }, [columnDefinitions, setAvailableTableColumns]);
-
-  const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
 
   const handleToggleColumnFilter = useHandleToggleColumnFilter({
     objectNameSingular,
@@ -82,19 +74,38 @@ export const RecordIndexTableContainerEffect = () => {
     );
   }, [setRecordCountInCurrentView, setOnEntityCountChange]);
 
+  const setContextStoreTargetedRecords = useSetRecoilComponentStateV2(
+    contextStoreTargetedRecordsRuleComponentState,
+  );
+  const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
+  const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
+  const unselectedRowIds = useRecoilValue(unselectedRowIdsSelector());
+
   useEffect(() => {
-    setContextStoreTargetedRecordIds(selectedRowIds);
-    setContextStoreCurrentObjectMetadataItem(objectMetadataItem?.id);
+    if (hasUserSelectedAllRows) {
+      setContextStoreTargetedRecords({
+        mode: 'exclusion',
+        excludedRecordIds: unselectedRowIds,
+        filters: [],
+      });
+    } else {
+      setContextStoreTargetedRecords({
+        mode: 'selection',
+        selectedRecordIds: selectedRowIds,
+      });
+    }
 
     return () => {
-      setContextStoreTargetedRecordIds([]);
-      setContextStoreCurrentObjectMetadataItem(null);
+      setContextStoreTargetedRecords({
+        mode: 'selection',
+        selectedRecordIds: [],
+      });
     };
   }, [
-    objectMetadataItem?.id,
+    hasUserSelectedAllRows,
     selectedRowIds,
-    setContextStoreCurrentObjectMetadataItem,
-    setContextStoreTargetedRecordIds,
+    setContextStoreTargetedRecords,
+    unselectedRowIds,
   ]);
 
   return <></>;

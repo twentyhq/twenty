@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { actionMenuDropdownPositionComponentState } from '@/action-menu/states/actionMenuDropdownPositionComponentState';
+import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -23,7 +23,7 @@ export const useTriggerActionMenuDropdown = ({
 
         set(
           extractComponentState(
-            actionMenuDropdownPositionComponentState,
+            recordIndexActionMenuDropdownPositionComponentState,
             `action-menu-dropdown-${recordTableId}`,
           ),
           {

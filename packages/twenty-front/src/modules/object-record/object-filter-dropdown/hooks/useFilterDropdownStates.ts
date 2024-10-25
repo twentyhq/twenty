@@ -1,3 +1,5 @@
+import { advancedFilterViewFilterGroupIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterGroupIdComponentState';
+import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
 import { isObjectFilterDropdownOperandSelectUnfoldedComponentState } from '@/object-record/object-filter-dropdown/states/isObjectFilterDropdownOperandSelectUnfoldedComponentState';
 import { isObjectFilterDropdownUnfoldedComponentState } from '@/object-record/object-filter-dropdown/states/isObjectFilterDropdownUnfoldedComponentState';
@@ -56,6 +58,16 @@ export const useFilterDropdownStates = (scopeId: string) => {
     scopeId,
   );
 
+  const advancedFilterViewFilterGroupIdState = extractComponentState(
+    advancedFilterViewFilterGroupIdComponentState,
+    scopeId,
+  );
+
+  const advancedFilterViewFilterIdState = extractComponentState(
+    advancedFilterViewFilterIdComponentState,
+    scopeId,
+  );
+
   return {
     filterDefinitionUsedInDropdownState,
     objectFilterDropdownSearchInputState,
@@ -66,5 +78,7 @@ export const useFilterDropdownStates = (scopeId: string) => {
     selectedFilterState,
     selectedOperandInDropdownState,
     onFilterSelectState,
+    advancedFilterViewFilterGroupIdState,
+    advancedFilterViewFilterIdState,
   };
 };

@@ -1,7 +1,6 @@
-import React from 'react';
 import styled from '@emotion/styled';
-
-import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
+import React from 'react';
+import { AnimatedEaseIn } from 'twenty-ui';
 
 type TitleProps = React.PropsWithChildren & {
   animate?: boolean;

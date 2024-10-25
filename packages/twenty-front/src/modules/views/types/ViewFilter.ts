@@ -12,5 +12,7 @@ export type ViewFilter = {
   createdAt?: string;
   updatedAt?: string;
   viewId?: string;
+  viewFilterGroupId?: string;
+  positionInViewFilterGroup?: number | null;
   definition?: FilterDefinition;
 };

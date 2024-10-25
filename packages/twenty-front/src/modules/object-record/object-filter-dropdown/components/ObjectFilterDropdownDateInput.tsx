@@ -6,12 +6,12 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { computeVariableDateViewFilterValue } from '@/views/utils/view-filter-value/computeVariableDateViewFilterValue';
+import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';
 import {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
-} from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
-import { resolveFilterValue } from '@/views/utils/view-filter-value/resolveFilterValue';
+} from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
+import { resolveFilterValue } from '@/views/view-filter-value/utils/resolveFilterValue';
 import { useState } from 'react';
 import { isDefined } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -63,6 +63,7 @@ export const ObjectFilterDropdownDateInput = () => {
           : newDate.toLocaleDateString()
         : '',
       definition: filterDefinitionUsedInDropdown,
+      viewFilterGroupId: selectedFilter?.viewFilterGroupId,
     });
 
     setIsObjectFilterDropdownUnfolded(false);
@@ -92,6 +93,7 @@ export const ObjectFilterDropdownDateInput = () => {
       operand: selectedOperandInDropdown,
       displayValue: getRelativeDateDisplayValue(relativeDate),
       definition: filterDefinitionUsedInDropdown,
+      viewFilterGroupId: selectedFilter?.viewFilterGroupId,
     });
 
     setIsObjectFilterDropdownUnfolded(false);

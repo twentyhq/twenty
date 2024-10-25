@@ -1,20 +1,28 @@
+import {
+  File,
+  SettingsServerlessFunctionCodeEditor,
+} from '@/settings/serverless-functions/components/SettingsServerlessFunctionCodeEditor';
+import { SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/serverless-functions/constants/SettingsServerlessFunctionTabListComponentId';
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Button } from '@/ui/input/button/components/Button';
-import { CodeEditor, File } from '@/ui/input/code-editor/components/CodeEditor';
 import { CoreEditorHeader } from '@/ui/input/code-editor/components/CodeEditorHeader';
 import { Section } from '@/ui/layout/section/components/Section';
 import { TabList } from '@/ui/layout/tab/components/TabList';
+import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { Key } from 'ts-key-enum';
-import { H2Title, IconGitCommit, IconPlayerPlay, IconRestore } from 'twenty-ui';
-import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
-import { SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/serverless-functions/constants/SettingsServerlessFunctionTabListComponentId';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
+import {
+  Button,
+  H2Title,
+  IconGitCommit,
+  IconPlayerPlay,
+  IconRestore,
+} from 'twenty-ui';
+import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 const StyledTabList = styled(TabList)`
   border-bottom: none;
@@ -77,9 +85,11 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   const HeaderTabList = (
     <StyledTabList
       tabListId={SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}
-      tabs={files.map((file) => {
-        return { id: file.path, title: file.path.split('/').at(-1) || '' };
-      })}
+      tabs={files
+        .filter((file) => file.path !== '.env')
+        .map((file) => {
+          return { id: file.path, title: file.path.split('/').at(-1) || '' };
+        })}
     />
   );
 
@@ -107,7 +117,7 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
         rightNodes={[ResetButton, PublishButton, TestButton]}
       />
       {activeTabId && (
-        <CodeEditor
+        <SettingsServerlessFunctionCodeEditor
           files={files}
           currentFilePath={activeTabId}
           onChange={(newCodeValue) => onChange(activeTabId, newCodeValue)}
