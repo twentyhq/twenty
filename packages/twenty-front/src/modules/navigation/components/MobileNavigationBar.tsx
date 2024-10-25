@@ -6,7 +6,13 @@ import { NavigationDrawerHeader } from '@/ui/navigation/navigation-drawer/compon
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { getImageAbsoluteURI, IconSearch, IconSettings } from 'twenty-ui';
+import {
+  getImageAbsoluteURI,
+  IconComponent,
+  IconList,
+  IconSearch,
+  IconSettings,
+} from 'twenty-ui';
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 
@@ -19,6 +25,8 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
+import { NavigationBar } from '@/ui/navigation/navigation-bar/components/NavigationBar';
+import { NavigationBarItem } from '@/ui/navigation/navigation-bar/components/NavigationBarItem';
 
 // type NavigationBarItemName = 'main' | 'search' | 'tasks' | 'settings';
 
@@ -29,7 +37,6 @@ const NavigationWrapper = styled.div`
   width: 90%;
   margin: auto;
   overflow-x: auto;
-  overflow-y: hidden;
   padding: ${({ theme }) => theme.spacing(3)};
   z-index: 1001;
 `;
@@ -59,7 +66,7 @@ export const MobileNavigationBar = () => {
         ? 'settings'
         : 'main';
 
-  // const isMobile = useIsMobile();
+  const isMobile = useIsMobile();
   // const { toggleCommandMenu } = useCommandMenu();
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
@@ -117,6 +124,7 @@ export const MobileNavigationBar = () => {
       <NavigationWrapper>
         <NavigationItem>
           <NavigationDrawerHeader
+            visible={isMobile}
             name={title}
             logo={logo}
             showCollapseButton={false}
@@ -126,7 +134,7 @@ export const MobileNavigationBar = () => {
           <NavigationDrawerItem
             label="Search"
             Icon={IconSearch}
-            mobileNavigationDrawer = {true}
+            mobileNavigationDrawer={true}
             onClick={() => {
               if (!isCommandMenuOpened) {
                 openCommandMenu();
@@ -136,8 +144,25 @@ export const MobileNavigationBar = () => {
             // keyboard={['⌘', 'K']}
           />
         </NavigationItem>
-
         <NavigationItem>
+          <NavigationBarItem
+            key={'settings'}
+            Icon={IconSettings}
+            isActive={activeItemName === 'settings'}
+            onClick={() => {
+              closeCommandMenu();
+              // setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
+              setIsNavigationDrawerExpanded(
+                (previousIsOpen) =>
+                  activeItemName !== 'settings' || !previousIsOpen,
+              );
+              // setNavigationMemorizedUrl(location.pathname + location.search);
+              setCurrentMobileNavigationDrawer('settings');
+            }}
+          />
+        </NavigationItem>
+
+        {/* <NavigationItem>
           <NavigationDrawerItem
             mobileNavigationDrawer={true}
             label="Settings"
@@ -153,32 +178,33 @@ export const MobileNavigationBar = () => {
               // setNavigationMemorizedUrl(location.pathname + location.search);
               setCurrentMobileNavigationDrawer('settings');
             }}
-            
           />
-        </NavigationItem>
-        
+        </NavigationItem> */}
+
         {isWorkspaceFavoriteEnabled && (
           <NavigationItem>
-            <NavigationDrawerOpenedSection mobileNavigationDrawer={true}  />
+            <NavigationDrawerOpenedSection mobileNavigationDrawer={true} />
           </NavigationItem>
         )}
 
         <NavigationItem>
-          <CurrentWorkspaceMemberFavorites  mobileNavigationDrawer = {true}/>
+          <CurrentWorkspaceMemberFavorites mobileNavigationDrawer={true} />
         </NavigationItem>
 
         {isWorkspaceFavoriteEnabled ? (
           <NavigationItem>
-            <WorkspaceFavorites mobileNavigationDrawer = {true}/>
+            <WorkspaceFavorites mobileNavigationDrawer={true} />
           </NavigationItem>
         ) : (
-          <NavigationDrawerSectionForObjectMetadataItemsWrapper mobileNavigationDrawer={true}
+          <NavigationDrawerSectionForObjectMetadataItemsWrapper
+            mobileNavigationDrawer={true}
             isRemote={false}
           />
         )}
 
         <NavigationItem>
-          <NavigationDrawerSectionForObjectMetadataItemsWrapper mobileNavigationDrawer={true}
+          <NavigationDrawerSectionForObjectMetadataItemsWrapper
+            mobileNavigationDrawer={true}
             isRemote={true}
           />
         </NavigationItem>

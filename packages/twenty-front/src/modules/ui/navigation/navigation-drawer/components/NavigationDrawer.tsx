@@ -41,7 +41,7 @@ const StyledContainer = styled.div<{
     isSettings
       ? isMobile
         ? theme.spacing(3, 8)
-        : theme.spacing(3, 8, 4, 0)
+        : theme.spacing(3, 8)
       : theme.spacing(3, 2, 4)};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -113,6 +113,7 @@ export const NavigationDrawer = ({
           !isMobile && <NavigationDrawerBackButton title={title} />
         ) : (
           <NavigationDrawerHeader
+            visible={!isMobile}
             name={title}
             logo={logo}
             showCollapseButton={isHovered}

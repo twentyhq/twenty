@@ -32,6 +32,7 @@ export const NavigationDrawerSubItem = ({
       soon={soon}
       count={count}
       keyboard={keyboard}
+      mobileNavigationDrawer={true}
     />
   );
 };

@@ -37,16 +37,29 @@ export type NavigationDrawerItemProps = {
   count?: number;
   keyboard?: string[];
   mobileNavigationDrawer?: boolean;
+  isMobile?: boolean;
 };
 
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
-  'active' | 'danger' | 'indentationLevel' | 'soon' | 'to'
+  | 'active'
+  | 'danger'
+  | 'indentationLevel'
+  | 'soon'
+  | 'to'
+  | 'isMobile'
+  | 'mobileNavigationDrawer'
 > & { isNavigationDrawerExpanded: boolean };
 
 const StyledItem = styled('div', {
   shouldForwardProp: (prop) =>
-    !['active', 'danger', 'soon'].includes(prop) && isPropValid(prop),
+    ![
+      'active',
+      'danger',
+      'soon',
+      'isMobile',
+      'mobileNavigationDrawer',
+    ].includes(prop) && isPropValid(prop),
 })<StyledItemProps>`
   align-items: center;
   background: ${(props) =>
@@ -87,9 +100,11 @@ const StyledItem = styled('div', {
   pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
 
   width: ${(props) =>
-    !props.isNavigationDrawerExpanded
+    props.isMobile
       ? `${NAV_DRAWER_WIDTHS.menu.desktop.collapsed - 24}px`
-      : '100%'};
+      : !props.isNavigationDrawerExpanded
+        ? `${NAV_DRAWER_WIDTHS.menu.desktop.collapsed - 24}px`
+        : '100%'};
 
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
@@ -201,8 +216,9 @@ export const NavigationDrawerItem = ({
         to={to ? to : undefined}
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
+        isMobile={isMobile}
       >
-        {showBreadcrumb && (
+        {!isMobile && showBreadcrumb && (
           <NavigationDrawerAnimatedCollapseWrapper>
             <NavigationDrawerItemBreadcrumb state={subItemState} />
           </NavigationDrawerAnimatedCollapseWrapper>

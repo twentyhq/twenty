@@ -79,6 +79,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         <SubItemsWrapper>
           {sortedObjectMetadataViews.map((view, index) => (
             <NavigationDrawerSubItem
+              mobileNavigationDrawer={mobileNavigationDrawer}
               label={view.name}
               to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
               active={viewId === view.id}

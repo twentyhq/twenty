@@ -1,4 +1,3 @@
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -25,19 +24,26 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
   // }
 
   const animate: AnimationControls | TargetAndTransition =
-    isNavigationDrawerExpanded && !mobileNavigationDrawer
+    mobileNavigationDrawer
       ? {
-          opacity: 1,
-          width: 'auto',
-          height: 'auto',
-          pointerEvents: 'auto',
-        }
-      : {
           opacity: 0,
-          width: 0,
-          height: 0,
-          pointerEvents: 'none',
-        };
+            width: 0,
+            height: 0,
+            pointerEvents: 'none',
+        }
+      : isNavigationDrawerExpanded
+        ? {
+            opacity: 1,
+            width: 'auto',
+            height: 'auto',
+            pointerEvents: 'auto',
+          }
+        : {
+            opacity: 0,
+            width: 0,
+            height: 0,
+            pointerEvents: 'none',
+          };
 
   return (
     <StyledAnimatedContainer

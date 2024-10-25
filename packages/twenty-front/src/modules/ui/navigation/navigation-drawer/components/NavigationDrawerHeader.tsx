@@ -50,12 +50,14 @@ type NavigationDrawerHeaderProps = {
   name?: string;
   logo?: string;
   showCollapseButton: boolean;
+  visible: boolean;
 };
 
 export const NavigationDrawerHeader = ({
   name = DEFAULT_WORKSPACE_NAME,
   logo = DEFAULT_WORKSPACE_LOGO,
   showCollapseButton,
+  visible,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
   const workspaces = useRecoilValue(workspacesState);
@@ -63,7 +65,7 @@ export const NavigationDrawerHeader = ({
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
-
+  if (!visible) return <></>;
   return (
     <StyledContainer>
       {isMultiWorkspace ? (
