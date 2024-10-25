@@ -1,5 +1,7 @@
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
+import { CREATE_STEP_STEP_ID } from '@/workflow/constants/CreateStepStepId';
+import { EMPTY_TRIGGER_STEP_ID } from '@/workflow/constants/EmptyTriggerStepId';
 import { useStartNodeCreation } from '@/workflow/hooks/useStartNodeCreation';
 import { useTriggerNodeSelection } from '@/workflow/hooks/useTriggerNodeSelection';
 import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
@@ -26,7 +28,14 @@ export const WorkflowDiagramCanvasEditableEffect = () => {
         return;
       }
 
-      const isCreateStepNode = selectedNode.type === 'create-step';
+      const isEmptyTriggerNode = selectedNode.type === EMPTY_TRIGGER_STEP_ID;
+      if (isEmptyTriggerNode) {
+        openRightDrawer(RightDrawerPages.WorkflowStepSelectTriggerType);
+
+        return;
+      }
+
+      const isCreateStepNode = selectedNode.type === CREATE_STEP_STEP_ID;
       if (isCreateStepNode) {
         if (selectedNode.data.nodeType !== 'create-step') {
           throw new Error('Expected selected node to be a create step node.');
