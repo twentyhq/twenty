@@ -20,25 +20,26 @@ export const NavigationDrawerItemsCollapsedContainer = ({
 }: NavigationDrawerItemsCollapsedContainerProps) => {
   const theme = useTheme();
   const isSettingsPage = useIsSettingsPage();
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
-  const isExpanded = isNavigationDrawerExpanded || (isSettingsPage && !isMobile);
+  const isExpanded =
+    isNavigationDrawerExpanded || (isSettingsPage && !isMobile);
   let animate: AnimationControls | TargetAndTransition = {
     width: 'auto',
     backgroundColor: 'transparent',
     border: 'none',
-    flexGrow: 1
+    flexGrow: 1,
   };
   if (!isExpanded) {
-    animate = { 
-      width: 24,
-      flexGrow: 1
-     };
+    animate = {
+      width: isMobile ? 'auto' : 24,
+      flexGrow: 1,
+    };
     if (isGroup) {
       animate = {
-        width: 24,
+        width: isMobile ? 'auto' : 24,
         backgroundColor: theme.background.transparent.lighter,
         border: `1px solid ${theme.background.transparent.lighter}`,
         borderRadius: theme.border.radius.sm,

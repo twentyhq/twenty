@@ -28,7 +28,7 @@ const StyledAnimatedContainer = styled(motion.div)`
 `;
 
 const StyledContainer = styled.div<{
-  isSettings?: boolean;
+  isSettingsDrawer?: boolean;
   isMobile?: boolean;
 }>`
   box-sizing: border-box;
@@ -37,19 +37,19 @@ const StyledContainer = styled.div<{
   gap: ${({ theme }) => theme.spacing(3)};
   height: 100%;
   flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
-  padding: ${({ theme, isSettings, isMobile }) =>
-    isSettings
+  padding: ${({ theme, isSettingsDrawer, isMobile }) =>
+    isSettingsDrawer
       ? isMobile
         ? theme.spacing(3, 8)
         : theme.spacing(3, 8, 4, 0)
       : theme.spacing(3, 2, 4)};
-
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
     padding-left: 20px;
     padding-right: 20px;
   }
 `;
+
 const StyledItemsContainer = styled.div<{
   isMobile?: boolean;
 }>`
@@ -106,7 +106,7 @@ export const NavigationDrawer = ({
       }}
     >
       <StyledContainer
-        isSettings={isSettingsDrawer}
+        isSettingsDrawer={isSettingsDrawer}
         isMobile={isMobile}
         onMouseEnter={handleHover}
         onMouseLeave={handleMouseLeave}
@@ -120,7 +120,8 @@ export const NavigationDrawer = ({
             showCollapseButton={isHovered}
           />
         )}
-        <StyledItemsContainer isMobile={isMobile}>
+        <StyledItemsContainer 
+          isMobile={isMobile}>
           {children}
         </StyledItemsContainer>
         {footer}

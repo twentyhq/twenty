@@ -3,8 +3,11 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { IconSearch, IconSettings } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { NavigationDrawerSectionForObjectMetadataItemsWrapper } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsWrapper';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -30,10 +33,36 @@ export const MainNavigationDrawerItems = () => {
   const setNavigationDrawerExpandedMemorized = useSetRecoilState(
     navigationDrawerExpandedMemorizedState,
   );
+  const { closeCommandMenu, openCommandMenu } = useCommandMenu();
+  const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
+    useRecoilState(currentMobileNavigationDrawerState);
+  const isSettingsPage = useIsSettingsPage();
+
+  const activeItemName = isNavigationDrawerExpanded
+    ? currentMobileNavigationDrawer
+    : isCommandMenuOpenedState
+      ? 'search'
+      : isSettingsPage
+        ? 'settings'
+        : 'main';
+
+  const settingsOnClickFunction = () => {
+    if (isMobile) {
+      closeCommandMenu();
+      setIsNavigationDrawerExpanded(
+        (previousIsOpen) => activeItemName !== 'settings' || !previousIsOpen,
+      );
+      setCurrentMobileNavigationDrawer('settings');
+    } else{
+      setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
+      setIsNavigationDrawerExpanded(true);
+      setNavigationMemorizedUrl(location.pathname + location.search);
+    }
+  };
 
   return (
     <>
-      {(
+      {
         <NavigationDrawerSection isMobile={isMobile}>
           <NavigationDrawerItem
             label="Search"
@@ -44,15 +73,11 @@ export const MainNavigationDrawerItems = () => {
           <NavigationDrawerItem
             label="Settings"
             to={'/settings/profile'}
-            onClick={() => {
-              setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
-              setIsNavigationDrawerExpanded(true);
-              setNavigationMemorizedUrl(location.pathname + location.search);
-            }}
+            onClick={settingsOnClickFunction}
             Icon={IconSettings}
           />
         </NavigationDrawerSection>
-      )}
+      }
 
       {isWorkspaceFavoriteEnabled && <NavigationDrawerOpenedSection />}
 

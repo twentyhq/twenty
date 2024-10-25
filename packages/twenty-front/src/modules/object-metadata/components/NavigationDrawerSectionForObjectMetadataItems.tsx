@@ -52,7 +52,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Objects' + (isRemote ? 'Remote' : 'Workspace'));
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
 
   const sortedStandardObjectMetadataItems = [...objectMetadataItems]
     .filter((item) => ORDERED_STANDARD_OBJECTS.includes(item.nameSingular))

@@ -5,10 +5,9 @@ const StyledSection = styled.div<{
 }>`
   display: flex;
   gap: ${({ theme }) => theme.betweenSiblingsGap};
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
   flex-shrink: 1;
   overflow: hidden;
-  flex-direction: ${({ isMobile }) => isMobile ? "row" : "column"};
+  flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
   width: ${({ isMobile }) => isMobile ? '20%' : 'auto'};
   `;
 

@@ -8,7 +8,6 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
@@ -171,18 +170,19 @@ export const NavigationDrawerItem = ({
   const showBreadcrumb = indentationLevel === 2;
 
   const handleItemClick = () => {
-    if (isMobile) {
-      setIsNavigationDrawerExpanded(false);
-    }
+    // if (isMobile) {
+    //   setIsNavigationDrawerExpanded(false);
+    // }
 
     if (isDefined(onClick)) {
       onClick();
+      console.log(`isMobile: ${isMobile}, isNavigationDrawerExpaned: ${isNavigationDrawerExpanded}`)
       return;
     }
 
-    if (isNonEmptyString(to)) {
-      navigate(to);
-    }
+    // if (isNonEmptyString(to)) {
+    //   navigate(to);
+    // }
   };
 
   return (
