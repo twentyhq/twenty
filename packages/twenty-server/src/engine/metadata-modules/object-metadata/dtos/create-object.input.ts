@@ -86,4 +86,9 @@ export class CreateObjectInput {
   primaryKeyFieldMetadataSettings?: FieldMetadataSettings<
     FieldMetadataType | 'default'
   >;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  shouldSyncLabelAndName?: boolean;
 }

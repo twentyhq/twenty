@@ -1,3 +1,6 @@
+import toCamelCase from 'lodash.camelcase';
+import { slugify, transliterate } from 'transliteration';
+
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
@@ -40,6 +43,8 @@ const reservedKeywords = [
   'addresses',
 ];
 
+const METADATA_NAME_VALID_PATTERN = /^[a-zA-Z][a-zA-Z0-9]*$/;
+
 export const validateObjectMetadataInputOrThrow = <
   T extends UpdateObjectPayload | CreateObjectInput,
 >(
@@ -56,6 +61,30 @@ export const validateObjectMetadataInputOrThrow = <
 
   validateNameIsNotTooLongThrow(objectMetadataInput.nameSingular);
   validateNameIsNotTooLongThrow(objectMetadataInput.namePlural);
+};
+
+export const transliterateAndFormatOrThrow = (string?: string): string => {
+  if (!string) {
+    throw new ObjectMetadataException(
+      'Name is required',
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
+  let formattedString = string;
+
+  if (formattedString.match(METADATA_NAME_VALID_PATTERN) !== null) {
+    return toCamelCase(formattedString);
+  }
+
+  formattedString = toCamelCase(
+    slugify(transliterate(formattedString, { trim: true })),
+  );
+
+  if (!formattedString.match(METADATA_NAME_VALID_PATTERN)) {
+    throw new Error(`"${string}" is not a valid name`);
+  }
+
+  return formattedString;
 };
 
 const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
@@ -106,4 +135,10 @@ const validateNameCharactersOrThrow = (name?: string) => {
       throw error;
     }
   }
+};
+
+export const computeMetadataNameFromLabelOrThrow = (label: string): string => {
+  const formattedString = transliterateAndFormatOrThrow(label);
+
+  return formattedString;
 };

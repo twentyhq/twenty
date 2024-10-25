@@ -1,23 +1,23 @@
-import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { EnvironmentVariable } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariablesSection';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import styled from '@emotion/styled';
+import { useState } from 'react';
 import {
   IconCheck,
   IconDotsVertical,
   IconPencil,
   IconTrash,
   IconX,
+  LightIconButton,
   OverflowingTextWithTooltip,
 } from 'twenty-ui';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import React, { useState } from 'react';
-import styled from '@emotion/styled';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { EnvironmentVariable } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTabEnvironmentVariablesSection';
 
 const StyledEditModeTableRow = styled(TableRow)`
   grid-template-columns: 180px auto 56px;

@@ -82,4 +82,7 @@ export class ObjectMetadataDTO {
 
   @Field(() => String, { nullable: true })
   imageIdentifierFieldMetadataId?: string | null;
+
+  @Field()
+  shouldSyncLabelAndName: boolean;
 }

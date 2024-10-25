@@ -10,13 +10,13 @@ import {
   IconDoorEnter,
   IconFunction,
   IconHierarchy2,
+  IconKey,
   IconMail,
   IconRocket,
   IconSettings,
   IconTool,
   IconUserCircle,
   IconUsers,
-  IconKey,
   MAIN_COLORS,
 } from 'twenty-ui';
 

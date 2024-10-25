@@ -60,8 +60,6 @@ export const ViewPickerListContent = () => {
 
   const { getIcon } = useIcons();
 
-  const indexView = viewsOnCurrentObject.find((view) => view.key === 'INDEX');
-
   const handleDragEnd = useCallback(
     (result: DropResult) => {
       if (!result.destination) return;
@@ -81,33 +79,29 @@ export const ViewPickerListContent = () => {
   return (
     <>
       <DropdownMenuItemsContainer>
-        {indexView && (
-          <MenuItemDraggable
-            key={indexView.id}
-            iconButtons={[
-              {
-                Icon: IconLock,
-              },
-            ].filter(isDefined)}
-            isIconDisplayedOnHoverOnly={false}
-            onClick={() => handleViewSelect(indexView.id)}
-            LeftIcon={getIcon(indexView.icon)}
-            text={indexView.name}
-            accent="placeholder"
-            isDragDisabled
-          />
-        )}
         <DraggableList
           onDragEnd={handleDragEnd}
-          draggableItems={viewsOnCurrentObject
-            .filter((view) => indexView?.id !== view.id)
-            .map((view, index) => (
-              <DraggableItem
-                key={view.id}
-                draggableId={view.id}
-                index={index}
-                isDragDisabled={viewsOnCurrentObject.length === 1}
-                itemComponent={
+          draggableItems={viewsOnCurrentObject.map((view, index) => (
+            <DraggableItem
+              key={view.id}
+              draggableId={view.id}
+              index={index}
+              isDragDisabled={viewsOnCurrentObject.length === 1}
+              itemComponent={
+                view.key === 'INDEX' ? (
+                  <MenuItemDraggable
+                    key={view.id}
+                    iconButtons={[
+                      {
+                        Icon: IconLock,
+                      },
+                    ].filter(isDefined)}
+                    isIconDisplayedOnHoverOnly={false}
+                    onClick={() => handleViewSelect(view.id)}
+                    LeftIcon={getIcon(view.icon)}
+                    text={view.name}
+                  />
+                ) : (
                   <MenuItemDraggable
                     key={view.id}
                     iconButtons={[
@@ -117,16 +111,15 @@ export const ViewPickerListContent = () => {
                           handleEditViewButtonClick(event, view.id),
                       },
                     ].filter(isDefined)}
-                    isIconDisplayedOnHoverOnly={
-                      indexView?.id === view.id ? false : true
-                    }
+                    isIconDisplayedOnHoverOnly={true}
                     onClick={() => handleViewSelect(view.id)}
                     LeftIcon={getIcon(view.icon)}
                     text={view.name}
                   />
-                }
-              />
-            ))}
+                )
+              }
+            />
+          ))}
         />
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />

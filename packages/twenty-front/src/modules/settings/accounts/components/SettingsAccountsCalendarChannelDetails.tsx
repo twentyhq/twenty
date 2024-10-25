@@ -3,10 +3,9 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
 import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
-import { Card } from '@/ui/layout/card/components/Card';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
-import { H2Title, Toggle } from 'twenty-ui';
+import { H2Title, Toggle, Card } from 'twenty-ui';
 import { CalendarChannelVisibility } from '~/generated-metadata/graphql';
 
 const StyledDetailsContainer = styled.div`
