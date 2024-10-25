@@ -1,7 +1,8 @@
 import { Section } from '@/ui/layout/section/components/Section';
-import { H2Title, IconPlayerPlay } from 'twenty-ui';
+import { Button, H2Title, IconPlayerPlay } from 'twenty-ui';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
+import { SettingsServerlessFunctionCodeEditorContainer } from '@/settings/serverless-functions/components/SettingsServerlessFunctionCodeEditorContainer';
 import { SettingsServerlessFunctionsOutputMetadataInfo } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsOutputMetadataInfo';
 import { settingsServerlessFunctionCodeEditorOutputParamsState } from '@/settings/serverless-functions/states/settingsServerlessFunctionCodeEditorOutputParamsState';
 import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
@@ -9,7 +10,6 @@ import { settingsServerlessFunctionOutputState } from '@/settings/serverless-fun
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Button } from '@/ui/input/button/components/Button';
 import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 import { CoreEditorHeader } from '@/ui/input/code-editor/components/CodeEditorHeader';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -78,37 +78,30 @@ export const SettingsServerlessFunctionTestTab = ({
               />,
             ]}
           />
-          <CodeEditor
-            files={[
-              {
-                content: settingsServerlessFunctionInput,
-                language: 'json',
-                path: 'input.json',
-              },
-            ]}
-            currentFilePath={'input.json'}
-            height={200}
-            onChange={setSettingsServerlessFunctionInput}
-          />
+          <SettingsServerlessFunctionCodeEditorContainer>
+            <CodeEditor
+              value={settingsServerlessFunctionInput}
+              language="json"
+              height={200}
+              onChange={setSettingsServerlessFunctionInput}
+            />
+          </SettingsServerlessFunctionCodeEditorContainer>
         </div>
         <div>
           <CoreEditorHeader
             leftNodes={[<SettingsServerlessFunctionsOutputMetadataInfo />]}
             rightNodes={[<LightCopyIconButton copyText={result} />]}
           />
-          <CodeEditor
-            files={[
-              {
-                content: result,
-                language:
-                  settingsServerlessFunctionCodeEditorOutputParams.language,
-                path: 'result.any',
-              },
-            ]}
-            currentFilePath={'result.any'}
-            height={settingsServerlessFunctionCodeEditorOutputParams.height}
-            options={{ readOnly: true, domReadOnly: true }}
-          />
+          <SettingsServerlessFunctionCodeEditorContainer>
+            <CodeEditor
+              value={result}
+              language={
+                settingsServerlessFunctionCodeEditorOutputParams.language
+              }
+              height={settingsServerlessFunctionCodeEditorOutputParams.height}
+              options={{ readOnly: true, domReadOnly: true }}
+            />
+          </SettingsServerlessFunctionCodeEditorContainer>
         </div>
       </StyledInputsContainer>
     </Section>

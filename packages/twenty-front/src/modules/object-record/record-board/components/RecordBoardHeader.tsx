@@ -17,6 +17,10 @@ const StyledHeaderContainer = styled.div`
     position: sticky;
     top: 0;
   }
+
+  & > *:not(:first-of-type) {
+    border-left: 1px solid ${({ theme }) => theme.border.color.light};
+  }
 `;
 
 export const RecordBoardHeader = () => {
@@ -27,7 +31,7 @@ export const RecordBoardHeader = () => {
   return (
     <StyledHeaderContainer id="record-board-header">
       {columnIds.map((columnId) => (
-        <RecordBoardColumnHeaderWrapper columnId={columnId} />
+        <RecordBoardColumnHeaderWrapper columnId={columnId} key={columnId} />
       ))}
     </StyledHeaderContainer>
   );

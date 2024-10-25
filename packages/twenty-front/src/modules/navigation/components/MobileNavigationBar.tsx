@@ -2,19 +2,23 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { useFilteredObjectMetadataItemsForWorkspaceFavorites } from '@/navigation/hooks/useObjectMetadataItemsInWorkspaceFavorites';
-import { NavigationBar } from '@/ui/navigation/navigation-bar/components/NavigationBar';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { AvatarType, IconComponent, IconList, IconSearch, IconSettings, useIcons } from 'twenty-ui';
-import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
-import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
-import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { View } from '@/views/types/View';
-import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
+import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
+import { useNavigate } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import {
+  AvatarType,
+  IconComponent,
+  NavigationBar,
+  useIcons
+} from 'twenty-ui';
+import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
+import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 
 type NavigationBarItemName = 'main' | 'search' | 'tasks' | 'settings';
 

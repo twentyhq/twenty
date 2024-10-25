@@ -1,31 +1,30 @@
+import { RecordShowActionMenu } from '@/action-menu/components/RecordShowActionMenu';
 import { Calendar } from '@/activities/calendar/components/Calendar';
 import { EmailThreads } from '@/activities/emails/components/EmailThreads';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
-import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
+import { TimelineActivities } from '@/activities/timeline-activities/components/TimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { Button } from '@/ui/input/button/components/Button';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { SingleTabProps, TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { WorkflowRunOutputVisualizer } from '@/workflow/components/WorkflowRunOutputVisualizer';
+import { WorkflowRunVersionVisualizer } from '@/workflow/components/WorkflowRunVersionVisualizer';
 import { WorkflowVersionVisualizer } from '@/workflow/components/WorkflowVersionVisualizer';
 import { WorkflowVersionVisualizerEffect } from '@/workflow/components/WorkflowVersionVisualizerEffect';
 import { WorkflowVisualizer } from '@/workflow/components/WorkflowVisualizer';
 import { WorkflowVisualizerEffect } from '@/workflow/components/WorkflowVisualizerEffect';
 import styled from '@emotion/styled';
-import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconTrash } from 'twenty-ui';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -39,6 +38,7 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
 
 const StyledTabListContainer = styled.div`
   align-items: center;
+  padding-left: ${({ theme }) => theme.spacing(2)};
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   box-sizing: border-box;
   display: flex;
@@ -182,21 +182,17 @@ export const ShowPageSubContainer = ({
             />
           </>
         );
+      case 'workflowRunFlow':
+        return (
+          <WorkflowRunVersionVisualizer workflowRunId={targetableObject.id} />
+        );
+      case 'workflowRunOutput':
+        return (
+          <WorkflowRunOutputVisualizer workflowRunId={targetableObject.id} />
+        );
       default:
         return <></>;
     }
-  };
-
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const { deleteOneRecord } = useDeleteOneRecord({
-    objectNameSingular: targetableObject.targetObjectNameSingular,
-  });
-
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    await deleteOneRecord(targetableObject.id);
-    setIsDeleting(false);
   };
 
   const [recordFromStore] = useRecoilState<ObjectRecord | null>(
@@ -225,12 +221,7 @@ export const ShowPageSubContainer = ({
         </StyledContentContainer>
         {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
           <StyledButtonContainer>
-            <Button
-              Icon={IconTrash}
-              onClick={handleDelete}
-              disabled={isDeleting}
-              title={isDeleting ? 'Deleting...' : 'Delete'}
-            ></Button>
+            <RecordShowActionMenu actionMenuId={'right-drawer-action-menu'} />
           </StyledButtonContainer>
         )}
       </StyledShowPageRightContainer>

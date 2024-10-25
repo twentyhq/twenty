@@ -10,6 +10,7 @@ interface WorkspaceEntityOptions {
   labelPlural: string;
   description?: string;
   icon?: string;
+  shortcut?: string;
   labelIdentifierStandardId?: string;
   imageIdentifierStandardId?: string;
 }
@@ -44,6 +45,7 @@ export function WorkspaceEntity(
         options.labelIdentifierStandardId ?? BASE_OBJECT_STANDARD_FIELD_IDS.id,
       imageIdentifierStandardId: options.imageIdentifierStandardId ?? null,
       icon: options.icon,
+      shortcut: options.shortcut,
       isAuditLogged,
       isSystem,
       gate,

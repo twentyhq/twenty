@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
+import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { FieldMetadataType } from '~/generated/graphql';
 
-import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
+import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
 import {
   BooleanFieldInput,
   BooleanFieldInputProps,
