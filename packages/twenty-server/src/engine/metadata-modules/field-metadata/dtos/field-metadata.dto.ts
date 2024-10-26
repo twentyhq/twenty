@@ -118,6 +118,11 @@ export class FieldMetadataDTO<
   @Field({ nullable: true })
   isNullable?: boolean;
 
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isUnique?: boolean;
+
   @Validate(IsFieldMetadataDefaultValue)
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })

@@ -40,7 +40,7 @@ export class DeleteOneResolverFactory
 
         return await this.graphqlQueryRunnerService.deleteOne(args, options);
       } catch (error) {
-        workspaceQueryRunnerGraphqlApiExceptionHandler(error);
+        workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
       }
     };
   }

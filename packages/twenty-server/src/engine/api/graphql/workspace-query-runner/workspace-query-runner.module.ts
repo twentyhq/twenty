@@ -8,7 +8,6 @@ import { TelemetryListener } from 'src/engine/api/graphql/workspace-query-runner
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
 import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
-import { DuplicateModule } from 'src/engine/core-modules/duplicate/duplicate.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -16,8 +15,6 @@ import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.mod
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-
-import { WorkspaceQueryRunnerService } from './workspace-query-runner.service';
 
 import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listener';
 
@@ -31,17 +28,15 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     AnalyticsModule,
     TelemetryModule,
-    DuplicateModule,
     FileModule,
     FeatureFlagModule,
   ],
   providers: [
-    WorkspaceQueryRunnerService,
     ...workspaceQueryRunnerFactories,
     EntityEventsToDbListener,
     TelemetryListener,
     RecordPositionBackfillCommand,
   ],
-  exports: [WorkspaceQueryRunnerService, ...workspaceQueryRunnerFactories],
+  exports: [...workspaceQueryRunnerFactories],
 })
 export class WorkspaceQueryRunnerModule {}

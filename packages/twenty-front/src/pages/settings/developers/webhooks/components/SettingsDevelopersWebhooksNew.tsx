@@ -10,7 +10,7 @@ import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { isValidUrl } from '~/utils/url/isValidUrl';
 
@@ -19,9 +19,11 @@ export const SettingsDevelopersWebhooksNew = () => {
   const [formValues, setFormValues] = useState<{
     targetUrl: string;
     operation: string;
+    operations: string[];
   }>({
     targetUrl: '',
     operation: '*.*',
+    operations: ['*.*'],
   });
   const [isTargetUrlValid, setIsTargetUrlValid] = useState(true);
 

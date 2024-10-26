@@ -10,13 +10,18 @@ type BaseWorkflowStepSettings = {
 };
 
 export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
-  serverlessFunctionId: string;
+  input: {
+    serverlessFunctionId: string;
+  };
 };
 
 export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
-  connectedAccountId: string;
-  subject?: string;
-  body?: string;
+  input: {
+    connectedAccountId: string;
+    email: string;
+    subject?: string;
+    body?: string;
+  };
 };
 
 type BaseWorkflowStep = {
@@ -43,10 +48,8 @@ export type WorkflowActionType = WorkflowAction['type'];
 
 export type WorkflowStepType = WorkflowStep['type'];
 
-export type WorkflowTriggerType = 'DATABASE_EVENT';
-
 type BaseTrigger = {
-  type: WorkflowTriggerType;
+  type: string;
   input?: object;
 };
 
@@ -57,7 +60,24 @@ export type WorkflowDatabaseEventTrigger = BaseTrigger & {
   };
 };
 
-export type WorkflowTrigger = WorkflowDatabaseEventTrigger;
+export type WorkflowManualTrigger = BaseTrigger & {
+  type: 'MANUAL';
+  settings: {
+    objectType?: string;
+  };
+};
+
+export type WorkflowManualTriggerSettings = WorkflowManualTrigger['settings'];
+
+export type WorkflowManualTriggerAvailability =
+  | 'EVERYWHERE'
+  | 'WHEN_RECORD_SELECTED';
+
+export type WorkflowTrigger =
+  | WorkflowDatabaseEventTrigger
+  | WorkflowManualTrigger;
+
+export type WorkflowTriggerType = WorkflowTrigger['type'];
 
 export type WorkflowStatus = 'DRAFT' | 'ACTIVE' | 'DEACTIVATED';
 
@@ -77,6 +97,28 @@ export type WorkflowVersion = {
   steps: Array<WorkflowStep> | null;
   status: WorkflowVersionStatus;
   __typename: 'WorkflowVersion';
+};
+
+type StepRunOutput = {
+  id: string;
+  name: string;
+  type: string;
+  outputs: {
+    attemptCount: number;
+    result: object | undefined;
+    error: string | undefined;
+  }[];
+};
+
+export type WorkflowRunOutput = {
+  steps: Record<string, StepRunOutput>;
+};
+
+export type WorkflowRun = {
+  __typename: 'WorkflowRun';
+  id: string;
+  workflowVersionId: string;
+  output: WorkflowRunOutput;
 };
 
 export type Workflow = {
