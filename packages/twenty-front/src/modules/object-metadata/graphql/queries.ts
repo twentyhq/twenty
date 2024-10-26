@@ -25,7 +25,7 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
           labelIdentifierFieldMetadataId
           imageIdentifierFieldMetadataId
           shortcut
-          shouldSyncLabelAndName
+          isLabelSyncedWithName
           indexMetadatas(paging: { first: 100 }) {
             edges {
               node {

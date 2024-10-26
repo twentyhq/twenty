@@ -204,7 +204,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    if (objectMetadataInput.shouldSyncLabelAndName === true) {
+    if (objectMetadataInput.isLabelSyncedWithName === true) {
       validateNameAndLabelAreSyncOrThrow(
         objectMetadataInput.labelSingular,
         objectMetadataInput.nameSingular,
@@ -436,7 +436,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       existingObjectMetadataId: fullObjectMetadataAfterUpdate.id,
     });
 
-    if (fullObjectMetadataAfterUpdate.shouldSyncLabelAndName) {
+    if (fullObjectMetadataAfterUpdate.isLabelSyncedWithName) {
       validateNameAndLabelAreSyncOrThrow(
         fullObjectMetadataAfterUpdate.labelSingular,
         fullObjectMetadataAfterUpdate.nameSingular,
