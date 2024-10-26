@@ -16,6 +16,7 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
+  IS_LABEL_SYNCED_WITH_NAME_LABEL,
   SettingsDataModelObjectAboutForm,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
@@ -81,10 +82,16 @@ export const SettingsObjectEdit = () => {
     formValues: SettingsDataModelObjectEditFormValues,
   ) => {
     let values = formValues;
-    if (
-      formValues.isLabelSyncedWithName === true ||
-      activeObjectMetadataItem.isLabelSyncedWithName === true
-    ) {
+    const dirtyFieldKeys = Object.keys(
+      formConfig.formState.dirtyFields,
+    ) as (keyof SettingsDataModelObjectEditFormValues)[];
+    const shouldComputeNamesFromLabels: boolean = dirtyFieldKeys.includes(
+      IS_LABEL_SYNCED_WITH_NAME_LABEL,
+    )
+      ? (formValues.isLabelSyncedWithName as boolean)
+      : activeObjectMetadataItem.isLabelSyncedWithName;
+
+    if (shouldComputeNamesFromLabels) {
       values = {
         ...values,
         ...(values.labelSingular
@@ -103,10 +110,6 @@ export const SettingsObjectEdit = () => {
           : {}),
       };
     }
-
-    const dirtyFieldKeys = Object.keys(
-      formConfig.formState.dirtyFields,
-    ) as (keyof SettingsDataModelObjectEditFormValues)[];
 
     return settingsUpdateObjectInputSchema.parse(
       pick(values, [
