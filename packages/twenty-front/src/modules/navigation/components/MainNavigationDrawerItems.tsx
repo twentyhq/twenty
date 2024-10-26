@@ -53,7 +53,7 @@ export const MainNavigationDrawerItems = () => {
         (previousIsOpen) => activeItemName !== 'settings' || !previousIsOpen,
       );
       setCurrentMobileNavigationDrawer('settings');
-    } else{
+    } else {
       setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
       setIsNavigationDrawerExpanded(true);
       setNavigationMemorizedUrl(location.pathname + location.search);

@@ -20,7 +20,7 @@ const StyledObjectsMetaDataItemsWrapper = styled.div<{
   isMobile?: boolean;
 }>`
   display: flex;
-  flex-direction: ${({ isMobile }) => isMobile ? "row" : "column"};
+  flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
   gap: ${({ theme }) => theme.betweenSiblingsGap};
   width: 100%;
   margin-bottom: ${({ theme }) => theme.spacing(3)};
@@ -36,9 +36,9 @@ const NavigationDrawerSection = styled.div<{
   margin-bottom: ${({ theme }) => theme.spacing(3)};
   flex-shrink: 1;
   overflow: hidden;
-  flex-direction: ${({ isMobile }) => isMobile ? "row" : "column"};
-  flex-grow: ${({ isMobile }) => isMobile ? 1 : 0};
-  `;
+  flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
+  flex-grow: ${({ isMobile }) => (isMobile ? 1 : 0)};
+`;
 
 export const NavigationDrawerSectionForObjectMetadataItems = ({
   sectionTitle,

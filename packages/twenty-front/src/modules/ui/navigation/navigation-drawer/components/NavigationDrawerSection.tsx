@@ -8,7 +8,7 @@ const StyledSection = styled.div<{
   flex-shrink: 1;
   overflow: hidden;
   flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
-  width: ${({ isMobile }) => isMobile ? '20%' : 'auto'};
-  `;
+  width: ${({ isMobile }) => (isMobile ? '20%' : 'auto')};
+`;
 
 export { StyledSection as NavigationDrawerSection };

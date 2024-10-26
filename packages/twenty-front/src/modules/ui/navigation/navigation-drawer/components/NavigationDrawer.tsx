@@ -120,8 +120,7 @@ export const NavigationDrawer = ({
             showCollapseButton={isHovered}
           />
         )}
-        <StyledItemsContainer 
-          isMobile={isMobile}>
+        <StyledItemsContainer isMobile={isMobile}>
           {children}
         </StyledItemsContainer>
         {footer}

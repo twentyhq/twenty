@@ -11,12 +11,7 @@ import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  AvatarType,
-  IconComponent,
-  NavigationBar,
-  useIcons
-} from 'twenty-ui';
+import { AvatarType, IconComponent, NavigationBar, useIcons } from 'twenty-ui';
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
 
@@ -36,29 +31,29 @@ export const MobileNavigationBar = () => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
   const { getIcon } = useIcons();
-  
+
   const activeItemName = isNavigationDrawerExpanded
-  ? currentMobileNavigationDrawer
-  : isCommandMenuOpened
-  ? 'search'
-  : isSettingsPage
-  ? 'settings'
-  : 'main';
-  
+    ? currentMobileNavigationDrawer
+    : isCommandMenuOpened
+      ? 'search'
+      : isSettingsPage
+        ? 'settings'
+        : 'main';
+
   const currentWorkspaceMemberFavorites = favorites.filter(
     (favorite) => favorite.workspaceMemberId === currentWorkspaceMember?.id,
   );
-  
+
   const favoriteItems: {
-    id: string,
-    name: string,
-    labelIdentifier: string,
-    avatarUrl: string,
-    avatarType: AvatarType,
-    link: string,
-    recordId: string,
+    id: string;
+    name: string;
+    labelIdentifier: string;
+    avatarUrl: string;
+    avatarType: AvatarType;
+    link: string;
+    recordId: string;
     onClick: () => void;
-  }[] = currentWorkspaceMemberFavorites.map(favItem => ({
+  }[] = currentWorkspaceMemberFavorites.map((favItem) => ({
     id: favItem.id,
     name: favItem.labelIdentifier,
     labelIdentifier: favItem.labelIdentifier,
@@ -66,75 +61,80 @@ export const MobileNavigationBar = () => {
     avatarType: favItem.avatarType,
     link: favItem.link,
     recordId: favItem.recordId,
-    onClick: () => navigate(favItem.link)
-  }))
+    onClick: () => navigate(favItem.link),
+  }));
 
-  
-const ORDERED_STANDARD_OBJECTS = [
-  'person',
-  'company',
-  'opportunity',
-  'task',
-  'note',
-];
+  const ORDERED_STANDARD_OBJECTS = [
+    'person',
+    'company',
+    'opportunity',
+    'task',
+    'note',
+  ];
 
-const { activeObjectMetadataItems: objectMetadataItemsToDisplay } =
-useFilteredObjectMetadataItemsForWorkspaceFavorites();
+  const { activeObjectMetadataItems: objectMetadataItemsToDisplay } =
+    useFilteredObjectMetadataItemsForWorkspaceFavorites();
 
-const sortedStandardObjectMetadataItems = [...objectMetadataItemsToDisplay]
-.filter((item) => ORDERED_STANDARD_OBJECTS.includes(item.nameSingular))
-.sort((objectMetadataItemA, objectMetadataItemB) => {
-  const indexA = ORDERED_STANDARD_OBJECTS.indexOf(
-    objectMetadataItemA.nameSingular,
-  );
-  const indexB = ORDERED_STANDARD_OBJECTS.indexOf(
-    objectMetadataItemB.nameSingular,
-  );
-  if (indexA === -1 || indexB === -1) {
-    return objectMetadataItemA.nameSingular.localeCompare(
-      objectMetadataItemB.nameSingular,
+  const sortedStandardObjectMetadataItems = [...objectMetadataItemsToDisplay]
+    .filter((item) => ORDERED_STANDARD_OBJECTS.includes(item.nameSingular))
+    .sort((objectMetadataItemA, objectMetadataItemB) => {
+      const indexA = ORDERED_STANDARD_OBJECTS.indexOf(
+        objectMetadataItemA.nameSingular,
+      );
+      const indexB = ORDERED_STANDARD_OBJECTS.indexOf(
+        objectMetadataItemB.nameSingular,
+      );
+      if (indexA === -1 || indexB === -1) {
+        return objectMetadataItemA.nameSingular.localeCompare(
+          objectMetadataItemB.nameSingular,
+        );
+      }
+      return indexA - indexB;
+    });
+
+  const sortedCustomObjectMetadataItems = [...objectMetadataItemsToDisplay]
+    .filter((item) => !ORDERED_STANDARD_OBJECTS.includes(item.nameSingular))
+    .sort((objectMetadataItemA, objectMetadataItemB) => {
+      return new Date(objectMetadataItemA.createdAt) <
+        new Date(objectMetadataItemB.createdAt)
+        ? 1
+        : -1;
+    });
+
+  const objectMetadataItemsForNavigationItems: {
+    id: string;
+    Icon: IconComponent;
+    isActive: boolean;
+    onclick: () => void;
+  }[] = [
+    ...sortedStandardObjectMetadataItems,
+    ...sortedCustomObjectMetadataItems,
+  ].map((objectMetadata) => {
+    const objectMetadataViews = getObjectMetadataItemViews(
+      objectMetadata.id,
+      views,
     );
-  }
-  return indexA - indexB;
-});
+    const lastVisitedViewId = getLastVisitedViewIdFromObjectMetadataItemId(
+      objectMetadata.id,
+    );
+    const viewId = lastVisitedViewId ?? objectMetadataViews[0]?.id;
+    const navigationPath = `/objects/${objectMetadata.namePlural}${
+      viewId ? `?view=${viewId}` : ''
+    }`;
 
-const sortedCustomObjectMetadataItems = [...objectMetadataItemsToDisplay]
-.filter((item) => !ORDERED_STANDARD_OBJECTS.includes(item.nameSingular))
-.sort((objectMetadataItemA, objectMetadataItemB) => {
-  return new Date(objectMetadataItemA.createdAt) <
-    new Date(objectMetadataItemB.createdAt)
-    ? 1
-    : -1;
-});
+    return {
+      id: objectMetadata.id,
+      Icon: getIcon(objectMetadata.icon),
+      isActive: objectMetadata.id == viewId,
+      onclick: () => navigate(navigationPath),
+    };
+  });
 
-const objectMetadataItemsForNavigationItems: {
-  id: string,
-  Icon: IconComponent,
-  isActive: boolean,
-  onclick: () => void
-}[] = [
-  ...sortedStandardObjectMetadataItems,
-  ...sortedCustomObjectMetadataItems,
-].map(objectMetadata => {
-  const objectMetadataViews = getObjectMetadataItemViews(
-    objectMetadata.id,
-    views,
+  return (
+    <NavigationBar
+      activeItemName={activeItemName}
+      favorites={favoriteItems}
+      objectMetaData={objectMetadataItemsForNavigationItems}
+    />
   );
-  const lastVisitedViewId = getLastVisitedViewIdFromObjectMetadataItemId(
-    objectMetadata.id,
-  );
-  const viewId = lastVisitedViewId ?? objectMetadataViews[0]?.id;
-  const navigationPath = `/objects/${objectMetadata.namePlural}${
-    viewId ? `?view=${viewId}` : ''
-  }`;
-
-  return{
-    id: objectMetadata.id,
-    Icon: getIcon(objectMetadata.icon),
-    isActive: objectMetadata.id == viewId,
-    onclick: () => navigate(navigationPath)
-  }
-})
-
-  return <NavigationBar activeItemName={activeItemName} favorites={favoriteItems} objectMetaData={objectMetadataItemsForNavigationItems}/>;
 };

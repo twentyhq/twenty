@@ -19,7 +19,7 @@ const StyledDragDropItemsWrapper = styled.div`
 const FavouritesDragItemsWrapper = styled.div<{
   isMobile?: boolean;
 }>`
-  display: ${({ isMobile }) => isMobile ? "flex" : "block"};
+  display: ${({ isMobile }) => (isMobile ? 'flex' : 'block')};
 `;
 
 export const DraggableList = ({
@@ -27,14 +27,14 @@ export const DraggableList = ({
   onDragEnd,
 }: DraggableListProps) => {
   const [v4Persistable] = useState(v4());
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <StyledDragDropItemsWrapper>
         <Droppable droppableId={v4Persistable}>
           {(provided) => (
-            <FavouritesDragItemsWrapper 
+            <FavouritesDragItemsWrapper
               isMobile={isMobile}
               ref={provided.innerRef}
               // eslint-disable-next-line react/jsx-props-no-spreading

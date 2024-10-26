@@ -20,8 +20,8 @@ import { useFavorites } from '../hooks/useFavorites';
 const StyledContainer = styled(NavigationDrawerSection)<{
   isMobile?: boolean;
 }>`
-  width: ${({ isMobile }) => isMobile ? 'auto' : ""};
-  flex-direction: ${({ isMobile }) => isMobile ? "row" : "column"};
+  flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
+  width: ${({ isMobile }) => (isMobile ? 'auto' : '')};
 `;
 
 const StyledAvatar = styled(Avatar)`

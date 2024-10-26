@@ -8,6 +8,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
@@ -149,6 +150,10 @@ const StyledNavigationDrawerItemContainer = styled.div<{
   flex-grow: ${({ isMobile }) => (isMobile ? 1 : 0)};
 `;
 
+const StyledSpacer = styled.span`
+  flex-grow: 1;
+`;
+
 export const NavigationDrawerItem = ({
   className,
   label,
@@ -170,21 +175,23 @@ export const NavigationDrawerItem = ({
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
   const showBreadcrumb = indentationLevel === 2;
-
   const handleItemClick = () => {
-    // if (isMobile) {
-    //   setIsNavigationDrawerExpanded(false);
-    // }
+    if (isMobile) {
+      setIsNavigationDrawerExpanded(false);
+    }
 
     if (isDefined(onClick)) {
+      setIsNavigationDrawerExpanded(true);
       onClick();
-      console.log(`isMobile: ${isMobile}, isNavigationDrawerExpaned: ${isNavigationDrawerExpanded}`)
+      console.log(
+        `isMobile: ${isMobile}, isNavigationDrawerExpaned: ${isNavigationDrawerExpanded} hello`,
+      );
       return;
     }
 
-    // if (isNonEmptyString(to)) {
-    //   navigate(to);
-    // }
+    if (isNonEmptyString(to)) {
+      navigate(to);
+    }
   };
 
   return (
@@ -199,7 +206,7 @@ export const NavigationDrawerItem = ({
         as={to ? Link : undefined}
         to={to ? to : undefined}
         indentationLevel={indentationLevel}
-        isNavigationDrawerExpanded={isNavigationDrawerExpanded}
+        isNavigationDrawerExpanded={true}
       >
         {showBreadcrumb && (
           <NavigationDrawerAnimatedCollapseWrapper>
