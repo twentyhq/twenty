@@ -5,4 +5,6 @@ export class RecordDetails {
   constructor(public readonly page: Page) {
     this.page = page;
   }
+
+
 }

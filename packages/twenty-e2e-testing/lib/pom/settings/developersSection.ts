@@ -114,4 +114,12 @@ export class DevelopersSection {
   async clickSaveButton() {
     await this.saveButton.click();
   }
+
+  async checkAPIKeyDetails(name: string) {
+    await this.page.locator(`//a/div[contains(.,'${name}')][first()]`).click();
+  }
+
+  async checkWebhookDetails(name: string) {
+    await this.page.locator(`//a/div[contains(.,'${name}')][first()]`).click();
+  }
 }

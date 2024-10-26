@@ -48,20 +48,8 @@ export class ExperienceSection {
     await this.page.getByText(dateFormat, { exact: true }).click();
   }
 
-  async selectDateFormatWithSearch(dateFormat: string) {
-    await this.timezoneDropdown.click();
-    await this.searchInput.fill(dateFormat);
-    await this.page.getByText(dateFormat, { exact: true }).click();
-  }
-
   async selectTimeFormat(timeFormat: string) {
     await this.timeFormatDropdown.click();
-    await this.page.getByText(timeFormat, { exact: true }).click();
-  }
-
-  async selectTimeFormatWithSearch(timeFormat: string) {
-    await this.timeFormatDropdown.click();
-    await this.searchInput.fill(timeFormat);
     await this.page.getByText(timeFormat, { exact: true }).click();
   }
 }
