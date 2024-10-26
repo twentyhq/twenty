@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -1155,13 +1155,13 @@ export type UpdateObjectPayload = {
   icon?: InputMaybe<Scalars['String']>;
   imageIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
   isActive?: InputMaybe<Scalars['Boolean']>;
+  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
   labelIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
   labelPlural?: InputMaybe<Scalars['String']>;
   labelSingular?: InputMaybe<Scalars['String']>;
   namePlural?: InputMaybe<Scalars['String']>;
   nameSingular?: InputMaybe<Scalars['String']>;
   shortcut?: InputMaybe<Scalars['String']>;
-  shouldSyncLabelAndName?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdateOneObjectInput = {
@@ -1471,6 +1471,7 @@ export type Object = {
   indexMetadatas: ObjectIndexMetadatasConnection;
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];
+  isLabelSyncedWithName: Scalars['Boolean'];
   isRemote: Scalars['Boolean'];
   isSystem: Scalars['Boolean'];
   labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
@@ -1479,7 +1480,6 @@ export type Object = {
   namePlural: Scalars['String'];
   nameSingular: Scalars['String'];
   shortcut?: Maybe<Scalars['String']>;
-  shouldSyncLabelAndName: Scalars['Boolean'];
   updatedAt: Scalars['DateTime'];
 };
 
