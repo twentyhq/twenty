@@ -25835,16 +25835,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-project-structure@npm:^3.7.2":
-  version: 3.7.2
-  resolution: "eslint-plugin-project-structure@npm:3.7.2"
+"eslint-plugin-project-structure@npm:^3.9.0":
+  version: 3.9.0
+  resolution: "eslint-plugin-project-structure@npm:3.9.0"
   dependencies:
     "@typescript-eslint/utils": "npm:^8.8.0"
     comment-json: "npm:^4.2.5"
     js-yaml: "npm:^4.1.0"
     jsonschema: "npm:^1.4.1"
     micromatch: "npm:^4.0.8"
-  checksum: 10c0/bb5d972cb2f24eceae0b5eefc7ccfaed1e0802977bc5ea33d3eb105521b590b5a69b36adcd3124ae67367af6b7798a05b17f06d085deaf9059e53b0839e3621e
+  checksum: 10c0/ee3058e034af420486fe6babf9311a663e673d77862062579e2206922fc7ca5879dce1f61f2ee6d4f162a6b7f44b466f6a3031471a9adeef1bc3bd12204d0980
   languageName: node
   linkType: hard
 
@@ -44484,7 +44484,7 @@ __metadata:
     eslint-plugin-jsx-a11y: "npm:^6.8.0"
     eslint-plugin-prefer-arrow: "npm:^1.2.3"
     eslint-plugin-prettier: "npm:^5.1.2"
-    eslint-plugin-project-structure: "npm:^3.7.2"
+    eslint-plugin-project-structure: "npm:^3.9.0"
     eslint-plugin-react: "npm:^7.33.2"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-react-refresh: "npm:^0.4.4"
