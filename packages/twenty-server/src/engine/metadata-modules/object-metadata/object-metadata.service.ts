@@ -168,7 +168,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    if (objectMetadataInput.shouldSyncLabelAndName === true) {
+    if (objectMetadataInput.isLabelSyncedWithName === true) {
       validateNameAndLabelAreSyncOrThrow(
         objectMetadataInput.labelSingular,
         objectMetadataInput.nameSingular,
@@ -362,7 +362,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       existingObjectMetadataId: fullObjectMetadataAfterUpdate.id,
     });
 
-    if (fullObjectMetadataAfterUpdate.shouldSyncLabelAndName) {
+    if (fullObjectMetadataAfterUpdate.isLabelSyncedWithName) {
       validateNameAndLabelAreSyncOrThrow(
         fullObjectMetadataAfterUpdate.labelSingular,
         fullObjectMetadataAfterUpdate.nameSingular,
@@ -370,6 +370,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       validateNameAndLabelAreSyncOrThrow(
         fullObjectMetadataAfterUpdate.labelPlural,
         fullObjectMetadataAfterUpdate.namePlural,
+      );
+    }
+
+    if (
+      isDefined(input.update.nameSingular) ||
+      isDefined(input.update.namePlural)
+    ) {
+      this.validateNameSingularAndNamePluralAreDifferentOrThrow(
+        fullObjectMetadataAfterUpdate,
       );
     }
 
@@ -612,21 +621,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     objectMetadataForUpdate: ObjectMetadataEntity,
     input: UpdateOneObjectInput,
   ) {
-    if (
-      isDefined(input.update.nameSingular) ||
-      isDefined(input.update.namePlural)
-    ) {
-      if (
-        objectMetadataForUpdate.nameSingular ===
-        objectMetadataForUpdate.namePlural
-      ) {
-        throw new ObjectMetadataException(
-          'The singular and plural name cannot be the same for an object',
-          ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-        );
-      }
-    }
-
     const newTargetTableName = computeObjectTargetTable(
       objectMetadataForUpdate,
     );
@@ -694,6 +688,20 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       throw new ObjectMetadataException(
         'Object already exists',
         ObjectMetadataExceptionCode.OBJECT_ALREADY_EXISTS,
+      );
+    }
+  };
+
+  private validateNameSingularAndNamePluralAreDifferentOrThrow = (
+    fullObjectMetadataAfterUpdate: ObjectMetadataEntity,
+  ) => {
+    if (
+      fullObjectMetadataAfterUpdate.nameSingular ===
+      fullObjectMetadataAfterUpdate.namePlural
+    ) {
+      throw new ObjectMetadataException(
+        'The singular and plural name cannot be the same for an object',
+        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
       );
     }
   };

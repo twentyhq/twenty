@@ -1,8 +1,8 @@
 import isPropValid from '@emotion/is-prop-valid';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Pill } from '@ui/components';
-import { IconComponent } from '@ui/display';
+import { Pill } from '@ui/components/Pill/Pill';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import React from 'react';
 import { Link } from 'react-router-dom';
 

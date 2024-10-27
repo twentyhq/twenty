@@ -27,6 +27,7 @@ import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/a
 import { BehavioralEventWorkspaceEntity } from 'src/modules/timeline/standard-objects/behavioral-event.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
+import { ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
@@ -59,6 +60,7 @@ export const standardObjectMetadataDefinitions = [
   ViewFieldWorkspaceEntity,
   ViewGroupWorkspaceEntity,
   ViewFilterWorkspaceEntity,
+  ViewFilterGroupWorkspaceEntity,
   ViewSortWorkspaceEntity,
   ViewWorkspaceEntity,
   WebhookWorkspaceEntity,

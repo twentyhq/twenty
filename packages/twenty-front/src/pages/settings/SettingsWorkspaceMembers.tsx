@@ -1,3 +1,20 @@
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { isNonEmptyArray } from '@sniptt/guards';
+import { useState } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  AppTooltip,
+  Avatar,
+  H2Title,
+  IconButton,
+  IconMail,
+  IconReload,
+  IconTrash,
+  Status,
+  TooltipDelay,
+} from 'twenty-ui';
+
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -16,25 +33,9 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { formatDistanceToNow } from 'date-fns';
-import { useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-  AppTooltip,
-  Avatar,
-  H2Title,
-  IconButton,
-  IconMail,
-  IconReload,
-  IconTrash,
-  TooltipDelay,
-} from 'twenty-ui';
 import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { Status } from '../../modules/ui/display/status/components/Status';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
 import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';

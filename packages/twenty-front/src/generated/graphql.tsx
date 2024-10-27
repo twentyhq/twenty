@@ -1155,12 +1155,13 @@ export type UpdateObjectPayload = {
   icon?: InputMaybe<Scalars['String']>;
   imageIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
   isActive?: InputMaybe<Scalars['Boolean']>;
+  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
   labelIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
   labelPlural?: InputMaybe<Scalars['String']>;
   labelSingular?: InputMaybe<Scalars['String']>;
   namePlural?: InputMaybe<Scalars['String']>;
   nameSingular?: InputMaybe<Scalars['String']>;
-  shouldSyncLabelAndName?: InputMaybe<Scalars['Boolean']>;
+  shortcut?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateOneObjectInput = {
@@ -1470,6 +1471,7 @@ export type Object = {
   indexMetadatas: ObjectIndexMetadatasConnection;
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];
+  isLabelSyncedWithName: Scalars['Boolean'];
   isRemote: Scalars['Boolean'];
   isSystem: Scalars['Boolean'];
   labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
@@ -1477,7 +1479,7 @@ export type Object = {
   labelSingular: Scalars['String'];
   namePlural: Scalars['String'];
   nameSingular: Scalars['String'];
-  shouldSyncLabelAndName: Scalars['Boolean'];
+  shortcut?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
 
