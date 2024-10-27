@@ -7,6 +7,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
+import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
@@ -37,6 +38,7 @@ import { UserService } from './services/user.service';
     OnboardingModule,
     TypeOrmModule.forFeature([KeyValuePair], 'core'),
     UserVarsModule,
+    AnalyticsModule,
   ],
   exports: [UserService],
   providers: [UserService, UserResolver, TypeORMService],

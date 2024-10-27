@@ -4,6 +4,10 @@ icon: TbBrandDocker
 image: /images/user-guide/objects/objects.png
 ---
 
+<ArticleWarning>
+Docker containers are for production hosting or self-hosting, for the contribution please check the [Local Setup](https://twenty.com/developers/local-setup).
+</ArticleWarning>
+
 ## Overview
 
 This guide provides step-by-step instructions to install and configure the Twenty application using Docker Compose. The aim is to make the process straightforward and prevent common pitfalls that could break your setup.
@@ -50,7 +54,7 @@ Follow these steps for a manual setup.
     ```bash
     openssl rand -base64 32
     ```
-    **Important:** Keep these tokens secure and do not share them.
+    **Important:** Keep this value secret / do not share it.
 
 3. **Update the `.env`**
 
@@ -59,7 +63,6 @@ Follow these steps for a manual setup.
     ```ini
     APP_SECRET=first_random_string
     ```
-    **Note:** Only modify these lines unless instructed otherwise.
 
 4. **Set the Postgres Password**
 

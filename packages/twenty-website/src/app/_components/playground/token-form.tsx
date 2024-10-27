@@ -76,9 +76,7 @@ const TokenForm = ({
     } else if (locationSetting === 'localhost') {
       url = 'http://localhost:3000';
     } else {
-      url = baseUrl?.endsWith('/')
-        ? baseUrl.substring(0, baseUrl.length - 1)
-        : baseUrl;
+      url = baseUrl;
     }
 
     setBaseUrl(url);

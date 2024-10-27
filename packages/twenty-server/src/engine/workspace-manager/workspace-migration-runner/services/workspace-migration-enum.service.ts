@@ -77,6 +77,7 @@ export class WorkspaceMigrationEnumService {
         enumName: newEnumTypeName,
         isArray: columnDefinition.isArray,
         isNullable: columnDefinition.isNullable,
+        isUnique: columnDefinition.isUnique,
       }),
     );
 
