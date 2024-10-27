@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { buildMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/build-migrations-for-custom-object-relations.util';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RelationToDelete } from 'src/engine/metadata-modules/relation-metadata/types/relation-to-delete';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
@@ -13,8 +14,10 @@ import { generateMigrationName } from 'src/engine/metadata-modules/workspace-mig
 import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnDrop,
+  WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
@@ -29,7 +32,63 @@ export class ObjectMetadataMigrationService {
     @InjectRepository(RelationMetadataEntity, 'metadata')
     private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
+    private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
   ) {}
+
+  public async createObjectMigration(
+    createdObjectMetadata: ObjectMetadataEntity,
+  ) {
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
+      createdObjectMetadata.workspaceId,
+      [
+        {
+          name: computeObjectTargetTable(createdObjectMetadata),
+          action: WorkspaceMigrationTableActionType.CREATE,
+        } satisfies WorkspaceMigrationTableAction,
+      ],
+    );
+  }
+
+  public async createFieldMigrations(
+    createdObjectMetadata: ObjectMetadataEntity,
+    fieldMetadataCollection: FieldMetadataEntity[],
+  ) {
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(
+        `create-${createdObjectMetadata.nameSingular}-fields`,
+      ),
+      createdObjectMetadata.workspaceId,
+      [
+        {
+          name: computeObjectTargetTable(createdObjectMetadata),
+          action: WorkspaceMigrationTableActionType.ALTER,
+          columns: fieldMetadataCollection.flatMap((fieldMetadata) =>
+            this.workspaceMigrationFactory.createColumnActions(
+              WorkspaceMigrationColumnActionType.CREATE,
+              fieldMetadata,
+            ),
+          ),
+        },
+      ],
+    );
+  }
+
+  public async createRelationMigrations(
+    createdObjectMetadata: ObjectMetadataEntity,
+    relatedObjectMetadataCollection: ObjectMetadataEntity[],
+  ) {
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(
+        `create-${createdObjectMetadata.nameSingular}-relations`,
+      ),
+      createdObjectMetadata.workspaceId,
+      buildMigrationsForCustomObjectRelations(
+        createdObjectMetadata,
+        relatedObjectMetadataCollection,
+      ),
+    );
+  }
 
   public async createRenameTableMigration(
     existingObjectMetadata: ObjectMetadataEntity,

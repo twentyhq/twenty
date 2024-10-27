@@ -138,3 +138,29 @@ export const computeMetadataNameFromLabelOrThrow = (label: string): string => {
 
   return formattedString;
 };
+
+export const validateNameAndLabelAreSyncOrThrow = (
+  label: string,
+  name: string,
+) => {
+  const computedName = computeMetadataNameFromLabelOrThrow(label);
+
+  if (name !== computedName) {
+    throw new ObjectMetadataException(
+      `Name is not synced with label. Expected name: "${computedName}", got ${name}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
+};
+
+export const validateNameSingularAndNamePluralAreDifferentOrThrow = (
+  nameSingular: string,
+  namePlural: string,
+) => {
+  if (nameSingular === namePlural) {
+    throw new ObjectMetadataException(
+      'The singular and plural name cannot be the same for an object',
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
+};

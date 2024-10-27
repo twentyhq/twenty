@@ -9,17 +9,16 @@ import {
 import { In, Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { CleanInactiveWorkspacesCommandOptions } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-inactive-workspaces.command';
 import { getDryRunLogHeader } from 'src/utils/get-dry-run-log-header';
@@ -40,8 +39,9 @@ export class CleanInactiveWorkspaceJob {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly dataSourceService: DataSourceService,
-    private readonly objectMetadataService: ObjectMetadataService,
     private readonly typeORMService: TypeORMService,
     private readonly userService: UserService,
     private readonly emailService: EmailService,
@@ -235,10 +235,8 @@ export class CleanInactiveWorkspaceJob {
     );
 
     for (const dataSourcesChunk of dataSourcesChunks) {
-      const objectsMetadata = await this.objectMetadataService.findMany({
-        where: {
-          dataSourceId: In(dataSourcesChunk.map((dataSource) => dataSource.id)),
-        },
+      const objectsMetadata = await this.objectMetadataRepository.findBy({
+        dataSourceId: In(dataSourcesChunk.map((dataSource) => dataSource.id)),
       });
 
       for (const dataSource of dataSourcesChunk) {
