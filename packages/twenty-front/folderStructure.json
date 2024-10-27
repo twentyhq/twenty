@@ -15,7 +15,7 @@
     "modulesFolderRule": {
       "children": [
         { "ruleId": "moduleFolderRule" },
-        { "name": "types", "ruleId": "doNotCheckLeafFolderRule" }
+        { "name": "types", "children": [] }
       ]
     },
 
@@ -26,17 +26,17 @@
         { "ruleId": "moduleFolderRule" },
         { "name": "hooks", "ruleId": "hooksLeafFolderRule" },
         { "name": "utils", "ruleId": "utilsLeafFolderRule" },
-        { "name": "states", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "types", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "graphql", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "components", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "effect-components", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "constants", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "validation-schemas", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "contexts", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "scopes", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "services", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "errors", "ruleId": "doNotCheckLeafFolderRule" }
+        { "name": "states", "children": [] },
+        { "name": "types", "children": [] },
+        { "name": "graphql", "children": [] },
+        { "name": "components", "children": [] },
+        { "name": "effect-components", "children": [] },
+        { "name": "constants", "children": [] },
+        { "name": "validation-schemas", "children": [] },
+        { "name": "contexts", "children": [] },
+        { "name": "scopes", "children": [] },
+        { "name": "services", "children": [] },
+        { "name": "errors", "children": [] }
       ]
     },
 
@@ -50,10 +50,6 @@
         },
         { "name": "internal", "ruleId": "hooksLeafFolderRule" }
       ]
-    },
-
-    "doNotCheckLeafFolderRule": {
-      "children": [{ "name": "*" }, { "name": "*", "children": [] }]
     },
 
     "utilsLeafFolderRule": {
