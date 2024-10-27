@@ -22,4 +22,6 @@ Your turn 👇
 
 » 26-October-2024 by [Khaan25](https://oss.gg/Khaan25) YouTube Link: [YouTube](https://www.youtube.com/watch?v=1ruo4tTWNIg)
 
+» 28-October-2024 by [sateshcharan](https://oss.gg/sateshcharan) Youtube Link: [Youtube](https://youtu.be/qfZyhrhCeyo)
+
 ---
