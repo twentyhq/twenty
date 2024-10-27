@@ -268,7 +268,7 @@ resource "azapi_update_resource" "cors" {
 ```hcl
 # backend.tf
 
-# Create app random UUID
+# Create a random UUID
 resource "random_uuid" "app_secret" {}
 
 resource "azurerm_container_app" "twenty_server" {
@@ -331,6 +331,10 @@ resource "azurerm_container_app" "twenty_server" {
         name  = "PG_DATABASE_URL"
         value = "postgres://${local.db_user}:
         ${local.db_password}@${local.db_app_name}:5432/default"
+      }
+      env {
+        name  = "FRONT_BASE_URL"
+        value = "https://${local.front_app_name}"
       }
       env {
         name  = "APP_SECRET"
