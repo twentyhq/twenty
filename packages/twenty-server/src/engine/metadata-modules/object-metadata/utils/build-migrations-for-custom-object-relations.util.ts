@@ -17,7 +17,6 @@ export const buildMigrationsForCustomObjectRelations = (
 
   for (const relatedObjectMetadata of relatedObjectMetadataCollection) {
     migrations.push(
-      // Add relation
       {
         name: computeObjectTargetTable(relatedObjectMetadata),
         action: WorkspaceMigrationTableActionType.ALTER,

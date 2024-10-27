@@ -130,8 +130,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         createdObjectMetadata,
       );
 
-      // CREATE FIELD MIGRATIONS
-
       await this.objectMetadataMigrationService.createFieldMigrations(
         createdObjectMetadata,
         createdObjectMetadata.fields,
