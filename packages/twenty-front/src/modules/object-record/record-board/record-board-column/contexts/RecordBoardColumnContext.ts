@@ -1,12 +1,12 @@
 import { createContext } from 'react';
 
-import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
+import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 
 type RecordBoardColumnContextProps = {
-  columnDefinition: RecordBoardColumnDefinition;
-  isFirstColumn: boolean;
-  isLastColumn: boolean;
+  columnDefinition: RecordGroupDefinition;
   recordCount: number;
+  columnId: string;
+  recordIds: string[];
 };
 
 export const RecordBoardColumnContext =

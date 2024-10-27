@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { H2Title, IconRepeat, IconTrash } from 'twenty-ui';
+import { Button, H2Title, IconRepeat, IconTrash } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -15,16 +15,15 @@ import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
 import { ApiKeyNameInput } from '@/settings/developers/components/ApiKeyNameInput';
 import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTokenState';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
-import { computeNewExpirationDate } from '@/settings/developers/utils/compute-new-expiration-date';
-import { formatExpiration } from '@/settings/developers/utils/format-expiration';
+import { computeNewExpirationDate } from '@/settings/developers/utils/computeNewExpirationDate';
+import { formatExpiration } from '@/settings/developers/utils/formatExpiration';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 

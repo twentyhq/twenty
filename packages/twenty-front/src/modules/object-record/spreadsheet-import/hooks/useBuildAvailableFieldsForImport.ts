@@ -4,7 +4,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-import/constants/CompositeFieldImportLabels';
 import { AvailableFieldForImport } from '@/object-record/spreadsheet-import/types/AvailableFieldForImport';
-import { getSpreadSheetFieldValidationDefinitions } from '@/object-record/spreadsheet-import/util/getSpreadSheetFieldValidationDefinitions';
+import { getSpreadSheetFieldValidationDefinitions } from '@/object-record/spreadsheet-import/utils/getSpreadSheetFieldValidationDefinitions';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useBuildAvailableFieldsForImport = () => {

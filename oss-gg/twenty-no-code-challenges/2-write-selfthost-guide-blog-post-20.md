@@ -18,4 +18,6 @@ Your turn 👇
 
 » 02-October-2024 by [yourhandle](https://oss.gg/yourhandle) guide Link: [guide](https://twenty.com/)
 
+» 26-October-2024 by [sateshcharan](https://oss.gg/sateshcharan) guide Link: [guide](https://dev.to/sateshcharan/supercharge-your-marketing-with-twentycrm-n8n-1hfd)
+
 ---

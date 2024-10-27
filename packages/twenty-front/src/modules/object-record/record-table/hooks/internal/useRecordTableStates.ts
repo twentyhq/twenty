@@ -19,6 +19,7 @@ import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-t
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { numberOfTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/numberOfTableColumnsComponentSelector';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
+import { unselectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/unselectedRowIdsComponentSelector';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { softFocusPositionComponentState } from '@/object-record/record-table/states/softFocusPositionComponentState';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
@@ -26,6 +27,7 @@ import { tableFiltersComponentState } from '@/object-record/record-table/states/
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
 import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
+import { tableViewFilterGroupsComponentState } from '@/object-record/record-table/states/tableViewFilterGroupsComponentState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
 import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
@@ -42,6 +44,10 @@ export const useRecordTableStates = (recordTableId?: string) => {
     scopeId,
     availableTableColumnsState: extractComponentState(
       availableTableColumnsComponentState,
+      scopeId,
+    ),
+    tableViewFilterGroupsState: extractComponentState(
+      tableViewFilterGroupsComponentState,
       scopeId,
     ),
     tableFiltersState: extractComponentState(
@@ -132,6 +138,10 @@ export const useRecordTableStates = (recordTableId?: string) => {
     ),
     selectedRowIdsSelector: extractComponentReadOnlySelector(
       selectedRowIdsComponentSelector,
+      scopeId,
+    ),
+    unselectedRowIdsSelector: extractComponentReadOnlySelector(
+      unselectedRowIdsComponentSelector,
       scopeId,
     ),
     visibleTableColumnsSelector: extractComponentReadOnlySelector(

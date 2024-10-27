@@ -5,7 +5,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
+import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { useRecordTableRecordGqlFields } from '@/object-record/record-index/hooks/useRecordTableRecordGqlFields';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -21,15 +21,17 @@ export const useFindManyParams = (
     objectNameSingular,
   });
 
-  const { tableFiltersState, tableSortsState } =
+  const { tableFiltersState, tableSortsState, tableViewFilterGroupsState } =
     useRecordTableStates(recordTableId);
 
+  const tableViewFilterGroups = useRecoilValue(tableViewFilterGroupsState);
   const tableFilters = useRecoilValue(tableFiltersState);
   const tableSorts = useRecoilValue(tableSortsState);
 
-  const filter = turnObjectDropdownFilterIntoQueryFilter(
+  const filter = computeViewRecordGqlOperationFilter(
     tableFilters,
     objectMetadataItem?.fields ?? [],
+    tableViewFilterGroups,
   );
 
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, tableSorts);

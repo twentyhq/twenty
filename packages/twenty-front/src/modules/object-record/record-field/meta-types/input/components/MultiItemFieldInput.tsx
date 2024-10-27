@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
 import React, { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconCheck, IconPlus } from 'twenty-ui';
+import { IconCheck, IconPlus, LightIconButton } from 'twenty-ui';
 
 import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import {
   DropdownMenuInput,
@@ -18,6 +17,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
+import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 const StyledDropdownMenu = styled(DropdownMenu)`
   left: -1px;
@@ -190,7 +190,11 @@ export const MultiItemFieldInput = <T,>({
                   })
               : undefined
           }
-          onChange={(event) => handleOnChange(event.target.value)}
+          onChange={(event) =>
+            handleOnChange(
+              turnIntoEmptyStringIfWhitespacesOnly(event.target.value),
+            )
+          }
           onEnter={handleSubmitInput}
           rightComponent={
             <LightIconButton

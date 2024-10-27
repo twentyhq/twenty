@@ -10,6 +10,7 @@ export interface CompositeProperty<
   type: Type;
   hidden: 'input' | 'output' | true | false;
   isRequired: boolean;
+  isIncludedInUniqueConstraint?: boolean;
   isArray?: boolean;
   options?: FieldMetadataOptions<Type>;
 }

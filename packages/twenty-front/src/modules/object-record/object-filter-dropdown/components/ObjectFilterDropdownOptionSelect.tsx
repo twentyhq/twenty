@@ -135,6 +135,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
         displayValue: filterDisplayValue,
         fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
         value: newFilterValue,
+        viewFilterGroupId: selectedFilter?.viewFilterGroupId,
       });
     }
     resetSelectedItem();

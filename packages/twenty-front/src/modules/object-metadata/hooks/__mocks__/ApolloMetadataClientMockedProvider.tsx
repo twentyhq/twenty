@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { ApolloMetadataClientContext } from '@/object-metadata/context/ApolloClientMetadataContext';
+import { ApolloMetadataClientContext } from '@/object-metadata/contexts/ApolloClientMetadataContext';
 import { mockedMetadataApolloClient } from '~/testing/mockedMetadataApolloClient';
 
 export const ApolloMetadataClientMockedProvider = ({
