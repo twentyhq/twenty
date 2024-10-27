@@ -18,4 +18,6 @@ Your turn 👇
 
 » 02-October-2024 by [yourhandle](https://oss.gg/yourhandle) video Link: [video](https://twenty.com/)
 
+» 27-October-2024 by [Nabhag8848](https://oss.gg/Nabhag8848)  video Link: [video]() repo Link: [twenty-raycast-integration](https://github.com/Nabhag8848/twenty-raycast-integration)
+
 ---
