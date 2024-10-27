@@ -268,10 +268,12 @@ export const SignInUpForm = () => {
                           disableHotkeys
                           onKeyDown={handleKeyDown}
                         />
-                        <StyledText
-                          text={'At least 8 characters long.'}
-                          color={theme.font.color.secondary}
-                        />
+                        {signInUpMode === SignInUpMode.SignUp && (
+                          <StyledText
+                            text={'At least 8 characters long.'}
+                            color={theme.font.color.secondary}
+                          />
+                        )}
                       </StyledInputContainer>
                     )}
                   />
