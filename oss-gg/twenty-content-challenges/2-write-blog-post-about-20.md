@@ -27,3 +27,5 @@ Your turn 👇
 » 22-October-2024 by [Khaan25](https://oss.gg/Khaan25) blog Link: [blog](https://medium.com/@ziaurzai/twenty-crm-modern-solution-for-modern-problems-a0b65fec9d6c)
 
 » 27-October-2024 by [Karan0207](https://oss.gg/karan0207) blog Link: [blog](https://medium.com/@karansingh0201k/my-journey-with-twenty-the-open-source-crm-that-really-gets-it-133879af6280)
+
+» 27-October-2024 by [Vardhaman619](https://oss.gg/vardhaman619) blog Link: [blog](https://dev.to/vardhaman619/my-experience-with-modern-open-source-crm-twenty-crm-2hen)
