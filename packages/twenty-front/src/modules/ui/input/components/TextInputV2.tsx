@@ -18,7 +18,9 @@ const StyledContainer = styled.div<
   Pick<TextInputV2ComponentProps, 'fullWidth'>
 >`
   display: inline-flex;
+  flex: 1;
   flex-direction: column;
+  min-width: 0;
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
 `;
 

@@ -16,12 +16,15 @@ const StyledControlContainer = styled.div<{ disabled?: boolean }>`
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(8)};
   justify-content: space-between;
+  max-width: 100%;
   padding: 0 ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledControlLabel = styled.div`
   align-items: center;
   display: flex;
+  max-width: 80%;
+  flex-grow: 1;
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -30,6 +33,7 @@ const StyledIconChevronDown = styled(IconChevronDown)<{
 }>`
   color: ${({ disabled, theme }) =>
     disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
+  flex-shrink: 0;
 `;
 
 type SelectControlProps = {
@@ -47,15 +51,25 @@ export const SelectControl = ({
     <StyledControlContainer disabled={isDisabled}>
       <StyledControlLabel>
         {!!selectedOption?.Icon && (
-          <selectedOption.Icon
-            color={
-              isDisabled ? theme.font.color.light : theme.font.color.primary
-            }
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
+          <div style={{ flexShrink: 0 }}>
+            <selectedOption.Icon
+              color={
+                isDisabled ? theme.font.color.light : theme.font.color.primary
+              }
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+          </div>
         )}
-        {selectedOption?.label}
+        <p
+          style={{
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {selectedOption?.label}
+        </p>
       </StyledControlLabel>
       <StyledIconChevronDown disabled={isDisabled} size={theme.icon.size.md} />
     </StyledControlContainer>
