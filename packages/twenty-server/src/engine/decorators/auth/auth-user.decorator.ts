@@ -15,7 +15,9 @@ export const AuthUser = createParamDecorator(
     const request = getRequest(ctx);
 
     if (!options?.allowUndefined && !request.user) {
-      throw new ForbiddenException("You're not authorized to do this");
+      throw new ForbiddenException(
+        "You're not authorized to do this. Note: This endpoint requires a user and won't work with just an API key.",
+      );
     }
 
     return request.user;

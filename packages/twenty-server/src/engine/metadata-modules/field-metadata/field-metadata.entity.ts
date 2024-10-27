@@ -108,6 +108,9 @@ export class FieldMetadataEntity<
   @Column({ nullable: true, default: true })
   isNullable: boolean;
 
+  @Column({ nullable: true, default: false })
+  isUnique: boolean;
+
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
@@ -126,7 +129,7 @@ export class FieldMetadataEntity<
   @OneToMany(
     () => IndexFieldMetadataEntity,
     (indexFieldMetadata: IndexFieldMetadataEntity) =>
-      indexFieldMetadata.fieldMetadata,
+      indexFieldMetadata.indexMetadata,
     {
       cascade: true,
     },

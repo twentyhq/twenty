@@ -94,7 +94,9 @@ const StyledBackDrop = styled(motion.div)<{
   background: ${({ theme, modalVariant }) =>
     modalVariant === 'primary'
       ? theme.background.overlayPrimary
-      : theme.background.overlaySecondary};
+      : modalVariant === 'secondary'
+        ? theme.background.overlaySecondary
+        : theme.background.overlayTertiary};
   display: flex;
   height: 100%;
   justify-content: center;
@@ -132,7 +134,7 @@ const ModalFooter = ({ children, className }: ModalFooterProps) => (
 
 export type ModalSize = 'small' | 'medium' | 'large';
 export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
-export type ModalVariants = 'primary' | 'secondary';
+export type ModalVariants = 'primary' | 'secondary' | 'tertiary';
 
 export type ModalProps = React.PropsWithChildren & {
   size?: ModalSize;

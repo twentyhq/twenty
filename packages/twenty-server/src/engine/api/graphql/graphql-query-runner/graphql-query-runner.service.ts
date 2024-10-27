@@ -361,19 +361,21 @@ export class GraphqlQueryRunnerService {
       authContext.workspace.id,
     );
 
+    const resultWithGettersArray = Array.isArray(resultWithGetters)
+      ? resultWithGetters
+      : [resultWithGetters];
+
     await this.workspaceQueryHookService.executePostQueryHooks(
       authContext,
       objectMetadataItem.nameSingular,
       operationName,
-      Array.isArray(resultWithGetters)
-        ? resultWithGetters
-        : [resultWithGetters],
+      resultWithGettersArray,
     );
 
     const jobOperation = this.operationNameToJobOperation(operationName);
 
     if (jobOperation) {
-      await this.triggerWebhooks(resultWithGetters, jobOperation, options);
+      await this.triggerWebhooks(resultWithGettersArray, jobOperation, options);
     }
 
     return resultWithGetters;

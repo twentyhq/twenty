@@ -21,7 +21,7 @@ export const SettingsNavigationDrawerItem = ({
   Icon,
   label,
   indentationLevel,
-  matchSubPages = false,
+  matchSubPages = true,
   path,
   soon,
   subItemState,

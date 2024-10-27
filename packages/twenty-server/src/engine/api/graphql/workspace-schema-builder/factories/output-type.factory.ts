@@ -26,7 +26,7 @@ export class OutputTypeFactory {
     target: string,
     type: FieldMetadataType,
     kind: ObjectTypeDefinitionKind,
-    buildOtions: WorkspaceBuildSchemaOptions,
+    buildOptions: WorkspaceBuildSchemaOptions,
     typeOptions: TypeOptions,
   ): GraphQLOutputType {
     let gqlType: GraphQLOutputType | undefined =
@@ -40,8 +40,9 @@ export class OutputTypeFactory {
 
     if (!gqlType) {
       this.logger.error(`Could not find a GraphQL type for ${target}`, {
+        kind,
         type,
-        buildOtions,
+        buildOptions,
         typeOptions,
       });
 

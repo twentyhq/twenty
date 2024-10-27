@@ -147,6 +147,10 @@ export const getResolverArgs = (
           type: GraphQLInt,
           isNullable: true,
         },
+        filter: {
+          kind: InputTypeDefinitionKind.Filter,
+          isNullable: true,
+        },
       };
     default:
       throw new Error(`Unknown resolver type: ${type}`);

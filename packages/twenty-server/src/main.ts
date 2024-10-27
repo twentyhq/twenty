@@ -2,12 +2,15 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
+import session from 'express-session';
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
 import { graphqlUploadExpress } from 'graphql-upload';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { ApplyCorsToExceptions } from 'src/utils/apply-cors-to-exceptions';
+import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 import { AppModule } from './app.module';
 import './instrument';
@@ -23,6 +26,7 @@ const bootstrap = async () => {
     snapshot: process.env.DEBUG_MODE === 'true',
   });
   const logger = app.get(LoggerService);
+  const environmentService = app.get(EnvironmentService);
 
   // TODO: Double check this as it's not working for now, it's going to be heplful for durable trees in twenty "orm"
   // // Apply context id strategy for durable trees
@@ -58,6 +62,11 @@ const bootstrap = async () => {
 
   // Create the env-config.js of the front at runtime
   generateFrontConfig();
+
+  // Enable session - Today it's used only for SSO
+  if (environmentService.get('AUTH_SSO_ENABLED')) {
+    app.use(session(getSessionStorageOptions(environmentService)));
+  }
 
   await app.listen(process.env.PORT ?? 3000);
 };

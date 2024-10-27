@@ -12,6 +12,9 @@ describe('settingsCreateObjectInputSchema', () => {
       icon: 'IconPlus',
       labelPlural: ' Labels     ',
       labelSingular: 'Label ',
+      namePlural: 'namePlural',
+      nameSingular: 'nameSingular',
+      isLabelSyncedWithName: false,
     };
 
     // When
@@ -24,8 +27,9 @@ describe('settingsCreateObjectInputSchema', () => {
       icon: validInput.icon,
       labelPlural: 'Labels',
       labelSingular: 'Label',
-      namePlural: 'labels',
-      nameSingular: 'label',
+      namePlural: 'namePlural',
+      nameSingular: 'nameSingular',
+      isLabelSyncedWithName: false,
     });
   });
 

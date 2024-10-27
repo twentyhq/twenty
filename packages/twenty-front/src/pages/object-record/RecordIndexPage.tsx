@@ -1,17 +1,22 @@
 import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
 
+import { SetMainContextStoreComponentInstanceIdEffect } from '@/context-store/components/SetMainContextStoreComponentInstanceIdEffect';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
+import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect';
+import { RecordIndexContainerContextStoreObjectMetadataEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreObjectMetadataEffect';
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
 import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
-import { PageBody } from '@/ui/layout/page/PageBody';
-import { PageContainer } from '@/ui/layout/page/PageContainer';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { PageBody } from '@/ui/layout/page/components/PageBody';
+import { PageContainer } from '@/ui/layout/page/components/PageContainer';
+import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { useRecoilCallback } from 'recoil';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -40,7 +45,7 @@ export const RecordIndexPage = () => {
     createNewTableRecord();
   };
 
-  const { handleIndexIdentifierClick } = useHandleIndexIdentifierClick({
+  const { indexIdentifierUrl } = useHandleIndexIdentifierClick({
     objectMetadataItem,
     recordIndexId,
   });
@@ -61,18 +66,32 @@ export const RecordIndexPage = () => {
           recordIndexId,
           objectNamePlural,
           objectNameSingular,
+          objectMetadataItem,
           onIndexRecordsLoaded: handleIndexRecordsLoaded,
-          onIndexIdentifierClick: handleIndexIdentifierClick,
+          indexIdentifierUrl,
           onCreateRecord: handleCreateRecord,
         }}
       >
-        <PageTitle title={`${capitalize(objectNamePlural)}`} />
-        <RecordIndexPageHeader />
-        <PageBody>
-          <StyledIndexContainer>
-            <RecordIndexContainer />
-          </StyledIndexContainer>
-        </PageBody>
+        <ViewComponentInstanceContext.Provider
+          value={{ instanceId: recordIndexId }}
+        >
+          <PageTitle title={`${capitalize(objectNamePlural)}`} />
+          <RecordIndexPageHeader />
+          <PageBody>
+            <StyledIndexContainer>
+              <ContextStoreComponentInstanceContext.Provider
+                value={{
+                  instanceId: 'record-index',
+                }}
+              >
+                <RecordIndexContainerContextStoreObjectMetadataEffect />
+                <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+                <SetMainContextStoreComponentInstanceIdEffect />
+                <RecordIndexContainer />
+              </ContextStoreComponentInstanceContext.Provider>
+            </StyledIndexContainer>
+          </PageBody>
+        </ViewComponentInstanceContext.Provider>
       </RecordIndexRootPropsContext.Provider>
     </PageContainer>
   );
