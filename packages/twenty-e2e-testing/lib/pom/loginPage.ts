@@ -51,7 +51,7 @@ export class LoginPage {
     this.revealPasswordButton = page.getByTestId('reveal-password-button');
     this.signInButton = page.getByRole('button', { name: 'Sign in' });
     this.signUpButton = page.getByRole('button', { name: 'Sign up' });
-    this.previewImageButton = page.locator('.css-1qzw107'); //needs fixing
+    this.previewImageButton = page.locator('.css-1qzw107'); // TODO: fix
     this.uploadImageButton = page.getByRole('button', { name: 'Upload' });
     this.deleteImageButton = page.getByRole('button', { name: 'Remove' });
     this.workspaceNameField = page.getByPlaceholder('Apple');
@@ -79,7 +79,6 @@ export class LoginPage {
 
   async loginWithGoogle() {
     await this.loginWithGoogleButton.click();
-    // TODO: finish
   }
 
   async clickLoginWithEmail() {
@@ -128,7 +127,6 @@ export class LoginPage {
 
   async clickUploadImage() {
     await this.uploadImageButton.click();
-    // TODO: finish once utils are merged
   }
 
   async deleteImage() {
@@ -161,7 +159,6 @@ export class LoginPage {
 
   async clickSyncWithGoogleButton() {
     await this.syncWithGoogleButton.click();
-    // TODO: finish
   }
 
   async noSyncWithGoogle() {

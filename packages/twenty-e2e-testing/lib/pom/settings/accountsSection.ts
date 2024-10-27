@@ -11,7 +11,9 @@ export class AccountsSection {
   constructor(public readonly page: Page) {
     this.page = page;
     this.addAccountButton = page.getByRole('button', { name: 'Add account' });
-    this.deleteAccountButton = page.getByText('Remove account');
+    this.deleteAccountButton = page
+      .getByTestId('tooltip')
+      .getByText('Remove account');
     this.addBlocklistField = page.getByPlaceholder(
       'eddy@gmail.com, @apple.com',
     );
@@ -32,7 +34,6 @@ export class AccountsSection {
       .locator(`//span[contains(., "${email}")]/../div/div/div/button`)
       .click();
     await this.deleteAccountButton.click();
-    // TODO: finish
   }
 
   async addToBlockList(domain: string) {
@@ -49,6 +50,6 @@ export class AccountsSection {
 
   async linkGoogleAccount() {
     await this.connectWithGoogleButton.click();
-    // TODO: finish
+    // TODO: move rest to upper layer
   }
 }

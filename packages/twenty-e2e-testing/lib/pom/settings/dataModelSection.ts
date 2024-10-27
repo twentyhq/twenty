@@ -109,7 +109,7 @@ export class DataModelSection {
       "//div[contains(., 'Number of decimals')]/../div[last()]/div/div/button[2]",
     );
     this.decimalsNumberInput = page.locator(
-      // would be better if first div was span
+      // would be better if first div was span tag
       "//div[contains(., 'Number of decimals')]/../div[last()]/div/div/div/div/input[2]",
     );
     this.increaseDecimalsButton = page.locator(

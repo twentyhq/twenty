@@ -199,5 +199,3 @@ export class MainPage {
     await this.deleteRecordsButton.click();
   }
 }
-
-export default MainPage;
