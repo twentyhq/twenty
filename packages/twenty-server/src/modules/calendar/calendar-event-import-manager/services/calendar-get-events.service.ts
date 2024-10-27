@@ -10,7 +10,9 @@ import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 export type GetCalendarEventsResponse = {
-  calendarEvents: CalendarEventWithParticipants[];
+  fullEvents: boolean;
+  calendarEvents?: CalendarEventWithParticipants[];
+  calendarEventIds?: string[];
   nextSyncCursor: string;
 };
 

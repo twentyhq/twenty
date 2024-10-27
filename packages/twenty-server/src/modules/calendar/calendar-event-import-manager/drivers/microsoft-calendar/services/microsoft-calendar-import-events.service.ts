@@ -1,18 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  PageCollection,
-  PageIterator,
-  PageIteratorCallback,
-} from '@microsoft/microsoft-graph-client';
+import { Event } from '@microsoft/microsoft-graph-types';
 
+import { formatMicrosoftCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/format-microsoft-calendar-event.util';
 import { parseMicrosoftCalendarError } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/parse-microsoft-calendar-error.util';
-import { GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
+import { CalendarEventWithParticipants } from 'src/modules/calendar/common/types/calendar-event';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
-export class MicrosoftCalendarGetEventsService {
+export class MicrosoftCalendarImportEventsService {
   constructor(
     private readonly microsoftOAuth2ClientManagerService: MicrosoftOAuth2ClientManagerService,
   ) {}
@@ -22,39 +19,25 @@ export class MicrosoftCalendarGetEventsService {
       ConnectedAccountWorkspaceEntity,
       'provider' | 'refreshToken' | 'id'
     >,
-    syncCursor?: string,
-  ): Promise<GetCalendarEventsResponse> {
+    changedEventIds: string[],
+  ): Promise<CalendarEventWithParticipants[]> {
     try {
       const microsoftClient =
         await this.microsoftOAuth2ClientManagerService.getOAuth2Client(
           connectedAccount.refreshToken,
         );
-      const eventIds: string[] = [];
 
-      const response: PageCollection = await microsoftClient
-        .api(syncCursor || '/me/calendar/events/delta')
-        .version('beta')
-        .get();
+      const events: Event[] = [];
 
-      const callback: PageIteratorCallback = (data) => {
-        eventIds.push(data.id);
+      for (const changedEventId of changedEventIds) {
+        const event = await microsoftClient
+          .api(`/me/calendar/events/${changedEventId}`)
+          .get();
 
-        return true;
-      };
+        events.push(event);
+      }
 
-      const pageIterator = new PageIterator(
-        microsoftClient,
-        response,
-        callback,
-      );
-
-      await pageIterator.iterate();
-
-      return {
-        fullEvents: false,
-        calendarEventIds: eventIds,
-        nextSyncCursor: pageIterator.getDeltaLink() || '',
-      };
+      return formatMicrosoftCalendarEvents(events);
     } catch (error) {
       throw parseMicrosoftCalendarError(error);
     }
