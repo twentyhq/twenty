@@ -11,8 +11,6 @@ import {
   CalendarEventImportDriverException,
   CalendarEventImportDriverExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
-import { CalendarEventsImportJobData } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
-import { CalendarImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-import.job';
 import {
   CalendarEventImportErrorHandlerService,
   CalendarEventImportSyncStep,
