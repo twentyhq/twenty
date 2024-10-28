@@ -10,6 +10,8 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
+import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/country/constants/SelectCountryDropdownId';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 const StyledAddressContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -42,6 +44,7 @@ const StyledHalfRowContainer = styled.div`
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     display: block;
+    white-space: nowrap;
     > div {
       margin-bottom: 7px;
     }
@@ -92,7 +95,9 @@ export const AddressInput = ({
 
   const [focusPosition, setFocusPosition] =
     useState<keyof FieldAddressDraftValue>('addressStreet1');
-
+  const { closeDropdown: closeCountryDropdown } = useDropdown(
+    SELECT_COUNTRY_DROPDOWN_ID,
+  );
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const getChangeHandler =
@@ -185,7 +190,7 @@ export const AddressInput = ({
     refs: [wrapperRef],
     callback: (event) => {
       event.stopImmediatePropagation();
-
+      closeCountryDropdown();
       onClickOutside?.(event, internalValue);
     },
     enabled: isDefined(onClickOutside),
