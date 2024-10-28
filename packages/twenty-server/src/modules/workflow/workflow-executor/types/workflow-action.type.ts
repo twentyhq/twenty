@@ -1,6 +1,7 @@
 import {
   WorkflowCodeStepSettings,
   WorkflowSendEmailStepSettings,
+  WorkflowStepSettings,
 } from 'src/modules/workflow/workflow-executor/types/workflow-step-settings.type';
 
 export enum WorkflowActionType {
@@ -11,6 +12,8 @@ export enum WorkflowActionType {
 type BaseWorkflowStep = {
   id: string;
   name: string;
+  type: WorkflowActionType;
+  settings: WorkflowStepSettings;
   valid: boolean;
 };
 

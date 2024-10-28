@@ -14,7 +14,7 @@ export * from './button/components/MainButton';
 export * from './button/components/RoundedIconButton';
 export * from './code-editor/components/CodeEditor';
 export * from './code-editor/components/CodeEditorHeader';
-export * from './code-editor/theme/CodeEditorTheme';
+export * from './code-editor/theme/utils/codeEditorTheme';
 export * from './color-scheme/components/ColorSchemeCard';
 export * from './color-scheme/components/ColorSchemePicker';
 export * from './components/Toggle';

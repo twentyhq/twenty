@@ -102,6 +102,8 @@ const StyledLabel = styled.span`
 
 const infoCircleElementId = 'info-circle-id';
 
+export const IS_LABEL_SYNCED_WITH_NAME_LABEL = 'isLabelSyncedWithName';
+
 export const SettingsDataModelObjectAboutForm = ({
   disabled,
   disableNameEdit,
@@ -115,7 +117,7 @@ export const SettingsDataModelObjectAboutForm = ({
     isAdvancedModeEnabled,
   );
 
-  const isLabelSyncedWithName = watch('isLabelSyncedWithName');
+  const isLabelSyncedWithName = watch(IS_LABEL_SYNCED_WITH_NAME_LABEL);
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
   const apiNameTooltipText = isLabelSyncedWithName
@@ -318,7 +320,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   ),
                 )}
                 <Controller
-                  name="isLabelSyncedWithName"
+                  name={IS_LABEL_SYNCED_WITH_NAME_LABEL}
                   control={control}
                   defaultValue={
                     objectMetadataItem?.isLabelSyncedWithName ?? true

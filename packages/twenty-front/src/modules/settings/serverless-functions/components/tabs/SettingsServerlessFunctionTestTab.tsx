@@ -1,10 +1,10 @@
-import { Section } from '@/ui/layout/section/components/Section';
 import {
   Button,
   CodeEditor,
   CoreEditorHeader,
   H2Title,
   IconPlayerPlay,
+  Section,
 } from 'twenty-ui';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';

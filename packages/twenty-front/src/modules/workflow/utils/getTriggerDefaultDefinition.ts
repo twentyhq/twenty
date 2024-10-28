@@ -26,6 +26,7 @@ export const getTriggerDefaultDefinition = ({
         type,
         settings: {
           eventName: `${activeObjectMetadataItems[0].nameSingular}.${OBJECT_EVENT_TRIGGERS[0].value}`,
+          outputSchema: {},
         },
       };
     }
