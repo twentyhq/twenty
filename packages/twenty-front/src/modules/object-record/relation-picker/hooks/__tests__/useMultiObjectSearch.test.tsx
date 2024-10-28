@@ -34,7 +34,7 @@ const objectData: ObjectMetadataItem[] = [
     labelSingular: 'labelSingular',
     namePlural: 'namePlural',
     nameSingular: 'nameSingular',
-    shouldSyncLabelAndName: false,
+    isLabelSyncedWithName: false,
     updatedAt: 'updatedAt',
     fields: [
       {
