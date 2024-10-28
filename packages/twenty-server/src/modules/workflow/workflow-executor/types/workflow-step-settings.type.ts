@@ -30,6 +30,10 @@ export type WorkflowSendEmailStepInput = {
   body?: string;
 };
 
+export type WorkflowSendEmailStepOutputSchema = {
+  success: boolean;
+};
+
 export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
   input: WorkflowSendEmailStepInput;
 };
