@@ -15,7 +15,7 @@ import { WorkflowBuilderService } from 'src/modules/workflow/workflow-builder/wo
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @UseFilters(WorkflowTriggerGraphqlApiExceptionFilter)
-export class WorkflowResolver {
+export class WorkflowBuilderResolver {
   constructor(
     private readonly workflowBuilderService: WorkflowBuilderService,
   ) {}
