@@ -1,162 +1,152 @@
-import { OnDragEndResponder } from '@hello-pangea/dnd';
-import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
+import { DropResult, ResponderProvided } from '@hello-pangea/dnd';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { Favorite } from '@/favorites/types/Favorite';
-import { sortFavorites } from '@/favorites/utils/sortFavorites';
-import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-export const useFavorites = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
+import {
+  favoriteId,
+  favoriteTargetObjectRecord,
+  initialFavorites,
+  mockId,
+  mocks,
+  mockWorkspaceMember,
+  sortedFavorites,
+} from '../__mocks__/useFavorites';
 
-  const { objectMetadataItem: favoriteObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.Favorite,
-    });
+jest.mock('uuid', () => ({
+  v4: jest.fn(() => mockId),
+}));
 
-  const { deleteOneRecord } = useDeleteOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Favorite,
-  });
+jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
+  useFindManyRecords: () => ({ records: initialFavorites }),
+}));
 
-  const { updateOneRecord: updateOneFavorite } = useUpdateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Favorite,
-  });
+const Wrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: mocks,
+});
 
-  const { createOneRecord: createOneFavorite } = useCreateOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Favorite,
-  });
+describe('useFavorites', () => {
+  it('should fetch favorites successfully', async () => {
+    const { result } = renderHook(
+      () => {
+        const setCurrentWorkspaceMember = useSetRecoilState(
+          currentWorkspaceMemberState,
+        );
+        setCurrentWorkspaceMember(mockWorkspaceMember);
 
-  const { records: favorites } = usePrefetchedData<Favorite>(
-    PrefetchKey.AllFavorites,
-    {
-      workspaceMemberId: {
-        eq: currentWorkspaceMember?.id ?? '',
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
+        setMetadataItems(generatedMockObjectMetadataItems);
+
+        return useFavorites();
       },
-    },
-  );
-
-  const { records: workspaceFavorites } = usePrefetchedData<Favorite>(
-    PrefetchKey.AllFavorites,
-    {
-      workspaceMemberId: {
-        eq: undefined,
+      {
+        wrapper: Wrapper,
       },
-    },
-  );
-
-  const favoriteRelationFieldMetadataItems = useMemo(
-    () =>
-      favoriteObjectMetadataItem.fields.filter(
-        (fieldMetadataItem) =>
-          fieldMetadataItem.type === FieldMetadataType.Relation &&
-          fieldMetadataItem.name !== 'workspaceMember',
-      ),
-    [favoriteObjectMetadataItem.fields],
-  );
-
-  const getObjectRecordIdentifierByNameSingular =
-    useGetObjectRecordIdentifierByNameSingular();
-
-  const favoritesSorted = useMemo(() => {
-    return sortFavorites(
-      favorites,
-      favoriteRelationFieldMetadataItems,
-      getObjectRecordIdentifierByNameSingular,
-      true,
     );
-  }, [
-    favoriteRelationFieldMetadataItems,
-    favorites,
-    getObjectRecordIdentifierByNameSingular,
-  ]);
 
-  const workspaceFavoritesSorted = useMemo(() => {
-    return sortFavorites(
-      workspaceFavorites.filter((favorite) => favorite.viewId),
-      favoriteRelationFieldMetadataItems,
-      getObjectRecordIdentifierByNameSingular,
-      false,
+    expect(result.current.favorites).toEqual(sortedFavorites);
+  });
+
+  it('should createOneFavorite successfully', async () => {
+    const { result } = renderHook(
+      () => {
+        const setCurrentWorkspaceMember = useSetRecoilState(
+          currentWorkspaceMemberState,
+        );
+        setCurrentWorkspaceMember(mockWorkspaceMember);
+
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
+        setMetadataItems(generatedMockObjectMetadataItems);
+
+        return useFavorites();
+      },
+      {
+        wrapper: Wrapper,
+      },
     );
-  }, [
-    favoriteRelationFieldMetadataItems,
-    getObjectRecordIdentifierByNameSingular,
-    workspaceFavorites,
-  ]);
 
-  const createFavorite = (
-    targetRecord: Record<string, any>,
-    targetObjectNameSingular: string,
-  ) => {
-    createOneFavorite({
-      [targetObjectNameSingular]: targetRecord,
-      position: favorites.length + 1,
-      workspaceMemberId: currentWorkspaceMember?.id,
+    result.current.createFavorite(
+      favoriteTargetObjectRecord,
+      CoreObjectNameSingular.Person,
+    );
+
+    await waitFor(() => {
+      expect(mocks[0].result).toHaveBeenCalled();
     });
-  };
+  });
 
-  const deleteFavorite = (favoriteId: string) => {
-    deleteOneRecord(favoriteId);
-  };
+  it('should deleteOneRecord successfully', async () => {
+    const { result } = renderHook(
+      () => {
+        const setCurrentWorkspaceMember = useSetRecoilState(
+          currentWorkspaceMemberState,
+        );
+        setCurrentWorkspaceMember(mockWorkspaceMember);
 
-  const computeNewPosition = (destIndex: number, sourceIndex: number) => {
-    const moveToFirstPosition = destIndex === 0;
-    const moveToLastPosition = destIndex === favoritesSorted.length - 1;
-    const moveAfterSource = destIndex > sourceIndex;
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
+        setMetadataItems(generatedMockObjectMetadataItems);
 
-    if (moveToFirstPosition) {
-      return favoritesSorted[0].position / 2;
-    } else if (moveToLastPosition) {
-      return favoritesSorted[destIndex - 1].position + 1;
-    } else if (moveAfterSource) {
-      return (
-        (favoritesSorted[destIndex + 1].position +
-          favoritesSorted[destIndex].position) /
-        2
+        return useFavorites();
+      },
+      {
+        wrapper: Wrapper,
+      },
+    );
+
+    result.current.deleteFavorite(favoriteId);
+
+    await waitFor(() => {
+      expect(mocks[1].result).toHaveBeenCalled();
+    });
+  });
+
+  it('should handle reordering favorites successfully', async () => {
+    const { result } = renderHook(
+      () => {
+        const setCurrentWorkspaceMember = useSetRecoilState(
+          currentWorkspaceMemberState,
+        );
+        setCurrentWorkspaceMember(mockWorkspaceMember);
+
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
+        setMetadataItems(generatedMockObjectMetadataItems);
+
+        return useFavorites();
+      },
+      {
+        wrapper: Wrapper,
+      },
+    );
+
+    act(() => {
+      const dragAndDropResult: DropResult = {
+        source: { index: 0, droppableId: 'droppableId' },
+        destination: { index: 2, droppableId: 'droppableId' },
+        combine: null,
+        mode: 'FLUID',
+        draggableId: 'draggableId',
+        type: 'type',
+        reason: 'DROP',
+      };
+
+      const responderProvided: ResponderProvided = {
+        announce: () => {},
+      };
+
+      result.current.handleReorderFavorite(
+        dragAndDropResult,
+        responderProvided,
       );
-    } else {
-      return (
-        favoritesSorted[destIndex].position -
-        (favoritesSorted[destIndex].position -
-          favoritesSorted[destIndex - 1].position) /
-          2
-      );
-    }
-  };
-
-  const handleReorderFavorite: OnDragEndResponder = (result) => {
-    if (!result.destination || !favoritesSorted) {
-      return;
-    }
-
-    const newPosition = computeNewPosition(
-      result.destination.index,
-      result.source.index,
-    );
-
-    const updatedFavorite = favoritesSorted[result.source.index];
-
-    updateOneFavorite({
-      idToUpdate: updatedFavorite.id,
-      updateOneRecordInput: {
-        position: newPosition,
-      },
     });
-  };
 
-  return {
-    favorites: favoritesSorted,
-    workspaceFavorites: workspaceFavoritesSorted,
-    createFavorite,
-    handleReorderFavorite,
-    deleteFavorite,
-  };
-};
+    await waitFor(() => {
+      expect(mocks[2].result).toHaveBeenCalled();
+    });
+  });
+});
