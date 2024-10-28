@@ -7,16 +7,12 @@ import { isDefined } from '~/utils/isDefined';
 
 const StyledSettingsPageContainer = styled.div<{
   width?: number;
-  removeLeftPadding?: boolean;
 }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(8)};
   overflow: auto;
   padding: ${({ theme }) => theme.spacing(6, 8, 8)};
-  & {
-    ${({ removeLeftPadding }) => removeLeftPadding && `padding-left: 0;`}
-  }
   width: ${({ width }) => {
     if (isDefined(width)) {
       return width + 'px';
@@ -31,14 +27,10 @@ const StyledSettingsPageContainer = styled.div<{
 
 export const SettingsPageContainer = ({
   children,
-  removeLeftPadding = false,
 }: {
   children: ReactNode;
-  removeLeftPadding?: boolean;
 }) => (
   <ScrollWrapper contextProviderName="settingsPageContainer">
-    <StyledSettingsPageContainer removeLeftPadding={removeLeftPadding}>
-      {children}
-    </StyledSettingsPageContainer>
+    <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>
   </ScrollWrapper>
 );

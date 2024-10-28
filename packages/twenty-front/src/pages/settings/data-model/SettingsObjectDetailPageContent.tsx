@@ -136,7 +136,7 @@ export const SettingsObjectDetailPageContent = ({
         )
       }
     >
-      <SettingsPageContainer removeLeftPadding>
+      <SettingsPageContainer>
         <StyledTitleContainer>
           <H3Title title={objectMetadataItem.labelPlural} />
           <StyledObjectTypeTag objectTypeLabel={objectTypeLabel} />

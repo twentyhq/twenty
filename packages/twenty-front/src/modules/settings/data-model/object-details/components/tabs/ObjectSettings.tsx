@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormProvider, useForm, useWatch } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Button, H2Title, IconArchive } from 'twenty-ui';
 import { z, ZodError } from 'zod';
@@ -12,6 +12,7 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import {
+  IS_LABEL_SYNCED_WITH_NAME_LABEL,
   SettingsDataModelObjectAboutForm,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
@@ -26,9 +27,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import styled from '@emotion/styled';
 import pick from 'lodash.pick';
-import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { useDebouncedCallback } from 'use-debounce';
 import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
 import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
@@ -82,20 +81,26 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
     formValues: SettingsDataModelObjectEditFormValues,
   ) => {
     let values = formValues;
-    if (
-      formValues.shouldSyncLabelAndName === true ||
-      objectMetadataItem.shouldSyncLabelAndName === true
-    ) {
+    const dirtyFieldKeys = Object.keys(
+      formConfig.formState.dirtyFields,
+    ) as (keyof SettingsDataModelObjectEditFormValues)[];
+    const shouldComputeNamesFromLabels: boolean = dirtyFieldKeys.includes(
+      IS_LABEL_SYNCED_WITH_NAME_LABEL,
+    )
+      ? (formValues.isLabelSyncedWithName as boolean)
+      : objectMetadataItem.isLabelSyncedWithName;
+
+    if (shouldComputeNamesFromLabels) {
       values = {
         ...values,
-        ...(values.labelSingular
+        ...(values.labelSingular && dirtyFieldKeys.includes('labelSingular')
           ? {
               nameSingular: computeMetadataNameFromLabelOrThrow(
                 formValues.labelSingular,
               ),
             }
           : {}),
-        ...(values.labelPlural
+        ...(values.labelPlural && dirtyFieldKeys.includes('labelPlural')
           ? {
               namePlural: computeMetadataNameFromLabelOrThrow(
                 formValues.labelPlural,
@@ -105,15 +110,17 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
       };
     }
 
-    const dirtyFieldKeys = Object.keys(
-      formConfig.formState.dirtyFields,
-    ) as (keyof SettingsDataModelObjectEditFormValues)[];
-
     return settingsUpdateObjectInputSchema.parse(
       pick(values, [
         ...dirtyFieldKeys,
-        ...(values.namePlural ? ['namePlural'] : []),
-        ...(values.nameSingular ? ['nameSingular'] : []),
+        ...(shouldComputeNamesFromLabels &&
+        dirtyFieldKeys.includes('labelPlural')
+          ? ['namePlural']
+          : []),
+        ...(shouldComputeNamesFromLabels &&
+        dirtyFieldKeys.includes('labelSingular')
+          ? ['nameSingular']
+          : []),
       ]),
     );
   };
@@ -168,21 +175,6 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
     navigate(settingsObjectsPagePath);
   };
 
-  const formData = useWatch<SettingsDataModelObjectEditFormValues>({
-    control: formConfig.control,
-  });
-
-  const debouncedHandleSave = useDebouncedCallback((data) => {
-    handleSave(data);
-  }, 1000);
-
-  useEffect(() => {
-    if (Object.keys(formData).length > 0) {
-      debouncedHandleSave.cancel();
-      debouncedHandleSave(formData);
-    }
-  }, [debouncedHandleSave, formData]);
-
   return (
     <RecordFieldValueSelectorContextProvider>
       <FormProvider {...formConfig}>
@@ -196,6 +188,9 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
               disabled={!objectMetadataItem.isCustom || loading}
               disableNameEdit={!objectMetadataItem.isCustom}
               objectMetadataItem={objectMetadataItem}
+              onBlur={() => {
+                formConfig.handleSubmit(handleSave)();
+              }}
             />
           </StyledFormSection>
           <StyledFormSection>
