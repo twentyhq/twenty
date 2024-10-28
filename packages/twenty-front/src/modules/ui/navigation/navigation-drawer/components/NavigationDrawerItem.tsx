@@ -142,9 +142,12 @@ const StyledKeyBoardShortcut = styled.span`
   visibility: hidden;
 `;
 
-const StyledNavigationDrawerItemContainer = styled.span`
+const StyledNavigationDrawerItemContainer = styled.div<{
+  isMobile?: boolean;
+}>`
   display: flex;
-  width: 100%;
+  width: ${({ isMobile }) => (isMobile ? 'auto' : '100%')};
+  flex-grow: ${({ isMobile }) => (isMobile ? 1 : 0)};
 `;
 
 const StyledSpacer = styled.span`
@@ -189,7 +192,7 @@ export const NavigationDrawerItem = ({
   };
 
   return (
-    <StyledNavigationDrawerItemContainer>
+    <StyledNavigationDrawerItemContainer isMobile={isMobile}>
       <StyledItem
         className={className}
         onClick={handleItemClick}

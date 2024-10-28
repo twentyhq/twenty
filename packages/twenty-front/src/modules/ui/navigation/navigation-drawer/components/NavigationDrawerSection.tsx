@@ -1,13 +1,14 @@
 import styled from '@emotion/styled';
 
-const StyledSection = styled.div`
+const StyledSection = styled.div<{
+  isMobile?: boolean;
+}>`
   display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.betweenSiblingsGap};
-  width: 100%;
+  gap: ${({ theme, isMobile }) => isMobile? theme.spacing(3) : theme.betweenSiblingsGap};
   margin-bottom: ${({ theme }) => theme.spacing(3)};
-  flex-shrink: 1;
   overflow: hidden;
-`;
+  flex-direction: ${({ isMobile }) => isMobile ? "row" : "column"};
+  min-width: ${({ isMobile }) => isMobile ? '20%' : ''};
+  `;
 
 export { StyledSection as NavigationDrawerSection };

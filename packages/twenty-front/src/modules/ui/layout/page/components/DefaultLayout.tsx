@@ -3,18 +3,17 @@ import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
-import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useScreenSize } from 'twenty-ui';
 import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
+import { useScreenSize } from 'twenty-ui';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -41,10 +40,12 @@ const StyledLayout = styled.div`
   }
 `;
 
-const StyledPageContainer = styled(motion.div)`
+const StyledPageContainer = styled(motion.div)<{
+  isMobile?: boolean;
+}>`
   display: flex;
   flex: 1 1 auto;
-  flex-direction: row;
+  flex-direction: ${({ isMobile }) => (isMobile ? 'column-reverse' : 'row')};
   min-height: 0;
 `;
 
@@ -64,7 +65,6 @@ export const DefaultLayout = () => {
   const theme = useTheme();
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
-
   return (
     <>
       <Global
@@ -78,7 +78,7 @@ export const DefaultLayout = () => {
         <CommandMenu />
         <KeyboardShortcutMenu />
 
-        <StyledPageContainer
+        <StyledPageContainer isMobile={isMobile}
           animate={{
             marginLeft:
               isSettingsPage && !isMobile
@@ -113,7 +113,7 @@ export const DefaultLayout = () => {
             )}
           </StyledMainContainer>
         </StyledPageContainer>
-        {isMobile && <MobileNavigationBar />}
+        {/* {isMobile && <MobileNavigationBar />} */}
       </StyledLayout>
     </>
   );

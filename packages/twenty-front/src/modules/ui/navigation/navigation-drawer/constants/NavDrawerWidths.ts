@@ -1,7 +1,7 @@
 export const NAV_DRAWER_WIDTHS = {
   menu: {
     mobile: {
-      collapsed: 0,
+      collapsed: '100%',
       expanded: '100%',
     },
     desktop: {

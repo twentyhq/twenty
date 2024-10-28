@@ -12,12 +12,16 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useFavorites } from '../hooks/useFavorites';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useFavorites } from '../hooks/useFavorites';
 
-const StyledContainer = styled(NavigationDrawerSection)`
-  width: 100%;
+const StyledContainer = styled(NavigationDrawerSection)<{
+  isMobile?: boolean;
+}>`
+  width: ${({ isMobile }) => (isMobile ? 'auto' : '')};
+  flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
 `;
 
 const StyledAvatar = styled(Avatar)`
@@ -44,6 +48,7 @@ export const CurrentWorkspaceMemberFavorites = () => {
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Favorites');
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
+  const isMobile = useIsMobile();
 
   if (loading && isDefined(currentWorkspaceMember)) {
     return <FavoritesSkeletonLoader />;
@@ -106,7 +111,7 @@ export const CurrentWorkspaceMemberFavorites = () => {
   );
 
   return (
-    <StyledContainer>
+    <StyledContainer isMobile={isMobile}>
       <NavigationDrawerAnimatedCollapseWrapper>
         <NavigationDrawerSectionTitle
           label="Favorites"

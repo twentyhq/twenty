@@ -3,8 +3,11 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { IconSearch, IconSettings } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { NavigationDrawerSectionForObjectMetadataItemsWrapper } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsWrapper';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -30,29 +33,48 @@ export const MainNavigationDrawerItems = () => {
   const setNavigationDrawerExpandedMemorized = useSetRecoilState(
     navigationDrawerExpandedMemorizedState,
   );
+  const [isCommandMenuOpened] = useRecoilState(isCommandMenuOpenedState);
+  const isSettingsPage = useIsSettingsPage();
+  const { closeCommandMenu, openCommandMenu } = useCommandMenu();
+  const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
+    useRecoilState(currentMobileNavigationDrawerState);
+  const activeItemName = isNavigationDrawerExpanded
+    ? currentMobileNavigationDrawer
+    : isCommandMenuOpened
+      ? 'search'
+      : isSettingsPage
+        ? 'settings'
+        : 'main';
 
   return (
     <>
-      {!isMobile && (
-        <NavigationDrawerSection>
-          <NavigationDrawerItem
-            label="Search"
-            Icon={IconSearch}
-            onClick={toggleCommandMenu}
-            keyboard={['⌘', 'K']}
-          />
-          <NavigationDrawerItem
-            label="Settings"
-            to={'/settings/profile'}
-            onClick={() => {
+      <NavigationDrawerSection isMobile={isMobile}>
+        <NavigationDrawerItem
+          label="Search"
+          Icon={IconSearch}
+          onClick={toggleCommandMenu}
+          keyboard={['⌘', 'K']}
+        />
+        <NavigationDrawerItem
+          label="Settings"
+          to={'/settings/profile'}
+          onClick={() => {
+            if (isMobile) {
+              closeCommandMenu();
+              setIsNavigationDrawerExpanded(
+                (previousIsOpen) =>
+                  activeItemName !== 'settings' || !previousIsOpen,
+              );
+              setCurrentMobileNavigationDrawer('settings');
+            } else {
               setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
               setIsNavigationDrawerExpanded(true);
               setNavigationMemorizedUrl(location.pathname + location.search);
-            }}
-            Icon={IconSettings}
-          />
-        </NavigationDrawerSection>
-      )}
+            }
+          }}
+          Icon={IconSettings}
+        />
+      </NavigationDrawerSection>
 
       {isWorkspaceFavoriteEnabled && <NavigationDrawerOpenedSection />}
 
