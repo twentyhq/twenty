@@ -5,7 +5,7 @@ import {
   ComputeStepOutputSchemaMutation,
   ComputeStepOutputSchemaMutationVariables,
 } from '~/generated/graphql';
-import { COMPUTE_STEP_OUTPUT_SCHEMA } from 'packages/twenty-front/src/modules/workflow/graphql/mutations/computeStepOutputSchema';
+import { COMPUTE_STEP_OUTPUT_SCHEMA } from '@/workflow/graphql/mutations/computeStepOutputSchema';
 
 export const useComputeStepOutputSchema = () => {
   const apolloMetadataClient = useApolloMetadataClient();

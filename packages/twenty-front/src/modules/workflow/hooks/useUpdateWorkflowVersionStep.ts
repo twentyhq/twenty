@@ -8,7 +8,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { replaceStep } from '@/workflow/utils/replaceStep';
 import { isDefined } from 'twenty-ui';
-import { useComputeStepOutputSchema } from 'packages/twenty-front/src/modules/workflow/hooks/useComputeStepOutputSchema';
+import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
 
 export const useUpdateWorkflowVersionStep = ({
   workflow,

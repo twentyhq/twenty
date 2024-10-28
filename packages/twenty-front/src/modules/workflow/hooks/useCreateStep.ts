@@ -16,7 +16,7 @@ import { getStepDefaultDefinition } from '@/workflow/utils/getStepDefaultDefinit
 import { insertStep } from '@/workflow/utils/insertStep';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
-import { useComputeStepOutputSchema } from 'packages/twenty-front/src/modules/workflow/hooks/useComputeStepOutputSchema';
+import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
 
 export const useCreateStep = ({
   workflow,
