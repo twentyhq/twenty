@@ -153,8 +153,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
           <StyledFilterRow>
             <Select
               fullWidth
-              dropdownWidth={250}
-              mobileDropdownWidth={160}
               dropdownId="object-webhook-type-select"
               value={operationObjectSingularName}
               onChange={(objectSingularName) => {
@@ -165,8 +163,6 @@ export const SettingsDevelopersWebhooksDetail = () => {
             />
             <Select
               fullWidth
-              dropdownWidth={250}
-              mobileDropdownWidth={160}
               dropdownId="operation-webhook-type-select"
               value={operationAction}
               onChange={(operationAction) => {
