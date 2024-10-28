@@ -8,7 +8,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { replaceStep } from '@/workflow/utils/replaceStep';
 import { isDefined } from 'twenty-ui';
-import { useComputeStepSettingOutputSchema } from '@/workflow/hooks/useComputeStepSettingOutputSchema';
+import { useComputeStepOutputSchema } from 'packages/twenty-front/src/modules/workflow/hooks/useComputeStepOutputSchema';
 
 export const useUpdateWorkflowVersionStep = ({
   workflow,
@@ -23,8 +23,7 @@ export const useUpdateWorkflowVersionStep = ({
     });
 
   const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
-  const { computeStepSettingOutputSchema } =
-    useComputeStepSettingOutputSchema();
+  const { computeStepOutputSchema } = useComputeStepOutputSchema();
 
   const updateStep = async <T extends WorkflowStep>(updatedStep: T) => {
     if (!isDefined(workflow.currentVersion)) {
@@ -32,10 +31,10 @@ export const useUpdateWorkflowVersionStep = ({
     }
 
     const outputSchema = (
-      await computeStepSettingOutputSchema({
+      await computeStepOutputSchema({
         step: updatedStep,
       })
-    )?.data?.computeStepSettingOutputSchema;
+    )?.data?.computeStepOutputSchema;
 
     updatedStep.settings = {
       ...updatedStep.settings,

@@ -7,7 +7,7 @@ import {
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-ui';
-import { useComputeStepSettingOutputSchema } from '@/workflow/hooks/useComputeStepSettingOutputSchema';
+import { useComputeStepOutputSchema } from 'packages/twenty-front/src/modules/workflow/hooks/useComputeStepOutputSchema';
 
 export const useUpdateWorkflowVersionTrigger = ({
   workflow,
@@ -21,8 +21,7 @@ export const useUpdateWorkflowVersionTrigger = ({
 
   const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
 
-  const { computeStepSettingOutputSchema } =
-    useComputeStepSettingOutputSchema();
+  const { computeStepOutputSchema } = useComputeStepOutputSchema();
 
   const updateTrigger = async (updatedTrigger: WorkflowTrigger) => {
     if (!isDefined(workflow.currentVersion)) {
@@ -31,10 +30,10 @@ export const useUpdateWorkflowVersionTrigger = ({
 
     if (workflow.currentVersion.status === 'DRAFT') {
       const outputSchema = (
-        await computeStepSettingOutputSchema({
+        await computeStepOutputSchema({
           step: updatedTrigger,
         })
-      )?.data?.computeStepSettingOutputSchema;
+      )?.data?.computeStepOutputSchema;
 
       updatedTrigger.settings = {
         ...updatedTrigger.settings,

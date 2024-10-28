@@ -19,7 +19,7 @@ export class WorkflowResolver {
   constructor(private readonly workflowService: WorkflowService) {}
 
   @Mutation(() => graphqlTypeJson)
-  async computeStepSettingOutputSchema(
+  async computeStepOutputSchema(
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input') { step }: ComputeStepOutputSchemaInput,
   ): Promise<OutputSchema> {

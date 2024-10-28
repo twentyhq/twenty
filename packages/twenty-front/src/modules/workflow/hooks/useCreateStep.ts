@@ -16,7 +16,7 @@ import { getStepDefaultDefinition } from '@/workflow/utils/getStepDefaultDefinit
 import { insertStep } from '@/workflow/utils/insertStep';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
-import { useComputeStepSettingOutputSchema } from '@/workflow/hooks/useComputeStepSettingOutputSchema';
+import { useComputeStepOutputSchema } from 'packages/twenty-front/src/modules/workflow/hooks/useComputeStepOutputSchema';
 
 export const useCreateStep = ({
   workflow,
@@ -41,8 +41,7 @@ export const useCreateStep = ({
 
   const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
 
-  const { computeStepSettingOutputSchema } =
-    useComputeStepSettingOutputSchema();
+  const { computeStepOutputSchema } = useComputeStepOutputSchema();
 
   const insertNodeAndSave = async ({
     parentNodeId,
@@ -90,10 +89,10 @@ export const useCreateStep = ({
     const newStep = getStepDefaultDefinition(newStepType);
 
     const outputSchema = (
-      await computeStepSettingOutputSchema({
+      await computeStepOutputSchema({
         step: newStep,
       })
-    )?.data?.computeStepSettingOutputSchema;
+    )?.data?.computeStepOutputSchema;
 
     newStep.settings = {
       ...newStep.settings,

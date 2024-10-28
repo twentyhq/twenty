@@ -19,14 +19,11 @@ export const generateFakeObjectRecordEvent = <Entity>(
   const userId = v4();
   const workspaceMemberId = v4();
 
-  const after = objectMetadataEntity.fields.reduce(
-    (acc, field) => {
-      acc[field.name] = generateFakeValue(field.type);
+  const after = objectMetadataEntity.fields.reduce((acc, field) => {
+    acc[field.name] = generateFakeValue(field.type);
 
-      return acc;
-    },
-    {} as Record<string, any>,
-  );
+    return acc;
+  }, {} as Entity);
 
   if (action === 'created') {
     return {
@@ -35,19 +32,16 @@ export const generateFakeObjectRecordEvent = <Entity>(
       workspaceMemberId,
       objectMetadata: objectMetadataEntity,
       properties: {
-        after: after as Entity,
+        after,
       },
-    };
+    } satisfies ObjectRecordCreateEvent<Entity>;
   }
 
-  const before = objectMetadataEntity.fields.reduce(
-    (acc, field) => {
-      acc[field.name] = generateFakeValue(field.type);
+  const before = objectMetadataEntity.fields.reduce((acc, field) => {
+    acc[field.name] = generateFakeValue(field.type);
 
-      return acc;
-    },
-    {} as Record<string, any>,
-  );
+    return acc;
+  }, {} as Entity);
 
   if (action === 'updated') {
     return {
@@ -56,11 +50,11 @@ export const generateFakeObjectRecordEvent = <Entity>(
       workspaceMemberId,
       objectMetadata: objectMetadataEntity,
       properties: {
-        before: after as Entity,
-        after: before as Entity,
-        diff: after as Entity,
+        before,
+        after,
+        diff: after,
       },
-    };
+    } satisfies ObjectRecordUpdateEvent<Entity>;
   }
 
   if (action === 'deleted') {
@@ -70,9 +64,9 @@ export const generateFakeObjectRecordEvent = <Entity>(
       workspaceMemberId,
       objectMetadata: objectMetadataEntity,
       properties: {
-        before: before as Entity,
+        before,
       },
-    };
+    } satisfies ObjectRecordDeleteEvent<Entity>;
   }
 
   if (action === 'destroyed') {
@@ -82,9 +76,9 @@ export const generateFakeObjectRecordEvent = <Entity>(
       workspaceMemberId,
       objectMetadata: objectMetadataEntity,
       properties: {
-        before: before as Entity,
+        before,
       },
-    };
+    } satisfies ObjectRecordDestroyEvent<Entity>;
   }
 
   throw new Error(`Unknown action '${action}'`);
