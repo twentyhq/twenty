@@ -3,7 +3,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/components/SettingsApiKeysFieldItemTableRow';
 import { ApiFieldItem } from '@/settings/developers/types/api-key/ApiFieldItem';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
-import { formatExpirations } from '@/settings/developers/utils/format-expiration';
+import { formatExpirations } from '@/settings/developers/utils/formatExpiration';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';

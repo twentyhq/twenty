@@ -34,6 +34,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   const {
     scopeId,
     availableTableColumnsState,
+    tableViewFilterGroupsState,
     tableFiltersState,
     tableSortsState,
     tableColumnsState,
@@ -42,6 +43,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     isRecordTableInitialLoadingState,
     tableLastRowVisibleState,
     selectedRowIdsSelector,
+    unselectedRowIdsSelector,
     onToggleColumnFilterState,
     onToggleColumnSortState,
     pendingRecordIdState,
@@ -65,6 +67,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   );
 
   const setOnEntityCountChange = useSetRecoilState(onEntityCountChangeState);
+
+  const setTableViewFilterGroups = useSetRecoilState(
+    tableViewFilterGroupsState,
+  );
 
   const setTableFilters = useSetRecoilState(tableFiltersState);
 
@@ -202,6 +208,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     scopeId,
     onColumnsChange,
     setAvailableTableColumns,
+    setTableViewFilterGroups,
     setTableFilters,
     setTableSorts,
     setOnEntityCountChange,
@@ -223,6 +230,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setSoftFocusPosition,
     isSomeCellInEditModeState,
     selectedRowIdsSelector,
+    unselectedRowIdsSelector,
     setHasUserSelectedAllRows,
     setOnToggleColumnFilter,
     setOnToggleColumnSort,

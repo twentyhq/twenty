@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -12,10 +11,6 @@ import {
   WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnCreate,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import {
-  WorkspaceMigrationException,
-  WorkspaceMigrationExceptionCode,
-} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
 export type TsVectorFieldMetadataType = FieldMetadataType.TS_VECTOR;
 
@@ -40,14 +35,28 @@ export class TsVectorColumnActionFactory extends ColumnActionAbstractFactory<TsV
     ];
   }
 
-  protected handleAlterAction(
-    _currentFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
-    _alteredFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
-    _options?: WorkspaceColumnActionOptions,
+  handleAlterAction(
+    currentFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
+    alteredFieldMetadata: FieldMetadataInterface<TsVectorFieldMetadataType>,
   ): WorkspaceMigrationColumnAlter[] {
-    throw new WorkspaceMigrationException(
-      `TsVectorColumnActionFactory.handleAlterAction has not been implemented yet.`,
-      WorkspaceMigrationExceptionCode.INVALID_FIELD_METADATA,
-    );
+    return [
+      {
+        action: WorkspaceMigrationColumnActionType.ALTER,
+        currentColumnDefinition: {
+          columnName: currentFieldMetadata.name,
+          columnType: fieldMetadataTypeToColumnType(currentFieldMetadata.type),
+          isNullable: currentFieldMetadata.isNullable ?? true,
+          defaultValue: undefined,
+        },
+        alteredColumnDefinition: {
+          columnName: alteredFieldMetadata.name,
+          columnType: fieldMetadataTypeToColumnType(alteredFieldMetadata.type),
+          isNullable: alteredFieldMetadata.isNullable ?? true,
+          defaultValue: undefined,
+          asExpression: alteredFieldMetadata.asExpression,
+          generatedType: alteredFieldMetadata.generatedType,
+        },
+      },
+    ];
   }
 }

@@ -24,8 +24,12 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { COMPANY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
@@ -39,13 +43,19 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 const NAME_FIELD_NAME = 'name';
 const DOMAIN_NAME_FIELD_NAME = 'domainName';
 
+export const SEARCH_FIELDS_FOR_COMPANY: FieldTypeAndNameMetadata[] = [
+  { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
+  { name: DOMAIN_NAME_FIELD_NAME, type: FieldMetadataType.LINKS },
+];
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.company,
   namePlural: 'companies',
   labelSingular: 'Company',
   labelPlural: 'Companies',
   description: 'A company',
-  icon: 'IconBuildingSkyscraper',
+  icon: STANDARD_OBJECT_ICONS.company,
+  shortcut: 'C',
   labelIdentifierStandardId: COMPANY_STANDARD_FIELD_IDS.name,
 })
 export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
@@ -292,10 +302,9 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     description: SEARCH_VECTOR_FIELD.description,
     icon: 'IconUser',
     generatedType: 'STORED',
-    asExpression: getTsVectorColumnExpressionFromFields([
-      { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
-      { name: DOMAIN_NAME_FIELD_NAME, type: FieldMetadataType.LINKS },
-    ]),
+    asExpression: getTsVectorColumnExpressionFromFields(
+      SEARCH_FIELDS_FOR_COMPANY,
+    ),
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()

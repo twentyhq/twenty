@@ -26,8 +26,12 @@ import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -43,13 +47,20 @@ const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
 const JOB_TITLE_FIELD_NAME = 'jobTitle';
 
+export const SEARCH_FIELDS_FOR_PERSON: FieldTypeAndNameMetadata[] = [
+  { name: NAME_FIELD_NAME, type: FieldMetadataType.FULL_NAME },
+  { name: EMAILS_FIELD_NAME, type: FieldMetadataType.EMAILS },
+  { name: JOB_TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
+];
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.person,
   namePlural: 'people',
   labelSingular: 'Person',
   labelPlural: 'People',
   description: 'A person',
-  icon: 'IconUser',
+  icon: STANDARD_OBJECT_ICONS.person,
+  shortcut: 'P',
   labelIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.name,
   imageIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
 })
@@ -298,11 +309,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: SEARCH_VECTOR_FIELD.description,
     icon: 'IconUser',
     generatedType: 'STORED',
-    asExpression: getTsVectorColumnExpressionFromFields([
-      { name: NAME_FIELD_NAME, type: FieldMetadataType.FULL_NAME },
-      { name: EMAILS_FIELD_NAME, type: FieldMetadataType.EMAILS },
-      { name: JOB_TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
-    ]),
+    asExpression: getTsVectorColumnExpressionFromFields(
+      SEARCH_FIELDS_FOR_PERSON,
+    ),
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
