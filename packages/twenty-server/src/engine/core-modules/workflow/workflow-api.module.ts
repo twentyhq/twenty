@@ -7,6 +7,7 @@ import { WorkflowResolver } from 'src/engine/core-modules/workflow/resolvers/wor
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { CodeIntrospectionModule } from 'src/modules/code-introspection/code-introspection.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkflowService } from 'src/engine/core-modules/workflow/services/workflow.service';
 
 @Module({
   imports: [
@@ -15,6 +16,6 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
     ServerlessFunctionModule,
     CodeIntrospectionModule,
   ],
-  providers: [WorkflowTriggerResolver, WorkflowResolver],
+  providers: [WorkflowTriggerResolver, WorkflowResolver, WorkflowService],
 })
 export class WorkflowApiModule {}

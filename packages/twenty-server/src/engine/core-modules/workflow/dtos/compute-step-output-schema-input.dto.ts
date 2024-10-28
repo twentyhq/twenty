@@ -6,7 +6,7 @@ import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/wor
 import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
 
 @InputType()
-export class ComputeStepSettingOutputSchemaInput {
+export class ComputeStepOutputSchemaInput {
   @Field(() => graphqlTypeJson, {
     description: 'Step JSON format',
     nullable: false,

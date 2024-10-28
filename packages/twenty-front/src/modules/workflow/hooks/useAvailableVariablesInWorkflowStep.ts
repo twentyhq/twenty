@@ -21,15 +21,11 @@ export const useAvailableVariablesInWorkflowStep = (): StepOutputSchema[] => {
     workflowVersion: workflow.currentVersion,
   });
 
-  if (!isDefined(stepDefinition)) {
-    return [];
-  }
-
-  if (stepDefinition.type === 'trigger') {
-    return [];
-  }
-
-  if (!isDefined(workflow.currentVersion.steps)) {
+  if (
+    !isDefined(stepDefinition) ||
+    stepDefinition.type === 'trigger' ||
+    !isDefined(workflow.currentVersion.steps)
+  ) {
     return [];
   }
 
