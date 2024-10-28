@@ -1,5 +1,3 @@
-# Data Source created from Pipe 'materializeWebhookEvent
-
 SCHEMA >
     `timestamp` DateTime64(3),
     `workspaceId` String,
@@ -10,6 +8,6 @@ SCHEMA >
     `eventName` String,
     `version` String
 
-ENGINE "MergeTree"
-ENGINE_PARTITION_KEY "toYYYYMM(timestamp)"
-ENGINE_SORTING_KEY "timestamp, workspaceId"
+ENGINE MergeTree
+ENGINE_PARTITION_KEY toYYYYMM(timestamp)
+ENGINE_SORTING_KEY timestamp, workspaceId

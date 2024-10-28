@@ -1,9 +1,7 @@
 INCLUDE "../../includes/timeSeries.incl"
-INCLUDE "../../includes/commonWorkspaceRessources.incl"
 
 NODE timeSeriesServerlessFunctionErrorsData
 SQL >
-
     %
     SELECT
         {% if granularity == "hour" %} toStartOfHour(timestamp, {{ String(timezone, 'UTC') }})
@@ -16,7 +14,6 @@ SQL >
         {% else %} toDateTime64(toStartOfDay(timestamp, {{ String(timezone, 'UTC') }}), 3)
         {% end %} AS interval,
         uniqIf(*, success = false) as error_count,
-        -- change it to div 0 val
         round(
             if(
                 uniqIf(*, success = true) = 0,
@@ -25,30 +22,20 @@ SQL >
             ),
             2
         ) as success_rate
-    FROM
-        serverlessFunctionEventMV
-        {% if not defined(functionId) and defined(workspaceId) %}
-            PREWHERE functionId in (SELECT functionId from workspaceServerlessFunctions)
-        {% end %}
+    FROM serverlessFunctionEventMV
     WHERE
         true
-        {% if defined(functionId) %} AND functionId = {{ String(functionId) }} {% end %}
-        AND workspaceId ={{ String(workspaceId) }}
+        AND functionId = {{ String(functionId, 'a9fd87c0-af86-4e17-be3a-a6d3d961678a', required=True) }}
+        AND workspaceId
+        ={{ String(workspaceId, '20202020-1c25-4d02-bf25-6aeccf7ea419', required=True) }}
         AND timestamp >= {{ DateTime(start, '2024-10-22 00:00:00') }}
         AND timestamp < {{ DateTime(end, '2024-10-23 00:00:00') }}
     GROUP BY interval
     ORDER BY interval
 
-
 NODE endpoint
 SQL >
-
     %
-
     SELECT formatDateTime(interval, '%FT%T.000%z') as start, error_count, success_rate
-    FROM
-        {% if granularity == "custom" %} customIntervals
-        {% elif granularity == "hour" %} hourIntervals
-        {% else %} dayIntervals
-        {% end %}
+    FROM selectIntervalByGranularity
     LEFT JOIN timeSeriesServerlessFunctionErrorsData USING interval

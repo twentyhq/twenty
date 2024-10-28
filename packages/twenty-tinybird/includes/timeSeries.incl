@@ -76,4 +76,12 @@ SQL >
     SELECT interval
     FROM time_series
 
-
+NODE selectIntervalByGranularity
+SQL >
+    %
+    SELECT *
+    FROM
+        {% if granularity == "custom" %} customIntervals
+        {% elif granularity == "hour" %} hourIntervals
+        {% else %} dayIntervals
+        {% end %}

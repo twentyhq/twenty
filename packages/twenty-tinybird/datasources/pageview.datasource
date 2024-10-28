@@ -1,4 +1,3 @@
-
 SCHEMA >
     `href` String `json:$.href`,
     `locale` String `json:$.locale`,
@@ -12,6 +11,6 @@ SCHEMA >
     `version` String `json:$.version`,
     `workspaceId` String `json:$.workspaceId`
 
-ENGINE "MergeTree"
-ENGINE_PARTITION_KEY "toYear(timestamp)"
-ENGINE_SORTING_KEY "timestamp, userId, version, workspaceId"
+ENGINE MergeTree
+ENGINE_PARTITION_KEY toYear(timestamp)
+ENGINE_SORTING_KEY timestamp, userId, version, workspaceId

@@ -1,4 +1,3 @@
-
 SCHEMA >
     `action` String `json:$.action`,
     `timestamp` DateTime64(3) `json:$.timestamp`,
@@ -7,6 +6,6 @@ SCHEMA >
     `workspaceId` String `json:$.workspaceId` DEFAULT '',
     `payload` String `json:$.payload`
 
-ENGINE "MergeTree"
-ENGINE_PARTITION_KEY "toYear(timestamp)"
-ENGINE_SORTING_KEY "action, timestamp"
+ENGINE MergeTree
+ENGINE_PARTITION_KEY toYear(timestamp)
+ENGINE_SORTING_KEY action, timestamp
