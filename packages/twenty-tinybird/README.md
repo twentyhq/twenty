@@ -33,8 +33,10 @@ tb pull
 ```
 Things I learned:
 
-When creating a MV think about populating it first using the files from the fixtures
-When pushing your pipes prefer to push one by one so you can have more coherent error messages
-The Include files will be nodes that will be added at the start of your node in Tinybird UI
-It's best to stick only with only the CLI or the UI when developping in Tinybird
+* When creating Materialied Views think about populating it first using the files from the fixtures
+* When pushing your pipes prefer to push one by one so you can have more coherent error messages
+* The Include files will be nodes that will be added at the start of your node in Tinybird UI
+* It's best to stick only with only the CLI or the UI when developping in Tinybird
+* If you want to format the data us the tb fmt command, perhaps we can add it to the linter in a next pull request.
+
 
