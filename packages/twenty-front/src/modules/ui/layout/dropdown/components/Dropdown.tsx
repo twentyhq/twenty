@@ -92,7 +92,7 @@ export const Dropdown = ({
     middleware: [
       flip(),
       size({
-        padding: 20,
+        padding: 12 + 20, // 12px for padding bottom, 20px for dropdown bottom margin target
         apply: ({ availableHeight }) => {
           flushSync(() => setMaxHeight(availableHeight));
         },
