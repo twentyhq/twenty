@@ -34,12 +34,14 @@ export const RecordTable = ({
 }: RecordTableProps) => {
   const isRecordTableInitialLoading = useRecoilComponentValueV2(
     isRecordTableInitialLoadingComponentState,
+    recordTableId,
   );
 
-  const tableRowIds = useRecoilComponentValueV2(tableRowIdsComponentState);
+  const tableRowIds = useRecoilComponentValueV2(tableRowIdsComponentState, recordTableId);
 
   const pendingRecordId = useRecoilComponentValueV2(
     recordTablePendingRecordIdComponentState,
+    recordTableId,
   );
 
   const recordTableIsEmpty =
