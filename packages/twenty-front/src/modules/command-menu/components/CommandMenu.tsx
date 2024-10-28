@@ -16,7 +16,6 @@ import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainNa
 import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
 import { Opportunity } from '@/opportunities/types/Opportunity';
 import { Person } from '@/people/types/Person';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -30,7 +29,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { Avatar, IconNotes, IconSparkles, IconX, isDefined } from 'twenty-ui';
+import {
+  Avatar,
+  IconNotes,
+  IconSparkles,
+  IconX,
+  LightIconButton,
+  isDefined,
+} from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
 import { getLogoUrlFromDomainName } from '~/utils';
 

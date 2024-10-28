@@ -1,7 +1,7 @@
 import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/turnFiltersIntoQueryFilter';
+import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 
 export const computeContextStoreFilters = (
@@ -12,9 +12,10 @@ export const computeContextStoreFilters = (
 
   if (contextStoreTargetedRecordsRule.mode === 'exclusion') {
     queryFilter = makeAndFilterVariables([
-      turnFiltersIntoQueryFilter(
+      computeViewRecordGqlOperationFilter(
         contextStoreTargetedRecordsRule.filters,
         objectMetadataItem?.fields ?? [],
+        [],
       ),
       contextStoreTargetedRecordsRule.excludedRecordIds.length > 0
         ? {

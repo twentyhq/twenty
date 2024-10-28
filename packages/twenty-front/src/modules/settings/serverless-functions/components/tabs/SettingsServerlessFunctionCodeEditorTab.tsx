@@ -6,7 +6,6 @@ import { SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/s
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Button } from '@/ui/input/button/components/Button';
 import { CoreEditorHeader } from '@/ui/input/code-editor/components/CodeEditorHeader';
 import { Section } from '@/ui/layout/section/components/Section';
 import { TabList } from '@/ui/layout/tab/components/TabList';
@@ -16,7 +15,13 @@ import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { H2Title, IconGitCommit, IconPlayerPlay, IconRestore } from 'twenty-ui';
+import {
+  Button,
+  H2Title,
+  IconGitCommit,
+  IconPlayerPlay,
+  IconRestore,
+} from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 const StyledTabList = styled(TabList)`
