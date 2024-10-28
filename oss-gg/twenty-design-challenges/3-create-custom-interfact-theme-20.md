@@ -21,4 +21,4 @@ Your turn 👇
 » 22-October-2024 by [rajeevDewangan](https://oss.gg/rajeevDewangan) Figma Link: [Figma](https://www.figma.com/design/XE21QdkFuy0IJHtmW7TURa/Twenty-(rajeevDewangan)?node-id=0-1&node-type=canvas&t=BYBulCT6hpJu6E8G-0)
 » 24-October-2024 by [Khaan25](https://oss.gg/Khaan25) Figma Link: [Figma](https://www.figma.com/design/HqYQrzel3e2TjzujwfdCXZ/Twenty-(Copy)---Khaan25?node-id=478-19796&t=QTB8gzKTudbVNeNs-1)
 
----
+» 28-October-2024 by [Vanshdeep Singh](https://oss.gg/Vanshdeepsingh-2232) Figma Link:[Figma](https://www.figma.com/design/akgDOb37YLUW9iWLB155EV/Twenty-(Copy)?node-id=478-19796&t=8Gz1yqls2Q3dsN9h-1)
