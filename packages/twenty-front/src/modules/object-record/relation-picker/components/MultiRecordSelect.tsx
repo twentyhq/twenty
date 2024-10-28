@@ -119,7 +119,9 @@ export const MultiRecordSelect = ({
           );
         })}
       </SelectableList>
-      {objectRecordsIdsMultiSelect?.length === 0 && <MenuItem text="No result" />}
+      {objectRecordsIdsMultiSelect?.length === 0 && (
+        <MenuItem text="No result" />
+      )}
     </DropdownMenuItemsContainer>
   );
 
