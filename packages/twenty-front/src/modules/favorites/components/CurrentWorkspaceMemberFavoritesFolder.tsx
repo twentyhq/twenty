@@ -154,7 +154,6 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
               key={folder.folderId}
               folder={folder}
               isGroup={isGroup}
-              handleReorderFavorite={handleReorderFavorite}
               isOpen={activeFolderId === folder.folderId}
               onToggle={(folderId) => {
                 setActiveFolderId((currentId) =>

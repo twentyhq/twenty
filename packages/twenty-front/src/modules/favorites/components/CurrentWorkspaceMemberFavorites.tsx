@@ -1,6 +1,5 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
@@ -51,7 +50,6 @@ type CurrentWorkspaceMemberFavoritesProps = {
     }>;
   };
   isGroup: boolean;
-  handleReorderFavorite: OnDragEndResponder;
   isOpen: boolean;
   onToggle: (folderId: string) => void;
 };
@@ -59,7 +57,6 @@ type CurrentWorkspaceMemberFavoritesProps = {
 export const CurrentWorkspaceMemberFavorites = ({
   folder,
   isGroup,
-  handleReorderFavorite,
   isOpen,
   onToggle,
 }: CurrentWorkspaceMemberFavoritesProps) => {
@@ -74,7 +71,7 @@ export const CurrentWorkspaceMemberFavorites = ({
   const selectedFavoriteIndex = folder.favorites.findIndex(
     (favorite) => favorite.link === currentPath,
   );
-  const { deleteFavorite } = useFavorites();
+  const { deleteFavorite, handleReorderFavorite } = useFavorites();
 
   const subItemArrayLength = folder.favorites.length;
 
