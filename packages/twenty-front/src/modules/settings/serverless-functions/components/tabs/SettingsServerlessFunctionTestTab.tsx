@@ -1,5 +1,4 @@
-import { Section } from '@/ui/layout/section/components/Section';
-import { Button, H2Title, IconPlayerPlay } from 'twenty-ui';
+import { Button, H2Title, IconPlayerPlay, Section } from 'twenty-ui';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { SettingsServerlessFunctionCodeEditorContainer } from '@/settings/serverless-functions/components/SettingsServerlessFunctionCodeEditorContainer';
