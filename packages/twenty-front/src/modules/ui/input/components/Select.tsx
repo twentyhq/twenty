@@ -43,7 +43,6 @@ export type SelectProps<Value extends string | number | null> = {
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
-  min-width: 0;
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
