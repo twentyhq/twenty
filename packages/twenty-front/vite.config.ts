@@ -66,7 +66,7 @@ export default defineConfig(({ command, mode }) => {
 
     server: {
       port,
-      host: 'localhost',
+      host: 'loclahost',
       fs: {
         allow: [
           searchForWorkspaceRoot(process.cwd()),

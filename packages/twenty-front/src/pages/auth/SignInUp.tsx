@@ -12,12 +12,17 @@ import { IconLockCustom } from '@ui/display/icon/components/IconLock';
 import { AnimatedEaseIn } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { SSOWorkspaceSelection } from './SSOWorkspaceSelection';
+import { useWorkspaceUnauthenticatedData } from '@/auth/sign-in-up/hooks/useWorkspaceUnauthenticatedData';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
 
 export const SignInUp = () => {
   const { form } = useSignInUpForm();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const { signInUpStep, signInUpMode } = useSignInUp(form);
+
+  const { loading } = useWorkspaceUnauthenticatedData();
+  const authProviders = useRecoilValue(authProvidersState);
 
   const title = useMemo(() => {
     if (
@@ -47,11 +52,15 @@ export const SignInUp = () => {
           <Logo />
         )}
       </AnimatedEaseIn>
-      <Title animate>{title}</Title>
-      {signInUpStep === SignInUpStep.SSOWorkspaceSelection ? (
-        <SSOWorkspaceSelection />
-      ) : (
-        <SignInUpForm />
+      {!loading && (
+        <>
+          <Title animate>{title}</Title>
+          {signInUpStep === SignInUpStep.SSOWorkspaceSelection ? (
+            <SSOWorkspaceSelection />
+          ) : (
+            <SignInUpForm />
+          )}
+        </>
       )}
     </>
   );

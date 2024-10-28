@@ -16,7 +16,6 @@ import { useGetClientConfigQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const ClientConfigProviderEffect = () => {
-  const setAuthProviders = useSetRecoilState(authProvidersState);
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
 
@@ -44,13 +43,7 @@ export const ClientConfigProviderEffect = () => {
   useEffect(() => {
     if (!loading && isDefined(data?.clientConfig)) {
       setIsClientConfigLoaded(true);
-      setAuthProviders({
-        google: data?.clientConfig.authProviders.google,
-        microsoft: data?.clientConfig.authProviders.microsoft,
-        password: data?.clientConfig.authProviders.password,
-        magicLink: false,
-        sso: data?.clientConfig.authProviders.sso,
-      });
+
       setIsDebugMode(data?.clientConfig.debugMode);
       setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
       setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
@@ -75,7 +68,6 @@ export const ClientConfigProviderEffect = () => {
     }
   }, [
     data,
-    setAuthProviders,
     setIsDebugMode,
     setIsSignInPrefilled,
     setIsSignUpDisabled,

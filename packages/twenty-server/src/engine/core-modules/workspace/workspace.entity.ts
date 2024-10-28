@@ -140,4 +140,8 @@ export class Workspace {
   @Field()
   @Column({ default: '' })
   databaseSchema: string;
+
+  @Field()
+  @Column()
+  subdomain: string;
 }

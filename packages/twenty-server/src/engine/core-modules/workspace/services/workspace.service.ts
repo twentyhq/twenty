@@ -19,6 +19,10 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+} from 'src/engine/core-modules/workspace/workspace.exception';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
@@ -157,6 +161,20 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         {
           defaultWorkspaceId: userWorkspaces[0].workspaceId,
         },
+      );
+    }
+  }
+
+  async getWorkspaceByOrigin(origin: string) {
+    try {
+      const { host } = new URL(origin);
+      const subdomain = host.split('.')[0];
+
+      return this.workspaceRepository.findOneBy({ subdomain });
+    } catch (e) {
+      throw new WorkspaceException(
+        'Subdomain not found',
+        WorkspaceExceptionCode.SUBDOMAIN_NOT_FOUND,
       );
     }
   }

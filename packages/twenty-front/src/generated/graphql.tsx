@@ -68,15 +68,6 @@ export type AppTokenEdge = {
   node: AppToken;
 };
 
-export type AuthProviders = {
-  __typename?: 'AuthProviders';
-  google: Scalars['Boolean'];
-  magicLink: Scalars['Boolean'];
-  microsoft: Scalars['Boolean'];
-  password: Scalars['Boolean'];
-  sso: Scalars['Boolean'];
-};
-
 export type AuthToken = {
   __typename?: 'AuthToken';
   expiresAt: Scalars['DateTime'];
@@ -97,6 +88,21 @@ export type AuthTokens = {
 export type AuthorizeApp = {
   __typename?: 'AuthorizeApp';
   redirectUrl: Scalars['String'];
+};
+
+export type AvailableAuthMethodsOutput = {
+  __typename?: 'AvailableAuthMethodsOutput';
+  authProviders: AvailableAuthProviders;
+  id: Scalars['Boolean'];
+};
+
+export type AvailableAuthProviders = {
+  __typename?: 'AvailableAuthProviders';
+  google: Scalars['Boolean'];
+  magicLink: Scalars['Boolean'];
+  microsoft: Scalars['Boolean'];
+  password: Scalars['Boolean'];
+  sso: Scalars['Boolean'];
 };
 
 export type Billing = {
@@ -154,7 +160,6 @@ export type ClientConfig = {
   __typename?: 'ClientConfig';
   analyticsEnabled: Scalars['Boolean'];
   api: ApiConfig;
-  authProviders: AuthProviders;
   billing: Billing;
   captcha: Captcha;
   chromeExtensionId?: Maybe<Scalars['String']>;
@@ -796,6 +801,7 @@ export type Query = {
   findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
+  getAvailableAuthMethodsByWorkspaceSubdomain: AvailableAuthMethodsOutput;
   getAvailablePackages: Scalars['JSON'];
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
@@ -1300,6 +1306,7 @@ export type Workspace = {
   isPublicInviteLinkEnabled: Scalars['Boolean'];
   logo?: Maybe<Scalars['String']>;
   metadataVersion: Scalars['Float'];
+  subdomain: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   workspaceMembersCount?: Maybe<Scalars['Float']>;
 };
@@ -1743,6 +1750,11 @@ export type CheckUserExistsQueryVariables = Exact<{
 
 export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename?: 'UserExists', exists: boolean } };
 
+export type GetAvailableAuthMethodsByWorkspaceSubdomainQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAvailableAuthMethodsByWorkspaceSubdomainQuery = { __typename?: 'Query', getAvailableAuthMethodsByWorkspaceSubdomain: { __typename?: 'AvailableAuthMethodsOutput', id: boolean, authProviders: { __typename?: 'AvailableAuthProviders', sso: boolean, google: boolean, magicLink: boolean, password: boolean, microsoft: boolean } } };
+
 export type ValidatePasswordResetTokenQueryVariables = Exact<{
   token: Scalars['String'];
 }>;
@@ -1780,7 +1792,7 @@ export type UpdateBillingSubscriptionMutation = { __typename?: 'Mutation', updat
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number } } };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -2901,6 +2913,47 @@ export function useCheckUserExistsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type CheckUserExistsQueryHookResult = ReturnType<typeof useCheckUserExistsQuery>;
 export type CheckUserExistsLazyQueryHookResult = ReturnType<typeof useCheckUserExistsLazyQuery>;
 export type CheckUserExistsQueryResult = Apollo.QueryResult<CheckUserExistsQuery, CheckUserExistsQueryVariables>;
+export const GetAvailableAuthMethodsByWorkspaceSubdomainDocument = gql`
+    query GetAvailableAuthMethodsByWorkspaceSubdomain {
+  getAvailableAuthMethodsByWorkspaceSubdomain {
+    id
+    authProviders {
+      sso
+      google
+      magicLink
+      password
+      microsoft
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAvailableAuthMethodsByWorkspaceSubdomainQuery__
+ *
+ * To run a query within a React component, call `useGetAvailableAuthMethodsByWorkspaceSubdomainQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAvailableAuthMethodsByWorkspaceSubdomainQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAvailableAuthMethodsByWorkspaceSubdomainQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAvailableAuthMethodsByWorkspaceSubdomainQuery(baseOptions?: Apollo.QueryHookOptions<GetAvailableAuthMethodsByWorkspaceSubdomainQuery, GetAvailableAuthMethodsByWorkspaceSubdomainQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAvailableAuthMethodsByWorkspaceSubdomainQuery, GetAvailableAuthMethodsByWorkspaceSubdomainQueryVariables>(GetAvailableAuthMethodsByWorkspaceSubdomainDocument, options);
+      }
+export function useGetAvailableAuthMethodsByWorkspaceSubdomainLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAvailableAuthMethodsByWorkspaceSubdomainQuery, GetAvailableAuthMethodsByWorkspaceSubdomainQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAvailableAuthMethodsByWorkspaceSubdomainQuery, GetAvailableAuthMethodsByWorkspaceSubdomainQueryVariables>(GetAvailableAuthMethodsByWorkspaceSubdomainDocument, options);
+        }
+export type GetAvailableAuthMethodsByWorkspaceSubdomainQueryHookResult = ReturnType<typeof useGetAvailableAuthMethodsByWorkspaceSubdomainQuery>;
+export type GetAvailableAuthMethodsByWorkspaceSubdomainLazyQueryHookResult = ReturnType<typeof useGetAvailableAuthMethodsByWorkspaceSubdomainLazyQuery>;
+export type GetAvailableAuthMethodsByWorkspaceSubdomainQueryResult = Apollo.QueryResult<GetAvailableAuthMethodsByWorkspaceSubdomainQuery, GetAvailableAuthMethodsByWorkspaceSubdomainQueryVariables>;
 export const ValidatePasswordResetTokenDocument = gql`
     query ValidatePasswordResetToken($token: String!) {
   validatePasswordResetToken(passwordResetToken: $token) {
@@ -3084,12 +3137,6 @@ export type UpdateBillingSubscriptionMutationOptions = Apollo.BaseMutationOption
 export const GetClientConfigDocument = gql`
     query GetClientConfig {
   clientConfig {
-    authProviders {
-      google
-      password
-      microsoft
-      sso
-    }
     billing {
       isBillingEnabled
       billingUrl
