@@ -1,11 +1,13 @@
-import { capitalize } from '~/utils/string/capitalize';
-import { useRecoilValue } from 'recoil';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
+import { getTriggerStepName } from '@/workflow/search-variables/utils/getTriggerStepName';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import isEmpty from 'lodash.isempty';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
-import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
+import { isEmptyObject } from '~/utils/isEmptyObject';
 
 export const useAvailableVariablesInWorkflowStep = (): StepOutputSchema[] => {
   const workflowId = useRecoilValue(workflowIdState);
@@ -41,20 +43,22 @@ export const useAvailableVariablesInWorkflowStep = (): StepOutputSchema[] => {
   const result = [];
 
   if (
-    workflow.currentVersion.trigger?.type === 'DATABASE_EVENT' &&
-    isDefined(workflow.currentVersion.trigger?.settings?.outputSchema)
+    isDefined(workflow.currentVersion.trigger) &&
+    isDefined(workflow.currentVersion.trigger?.settings?.outputSchema) &&
+    !isEmptyObject(workflow.currentVersion.trigger?.settings?.outputSchema)
   ) {
-    const [object, action] =
-      workflow.currentVersion.trigger.settings.eventName.split('.');
     result.push({
       id: 'trigger',
-      name: `${capitalize(object)} is ${capitalize(action)}`,
+      name: getTriggerStepName(workflow.currentVersion.trigger),
       outputSchema: workflow.currentVersion.trigger.settings.outputSchema,
     });
   }
 
   previousSteps.forEach((previousStep) => {
-    if (isDefined(previousStep.settings.outputSchema)) {
+    if (
+      isDefined(previousStep.settings.outputSchema) &&
+      !isEmpty(previousStep.settings.outputSchema)
+    ) {
       result.push({
         id: previousStep.id,
         name: previousStep.name,
