@@ -18,7 +18,7 @@ const WEBHOOK_3_ID = '777a8457-eb2d-40ac-a707-551b615b6989';
 const WEBHOOK_GQL_FIELDS = `
   id
   targetUrl
-  operation
+  operations
   description
   createdAt
   updatedAt
@@ -55,7 +55,7 @@ describe('webhooks resolvers (integration)', () => {
       expect([webhookDescription1, webhookDescription2]).toContain(
         webhook.description,
       );
-      expect(webhook).toHaveProperty('operation');
+      expect(webhook).toHaveProperty('operations');
       expect(webhook).toHaveProperty('id');
       expect(webhook).toHaveProperty('targetUrl');
       expect(webhook).toHaveProperty('createdAt');
@@ -82,7 +82,7 @@ describe('webhooks resolvers (integration)', () => {
 
     expect(createdWebhook).toHaveProperty('description');
     expect(createdWebhook.description).toEqual(webhookDescription);
-    expect(createdWebhook).toHaveProperty('operation');
+    expect(createdWebhook).toHaveProperty('operations');
     expect(createdWebhook).toHaveProperty('id');
     expect(createdWebhook).toHaveProperty('targetUrl');
     expect(createdWebhook).toHaveProperty('createdAt');
@@ -108,7 +108,7 @@ describe('webhooks resolvers (integration)', () => {
       const webhooks = data.edges[0].node;
 
       expect(webhooks).toHaveProperty('targetUrl');
-      expect(webhooks).toHaveProperty('operation');
+      expect(webhooks).toHaveProperty('operations');
       expect(webhooks).toHaveProperty('id');
       expect(webhooks).toHaveProperty('description');
       expect(webhooks).toHaveProperty('createdAt');
@@ -133,7 +133,7 @@ describe('webhooks resolvers (integration)', () => {
     const webhook = response.body.data.webhook;
 
     expect(webhook).toHaveProperty('targetUrl');
-    expect(webhook).toHaveProperty('operation');
+    expect(webhook).toHaveProperty('operations');
     expect(webhook).toHaveProperty('id');
     expect(webhook).toHaveProperty('description');
     expect(webhook).toHaveProperty('createdAt');
