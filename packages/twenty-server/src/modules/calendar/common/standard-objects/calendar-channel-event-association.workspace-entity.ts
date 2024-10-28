@@ -10,6 +10,7 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
@@ -20,7 +21,7 @@ import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standa
   labelSingular: 'Calendar Channel Event Association',
   labelPlural: 'Calendar Channel Event Associations',
   description: 'Calendar Channel Event Associations',
-  icon: 'IconCalendar',
+  icon: STANDARD_OBJECT_ICONS.calendarChannelEventAssociation,
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
