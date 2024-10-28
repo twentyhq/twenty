@@ -82,7 +82,8 @@ export const RecordDetailRelationSection = ({
 
   const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}-${recordId}`;
 
-  const { closeDropdown, isDropdownOpen } = useDropdown(dropdownId);
+  const { closeDropdown, isDropdownOpen, dropdownPlacement } =
+    useDropdown(dropdownId);
 
   const { setRelationPickerSearchFilter } = useRelationPicker({
     relationPickerScopeId: dropdownId,
@@ -183,7 +184,7 @@ export const RecordDetailRelationSection = ({
             <DropdownScope dropdownScopeId={dropdownId}>
               <StyledAddDropdown
                 dropdownId={dropdownId}
-                dropdownPlacement="right-start"
+                dropdownPlacement="left-start"
                 onClose={handleCloseRelationPickerDropdown}
                 clickableComponent={
                   <LightIconButton
@@ -204,6 +205,7 @@ export const RecordDetailRelationSection = ({
                         }
                         relationPickerScopeId={dropdownId}
                         onCreate={createNewRecordAndOpenRightDrawer}
+                        dropdownPlacement={dropdownPlacement}
                       />
                     ) : (
                       <>
@@ -212,6 +214,7 @@ export const RecordDetailRelationSection = ({
                           onCreate={createNewRecordAndOpenRightDrawer}
                           onChange={updateRelation}
                           onSubmit={closeDropdown}
+                          dropdownPlacement={dropdownPlacement}
                         />
                       </>
                     )}

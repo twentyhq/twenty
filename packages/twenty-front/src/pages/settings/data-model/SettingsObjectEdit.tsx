@@ -1,4 +1,12 @@
 /* eslint-disable react/jsx-props-no-spreading */
+import { zodResolver } from '@hookform/resolvers/zod';
+import pick from 'lodash.pick';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Button, H2Title, IconArchive, Section } from 'twenty-ui';
+import { z } from 'zod';
+
 import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -8,6 +16,7 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
+  IS_LABEL_SYNCED_WITH_NAME_LABEL,
   SettingsDataModelObjectAboutForm,
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
@@ -20,16 +29,8 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { zodResolver } from '@hookform/resolvers/zod';
-import pick from 'lodash.pick';
-import { useEffect } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { Button, H2Title, IconArchive } from 'twenty-ui';
-import { z } from 'zod';
 import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 const objectEditFormSchema = z
@@ -80,10 +81,16 @@ export const SettingsObjectEdit = () => {
     formValues: SettingsDataModelObjectEditFormValues,
   ) => {
     let values = formValues;
-    if (
-      formValues.shouldSyncLabelAndName ??
-      activeObjectMetadataItem.shouldSyncLabelAndName
-    ) {
+    const dirtyFieldKeys = Object.keys(
+      formConfig.formState.dirtyFields,
+    ) as (keyof SettingsDataModelObjectEditFormValues)[];
+    const shouldComputeNamesFromLabels: boolean = dirtyFieldKeys.includes(
+      IS_LABEL_SYNCED_WITH_NAME_LABEL,
+    )
+      ? (formValues.isLabelSyncedWithName as boolean)
+      : activeObjectMetadataItem.isLabelSyncedWithName;
+
+    if (shouldComputeNamesFromLabels) {
       values = {
         ...values,
         ...(values.labelSingular
@@ -102,10 +109,6 @@ export const SettingsObjectEdit = () => {
           : {}),
       };
     }
-
-    const dirtyFieldKeys = Object.keys(
-      formConfig.formState.dirtyFields,
-    ) as (keyof SettingsDataModelObjectEditFormValues)[];
 
     return settingsUpdateObjectInputSchema.parse(
       pick(values, [

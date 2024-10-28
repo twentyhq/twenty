@@ -69,6 +69,9 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ default: true })
   isAuditLogged: boolean;
 
+  @Column({ nullable: true })
+  shortcut: string;
+
   @Column({ nullable: true, type: 'uuid' })
   labelIdentifierFieldMetadataId?: string | null;
 
@@ -76,7 +79,7 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   imageIdentifierFieldMetadataId?: string | null;
 
   @Column({ default: true })
-  shouldSyncLabelAndName: boolean;
+  isLabelSyncedWithName: boolean;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;

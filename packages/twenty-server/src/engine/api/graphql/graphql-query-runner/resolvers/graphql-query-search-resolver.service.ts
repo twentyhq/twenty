@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import graphqlFields from 'graphql-fields';
+import { Brackets } from 'typeorm';
+
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import {
   Record as IRecord,
@@ -37,6 +40,7 @@ export class GraphqlQuerySearchResolverService
       objectMetadataItem,
       objectMetadataMapItem,
       objectMetadataMap,
+      info,
     } = options;
 
     const repository =
@@ -80,16 +84,19 @@ export class GraphqlQuerySearchResolverService
 
     const resultsWithTsVector = (await queryBuilderWithFilter
       .andWhere(
-        searchTerms === ''
-          ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
-          : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTerms)`,
-        searchTerms === '' ? {} : { searchTerms },
-      )
-      .orWhere(
-        searchTermsOr === ''
-          ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
-          : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTermsOr)`,
-        searchTermsOr === '' ? {} : { searchTermsOr },
+        new Brackets((qb) => {
+          qb.where(
+            searchTerms === ''
+              ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
+              : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTerms)`,
+            searchTerms === '' ? {} : { searchTerms },
+          ).orWhere(
+            searchTermsOr === ''
+              ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
+              : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTermsOr)`,
+            searchTermsOr === '' ? {} : { searchTermsOr },
+          );
+        }),
       )
       .orderBy(
         `ts_rank_cd("${SEARCH_VECTOR_FIELD.name}", to_tsquery(:searchTerms))`,
@@ -106,7 +113,11 @@ export class GraphqlQuerySearchResolverService
 
     const objectRecords = await repository.formatResult(resultsWithTsVector);
 
-    const totalCount = await repository.count();
+    const selectedFields = graphqlFields(info);
+
+    const totalCount = isDefined(selectedFields.totalCount)
+      ? await queryBuilderWithFilter.getCount()
+      : 0;
     const order = undefined;
 
     return typeORMObjectRecordsParser.createConnection({

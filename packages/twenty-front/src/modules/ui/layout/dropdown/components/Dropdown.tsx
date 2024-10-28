@@ -4,9 +4,10 @@ import {
   FloatingPortal,
   offset,
   Placement,
+  size,
   useFloating,
 } from '@floating-ui/react';
-import { MouseEvent, useRef } from 'react';
+import { MouseEvent, useEffect, useRef, useState } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -21,6 +22,7 @@ import { isDefined } from '~/utils/isDefined';
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
+import { flushSync } from 'react-dom';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
@@ -63,9 +65,17 @@ export const Dropdown = ({
   onOpen,
 }: DropdownProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [maxHeight, setMaxHeight] = useState<string | number | undefined>(
+    undefined,
+  );
 
-  const { isDropdownOpen, toggleDropdown, closeDropdown, dropdownWidth } =
-    useDropdown(dropdownId);
+  const {
+    isDropdownOpen,
+    toggleDropdown,
+    closeDropdown,
+    dropdownWidth,
+    setDropdownPlacement,
+  } = useDropdown(dropdownId);
 
   const offsetMiddlewares = [];
 
@@ -77,12 +87,25 @@ export const Dropdown = ({
     offsetMiddlewares.push(offset({ mainAxis: dropdownOffset.y }));
   }
 
-  const { refs, floatingStyles } = useFloating({
+  const { refs, floatingStyles, placement } = useFloating({
     placement: dropdownPlacement,
-    middleware: [flip(), ...offsetMiddlewares],
+    middleware: [
+      flip(),
+      size({
+        padding: 12 + 20, // 12px for padding bottom, 20px for dropdown bottom margin target
+        apply: ({ availableHeight }) => {
+          flushSync(() => setMaxHeight(availableHeight));
+        },
+      }),
+      ...offsetMiddlewares,
+    ],
     whileElementsMounted: autoUpdate,
     strategy: dropdownStrategy,
   });
+
+  useEffect(() => {
+    setDropdownPlacement(placement);
+  }, [placement, setDropdownPlacement]);
 
   const handleHotkeyTriggered = () => {
     toggleDropdown();
@@ -146,7 +169,7 @@ export const Dropdown = ({
               width={dropdownMenuWidth ?? dropdownWidth}
               data-select-disable
               ref={refs.setFloating}
-              style={floatingStyles}
+              style={{ ...floatingStyles, maxHeight }}
             >
               {dropdownComponents}
             </DropdownMenu>
@@ -158,7 +181,7 @@ export const Dropdown = ({
             width={dropdownMenuWidth ?? dropdownWidth}
             data-select-disable
             ref={refs.setFloating}
-            style={floatingStyles}
+            style={{ ...floatingStyles, maxHeight }}
           >
             {dropdownComponents}
           </DropdownMenu>

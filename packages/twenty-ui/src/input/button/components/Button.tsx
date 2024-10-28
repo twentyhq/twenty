@@ -1,8 +1,8 @@
 import isPropValid from '@emotion/is-prop-valid';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Pill } from '@ui/components';
-import { IconComponent } from '@ui/display';
+import { Pill } from '@ui/components/Pill/Pill';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -286,9 +286,7 @@ const StyledButton = styled('button', {
                 : 'none'};
               opacity: ${disabled ? 0.24 : 1};
               color: ${!inverted
-                ? !disabled
-                  ? theme.font.color.danger
-                  : theme.color.red20
+                ? theme.font.color.danger
                 : theme.font.color.inverted};
               &:hover {
                 background: ${!inverted

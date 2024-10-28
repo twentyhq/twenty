@@ -2,7 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useCreateOneDatabaseConnection } from '@/databases/hooks/useCreateOneDatabaseConnection';
@@ -22,7 +21,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
+import { H2Title, Section } from 'twenty-ui';
 import { CreateRemoteServerInput } from '~/generated-metadata/graphql';
 
 const createRemoteServerInputPostgresSchema =
