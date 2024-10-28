@@ -17,7 +17,8 @@ export const mapViewFiltersToFilters = (
 
       if (!availableFilterDefinition) return null;
 
-      const subFieldName = viewFilter.subFieldName;
+      const subFieldName =
+        viewFilter.subFieldName ?? viewFilter.definition?.subFieldName;
 
       return {
         id: viewFilter.id,
