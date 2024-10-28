@@ -1,5 +1,5 @@
+import { ThemeType } from '@ui/theme';
 import { editor } from 'monaco-editor';
-import { ThemeType } from 'twenty-ui';
 
 export const codeEditorTheme = (theme: ThemeType) => {
   return {

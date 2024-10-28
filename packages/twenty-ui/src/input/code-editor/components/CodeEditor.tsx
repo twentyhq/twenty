@@ -1,7 +1,11 @@
-import { codeEditorTheme } from '@/ui/input/code-editor/utils/codeEditorTheme';
 import { useTheme } from '@emotion/react';
 import Editor, { EditorProps } from '@monaco-editor/react';
-import { isDefined } from 'twenty-ui';
+import { codeEditorTheme } from '@ui/input';
+import { isDefined } from '@ui/utilities';
+
+export type CodeEditorPackage = {
+  [packageName: string]: string;
+};
 
 type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
   onChange?: (value: string) => void;
