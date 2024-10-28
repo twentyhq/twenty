@@ -20,7 +20,7 @@ const StyledAddressContainer = styled.div`
   padding: 4px 8px;
 
   width: 100%;
-  min-width: 260px;
+  max-width: 344px;
   > div {
     margin-bottom: 6px;
   }
