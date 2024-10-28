@@ -27,3 +27,5 @@ Your turn 👇
 
 » 26-October-2024 by [Yash-1511](https://oss.gg/Yash-1511) blog Link: [blog](https://medium.com/@yashp3020/a-comprehensive-guide-to-self-hosting-twenty-crm-with-docker-compose-40ea3fb4afdc)
 ---
+
+» 28-October-2024 by [harshsbhat](https://oss.gg/harshsbhat) blog Link: [blog](https://www.harshbhat.me/blog/twenty-self-host)
