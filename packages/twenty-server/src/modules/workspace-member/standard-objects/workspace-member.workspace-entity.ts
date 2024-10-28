@@ -21,6 +21,7 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WORKSPACE_MEMBER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
   FieldTypeAndNameMetadata,
@@ -78,7 +79,7 @@ export const SEARCH_FIELDS_FOR_WORKSPACE_MEMBER: FieldTypeAndNameMetadata[] = [
   labelSingular: 'Workspace Member',
   labelPlural: 'Workspace Members',
   description: 'A workspace member',
-  icon: 'IconUserCircle',
+  icon: STANDARD_OBJECT_ICONS.workspaceMember,
   labelIdentifierStandardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSystem()
