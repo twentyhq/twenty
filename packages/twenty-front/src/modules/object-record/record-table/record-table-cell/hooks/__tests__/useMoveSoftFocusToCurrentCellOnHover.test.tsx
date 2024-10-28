@@ -16,13 +16,13 @@ const mockSoftFocusPositionState = {
   key: 'softFocusPositionComponentState__{"scopeId":"scopeId"}',
 };
 const mockSoftFocusActiveState = {
-  key: 'isSoftFocusActiveComponentState__{"scopeId":"scopeId"}',
+  key: 'isSoftFocusActiveComponentState__{"instanceId":"scopeId"}',
 };
 const mockIsSoftFocusOnTableCellFamilyState = {
   key: 'isSoftFocusOnTableCellFamilyComponentState__{"familyKey":{"column":1,"row":0},"scopeId":"scopeId"}',
 };
 const mockCurrentTableCellInEditModePositionState = {
-  key: 'currentTableCellInEditModePositionComponentState__{"scopeId":"scopeId"}',
+  key: 'currentTableCellInEditModePositionComponentState__{"instanceId":"scopeId"}',
 };
 const mockIsTableCellInEditModeFamilyState = {
   key: 'isTableCellInEditModeFamilyComponentState__{"familyKey":{"column":1,"row":0},"scopeId":"scopeId"}',
@@ -61,21 +61,6 @@ jest.mock('recoil', () => ({
     ) => (newPosition: TableCellPosition) => void,
   ) => callback(mockCallbackInterface),
 }));
-jest.mock(
-  '@/object-record/record-table/hooks/internal/useRecordTableStates',
-  () => ({
-    useRecordTableStates: () => ({
-      softFocusPositionState: mockSoftFocusPositionState,
-      isSoftFocusActiveState: mockSoftFocusActiveState,
-      isSoftFocusOnTableCellFamilyState: () =>
-        mockIsSoftFocusOnTableCellFamilyState,
-      currentTableCellInEditModePositionState:
-        mockCurrentTableCellInEditModePositionState,
-      isTableCellInEditModeFamilyState: () =>
-        mockIsTableCellInEditModeFamilyState,
-    }),
-  }),
-);
 jest.mock('@/object-record/record-table/hooks/useRecordTable', () => ({
   useRecordTable: () => ({
     setSoftFocusPosition,
