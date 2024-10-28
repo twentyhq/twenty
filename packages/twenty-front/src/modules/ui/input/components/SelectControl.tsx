@@ -1,7 +1,7 @@
 import { SelectOption } from '@/ui/input/components/Select';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronDown } from 'twenty-ui';
+import { IconChevronDown, isDefined } from 'twenty-ui';
 
 const StyledControlContainer = styled.div<{ disabled?: boolean }>`
   align-items: center;
@@ -15,17 +15,10 @@ const StyledControlContainer = styled.div<{ disabled?: boolean }>`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(8)};
-  justify-content: space-between;
   max-width: 100%;
   padding: 0 ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledControlLabel = styled.div`
-  align-items: center;
-  display: flex;
-  max-width: 80%;
   flex-grow: 1;
-  gap: ${({ theme }) => theme.spacing(1)};
+  flex-shrink: 1;
 `;
 
 const StyledIconChevronDown = styled(IconChevronDown)<{
@@ -34,6 +27,19 @@ const StyledIconChevronDown = styled(IconChevronDown)<{
   color: ${({ disabled, theme }) =>
     disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
   flex-shrink: 0;
+`;
+
+const StyledIconContainer = styled.span`
+  display: flex;
+  flex-shrink: 0;
+`;
+
+const StyledLabel = styled.span`
+  flex-grow: 1;
+  flex-shrink: 1;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 
 type SelectControlProps = {
@@ -49,28 +55,18 @@ export const SelectControl = ({
 
   return (
     <StyledControlContainer disabled={isDisabled}>
-      <StyledControlLabel>
-        {!!selectedOption?.Icon && (
-          <div style={{ flexShrink: 0 }}>
-            <selectedOption.Icon
-              color={
-                isDisabled ? theme.font.color.light : theme.font.color.primary
-              }
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
-          </div>
-        )}
-        <p
-          style={{
-            textOverflow: 'ellipsis',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {selectedOption?.label}
-        </p>
-      </StyledControlLabel>
+      {isDefined(selectedOption.Icon) ? (
+        <StyledIconContainer>
+          <selectedOption.Icon
+            color={
+              isDisabled ? theme.font.color.light : theme.font.color.primary
+            }
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+          />
+        </StyledIconContainer>
+      ) : null}
+      <StyledLabel>{selectedOption.label}</StyledLabel>
       <StyledIconChevronDown disabled={isDisabled} size={theme.icon.size.md} />
     </StyledControlContainer>
   );
