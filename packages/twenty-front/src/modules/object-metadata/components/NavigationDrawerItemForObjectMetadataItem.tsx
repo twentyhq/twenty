@@ -43,8 +43,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const shouldSubItemsBeDisplayed = isActive && objectMetadataViews.length > 1;
 
   const sortedObjectMetadataViews = [...objectMetadataViews].sort(
-    (viewA, viewB) =>
-      viewA.key === 'INDEX' ? -1 : viewA.position - viewB.position,
+    (viewA, viewB) => viewA.position - viewB.position,
   );
 
   const selectedSubItemIndex = sortedObjectMetadataViews.findIndex(
