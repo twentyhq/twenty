@@ -1,4 +1,4 @@
-import { H2Title, Section } from 'twenty-ui';
+import { H2Title, Section, IconLock, Tag } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
@@ -23,7 +23,18 @@ export const SettingsSecurity = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title="SSO" description="Configure an SSO connection" />
+          <H2Title
+            title="SSO"
+            description="Configure an SSO connection"
+            addornment={
+              <Tag
+                text={'Enterprise'}
+                color={'transparent'}
+                Icon={IconLock}
+                variant={'border'}
+              />
+            }
+          />
           <SettingsSSOIdentitiesProvidersListCard />
         </Section>
         <Section>

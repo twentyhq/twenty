@@ -27,6 +27,8 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { assert } from 'src/utils/assert';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { isDefined } from 'src/utils/is-defined';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 import { Workspace } from './workspace.entity';
 
@@ -38,6 +40,7 @@ export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -135,5 +138,10 @@ export class WorkspaceResolver {
     }
 
     return workspace.logo ?? '';
+  }
+
+  @ResolveField(() => Boolean)
+  hasEnterpriseFeaturesAccess(): boolean {
+    return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
   }
 }
