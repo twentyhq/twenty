@@ -1,8 +1,9 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
-
+import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
+import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 import { Sort } from '../../object-sort-dropdown/types/Sort';
 
-export const tableSortsComponentState = createComponentState<Sort[]>({
+export const tableSortsComponentState = createComponentStateV2<Sort[]>({
   key: 'tableSortsComponentState',
   defaultValue: [],
+  componentInstanceContext: RecordTableScopeInternalContext,
 });

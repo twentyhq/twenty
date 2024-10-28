@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
@@ -15,6 +14,7 @@ import { useRecordBoardStates } from '@/object-record/record-board/hooks/interna
 import { useFindManyParams } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-index/options/constants/ExportTableDataDefaultPageSize';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 
@@ -61,8 +61,6 @@ export const useRecordData = ({
   });
   const [previousRecordCount, setPreviousRecordCount] = useState(0);
 
-  const { visibleTableColumnsSelector } = useRecordTableStates(recordIndexId);
-
   const { hiddenBoardFields } = useRecordIndexOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordBoardId: recordIndexId,
@@ -74,7 +72,9 @@ export const useRecordData = ({
   const hiddenKanbanFieldColumn = hiddenBoardFields.find(
     (column) => column.metadata.fieldName === kanbanFieldMetadataName,
   );
-  const columns = useRecoilValue(visibleTableColumnsSelector());
+  const columns = useRecoilComponentValueV2(
+    visibleTableColumnsComponentSelector,
+  );
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,

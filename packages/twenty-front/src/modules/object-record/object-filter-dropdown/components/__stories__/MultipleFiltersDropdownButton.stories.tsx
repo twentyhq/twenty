@@ -4,14 +4,13 @@ import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
 import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
+import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { within } from '@storybook/test';
-import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated/graphql';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
@@ -30,9 +29,9 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
         instanceId,
       );
 
-      const { tableColumnsState } = useRecordTableStates(instanceId);
-
-      const setTableColumns = useSetRecoilState(tableColumnsState);
+      const setTableColumns = useSetRecoilComponentStateV2(
+        tableColumnsComponentState,
+      );
 
       setTableColumns([
         {
@@ -92,7 +91,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
           value={{ instanceId }}
         >
           <RecordTableScopeInternalContext.Provider
-            value={{ scopeId: instanceId, onColumnsChange: () => {} }}
+            value={{ instanceId: instanceId, onColumnsChange: () => {} }}
           >
             <ViewComponentInstanceContext.Provider value={{ instanceId }}>
               <ObjectFilterDropdownScope filterScopeId={instanceId}>

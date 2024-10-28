@@ -7,12 +7,12 @@ import { useCurrentTableCellEditMode } from '../useCurrentTableCellEditMode';
 
 const onColumnsChange = jest.fn();
 
-const scopeId = 'scopeId';
+const recordTableId = 'scopeId';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
     <RecordTableScope
-      recordTableScopeId={scopeId}
+      recordTableId={recordTableId}
       onColumnsChange={onColumnsChange}
     >
       {children}

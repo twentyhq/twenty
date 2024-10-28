@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
 import { Checkbox } from '@/ui/input/components/Checkbox';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -23,9 +23,9 @@ const StyledColumnHeaderCell = styled.th`
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {
-  const { allRowsSelectedStatusSelector } = useRecordTableStates();
-
-  const allRowsSelectedStatus = useRecoilValue(allRowsSelectedStatusSelector());
+  const allRowsSelectedStatus = useRecoilComponentValueV2(
+    allRowsSelectedStatusComponentSelector,
+  );
   const { selectAllRows, resetTableRowSelection, setHasUserSelectedAllRows } =
     useRecordTable();
 

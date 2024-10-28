@@ -1,18 +1,18 @@
 import { useResetRecoilState } from 'recoil';
 
 import { SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/SoftFocusClickOutsideListenerId';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 
+import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useCloseCurrentTableCellInEditMode } from '../../hooks/internal/useCloseCurrentTableCellInEditMode';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const useCloseRecordTableCellV2 = (recordTableScopeId: string) => {
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
-  const { pendingRecordIdState } = useRecordTableStates(recordTableScopeId);
 
   const { toggleClickOutsideListener } = useClickOutsideListener(
     SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID,
@@ -21,6 +21,9 @@ export const useCloseRecordTableCellV2 = (recordTableScopeId: string) => {
   const closeCurrentTableCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableScopeId);
 
+  const pendingRecordIdState = useRecoilComponentCallbackStateV2(
+    recordTablePendingRecordIdComponentState,
+  );
   const resetRecordTablePendingRecordId =
     useResetRecoilState(pendingRecordIdState);
 

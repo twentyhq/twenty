@@ -78,10 +78,7 @@ const meta: Meta = {
               recordTableId: 'recordTableId',
             }}
           >
-            <RecordTableScope
-              recordTableScopeId="asd"
-              onColumnsChange={() => {}}
-            >
+            <RecordTableScope recordTableId="asd" onColumnsChange={() => {}}>
               <RecordTableRowContext.Provider
                 value={{
                   objectNameSingular:

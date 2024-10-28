@@ -1,17 +1,19 @@
-import { useCallback } from 'react';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
-import { useRecoilValue } from 'recoil';
+import { useCallback } from 'react';
 
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
+import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
 export const useRecordIndexOptionsForTable = (recordTableId: string) => {
-  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
-    useRecordTableStates(recordTableId);
-
-  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector());
-  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const hiddenTableColumns = useRecoilComponentValueV2(
+    hiddenTableColumnsComponentSelector,
+  );
+  const visibleTableColumns = useRecoilComponentValueV2(
+    visibleTableColumnsComponentSelector,
+  );
 
   const { handleColumnVisibilityChange, handleColumnReorder } = useTableColumns(
     { recordTableId: recordTableId },

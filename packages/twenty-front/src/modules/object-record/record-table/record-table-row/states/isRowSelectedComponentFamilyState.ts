@@ -1,9 +1,11 @@
-import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
+import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
+import { createComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentFamilyStateV2';
 
-export const isRowSelectedComponentFamilyState = createComponentFamilyState<
+export const isRowSelectedComponentFamilyState = createComponentFamilyStateV2<
   boolean,
   string
 >({
   key: 'isRowSelectedComponentFamilyState',
   defaultValue: false,
+  componentInstanceContext: RecordTableScopeInternalContext,
 });

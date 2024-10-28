@@ -6,7 +6,8 @@ import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/co
 import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useObjectSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -15,6 +16,7 @@ import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/Styl
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useContext } from 'react';
 import { SORT_DIRECTIONS } from '../types/SortDirection';
 
@@ -80,6 +82,8 @@ export const ObjectSortDropdownButton = ({
     resetSearchInput,
   } = useObjectSortDropdown();
 
+  const { recordIndexId } = useContext(RecordIndexRootPropsContext);
+
   const { isDropdownOpen } = useDropdown(OBJECT_SORT_DROPDOWN_ID);
 
   const handleButtonClick = () => {
@@ -97,15 +101,17 @@ export const ObjectSortDropdownButton = ({
 
   const { getIcon } = useIcons();
 
-  const { recordIndexId } = useContext(RecordIndexRootPropsContext);
-  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
-    useRecordTableStates(recordIndexId);
-
-  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const visibleTableColumns = useRecoilComponentValueV2(
+    visibleTableColumnsComponentSelector,
+    recordIndexId,
+  );
   const visibleColumnsIds = visibleTableColumns.map(
     (column) => column.fieldMetadataId,
   );
-  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector());
+  const hiddenTableColumns = useRecoilComponentValueV2(
+    hiddenTableColumnsComponentSelector,
+    recordIndexId,
+  );
   const hiddenColumnIds = hiddenTableColumns.map(
     (column) => column.fieldMetadataId,
   );

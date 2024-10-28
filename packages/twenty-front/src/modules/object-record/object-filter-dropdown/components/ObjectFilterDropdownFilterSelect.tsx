@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useContext } from 'react';
 
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
@@ -10,8 +9,8 @@ import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdow
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -76,15 +75,16 @@ export const ObjectFilterDropdownFilterSelect = ({
   const availableFilterDefinitions = useRecoilComponentValueV2(
     availableFilterDefinitionsComponentState,
   );
-  const { recordIndexId } = useContext(RecordIndexRootPropsContext);
-  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
-    useRecordTableStates(recordIndexId);
 
-  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const visibleTableColumns = useRecoilComponentValueV2(
+    visibleTableColumnsComponentSelector,
+  );
   const visibleColumnsIds = visibleTableColumns.map(
     (column) => column.fieldMetadataId,
   );
-  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector());
+  const hiddenTableColumns = useRecoilComponentValueV2(
+    hiddenTableColumnsComponentSelector,
+  );
   const hiddenColumnIds = hiddenTableColumns.map(
     (column) => column.fieldMetadataId,
   );

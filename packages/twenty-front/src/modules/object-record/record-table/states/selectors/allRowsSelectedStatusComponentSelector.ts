@@ -1,19 +1,23 @@
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
-import { createComponentReadOnlySelector } from '@/ui/utilities/state/component-state/utils/createComponentReadOnlySelector';
 
+import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
+import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 import { AllRowsSelectedStatus } from '../../types/AllRowSelectedStatus';
 
 export const allRowsSelectedStatusComponentSelector =
-  createComponentReadOnlySelector<AllRowsSelectedStatus>({
+  createComponentSelectorV2<AllRowsSelectedStatus>({
     key: 'allRowsSelectedStatusComponentSelector',
+    componentInstanceContext: RecordTableScopeInternalContext,
     get:
-      ({ scopeId }) =>
+      ({ instanceId }) =>
       ({ get }) => {
-        const tableRowIds = get(tableRowIdsComponentState({ scopeId }));
+        const tableRowIds = get(
+          tableRowIdsComponentState.atomFamily({ instanceId }),
+        );
 
         const selectedRowIds = get(
-          selectedRowIdsComponentSelector({ scopeId }),
+          selectedRowIdsComponentSelector.selectorFamily({ instanceId }),
         );
 
         const numberOfSelectedRows = selectedRowIds.length;

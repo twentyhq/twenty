@@ -5,7 +5,8 @@ import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/u
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useRecoilCallback } from 'recoil';
@@ -28,7 +29,9 @@ export const useHandleToggleTrashColumnFilter = ({
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters(viewBarId);
-  const { isSoftDeleteActiveState } = useRecordTableStates(viewBarId);
+
+  const isSoftDeleteFilterActiveComponentRecoilState =
+    useRecoilComponentCallbackStateV2(isSoftDeleteFilterActiveComponentState);
 
   const handleToggleTrashColumnFilter = useCallback(() => {
     const trashFieldMetadata = objectMetadataItem.fields.find(
@@ -69,9 +72,9 @@ export const useHandleToggleTrashColumnFilter = ({
   const toggleSoftDeleteFilterState = useRecoilCallback(
     ({ set }) =>
       (currentState: boolean) => {
-        set(isSoftDeleteActiveState, currentState);
+        set(isSoftDeleteFilterActiveComponentRecoilState, currentState);
       },
-    [isSoftDeleteActiveState],
+    [isSoftDeleteFilterActiveComponentRecoilState],
   );
   return {
     handleToggleTrashColumnFilter,

@@ -1,8 +1,9 @@
-import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
+import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
+import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
+import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
-import { Filter } from '../../object-filter-dropdown/types/Filter';
-
-export const tableFiltersComponentState = createComponentState<Filter[]>({
+export const tableFiltersComponentState = createComponentStateV2<Filter[]>({
   key: 'tableFiltersComponentState',
   defaultValue: [],
+  componentInstanceContext: RecordTableScopeInternalContext,
 });

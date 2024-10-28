@@ -1,9 +1,9 @@
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
-import { createComponentStateV2_alpha } from '@/ui/utilities/state/component-state/utils/createComponentStateV2Alpha';
+import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
 export const hasRecordTableFetchedAllRecordsComponentStateV2 =
-  createComponentStateV2_alpha<boolean>({
+  createComponentStateV2<boolean>({
     key: 'hasRecordTableFetchedAllRecordsComponentStateV2',
-    componentContext: RecordTableScopeInternalContext,
+    componentInstanceContext: RecordTableScopeInternalContext,
     defaultValue: false,
   });

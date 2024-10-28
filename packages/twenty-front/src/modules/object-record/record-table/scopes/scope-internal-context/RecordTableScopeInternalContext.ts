@@ -1,13 +1,13 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { createScopeInternalContext } from '@/ui/utilities/recoil-scope/scopes-internal/utils/createScopeInternalContext';
-import { RecoilComponentStateKey } from '@/ui/utilities/state/component-state/types/RecoilComponentStateKey';
 
+import { ComponentStateKeyV2 } from '@/ui/utilities/state/component-state/types/ComponentStateKeyV2';
+import { createComponentInstanceContext } from '@/ui/utilities/state/component-state/utils/createComponentInstanceContext';
 import { ColumnDefinition } from '../../types/ColumnDefinition';
 
 // TODO: separate scope contexts from event contexts
-type RecordTableScopeInternalContextProps = RecoilComponentStateKey & {
+type RecordTableScopeInternalContextProps = ComponentStateKeyV2 & {
   onColumnsChange: (columns: ColumnDefinition<FieldMetadata>[]) => void;
 };
 
 export const RecordTableScopeInternalContext =
-  createScopeInternalContext<RecordTableScopeInternalContextProps>();
+  createComponentInstanceContext<RecordTableScopeInternalContextProps>();
