@@ -1,16 +1,9 @@
-import styled from '@emotion/styled';
-import { useCallback } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
-import { useDebouncedCallback } from 'use-debounce';
-
+import { FAVORITE_FOLDERS_DROPDOWN_ID } from '@/favorites/constants/FavoriteFoldersDropdownId';
 import { useFavoriteFoldersScopedStates } from '@/favorites/hooks/useFavoriteFoldersScopedStates';
 import { useMultiFavoriteFolder } from '@/favorites/hooks/useMultiFavoriteFolder';
 import { FavoriteFoldersScopeInternalContext } from '@/favorites/scopes/scope-internal-context/favoritesScopeInternalContext';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-
-import { FAVORITE_FOLDERS_DROPDOWN_ID } from '@/favorites/constants/FavoriteFoldersDropdownId';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -20,7 +13,12 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useCallback } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
 import { IconPlus } from 'twenty-ui';
+import { useDebouncedCallback } from 'use-debounce';
 
 const StyledDropdownContainer = styled.div`
   position: relative;
@@ -40,9 +38,11 @@ const StyledFooter = styled.div`
   bottom: 0;
   position: sticky;
 `;
+
 const StyledCheckbox = styled(Checkbox)`
   padding-right: 0;
 `;
+
 type FavoriteFoldersMultiSelectProps = {
   onSubmit?: () => void;
   record?: ObjectRecord;
@@ -81,12 +81,9 @@ export const FavoriteFoldersMultiSelect = ({
     objectNameSingular,
   });
 
-  const favoriteFoldersSearchFilter = useRecoilValue(
-    favoriteFoldersSearchFilterState,
-  );
-  const setFavoriteFoldersSearchFilter = useSetRecoilState(
-    favoriteFoldersSearchFilterState,
-  );
+  const [favoriteFoldersSearchFilter, setFavoriteFoldersSearchFilter] =
+    useRecoilState(favoriteFoldersSearchFilterState);
+
   const favoriteFoldersMultiSelectChecked = useRecoilValue(
     favoriteFoldersMultiSelectCheckedState,
   );

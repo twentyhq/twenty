@@ -1,21 +1,20 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
+import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { useRecoilValue } from 'recoil';
+import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 
 export const useFavoriteFolders = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const { folders, favorites, upsertFavorites, currentWorkspaceMemberId } =
+    usePrefetchedFavoritesData();
 
   const { deleteOneRecord } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
   });
 
-  const { updateOneRecord: updateOneFavorite } = useUpdateOneRecord({
+  const { updateOneRecord: updateFavoriteFolder } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
   });
 
@@ -23,30 +22,40 @@ export const useFavoriteFolders = () => {
     objectNameSingular: CoreObjectNameSingular.FavoriteFolder,
   });
 
-  const { records: favoriteFolder } = usePrefetchedData<FavoriteFolder>(
-    PrefetchKey.AllFavoritesFolders,
-    {
-      workspaceMemberId: {
-        eq: undefined,
-      },
-    },
-  );
-
   const createFolder = async (name: string): Promise<void> => {
-    const trimmedName = name.trim();
-
-    if (!trimmedName) {
+    if (!name || !currentWorkspaceMemberId) {
       return;
     }
 
-    if (!currentWorkspaceMember?.id) {
-      return;
-    }
+    const maxPosition = Math.max(
+      ...folders.map((folder) => folder.position),
+      0,
+    );
 
     await createFavoriteFolder({
-      workspaceMemberId: currentWorkspaceMember.id,
-      name: trimmedName,
-      position: (favoriteFolder?.length || 0) + 1,
+      workspaceMemberId: currentWorkspaceMemberId,
+      name,
+      position: maxPosition + 1,
+    });
+  };
+
+  const handleReorderFavoriteFolder: OnDragEndResponder = (result) => {
+    if (!result.destination) return;
+
+    const draggedFolderId = result.draggableId;
+    const draggedFolder = folders.find((f) => f.id === draggedFolderId);
+
+    if (!draggedFolder) return;
+
+    const newPosition = calculateNewPosition({
+      destinationIndex: result.destination.index,
+      sourceIndex: result.source.index,
+      items: folders,
+    });
+
+    updateFavoriteFolder({
+      idToUpdate: draggedFolderId,
+      updateOneRecordInput: { position: newPosition },
     });
   };
 
@@ -54,36 +63,34 @@ export const useFavoriteFolders = () => {
     folderId: string,
     newName: string,
   ): Promise<void> => {
-    const trimmedName = newName.trim();
-
-    if (!trimmedName) {
+    if (!newName || !currentWorkspaceMemberId) {
       return;
     }
 
-    if (!currentWorkspaceMember?.id) {
-      return;
-    }
-
-    await updateOneFavorite({
+    await updateFavoriteFolder({
       idToUpdate: folderId,
       updateOneRecordInput: {
-        name: trimmedName,
+        name: newName,
       },
     });
   };
 
   const deleteFolder = async (folderId: string): Promise<void> => {
-    if (!currentWorkspaceMember?.id) {
+    if (!currentWorkspaceMemberId) {
       return;
     }
-
     await deleteOneRecord(folderId);
+    const updatedFavorites = favorites.filter(
+      (favorite) => favorite.favoriteFolderId !== folderId,
+    );
+    upsertFavorites(updatedFavorites);
   };
 
   return {
-    favoriteFolder,
+    favoriteFolder: folders,
     createFolder,
     renameFolder,
     deleteFolder,
+    handleReorderFavoriteFolder,
   };
 };

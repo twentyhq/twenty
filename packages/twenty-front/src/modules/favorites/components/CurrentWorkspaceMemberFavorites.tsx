@@ -26,7 +26,6 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 const StyledAvatar = styled(Avatar)`
   :hover {
@@ -37,24 +36,7 @@ const StyledAvatar = styled(Avatar)`
 const StyledDropdownContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
 `;
-const StyledIconDotsVertical = styled(IconDotsVertical)<{ isMobile: boolean }>`
-  visibility: ${({ isMobile }) => (isMobile ? 'visible' : 'hidden')};
-  color: ${({ theme }) => theme.color.gray50};
 
-  .navigation-drawer-item:hover &,
-  .navigation-drawer-sub-item:hover & {
-    visibility: visible;
-  }
-`;
-
-const StyledIconHeartOff = styled(IconHeartOff)<{ isMobile: boolean }>`
-  visibility: ${({ isMobile }) => (isMobile ? 'visible' : 'hidden')};
-  color: ${({ theme }) => theme.color.red};
-
-  .navigation-drawer-sub-item:hover & {
-    visibility: visible;
-  }
-`;
 type CurrentWorkspaceMemberFavoritesProps = {
   folder: {
     folderId: string;
@@ -83,12 +65,12 @@ export const CurrentWorkspaceMemberFavorites = ({
 }: CurrentWorkspaceMemberFavoritesProps) => {
   const currentPath = useLocation().pathname;
   const theme = useTheme();
-  const isMobile = useIsMobile();
-
   const [isRenaming, setIsRenaming] = useState(false);
   const [folderName, setFolderName] = useState(folder.folderName);
   const { renameFolder, deleteFolder } = useFavoriteFolders();
-  const { closeDropdown } = useDropdown(`favorite-folder-${folder.folderId}`);
+  const { closeDropdown, isDropdownOpen } = useDropdown(
+    `favorite-folder-${folder.folderId}`,
+  );
   const selectedFavoriteIndex = folder.favorites.findIndex(
     (favorite) => favorite.link === currentPath,
   );
@@ -97,10 +79,9 @@ export const CurrentWorkspaceMemberFavorites = ({
   const subItemArrayLength = folder.favorites.length;
 
   const handleSubmitRename = async (value: string) => {
-    const trimmedValue = value.trim();
-    if (!trimmedValue) return false;
+    if (!value) return false;
 
-    await renameFolder(folder.folderId, trimmedValue);
+    await renameFolder(folder.folderId, value);
     setIsRenaming(false);
     return true;
   };
@@ -114,13 +95,12 @@ export const CurrentWorkspaceMemberFavorites = ({
     event: MouseEvent | TouchEvent,
     value: string,
   ) => {
-    const trimmedValue = value.trim();
-    if (!trimmedValue) {
+    if (!value) {
       setIsRenaming(false);
       return;
     }
 
-    await renameFolder(folder.folderId, trimmedValue);
+    await renameFolder(folder.folderId, value);
     setIsRenaming(false);
   };
 
@@ -135,7 +115,10 @@ export const CurrentWorkspaceMemberFavorites = ({
       }}
       data-select-disable
       clickableComponent={
-        <StyledIconDotsVertical isMobile={isMobile} size={theme.icon.size.md} />
+        <IconDotsVertical
+          size={theme.icon.size.md}
+          color={theme.color.gray50}
+        />
       }
       dropdownPlacement="right"
       dropdownOffset={{ y: -15 }}
@@ -188,6 +171,7 @@ export const CurrentWorkspaceMemberFavorites = ({
           active={isOpen}
           rightOptions={rightOptions}
           className="navigation-drawer-item"
+          isDropdownOpen={isDropdownOpen}
         />
       )}
 
@@ -224,9 +208,9 @@ export const CurrentWorkspaceMemberFavorites = ({
                           selectedIndex: selectedFavoriteIndex,
                         })}
                         rightOptions={
-                          <StyledIconHeartOff
-                            isMobile={isMobile}
+                          <IconHeartOff
                             size={theme.icon.size.sm}
+                            color={theme.color.red}
                             onClick={() => deleteFavorite(favorite.id)}
                           />
                         }

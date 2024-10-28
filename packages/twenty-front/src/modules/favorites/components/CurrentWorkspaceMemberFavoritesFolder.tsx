@@ -6,13 +6,14 @@ import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
+import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
+import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -46,20 +47,10 @@ const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
   }
 `;
 
-const StyledIconHeartOff = styled(IconHeartOff)<{ isMobile: boolean }>`
-  visibility: ${({ isMobile }) => (isMobile ? 'visible' : 'hidden')};
-  color: ${({ theme }) => theme.color.red};
-
-  .navigation-drawer-item:hover & {
-    visibility: visible;
-  }
-`;
-
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
   const { createFolder, favoriteFolder } = useFavoriteFolders();
   const { deleteFavorite } = useFavorites();
-  const isMobile = useIsMobile();
   const [folderName, setFolderName] = useState('');
   const currentPath = useLocation().pathname;
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
@@ -78,12 +69,11 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   };
 
   const handleSubmitFolder = async (value: string) => {
-    const trimmedValue = value.trim();
-    if (!trimmedValue) return false;
+    if (!value) return false;
 
     setIsFavoriteFolderCreating(false);
     setFolderName('');
-    await createFolder(trimmedValue);
+    await createFolder(value);
     return true;
   };
 
@@ -91,15 +81,14 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
     event: MouseEvent | TouchEvent,
     value: string,
   ) => {
-    const trimmedValue = value.trim();
-    if (!trimmedValue) {
+    if (!value) {
       setIsFavoriteFolderCreating(false);
       return;
     }
 
     setIsFavoriteFolderCreating(false);
     setFolderName('');
-    await createFolder(trimmedValue);
+    await createFolder(value);
   };
 
   const handleCancel = () => {
@@ -132,7 +121,8 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const unorganisedFavorites = currentWorkspaceMemberFavorites.filter(
     (favorite) => !favorite.favoriteFolderId,
   );
-  const isGroup = currentWorkspaceMemberFavorites.length > 1;
+  const isGroup =
+    currentWorkspaceMemberFavorites.length > 1 || favoritesByFolder.length > 1;
 
   return (
     <StyledContainer>
@@ -173,32 +163,44 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
               }}
             />
           ))}
-          {unorganisedFavorites.length > 0 &&
-            unorganisedFavorites.map((favorite) => (
-              <StyledNavigationDrawerItem
-                key={favorite.id}
-                className="navigation-drawer-item"
-                label={favorite.labelIdentifier}
-                Icon={() => (
-                  <StyledAvatar
-                    placeholderColorSeed={favorite.recordId}
-                    avatarUrl={favorite.avatarUrl}
-                    type={favorite.avatarType}
-                    placeholder={favorite.labelIdentifier}
-                    className="unorganised-fav-avatar"
-                  />
-                )}
-                active={favorite.link === currentPath}
-                to={favorite.link}
-                rightOptions={
-                  <StyledIconHeartOff
-                    isMobile={isMobile}
-                    size={theme.icon.size.sm}
-                    onClick={() => deleteFavorite(favorite.id)}
-                  />
-                }
-              />
-            ))}
+
+          {unorganisedFavorites.length > 0 && (
+            <DraggableList
+              onDragEnd={handleReorderFavorite}
+              draggableItems={unorganisedFavorites.map((favorite, index) => (
+                <DraggableItem
+                  key={favorite.id}
+                  draggableId={favorite.id}
+                  index={index}
+                  itemComponent={
+                    <StyledNavigationDrawerItem
+                      key={favorite.id}
+                      className="navigation-drawer-item"
+                      label={favorite.labelIdentifier}
+                      Icon={() => (
+                        <StyledAvatar
+                          placeholderColorSeed={favorite.recordId}
+                          avatarUrl={favorite.avatarUrl}
+                          type={favorite.avatarType}
+                          placeholder={favorite.labelIdentifier}
+                          className="unorganised-fav-avatar"
+                        />
+                      )}
+                      active={favorite.link === currentPath}
+                      to={favorite.link}
+                      rightOptions={
+                        <IconHeartOff
+                          size={theme.icon.size.sm}
+                          color={theme.color.red}
+                          onClick={() => deleteFavorite(favorite.id)}
+                        />
+                      }
+                    />
+                  }
+                />
+              ))}
+            />
+          )}
         </>
       )}
     </StyledContainer>

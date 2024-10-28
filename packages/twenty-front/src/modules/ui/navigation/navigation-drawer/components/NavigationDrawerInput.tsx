@@ -1,10 +1,19 @@
-import { TextInput } from '@/ui/field/input/components/TextInput';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { ChangeEvent, FocusEvent, useRef } from 'react';
 import { useRecoilState } from 'recoil';
-import { IconComponent, TablerIconsProps } from 'twenty-ui';
+import { Key } from 'ts-key-enum';
+import {
+  IconComponent,
+  isDefined,
+  TablerIconsProps,
+  TEXT_INPUT_STYLE,
+} from 'twenty-ui';
+import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
 type NavigationDrawerInputProps = {
   className?: string;
@@ -39,6 +48,12 @@ const StyledItemElementsContainer = styled.span`
   width: 100%;
 `;
 
+const StyledTextInput = styled.input`
+  margin: 0;
+  ${TEXT_INPUT_STYLE}
+  width: 100%;
+`;
+
 export const NavigationDrawerInput = ({
   className,
   Icon,
@@ -53,6 +68,43 @@ export const NavigationDrawerInput = ({
   const [isNavigationDrawerExpanded] = useRecoilState(
     isNavigationDrawerExpandedState,
   );
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useHotkeyScopeOnMount(hotkeyScope);
+
+  useScopedHotkeys(
+    [Key.Escape],
+    () => {
+      onCancel(value);
+    },
+    hotkeyScope,
+  );
+
+  useScopedHotkeys(
+    [Key.Enter],
+    () => {
+      onSubmit(value);
+    },
+    hotkeyScope,
+  );
+
+  useListenClickOutside({
+    refs: [inputRef],
+    callback: (event) => {
+      event.stopImmediatePropagation();
+      onClickOutside(event, value);
+    },
+  });
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    onChange(event.target.value);
+  };
+
+  const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
+    if (isDefined(value)) {
+      event.target.select();
+    }
+  };
 
   return (
     <StyledItem
@@ -69,14 +121,11 @@ export const NavigationDrawerInput = ({
           />
         )}
         <NavigationDrawerAnimatedCollapseWrapper>
-          <TextInput
+          <StyledTextInput
+            ref={inputRef}
             value={value}
-            onChange={onChange}
-            onEnter={onSubmit}
-            onEscape={onCancel}
-            onClickOutside={onClickOutside}
-            hotkeyScope={hotkeyScope}
-            copyButton={false}
+            onChange={handleChange}
+            onFocus={handleFocus}
             autoFocus
           />
         </NavigationDrawerAnimatedCollapseWrapper>
