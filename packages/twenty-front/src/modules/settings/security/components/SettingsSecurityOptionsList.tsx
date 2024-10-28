@@ -1,13 +1,11 @@
-import { IconLink } from 'twenty-ui';
-import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
-import { Card } from '@/ui/layout/card/components/Card';
-import styled from '@emotion/styled';
-import { Toggle } from '@/ui/input/components/Toggle';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useRecoilState } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
+import { IconLink, Toggle, Card } from 'twenty-ui';
+import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledToggle = styled(Toggle)`
   margin-left: auto;

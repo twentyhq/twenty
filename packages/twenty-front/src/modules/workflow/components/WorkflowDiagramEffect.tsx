@@ -27,7 +27,9 @@ export const WorkflowDiagramEffect = ({
           workflowDiagramState,
         );
 
-        const nextWorkflowDiagram = getWorkflowVersionDiagram(currentVersion);
+        const nextWorkflowDiagram = addCreateStepNodes(
+          getWorkflowVersionDiagram(currentVersion),
+        );
 
         let mergedWorkflowDiagram = nextWorkflowDiagram;
         if (isDefined(previousWorkflowDiagram)) {
@@ -37,11 +39,7 @@ export const WorkflowDiagramEffect = ({
           );
         }
 
-        const workflowDiagramWithCreateStepNodes = addCreateStepNodes(
-          mergedWorkflowDiagram,
-        );
-
-        set(workflowDiagramState, workflowDiagramWithCreateStepNodes);
+        set(workflowDiagramState, mergedWorkflowDiagram);
       };
     },
     [],

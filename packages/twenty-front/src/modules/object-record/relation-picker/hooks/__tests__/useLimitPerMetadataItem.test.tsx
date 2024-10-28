@@ -26,6 +26,7 @@ describe('useLimitPerMetadataItem', () => {
       namePlural: 'namePlural',
       nameSingular: 'nameSingular',
       updatedAt: 'updatedAt',
+      isLabelSyncedWithName: false,
       fields: [],
       indexMetadatas: [],
     },

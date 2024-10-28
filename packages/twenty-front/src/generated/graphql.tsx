@@ -155,6 +155,11 @@ export type ClientConfig = {
   support: Support;
 };
 
+export type ComputeStepOutputSchemaInput = {
+  /** Step JSON format */
+  step: Scalars['JSON'];
+};
+
 export type CreateServerlessFunctionInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
@@ -174,11 +179,6 @@ export type CursorPaging = {
 export type DeleteOneObjectInput = {
   /** The id of the record to delete. */
   id: Scalars['UUID'];
-};
-
-export type DeleteServerlessFunctionInput = {
-  /** The id of the function. */
-  id: Scalars['ID'];
 };
 
 export type DeleteSsoInput = {
@@ -429,6 +429,7 @@ export type Mutation = {
   authorizeApp: AuthorizeApp;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
+  computeStepOutputSchema: Scalars['JSON'];
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
   createOneObject: Object;
@@ -514,6 +515,11 @@ export type MutationCheckoutSessionArgs = {
 };
 
 
+export type MutationComputeStepOutputSchemaArgs = {
+  input: ComputeStepOutputSchemaInput;
+};
+
+
 export type MutationCreateOidcIdentityProviderArgs = {
   input: SetupOidcSsoInput;
 };
@@ -540,7 +546,7 @@ export type MutationDeleteOneObjectArgs = {
 
 
 export type MutationDeleteOneServerlessFunctionArgs = {
-  input: DeleteServerlessFunctionInput;
+  input: ServerlessFunctionIdInput;
 };
 
 
@@ -776,6 +782,8 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
+  findManyServerlessFunctions: Array<ServerlessFunction>;
+  findOneServerlessFunction: ServerlessFunction;
   findWorkspaceFromInviteHash: Workspace;
   findWorkspaceInvitations: Array<WorkspaceInvitation>;
   getAvailablePackages: Scalars['JSON'];
@@ -791,8 +799,6 @@ export type Query = {
   listSSOIdentityProvidersByWorkspaceId: Array<FindAvailableSsoidpOutput>;
   object: Object;
   objects: ObjectConnection;
-  serverlessFunction: ServerlessFunction;
-  serverlessFunctions: ServerlessFunctionConnection;
   validatePasswordResetToken: ValidatePasswordResetToken;
 };
 
@@ -810,6 +816,11 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
+};
+
+
+export type QueryFindOneServerlessFunctionArgs = {
+  input: ServerlessFunctionIdInput;
 };
 
 
@@ -957,25 +968,10 @@ export type ServerlessFunction = {
   id: Scalars['UUID'];
   latestVersion?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  publishedVersions: Array<Scalars['String']>;
   runtime: Scalars['String'];
   syncStatus: ServerlessFunctionSyncStatus;
   updatedAt: Scalars['DateTime'];
-};
-
-export type ServerlessFunctionConnection = {
-  __typename?: 'ServerlessFunctionConnection';
-  /** Array of edges. */
-  edges: Array<ServerlessFunctionEdge>;
-  /** Paging information */
-  pageInfo: PageInfo;
-};
-
-export type ServerlessFunctionEdge = {
-  __typename?: 'ServerlessFunctionEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the ServerlessFunction */
-  node: ServerlessFunction;
 };
 
 export type ServerlessFunctionExecutionResult = {
@@ -995,6 +991,11 @@ export enum ServerlessFunctionExecutionStatus {
   Error = 'ERROR',
   Success = 'SUCCESS'
 }
+
+export type ServerlessFunctionIdInput = {
+  /** The id of the function. */
+  id: Scalars['ID'];
+};
 
 /** SyncStatus of the serverlessFunction */
 export enum ServerlessFunctionSyncStatus {
@@ -1165,11 +1166,13 @@ export type UpdateObjectPayload = {
   icon?: InputMaybe<Scalars['String']>;
   imageIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
   isActive?: InputMaybe<Scalars['Boolean']>;
+  isLabelSyncedWithName?: InputMaybe<Scalars['Boolean']>;
   labelIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
   labelPlural?: InputMaybe<Scalars['String']>;
   labelSingular?: InputMaybe<Scalars['String']>;
   namePlural?: InputMaybe<Scalars['String']>;
   nameSingular?: InputMaybe<Scalars['String']>;
+  shortcut?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateOneObjectInput = {
@@ -1479,6 +1482,7 @@ export type Object = {
   indexMetadatas: ObjectIndexMetadatasConnection;
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];
+  isLabelSyncedWithName: Scalars['Boolean'];
   isRemote: Scalars['Boolean'];
   isSystem: Scalars['Boolean'];
   labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
@@ -1486,6 +1490,7 @@ export type Object = {
   labelSingular: Scalars['String'];
   namePlural: Scalars['String'];
   nameSingular: Scalars['String'];
+  shortcut?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
 };
 
@@ -1828,6 +1833,13 @@ export type ActivateWorkflowVersionMutationVariables = Exact<{
 
 
 export type ActivateWorkflowVersionMutation = { __typename?: 'Mutation', activateWorkflowVersion: boolean };
+
+export type ComputeStepOutputSchemaMutationVariables = Exact<{
+  input: ComputeStepOutputSchemaInput;
+}>;
+
+
+export type ComputeStepOutputSchemaMutation = { __typename?: 'Mutation', computeStepOutputSchema: any };
 
 export type DeactivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['String'];
@@ -3449,6 +3461,37 @@ export function useActivateWorkflowVersionMutation(baseOptions?: Apollo.Mutation
 export type ActivateWorkflowVersionMutationHookResult = ReturnType<typeof useActivateWorkflowVersionMutation>;
 export type ActivateWorkflowVersionMutationResult = Apollo.MutationResult<ActivateWorkflowVersionMutation>;
 export type ActivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<ActivateWorkflowVersionMutation, ActivateWorkflowVersionMutationVariables>;
+export const ComputeStepOutputSchemaDocument = gql`
+    mutation ComputeStepOutputSchema($input: ComputeStepOutputSchemaInput!) {
+  computeStepOutputSchema(input: $input)
+}
+    `;
+export type ComputeStepOutputSchemaMutationFn = Apollo.MutationFunction<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>;
+
+/**
+ * __useComputeStepOutputSchemaMutation__
+ *
+ * To run a mutation, you first call `useComputeStepOutputSchemaMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useComputeStepOutputSchemaMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [computeStepOutputSchemaMutation, { data, loading, error }] = useComputeStepOutputSchemaMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useComputeStepOutputSchemaMutation(baseOptions?: Apollo.MutationHookOptions<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>(ComputeStepOutputSchemaDocument, options);
+      }
+export type ComputeStepOutputSchemaMutationHookResult = ReturnType<typeof useComputeStepOutputSchemaMutation>;
+export type ComputeStepOutputSchemaMutationResult = Apollo.MutationResult<ComputeStepOutputSchemaMutation>;
+export type ComputeStepOutputSchemaMutationOptions = Apollo.BaseMutationOptions<ComputeStepOutputSchemaMutation, ComputeStepOutputSchemaMutationVariables>;
 export const DeactivateWorkflowVersionDocument = gql`
     mutation DeactivateWorkflowVersion($workflowVersionId: String!) {
   deactivateWorkflowVersion(workflowVersionId: $workflowVersionId)

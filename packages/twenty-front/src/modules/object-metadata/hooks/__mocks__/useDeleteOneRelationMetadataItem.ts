@@ -11,5 +11,5 @@ export const query = gql`
 export const variables = { idToDelete: 'idToDelete' };
 
 export const responseData = {
-  id: 'idToDelete'
+  id: 'idToDelete',
 };

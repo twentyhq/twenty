@@ -1,10 +1,10 @@
 import { SettingsServerlessFunctionCodeEditorContainer } from '@/settings/serverless-functions/components/SettingsServerlessFunctionCodeEditorContainer';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
-import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 import { EditorProps, Monaco } from '@monaco-editor/react';
 import dotenv from 'dotenv';
 import { editor, MarkerSeverity } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
+import { CodeEditor } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
 export type File = {
@@ -72,23 +72,25 @@ export const SettingsServerlessFunctionCodeEditor = ({
         );
 
         const environmentDefinition = `
-        declare namespace NodeJS {
-          interface ProcessEnv {
-            ${Object.keys(environmentVariables)
-              .map((key) => `${key}: string;`)
-              .join('\n')}
+          declare namespace NodeJS {
+            interface ProcessEnv {
+              ${Object.keys(environmentVariables)
+                .map((key) => `${key}: string;`)
+                .join('\n')}
+            }
           }
-        }
+  
+          declare const process: {
+            env: NodeJS.ProcessEnv;
+          };
+        `;
 
-        declare const process: {
-          env: NodeJS.ProcessEnv;
-        };
-      `;
-
-        monaco.languages.typescript.typescriptDefaults.addExtraLib(
-          environmentDefinition,
-          'ts:process-env.d.ts',
-        );
+        monaco.languages.typescript.typescriptDefaults.setExtraLibs([
+          {
+            content: environmentDefinition,
+            filePath: 'ts:process-env.d.ts',
+          },
+        ]);
       }
 
       await AutoTypings.create(editor, {

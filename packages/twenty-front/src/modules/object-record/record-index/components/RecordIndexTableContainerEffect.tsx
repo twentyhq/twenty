@@ -1,13 +1,14 @@
 import { useContext, useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
-import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 
 export const RecordIndexTableContainerEffect = () => {
@@ -73,8 +74,8 @@ export const RecordIndexTableContainerEffect = () => {
     );
   }, [setRecordCountInCurrentView, setOnEntityCountChange]);
 
-  const setContextStoreTargetedRecords = useSetRecoilState(
-    contextStoreTargetedRecordsRuleState,
+  const setContextStoreTargetedRecords = useSetRecoilComponentStateV2(
+    contextStoreTargetedRecordsRuleComponentState,
   );
   const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
   const selectedRowIds = useRecoilValue(selectedRowIdsSelector());

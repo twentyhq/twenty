@@ -282,6 +282,7 @@ export const NOTE_STANDARD_FIELD_IDS = {
   attachments: '20202020-4986-4c92-bf19-39934b149b16',
   timelineActivities: '20202020-7030-42f8-929c-1a57b25d6bce',
   favorites: '20202020-4d1d-41ac-b13b-621631298d67',
+  searchVector: '20202020-7ea8-44d4-9d4c-51dd2a757950',
 };
 
 export const NOTE_TARGET_STANDARD_FIELD_IDS = {
@@ -349,6 +350,7 @@ export const TASK_STANDARD_FIELD_IDS = {
   assignee: '20202020-065a-4f42-a906-e20422c1753f',
   timelineActivities: '20202020-c778-4278-99ee-23a2837aee64',
   favorites: '20202020-4d1d-41ac-b13b-621631298d65',
+  searchVector: '20202020-4746-4e2f-870c-52b02c67c90d',
 };
 
 export const TASK_TARGET_STANDARD_FIELD_IDS = {
@@ -367,12 +369,29 @@ export const VIEW_FIELD_STANDARD_FIELD_IDS = {
   view: '20202020-e8da-4521-afab-d6d231f9fa18',
 };
 
+export const VIEW_GROUP_STANDARD_FIELD_IDS = {
+  fieldMetadataId: '20202020-8f26-46ae-afed-fdacd7778682',
+  fieldValue: '20202020-175e-4596-b7a4-1cd9d14e5a30',
+  isVisible: '20202020-0fed-4b44-88fd-a064c4fcfce4',
+  position: '20202020-748e-4645-8f32-84aae7726c04',
+  view: '20202020-5bc7-4110-b23f-fb851fb133b4',
+};
+
 export const VIEW_FILTER_STANDARD_FIELD_IDS = {
   fieldMetadataId: '20202020-c9aa-4c94-8d0e-9592f5008fb0',
   operand: '20202020-bd23-48c4-9fab-29d1ffb80310',
   value: '20202020-1e55-4a1e-a1d2-fefb86a5fce5',
   displayValue: '20202020-1270-4ebf-9018-c0ec10d5038e',
   view: '20202020-4f5b-487e-829c-3d881c163611',
+  viewFilterGroupId: '20202020-2580-420a-8328-cab1635c0296',
+  positionInViewFilterGroup: '20202020-3bb0-4f66-a537-a46fe0dc468f',
+};
+
+export const VIEW_FILTER_GROUP_STANDARD_FIELD_IDS = {
+  view: '20202020-ff7a-4b54-8be5-aa0249047b74',
+  parentViewFilterGroupId: '20202020-edbf-4929-8ede-64f48d6bf2a7',
+  logicalOperator: '20202020-64d9-4bc5-85ba-c250796ce9aa',
+  positionInViewFilterGroup: '20202020-90d6-4299-ad87-d05ddd3a0a3f',
 };
 
 export const VIEW_SORT_STANDARD_FIELD_IDS = {
@@ -391,7 +410,9 @@ export const VIEW_STANDARD_FIELD_IDS = {
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',
+  viewGroups: '20202020-e1a1-419f-ac81-1986a5ea59a8',
   viewFilters: '20202020-ff23-4154-b63c-21fb36cd0967',
+  viewFilterGroups: '20202020-0318-474a-84a1-bac895ceaa5a',
   viewSorts: '20202020-891b-45c3-9fe1-80a75b4aa043',
   favorites: '20202020-c818-4a86-8284-9ec0ef0a59a5',
 };
@@ -399,6 +420,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
 export const WEBHOOK_STANDARD_FIELD_IDS = {
   targetUrl: '20202020-1229-45a8-8cf4-85c9172aae12',
   operation: '20202020-15b7-458e-bf30-74770a54410c',
+  operations: '20202020-15b7-458e-bf30-74770a54411c',
   description: '20202020-15b7-458e-bf30-74770a54410d',
 };
 
@@ -469,6 +491,7 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   timeZone: '20202020-2d33-4c21-a86e-5943b050dd54',
   dateFormat: '20202020-af13-4e11-b1e7-b8cf5ea13dc0',
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
+  searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
 };
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
@@ -482,4 +505,48 @@ export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   attachments: '20202020-8d59-46ca-b7b2-73d167712134',
   timelineActivities: '20202020-f1ef-4ba4-8f33-1a4577afa477',
   searchVector: '70e56537-18ef-4811-b1c7-0a444006b815',
+};
+
+export const STANDARD_OBJECT_FIELD_IDS = {
+  activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,
+  activity: ACTIVITY_STANDARD_FIELD_IDS,
+  apiKey: API_KEY_STANDARD_FIELD_IDS,
+  attachment: ATTACHMENT_STANDARD_FIELD_IDS,
+  blocklist: BLOCKLIST_STANDARD_FIELD_IDS,
+  behavioralEvent: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS,
+  calendarChannelEventAssociation:
+    CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS,
+  calendarChannel: CALENDAR_CHANNEL_STANDARD_FIELD_IDS,
+  calendarEventParticipant: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS,
+  calendarEvent: CALENDAR_EVENT_STANDARD_FIELD_IDS,
+  comment: COMMENT_STANDARD_FIELD_IDS,
+  company: COMPANY_STANDARD_FIELD_IDS,
+  connectedAccount: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS,
+  favorite: FAVORITE_STANDARD_FIELD_IDS,
+  auditLog: AUDIT_LOGS_STANDARD_FIELD_IDS,
+  messageChannelMessageAssociation:
+    MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS,
+  messageChannel: MESSAGE_CHANNEL_STANDARD_FIELD_IDS,
+  messageParticipant: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS,
+  messageThread: MESSAGE_THREAD_STANDARD_FIELD_IDS,
+  messageThreadSubscriber: MESSAGE_THREAD_SUBSCRIBER_STANDARD_FIELD_IDS,
+  message: MESSAGE_STANDARD_FIELD_IDS,
+  note: NOTE_STANDARD_FIELD_IDS,
+  noteTarget: NOTE_TARGET_STANDARD_FIELD_IDS,
+  opportunity: OPPORTUNITY_STANDARD_FIELD_IDS,
+  person: PERSON_STANDARD_FIELD_IDS,
+  task: TASK_STANDARD_FIELD_IDS,
+  taskTarget: TASK_TARGET_STANDARD_FIELD_IDS,
+  timelineActivity: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
+  viewField: VIEW_FIELD_STANDARD_FIELD_IDS,
+  viewGroup: VIEW_GROUP_STANDARD_FIELD_IDS,
+  viewFilter: VIEW_FILTER_STANDARD_FIELD_IDS,
+  viewSort: VIEW_SORT_STANDARD_FIELD_IDS,
+  view: VIEW_STANDARD_FIELD_IDS,
+  webhook: WEBHOOK_STANDARD_FIELD_IDS,
+  workflow: WORKFLOW_STANDARD_FIELD_IDS,
+  workflowEventListener: WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS,
+  workflowRun: WORKFLOW_RUN_STANDARD_FIELD_IDS,
+  workflowVersion: WORKFLOW_VERSION_STANDARD_FIELD_IDS,
+  workspaceMember: WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
 };
