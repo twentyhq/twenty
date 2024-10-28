@@ -37,7 +37,10 @@ export const RecordTable = ({
     recordTableId,
   );
 
-  const tableRowIds = useRecoilComponentValueV2(tableRowIdsComponentState, recordTableId);
+  const tableRowIds = useRecoilComponentValueV2(
+    tableRowIdsComponentState,
+    recordTableId,
+  );
 
   const pendingRecordId = useRecoilComponentValueV2(
     recordTablePendingRecordIdComponentState,
