@@ -8,13 +8,13 @@ import { unsavedToUpsertViewSortsComponentFamilyState } from '@/views/states/uns
 import { useRecoilCallback } from 'recoil';
 
 export const useResetUnsavedViewStates = (viewBarInstanceId?: string) => {
-  const setUnsavedToDeleteViewFilterIdsCallbackState =
+  const unsavedToDeleteViewFilterIdsCallbackState =
     useRecoilComponentCallbackStateV2(
       unsavedToDeleteViewFilterIdsComponentFamilyState,
       viewBarInstanceId,
     );
 
-  const setUnsavedToDeleteViewSortIdsCallbackState =
+  const unsavedToDeleteViewSortIdsCallbackState =
     useRecoilComponentCallbackStateV2(
       unsavedToDeleteViewSortIdsComponentFamilyState,
       viewBarInstanceId,
@@ -26,7 +26,7 @@ export const useResetUnsavedViewStates = (viewBarInstanceId?: string) => {
       viewBarInstanceId,
     );
 
-  const setUnsavedToUpsertViewFiltersCallbackState =
+  const unsavedToUpsertViewFiltersCallbackState =
     useRecoilComponentCallbackStateV2(
       unsavedToUpsertViewFiltersComponentFamilyState,
       viewBarInstanceId,
@@ -48,18 +48,18 @@ export const useResetUnsavedViewStates = (viewBarInstanceId?: string) => {
     ({ set }) =>
       (viewId: string) => {
         set(unsavedToDeleteViewFilterGroupIdsCallbackState({ viewId }), []);
-        set(setUnsavedToDeleteViewFilterIdsCallbackState({ viewId }), []);
-        set(setUnsavedToDeleteViewSortIdsCallbackState({ viewId }), []);
+        set(unsavedToDeleteViewFilterIdsCallbackState({ viewId }), []);
+        set(unsavedToDeleteViewSortIdsCallbackState({ viewId }), []);
         set(unsavedToUpsertViewFilterGroupsCallbackState({ viewId }), []);
-        set(setUnsavedToUpsertViewFiltersCallbackState({ viewId }), []);
+        set(unsavedToUpsertViewFiltersCallbackState({ viewId }), []);
         set(unsavedToUpsertViewSortsCallbackState({ viewId }), []);
       },
     [
       unsavedToUpsertViewSortsCallbackState,
-      setUnsavedToUpsertViewFiltersCallbackState,
+      unsavedToUpsertViewFiltersCallbackState,
       unsavedToUpsertViewFilterGroupsCallbackState,
-      setUnsavedToDeleteViewSortIdsCallbackState,
-      setUnsavedToDeleteViewFilterIdsCallbackState,
+      unsavedToDeleteViewSortIdsCallbackState,
+      unsavedToDeleteViewFilterIdsCallbackState,
       unsavedToDeleteViewFilterGroupIdsCallbackState,
     ],
   );
