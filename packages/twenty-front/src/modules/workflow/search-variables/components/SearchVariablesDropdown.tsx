@@ -5,14 +5,14 @@ import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/S
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SearchVariablesDropdownStepItem } from '@/workflow/search-variables/components/SearchVariablesDropdownStepItem';
 import SearchVariablesDropdownStepSubItem from '@/workflow/search-variables/components/SearchVariablesDropdownStepSubItem';
-import { AVAILABLE_VARIABLES_MOCK } from '@/workflow/search-variables/constants/AvailableVariablesMock';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/search-variables/constants/SearchVariablesDropdownId';
-import { WorkflowStepMock } from '@/workflow/search-variables/types/WorkflowStepMock';
+import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Editor } from '@tiptap/react';
 import { useState } from 'react';
 import { IconVariable } from 'twenty-ui';
+import { useAvailableVariablesInWorkflowStep } from '@/workflow/hooks/useAvailableVariablesInWorkflowStep';
 
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
@@ -34,8 +34,11 @@ const SearchVariablesDropdown = ({
 
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${inputId}`;
   const { isDropdownOpen } = useDropdown(dropdownId);
+  const availableVariablesInWorkflowStep =
+    useAvailableVariablesInWorkflowStep();
+
   const [selectedStep, setSelectedStep] = useState<
-    WorkflowStepMock | undefined
+    StepOutputSchema | undefined
   >(undefined);
 
   const insertVariableTag = (variable: string) => {
@@ -44,7 +47,7 @@ const SearchVariablesDropdown = ({
 
   const handleStepSelect = (stepId: string) => {
     setSelectedStep(
-      AVAILABLE_VARIABLES_MOCK.find((step) => step.id === stepId),
+      availableVariablesInWorkflowStep.find((step) => step.id === stepId),
     );
   };
 
@@ -78,7 +81,7 @@ const SearchVariablesDropdown = ({
               />
             ) : (
               <SearchVariablesDropdownStepItem
-                steps={AVAILABLE_VARIABLES_MOCK}
+                steps={availableVariablesInWorkflowStep}
                 onSelect={handleStepSelect}
               />
             )}

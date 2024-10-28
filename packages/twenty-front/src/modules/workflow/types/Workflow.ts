@@ -1,4 +1,6 @@
 type BaseWorkflowStepSettings = {
+  input: object;
+  outputSchema: object;
   errorHandlingOptions: {
     retryOnFailure: {
       value: boolean;
@@ -12,6 +14,7 @@ type BaseWorkflowStepSettings = {
 export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
   input: {
     serverlessFunctionId: string;
+    serverlessFunctionVersion: string;
   };
 };
 
@@ -57,6 +60,8 @@ export type WorkflowDatabaseEventTrigger = BaseTrigger & {
   type: 'DATABASE_EVENT';
   settings: {
     eventName: string;
+    input?: object;
+    outputSchema: object;
   };
 };
 
