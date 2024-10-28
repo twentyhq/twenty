@@ -9,10 +9,6 @@ import { isCurrencyCodeCompositeFilter } from '@/object-record/object-filter-dro
 export const getFilterInputTypeToUse = (
   filterDefinition: FilterDefinition,
 ): FilterInputType => {
-  console.log({
-    filterDefinition,
-    true: isCurrencyCodeCompositeFilter(filterDefinition),
-  });
   if (
     (TEXT_FILTER_TYPES.includes(filterDefinition.type) &&
       !isActorSourceCompositeFilter(filterDefinition)) ||

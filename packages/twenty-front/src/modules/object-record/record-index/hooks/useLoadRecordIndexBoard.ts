@@ -61,7 +61,6 @@ export const useLoadRecordIndexBoard = ({
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
   const recordIndexSorts = useRecoilValue(recordIndexSortsState);
 
-  console.log({ recordIndexFilters });
   const requestFilters = computeViewRecordGqlOperationFilter(
     recordIndexFilters,
     objectMetadataItem?.fields ?? [],

@@ -353,15 +353,7 @@ const computeFilterRecordGqlOperationFilter = (
       break;
     }
     case 'CURRENCY': {
-      console.log({
-        filter,
-        isCompositeFieldFiter,
-        subFieldName,
-      });
-      if (
-        isCurrencyCodeCompositeFilter(filter.definition) ||
-        filter.operand === ViewFilterOperand.Contains
-      ) {
+      if (isCurrencyCodeCompositeFilter(filter.definition)) {
         switch (filter.operand) {
           case ViewFilterOperand.Contains:
             return {

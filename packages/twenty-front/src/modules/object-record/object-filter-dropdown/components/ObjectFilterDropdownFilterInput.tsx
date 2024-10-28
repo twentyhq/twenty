@@ -57,12 +57,6 @@ export const ObjectFilterDropdownFilterInput =
       filterDefinitionUsedInDropdown,
     );
 
-    console.log({
-      filterDefinitionUsedInDropdown,
-
-      filterInputTypeToUse,
-    });
-
     return (
       <>
         {isConfigurable && selectedOperandInDropdown && (

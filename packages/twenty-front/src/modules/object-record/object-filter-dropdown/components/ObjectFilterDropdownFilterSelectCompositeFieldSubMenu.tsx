@@ -81,11 +81,6 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
           operand,
         );
 
-        console.log({
-          value,
-          displayValue,
-          definition,
-        });
         selectFilter({
           id: advancedFilterViewFilterId,
           fieldMetadataId: definition.fieldMetadataId,
@@ -96,10 +91,6 @@ export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
           viewFilterGroupId: advancedFilterViewFilterGroupId,
         });
       }
-
-      console.log({
-        definition,
-      });
 
       setFilterDefinitionUsedInDropdown(definition);
 

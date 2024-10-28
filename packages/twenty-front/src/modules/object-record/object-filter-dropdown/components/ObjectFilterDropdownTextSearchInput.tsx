@@ -40,11 +40,6 @@ export const ObjectFilterDropdownTextSearchInput = () => {
     [hasFocused],
   );
 
-  console.log({
-    filterDefinitionUsedInDropdown,
-    selectedOperandInDropdown,
-  });
-
   const shouldNotRender =
     !filterDefinitionUsedInDropdown || !selectedOperandInDropdown;
 
