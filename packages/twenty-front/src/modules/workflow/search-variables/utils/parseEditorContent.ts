@@ -12,7 +12,7 @@ export const parseEditorContent = (json: JSONContent): string => {
 
     if (node.type === 'text') {
       // Replace &nbsp; with regular space
-      return (node.text || '').replace(/\u00A0/g, ' ');
+      return node?.text?.replace(/\u00A0/g, ' ') ?? '';
     }
 
     if (node.type === 'hardBreak') {
