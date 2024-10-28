@@ -34,6 +34,7 @@ export const RecordTableContextProvider = ({
 
   const { upsertRecord } = useUpsertRecord({
     objectNameSingular,
+    recordTableId,
   });
 
   const handleUpsertRecord = ({
@@ -45,7 +46,7 @@ export const RecordTableContextProvider = ({
     recordId: string;
     fieldName: string;
   }) => {
-    upsertRecord(persistField, recordId, fieldName, recordTableId);
+    upsertRecord(persistField, recordId, fieldName);
   };
 
   const { openTableCell } = useOpenRecordTableCellV2(recordTableId);
