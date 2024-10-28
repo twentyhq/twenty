@@ -44,7 +44,10 @@ export const useAvailableVariablesInWorkflowStep = (): StepOutputSchema[] => {
 
   const result = [];
 
-  if (isDefined(workflow.currentVersion.trigger?.settings.outputSchema)) {
+  if (
+    workflow.currentVersion.trigger?.type === 'DATABASE_EVENT' &&
+    isDefined(workflow.currentVersion.trigger?.settings?.outputSchema)
+  ) {
     const [object, action] =
       workflow.currentVersion.trigger.settings.eventName.split('.');
     result.push({
