@@ -55,7 +55,10 @@ export const useAvailableVariablesInWorkflowStep = (): StepOutputSchema[] => {
   }
 
   previousSteps.forEach((previousStep) => {
-    if (isDefined(previousStep.settings.outputSchema) && !isEmpty(previousStep.settings.outputSchema)) {
+    if (
+      isDefined(previousStep.settings.outputSchema) &&
+      !isEmpty(previousStep.settings.outputSchema)
+    ) {
       result.push({
         id: previousStep.id,
         name: previousStep.name,

@@ -25,12 +25,13 @@ export const SearchVariablesDropdownStepItem = ({
         />
       ))}
     </>
-  ) :  
+  ) : (
     <MenuItem
       key="no-steps"
       onClick={() => {}}
       text="No variables available"
       LeftIcon={undefined}
       hasSubMenu={false}
-    />;
+    />
+  );
 };
