@@ -19,3 +19,5 @@ Your turn 👇
 » 21-October-2024 by [sateshcharan](https://oss.gg/sateshcharan)
 
 » 22-October-2024 by [Khaan25](https://oss.gg/Khaan25)
+
+» 26-October-2024 by [Naprila](https://oss.gg/Naprila)
