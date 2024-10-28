@@ -45,7 +45,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
         primaryLinkLabel
         secondaryLinks
       }
-`
+`;
 
 export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
       __typename
@@ -312,4 +312,4 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
         primaryLinkLabel
         secondaryLinks
       }
-`
+`;

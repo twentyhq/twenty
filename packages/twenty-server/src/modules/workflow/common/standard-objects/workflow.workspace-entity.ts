@@ -55,6 +55,7 @@ const WorkflowStatusOptions = [
   labelPlural: 'Workflows',
   description: 'A workflow',
   icon: 'IconSettingsAutomation',
+  shortcut: 'W',
   labelIdentifierStandardId: WORKFLOW_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceGate({

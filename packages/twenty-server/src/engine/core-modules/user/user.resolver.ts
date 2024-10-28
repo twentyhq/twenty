@@ -19,6 +19,7 @@ import { Repository } from 'typeorm';
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
+import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -55,6 +56,7 @@ export class UserResolver {
     private readonly onboardingService: OnboardingService,
     private readonly userVarService: UserVarsService,
     private readonly fileService: FileService,
+    private readonly analyticsService: AnalyticsService,
   ) {}
 
   @Query(() => User)
@@ -152,6 +154,15 @@ export class UserResolver {
     const key = this.environmentService.get('SUPPORT_FRONT_HMAC_KEY');
 
     return getHMACKey(parent.email, key);
+  }
+
+  @ResolveField(() => String, {
+    nullable: true,
+  })
+  async analyticsTinybirdJwt(
+    @AuthWorkspace() workspace: Workspace | undefined,
+  ): Promise<string> {
+    return await this.analyticsService.generateWorkspaceJwt(workspace?.id);
   }
 
   @Mutation(() => String)

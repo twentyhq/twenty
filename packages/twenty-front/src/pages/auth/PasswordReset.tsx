@@ -1,15 +1,3 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { isNonEmptyString } from '@sniptt/guards';
-import { motion } from 'framer-motion';
-import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
-import { z } from 'zod';
-
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
@@ -20,10 +8,20 @@ import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
-import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { isNonEmptyString } from '@sniptt/guards';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { AnimatedEaseIn, MainButton } from 'twenty-ui';
+import { z } from 'zod';
 import {
   useUpdatePasswordViaResetTokenMutation,
   useValidatePasswordResetTokenQuery,

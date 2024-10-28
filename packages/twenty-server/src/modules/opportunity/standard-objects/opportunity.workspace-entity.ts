@@ -49,6 +49,7 @@ export const SEARCH_FIELDS_FOR_OPPORTUNITY: FieldTypeAndNameMetadata[] = [
   labelPlural: 'Opportunities',
   description: 'An opportunity',
   icon: 'IconTargetArrow',
+  shortcut: 'O',
   labelIdentifierStandardId: OPPORTUNITY_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsNotAuditLogged()

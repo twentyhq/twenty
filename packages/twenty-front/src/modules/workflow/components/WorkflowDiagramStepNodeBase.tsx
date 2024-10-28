@@ -3,7 +3,7 @@ import { WorkflowDiagramStepNodeData } from '@/workflow/types/WorkflowDiagram';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCode, IconMail, IconPlaylistAdd } from 'twenty-ui';
+import { IconCode, IconHandMove, IconMail, IconPlaylistAdd } from 'twenty-ui';
 
 const StyledStepNodeLabelIconContainer = styled.div`
   align-items: center;
@@ -26,17 +26,30 @@ export const WorkflowDiagramStepNodeBase = ({
   const renderStepIcon = () => {
     switch (data.nodeType) {
       case 'trigger': {
-        return (
-          <StyledStepNodeLabelIconContainer>
-            <IconPlaylistAdd
-              size={theme.icon.size.sm}
-              color={theme.font.color.tertiary}
-            />
-          </StyledStepNodeLabelIconContainer>
-        );
-      }
-      case 'condition': {
-        return null;
+        switch (data.triggerType) {
+          case 'DATABASE_EVENT': {
+            return (
+              <StyledStepNodeLabelIconContainer>
+                <IconPlaylistAdd
+                  size={theme.icon.size.sm}
+                  color={theme.font.color.tertiary}
+                />
+              </StyledStepNodeLabelIconContainer>
+            );
+          }
+          case 'MANUAL': {
+            return (
+              <StyledStepNodeLabelIconContainer>
+                <IconHandMove
+                  size={theme.icon.size.sm}
+                  color={theme.font.color.tertiary}
+                />
+              </StyledStepNodeLabelIconContainer>
+            );
+          }
+        }
+
+        return assertUnreachable(data.triggerType);
       }
       case 'action': {
         switch (data.actionType) {

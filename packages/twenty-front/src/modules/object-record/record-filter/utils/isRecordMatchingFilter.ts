@@ -5,6 +5,7 @@ import {
   ActorFilter,
   AddressFilter,
   AndObjectRecordFilter,
+  ArrayFilter,
   BooleanFilter,
   CurrencyFilter,
   DateFilter,
@@ -16,14 +17,17 @@ import {
   NotObjectRecordFilter,
   OrObjectRecordFilter,
   PhonesFilter,
+  RawJsonFilter,
   RecordGqlOperationFilter,
   StringFilter,
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
+import { isMatchingArrayFilter } from '@/object-record/record-filter/utils/isMatchingArrayFilter';
 import { isMatchingBooleanFilter } from '@/object-record/record-filter/utils/isMatchingBooleanFilter';
 import { isMatchingCurrencyFilter } from '@/object-record/record-filter/utils/isMatchingCurrencyFilter';
 import { isMatchingDateFilter } from '@/object-record/record-filter/utils/isMatchingDateFilter';
 import { isMatchingFloatFilter } from '@/object-record/record-filter/utils/isMatchingFloatFilter';
+import { isMatchingRawJsonFilter } from '@/object-record/record-filter/utils/isMatchingRawJsonFilter';
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
 import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -165,6 +169,18 @@ export const isRecordMatchingFilter = ({
           value: record[filterKey],
         });
       }
+      case FieldMetadataType.Array: {
+        return isMatchingArrayFilter({
+          arrayFilter: filterValue as ArrayFilter,
+          value: record[filterKey],
+        });
+      }
+      case FieldMetadataType.RawJson: {
+        return isMatchingRawJsonFilter({
+          rawJsonFilter: filterValue as RawJsonFilter,
+          value: record[filterKey],
+        });
+      }
       case FieldMetadataType.FullName: {
         const fullNameFilter = filterValue as FullNameFilter;
 
@@ -302,6 +318,7 @@ export const isRecordMatchingFilter = ({
           `Not implemented yet, use UUID filter instead on the corredponding "${filterKey}Id" field`,
         );
       }
+
       default: {
         throw new Error(
           `Not implemented yet for field type "${objectMetadataField.type}"`,
