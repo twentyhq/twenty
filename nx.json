@@ -261,28 +261,22 @@
         "bundler": "vite",
         "compiler": "swc",
         "unitTestRunner": "jest",
-        "projectNameAndRootFormat": "derived"
+        "e2eTestRunner": "cypress"
       },
       "library": {
         "style": "@emotion/styled",
         "linter": "eslint",
-        "bundler": "vite",
-        "compiler": "swc",
         "unitTestRunner": "jest",
-        "projectNameAndRootFormat": "derived"
-      },
-      "component": {
-        "style": "@emotion/styled"
+        "bundler": "vite",
+        "compiler": "swc"
+      }
+    },
+    "@nx/js": {
+      "library": {
+        "linter": "eslint",
+        "unitTestRunner": "jest",
+        "bundler": "tsup"
       }
     }
-  },
-  "tasksRunnerOptions": {
-    "default": {
-      "options": {
-        "cacheableOperations": ["storybook:build"]
-      }
-    }
-  },
-  "useInferencePlugins": false,
-  "defaultBase": "main"
+  }
 }
