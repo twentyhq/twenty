@@ -20,7 +20,7 @@ import {
   IconGitCommit,
   IconPlayerPlay,
   IconRestore,
-  Section
+  Section,
 } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
