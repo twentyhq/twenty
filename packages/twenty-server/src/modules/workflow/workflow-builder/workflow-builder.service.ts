@@ -21,7 +21,7 @@ import { generateFakeObjectRecordEvent } from 'src/engine/core-modules/event-emi
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 
 @Injectable()
-export class WorkflowService {
+export class WorkflowBuilderService {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly codeIntrospectionService: CodeIntrospectionService,
