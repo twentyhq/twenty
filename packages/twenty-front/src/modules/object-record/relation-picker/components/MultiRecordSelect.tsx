@@ -119,14 +119,12 @@ export const MultiRecordSelect = ({
           );
         })}
       </SelectableList>
-      {objectRecordsIdsMultiSelect?.length === 0 &&
-        !recordMultiSelectIsLoading && <MenuItem text="No result" />}
+      {objectRecordsIdsMultiSelect?.length === 0 && <MenuItem text="No result" />}
     </DropdownMenuItemsContainer>
   );
 
   const createNewButton = isDefined(onCreate) && (
     <>
-      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         <CreateNewButton
           onClick={() => onCreate?.(relationPickerSearchFilter)}
@@ -134,6 +132,7 @@ export const MultiRecordSelect = ({
           text="Add New"
         />
       </DropdownMenuItemsContainer>
+      <DropdownMenuSeparator />
     </>
   );
 
