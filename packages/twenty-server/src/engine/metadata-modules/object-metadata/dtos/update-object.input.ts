@@ -47,6 +47,11 @@ export class UpdateObjectPayload {
   @Field({ nullable: true })
   icon?: string;
 
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  shortcut?: string;
+
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
@@ -65,7 +70,7 @@ export class UpdateObjectPayload {
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
-  shouldSyncLabelAndName?: boolean;
+  isLabelSyncedWithName?: boolean;
 }
 
 @InputType()

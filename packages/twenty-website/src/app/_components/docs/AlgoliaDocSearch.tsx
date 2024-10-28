@@ -8,7 +8,7 @@ interface AlgoliaDocSearchProps {
 export const AlgoliaDocSearch = ({ pathname }: AlgoliaDocSearchProps) => {
   const indexName = pathname.includes('user-guide')
     ? 'user-guide'
-    : 'developer';
+    : 'developer-docs';
   return (
     <DocSearch
       hitComponent={({ hit }: { hit: any }) => (

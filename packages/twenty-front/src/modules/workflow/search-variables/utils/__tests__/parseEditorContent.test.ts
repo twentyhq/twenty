@@ -236,4 +236,64 @@ describe('parseEditorContent', () => {
       'Hello {{user.firstName}} {{user.lastName}}Your ID is: {{user.id}}',
     );
   });
+
+  it('should handle hard breaks', () => {
+    const input: JSONContent = {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              text: 'First line',
+            },
+          ],
+        },
+        {
+          type: 'hardBreak',
+        },
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              text: 'Second line',
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(parseEditorContent(input)).toBe('First line\nSecond line');
+  });
+
+  it('should handle spaces between variables correctly', () => {
+    const input: JSONContent = {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'variableTag',
+              attrs: { variable: '{{user.firstName}}' },
+            },
+            {
+              type: 'text',
+              text: '\u00A0', // NBSP character
+            },
+            {
+              type: 'variableTag',
+              attrs: { variable: '{{user.lastName}}' },
+            },
+          ],
+        },
+      ],
+    };
+
+    expect(parseEditorContent(input)).toBe(
+      '{{user.firstName}} {{user.lastName}}',
+    );
+  });
 });

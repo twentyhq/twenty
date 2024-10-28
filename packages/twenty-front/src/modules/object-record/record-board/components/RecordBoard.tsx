@@ -31,7 +31,7 @@ const StyledContainer = styled.div`
 
 const StyledColumnContainer = styled.div`
   display: flex;
-  & > *:not(:first-child) {
+  & > *:not(:first-of-type) {
     border-left: 1px solid ${({ theme }) => theme.border.color.light};
   }
 `;
