@@ -20,4 +20,10 @@ Your turn 👇
 
 » 24-October-2024 by [Thefool76](https://oss.gg/thefool76) video Link: [video](https://youtube.com/shorts/lC4oqm7UlCI?si=Md-nsfK9F6Shzjkv)
 
+» 27-October-2024 by [Khaan25](https://oss.gg/Khaan25) video Link: [video](https://x.com/zia_webdev/status/1850409233663115529)
+
+» 27-October-2024 by [sateshcharan](https://oss.gg/sateshcharan) video link: [video](https://youtube.com/shorts/OK52eaq0pAQ?feature=share)
+
+» 28-October-2024 by [adityadeshlahre](https://oss.gg/adityadeshlahre) video link: [video](https://youtu.be/65sOHce1gjw)
+
 ---

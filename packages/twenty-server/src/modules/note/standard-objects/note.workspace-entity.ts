@@ -19,6 +19,7 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { NOTE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
   FieldTypeAndNameMetadata,
@@ -43,7 +44,7 @@ export const SEARCH_FIELDS_FOR_NOTES: FieldTypeAndNameMetadata[] = [
   labelSingular: 'Note',
   labelPlural: 'Notes',
   description: 'A note',
-  icon: 'IconNotes',
+  icon: STANDARD_OBJECT_ICONS.note,
   shortcut: 'N',
   labelIdentifierStandardId: NOTE_STANDARD_FIELD_IDS.title,
 })

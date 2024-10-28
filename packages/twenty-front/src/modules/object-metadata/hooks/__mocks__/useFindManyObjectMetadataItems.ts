@@ -25,7 +25,7 @@ export const query = gql`
           labelIdentifierFieldMetadataId
           imageIdentifierFieldMetadataId
           shortcut
-          shouldSyncLabelAndName
+          isLabelSyncedWithName
           fields(paging: { first: 1000 }, filter: $fieldFilter) {
             edges {
               node {

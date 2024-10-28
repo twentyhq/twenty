@@ -27,6 +27,7 @@ import {
   IconMicrosoft,
   Loader,
   MainButton,
+  StyledText,
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
@@ -267,6 +268,12 @@ export const SignInUpForm = () => {
                           disableHotkeys
                           onKeyDown={handleKeyDown}
                         />
+                        {signInUpMode === SignInUpMode.SignUp && (
+                          <StyledText
+                            text={'At least 8 characters long.'}
+                            color={theme.font.color.secondary}
+                          />
+                        )}
                       </StyledInputContainer>
                     )}
                   />

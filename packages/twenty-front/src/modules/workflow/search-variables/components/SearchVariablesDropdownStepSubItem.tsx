@@ -1,12 +1,12 @@
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
-import { WorkflowStepMock } from '@/workflow/search-variables/types/WorkflowStepMock';
+import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
 import { isObject } from '@sniptt/guards';
 import { useState } from 'react';
 import { IconChevronLeft } from 'twenty-ui';
 
 type SearchVariablesDropdownStepSubItemProps = {
-  step: WorkflowStepMock;
+  step: StepOutputSchema;
   onSelect: (value: string) => void;
   onBack: () => void;
 };
@@ -19,7 +19,7 @@ const SearchVariablesDropdownStepSubItem = ({
   const [currentPath, setCurrentPath] = useState<string[]>([]);
 
   const getSelectedObject = () => {
-    let selected = step.output;
+    let selected = step.outputSchema;
     for (const key of currentPath) {
       selected = selected[key];
     }
@@ -28,6 +28,7 @@ const SearchVariablesDropdownStepSubItem = ({
 
   const handleSelect = (key: string) => {
     const selectedObject = getSelectedObject();
+
     if (isObject(selectedObject[key])) {
       setCurrentPath([...currentPath, key]);
     } else {
