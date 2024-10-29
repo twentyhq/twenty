@@ -10,3 +10,4 @@ export * from './card/components/CardContent';
 export * from './card/components/CardFooter';
 export * from './card/components/CardHeader';
 export * from './expandableContainer/components/ExpandableContainer';
+export * from './section/components/Section';

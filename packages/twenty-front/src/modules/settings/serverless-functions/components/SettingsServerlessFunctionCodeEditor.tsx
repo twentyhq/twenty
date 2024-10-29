@@ -1,10 +1,10 @@
 import { SettingsServerlessFunctionCodeEditorContainer } from '@/settings/serverless-functions/components/SettingsServerlessFunctionCodeEditorContainer';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
-import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
 import { EditorProps, Monaco } from '@monaco-editor/react';
 import dotenv from 'dotenv';
 import { editor, MarkerSeverity } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
+import { CodeEditor } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
 export type File = {

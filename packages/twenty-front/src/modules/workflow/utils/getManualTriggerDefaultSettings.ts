@@ -16,11 +16,13 @@ export const getManualTriggerDefaultSettings = ({
     case 'EVERYWHERE': {
       return {
         objectType: undefined,
+        outputSchema: {},
       };
     }
     case 'WHEN_RECORD_SELECTED': {
       return {
         objectType: activeObjectMetadataItems[0].nameSingular,
+        outputSchema: {},
       };
     }
   }

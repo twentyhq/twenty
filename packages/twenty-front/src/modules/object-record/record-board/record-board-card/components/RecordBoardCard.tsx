@@ -17,7 +17,6 @@ import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
@@ -29,6 +28,8 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   AnimatedEaseInOut,
   AvatarChipVariant,
+  Checkbox,
+  CheckboxVariant,
   ChipSize,
   IconEye,
   IconEyeOff,

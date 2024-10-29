@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 
 import {
-  // eslint-disable-next-line prettier/prettier
-    SettingsDataModelFieldPreview,
+  SettingsDataModelFieldPreview,
   SettingsDataModelFieldPreviewProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreview';
 import { SettingsDataModelObjectSummary } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';

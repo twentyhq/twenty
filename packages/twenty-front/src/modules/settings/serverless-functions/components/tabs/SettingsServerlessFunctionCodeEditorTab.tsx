@@ -6,8 +6,6 @@ import { SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/settings/s
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { CoreEditorHeader } from '@/ui/input/code-editor/components/CodeEditorHeader';
-import { Section } from '@/ui/layout/section/components/Section';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -17,10 +15,12 @@ import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import {
   Button,
+  CoreEditorHeader,
   H2Title,
   IconGitCommit,
   IconPlayerPlay,
   IconRestore,
+  Section,
 } from 'twenty-ui';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
 
