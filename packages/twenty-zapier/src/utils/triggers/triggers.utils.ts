@@ -19,18 +19,34 @@ export const subscribe = async (
   bundle: Bundle,
   operation: Operation,
 ) => {
-  const data = {
-    targetUrl: bundle.targetUrl,
-    operation: `${bundle.inputData.nameSingular}.${operation}`,
-  };
-  const result = await requestDb(
-    z,
-    bundle,
-    `mutation createWebhook {createWebhook(data:{${handleQueryParams(
-      data,
-    )}}) {id}}`,
-  );
-  return result.data.createWebhook;
+  try {
+    const data = {
+      targetUrl: bundle.targetUrl,
+      operations: [`${bundle.inputData.nameSingular}.${operation}`],
+    };
+    const result = await requestDb(
+      z,
+      bundle,
+      `mutation createWebhook {createWebhook(data:{${handleQueryParams(
+        data,
+      )}}) {id}}`,
+    );
+    return result.data.createWebhook;
+  } catch (e) {
+    // Remove that catch code when operations column exists in all active workspace schemas
+    const data = {
+      targetUrl: bundle.targetUrl,
+      operation: `${bundle.inputData.nameSingular}.${operation}`,
+    };
+    const result = await requestDb(
+      z,
+      bundle,
+      `mutation createWebhook {createWebhook(data:{${handleQueryParams(
+        data,
+      )}}) {id}}`,
+    );
+    return result.data.createWebhook;
+  }
 };
 
 export const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
