@@ -42,7 +42,7 @@ const StyledContainer = styled.div<{
       ? isMobile
         ? theme.spacing(3, 8)
         : theme.spacing(3, 8, 4, 0)
-      : theme.spacing(3, 2, 4)};
+      : theme.spacing(3, 2, 2)};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: 100%;
