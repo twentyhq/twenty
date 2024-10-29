@@ -2,15 +2,17 @@ import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
 import { ReactNode, useContext, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { isDefined } from '~/utils/isDefined';
 
 export const RecordTableRowWrapper = ({
   recordId,
@@ -33,6 +35,10 @@ export const RecordTableRowWrapper = ({
 
   const scrollWrapperRef = useContext(
     RecordTableWithWrappersScrollWrapperContext,
+  );
+
+  const [recordFromStore] = useRecoilState<any>(
+    recordStoreFamilyState(recordId),
   );
 
   const { ref: elementRef, inView } = useInView({
@@ -82,7 +88,9 @@ export const RecordTableRowWrapper = ({
                 }) + recordId,
               objectNameSingular: objectMetadataItem.nameSingular,
               isSelected: currentRowSelected,
-              isReadOnly: objectMetadataItem.isRemote ?? false,
+              isReadOnly:
+                objectMetadataItem.isRemote ||
+                isDefined(recordFromStore?.deletedAt),
               isPendingRow,
               isDragging: draggableSnapshot.isDragging,
               dragHandleProps: draggableProvided.dragHandleProps,

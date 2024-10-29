@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
+import { useRecoilValue } from 'recoil';
 import {
   AnimatedEaseInOut,
   IconChevronDown,
@@ -32,6 +33,7 @@ import { PropertyBox } from '@/object-record/record-inline-cell/property-box/com
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -40,6 +42,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
   isDropdownOpen?: boolean;
@@ -84,7 +87,7 @@ export const RecordDetailRelationRecordsListItem = ({
   onClick,
   relationRecord,
 }: RecordDetailRelationRecordsListItemProps) => {
-  const { fieldDefinition } = useContext(FieldContext);
+  const { fieldDefinition, recordId } = useContext(FieldContext);
 
   const {
     relationFieldMetadataId,
@@ -181,7 +184,11 @@ export const RecordDetailRelationRecordsListItem = ({
     [isExpanded],
   );
 
-  const canEdit = !isFieldMetadataReadOnly(fieldDefinition.metadata);
+  const record = useRecoilValue(recordStoreFamilyState(recordId));
+
+  const canEdit =
+    !isFieldMetadataReadOnly(fieldDefinition.metadata) &&
+    !isDefined(record?.deletedAt);
 
   return (
     <>

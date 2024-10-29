@@ -45,7 +45,8 @@ export const SummaryCard = ({
 
   const { Icon, IconColor } = useGetStandardObjectIcon(objectNameSingular);
   const isMobile = useIsMobile() || isInRightDrawer;
-  const isReadOnly = objectMetadataItem.isRemote;
+  const isReadOnly =
+    objectMetadataItem.isRemote || isDefined(recordFromStore?.deletedAt);
 
   if (isNewRightDrawerItemLoading || !isDefined(recordFromStore)) {
     return <ShowPageSummaryCardSkeletonLoader />;

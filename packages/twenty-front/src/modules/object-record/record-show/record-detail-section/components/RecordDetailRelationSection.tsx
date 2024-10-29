@@ -34,6 +34,7 @@ import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams
 import { View } from '@/views/types/View';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 type RecordDetailRelationSectionProps = {
   loading: boolean;
@@ -158,7 +159,9 @@ export const RecordDetailRelationSection = ({
       recordId,
     });
 
-  const canEdit = !isFieldMetadataReadOnly(fieldDefinition.metadata);
+  const canEdit =
+    !isFieldMetadataReadOnly(fieldDefinition.metadata) &&
+    !isDefined(record?.deletedAt);
 
   if (loading) return null;
 
