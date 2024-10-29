@@ -4,6 +4,7 @@ import {
   FloatingPortal,
   offset,
   Placement,
+  size,
   useFloating,
 } from '@floating-ui/react';
 import { MouseEvent, useEffect, useRef } from 'react';
@@ -85,7 +86,19 @@ export const Dropdown = ({
 
   const { refs, floatingStyles, placement } = useFloating({
     placement: dropdownPlacement,
-    middleware: [flip(), ...offsetMiddlewares],
+    middleware: [
+      flip(),
+      size({
+        padding: 12 + 20, // 12px for padding bottom, 20px for dropdown bottom margin target
+        apply: ({ availableHeight, elements }) => {
+          elements.floating.style.maxHeight =
+            availableHeight >= elements.floating.scrollHeight
+              ? ''
+              : `${availableHeight}px`;
+        },
+      }),
+      ...offsetMiddlewares,
+    ],
     whileElementsMounted: autoUpdate,
     strategy: dropdownStrategy,
   });
