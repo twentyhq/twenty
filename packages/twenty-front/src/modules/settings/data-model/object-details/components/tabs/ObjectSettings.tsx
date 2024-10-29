@@ -144,6 +144,8 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
         updatePayload,
       });
 
+      formConfig.reset(undefined, { keepValues: true });
+
       if (lastVisitedObjectMetadataItemId === objectMetadataItem.id) {
         const lastVisitedView = getLastVisitedViewIdFromObjectMetadataItemId(
           objectMetadataItem.id,
