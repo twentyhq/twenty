@@ -6,13 +6,13 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-const singleRecordActions = [
+const singleRecordActionEffects = [
   ManageFavoritesActionEffect,
   ExportRecordsActionEffect,
   DeleteRecordsActionEffect,
 ];
 
-const multipleRecordActions = [
+const multipleRecordActionEffects = [
   ExportRecordsActionEffect,
   DeleteRecordsActionEffect,
 ];
@@ -42,8 +42,8 @@ export const RecordActionMenuEntriesSetter = () => {
 
   const actions =
     contextStoreNumberOfSelectedRecords === 1
-      ? singleRecordActions
-      : multipleRecordActions;
+      ? singleRecordActionEffects
+      : multipleRecordActionEffects;
 
   return (
     <>

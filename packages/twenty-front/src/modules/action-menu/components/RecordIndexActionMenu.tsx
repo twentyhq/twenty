@@ -3,7 +3,7 @@ import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMen
 import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexActionMenuBar';
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
 import { RecordIndexActionMenuEffect } from '@/action-menu/components/RecordIndexActionMenuEffect';
-import { ActionMenuContext } from '@/action-menu/states/contexts/ActionMenuContext';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';

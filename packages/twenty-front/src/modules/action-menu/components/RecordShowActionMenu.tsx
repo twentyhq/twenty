@@ -1,6 +1,6 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
-import { ActionMenuContext } from '@/action-menu/states/contexts/ActionMenuContext';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';

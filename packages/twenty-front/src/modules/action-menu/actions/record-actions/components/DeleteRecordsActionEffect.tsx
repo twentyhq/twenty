@@ -1,5 +1,5 @@
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import { ActionMenuContext } from '@/action-menu/states/contexts/ActionMenuContext';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';

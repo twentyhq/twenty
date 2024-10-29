@@ -73,9 +73,6 @@ export const RecordIndexPage = () => {
           onCreateRecord: handleCreateRecord,
         }}
       >
-        <PageTitle title={`${capitalize(objectNamePlural)}`} />
-        <RecordIndexPageHeader />
-
         <ViewComponentInstanceContext.Provider
           value={{ instanceId: recordIndexId }}
         >

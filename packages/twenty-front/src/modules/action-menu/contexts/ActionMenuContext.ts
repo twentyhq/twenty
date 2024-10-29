@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-export type ActionMenuContextType = {
+type ActionMenuContextType = {
   isInRightDrawer: boolean;
   onActionExecutedCallback: () => void;
 };
