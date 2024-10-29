@@ -1,8 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
-import { Section } from '@/ui/layout/section/components/Section';
 import styled from '@emotion/styled';
-import { H2Title } from 'twenty-ui';
+import { H2Title, Section } from 'twenty-ui';
 import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 
 type ObjectIndexesProps = {

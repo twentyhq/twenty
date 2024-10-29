@@ -1,9 +1,8 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
 
-import { Section } from '@/ui/layout/section/components/Section';
 import styled from '@emotion/styled';
-import { Button, H2Title, IconPlus, UndecoratedLink } from 'twenty-ui';
+import { Button, H2Title, IconPlus, Section, UndecoratedLink } from 'twenty-ui';
 
 const StyledContentContainer = styled.div`
   padding-left: ${({ theme }) => theme.spacing(8)};

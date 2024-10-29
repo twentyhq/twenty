@@ -6,7 +6,7 @@ import console from 'console';
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { isDefined } from 'class-validator';
-import { FindManyOptions, In, Not, Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -217,7 +217,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       existingObjectMetadata,
       fullObjectMetadataAfterUpdate,
       input,
-      workspaceId,
     );
 
     if (input.update.isActive !== undefined) {
@@ -321,6 +320,44 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     return objectMetadata;
   }
 
+  public async findOneWithinWorkspace(
+    workspaceId: string,
+    options: FindOneOptions<ObjectMetadataEntity>,
+  ): Promise<ObjectMetadataEntity | null> {
+    return this.objectMetadataRepository.findOne({
+      relations: [
+        'fields',
+        'fields.fromRelationMetadata',
+        'fields.toRelationMetadata',
+      ],
+      ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
+    });
+  }
+
+  public async findManyWithinWorkspace(
+    workspaceId: string,
+    options?: FindManyOptions<ObjectMetadataEntity>,
+  ) {
+    return this.objectMetadataRepository.find({
+      relations: [
+        'fields.object',
+        'fields',
+        'fields.fromRelationMetadata',
+        'fields.toRelationMetadata',
+        'fields.fromRelationMetadata.toObjectMetadata',
+      ],
+      ...options,
+      where: {
+        ...options?.where,
+        workspaceId,
+      },
+    });
+  }
+
   public async findMany(options?: FindManyOptions<ObjectMetadataEntity>) {
     return this.objectMetadataRepository.find({
       relations: [
@@ -380,7 +417,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     existingObjectMetadata: ObjectMetadataEntity,
     objectMetadataForUpdate: ObjectMetadataEntity,
     input: UpdateOneObjectInput,
-    workspaceId: string,
   ) {
     const newTargetTableName = computeObjectTargetTable(
       objectMetadataForUpdate,
