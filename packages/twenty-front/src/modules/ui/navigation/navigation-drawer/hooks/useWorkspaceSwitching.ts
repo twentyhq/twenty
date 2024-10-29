@@ -1,22 +1,20 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { AppPath } from '@/types/AppPath';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import {
-  SignInUpStep,
-  signInUpStepState,
-} from '@/auth/states/signInUpStepState';
+import { signInUpStepState } from '@/auth/states/signInUpStepState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { AppPath } from '@/types/AppPath';
-import { useGenerateJwtMutation } from '~/generated/graphql';
+import { useSwitchWorkspaceMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { sleep } from '~/utils/sleep';
+import { buildWorkspaceUrl } from '~/utils/workspace-url.helper';
 
 export const useWorkspaceSwitching = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
-  const [generateJWT] = useGenerateJwtMutation();
+
+  const [switchWorkspaceMutation] = useSwitchWorkspaceMutation();
   const { redirectToSSOLoginPage } = useSSO();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const setAvailableWorkspacesForSSOState = useSetRecoilState(
@@ -27,48 +25,65 @@ export const useWorkspaceSwitching = () => {
 
   const switchWorkspace = async (workspaceId: string) => {
     if (currentWorkspace?.id === workspaceId) return;
-    const jwt = await generateJWT({
+
+    const { data, errors } = await switchWorkspaceMutation({
       variables: {
         workspaceId,
       },
     });
 
-    if (isDefined(jwt.errors)) {
-      throw jwt.errors;
+    if (isDefined(errors) || !isDefined(data?.switchWorkspace.subdomain)) {
+      return (window.location.href = AppPath.Index);
     }
 
-    if (!isDefined(jwt.data?.generateJWT)) {
-      throw new Error('could not create token');
-    }
+    const url = buildWorkspaceUrl(data.switchWorkspace.subdomain);
 
-    if (
-      jwt.data.generateJWT.reason === 'WORKSPACE_USE_SSO_AUTH' &&
-      'availableSSOIDPs' in jwt.data.generateJWT
-    ) {
-      if (jwt.data.generateJWT.availableSSOIDPs.length === 1) {
-        redirectToSSOLoginPage(jwt.data.generateJWT.availableSSOIDPs[0].id);
-      }
+    window.location.href = url;
 
-      if (jwt.data.generateJWT.availableSSOIDPs.length > 1) {
-        await signOut();
-        setAvailableWorkspacesForSSOState(
-          jwt.data.generateJWT.availableSSOIDPs,
-        );
-        setSignInUpStep(SignInUpStep.SSOWorkspaceSelection);
-      }
+    // window.location.href = `https://${data.switchWorkspace.subdomain}.twenty.work`;
 
-      return;
-    }
-
-    if (
-      jwt.data.generateJWT.reason !== 'WORKSPACE_USE_SSO_AUTH' &&
-      'authTokens' in jwt.data.generateJWT
-    ) {
-      const { tokens } = jwt.data.generateJWT.authTokens;
-      setTokenPair(tokens);
-      await sleep(0); // This hacky workaround is necessary to ensure the tokens stored in the cookie are updated correctly.
-      window.location.href = AppPath.Index;
-    }
+    // const jwt = await generateJWT({
+    //   variables: {
+    //     workspaceId,
+    //   },
+    // });
+    //
+    // if (isDefined(jwt.errors)) {
+    //   throw jwt.errors;
+    // }
+    //
+    // if (!isDefined(jwt.data?.generateJWT)) {
+    //   throw new Error('could not create token');
+    // }
+    //
+    // if (
+    //   jwt.data.generateJWT.reason === 'WORKSPACE_USE_SSO_AUTH' &&
+    //   'availableSSOIDPs' in jwt.data.generateJWT
+    // ) {
+    //   if (jwt.data.generateJWT.availableSSOIDPs.length === 1) {
+    //     redirectToSSOLoginPage(jwt.data.generateJWT.availableSSOIDPs[0].id);
+    //   }
+    //
+    //   if (jwt.data.generateJWT.availableSSOIDPs.length > 1) {
+    //     await signOut();
+    //     setAvailableWorkspacesForSSOState(
+    //       jwt.data.generateJWT.availableSSOIDPs,
+    //     );
+    //     setSignInUpStep(SignInUpStep.SSOWorkspaceSelection);
+    //   }
+    //
+    //   return;
+    // }
+    //
+    // if (
+    //   jwt.data.generateJWT.reason !== 'WORKSPACE_USE_SSO_AUTH' &&
+    //   'authTokens' in jwt.data.generateJWT
+    // ) {
+    //   const { tokens } = jwt.data.generateJWT.authTokens;
+    //   setTokenPair(tokens);
+    //   await sleep(0); // This hacky workaround is necessary to ensure the tokens stored in the cookie are updated correctly.
+    //   window.location.href = AppPath.Index;
+    // }
   };
 
   return { switchWorkspace };

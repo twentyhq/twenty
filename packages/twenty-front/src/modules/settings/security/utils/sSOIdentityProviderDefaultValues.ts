@@ -1,10 +1,10 @@
 /* @license Enterprise */
 
 import { SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
-import { IdpType } from '~/generated/graphql';
+import { IdentityProviderType } from '~/generated/graphql';
 
 export const sSOIdentityProviderDefaultValues: Record<
-  IdpType,
+  IdentityProviderType,
   () => SettingSecurityNewSSOIdentityFormValues
 > = {
   SAML: () => ({

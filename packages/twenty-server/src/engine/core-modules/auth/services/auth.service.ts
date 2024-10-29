@@ -38,12 +38,17 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { buildWorkspaceURL } from 'src/utils/workspace-url.utils';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly refreshTokenService: RefreshTokenService,
+    private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -55,9 +60,47 @@ export class AuthService {
     private readonly appTokenRepository: Repository<AppToken>,
   ) {}
 
-  async challenge(challengeInput: ChallengeInput) {
-    const user = await this.userRepository.findOneBy({
-      email: challengeInput.email,
+  private async checkAccessAndUseInvitationOrThrow(
+    workspace: Workspace,
+    user: User,
+  ) {
+    if (
+      await this.userWorkspaceService.checkUserWorkspaceExists(
+        user.id,
+        workspace.id,
+      )
+    ) {
+      return;
+    }
+
+    const invitation =
+      await this.workspaceInvitationService.getOneWorkspaceInvitation(
+        workspace.id,
+        user.email,
+      );
+
+    if (invitation) {
+      await this.workspaceInvitationService.validateInvitation({
+        workspacePersonalInviteToken: invitation.value,
+        email: user.email,
+      });
+      await this.userWorkspaceService.addUserToWorkspace(user, workspace);
+
+      return;
+    }
+
+    throw new AuthException(
+      "You're not member of this workspace.",
+      AuthExceptionCode.FORBIDDEN_EXCEPTION,
+    );
+  }
+
+  async challenge(challengeInput: ChallengeInput, targetWorkspace: Workspace) {
+    const user = await this.userRepository.findOne({
+      where: {
+        email: challengeInput.email,
+      },
+      relations: ['workspaces'],
     });
 
     if (!user) {
@@ -66,6 +109,8 @@ export class AuthService {
         AuthExceptionCode.USER_NOT_FOUND,
       );
     }
+
+    await this.checkAccessAndUseInvitationOrThrow(targetWorkspace, user);
 
     if (!user.passwordHash) {
       throw new AuthException(
@@ -94,6 +139,7 @@ export class AuthService {
     password,
     workspaceInviteHash,
     workspacePersonalInviteToken,
+    targetWorkspaceSubdomain,
     firstName,
     lastName,
     picture,
@@ -103,10 +149,11 @@ export class AuthService {
     password?: string;
     firstName?: string | null;
     lastName?: string | null;
-    workspaceInviteHash?: string | null;
-    workspacePersonalInviteToken?: string | null;
+    workspaceInviteHash?: string;
+    workspacePersonalInviteToken?: string;
     picture?: string | null;
     fromSSO: boolean;
+    targetWorkspaceSubdomain?: string;
   }) {
     return await this.signInUpService.signInUp({
       email,
@@ -115,6 +162,7 @@ export class AuthService {
       lastName,
       workspaceInviteHash,
       workspacePersonalInviteToken,
+      targetWorkspaceSubdomain,
       picture,
       fromSSO,
     });
@@ -399,9 +447,16 @@ export class AuthService {
     return workspace;
   }
 
-  computeRedirectURI(loginToken: string): string {
-    return `${this.environmentService.get(
-      'FRONT_BASE_URL',
-    )}/verify?loginToken=${loginToken}`;
+  async computeRedirectURI(loginToken: string, subdomain: string) {
+    const url = buildWorkspaceURL(
+      this.environmentService.get('FRONT_BASE_URL'),
+      { subdomain },
+      {
+        withPathname: '/verify',
+        withSearchParams: { loginToken },
+      },
+    );
+
+    return url.toString();
   }
 }

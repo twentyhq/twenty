@@ -12,6 +12,11 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
+  subdomain?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
   displayName?: string;
 
   @Field({ nullable: true })

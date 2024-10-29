@@ -60,6 +60,11 @@ export class MicrosoftAuthController {
       user.email,
     );
 
-    return res.redirect(this.authService.computeRedirectURI(loginToken.token));
+    return res.redirect(
+      await this.authService.computeRedirectURI(
+        loginToken.token,
+        user.defaultWorkspace.subdomain,
+      ),
+    );
   }
 }

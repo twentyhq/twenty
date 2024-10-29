@@ -1,4 +1,7 @@
-import { GithubVersionLink, H2Title, Section } from 'twenty-ui';
+import { GithubVersionLink, H2Title, Section, IconWorld } from 'twenty-ui';
+import { Link } from 'react-router-dom';
+
+import styled from '@emotion/styled';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
@@ -9,6 +12,12 @@ import { WorkspaceLogoUploader } from '@/settings/workspace/components/Workspace
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import packageJson from '../../../package.json';
+import { SettingsCard } from '@/settings/components/SettingsCard';
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+`;
+
 export const SettingsWorkspace = () => (
   <SubMenuTopBarContainer
     title="General"
@@ -28,6 +37,15 @@ export const SettingsWorkspace = () => (
       <Section>
         <H2Title title="Name" description="Name of your workspace" />
         <NameField />
+      </Section>
+      <Section>
+        <H2Title
+          title="Domain"
+          description="Edit your subdomain name or set a custom domain."
+        />
+        <StyledLink to={getSettingsPagePath(SettingsPath.Domain)}>
+          <SettingsCard title="Customize Domain" Icon={<IconWorld />} />
+        </StyledLink>
       </Section>
       <Section>
         <H2Title

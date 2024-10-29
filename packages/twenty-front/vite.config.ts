@@ -18,10 +18,13 @@ export default defineConfig(({ command, mode }) => {
     VITE_BUILD_SOURCEMAP,
     VITE_DISABLE_TYPESCRIPT_CHECKER,
     VITE_DISABLE_ESLINT_CHECKER,
-    REACT_APP_PORT
+    REACT_WEB_APP_BASE_URL,
+    REACT_APP_PORT,
   } = env;
 
-  const port = isNonEmptyString(REACT_APP_PORT) ? parseInt(REACT_APP_PORT) : 3001;
+  const port = isNonEmptyString(REACT_APP_PORT)
+    ? parseInt(REACT_APP_PORT)
+    : 3001;
 
   const isBuildCommand = command === 'build';
 
@@ -60,13 +63,18 @@ export default defineConfig(({ command, mode }) => {
     };
   }
 
+  const { hostname, protocol } = new URL(
+    REACT_WEB_APP_BASE_URL ?? 'http://localhost',
+  );
+
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-front',
 
     server: {
-      port,
-      host: 'loclahost',
+      port: port,
+      host: hostname,
+      protocol: protocol.slice(0, -1) as 'http' | 'https',
       fs: {
         allow: [
           searchForWorkspaceRoot(process.cwd()),
@@ -124,6 +132,7 @@ export default defineConfig(({ command, mode }) => {
     define: {
       'process.env': {
         REACT_APP_SERVER_BASE_URL,
+        REACT_WEB_APP_BASE_URL,
       },
     },
     css: {

@@ -23,10 +23,11 @@ import {
   WorkspaceException,
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
+import { getWorkspaceSubdomainByOrigin } from 'src/engine/utils/get-workspace-subdomain-by-origin';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
-  private userWorkspaceService: UserWorkspaceService;
+  private readonly userWorkspaceService: UserWorkspaceService;
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -43,6 +44,21 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     this.userWorkspaceService = this.moduleRef.get(UserWorkspaceService, {
       strict: false,
     });
+  }
+
+  private async generateSubdomain(displayName: string) {
+    const displayNameWords = displayName.match(/(\w| |\d)+/);
+    let subdomain = '';
+
+    if (displayNameWords) {
+      subdomain = displayNameWords.join('-').replace(/ /g, '').toLowerCase();
+    }
+
+    const existingWorkspaceCount = await this.workspaceRepository.countBy({
+      subdomain,
+    });
+
+    return `${subdomain}${existingWorkspaceCount > 0 ? Math.random().toString(36).substring(2, 10) : ''}`;
   }
 
   async activateWorkspace(user: User, data: ActivateWorkspaceInput) {
@@ -86,7 +102,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       user.defaultWorkspaceId,
       user,
     );
+
+    const subdomain = await this.generateSubdomain(data.displayName);
+
     await this.workspaceRepository.update(user.defaultWorkspaceId, {
+      subdomain,
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
@@ -165,15 +185,35 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
+  async getAuthProvidersByWorkspaceId(workspaceId: string) {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
+
+    if (!workspace) {
+      throw new WorkspaceException(
+        'Workspace not found',
+        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    return {
+      google: workspace.isGoogleAuthEnabled,
+      magicLink: false,
+      password: workspace.isPasswordAuthEnabled,
+      microsoft: workspace.isMicrosoftAuthEnabled,
+      sso: workspace.isSSOAuthEnabled,
+    };
+  }
+
   async getWorkspaceByOrigin(origin: string) {
     try {
-      const { host } = new URL(origin);
-      const subdomain = host.split('.')[0];
+      const subdomain = getWorkspaceSubdomainByOrigin(origin);
 
       return this.workspaceRepository.findOneBy({ subdomain });
     } catch (e) {
       throw new WorkspaceException(
-        'Subdomain not found',
+        'Workspace not found',
         WorkspaceExceptionCode.SUBDOMAIN_NOT_FOUND,
       );
     }

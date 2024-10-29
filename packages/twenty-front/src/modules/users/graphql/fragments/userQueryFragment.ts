@@ -32,6 +32,7 @@ export const USER_QUERY_FRAGMENT = gql`
       allowImpersonation
       activationStatus
       isPublicInviteLinkEnabled
+      subdomain
       hasValidEntrepriseKey
       featureFlags {
         id

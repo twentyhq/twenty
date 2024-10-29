@@ -105,6 +105,12 @@ const SettingsWorkspace = lazy(() =>
   })),
 );
 
+const SettingsDomain = lazy(() =>
+  import('~/pages/settings/workspace/SettingsDomain').then((module) => ({
+    default: module.SettingsDomain,
+  })),
+);
+
 const SettingsWorkspaceMembers = lazy(() =>
   import('~/pages/settings/SettingsWorkspaceMembers').then((module) => ({
     default: module.SettingsWorkspaceMembers,
@@ -272,11 +278,12 @@ export const SettingsRoutes = ({
       {isBillingEnabled && (
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
       )}
+      <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
+      <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
       <Route
         path={SettingsPath.WorkspaceMembersPage}
         element={<SettingsWorkspaceMembers />}
       />
-      <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
       <Route path={SettingsPath.Objects} element={<SettingsObjects />} />
       <Route
         path={SettingsPath.ObjectOverview}

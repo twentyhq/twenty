@@ -13,7 +13,6 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserWorkspaceResolver } from 'src/engine/core-modules/user-workspace/user-workspace.resolver';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceWorkspaceMemberListener } from 'src/engine/core-modules/workspace/workspace-workspace-member.listener';
 import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.resolver';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
@@ -24,6 +23,7 @@ import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
 import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
+import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 
 @Module({
   imports: [

@@ -41,7 +41,6 @@ export class SSOAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
-    private readonly environmentService: EnvironmentService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly ssoService: SSOService,
     @InjectRepository(WorkspaceSSOIdentityProvider, 'core')
@@ -84,10 +83,12 @@ export class SSOAuthController {
       const loginToken = await this.generateLoginToken(req.user);
 
       return res.redirect(
-        this.authService.computeRedirectURI(loginToken.token),
+        await this.authService.computeRedirectURI(
+          loginToken.token,
+          req.user.defaultWorkspace.subdomain,
+        ),
       );
     } catch (err) {
-      // TODO: improve error management
       res.status(403).send(err.message);
     }
   }
@@ -99,12 +100,13 @@ export class SSOAuthController {
       const loginToken = await this.generateLoginToken(req.user);
 
       return res.redirect(
-        this.authService.computeRedirectURI(loginToken.token),
+        await this.authService.computeRedirectURI(
+          loginToken.token,
+          req.user.defaultWorkspace.subdomain,
+        ),
       );
     } catch (err) {
-      // TODO: improve error management
       res.status(403).send(err.message);
-      res.redirect(`${this.environmentService.get('FRONT_BASE_URL')}/verify`);
     }
   }
 

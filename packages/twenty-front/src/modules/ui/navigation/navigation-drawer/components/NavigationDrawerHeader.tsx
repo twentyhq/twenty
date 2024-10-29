@@ -11,6 +11,8 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { isNonEmptyString } from '@sniptt/guards';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -54,8 +56,8 @@ type NavigationDrawerHeaderProps = {
 };
 
 export const NavigationDrawerHeader = ({
-  name = DEFAULT_WORKSPACE_NAME,
-  logo = DEFAULT_WORKSPACE_LOGO,
+  name,
+  logo,
   showCollapseButton,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
@@ -65,17 +67,26 @@ export const NavigationDrawerHeader = ({
     isNavigationDrawerExpandedState,
   );
 
+  const workspacePublicData = useRecoilValue(workspacePublicDataState);
+  const displayName =
+    name ?? workspacePublicData?.displayName ?? DEFAULT_WORKSPACE_NAME;
+  const displayLogo = getImageAbsoluteURI(
+    isNonEmptyString(logo)
+      ? logo
+      : isNonEmptyString(workspacePublicData?.logo)
+        ? workspacePublicData?.logo
+        : DEFAULT_WORKSPACE_LOGO,
+  );
+
   return (
     <StyledContainer>
       {isMultiWorkspace ? (
         <MultiWorkspaceDropdownButton workspaces={workspaces} />
       ) : (
         <StyledSingleWorkspaceContainer>
-          <StyledLogo
-            logo={isNonEmptyString(logo) ? logo : DEFAULT_WORKSPACE_LOGO}
-          />
+          <StyledLogo logo={displayLogo} />
           <NavigationDrawerAnimatedCollapseWrapper>
-            <StyledName>{name}</StyledName>
+            <StyledName>{displayName}</StyledName>
           </NavigationDrawerAnimatedCollapseWrapper>
         </StyledSingleWorkspaceContainer>
       )}

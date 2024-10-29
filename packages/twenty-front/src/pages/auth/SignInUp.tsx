@@ -12,8 +12,8 @@ import { IconLockCustom } from '@ui/display/icon/components/IconLock';
 import { AnimatedEaseIn } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { SSOWorkspaceSelection } from './SSOWorkspaceSelection';
-import { useWorkspaceUnauthenticatedData } from '@/auth/sign-in-up/hooks/useWorkspaceUnauthenticatedData';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { useWorkspacePublicData } from '@/auth/sign-in-up/hooks/useWorkspacePublicData';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 
 export const SignInUp = () => {
   const { form } = useSignInUpForm();
@@ -21,23 +21,23 @@ export const SignInUp = () => {
 
   const { signInUpStep, signInUpMode } = useSignInUp(form);
 
-  const { loading } = useWorkspaceUnauthenticatedData();
-  const authProviders = useRecoilValue(authProvidersState);
+  const { loading } = useWorkspacePublicData();
+  const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
   const title = useMemo(() => {
     if (
       signInUpStep === SignInUpStep.Init ||
       signInUpStep === SignInUpStep.Email
     ) {
-      return 'Welcome to Twenty';
+      return `Welcome to ${workspacePublicData?.displayName ?? 'Twenty'}`;
     }
     if (signInUpStep === SignInUpStep.SSOWorkspaceSelection) {
       return 'Choose SSO connection';
     }
     return signInUpMode === SignInUpMode.SignIn
-      ? 'Sign in to Twenty'
-      : 'Sign up to Twenty';
-  }, [signInUpMode, signInUpStep]);
+      ? `Sign in to ${workspacePublicData?.displayName ?? 'Twenty'}`
+      : `Sign up to ${workspacePublicData?.displayName ?? 'Twenty'}`;
+  }, [signInUpMode, signInUpStep, workspacePublicData]);
 
   if (isDefined(currentWorkspace)) {
     return <></>;
@@ -49,7 +49,7 @@ export const SignInUp = () => {
         {signInUpStep === SignInUpStep.SSOWorkspaceSelection ? (
           <IconLockCustom size={40} />
         ) : (
-          <Logo />
+          <Logo workspaceLogo={workspacePublicData?.logo} />
         )}
       </AnimatedEaseIn>
       {!loading && (

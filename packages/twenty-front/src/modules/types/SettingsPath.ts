@@ -19,6 +19,7 @@ export enum SettingsPath {
   ServerlessFunctionDetail = 'functions/:serverlessFunctionId',
   WorkspaceMembersPage = 'workspace-members',
   Workspace = 'workspace',
+  Domain = 'domain',
   CRMMigration = 'crm-migration',
   Developers = 'developers',
   ServerlessFunctions = 'functions',

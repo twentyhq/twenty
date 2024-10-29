@@ -42,10 +42,15 @@ import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDa
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
+import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
+import { getWorkspaceSubdomain } from '~/utils/workspace-url.helper';
 
 export const useAuth = () => {
   const [, setTokenPair] = useRecoilState(tokenPairState);
   const setCurrentUser = useSetRecoilState(currentUserState);
+  const setLastAuthenticateWorkspaceState = useSetRecoilState(
+    lastAuthenticateWorkspaceState,
+  );
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
@@ -157,6 +162,10 @@ export const useAuth = () => {
       const workspace = user.defaultWorkspace ?? null;
 
       setCurrentWorkspace(workspace);
+      setLastAuthenticateWorkspaceState({
+        id: workspace?.id,
+        subdomain: workspace?.subdomain,
+      });
 
       if (isDefined(verifyResult.data?.verify.user.workspaces)) {
         const validWorkspaces = verifyResult.data?.verify.user.workspaces
@@ -183,6 +192,7 @@ export const useAuth = () => {
       setCurrentWorkspace,
       setCurrentWorkspaceMembers,
       setCurrentWorkspaceMember,
+      setLastAuthenticateWorkspaceState,
       setDateTimeFormat,
       setWorkspaces,
     ],
@@ -312,6 +322,12 @@ export const useAuth = () => {
     if (isDefined(params.workspacePersonalInviteToken)) {
       url.searchParams.set('inviteToken', params.workspacePersonalInviteToken);
     }
+    const subdomain = getWorkspaceSubdomain();
+
+    if (isDefined(subdomain)) {
+      url.searchParams.set('workspaceSubdomain', subdomain);
+    }
+
     return url.toString();
   };
 

@@ -15,6 +15,7 @@ import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
+import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
     TypeOrmModule.forFeature([User, AppToken, Workspace], 'core'),
     TypeORMModule,
     DataSourceModule,
+    WorkspaceModule,
     EmailModule,
     WorkspaceSSOModule,
   ],

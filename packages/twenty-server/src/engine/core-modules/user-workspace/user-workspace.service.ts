@@ -107,39 +107,25 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       await this.createWorkspaceMember(workspace.id, user);
     }
 
-    return await this.userRepository.save({
+    const savedUser = await this.userRepository.save({
       id: user.id,
       defaultWorkspace: workspace,
       updatedAt: new Date().toISOString(),
     });
-  }
 
-  async validateInvitation(inviteToken: string, email: string) {
-    const appToken = await this.appTokenRepository.findOne({
-      where: {
-        value: inviteToken,
-        type: AppTokenType.InvitationToken,
-      },
-      relations: ['workspace'],
-    });
+    await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+      workspace.id,
+      user.email,
+    );
 
-    if (!appToken) {
-      throw new Error('Invalid invitation token');
-    }
-
-    if (!appToken.context?.email && appToken.context?.email !== email) {
-      throw new Error('Email does not match the invitation');
-    }
-
-    if (new Date(appToken.expiresAt) < new Date()) {
-      throw new Error('Invitation expired');
-    }
-
-    return appToken;
+    return savedUser;
   }
 
   async addUserToWorkspaceByInviteToken(inviteToken: string, user: User) {
-    const appToken = await this.validateInvitation(inviteToken, user.email);
+    const appToken = await this.workspaceInvitationService.validateInvitation({
+      workspacePersonalInviteToken: inviteToken,
+      email: user.email,
+    });
 
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
       appToken.workspace.id,

@@ -96,13 +96,9 @@ export const MultiWorkspaceDropdownButton = ({
           isNavigationDrawerExpanded={isNavigationDrawerExpanded}
         >
           <StyledLogo
-            logo={
-              getImageAbsoluteURI(
-                currentWorkspace?.logo === null
-                  ? DEFAULT_WORKSPACE_LOGO
-                  : currentWorkspace?.logo,
-              ) ?? ''
-            }
+            logo={getImageAbsoluteURI(
+              currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
+            )}
           />
           <NavigationDrawerAnimatedCollapseWrapper>
             <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
@@ -123,13 +119,9 @@ export const MultiWorkspaceDropdownButton = ({
               text={workspace.displayName ?? ''}
               avatar={
                 <StyledLogo
-                  logo={
-                    getImageAbsoluteURI(
-                      workspace.logo === null
-                        ? DEFAULT_WORKSPACE_LOGO
-                        : workspace.logo,
-                    ) ?? ''
-                  }
+                  logo={getImageAbsoluteURI(
+                    workspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                  )}
                 />
               }
               selected={currentWorkspace?.id === workspace.id}

@@ -43,6 +43,7 @@ export class GoogleAuthController {
       picture,
       workspaceInviteHash,
       workspacePersonalInviteToken,
+      targetWorkspaceSubdomain,
     } = req.user;
 
     const user = await this.authService.signInUp({
@@ -52,6 +53,7 @@ export class GoogleAuthController {
       picture,
       workspaceInviteHash,
       workspacePersonalInviteToken,
+      targetWorkspaceSubdomain,
       fromSSO: true,
     });
 
@@ -59,6 +61,11 @@ export class GoogleAuthController {
       user.email,
     );
 
-    return res.redirect(this.authService.computeRedirectURI(loginToken.token));
+    return res.redirect(
+      await this.authService.computeRedirectURI(
+        loginToken.token,
+        user.defaultWorkspace.subdomain,
+      ),
+    );
   }
 }

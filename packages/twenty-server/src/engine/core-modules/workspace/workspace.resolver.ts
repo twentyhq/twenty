@@ -33,9 +33,9 @@ import {
   WorkspaceException,
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { AvailableAuthMethodsOutput } from 'src/engine/core-modules/workspace/dtos/available-auth-mehtods.output';
-import { OriginHeader } from 'src/engine/decorators/auth/host-header.decorator';
+import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
 
+import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
@@ -153,11 +153,14 @@ export class WorkspaceResolver {
     return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
   }
 
-  @Query(() => AvailableAuthMethodsOutput)
-  async getAvailableAuthMethodsByWorkspaceSubdomain(
+  @Query(() => PublicWorkspaceDataOutput)
+  async getPublicWorkspaceDataBySubdomain(
     @OriginHeader() origin: string,
+    @Args('workspaceId', { nullable: true }) workspaceId?: string,
   ) {
-    const workspace = await this.workspaceService.getWorkspaceByOrigin(origin);
+    const workspace = workspaceId
+      ? await this.workspaceService.findById(workspaceId)
+      : await this.workspaceService.getWorkspaceByOrigin(origin);
 
     if (!workspace) {
       return new WorkspaceException(
@@ -168,13 +171,12 @@ export class WorkspaceResolver {
 
     return {
       id: workspace.id,
-      authProviders: {
-        google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
-        magicLink: false,
-        password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
-        microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
-        sso: this.environmentService.get('AUTH_SSO_ENABLED'),
-      },
+      logo: workspace.logo,
+      displayName: workspace.displayName,
+      subdomain: workspace.subdomain,
+      authProviders: await this.workspaceService.getAuthProvidersByWorkspaceId(
+        workspace.id,
+      ),
     };
   }
 }

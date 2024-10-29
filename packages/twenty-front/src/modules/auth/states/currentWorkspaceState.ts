@@ -15,6 +15,7 @@ export type CurrentWorkspace = Pick<
   | 'workspaceMembersCount'
   | 'isPublicInviteLinkEnabled'
   | 'hasValidEntrepriseKey'
+  | 'subdomain'
   | 'metadataVersion'
 >;
 

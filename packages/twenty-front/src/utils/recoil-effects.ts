@@ -20,12 +20,20 @@ export const localStorageEffect =
   };
 
 export const cookieStorageEffect =
-  <T>(key: string): AtomEffect<T | null> =>
+  <T>(
+    key: string,
+    attributes?: Cookies.CookieAttributes,
+    hooks?: {
+      validateInitFn?: (payload: T) => boolean;
+    },
+  ): AtomEffect<T | null> =>
   ({ setSelf, onSet }) => {
     const savedValue = cookieStorage.getItem(key);
+
     if (
       isDefined(savedValue) &&
-      isDefined(JSON.parse(savedValue)['accessToken'])
+      (!isDefined(hooks?.validateInitFn) ||
+        hooks.validateInitFn(JSON.parse(savedValue)))
     ) {
       setSelf(JSON.parse(savedValue));
     }
@@ -39,6 +47,7 @@ export const cookieStorageEffect =
         ? cookieStorage.removeItem(key)
         : cookieStorage.setItem(key, JSON.stringify(newValue), {
             expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+            ...attributes,
           });
     });
   };

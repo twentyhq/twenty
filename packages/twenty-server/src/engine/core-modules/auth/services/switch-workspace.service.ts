@@ -7,12 +7,13 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 
 @Injectable()
 export class SwitchWorkspaceService {
@@ -22,6 +23,7 @@ export class SwitchWorkspaceService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly ssoService: SSOService,
+    private readonly workspaceService: WorkspaceService,
     private readonly accessTokenService: AccessTokenService,
     private readonly refreshTokenService: RefreshTokenService,
   ) {}
@@ -59,31 +61,38 @@ export class SwitchWorkspaceService {
       );
     }
 
-    if (workspace.workspaceSSOIdentityProviders.length > 0) {
-      return {
-        useSSOAuth: true,
-        workspace,
-        availableSSOIdentityProviders:
-          await this.ssoService.listSSOIdentityProvidersByWorkspaceId(
-            workspaceId,
-          ),
-      } as {
-        useSSOAuth: true;
-        workspace: Workspace;
-        availableSSOIdentityProviders: Awaited<
-          ReturnType<
-            typeof this.ssoService.listSSOIdentityProvidersByWorkspaceId
-          >
-        >;
-      };
-    }
+    await this.userRepository.save({
+      id: user.id,
+      defaultWorkspace: workspace,
+    });
+
+    // if (workspace.workspaceSSOIdentityProviders.length > 0) {
+    //   return {
+    //     useSSOAuth: true,
+    //     workspace,
+    //     availableSSOIdentityProviders:
+    //       await this.sSSOService.listSSOIdentityProvidersByWorkspaceId(
+    //         workspaceId,
+    //       ),
+    //   } as {
+    //     useSSOAuth: true;
+    //     workspace: Workspace;
+    //     availableSSOIdentityProviders: Awaited<
+    //       ReturnType<
+    //         typeof this.sSSOService.listSSOIdentityProvidersByWorkspaceId
+    //       >
+    //     >;
+    //   };
+    // }
 
     return {
-      useSSOAuth: false,
-      workspace,
-    } as {
-      useSSOAuth: false;
-      workspace: Workspace;
+      id: workspace.id,
+      subdomain: workspace.subdomain,
+      logo: workspace.logo,
+      displayName: workspace.displayName,
+      authProviders: await this.workspaceService.getAuthProvidersByWorkspaceId(
+        workspace.id,
+      ),
     };
   }
 

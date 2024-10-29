@@ -10,7 +10,7 @@ import styled from '@emotion/styled';
 import { ReactElement } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { H2Title, IconComponent, IconKey, Section } from 'twenty-ui';
-import { IdpType } from '~/generated/graphql';
+import { IdentityProviderType } from '~/generated/graphql';
 
 const StyledInputsContainer = styled.div`
   display: grid;
@@ -30,8 +30,8 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
   const { control, getValues } =
     useFormContext<SettingSecurityNewSSOIdentityFormValues>();
 
-  const IdpMap: Record<
-    IdpType,
+  const IdentitiesProvidersMap: Record<
+    IdentityProviderType,
     {
       form: ReactElement;
       option: {
@@ -62,12 +62,12 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
     },
   };
 
-  const getFormByType = (type: Uppercase<IdpType> | undefined) => {
+  const getFormByType = (type: Uppercase<IdentityProviderType> | undefined) => {
     switch (type) {
-      case IdpType.Oidc:
-        return IdpMap.OIDC.form;
-      case IdpType.Saml:
-        return IdpMap.SAML.form;
+      case IdentityProviderType.Oidc:
+        return IdentitiesProvidersMap.OIDC.form;
+      case IdentityProviderType.Saml:
+        return IdentitiesProvidersMap.SAML.form;
       default:
         return null;
     }
@@ -106,7 +106,7 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
             render={({ field: { onChange, value } }) => (
               <SettingsRadioCardContainer
                 value={value}
-                options={Object.values(IdpMap).map(
+                options={Object.values(IdentitiesProvidersMap).map(
                   (identityProviderType) => identityProviderType.option,
                 )}
                 onChange={onChange}

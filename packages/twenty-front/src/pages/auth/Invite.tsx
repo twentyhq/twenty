@@ -77,7 +77,7 @@ export const Invite = () => {
         <Logo workspaceLogo={workspaceFromInviteHash?.logo} />
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
-      {isDefined(currentWorkspace) ? (
+      {isDefined(workspaceFromInviteHash) ? (
         <>
           <StyledContentContainer>
             <MainButton
