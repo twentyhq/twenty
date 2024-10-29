@@ -4,6 +4,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
+import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
@@ -32,28 +33,38 @@ export const ActivateWorkflowActionEffect = ({
   );
 
   const { activateWorkflowVersion } = useActivateWorkflowVersion();
+  const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
 
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
     selectedRecord?.id,
   );
 
+  const isWorkflowActive =
+    isDefined(workflowWithCurrentVersion) &&
+    workflowWithCurrentVersion.currentVersion.status === 'ACTIVE';
+
   useEffect(() => {
-    if (!isDefined(objectMetadataItem) || objectMetadataItem.isRemote) {
+    if (
+      !isDefined(workflowWithCurrentVersion) ||
+      !isDefined(workflowWithCurrentVersion.currentVersion.trigger)
+    ) {
       return;
     }
 
     addActionMenuEntry({
       key: 'activate-workflow',
-      label: 'Activate',
+      label: isWorkflowActive ? 'Deactivate' : 'Activate',
       position,
       Icon: IconPower,
       onClick: () => {
-        if (isDefined(workflowWithCurrentVersion)) {
-          activateWorkflowVersion({
-            workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
-            workflowId: workflowWithCurrentVersion.id,
-          });
-        }
+        isWorkflowActive
+          ? deactivateWorkflowVersion(
+              workflowWithCurrentVersion.currentVersion.id,
+            )
+          : activateWorkflowVersion({
+              workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+              workflowId: workflowWithCurrentVersion.id,
+            });
       },
     });
 
