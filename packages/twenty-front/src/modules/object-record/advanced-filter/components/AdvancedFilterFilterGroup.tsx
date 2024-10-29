@@ -1,7 +1,7 @@
-import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
-import { AdvancedFilterLogicalOperatorCell } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell';
-import { AdvancedFilterRuleOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRuleOptionsDropdown';
-import { AdvancedFilterViewFilter } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilter';
+import { AdvancedFilterAddFilterDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterDropdown';
+import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorDropdown';
+import { AdvancedFilterOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterOptionsDropdown';
+import { AdvancedFilterSingleFilter } from '@/object-record/advanced-filter/components/AdvancedFilterSingleFilter';
 import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/hooks/useCurrentViewViewFilterGroup';
 import styled from '@emotion/styled';
 
@@ -29,7 +29,7 @@ type AdvancedFilterViewFilterGroupProps = {
   viewFilterGroupId: string;
 };
 
-export const AdvancedFilterViewFilterGroup = ({
+export const AdvancedFilterFilterGroup = ({
   viewFilterGroupId,
 }: AdvancedFilterViewFilterGroupProps) => {
   const {
@@ -50,15 +50,15 @@ export const AdvancedFilterViewFilterGroup = ({
     >
       {childViewFiltersAndViewFilterGroups.map((child, i) => (
         <StyledRow key={child.id}>
-          <AdvancedFilterLogicalOperatorCell
+          <AdvancedFilterLogicalOperatorDropdown
             index={i}
             viewFilterGroup={currentViewFilterGroup}
           />
-          <AdvancedFilterViewFilter viewFilterId={child.id} />
-          <AdvancedFilterRuleOptionsDropdown viewFilterId={child.id} />
+          <AdvancedFilterSingleFilter viewFilterId={child.id} />
+          <AdvancedFilterOptionsDropdown viewFilterId={child.id} />
         </StyledRow>
       ))}
-      <AdvancedFilterAddFilterRuleSelect
+      <AdvancedFilterAddFilterDropdown
         viewFilterGroup={currentViewFilterGroup}
         lastChildPosition={lastChildPosition}
       />

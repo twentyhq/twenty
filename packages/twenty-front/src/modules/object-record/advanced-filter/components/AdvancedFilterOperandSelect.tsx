@@ -21,7 +21,7 @@ type AdvancedFilterViewFilterOperandSelectProps = {
   viewFilterId: string;
 };
 
-export const AdvancedFilterViewFilterOperandSelect = ({
+export const AdvancedFilterOperandSelect = ({
   viewFilterId,
 }: AdvancedFilterViewFilterOperandSelectProps) => {
   const dropdownId = `advanced-filter-view-filter-operand-${viewFilterId}`;

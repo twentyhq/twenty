@@ -1,6 +1,6 @@
-import { AdvancedFilterViewFilterFieldSelect } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterFieldSelect';
-import { AdvancedFilterViewFilterOperandSelect } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterOperandSelect';
-import { AdvancedFilterViewFilterValueInput } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterValueInput';
+import { AdvancedFilterFieldSelect } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelect';
+import { AdvancedFilterOperandSelect } from '@/object-record/advanced-filter/components/AdvancedFilterOperandSelect';
+import { AdvancedFilterValueInput } from '@/object-record/advanced-filter/components/AdvancedFilterValueInput';
 import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { configurableViewFilterOperands } from '@/object-record/object-filter-dropdown/utils/configurableViewFilterOperands';
@@ -22,7 +22,7 @@ type AdvancedFilterViewFilterProps = {
   viewFilterId: string;
 };
 
-export const AdvancedFilterViewFilter = ({
+export const AdvancedFilterSingleFilter = ({
   viewFilterId,
 }: AdvancedFilterViewFilterProps) => {
   const filter = useCurrentViewFilter({ viewFilterId });
@@ -34,11 +34,11 @@ export const AdvancedFilterViewFilter = ({
   return (
     <ObjectFilterDropdownScope filterScopeId={filter.id}>
       <StyledRow>
-        <AdvancedFilterViewFilterFieldSelect viewFilterId={filter.id} />
-        <AdvancedFilterViewFilterOperandSelect viewFilterId={filter.id} />
+        <AdvancedFilterFieldSelect viewFilterId={filter.id} />
+        <AdvancedFilterOperandSelect viewFilterId={filter.id} />
         <StyledValueDropdownContainer>
           {configurableViewFilterOperands.has(filter.operand) && (
-            <AdvancedFilterViewFilterValueInput viewFilterId={filter.id} />
+            <AdvancedFilterValueInput viewFilterId={filter.id} />
           )}
         </StyledValueDropdownContainer>
       </StyledRow>

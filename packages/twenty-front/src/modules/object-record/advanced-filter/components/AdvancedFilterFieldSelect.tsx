@@ -18,7 +18,7 @@ type AdvancedFilterViewFilterFieldSelectProps = {
   viewFilterId: string;
 };
 
-export const AdvancedFilterViewFilterFieldSelect = ({
+export const AdvancedFilterFieldSelect = ({
   viewFilterId,
 }: AdvancedFilterViewFilterFieldSelectProps) => {
   const { advancedFilterDropdownId } = useAdvancedFilterDropdown(viewFilterId);

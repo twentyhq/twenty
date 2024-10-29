@@ -1,4 +1,4 @@
-import { AdvancedFilterRuleOptionsDropdownButton } from '@/object-record/advanced-filter/components/AdvancedFilterRuleOptionsDropdownButton';
+import { AdvancedFilterRuleOptionsDropdownButton } from '@/object-record/advanced-filter/components/AdvancedFilterOptionsDropdownButton';
 import { useCurrentViewFilter } from '@/object-record/advanced-filter/hooks/useCurrentViewFilter';
 import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/hooks/useCurrentViewViewFilterGroup';
 import { useDeleteCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useDeleteCombinedViewFilterGroup';
@@ -19,7 +19,7 @@ type AdvancedFilterRuleOptionsDropdownProps =
       viewFilterGroupId: string;
     };
 
-export const AdvancedFilterRuleOptionsDropdown = ({
+export const AdvancedFilterOptionsDropdown = ({
   viewFilterId,
   viewFilterGroupId,
 }: AdvancedFilterRuleOptionsDropdownProps) => {

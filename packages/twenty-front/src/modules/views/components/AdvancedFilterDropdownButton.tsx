@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
-import { AdvancedFilterRootLevelViewFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterRootLevelViewFilterGroup';
+import { AdvancedFilterDropdownContent } from '@/object-record/advanced-filter/components/AdvancedFilterDropdownContent';
 import { useDeleteCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useDeleteCombinedViewFilterGroup';
 import { AdvancedFilterChip } from '@/views/components/AdvancedFilterChip';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
@@ -68,7 +68,7 @@ export const AdvancedFilterDropdownButton = () => {
         />
       }
       dropdownComponents={
-        <AdvancedFilterRootLevelViewFilterGroup
+        <AdvancedFilterDropdownContent
           rootLevelViewFilterGroupId={outermostViewFilterGroupId}
         />
       }

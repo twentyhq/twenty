@@ -1,33 +1,41 @@
-import { ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS } from '@/object-record/advanced-filter/constants/AdvancedFilterLogicalOperatorOptions';
-import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useUpsertCombinedViewFilterGroup';
-import { Select } from '@/ui/input/components/Select';
+import { AdvancedFilterLogicalOperatorDropdownContent } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorDropdownContent';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
-import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
+import styled from '@emotion/styled';
+import { capitalize } from '~/utils/string/capitalize';
 
-type AdvancedFilterLogicalOperatorDropdownProps = {
+const StyledText = styled.div`
+  height: ${({ theme }) => theme.spacing(8)};
+  display: flex;
+  align-items: center;
+`;
+
+const StyledContainer = styled.div`
+  align-items: start;
+  display: flex;
+  min-width: ${({ theme }) => theme.spacing(20)};
+  color: ${({ theme }) => theme.font.color.tertiary};
+`;
+
+type AdvancedFilterLogicalOperatorCellProps = {
+  index: number;
   viewFilterGroup: ViewFilterGroup;
 };
 
 export const AdvancedFilterLogicalOperatorDropdown = ({
+  index,
   viewFilterGroup,
-}: AdvancedFilterLogicalOperatorDropdownProps) => {
-  const { upsertCombinedViewFilterGroup } = useUpsertCombinedViewFilterGroup();
-
-  const handleChange = (value: ViewFilterGroupLogicalOperator) => {
-    upsertCombinedViewFilterGroup({
-      ...viewFilterGroup,
-      logicalOperator: value,
-    });
-  };
-
-  return (
-    <Select
-      disableBlur
-      fullWidth
-      dropdownId={`advanced-filter-logical-operator-${viewFilterGroup.id}`}
-      value={viewFilterGroup.logicalOperator}
-      onChange={handleChange}
-      options={ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS}
-    />
-  );
-};
+}: AdvancedFilterLogicalOperatorCellProps) => (
+  <StyledContainer>
+    {index === 0 ? (
+      <StyledText>Where</StyledText>
+    ) : index === 1 ? (
+      <AdvancedFilterLogicalOperatorDropdownContent
+        viewFilterGroup={viewFilterGroup}
+      />
+    ) : (
+      <StyledText>
+        {capitalize(viewFilterGroup.logicalOperator.toLowerCase())}
+      </StyledText>
+    )}
+  </StyledContainer>
+);

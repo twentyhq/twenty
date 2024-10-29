@@ -21,7 +21,7 @@ type AdvancedFilterAddFilterRuleSelectProps = {
   lastChildPosition?: number;
 };
 
-export const AdvancedFilterAddFilterRuleSelect = ({
+export const AdvancedFilterAddFilterDropdown = ({
   viewFilterGroup,
   lastChildPosition = 0,
 }: AdvancedFilterAddFilterRuleSelectProps) => {

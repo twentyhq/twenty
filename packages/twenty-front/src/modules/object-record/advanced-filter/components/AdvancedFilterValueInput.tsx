@@ -10,7 +10,7 @@ type AdvancedFilterViewFilterValueInputProps = {
   viewFilterId: string;
 };
 
-export const AdvancedFilterViewFilterValueInput = ({
+export const AdvancedFilterValueInput = ({
   viewFilterId,
 }: AdvancedFilterViewFilterValueInputProps) => {
   const dropdownId = `advanced-filter-view-filter-value-input-${viewFilterId}`;

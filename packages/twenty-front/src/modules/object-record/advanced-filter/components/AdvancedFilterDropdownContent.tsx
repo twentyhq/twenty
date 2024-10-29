@@ -1,8 +1,8 @@
-import { AdvancedFilterAddFilterRuleSelect } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterRuleSelect';
-import { AdvancedFilterLogicalOperatorCell } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorCell';
-import { AdvancedFilterRuleOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterRuleOptionsDropdown';
-import { AdvancedFilterViewFilter } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilter';
-import { AdvancedFilterViewFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterViewFilterGroup';
+import { AdvancedFilterAddFilterDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterAddFilterDropdown';
+import { AdvancedFilterFilterGroup } from '@/object-record/advanced-filter/components/AdvancedFilterFilterGroup';
+import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorDropdown';
+import { AdvancedFilterOptionsDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterOptionsDropdown';
+import { AdvancedFilterSingleFilter } from '@/object-record/advanced-filter/components/AdvancedFilterSingleFilter';
 import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/hooks/useCurrentViewViewFilterGroup';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-ui';
@@ -31,7 +31,7 @@ type AdvancedFilterRootLevelViewFilterGroupProps = {
   rootLevelViewFilterGroupId: string;
 };
 
-export const AdvancedFilterRootLevelViewFilterGroup = ({
+export const AdvancedFilterDropdownContent = ({
   rootLevelViewFilterGroupId,
 }: AdvancedFilterRootLevelViewFilterGroupProps) => {
   const {
@@ -51,25 +51,25 @@ export const AdvancedFilterRootLevelViewFilterGroup = ({
       {childViewFiltersAndViewFilterGroups.map((child, i) =>
         child.__typename === 'ViewFilterGroup' ? (
           <StyledRow key={child.id}>
-            <AdvancedFilterLogicalOperatorCell
+            <AdvancedFilterLogicalOperatorDropdown
               index={i}
               viewFilterGroup={rootLevelViewFilterGroup}
             />
-            <AdvancedFilterViewFilterGroup viewFilterGroupId={child.id} />
-            <AdvancedFilterRuleOptionsDropdown viewFilterGroupId={child.id} />
+            <AdvancedFilterFilterGroup viewFilterGroupId={child.id} />
+            <AdvancedFilterOptionsDropdown viewFilterGroupId={child.id} />
           </StyledRow>
         ) : (
           <StyledRow key={child.id}>
-            <AdvancedFilterLogicalOperatorCell
+            <AdvancedFilterLogicalOperatorDropdown
               index={i}
               viewFilterGroup={rootLevelViewFilterGroup}
             />
-            <AdvancedFilterViewFilter viewFilterId={child.id} />
-            <AdvancedFilterRuleOptionsDropdown viewFilterId={child.id} />
+            <AdvancedFilterSingleFilter viewFilterId={child.id} />
+            <AdvancedFilterOptionsDropdown viewFilterId={child.id} />
           </StyledRow>
         ),
       )}
-      <AdvancedFilterAddFilterRuleSelect
+      <AdvancedFilterAddFilterDropdown
         viewFilterGroup={rootLevelViewFilterGroup}
         lastChildPosition={lastChildPosition}
       />
