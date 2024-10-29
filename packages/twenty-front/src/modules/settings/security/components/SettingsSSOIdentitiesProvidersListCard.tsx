@@ -5,13 +5,13 @@ import { Link } from 'react-router-dom';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
-import { useRecoilValue } from 'recoil';
-import { SettingsCard } from '@/settings/components/SettingsCard';
-import { IconKey } from 'twenty-ui';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import styled from '@emotion/styled';
+import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsSSOIdentitiesProvidersListCardWrapper } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListCardWrapper';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
+import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
+import { IconKey } from 'twenty-ui';
 
 const StyledLink = styled(Link)<{ isDisabled: boolean }>`
   pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
@@ -26,11 +26,11 @@ export const SettingsSSOIdentitiesProvidersListCard = () => {
   return !SSOIdentitiesProviders.length ? (
     <StyledLink
       to={getSettingsPagePath(SettingsPath.NewSSOIdentityProvider)}
-      isDisabled={currentWorkspace?.hasEnterpriseFeaturesAccess !== true}
+      isDisabled={currentWorkspace?.hasValidEntrepriseKey !== true}
     >
       <SettingsCard
         title="Add SSO Identity Provider"
-        disabled={currentWorkspace?.hasEnterpriseFeaturesAccess !== true}
+        disabled={currentWorkspace?.hasValidEntrepriseKey !== true}
         Icon={<IconKey />}
       />
     </StyledLink>
