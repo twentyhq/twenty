@@ -462,6 +462,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       existingObjectMetadata,
       fullObjectMetadataAfterUpdate,
       input,
+      workspaceId,
     );
 
     if (input.update.isActive !== undefined) {
@@ -1424,6 +1425,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     existingObjectMetadata: ObjectMetadataEntity,
     objectMetadataForUpdate: ObjectMetadataEntity,
     input: UpdateOneObjectInput,
+    workspaceId: string,
   ) {
     const newTargetTableName = computeObjectTargetTable(
       objectMetadataForUpdate,
@@ -1436,11 +1438,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.createRenameTableMigration(
         existingObjectMetadata,
         objectMetadataForUpdate,
+        workspaceId,
       );
 
       await this.createRelationsUpdatesMigrations(
         existingObjectMetadata,
         objectMetadataForUpdate,
+        workspaceId,
       );
     }
 
@@ -1460,6 +1464,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   private async createRenameTableMigration(
     existingObjectMetadata: ObjectMetadataEntity,
     objectMetadataForUpdate: ObjectMetadataEntity,
+    workspaceId: string,
   ) {
     const newTargetTableName = computeObjectTargetTable(
       objectMetadataForUpdate,
@@ -1470,7 +1475,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`rename-${existingObjectMetadata.nameSingular}`),
-      objectMetadataForUpdate.workspaceId,
+      workspaceId,
       [
         {
           name: existingTargetTableName,
@@ -1484,6 +1489,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   private async createRelationsUpdatesMigrations(
     existingObjectMetadata: ObjectMetadataEntity,
     updatedObjectMetadata: ObjectMetadataEntity,
+    workspaceId: string,
   ) {
     const existingTableName = computeObjectTargetTable(existingObjectMetadata);
     const newTableName = computeObjectTargetTable(updatedObjectMetadata);
@@ -1495,6 +1501,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           isForeignKey: true,
         },
         name: `${existingObjectMetadata.nameSingular}Id`,
+        workspaceId,
       };
 
       const fieldsWithStandardRelation =
@@ -1505,6 +1512,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               isForeignKey: true,
             },
             name: `${existingObjectMetadata.nameSingular}Id`,
+            workspaceId,
           },
         });
 
@@ -1516,7 +1524,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         fieldsWithStandardRelation.map(async (fieldWithStandardRelation) => {
           const relatedObject = await this.objectMetadataRepository.findOneBy({
             id: fieldWithStandardRelation.objectMetadataId,
-            workspaceId: updatedObjectMetadata.workspaceId,
+            workspaceId,
           });
 
           if (relatedObject) {
@@ -1541,7 +1549,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               generateMigrationName(
                 `rename-${existingObjectMetadata.nameSingular}-to-${updatedObjectMetadata.nameSingular}-in-${relatedObject.nameSingular}`,
               ),
-              updatedObjectMetadata.workspaceId,
+              workspaceId,
               [
                 {
                   name: relationTableName,
