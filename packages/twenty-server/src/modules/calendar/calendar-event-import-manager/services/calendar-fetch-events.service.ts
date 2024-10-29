@@ -31,7 +31,6 @@ export class CalendarFetchEventsService {
     private readonly getCalendarEventsService: CalendarGetCalendarEventsService,
     private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
     private readonly calendarEventsImportService: CalendarEventsImportService,
-
   ) {}
 
   public async fetchCalendarEvents(
@@ -112,7 +111,6 @@ export class CalendarFetchEventsService {
         await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
           [calendarChannel.id],
         );
-
       } else {
         throw new CalendarEventImportDriverException(
           "Expected 'calendarEvents' or 'calendarEventIds' to be present",
