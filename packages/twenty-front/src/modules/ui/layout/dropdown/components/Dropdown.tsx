@@ -70,6 +70,7 @@ export const Dropdown = ({
     closeDropdown,
     dropdownWidth,
     setDropdownPlacement,
+    resetDropdown,
   } = useDropdown(dropdownId);
 
   const offsetMiddlewares = [];
@@ -129,6 +130,12 @@ export const Dropdown = ({
     dropdownHotkeyScope.scope,
     [closeDropdown],
   );
+
+  useEffect(() => {
+    return () => {
+      resetDropdown();
+    };
+  }, [resetDropdown]);
 
   return (
     <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>
