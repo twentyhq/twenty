@@ -3,6 +3,8 @@ import { useContext } from 'react';
 
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 
+import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
+import { AdvancedFilterButton } from '@/object-record/object-filter-dropdown/components/AdvancedFilterButton';
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
@@ -15,6 +17,7 @@ import { SelectableItem } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
@@ -45,11 +48,26 @@ export const StyledInput = styled.input`
   }
 `;
 
-export const ObjectFilterDropdownFilterSelect = () => {
+type ObjectFilterDropdownFilterSelectProps = {
+  isAdvancedFilterButtonVisible?: boolean;
+};
+
+export const ObjectFilterDropdownFilterSelect = ({
+  isAdvancedFilterButtonVisible,
+}: ObjectFilterDropdownFilterSelectProps) => {
   const {
     setObjectFilterDropdownSearchInput,
     objectFilterDropdownSearchInputState,
+    advancedFilterViewFilterIdState,
   } = useFilterDropdown();
+
+  const advancedFilterViewFilterId = useRecoilValue(
+    advancedFilterViewFilterIdState,
+  );
+
+  const { closeAdvancedFilterDropdown } = useAdvancedFilterDropdown(
+    advancedFilterViewFilterId,
+  );
 
   const objectFilterDropdownSearchInput = useRecoilValue(
     objectFilterDropdownSearchInputState,
@@ -110,13 +128,21 @@ export const ObjectFilterDropdownFilterSelect = () => {
     }
 
     resetSelectedItem();
-
     selectFilter({ filterDefinition: selectedFilterDefinition });
+    closeAdvancedFilterDropdown();
   };
 
   const shoudShowSeparator =
     visibleColumnsFilterDefinitions.length > 0 &&
     hiddenColumnsFilterDefinitions.length > 0;
+
+  const { currentViewId, currentViewWithCombinedFiltersAndSorts } =
+    useGetCurrentView();
+
+  const shouldShowAdvancedFilterButton =
+    isDefined(currentViewId) &&
+    isDefined(currentViewWithCombinedFiltersAndSorts?.objectMetadataId) &&
+    isAdvancedFilterButtonVisible;
 
   return (
     <>
@@ -164,6 +190,7 @@ export const ObjectFilterDropdownFilterSelect = () => {
           )}
         </DropdownMenuItemsContainer>
       </SelectableList>
+      {shouldShowAdvancedFilterButton && <AdvancedFilterButton />}
     </>
   );
 };

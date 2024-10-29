@@ -3,11 +3,17 @@ import { formatTimeZoneLabel } from '@/localization/utils/formatTimeZoneLabel';
 describe('formatTimeZoneLabel', () => {
   it('should format the time zone label correctly when location is included in the label', () => {
     const ianaTimeZone = 'Europe/Paris';
-    const expectedLabel = '(GMT+02:00) Central European Summer Time - Paris';
+    const expectedLabelSummer =
+      '(GMT+02:00) Central European Summer Time - Paris';
+    const expectedLabelWinter =
+      '(GMT+01:00) Central European Standard Time - Paris';
 
     const formattedLabel = formatTimeZoneLabel(ianaTimeZone);
 
-    expect(formattedLabel).toEqual(expectedLabel);
+    expect(
+      expectedLabelSummer === formattedLabel ||
+        expectedLabelWinter === formattedLabel,
+    ).toBeTruthy();
   });
 
   it('should format the time zone label correctly when location is not included in the label', () => {

@@ -116,6 +116,7 @@ export class EnvironmentVariables {
     protocols: ['postgres'],
     require_tld: false,
     allow_underscores: true,
+    require_host: false,
   })
   PG_DATABASE_URL: string;
 

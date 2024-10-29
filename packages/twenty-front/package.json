@@ -33,6 +33,12 @@
     "@nivo/calendar": "^0.87.0",
     "@nivo/core": "^0.87.0",
     "@nivo/line": "^0.87.0",
+    "@tiptap/extension-document": "^2.9.0",
+    "@tiptap/extension-paragraph": "^2.9.0",
+    "@tiptap/extension-placeholder": "^2.9.0",
+    "@tiptap/extension-text": "^2.9.0",
+    "@tiptap/extension-text-style": "^2.8.0",
+    "@tiptap/react": "^2.8.0",
     "@xyflow/react": "^12.0.4",
     "transliteration": "^2.3.5"
   }

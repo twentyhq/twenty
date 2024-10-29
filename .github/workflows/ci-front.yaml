@@ -133,7 +133,7 @@ jobs:
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: npx nx storybook:serve-and-test:static:performance twenty-front
+        run: npx nx run twenty-front:storybook:serve-and-test:static:performance
   front-chromatic-deployment:
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
     needs: front-sb-build

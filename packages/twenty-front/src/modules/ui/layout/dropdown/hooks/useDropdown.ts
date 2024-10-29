@@ -1,4 +1,4 @@
-import { useRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilState } from 'recoil';
 
 import { useDropdownStates } from '@/ui/layout/dropdown/hooks/internal/useDropdownStates';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
@@ -12,6 +12,7 @@ export const useDropdown = (dropdownId?: string) => {
     dropdownHotkeyScopeState,
     dropdownWidthState,
     isDropdownOpenState,
+    dropdownPlacementState,
   } = useDropdownStates({
     dropdownScopeId: getScopeIdOrUndefinedFromComponentId(dropdownId),
   });
@@ -24,6 +25,10 @@ export const useDropdown = (dropdownId?: string) => {
   const [dropdownHotkeyScope] = useRecoilState(dropdownHotkeyScopeState);
 
   const [dropdownWidth, setDropdownWidth] = useRecoilState(dropdownWidthState);
+
+  const [dropdownPlacement, setDropdownPlacement] = useRecoilState(
+    dropdownPlacementState,
+  );
 
   const [isDropdownOpen, setIsDropdownOpen] =
     useRecoilState(isDropdownOpenState);
@@ -51,6 +56,16 @@ export const useDropdown = (dropdownId?: string) => {
     }
   };
 
+  const resetDropdown = useRecoilCallback(
+    ({ reset }) =>
+      () => {
+        reset(dropdownHotkeyScopeState);
+        reset(dropdownWidthState);
+        reset(isDropdownOpenState);
+      },
+    [dropdownHotkeyScopeState, dropdownWidthState, isDropdownOpenState],
+  );
+
   return {
     scopeId,
     isDropdownOpen,
@@ -59,5 +74,8 @@ export const useDropdown = (dropdownId?: string) => {
     openDropdown,
     dropdownWidth,
     setDropdownWidth,
+    dropdownPlacement,
+    setDropdownPlacement,
+    resetDropdown,
   };
 };

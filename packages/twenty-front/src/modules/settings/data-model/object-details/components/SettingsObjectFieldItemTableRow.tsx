@@ -1,22 +1,11 @@
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { useMemo } from 'react';
-import { IconMinus, IconPlus, isDefined, useIcons } from 'twenty-ui';
-
-import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
-import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
-
-import { RELATION_TYPES } from '../../constants/RelationTypes';
-
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
+import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
+import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteRecordFromCache';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
@@ -24,13 +13,26 @@ import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldActiveActionDropdown';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { View } from '@/views/types/View';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import {
+  IconMinus,
+  IconPlus,
+  LightIconButton,
+  isDefined,
+  useIcons,
+} from 'twenty-ui';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
+import { RELATION_TYPES } from '../../constants/RelationTypes';
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
 type SettingsObjectFieldItemTableRowProps = {

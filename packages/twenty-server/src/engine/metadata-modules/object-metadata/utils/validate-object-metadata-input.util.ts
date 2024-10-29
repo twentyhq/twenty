@@ -1,3 +1,6 @@
+import toCamelCase from 'lodash.camelcase';
+import { slugify, transliterate } from 'transliteration';
+
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
@@ -40,6 +43,8 @@ const reservedKeywords = [
   'addresses',
 ];
 
+const METADATA_NAME_VALID_PATTERN = /^[a-zA-Z][a-zA-Z0-9]*$/;
+
 export const validateObjectMetadataInputOrThrow = <
   T extends UpdateObjectPayload | CreateObjectInput,
 >(
@@ -58,6 +63,30 @@ export const validateObjectMetadataInputOrThrow = <
   validateNameIsNotTooLongThrow(objectMetadataInput.namePlural);
 };
 
+export const transliterateAndFormatOrThrow = (string?: string): string => {
+  if (!string) {
+    throw new ObjectMetadataException(
+      'Name is required',
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
+  let formattedString = string;
+
+  if (formattedString.match(METADATA_NAME_VALID_PATTERN) !== null) {
+    return toCamelCase(formattedString);
+  }
+
+  formattedString = toCamelCase(
+    slugify(transliterate(formattedString, { trim: true })),
+  );
+
+  if (!formattedString.match(METADATA_NAME_VALID_PATTERN)) {
+    throw new Error(`"${string}" is not a valid name`);
+  }
+
+  return formattedString;
+};
+
 const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
   if (name) {
     if (reservedKeywords.includes(name)) {
@@ -70,24 +99,20 @@ const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
 };
 
 const validateNameCamelCasedOrThrow = (name?: string) => {
-  if (name) {
-    if (name !== camelCase(name)) {
-      throw new ObjectMetadataException(
-        `Name should be in camelCase: ${name}`,
-        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      );
-    }
+  if (name && name !== camelCase(name)) {
+    throw new ObjectMetadataException(
+      `Name should be in camelCase: ${name}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
   }
 };
 
 const validateNameIsNotTooLongThrow = (name?: string) => {
-  if (name) {
-    if (exceedsDatabaseIdentifierMaximumLength(name)) {
-      throw new ObjectMetadataException(
-        `Name exceeds 63 characters: ${name}`,
-        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      );
-    }
+  if (name && exceedsDatabaseIdentifierMaximumLength(name)) {
+    throw new ObjectMetadataException(
+      `Name exceeds 63 characters: ${name}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
   }
 };
 
@@ -105,5 +130,37 @@ const validateNameCharactersOrThrow = (name?: string) => {
     } else {
       throw error;
     }
+  }
+};
+
+export const computeMetadataNameFromLabelOrThrow = (label: string): string => {
+  const formattedString = transliterateAndFormatOrThrow(label);
+
+  return formattedString;
+};
+
+export const validateNameAndLabelAreSyncOrThrow = (
+  label: string,
+  name: string,
+) => {
+  const computedName = computeMetadataNameFromLabelOrThrow(label);
+
+  if (name !== computedName) {
+    throw new ObjectMetadataException(
+      `Name is not synced with label. Expected name: "${computedName}", got ${name}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
+};
+
+export const validateNameSingularAndNamePluralAreDifferentOrThrow = (
+  nameSingular: string,
+  namePlural: string,
+) => {
+  if (nameSingular === namePlural) {
+    throw new ObjectMetadataException(
+      'The singular and plural name cannot be the same for an object',
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
   }
 };

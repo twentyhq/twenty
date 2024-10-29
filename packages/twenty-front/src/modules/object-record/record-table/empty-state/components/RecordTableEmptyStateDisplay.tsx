@@ -1,6 +1,5 @@
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
-import { Button } from '@/ui/input/button/components/Button';
 import { useContext } from 'react';
 import {
   AnimatedPlaceholder,
@@ -9,6 +8,7 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   AnimatedPlaceholderType,
+  Button,
   IconComponent,
 } from 'twenty-ui';
 

@@ -1,4 +1,4 @@
-import { H2Title } from 'twenty-ui';
+import { GithubVersionLink, H2Title, Section } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
@@ -8,9 +8,7 @@ import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImperso
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
-import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersionLink';
-
+import packageJson from '../../../package.json';
 export const SettingsWorkspace = () => (
   <SubMenuTopBarContainer
     title="General"
@@ -42,7 +40,7 @@ export const SettingsWorkspace = () => (
         <DeleteWorkspace />
       </Section>
       <Section>
-        <GithubVersionLink />
+        <GithubVersionLink version={packageJson.version} />
       </Section>
     </SettingsPageContainer>
   </SubMenuTopBarContainer>
