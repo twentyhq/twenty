@@ -122,11 +122,11 @@ export const MultiRecordSelect = ({
   );
 
   const createNewButton = isDefined(onCreate) && (
-        <CreateNewButton
-          onClick={() => onCreate?.(relationPickerSearchFilter)}
-          LeftIcon={IconPlus}
-          text="Add New"
-        />
+    <CreateNewButton
+      onClick={() => onCreate?.(relationPickerSearchFilter)}
+      LeftIcon={IconPlus}
+      text="Add New"
+    />
   );
 
   return (
@@ -167,8 +167,8 @@ export const MultiRecordSelect = ({
             <DropdownMenuSeparator />
             {recordMultiSelectIsLoading && !relationPickerSearchFilter && (
               <>
-              <DropdownMenuSkeletonItem />
-              <DropdownMenuSeparator />
+                <DropdownMenuSkeletonItem />
+                <DropdownMenuSeparator />
               </>
             )}
             {results}
