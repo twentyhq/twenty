@@ -10,15 +10,15 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/calendar-event-cleaner/calendar-event-cleaner.module';
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
-import { CalendarImportCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-import.cron.command';
+import { CalendarEventsImportCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-import.cron.command';
 import { CalendarOngoingStaleCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-ongoing-stale.cron.command';
 import { CalendarEventListFetchCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-event-list-fetch.cron.job';
-import { CalendarImportCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-import.cron.job';
+import { CalendarEventsImportCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-import.cron.job';
 import { CalendarOngoingStaleCronJob } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-ongoing-stale.cron.job';
 import { GoogleCalendarDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/google-calendar/google-calendar-driver.module';
 import { MicrosoftCalendarDriverModule } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/microsoft-calendar-driver.module';
 import { CalendarEventListFetchJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
-import { CalendarImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-import.job';
+import { CalendarEventsImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-import.job';
 import { CalendarOngoingStaleJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
 import { CalendarEventImportErrorHandlerService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-exception-handler.service';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
@@ -61,9 +61,9 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
     CalendarEventListFetchCronJob,
     CalendarEventListFetchCronCommand,
     CalendarEventListFetchJob,
-    CalendarImportCronJob,
-    CalendarImportCronCommand,
-    CalendarImportJob,
+    CalendarEventsImportCronJob,
+    CalendarEventsImportCronCommand,
+    CalendarEventsImportJob,
     CalendarOngoingStaleCronJob,
     CalendarOngoingStaleCronCommand,
     CalendarOngoingStaleJob,

@@ -15,7 +15,7 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { CalendarEventsImportJobData } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
-import { CalendarImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-import.job';
+import { CalendarEventsImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-import.job';
 import { CalendarChannelSyncStage } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
 export const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/5 * * * *';
@@ -23,7 +23,7 @@ export const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/5 * * * *';
 @Processor({
   queueName: MessageQueue.cronQueue,
 })
-export class CalendarImportCronJob {
+export class CalendarEventsImportCronJob {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -33,13 +33,13 @@ export class CalendarImportCronJob {
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
-  @Process(CalendarImportCronJob.name)
+  @Process(CalendarEventsImportCronJob.name)
   @SentryCronMonitor(
-    CalendarImportCronJob.name,
+    CalendarEventsImportCronJob.name,
     CALENDAR_EVENTS_IMPORT_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    console.time('CalendarImportCronJob time');
+    console.time('CalendarEventsImportCronJob time');
 
     const activeWorkspaces = await this.workspaceRepository.find({
       where: {
@@ -66,7 +66,7 @@ export class CalendarImportCronJob {
 
         for (const calendarChannel of calendarChannels) {
           await this.messageQueueService.add<CalendarEventsImportJobData>(
-            CalendarImportJob.name,
+            CalendarEventsImportJob.name,
             {
               calendarChannelId: calendarChannel.id,
               workspaceId: activeWorkspace.id,
@@ -82,6 +82,6 @@ export class CalendarImportCronJob {
       }
     }
 
-    console.timeEnd('CalendarImportCronJob time');
+    console.timeEnd('CalendarEventsImportCronJob time');
   }
 }

@@ -3,9 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   CalendarEventImportDriverException,
@@ -34,8 +31,6 @@ export class CalendarFetchEventsService {
     private readonly getCalendarEventsService: CalendarGetCalendarEventsService,
     private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
     private readonly calendarEventsImportService: CalendarEventsImportService,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
-    private readonly messageQueueService: MessageQueueService,
 
   ) {}
 
@@ -100,7 +95,7 @@ export class CalendarFetchEventsService {
 
       if (hasFullEvents && calendarEvents) {
         // Event Import already done
-        this.calendarEventsImportService.processCalendarEventsImport(
+        await this.calendarEventsImportService.processCalendarEventsImport(
           calendarChannel,
           connectedAccount,
           workspaceId,
@@ -116,12 +111,6 @@ export class CalendarFetchEventsService {
 
         await this.calendarChannelSyncStatusService.scheduleCalendarEventsImport(
           [calendarChannel.id],
-        );
-
-        this.calendarEventsImportService.processCalendarEventsImport(
-          calendarChannel,
-          connectedAccount,
-          workspaceId,
         );
 
       } else {

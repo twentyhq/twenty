@@ -173,8 +173,8 @@ export class MicrosoftAPIsService {
             connectedAccountId: newOrExistingConnectedAccountId,
           },
           {
-            syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
-            syncStatus: null,
+            syncStage: MessageChannelSyncStage.FAILED,
+            syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
             syncCursor: '',
             syncStageStartedAt: null,
           },

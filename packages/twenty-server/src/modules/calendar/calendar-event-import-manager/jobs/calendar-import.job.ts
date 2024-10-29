@@ -20,13 +20,13 @@ export type CalendarEventsImportJobData = {
   queueName: MessageQueue.calendarQueue,
   scope: Scope.REQUEST,
 })
-export class CalendarImportJob {
+export class CalendarEventsImportJob {
   constructor(
     private readonly calendarEventsImportService: CalendarEventsImportService,
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
-  @Process(CalendarImportJob.name)
+  @Process(CalendarEventsImportJob.name)
   async handle(data: CalendarEventsImportJobData): Promise<void> {
     console.time('CalendarEventsImportJob time');
 

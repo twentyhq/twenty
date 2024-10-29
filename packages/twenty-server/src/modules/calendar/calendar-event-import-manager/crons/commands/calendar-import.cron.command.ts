@@ -5,14 +5,14 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   CALENDAR_EVENTS_IMPORT_CRON_PATTERN,
-  CalendarImportCronJob,
+  CalendarEventsImportCronJob,
 } from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-import.cron.job';
 
 @Command({
-  name: 'cron:calendar:calendar-import',
+  name: 'cron:calendar:calendar-events-import',
   description: 'Starts a cron job to import the calendar events',
 })
-export class CalendarImportCronCommand extends CommandRunner {
+export class CalendarEventsImportCronCommand extends CommandRunner {
   constructor(
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -22,7 +22,7 @@ export class CalendarImportCronCommand extends CommandRunner {
 
   async run(): Promise<void> {
     await this.messageQueueService.addCron<undefined>(
-      CalendarImportCronJob.name,
+      CalendarEventsImportCronJob.name,
       undefined,
       {
         repeat: { pattern: CALENDAR_EVENTS_IMPORT_CRON_PATTERN },
