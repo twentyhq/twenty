@@ -13,6 +13,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Injectable()
 export class WorkspaceWorkspaceMemberListener {
@@ -22,7 +23,7 @@ export class WorkspaceWorkspaceMemberListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('workspaceMember.updated')
+  @OnEvent(`workspaceMember.${EventOperation.UPDATED}`)
   async handleUpdateEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>
@@ -50,7 +51,7 @@ export class WorkspaceWorkspaceMemberListener {
     );
   }
 
-  @OnEvent('workspaceMember.deleted')
+  @OnEvent(`workspaceMember.${EventOperation.DELETED}`)
   async handleDeleteEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>

@@ -7,6 +7,13 @@ import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.typ
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 
+export enum EventOperation {
+  CREATED = 'created',
+  UPDATED = 'updated',
+  DELETED = 'deleted',
+  DESTROYED = 'destroyed',
+}
+
 @Injectable()
 export class ApiEventEmitterService {
   constructor(private readonly workspaceEventEmitter: WorkspaceEventEmitter) {}
@@ -17,7 +24,7 @@ export class ApiEventEmitterService {
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.created`,
+      `${objectMetadataItem.nameSingular}.${EventOperation.CREATED}`,
       records.map((record) => ({
         userId: authContext.user?.id,
         recordId: record.id,
@@ -47,7 +54,7 @@ export class ApiEventEmitterService {
     );
 
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.updated`,
+      `${objectMetadataItem.nameSingular}.${EventOperation.UPDATED}`,
       records.map((record) => {
         const before = this.removeGraphQLAndNestedProperties(
           mappedExistingRecords[record.id],
@@ -82,7 +89,7 @@ export class ApiEventEmitterService {
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.deleted`,
+      `${objectMetadataItem.nameSingular}.${EventOperation.DELETED}`,
       records.map((record) => {
         return {
           userId: authContext.user?.id,
@@ -104,7 +111,7 @@ export class ApiEventEmitterService {
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.destroyed`,
+      `${objectMetadataItem.nameSingular}.${EventOperation.DESTROYED}`,
       records.map((record) => {
         return {
           userId: authContext.user?.id,

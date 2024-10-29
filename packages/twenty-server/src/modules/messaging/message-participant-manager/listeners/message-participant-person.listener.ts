@@ -17,6 +17,7 @@ import {
   MessageParticipantUnmatchParticipantJobData,
 } from 'src/modules/messaging/message-participant-manager/jobs/message-participant-unmatch-participant.job';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Injectable()
 export class MessageParticipantPersonListener {
@@ -25,7 +26,7 @@ export class MessageParticipantPersonListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('person.created')
+  @OnEvent(`person.${EventOperation.CREATED}`)
   async handleCreatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<PersonWorkspaceEntity>
@@ -47,7 +48,7 @@ export class MessageParticipantPersonListener {
     }
   }
 
-  @OnEvent('person.updated')
+  @OnEvent(`person.${EventOperation.UPDATED}`)
   async handleUpdatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<PersonWorkspaceEntity>

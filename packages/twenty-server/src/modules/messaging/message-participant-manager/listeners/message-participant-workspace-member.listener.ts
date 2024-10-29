@@ -24,6 +24,7 @@ import {
   MessageParticipantUnmatchParticipantJobData,
 } from 'src/modules/messaging/message-participant-manager/jobs/message-participant-unmatch-participant.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Injectable()
 export class MessageParticipantWorkspaceMemberListener {
@@ -34,7 +35,7 @@ export class MessageParticipantWorkspaceMemberListener {
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
-  @OnEvent('workspaceMember.created')
+  @OnEvent(`workspaceMember.${EventOperation.CREATED}`)
   async handleCreatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>
@@ -67,7 +68,7 @@ export class MessageParticipantWorkspaceMemberListener {
     }
   }
 
-  @OnEvent('workspaceMember.updated')
+  @OnEvent(`workspaceMember.${EventOperation.UPDATED}`)
   async handleUpdatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>

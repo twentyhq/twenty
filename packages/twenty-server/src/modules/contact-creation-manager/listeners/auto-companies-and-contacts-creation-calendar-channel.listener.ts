@@ -12,6 +12,7 @@ import {
   CalendarCreateCompanyAndContactAfterSyncJobData,
 } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-create-company-and-contact-after-sync.job';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Injectable()
 export class AutoCompaniesAndContactsCreationCalendarChannelListener {
@@ -20,7 +21,7 @@ export class AutoCompaniesAndContactsCreationCalendarChannelListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('calendarChannel.updated')
+  @OnEvent(`calendarChannel.${EventOperation.UPDATED}`)
   async handleUpdatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<MessageChannelWorkspaceEntity>

@@ -10,6 +10,11 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
+import {
+  CallWebhookJobsJob,
+  CallWebhookJobsJobData,
+} from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook-jobs.job';
+import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Injectable()
 export class EntityEventsToDbListener {
@@ -18,28 +23,28 @@ export class EntityEventsToDbListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('*.created')
+  @OnEvent(`*.${EventOperation.CREATED}`)
   async handleCreate(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
   ) {
     return this.handle(payload);
   }
 
-  @OnEvent('*.updated')
+  @OnEvent(`*.${EventOperation.UPDATED}`)
   async handleUpdate(
     payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
   ) {
     return this.handle(payload);
   }
 
-  @OnEvent('*.deleted')
+  @OnEvent(`*.${EventOperation.DELETED}`)
   async handleDelete(
     payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
   ) {
     return this.handle(payload);
   }
 
-  @OnEvent('*.destroyed')
+  @OnEvent(`*.${EventOperation.DESTROYED}`)
   async handleDestroy(
     payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
   ) {
@@ -63,6 +68,19 @@ export class EntityEventsToDbListener {
     >(UpsertTimelineActivityFromInternalEvent.name, {
       ...payload,
       events: filteredEvents,
+    });
+
+    payload.events.forEach((event) => {
+      this.messageQueueService.add<CallWebhookJobsJobData>(
+        CallWebhookJobsJob.name,
+        {
+          record: event,
+          workspaceId: event.workspaceId,
+          eventName: event.name,
+          objectMetadataItem: event.objectMetadata,
+        },
+        { retryLimit: 3 },
+      );
     });
   }
 }

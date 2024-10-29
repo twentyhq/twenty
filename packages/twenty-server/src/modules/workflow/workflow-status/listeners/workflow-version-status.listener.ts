@@ -17,6 +17,7 @@ import {
   WorkflowVersionEventType,
   WorkflowVersionStatusUpdate,
 } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
+import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Injectable()
 export class WorkflowVersionStatusListener {
@@ -25,7 +26,7 @@ export class WorkflowVersionStatusListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('workflowVersion.created')
+  @OnEvent(`workflowVersion.${EventOperation.CREATED}`)
   async handleWorkflowVersionCreated(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<WorkflowVersionWorkspaceEntity>
@@ -67,7 +68,7 @@ export class WorkflowVersionStatusListener {
     );
   }
 
-  @OnEvent('workflowVersion.deleted')
+  @OnEvent(`workflowVersion.${EventOperation.DELETED}`)
   async handleWorkflowVersionDeleted(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<WorkflowVersionWorkspaceEntity>

@@ -11,6 +11,7 @@ import {
   MessagingConnectedAccountDeletionCleanupJob,
   MessagingConnectedAccountDeletionCleanupJobData,
 } from 'src/modules/messaging/message-cleaner/jobs/messaging-connected-account-deletion-cleanup.job';
+import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Injectable()
 export class MessagingMessageCleanerConnectedAccountListener {
@@ -19,7 +20,7 @@ export class MessagingMessageCleanerConnectedAccountListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('connectedAccount.destroyed')
+  @OnEvent(`connectedAccount.${EventOperation.DESTROYED}`)
   async handleDestroyedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<ConnectedAccountWorkspaceEntity>

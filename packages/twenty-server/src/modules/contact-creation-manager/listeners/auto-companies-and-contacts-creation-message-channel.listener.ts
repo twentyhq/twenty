@@ -12,6 +12,7 @@ import {
   MessagingCreateCompanyAndContactAfterSyncJob,
   MessagingCreateCompanyAndContactAfterSyncJobData,
 } from 'src/modules/messaging/message-participant-manager/jobs/messaging-create-company-and-contact-after-sync.job';
+import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Injectable()
 export class AutoCompaniesAndContactsCreationMessageChannelListener {
@@ -20,7 +21,7 @@ export class AutoCompaniesAndContactsCreationMessageChannelListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('messageChannel.updated')
+  @OnEvent(`messageChannel.${EventOperation.UPDATED}`)
   async handleUpdatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<MessageChannelWorkspaceEntity>

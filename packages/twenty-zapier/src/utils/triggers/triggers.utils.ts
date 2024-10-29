@@ -7,17 +7,17 @@ import requestDb, {
   requestSchema,
 } from '../../utils/requestDb';
 
-export enum Operation {
-  create = 'create',
-  update = 'update',
-  delete = 'delete',
-  destroy = 'destroy',
+export enum EventOperation {
+  CREATED = 'created',
+  UPDATED = 'updated',
+  DELETED = 'deleted',
+  DESTROYED = 'destroyed',
 }
 
 export const subscribe = async (
   z: ZObject,
   bundle: Bundle,
-  operation: Operation,
+  operation: EventOperation,
 ) => {
   try {
     const data = {

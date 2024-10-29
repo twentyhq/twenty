@@ -17,6 +17,7 @@ import {
   BlocklistReimportMessagesJob,
   BlocklistReimportMessagesJobData,
 } from 'src/modules/messaging/blocklist-manager/jobs/messaging-blocklist-reimport-messages.job';
+import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Injectable({ scope: Scope.REQUEST })
 export class MessagingBlocklistListener {
@@ -25,7 +26,7 @@ export class MessagingBlocklistListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('blocklist.created')
+  @OnEvent(`blocklist.${EventOperation.CREATED}`)
   async handleCreatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<BlocklistWorkspaceEntity>
@@ -37,7 +38,7 @@ export class MessagingBlocklistListener {
     );
   }
 
-  @OnEvent('blocklist.deleted')
+  @OnEvent(`blocklist.${EventOperation.CREATED}`)
   async handleDeletedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>
@@ -49,7 +50,7 @@ export class MessagingBlocklistListener {
     );
   }
 
-  @OnEvent('blocklist.updated')
+  @OnEvent(`blocklist.${EventOperation.UPDATED}`)
   async handleUpdatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<BlocklistWorkspaceEntity>

@@ -7,7 +7,7 @@ import { computeInputFields } from '../utils/computeInputFields';
 import { InputData } from '../utils/data.types';
 import handleQueryParams from '../utils/handleQueryParams';
 import requestDb, { requestSchema } from '../utils/requestDb';
-import { Operation } from '../utils/triggers/triggers.utils';
+import { EventOperation } from '../utils/triggers/triggers.utils';
 
 export const recordInputFields = async (
   z: ZObject,
@@ -22,9 +22,9 @@ export const recordInputFields = async (
 };
 
 const computeFields = async (z: ZObject, bundle: Bundle) => {
-  const operation = bundle.inputData.crudZapierOperation;
+  const operation = bundle.inputData.crudZapierEventOperation;
   switch (operation) {
-    case Operation.delete:
+    case EventOperation.DELETED:
       return [
         {
           key: 'id',
@@ -34,9 +34,9 @@ const computeFields = async (z: ZObject, bundle: Bundle) => {
           required: true,
         },
       ];
-    case Operation.update:
+    case EventOperation.UPDATED:
       return recordInputFields(z, bundle, true);
-    case Operation.create:
+    case EventOperation.CREATED:
       return recordInputFields(z, bundle, false);
     default:
       return [];
@@ -44,18 +44,18 @@ const computeFields = async (z: ZObject, bundle: Bundle) => {
 };
 
 const computeQueryParameters = (
-  operation: Operation,
+  operation: EventOperation,
   data: InputData,
 ): string => {
   switch (operation) {
-    case Operation.create:
+    case EventOperation.CREATED:
       return `data:{${handleQueryParams(data)}}`;
-    case Operation.update:
+    case EventOperation.UPDATED:
       return `
       data:{${handleQueryParams(data)}},
       id: "${data.id}"
       `;
-    case Operation.delete:
+    case EventOperation.DELETED:
       return `
       id: "${data.id}"
       `;
@@ -66,10 +66,10 @@ const computeQueryParameters = (
 
 const perform = async (z: ZObject, bundle: Bundle) => {
   const data = bundle.inputData;
-  const operation = data.crudZapierOperation;
+  const operation = data.crudZapierEventOperation;
   const nameSingular = data.nameSingular;
   delete data.nameSingular;
-  delete data.crudZapierOperation;
+  delete data.crudZapierEventOperation;
   const query = `
   mutation ${operation}${capitalize(nameSingular)} {
     ${operation}${capitalize(nameSingular)}(
@@ -100,13 +100,13 @@ export default {
         altersDynamicFields: true,
       },
       {
-        key: 'crudZapierOperation',
+        key: 'crudZapierEventOperation',
         required: true,
-        label: 'Operation',
+        label: 'EventOperation',
         choices: {
-          [Operation.create]: Operation.create,
-          [Operation.update]: Operation.update,
-          [Operation.delete]: Operation.delete,
+          [EventOperation.CREATED]: EventOperation.CREATED,
+          [EventOperation.UPDATED]: EventOperation.UPDATED,
+          [EventOperation.DELETED]: EventOperation.DELETED,
         },
         altersDynamicFields: true,
       },

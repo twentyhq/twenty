@@ -7,6 +7,7 @@ import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspac
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Injectable()
 export class ConnectedAccountListener {
@@ -15,7 +16,7 @@ export class ConnectedAccountListener {
     private readonly accountsToReconnectService: AccountsToReconnectService,
   ) {}
 
-  @OnEvent('connectedAccount.destroyed')
+  @OnEvent(`connectedAccount.${EventOperation.DESTROYED}`)
   async handleDestroyedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<ConnectedAccountWorkspaceEntity>

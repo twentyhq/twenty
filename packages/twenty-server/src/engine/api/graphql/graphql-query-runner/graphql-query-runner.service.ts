@@ -31,11 +31,6 @@ import { GraphqlQueryResolverFactory } from 'src/engine/api/graphql/graphql-quer
 import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/query-result-getters.factory';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
-import {
-  CallWebhookJobsJob,
-  CallWebhookJobsJobData,
-  CallWebhookJobsJobOperation,
-} from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -312,7 +307,7 @@ export class GraphqlQueryRunnerService {
     args: RestoreManyResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<ObjectRecord> {
-    const result = await this.executeQuery<
+    return await this.executeQuery<
       UpdateManyResolverArgs<Partial<ObjectRecord>>,
       ObjectRecord
     >(
@@ -323,8 +318,6 @@ export class GraphqlQueryRunnerService {
       },
       options,
     );
-
-    return result;
   }
 
   private async executeQuery<Input extends ResolverArgs, Response>(
@@ -372,54 +365,6 @@ export class GraphqlQueryRunnerService {
       resultWithGettersArray,
     );
 
-    const jobOperation = this.operationNameToJobOperation(operationName);
-
-    if (jobOperation) {
-      await this.triggerWebhooks(resultWithGettersArray, jobOperation, options);
-    }
-
     return resultWithGetters;
-  }
-
-  private operationNameToJobOperation(
-    operationName: WorkspaceResolverBuilderMethodNames,
-  ): CallWebhookJobsJobOperation | undefined {
-    switch (operationName) {
-      case 'createOne':
-      case 'createMany':
-        return CallWebhookJobsJobOperation.create;
-      case 'updateOne':
-      case 'updateMany':
-      case 'restoreMany':
-        return CallWebhookJobsJobOperation.update;
-      case 'deleteOne':
-      case 'deleteMany':
-        return CallWebhookJobsJobOperation.delete;
-      case 'destroyOne':
-        return CallWebhookJobsJobOperation.destroy;
-      default:
-        return undefined;
-    }
-  }
-
-  private async triggerWebhooks<T>(
-    jobsData: T[] | undefined,
-    operation: CallWebhookJobsJobOperation,
-    options: WorkspaceQueryRunnerOptions,
-  ): Promise<void> {
-    if (!jobsData || !Array.isArray(jobsData)) return;
-
-    jobsData.forEach((jobData) => {
-      this.messageQueueService.add<CallWebhookJobsJobData>(
-        CallWebhookJobsJob.name,
-        {
-          record: jobData,
-          workspaceId: options.authContext.workspace.id,
-          operation,
-          objectMetadataItem: options.objectMetadataItem,
-        },
-        { retryLimit: 3 },
-      );
-    });
   }
 }

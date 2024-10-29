@@ -11,6 +11,7 @@ import {
   MessagingCleanCacheJob,
   MessagingCleanCacheJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-clean-cache';
+import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Injectable()
 export class MessagingMessageImportManagerMessageChannelListener {
@@ -19,7 +20,7 @@ export class MessagingMessageImportManagerMessageChannelListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('messageChannel.destroyed')
+  @OnEvent(`messageChannel.${EventOperation.DESTROYED}`)
   async handleDestroyedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<MessageChannelWorkspaceEntity>

@@ -16,18 +16,11 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
 
-export enum CallWebhookJobsJobOperation {
-  create = 'create',
-  update = 'update',
-  delete = 'delete',
-  destroy = 'destroy',
-}
-
 export type CallWebhookJobsJobData = {
   workspaceId: string;
   objectMetadataItem: ObjectMetadataInterface;
   record: any;
-  operation: CallWebhookJobsJobOperation;
+  eventName: string;
 };
 
 @Processor(MessageQueue.webhookQueue)
@@ -51,13 +44,11 @@ export class CallWebhookJobsJob {
         'webhook',
       );
 
-    const nameSingular = data.objectMetadataItem.nameSingular;
-    const operation = data.operation;
-    const eventName = `${nameSingular}.${operation}`;
+    const [nameSingular, operation] = data.eventName.split('.');
 
     const webhooks = await webhookRepository.find({
       where: [
-        { operations: ArrayContains([eventName]) },
+        { operations: ArrayContains([data.eventName]) },
         { operations: ArrayContains([`*.${operation}`]) },
         { operations: ArrayContains([`${nameSingular}.*`]) },
         { operations: ArrayContains(['*.*']) },
@@ -69,7 +60,7 @@ export class CallWebhookJobsJob {
         CallWebhookJob.name,
         {
           targetUrl: webhook.targetUrl,
-          eventName,
+          eventName: data.eventName,
           objectMetadata: {
             id: data.objectMetadataItem.id,
             nameSingular: data.objectMetadataItem.nameSingular,
@@ -85,7 +76,7 @@ export class CallWebhookJobsJob {
 
     webhooks.length > 0 &&
       this.logger.log(
-        `CallWebhookJobsJob on eventName '${eventName}' triggered webhooks with ids [\n"${webhooks.map((webhook) => webhook.id).join('",\n"')}"\n]`,
+        `CallWebhookJobsJob on eventName '${data.eventName}' triggered webhooks with ids [\n"${webhooks.map((webhook) => webhook.id).join('",\n"')}"\n]`,
       );
   }
 }
