@@ -29,7 +29,7 @@ const StyledObjectsMetaDataItemsWrapper = styled.div<{
   overflow-y: auto;
 `;
 
-const NavigationDrawerSection = styled.div<{
+const StyledNavigationDrawerSection = styled.div<{
   isMobile?: boolean;
 }>`
   display: flex;
@@ -88,7 +88,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
 
   return (
     objectMetadataItems.length > 0 && (
-      <NavigationDrawerSection isMobile={isMobile}>
+      <StyledNavigationDrawerSection isMobile={isMobile}>
         <NavigationDrawerAnimatedCollapseWrapper>
           <NavigationDrawerSectionTitle
             label={sectionTitle}
@@ -108,7 +108,7 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
               )}
           </StyledObjectsMetaDataItemsWrapper>
         </ScrollWrapper>
-      </NavigationDrawerSection>
+      </StyledNavigationDrawerSection>
     )
   );
 };

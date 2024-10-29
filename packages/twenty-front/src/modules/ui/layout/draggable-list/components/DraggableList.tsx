@@ -16,7 +16,7 @@ const StyledDragDropItemsWrapper = styled.div`
   width: 100%;
 `;
 
-const FavouritesDragItemsWrapper = styled.div<{
+const StyledFavouritesDragItemsWrapper = styled.div<{
   isMobile?: boolean;
 }>`
   display: ${({ isMobile }) => (isMobile ? 'flex' : 'block')};
@@ -35,7 +35,7 @@ export const DraggableList = ({
       <StyledDragDropItemsWrapper>
         <Droppable droppableId={v4Persistable}>
           {(provided) => (
-            <FavouritesDragItemsWrapper
+            <StyledFavouritesDragItemsWrapper
               isMobile={isMobile}
               ref={provided.innerRef}
               // eslint-disable-next-line react/jsx-props-no-spreading
@@ -43,7 +43,7 @@ export const DraggableList = ({
             >
               {draggableItems}
               {provided.placeholder}
-            </FavouritesDragItemsWrapper>
+            </StyledFavouritesDragItemsWrapper>
           )}
         </Droppable>
       </StyledDragDropItemsWrapper>
