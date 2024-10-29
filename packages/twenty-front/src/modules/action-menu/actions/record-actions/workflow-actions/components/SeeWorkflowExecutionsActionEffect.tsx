@@ -6,10 +6,11 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { IconPower, isDefined } from 'twenty-ui';
+import { IconHistoryToggle, isDefined } from 'twenty-ui';
 
-export const ActivateWorkflowActionEffect = ({
+export const SeeWorkflowExecutionsActionEffect = ({
   position,
   objectMetadataItem,
 }: {
@@ -37,38 +38,36 @@ export const ActivateWorkflowActionEffect = ({
     selectedRecord?.id,
   );
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (!isDefined(objectMetadataItem) || objectMetadataItem.isRemote) {
       return;
     }
 
     addActionMenuEntry({
-      key: 'activate-workflow',
-      label: 'Activate',
+      key: 'see-workflow-executions',
+      label: 'See executions',
       position,
-      Icon: IconPower,
+      Icon: IconHistoryToggle,
       onClick: () => {
-        if (isDefined(workflowWithCurrentVersion)) {
-          activateWorkflowVersion({
-            workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
-            workflowId: workflowWithCurrentVersion.id,
-          });
-        }
+        //TODO: go to past executions page http://localhost:3001/objects/workflowRuns?filter%5Bworkflow%5D%5Bis%5D%5B0%5D=3323cf02-5b95-459d-b432-20714a3d9c77&view=f3da4217-24c6-414a-8214-81fbd6012c01
+        navigate(`/object/workflow/${workflowWithCurrentVersion?.id}`);
       },
     });
 
     return () => {
-      removeActionMenuEntry('activate-workflow');
+      removeActionMenuEntry('see-workflow-executions');
     };
   }, [
     activateWorkflowVersion,
     addActionMenuEntry,
+    navigate,
     objectMetadataItem,
     position,
     removeActionMenuEntry,
     selectedRecord,
     workflowWithCurrentVersion,
   ]);
-
   return null;
 };

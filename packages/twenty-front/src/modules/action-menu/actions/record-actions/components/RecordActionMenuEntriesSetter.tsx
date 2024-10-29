@@ -2,6 +2,7 @@ import { DeleteRecordsActionEffect } from '@/action-menu/actions/record-actions/
 import { ExportRecordsActionEffect } from '@/action-menu/actions/record-actions/components/ExportRecordsActionEffect';
 import { ManageFavoritesActionEffect } from '@/action-menu/actions/record-actions/components/ManageFavoritesActionEffect';
 import { ActivateWorkflowActionEffect } from '@/action-menu/actions/record-actions/workflow-actions/components/ActivateWorkflowActionEffect';
+import { SeeWorkflowExecutionsActionEffect } from '@/action-menu/actions/record-actions/workflow-actions/components/SeeWorkflowExecutionsActionEffect';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
@@ -19,7 +20,10 @@ const multipleRecordActionEffects = [
   DeleteRecordsActionEffect,
 ];
 
-const workflowSingleRecordActionEffects = [ActivateWorkflowActionEffect];
+const workflowSingleRecordActionEffects = [
+  ActivateWorkflowActionEffect,
+  SeeWorkflowExecutionsActionEffect,
+];
 
 export const RecordActionMenuEntriesSetter = () => {
   const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
