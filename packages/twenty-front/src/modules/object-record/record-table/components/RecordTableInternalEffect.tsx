@@ -27,7 +27,7 @@ export const RecordTableInternalEffect = ({
 
   useListenClickOutsideByClassName({
     classNames: ['entity-table-cell'],
-    excludeClassNames: ['bottom-bar', 'action-menu-dropdown'],
+    excludeClassNames: ['bottom-bar', 'action-menu-dropdown', 'command-menu'],
     callback: () => {
       leaveTableFocus();
     },

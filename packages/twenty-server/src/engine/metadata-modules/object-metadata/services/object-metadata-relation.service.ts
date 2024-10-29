@@ -139,8 +139,7 @@ export class ObjectMetadataRelationService {
     createdObjectMetadata: ObjectMetadataEntity,
     relatedObjectMetadata: ObjectMetadataEntity,
   ) {
-    const relationObjectMetadataNamePlural =
-      relatedObjectMetadata.nameSingular + 's';
+    const relationObjectMetadataNamePlural = relatedObjectMetadata.namePlural;
 
     return {
       standardId:
@@ -151,7 +150,7 @@ export class ObjectMetadataRelationService {
       isActive: true,
       isSystem: true,
       type: FieldMetadataType.RELATION,
-      name: relationObjectMetadataNamePlural,
+      name: relatedObjectMetadata.namePlural,
       label: capitalize(relationObjectMetadataNamePlural),
       description: `${capitalize(relationObjectMetadataNamePlural)} tied to the ${createdObjectMetadata.labelSingular}`,
       icon:
