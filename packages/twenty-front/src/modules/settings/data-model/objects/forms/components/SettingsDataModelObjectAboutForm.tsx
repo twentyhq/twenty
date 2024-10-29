@@ -339,6 +339,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   render={({ field: { onChange, value } }) => (
                     <SyncObjectLabelAndNameToggle
                       value={value ?? true}
+                      disabled={!objectMetadataItem?.isCustom}
                       onChange={(value) => {
                         onChange(value);
                         if (value === true) {

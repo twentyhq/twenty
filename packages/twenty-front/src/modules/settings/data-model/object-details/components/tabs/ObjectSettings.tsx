@@ -182,10 +182,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
       <FormProvider {...formConfig}>
         <StyledContentContainer>
           <StyledFormSection>
-            <H2Title
-              title="About"
-              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-            />
+            <H2Title title="About" description="Object settings" />
             <SettingsDataModelObjectAboutForm
               disabled={!objectMetadataItem.isCustom || loading}
               disableNameEdit={!objectMetadataItem.isCustom}

@@ -46,11 +46,13 @@ const StyledDescription = styled.h3`
 type SyncObjectLabelAndNameToggleProps = {
   value: boolean;
   onChange: (value: boolean) => void;
+  disabled?: boolean;
 };
 
 export const SyncObjectLabelAndNameToggle = ({
   value,
   onChange,
+  disabled,
 }: SyncObjectLabelAndNameToggleProps) => {
   const theme = useTheme();
   return (
@@ -66,7 +68,12 @@ export const SyncObjectLabelAndNameToggle = ({
           </StyledDescription>
         </div>
       </StyledTitleContainer>
-      <Toggle onChange={onChange} color={MAIN_COLORS.yellow} value={value} />
+      <Toggle
+        onChange={onChange}
+        color={MAIN_COLORS.yellow}
+        value={value}
+        disabled={disabled}
+      />
     </StyledToggleContainer>
   );
 };
