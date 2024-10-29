@@ -8,7 +8,7 @@ const StyledSkeletonContainer = styled.div<{
   isMobile?: boolean;
 }>`
   display: flex;
-  flex-direction: ${({ isMobile }) => isMobile ? 'row': 'column'};
+  flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
   gap: ${({ theme }) => theme.spacing(2)};
   height: 71px;
   padding-left: ${({ theme }) => theme.spacing(1)};
@@ -18,7 +18,7 @@ const StyledSkeletonColumn = styled.div<{
   isMobile?: boolean;
 }>`
   display: flex;
-  flex-direction: ${({ isMobile }) => isMobile ? 'row': 'column'};
+  flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
