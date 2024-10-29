@@ -33,7 +33,9 @@ export const subscribe = async (
     );
     return result.data.createWebhook;
   } catch (e) {
-    // Remove that catch code when operations column exists in all active workspace schemas
+    // Remove that catch code when VERSION 0.32 is deployed
+    // probably removable after 01/11/2024
+    // (ie: when operations column exists in all active workspace schemas)
     const data = {
       targetUrl: bundle.targetUrl,
       operation: `${bundle.inputData.nameSingular}.${operation}`,
