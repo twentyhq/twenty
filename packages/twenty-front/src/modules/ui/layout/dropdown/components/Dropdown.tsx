@@ -7,7 +7,7 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import { MouseEvent, useEffect, useRef, useState } from 'react';
+import { MouseEvent, useEffect, useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -64,9 +64,6 @@ export const Dropdown = ({
   onOpen,
 }: DropdownProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [maxHeight, setMaxHeight] = useState<string | number | undefined>(
-    undefined,
-  );
 
   const {
     isDropdownOpen,
@@ -171,7 +168,7 @@ export const Dropdown = ({
               width={dropdownMenuWidth ?? dropdownWidth}
               data-select-disable
               ref={refs.setFloating}
-              style={{ ...floatingStyles, maxHeight }}
+              style={floatingStyles}
             >
               {dropdownComponents}
             </DropdownMenu>
@@ -183,7 +180,7 @@ export const Dropdown = ({
             width={dropdownMenuWidth ?? dropdownWidth}
             data-select-disable
             ref={refs.setFloating}
-            style={{ ...floatingStyles, maxHeight }}
+            style={floatingStyles}
           >
             {dropdownComponents}
           </DropdownMenu>
