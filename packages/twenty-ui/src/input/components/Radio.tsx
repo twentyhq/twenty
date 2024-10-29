@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import * as React from 'react';
-import { RGBA } from 'twenty-ui';
-
+import { RGBA } from '@ui/theme';
 import { RadioGroup } from './RadioGroup';
 
 export enum RadioSize {
