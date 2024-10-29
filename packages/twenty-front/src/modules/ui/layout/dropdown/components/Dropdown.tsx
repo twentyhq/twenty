@@ -90,12 +90,12 @@ export const Dropdown = ({
       flip(),
       size({
         padding: 12 + 20, // 12px for padding bottom, 20px for dropdown bottom margin target
-        apply: ({ availableHeight, elements }) => {
-          elements.floating.style.maxHeight =
-            availableHeight >= elements.floating.scrollHeight
-              ? ''
-              : `${availableHeight}px`;
-        },
+        // apply: ({ availableHeight, elements }) => {
+        //   elements.floating.style.maxHeight =
+        //     availableHeight >= elements.floating.scrollHeight
+        //       ? ''
+        //       : `${availableHeight}px`;
+        // },
       }),
       ...offsetMiddlewares,
     ],
