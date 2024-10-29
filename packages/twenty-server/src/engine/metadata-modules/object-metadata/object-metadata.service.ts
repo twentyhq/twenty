@@ -543,6 +543,44 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     });
   }
 
+  public async findOneWithinWorkspace(
+    workspaceId: string,
+    options: FindOneOptions<ObjectMetadataEntity>,
+  ): Promise<ObjectMetadataEntity | null> {
+    return this.objectMetadataRepository.findOne({
+      relations: [
+        'fields',
+        'fields.fromRelationMetadata',
+        'fields.toRelationMetadata',
+      ],
+      ...options,
+      where: {
+        ...options.where,
+        workspaceId,
+      },
+    });
+  }
+
+  public async findManyWithinWorkspace(
+    workspaceId: string,
+    options?: FindManyOptions<ObjectMetadataEntity>,
+  ) {
+    return this.objectMetadataRepository.find({
+      relations: [
+        'fields.object',
+        'fields',
+        'fields.fromRelationMetadata',
+        'fields.toRelationMetadata',
+        'fields.fromRelationMetadata.toObjectMetadata',
+      ],
+      ...options,
+      where: {
+        ...options?.where,
+        workspaceId,
+      },
+    });
+  }
+
   public async findMany(options?: FindManyOptions<ObjectMetadataEntity>) {
     return this.objectMetadataRepository.find({
       relations: [
