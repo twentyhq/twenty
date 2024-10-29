@@ -1,9 +1,11 @@
 import { DeleteRecordsActionEffect } from '@/action-menu/actions/record-actions/components/DeleteRecordsActionEffect';
 import { ExportRecordsActionEffect } from '@/action-menu/actions/record-actions/components/ExportRecordsActionEffect';
 import { ManageFavoritesActionEffect } from '@/action-menu/actions/record-actions/components/ManageFavoritesActionEffect';
+import { ActivateWorkflowActionEffect } from '@/action-menu/actions/record-actions/workflow-actions/components/ActivateWorkflowActionEffect';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 const singleRecordActionEffects = [
@@ -16,6 +18,8 @@ const multipleRecordActionEffects = [
   ExportRecordsActionEffect,
   DeleteRecordsActionEffect,
 ];
+
+const workflowSingleRecordActionEffects = [ActivateWorkflowActionEffect];
 
 export const RecordActionMenuEntriesSetter = () => {
   const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
@@ -42,7 +46,13 @@ export const RecordActionMenuEntriesSetter = () => {
 
   const actions =
     contextStoreNumberOfSelectedRecords === 1
-      ? singleRecordActionEffects
+      ? [
+          ...(objectMetadataItem.nameSingular ===
+          CoreObjectNameSingular.Workflow
+            ? workflowSingleRecordActionEffects
+            : []),
+          ...singleRecordActionEffects,
+        ]
       : multipleRecordActionEffects;
 
   return (
