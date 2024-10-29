@@ -35,6 +35,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { isDefined } from 'src/utils/is-defined';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;

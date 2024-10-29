@@ -1,61 +1,40 @@
 /* @license Enterprise */
 
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 
-import { SettingsSSOIdentitiesProvidersListEmptyStateCard } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListEmptyStateCard';
-import { SettingsSSOIdentityProviderRowRightContainer } from '@/settings/security/components/SettingsSSOIdentityProviderRowRightContainer';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsCard } from '@/settings/components/SettingsCard';
+import { SettingsSSOIdentitiesProvidersListCardWrapper } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListCardWrapper';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilState } from 'recoil';
-import { useListSsoIdentityProvidersByWorkspaceIdQuery } from '~/generated/graphql';
-import { SettingsListCard } from '../../components/SettingsListCard';
-import { guessSSOIdentityProviderIconByUrl } from '../utils/guessSSOIdentityProviderIconByUrl';
+import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
+import { IconKey } from 'twenty-ui';
+
+const StyledLink = styled(Link)<{ isDisabled: boolean }>`
+  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
+  text-decoration: none;
+`;
 
 export const SettingsSSOIdentitiesProvidersListCard = () => {
-  const navigate = useNavigate();
-  const { enqueueSnackBar } = useSnackBar();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const [SSOIdentitiesProviders, setSSOIdentitiesProviders] = useRecoilState(
-    SSOIdentitiesProvidersState,
-  );
+  const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
 
-  const { loading } = useListSsoIdentityProvidersByWorkspaceIdQuery({
-    onCompleted: (data) => {
-      setSSOIdentitiesProviders(
-        data?.listSSOIdentityProvidersByWorkspaceId ?? [],
-      );
-    },
-    onError: (error: Error) => {
-      enqueueSnackBar(error.message, {
-        variant: SnackBarVariant.Error,
-      });
-    },
-  });
-
-  return !SSOIdentitiesProviders.length && !loading ? (
-    <SettingsSSOIdentitiesProvidersListEmptyStateCard />
+  return !SSOIdentitiesProviders.length ? (
+    <StyledLink
+      to={getSettingsPagePath(SettingsPath.NewSSOIdentityProvider)}
+      isDisabled={currentWorkspace?.hasValidEntrepriseKey !== true}
+    >
+      <SettingsCard
+        title="Add SSO Identity Provider"
+        disabled={currentWorkspace?.hasValidEntrepriseKey !== true}
+        Icon={<IconKey />}
+      />
+    </StyledLink>
   ) : (
-    <SettingsListCard
-      items={SSOIdentitiesProviders}
-      getItemLabel={(SSOIdentityProvider) =>
-        `${SSOIdentityProvider.name} - ${SSOIdentityProvider.type}`
-      }
-      isLoading={loading}
-      RowIconFn={(SSOIdentityProvider) =>
-        guessSSOIdentityProviderIconByUrl(SSOIdentityProvider.issuer)
-      }
-      RowRightComponent={({ item: SSOIdp }) => (
-        <SettingsSSOIdentityProviderRowRightContainer SSOIdp={SSOIdp} />
-      )}
-      hasFooter
-      footerButtonLabel="Add SSO Identity Provider"
-      onFooterButtonClick={() =>
-        navigate(getSettingsPagePath(SettingsPath.NewSSOIdentityProvider))
-      }
-    />
+    <SettingsSSOIdentitiesProvidersListCardWrapper />
   );
 };

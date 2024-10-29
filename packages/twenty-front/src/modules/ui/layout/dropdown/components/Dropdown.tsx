@@ -7,7 +7,7 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import { MouseEvent, useEffect, useRef, useState } from 'react';
+import { MouseEvent, useEffect, useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -22,7 +22,6 @@ import { isDefined } from '~/utils/isDefined';
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
-import { flushSync } from 'react-dom';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
@@ -65,9 +64,6 @@ export const Dropdown = ({
   onOpen,
 }: DropdownProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [maxHeight, setMaxHeight] = useState<string | number | undefined>(
-    undefined,
-  );
 
   const {
     isDropdownOpen,
@@ -75,6 +71,7 @@ export const Dropdown = ({
     closeDropdown,
     dropdownWidth,
     setDropdownPlacement,
+    resetDropdown,
   } = useDropdown(dropdownId);
 
   const offsetMiddlewares = [];
@@ -93,8 +90,11 @@ export const Dropdown = ({
       flip(),
       size({
         padding: 12 + 20, // 12px for padding bottom, 20px for dropdown bottom margin target
-        apply: ({ availableHeight }) => {
-          flushSync(() => setMaxHeight(availableHeight));
+        apply: ({ availableHeight, elements }) => {
+          elements.floating.style.maxHeight =
+            availableHeight >= elements.floating.scrollHeight
+              ? ''
+              : `${availableHeight}px`;
         },
       }),
       ...offsetMiddlewares,
@@ -144,6 +144,12 @@ export const Dropdown = ({
     [closeDropdown],
   );
 
+  useEffect(() => {
+    return () => {
+      resetDropdown();
+    };
+  }, [resetDropdown]);
+
   return (
     <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>
       <div ref={containerRef} className={className}>
@@ -169,7 +175,7 @@ export const Dropdown = ({
               width={dropdownMenuWidth ?? dropdownWidth}
               data-select-disable
               ref={refs.setFloating}
-              style={{ ...floatingStyles, maxHeight }}
+              style={floatingStyles}
             >
               {dropdownComponents}
             </DropdownMenu>
@@ -181,7 +187,7 @@ export const Dropdown = ({
             width={dropdownMenuWidth ?? dropdownWidth}
             data-select-disable
             ref={refs.setFloating}
-            style={{ ...floatingStyles, maxHeight }}
+            style={floatingStyles}
           >
             {dropdownComponents}
           </DropdownMenu>
