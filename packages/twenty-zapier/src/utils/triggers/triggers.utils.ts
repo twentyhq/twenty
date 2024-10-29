@@ -11,6 +11,7 @@ export enum Operation {
   create = 'create',
   update = 'update',
   delete = 'delete',
+  destroy = 'destroy',
 }
 
 export const subscribe = async (
@@ -20,7 +21,7 @@ export const subscribe = async (
 ) => {
   const data = {
     targetUrl: bundle.targetUrl,
-    operation: `${operation}.${bundle.inputData.nameSingular}`,
+    operation: `${bundle.inputData.nameSingular}.${operation}`,
   };
   const result = await requestDb(
     z,
