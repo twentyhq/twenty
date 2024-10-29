@@ -99,24 +99,20 @@ const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
 };
 
 const validateNameCamelCasedOrThrow = (name?: string) => {
-  if (name) {
-    if (name !== camelCase(name)) {
-      throw new ObjectMetadataException(
-        `Name should be in camelCase: ${name}`,
-        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      );
-    }
+  if (name && name !== camelCase(name)) {
+    throw new ObjectMetadataException(
+      `Name should be in camelCase: ${name}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
   }
 };
 
 const validateNameIsNotTooLongThrow = (name?: string) => {
-  if (name) {
-    if (exceedsDatabaseIdentifierMaximumLength(name)) {
-      throw new ObjectMetadataException(
-        `Name exceeds 63 characters: ${name}`,
-        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      );
-    }
+  if (name && exceedsDatabaseIdentifierMaximumLength(name)) {
+    throw new ObjectMetadataException(
+      `Name exceeds 63 characters: ${name}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
   }
 };
 
@@ -141,4 +137,30 @@ export const computeMetadataNameFromLabelOrThrow = (label: string): string => {
   const formattedString = transliterateAndFormatOrThrow(label);
 
   return formattedString;
+};
+
+export const validateNameAndLabelAreSyncOrThrow = (
+  label: string,
+  name: string,
+) => {
+  const computedName = computeMetadataNameFromLabelOrThrow(label);
+
+  if (name !== computedName) {
+    throw new ObjectMetadataException(
+      `Name is not synced with label. Expected name: "${computedName}", got ${name}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
+};
+
+export const validateNameSingularAndNamePluralAreDifferentOrThrow = (
+  nameSingular: string,
+  namePlural: string,
+) => {
+  if (nameSingular === namePlural) {
+    throw new ObjectMetadataException(
+      'The singular and plural name cannot be the same for an object',
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
 };

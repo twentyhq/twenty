@@ -8,7 +8,7 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 export const objectRecordChangedValues = (
   oldRecord: Partial<IRecord>,
   newRecord: Partial<IRecord>,
-  updatedKeys: string[],
+  updatedKeys: string[] | undefined,
   objectMetadata: ObjectMetadataInterface,
 ) => {
   const fieldsByKey = new Map(
@@ -23,7 +23,7 @@ export const objectRecordChangedValues = (
 
       if (
         key === 'updatedAt' ||
-        !updatedKeys.includes(key) ||
+        !updatedKeys?.includes(key) ||
         field?.type === FieldMetadataType.RELATION ||
         deepEqual(oldRecordValue, newRecordValue)
       ) {

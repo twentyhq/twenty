@@ -2,7 +2,7 @@ import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/typ
 
 export class ObjectRecordUpdateEvent<T> extends ObjectRecordBaseEvent {
   properties: {
-    updatedFields: string[];
+    updatedFields?: string[];
     before: T;
     after: T;
     diff?: Partial<T>;

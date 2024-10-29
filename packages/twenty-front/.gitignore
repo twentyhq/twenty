@@ -42,3 +42,6 @@ dist-ssr
 
 .vite/
 .nyc_output/
+
+# eslint-plugin-project-structure
+projectStructure.cache.json
