@@ -1,50 +1,26 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
+import { RecordShowRightDrawerActionMenuBar } from '@/action-menu/components/RecordShowRightDrawerActionMenuBar';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { RecordShowPageBaseHeader } from '~/pages/object-record/RecordShowPageBaseHeader';
 
-export const RecordShowActionMenu = ({
-  isFavorite,
-  handleFavoriteButtonClick,
-  record,
-  objectMetadataItem,
-  objectNameSingular,
-}: {
-  isFavorite: boolean;
-  handleFavoriteButtonClick: () => void;
-  record: ObjectRecord | undefined;
-  objectMetadataItem: ObjectMetadataItem;
-  objectNameSingular: string;
-}) => {
+export const RecordShowRightDrawerActionMenu = () => {
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
   );
-
-  // TODO: refactor RecordShowPageBaseHeader to use the context store
 
   return (
     <>
       {contextStoreCurrentObjectMetadataId && (
         <ActionMenuContext.Provider
           value={{
-            isInRightDrawer: false,
+            isInRightDrawer: true,
             onActionExecutedCallback: () => {},
           }}
         >
-          <RecordShowPageBaseHeader
-            {...{
-              isFavorite,
-              handleFavoriteButtonClick,
-              record,
-              objectMetadataItem,
-              objectNameSingular,
-            }}
-          />
+          <RecordShowRightDrawerActionMenuBar />
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />
         </ActionMenuContext.Provider>
