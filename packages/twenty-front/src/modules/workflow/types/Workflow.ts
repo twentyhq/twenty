@@ -69,6 +69,7 @@ export type WorkflowManualTrigger = BaseTrigger & {
   type: 'MANUAL';
   settings: {
     objectType?: string;
+    outputSchema: object;
   };
 };
 
