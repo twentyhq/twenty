@@ -4,10 +4,9 @@ import {
   FloatingPortal,
   offset,
   Placement,
-  size,
   useFloating,
 } from '@floating-ui/react';
-import { MouseEvent, useEffect, useRef, useState } from 'react';
+import { MouseEvent, useEffect, useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -22,7 +21,6 @@ import { isDefined } from '~/utils/isDefined';
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
-import { flushSync } from 'react-dom';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
@@ -65,9 +63,6 @@ export const Dropdown = ({
   onOpen,
 }: DropdownProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [maxHeight, setMaxHeight] = useState<string | number | undefined>(
-    undefined,
-  );
 
   const {
     isDropdownOpen,
@@ -89,16 +84,7 @@ export const Dropdown = ({
 
   const { refs, floatingStyles, placement } = useFloating({
     placement: dropdownPlacement,
-    middleware: [
-      flip(),
-      size({
-        padding: 12 + 20, // 12px for padding bottom, 20px for dropdown bottom margin target
-        apply: ({ availableHeight }) => {
-          flushSync(() => setMaxHeight(availableHeight));
-        },
-      }),
-      ...offsetMiddlewares,
-    ],
+    middleware: [flip(), ...offsetMiddlewares],
     whileElementsMounted: autoUpdate,
     strategy: dropdownStrategy,
   });
@@ -169,7 +155,7 @@ export const Dropdown = ({
               width={dropdownMenuWidth ?? dropdownWidth}
               data-select-disable
               ref={refs.setFloating}
-              style={{ ...floatingStyles, maxHeight }}
+              style={floatingStyles}
             >
               {dropdownComponents}
             </DropdownMenu>
@@ -181,7 +167,7 @@ export const Dropdown = ({
             width={dropdownMenuWidth ?? dropdownWidth}
             data-select-disable
             ref={refs.setFloating}
-            style={{ ...floatingStyles, maxHeight }}
+            style={floatingStyles}
           >
             {dropdownComponents}
           </DropdownMenu>
