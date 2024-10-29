@@ -41,6 +41,23 @@ If you want to reset the database, you can run the following command:
 npx nx database:reset
 ```
 
+### Migrations
+
+#### For objects in Core/Metadata schemas (TypeORM)
+
+```bash
+npx nx typeorm twenty-server  -- migration:generate src/database/typeorm/metadata/migrations/nameOfYourMigration -d src/database/typeorm/metadata/metadata.datasource.ts # replace by core data source if necessary
+```
+
+#### For Workspace objects
+
+There are no migrations files, migration are generated automatically for each workspace, 
+stored in the database, and applied with this command
+
+```bash
+yarn command:prod workspace:sync-metadata -f
+```
+
 <ArticleWarning>
 
 This will drop the database and re-run the migrations and seed.
