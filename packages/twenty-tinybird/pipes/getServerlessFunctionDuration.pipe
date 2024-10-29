@@ -1,4 +1,4 @@
-INCLUDE "../../includes/timeSeries.incl"
+INCLUDE "../includes/timeSeries.incl"
 
 NODE timeSeriesServerlessFunctionDurationData
 SQL >

@@ -1,1 +1,1 @@
-tinybird-cli==5.10.1
+tinybird-cli>=4,<5
