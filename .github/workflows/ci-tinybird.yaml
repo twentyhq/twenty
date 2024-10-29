@@ -1,0 +1,22 @@
+name: CI Tinybird
+on:
+  # Temporarily disabled
+  # push:
+  #   branches:
+  #     - main
+
+  # pull_request:
+    
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    uses: tinybirdco/ci/.github/workflows/ci.yml@main
+    with:
+        data_project_dir: packages/twenty-tinybird
+    secrets:
+        tb_admin_token: ${{ secrets.TINYBIRD_ADMIN_TOKEN }} 
+        tb_host: https://api.eu-central-1.aws.tinybird.co

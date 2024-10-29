@@ -1,0 +1,16 @@
+NODE mv
+SQL >
+    SELECT
+        timestamp,
+        workspaceId,
+        JSONExtractString(payload, 'webhookId') as webhookId,
+        JSONExtractString(payload, 'url') as url,
+        JSONExtractBool(payload, 'success') as success,
+        JSONExtractInt(payload, 'status') as status,
+        JSONExtractString(payload, 'eventName') as eventName,
+        version
+    FROM event
+    WHERE action = 'webhook.response'
+
+TYPE MATERIALIZED
+DATASOURCE webhookEventMV
