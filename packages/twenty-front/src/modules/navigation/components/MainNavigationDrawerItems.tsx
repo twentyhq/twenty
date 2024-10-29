@@ -17,6 +17,7 @@ import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/n
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useEffect } from 'react';
 
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
@@ -35,7 +36,7 @@ export const MainNavigationDrawerItems = () => {
   );
   const [isCommandMenuOpened] = useRecoilState(isCommandMenuOpenedState);
   const isSettingsPage = useIsSettingsPage();
-  const { closeCommandMenu, openCommandMenu } = useCommandMenu();
+  const { closeCommandMenu } = useCommandMenu();
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
     useRecoilState(currentMobileNavigationDrawerState);
   const activeItemName = isNavigationDrawerExpanded
@@ -45,6 +46,12 @@ export const MainNavigationDrawerItems = () => {
       : isSettingsPage
         ? 'settings'
         : 'main';
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsNavigationDrawerExpanded(false);
+    }
+  }, [isMobile, setIsNavigationDrawerExpanded]);
 
   return (
     <>

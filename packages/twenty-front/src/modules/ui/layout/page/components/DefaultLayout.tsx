@@ -78,7 +78,8 @@ export const DefaultLayout = () => {
         <CommandMenu />
         <KeyboardShortcutMenu />
 
-        <StyledPageContainer isMobile={isMobile}
+        <StyledPageContainer
+          isMobile={isMobile}
           animate={{
             marginLeft:
               isSettingsPage && !isMobile

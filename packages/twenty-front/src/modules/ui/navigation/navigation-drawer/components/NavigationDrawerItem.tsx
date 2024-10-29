@@ -1,4 +1,5 @@
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
@@ -8,7 +9,6 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
 import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
@@ -175,20 +175,26 @@ export const NavigationDrawerItem = ({
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
   const showBreadcrumb = indentationLevel === 2;
+  const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
+    useRecoilState(currentMobileNavigationDrawerState);
 
   const handleItemClick = () => {
-    if (isMobile) {
-      setIsNavigationDrawerExpanded(false);
-    }
+    // if (isMobile) {
+    //   setIsNavigationDrawerExpanded(false);
+    // }
 
     if (isDefined(onClick)) {
+      setCurrentMobileNavigationDrawer('settings');
+      console.log(
+        `currentMobileNavigationDrawer: ${currentMobileNavigationDrawer}`,
+      );
       onClick();
       return;
     }
 
-    if (isNonEmptyString(to)) {
-      navigate(to);
-    }
+    // if (isNonEmptyString(to)) {
+    //   navigate(to);
+    // }
   };
 
   return (

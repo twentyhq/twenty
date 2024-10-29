@@ -57,6 +57,7 @@ const StyledItemsContainer = styled.div<{
   flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
   margin-bottom: auto;
   overflow: hidden;
+  gap: ${({ theme }) => theme.spacing(3)};
   flex: 1;
 `;
 

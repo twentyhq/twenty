@@ -38,7 +38,7 @@ const NavigationDrawerSection = styled.div<{
   overflow: hidden;
   flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
   flex: 1;
-  min-width: 0
+  min-width: 0;
 `;
 
 export const NavigationDrawerSectionForObjectMetadataItems = ({
