@@ -3,7 +3,9 @@ import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer
 
 import { MainContextStoreComponentInstanceIdSetterEffect } from '@/context-store/components/MainContextStoreComponentInstanceIdSetterEffect';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
-import { RecordShowContainerContextStoreEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreEffect';
+
+import { RecordShowContainerContextStoreObjectMetadataIdEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreObjectMetadataIdEffect';
+import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';
 import { ShowPageSubContainer } from '@/ui/layout/show-page/components/ShowPageSubContainer';
@@ -41,9 +43,12 @@ export const RecordShowContainer = ({
 
   return (
     <>
-      <RecordShowContainerContextStoreEffect
+      <RecordShowContainerContextStoreObjectMetadataIdEffect
         recordId={objectRecordId}
         objectNameSingular={objectNameSingular}
+      />
+      <RecordShowContainerContextStoreTargetedRecordsEffect
+        recordId={objectRecordId}
       />
       {!isInRightDrawer && <MainContextStoreComponentInstanceIdSetterEffect />}
       {recordFromStore && recordFromStore.deletedAt && (
