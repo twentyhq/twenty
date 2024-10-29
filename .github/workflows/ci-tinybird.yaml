@@ -1,11 +1,10 @@
 name: CI Tinybird
 on:
-  # Temporarily disabled
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
 
-  # pull_request:
+  pull_request:
     
 
 concurrency:
