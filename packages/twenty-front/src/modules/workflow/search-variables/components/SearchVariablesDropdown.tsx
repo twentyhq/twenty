@@ -6,13 +6,13 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SearchVariablesDropdownStepItem } from '@/workflow/search-variables/components/SearchVariablesDropdownStepItem';
 import SearchVariablesDropdownStepSubItem from '@/workflow/search-variables/components/SearchVariablesDropdownStepSubItem';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/search-variables/constants/SearchVariablesDropdownId';
+import { useAvailableVariablesInWorkflowStep } from '@/workflow/search-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Editor } from '@tiptap/react';
 import { useState } from 'react';
 import { IconVariable } from 'twenty-ui';
-import { useAvailableVariablesInWorkflowStep } from '@/workflow/hooks/useAvailableVariablesInWorkflowStep';
 
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
