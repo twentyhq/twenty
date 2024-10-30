@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { IconCheck, IconMinus } from '@ui/display/icon/components/TablerIcons';
 import * as React from 'react';
+import { IconCheck, IconMinus } from '@ui/display/icon/components/TablerIcons';
 
 export enum CheckboxVariant {
   Primary = 'primary',
