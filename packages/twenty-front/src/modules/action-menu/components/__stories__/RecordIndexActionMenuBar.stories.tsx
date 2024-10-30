@@ -5,6 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexActionMenuBar';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -40,6 +41,9 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
               }),
               3,
             );
+
+            const entryType: ActionMenuEntry['type'] = 'standard';
+
             set(
               actionMenuEntriesComponentState.atomFamily({
                 instanceId: 'story-action-menu',
@@ -48,6 +52,7 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
                 [
                   'delete',
                   {
+                    type: entryType,
                     key: 'delete',
                     label: 'Delete',
                     position: 0,
@@ -58,6 +63,7 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
                 [
                   'markAsDone',
                   {
+                    type: entryType,
                     key: 'markAsDone',
                     label: 'Mark as done',
                     position: 1,

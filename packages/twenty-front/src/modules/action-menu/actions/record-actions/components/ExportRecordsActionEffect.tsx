@@ -26,6 +26,7 @@ export const ExportRecordsActionEffect = ({
 
   useEffect(() => {
     addActionMenuEntry({
+      type: 'standard',
       key: 'export',
       position,
       label: displayedExportProgress(progress),

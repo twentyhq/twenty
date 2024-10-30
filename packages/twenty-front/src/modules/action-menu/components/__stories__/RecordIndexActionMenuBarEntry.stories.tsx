@@ -21,6 +21,7 @@ const markAsDoneMock = jest.fn();
 export const Default: Story = {
   args: {
     entry: {
+      type: 'standard',
       key: 'delete',
       label: 'Delete',
       position: 0,
@@ -33,6 +34,7 @@ export const Default: Story = {
 export const WithDangerAccent: Story = {
   args: {
     entry: {
+      type: 'standard',
       key: 'delete',
       label: 'Delete',
       position: 0,
@@ -46,6 +48,7 @@ export const WithDangerAccent: Story = {
 export const WithInteraction: Story = {
   args: {
     entry: {
+      type: 'standard',
       key: 'markAsDone',
       label: 'Mark as done',
       position: 0,

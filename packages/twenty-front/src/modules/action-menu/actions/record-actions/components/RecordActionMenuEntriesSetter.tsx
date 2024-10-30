@@ -1,10 +1,13 @@
 import { DeleteRecordsActionEffect } from '@/action-menu/actions/record-actions/components/DeleteRecordsActionEffect';
 import { ExportRecordsActionEffect } from '@/action-menu/actions/record-actions/components/ExportRecordsActionEffect';
 import { ManageFavoritesActionEffect } from '@/action-menu/actions/record-actions/components/ManageFavoritesActionEffect';
+import { WorkflowRunRecordActionEffect } from '@/action-menu/actions/record-actions/workflow-run-record-actions/components/WorkflowRunRecordActionEffect';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilValue } from 'recoil';
 
 const singleRecordActionEffects = [
   ManageFavoritesActionEffect,
@@ -36,6 +39,8 @@ export const RecordActionMenuEntriesSetter = () => {
     );
   }
 
+  const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
+
   if (!contextStoreNumberOfSelectedRecords) {
     return null;
   }
@@ -54,6 +59,11 @@ export const RecordActionMenuEntriesSetter = () => {
           objectMetadataItem={objectMetadataItem}
         />
       ))}
+      {contextStoreNumberOfSelectedRecords === 1 && isCommandMenuOpened && (
+        <WorkflowRunRecordActionEffect
+          objectMetadataItem={objectMetadataItem}
+        />
+      )}
     </>
   );
 };

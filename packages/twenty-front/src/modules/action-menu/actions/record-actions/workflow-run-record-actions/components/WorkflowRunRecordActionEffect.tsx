@@ -1,18 +1,17 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useActiveWorkflowVersionsWithTriggerRecordType } from '@/workflow/hooks/useActiveWorkflowVersionsWithTriggerRecordType';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconHeart, IconHeartOff, isDefined } from 'twenty-ui';
+import { IconSettingsAutomation, isDefined } from 'twenty-ui';
+import { capitalize } from '~/utils/string/capitalize';
 
-export const ManageFavoritesActionEffect = ({
-  position,
+export const WorkflowRunRecordActionEffect = ({
   objectMetadataItem,
 }: {
-  position: number;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
@@ -20,8 +19,6 @@ export const ManageFavoritesActionEffect = ({
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
     contextStoreTargetedRecordsRuleComponentState,
   );
-
-  const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
   const selectedRecordId =
     contextStoreTargetedRecordsRule.mode === 'selection'
@@ -32,45 +29,44 @@ export const ManageFavoritesActionEffect = ({
     recordStoreFamilyState(selectedRecordId ?? ''),
   );
 
-  const foundFavorite = favorites?.find(
-    (favorite) => favorite.recordId === selectedRecordId,
-  );
-
-  const isFavorite = !!selectedRecordId && !!foundFavorite;
+  const { records: activeWorkflowVersions } =
+    useActiveWorkflowVersionsWithTriggerRecordType({
+      objectNameSingular: objectMetadataItem.nameSingular,
+    });
 
   useEffect(() => {
     if (!isDefined(objectMetadataItem) || objectMetadataItem.isRemote) {
       return;
     }
 
-    addActionMenuEntry({
-      type: 'standard',
-      key: 'manage-favorites',
-      label: isFavorite ? 'Remove from favorites' : 'Add to favorites',
-      position,
-      Icon: isFavorite ? IconHeartOff : IconHeart,
-      onClick: () => {
-        if (isFavorite && isDefined(foundFavorite?.id)) {
-          deleteFavorite(foundFavorite.id);
-        } else if (isDefined(selectedRecord)) {
-          createFavorite(selectedRecord, objectMetadataItem.nameSingular);
-        }
-      },
-    });
+    for (const [
+      index,
+      activeWorkflowVersion,
+    ] of activeWorkflowVersions.entries()) {
+      addActionMenuEntry({
+        type: 'workflow-run',
+        key: `workflow-run-${activeWorkflowVersion.workflow.name}`,
+        label: capitalize(activeWorkflowVersion.workflow.name),
+        position: index,
+        Icon: IconSettingsAutomation,
+        onClick: () => {
+          console.log('run workflow');
+        },
+      });
+    }
 
     return () => {
-      removeActionMenuEntry('manage-favorites');
+      for (const activeWorkflowVersion of activeWorkflowVersions) {
+        removeActionMenuEntry(
+          `workflow-run-${activeWorkflowVersion.workflow.name}`,
+        );
+      }
     };
   }, [
+    activeWorkflowVersions,
     addActionMenuEntry,
-    createFavorite,
-    deleteFavorite,
-    foundFavorite?.id,
-    isFavorite,
     objectMetadataItem,
-    position,
     removeActionMenuEntry,
-    selectedRecord,
   ]);
 
   return null;

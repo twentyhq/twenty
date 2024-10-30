@@ -410,7 +410,7 @@ export const CommandMenu = () => {
                     </CommandGroup>
                   )}
                   {mainContextStoreComponentInstanceId && (
-                    <CommandGroup heading="Actions">
+                    <CommandGroup heading="Standard Actions">
                       {matchingActionCommands?.map((actionCommand) => (
                         <SelectableItem
                           itemId={actionCommand.id}

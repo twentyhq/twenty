@@ -7,6 +7,7 @@ import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIn
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
+import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { IconCheckbox, IconHeart, IconTrash } from 'twenty-ui';
@@ -29,6 +30,9 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
             ),
             { x: 10, y: 10 },
           );
+
+          const entryType: ActionMenuEntry['type'] = 'standard';
+
           set(
             actionMenuEntriesComponentState.atomFamily({
               instanceId: 'story-action-menu',
@@ -37,6 +41,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
               [
                 'delete',
                 {
+                  type: entryType,
                   key: 'delete',
                   label: 'Delete',
                   position: 0,
@@ -47,6 +52,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
               [
                 'markAsDone',
                 {
+                  type: entryType,
                   key: 'markAsDone',
                   label: 'Mark as done',
                   position: 1,
@@ -57,6 +63,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
               [
                 'addToFavorites',
                 {
+                  type: entryType,
                   key: 'addToFavorites',
                   label: 'Add to favorites',
                   position: 2,
