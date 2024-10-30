@@ -140,12 +140,15 @@ export const ObjectFilterDropdownFilterSelect = ({
   const { currentViewId, currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView();
 
-  const isAdvancedFiltersEnabled = useIsFeatureEnabled("IS_ADVANCED_FILTERS_ENABLED");
+  const isAdvancedFiltersEnabled = useIsFeatureEnabled(
+    'IS_ADVANCED_FILTERS_ENABLED',
+  );
 
   const shouldShowAdvancedFilterButton =
     isDefined(currentViewId) &&
     isDefined(currentViewWithCombinedFiltersAndSorts?.objectMetadataId) &&
-    isAdvancedFilterButtonVisible && isAdvancedFiltersEnabled;
+    isAdvancedFilterButtonVisible &&
+    isAdvancedFiltersEnabled;
 
   return (
     <>
