@@ -2,10 +2,6 @@ import { Logger } from '@nestjs/common';
 
 import { ArrayContains } from 'typeorm';
 
-import {
-  CallWebhookJob,
-  CallWebhookJobData,
-} from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook.job';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -16,6 +12,10 @@ import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/web
 import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
+import {
+  CallWebhookJob,
+  CallWebhookJobData,
+} from 'src/modules/webhook/jobs/call-webhook.job';
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJobsJob {
@@ -35,6 +35,8 @@ export class CallWebhookJobsJob {
     // trigger in packages/twenty-zapier/src/triggers/trigger_record.ts
     // Also change the openApi schema for webhooks
     // packages/twenty-server/src/engine/core-modules/open-api/utils/computeWebhooks.utils.ts
+
+    console.log('CallWebhookJobsJob run');
 
     const webhookRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WebhookWorkspaceEntity>(

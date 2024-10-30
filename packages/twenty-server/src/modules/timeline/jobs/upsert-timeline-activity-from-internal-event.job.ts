@@ -20,6 +20,7 @@ export class UpsertTimelineActivityFromInternalEvent {
   async handle(
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordBaseEvent>,
   ): Promise<void> {
+    console.log('UpsertTimelineActivityFromInternalEvent run');
     for (const eventData of workspaceEventBatch.events) {
       if (eventData.userId) {
         const workspaceMember = await this.workspaceMemberService.getByIdOrFail(
