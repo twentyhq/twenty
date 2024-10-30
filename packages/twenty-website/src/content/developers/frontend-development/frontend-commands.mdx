@@ -16,25 +16,25 @@ image: /images/user-guide/create-workspace/workspace-cover.png
 
 
 ```bash
-npx nx graphql:generate twenty-front --configuration=metadata
+npx nx run twenty-front:graphql:generate  --configuration=metadata
 ```
 OR
 ```bash
-npx nx graphql:generate twenty-front
+npx nx run twenty-front:graphql:generate 
 ```
 ### Lint
 
 ```bash
-npx nx lint twenty-front
+npx nx run twenty-front:lint # pass --fix to fix lint errors
 ```
 
 ### Test
 
 ```bash
-npx nx test twenty-front# run jest tests
-npx nx storybook:serve:dev twenty-front# run storybook
-npx nx storybook:test twenty-front# run tests # (needs yarn storybook:serve:dev to be running)
-npx nx storybook:coverage twenty-front # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:test # run jest tests
+npx nx run twenty-front:storybook:serve:dev # run storybook
+npx nx run twenty-front:storybook:test # run tests # (needs yarn storybook:serve:dev to be running)
+npx nx run twenty-front:storybook:coverage # (needs yarn storybook:serve:dev to be running)
 ```
 
 ## Tech Stack
