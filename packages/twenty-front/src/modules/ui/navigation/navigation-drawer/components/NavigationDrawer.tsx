@@ -24,7 +24,6 @@ export type NavigationDrawerProps = {
 
 const StyledAnimatedContainer = styled(motion.div)`
   max-height: 100vh;
-  overflow: hidden;
 `;
 
 const StyledContainer = styled.div<{
@@ -54,7 +53,6 @@ const StyledItemsContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin-bottom: auto;
-  overflow: hidden;
   flex: 1;
 `;
 
