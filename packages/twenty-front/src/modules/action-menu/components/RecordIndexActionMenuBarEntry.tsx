@@ -15,7 +15,7 @@ const StyledButton = styled.div`
   justify-content: center;
 
   padding: ${({ theme }) => theme.spacing(2)};
-  transition: background 0.1s ease;
+  transition: background ${({ theme }) => theme.animation.duration.fast} ease;
   user-select: none;
 
   &:hover {
