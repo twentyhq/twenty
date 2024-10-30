@@ -183,7 +183,7 @@ export const SingleEntitySelectMenuItems = ({
                         onClick={() => onEntitySelected()}
                         LeftIcon={EmptyIcon}
                         text={emptyLabel}
-                        selected={shouldSelectEmptyOption || false}
+                        selected={shouldSelectEmptyOption === true}
                         hovered={isSelectedSelectNoneButton}
                       />
                     )
