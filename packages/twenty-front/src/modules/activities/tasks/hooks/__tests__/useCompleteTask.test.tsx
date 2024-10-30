@@ -94,6 +94,8 @@ const mocks: MockedResponse[] = [
                   updatedAt
                   viewId
                   workflowId
+                  workflowRunId
+                  workflowVersionId
                   workspaceMemberId
                 }
               }
