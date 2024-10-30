@@ -38,9 +38,6 @@ You should now see a prompt to restart your computer. If not, restart it manuall
 Upon restart, a powershell window will open and install Ubuntu. This may take up some time.
 You'll see a prompt to create a username and password for your Ubuntu installation.
 
-> ### __Note: Run all the below commands in wsl__.
-> Run `wsl -d ${distroName}` to start wsl from windows terminal
-
 2. Install and configure git
 
 ```bash
@@ -81,9 +78,7 @@ corepack enable
 
 ## Step 1: Git Clone
 
-Go to the home directory by typing 
-`cd /` 
-then, run the following command. 
+In your terminal, run the following command. 
 
 
 <ArticleTabs label1="SSH (Recommended)" label2="HTTPS">
@@ -117,6 +112,9 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
   <ArticleTab>
     <b>Option 1:</b> To provision your database locally:
     Use the following link to install Postgresql on your Linux machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
+    ```
 
     <b>Option 2:</b> If you have docker installed:
     ```bash
@@ -129,7 +127,7 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     ```bash
       brew install postgresql@16
       export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
-     sudo psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
     ```
 
     <b>Option 2:</b> If you have docker installed:
@@ -138,9 +136,13 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     ```
   </ArticleTab>
   <ArticleTab>
+    All the following steps are to be run in the WSL terminal (within your virtual machine)
 
     <b>Option 1:</b> To provision your Postgresql locally:
     Use the following link to install Postgresql on your Linux virtual machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
+    ```bash
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
+    ```
 
     <b>Option 2:</b> If you have docker installed:  
     Running Docker on WSL adds an extra layer of complexity.
