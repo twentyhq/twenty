@@ -27,8 +27,6 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
-import { CommentWorkspaceEntity } from 'src/modules/activity/standard-objects/comment.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -143,30 +141,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   // Relations
   @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredActivities,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Authored activities',
-    description: 'Activities created by the workspace member',
-    icon: 'IconCheckbox',
-    inverseSideTarget: () => ActivityWorkspaceEntity,
-    inverseSideFieldKey: 'author',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  authoredActivities: Relation<ActivityWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedActivities,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Assigned activities',
-    description: 'Activities assigned to the workspace member',
-    icon: 'IconCheckbox',
-    inverseSideTarget: () => ActivityWorkspaceEntity,
-    inverseSideFieldKey: 'assignee',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  assignedActivities: Relation<ActivityWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedTasks,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Assigned tasks',
@@ -226,18 +200,6 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   authoredAttachments: Relation<AttachmentWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredComments,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Authored comments',
-    description: 'Authored comments',
-    icon: 'IconComment',
-    inverseSideTarget: () => CommentWorkspaceEntity,
-    inverseSideFieldKey: 'author',
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  authoredComments: Relation<CommentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.connectedAccounts,
