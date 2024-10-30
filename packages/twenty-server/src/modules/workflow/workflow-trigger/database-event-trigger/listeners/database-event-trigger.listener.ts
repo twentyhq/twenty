@@ -16,7 +16,7 @@ import {
   WorkflowEventTriggerJob,
   WorkflowEventTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-event-trigger.job';
-import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 
 @Injectable()
@@ -30,28 +30,28 @@ export class DatabaseEventTriggerListener {
     private readonly isFeatureFlagEnabledService: FeatureFlagService,
   ) {}
 
-  @OnDatabaseEvent('*', EventOperation.CREATED)
+  @OnDatabaseEvent('*', DatabaseEventAction.CREATED)
   async handleObjectRecordCreateEvent(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
   ) {
     await this.handleEvent(payload);
   }
 
-  @OnDatabaseEvent('*', EventOperation.UPDATED)
+  @OnDatabaseEvent('*', DatabaseEventAction.UPDATED)
   async handleObjectRecordUpdateEvent(
     payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
   ) {
     await this.handleEvent(payload);
   }
 
-  @OnDatabaseEvent('*', EventOperation.DELETED)
+  @OnDatabaseEvent('*', DatabaseEventAction.DELETED)
   async handleObjectRecordDeleteEvent(
     payload: WorkspaceEventBatch<ObjectRecordDeleteEvent<any>>,
   ) {
     await this.handleEvent(payload);
   }
 
-  @OnDatabaseEvent('*', EventOperation.DESTROYED)
+  @OnDatabaseEvent('*', DatabaseEventAction.DESTROYED)
   async handleObjectRecordDestroyEvent(
     payload: WorkspaceEventBatch<ObjectRecordDestroyEvent<any>>,
   ) {

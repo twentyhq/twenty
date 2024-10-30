@@ -11,7 +11,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 
 @Injectable()
@@ -22,8 +22,8 @@ export class BillingWorkspaceMemberListener {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  @OnDatabaseEvent('workspaceMember', EventOperation.CREATED)
-  @OnDatabaseEvent('workspaceMember', EventOperation.DELETED)
+  @OnDatabaseEvent('workspaceMember', DatabaseEventAction.CREATED)
+  @OnDatabaseEvent('workspaceMember', DatabaseEventAction.DELETED)
   async handleCreateOrDeleteEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>

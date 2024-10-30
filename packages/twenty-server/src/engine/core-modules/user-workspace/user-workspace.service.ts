@@ -18,7 +18,7 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
-import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -89,7 +89,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     payload.recordId = workspaceMember[0].id;
 
     this.workspaceEventEmitter.emit(
-      `workspaceMember.${EventOperation.CREATED}`,
+      `workspaceMember.${DatabaseEventAction.CREATED}`,
       [payload],
       workspaceId,
     );

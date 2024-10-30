@@ -10,7 +10,7 @@ import {
   DeleteConnectedAccountAssociatedCalendarDataJobData,
 } from 'src/modules/calendar/calendar-event-cleaner/jobs/delete-connected-account-associated-calendar-data.job';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class CalendarEventCleanerConnectedAccountListener {
     private readonly calendarQueueService: MessageQueueService,
   ) {}
 
-  @OnDatabaseEvent('connectedAccount', EventOperation.DESTROYED)
+  @OnDatabaseEvent('connectedAccount', DatabaseEventAction.DESTROYED)
   async handleDestroyedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<ConnectedAccountWorkspaceEntity>

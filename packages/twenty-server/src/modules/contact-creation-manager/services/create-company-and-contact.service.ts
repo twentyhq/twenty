@@ -25,7 +25,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isWorkEmail } from 'src/utils/is-work-email';
-import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -196,7 +196,7 @@ export class CreateCompanyAndContactService {
       );
 
       this.workspaceEventEmitter.emit(
-        `person.${EventOperation.CREATED}`,
+        `person.${DatabaseEventAction.CREATED}`,
         createdPeople.map(
           (createdPerson) =>
             ({

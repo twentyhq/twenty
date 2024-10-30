@@ -2,10 +2,10 @@ import { OpenAPIV3_1 } from 'openapi-types';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { capitalize } from 'src/utils/capitalize';
-import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 export const computeWebhooks = (
-  type: EventOperation,
+  type: DatabaseEventAction,
   item: ObjectMetadataEntity,
 ): OpenAPIV3_1.PathItemObject => {
   return {

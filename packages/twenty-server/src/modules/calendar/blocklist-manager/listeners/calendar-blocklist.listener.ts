@@ -16,7 +16,7 @@ import {
   BlocklistReimportCalendarEventsJob,
   BlocklistReimportCalendarEventsJobData,
 } from 'src/modules/calendar/blocklist-manager/jobs/blocklist-reimport-calendar-events.job';
-import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class CalendarBlocklistListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnDatabaseEvent('blocklist', EventOperation.CREATED)
+  @OnDatabaseEvent('blocklist', DatabaseEventAction.CREATED)
   async handleCreatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<BlocklistWorkspaceEntity>
@@ -38,7 +38,7 @@ export class CalendarBlocklistListener {
     );
   }
 
-  @OnDatabaseEvent('blocklist', EventOperation.DELETED)
+  @OnDatabaseEvent('blocklist', DatabaseEventAction.DELETED)
   async handleDeletedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>
@@ -50,7 +50,7 @@ export class CalendarBlocklistListener {
     );
   }
 
-  @OnDatabaseEvent('blocklist', EventOperation.UPDATED)
+  @OnDatabaseEvent('blocklist', DatabaseEventAction.UPDATED)
   async handleUpdatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<BlocklistWorkspaceEntity>

@@ -13,7 +13,7 @@ import {
   CallWebhookJobsJob,
   CallWebhookJobsJobData,
 } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook-jobs.job';
-import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 
 @Injectable()
@@ -23,28 +23,28 @@ export class EntityEventsToDbListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnDatabaseEvent('*', EventOperation.CREATED)
+  @OnDatabaseEvent('*', DatabaseEventAction.CREATED)
   async handleCreate(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
   ) {
     return this.handle(payload);
   }
 
-  @OnDatabaseEvent('*', EventOperation.UPDATED)
+  @OnDatabaseEvent('*', DatabaseEventAction.UPDATED)
   async handleUpdate(
     payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
   ) {
     return this.handle(payload);
   }
 
-  @OnDatabaseEvent('*', EventOperation.DELETED)
+  @OnDatabaseEvent('*', DatabaseEventAction.DELETED)
   async handleDelete(
     payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
   ) {
     return this.handle(payload);
   }
 
-  @OnDatabaseEvent('*', EventOperation.DESTROYED)
+  @OnDatabaseEvent('*', DatabaseEventAction.DESTROYED)
   async handleDestroy(
     payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
   ) {

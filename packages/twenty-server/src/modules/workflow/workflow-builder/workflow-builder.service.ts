@@ -22,7 +22,7 @@ import {
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { isDefined } from 'src/utils/is-defined';
 import { checkStringIsEventOperation } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-event-operation';
-import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @Injectable()
 export class WorkflowBuilderService {
@@ -112,7 +112,7 @@ export class WorkflowBuilderService {
 
     return generateFakeObjectRecordEvent(
       objectMetadata,
-      action as EventOperation,
+      action as DatabaseEventAction,
     );
   }
 

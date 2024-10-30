@@ -7,7 +7,7 @@ import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.typ
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 
-export enum EventOperation {
+export enum DatabaseEventAction {
   CREATED = 'created',
   UPDATED = 'updated',
   DELETED = 'deleted',
@@ -24,7 +24,7 @@ export class ApiEventEmitterService {
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${EventOperation.CREATED}`,
+      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.CREATED}`,
       records.map((record) => ({
         userId: authContext.user?.id,
         recordId: record.id,
@@ -54,7 +54,7 @@ export class ApiEventEmitterService {
     );
 
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${EventOperation.UPDATED}`,
+      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.UPDATED}`,
       records.map((record) => {
         const before = this.removeGraphQLAndNestedProperties(
           mappedExistingRecords[record.id],
@@ -89,7 +89,7 @@ export class ApiEventEmitterService {
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${EventOperation.DELETED}`,
+      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.DELETED}`,
       records.map((record) => {
         return {
           userId: authContext.user?.id,
@@ -111,7 +111,7 @@ export class ApiEventEmitterService {
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${EventOperation.DESTROYED}`,
+      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.DESTROYED}`,
       records.map((record) => {
         return {
           userId: authContext.user?.id,

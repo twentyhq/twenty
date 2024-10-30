@@ -5,7 +5,7 @@ import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.se
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TelemetryService } from 'src/engine/core-modules/telemetry/telemetry.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
-import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class TelemetryListener {
     private readonly telemetryService: TelemetryService,
   ) {}
 
-  @OnDatabaseEvent('*', EventOperation.CREATED)
+  @OnDatabaseEvent('*', DatabaseEventAction.CREATED)
   async handleAllCreate(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
   ) {

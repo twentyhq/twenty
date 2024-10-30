@@ -16,7 +16,7 @@ import {
   WorkflowVersionEventType,
   WorkflowVersionStatusUpdate,
 } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
-import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class WorkflowVersionStatusListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnDatabaseEvent('workflowVersion', EventOperation.CREATED)
+  @OnDatabaseEvent('workflowVersion', DatabaseEventAction.CREATED)
   async handleWorkflowVersionCreated(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<WorkflowVersionWorkspaceEntity>
@@ -54,7 +54,7 @@ export class WorkflowVersionStatusListener {
     );
   }
 
-  @OnDatabaseEvent('workflowVersion', EventOperation.UPDATED)
+  @OnDatabaseEvent('workflowVersion', DatabaseEventAction.UPDATED)
   async handleWorkflowVersionUpdated(
     payload: WorkspaceEventBatch<WorkflowVersionStatusUpdate>,
   ): Promise<void> {
@@ -68,7 +68,7 @@ export class WorkflowVersionStatusListener {
     );
   }
 
-  @OnDatabaseEvent('workflowVersion', EventOperation.DELETED)
+  @OnDatabaseEvent('workflowVersion', DatabaseEventAction.DELETED)
   async handleWorkflowVersionDeleted(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<WorkflowVersionWorkspaceEntity>

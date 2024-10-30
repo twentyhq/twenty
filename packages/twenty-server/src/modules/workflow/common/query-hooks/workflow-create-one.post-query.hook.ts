@@ -16,7 +16,7 @@ import {
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 @WorkspaceQueryHook({
   key: `workflow.createOne`,
@@ -59,7 +59,7 @@ export class WorkflowCreateOnePostQueryHook
     });
 
     this.workspaceEventEmitter.emit(
-      `workflowVersion.${EventOperation.CREATED}`,
+      `workflowVersion.${DatabaseEventAction.CREATED}`,
       [
         {
           userId: authContext.user?.id,
