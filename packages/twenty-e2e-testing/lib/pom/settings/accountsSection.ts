@@ -5,7 +5,6 @@ export class AccountsSection {
   private readonly deleteAccountButton: Locator;
   private readonly addBlocklistField: Locator;
   private readonly addBlocklistButton: Locator;
-  private removeFromBlocklistButton: Locator;
   private readonly connectWithGoogleButton: Locator;
 
   constructor(public readonly page: Page) {
@@ -42,14 +41,14 @@ export class AccountsSection {
   }
 
   async removeFromBlocklist(domain: string) {
-    this.removeFromBlocklistButton = this.page.locator(
-      `//div[@data-testid='tooltip' and contains(., '${domain}')]/../../div[last()]/button`,
-    );
-    await this.removeFromBlocklistButton.click();
+    await this.page
+      .locator(
+        `//div[@data-testid='tooltip' and contains(., '${domain}')]/../../div[last()]/button`,
+      )
+      .click();
   }
 
   async linkGoogleAccount() {
     await this.connectWithGoogleButton.click();
-    // TODO: move rest to upper layer
   }
 }

@@ -1,8 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 
 export class ProfileSection {
-  private readonly uploadImage: Locator;
-  private readonly removeImage: Locator;
   private readonly firstNameField: Locator;
   private readonly lastNameField: Locator;
   private readonly emailField: Locator;
@@ -11,8 +9,6 @@ export class ProfileSection {
 
   constructor(public readonly page: Page) {
     this.page = page;
-    this.uploadImage = page.getByRole('button', { name: 'Upload' });
-    this.removeImage = page.getByRole('button', { name: 'Remove' });
     this.firstNameField = page.getByPlaceholder('Tim');
     this.lastNameField = page.getByPlaceholder('Cook');
     this.emailField = page.getByRole('textbox').nth(2);
@@ -22,15 +18,6 @@ export class ProfileSection {
     this.deleteAccountButton = page.getByRole('button', {
       name: 'Delete account',
     });
-  }
-
-  async addProfileImage() {
-    await this.uploadImage.click();
-    // TODO: fix once utils are merged
-  }
-
-  async removeProfileImage() {
-    await this.removeImage.click();
   }
 
   async changeFirstName(firstName: string) {
@@ -43,12 +30,15 @@ export class ProfileSection {
     await this.lastNameField.fill(lastName);
   }
 
+  async getEmail() {
+    await this.emailField.textContent();
+  }
+
   async sendChangePasswordEmail() {
     await this.changePasswordButton.click();
   }
 
   async deleteAccount() {
     await this.deleteAccountButton.click();
-    // TODO: finish
   }
 }

@@ -1,7 +1,7 @@
 import { Locator, Page } from '@playwright/test';
 
 export class MainPage {
-  // TODO: add missing elements
+  // TODO: add missing elements (advanced filters, import/export popups)
   private readonly tableViews: Locator;
   private readonly addViewButton: Locator;
   private readonly viewIconSelect: Locator;
@@ -86,11 +86,6 @@ export class MainPage {
 
   async clickAddViewButton() {
     await this.addViewButton.click();
-  }
-
-  async selectViewIcon(name: string) {
-    await this.viewIconSelect.click();
-    // TODO: finish
   }
 
   async typeViewName(name: string) {

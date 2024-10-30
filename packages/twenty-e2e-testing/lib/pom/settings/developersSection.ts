@@ -75,12 +75,10 @@ export class DevelopersSection {
 
   async deleteAPIKey() {
     await this.deleteButton.click();
-    // TODO: finish
   }
 
   async deleteWebhook() {
     await this.deleteButton.click();
-    // TODO: finish
   }
 
   async createWebhook() {

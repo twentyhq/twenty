@@ -6,7 +6,7 @@ export class RecordDetails {
   private readonly previousRecordButton: Locator;
   private readonly nextRecordButton: Locator;
   private readonly favoriteRecordButton: Locator;
-  private readonly addShowpageButton: Locator;
+  private readonly addShowPageButton: Locator;
   private readonly moreOptionsButton: Locator;
   private readonly deleteButton: Locator;
   private readonly uploadProfileImageButton: Locator;
@@ -39,14 +39,14 @@ export class RecordDetails {
   }
 
   async createRelatedNote() {
-    await this.addShowpageButton.click();
+    await this.addShowPageButton.click();
     await this.page
       .locator('//div[@data-testid="tooltip" and contains(., "Note")]')
       .click();
   }
 
   async createRelatedTask() {
-    await this.addShowpageButton.click();
+    await this.addShowPageButton.click();
     await this.page
       .locator('//div[@data-testid="tooltip" and contains(., "Task")]')
       .click();

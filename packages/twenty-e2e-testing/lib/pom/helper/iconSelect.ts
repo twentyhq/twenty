@@ -14,4 +14,10 @@ export class IconSelect {
     await this.iconSearchInput.fill(name);
     await this.page.getByTitle(name).click();
   }
+
+  async selectRelationIcon(name: string) {
+    await this.iconSelectButton.nth(1).click();
+    await this.iconSearchInput.fill(name);
+    await this.page.getByTitle(name).click();
+  }
 }
