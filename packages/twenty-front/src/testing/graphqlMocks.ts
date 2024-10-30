@@ -259,9 +259,13 @@ export const graphqlMocks = {
                   edges: [],
                   __typename: 'OpportunityConnection',
                 },
-                activityTargets: {
+                taskTargets: {
                   edges: [],
-                  __typename: 'ActivityTargetConnection',
+                  __typename: 'TaskTargetConnection',
+                },
+                noteTargets: {
+                  edges: [],
+                  __typename: 'NoteTargetConnection',
                 },
               },
               cursor: null,
@@ -301,9 +305,13 @@ export const graphqlMocks = {
                       edges: [],
                       __typename: 'OpportunityConnection',
                     },
-                    activityTargets: {
+                    taskTargets: {
                       edges: [],
-                      __typename: 'ActivityTargetConnection',
+                      __typename: 'TaskTargetConnection',
+                    },
+                    noteTargets: {
+                      edges: [],
+                      __typename: 'NoteTargetConnection',
                     },
                   },
                   cursor: null,
