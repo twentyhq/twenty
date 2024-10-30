@@ -1,7 +1,5 @@
 import { test as setup, expect } from '@playwright/test';
-import { config } from 'dotenv';
-import path = require('path');
-config({ path: path.resolve(__dirname, '..', '.env') });
+import path from "path";
 
 setup('Login test', async ({ page }) => {
   await page.goto('/');
