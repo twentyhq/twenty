@@ -39,7 +39,6 @@ const StyledTabListContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(10)};
-  padding-left: ${({ theme }) => theme.spacing(8)};
   .tab-list {
     padding-left: 0px;
   }
@@ -51,6 +50,7 @@ const StyledTabListContainer = styled.div`
 const StyledContentContainer = styled.div`
   flex: 1;
   overflow-y: auto;
+  padding-left: 0;
 `;
 
 const StyledObjectTypeTag = styled(SettingsDataModelObjectTypeTag)`

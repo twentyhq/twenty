@@ -5,10 +5,11 @@ import { IconRefresh, MAIN_COLORS, Toggle } from 'twenty-ui';
 const StyledToggleContainer = styled.div`
   align-items: center;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacing(4)};
+  background: ${({ theme }) => theme.background.secondary};
 `;
 
 const StyledIconRefreshContainer = styled.div`

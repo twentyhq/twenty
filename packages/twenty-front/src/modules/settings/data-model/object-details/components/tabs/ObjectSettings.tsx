@@ -47,7 +47,6 @@ const StyledContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(8)};
-  padding-left: ${({ theme }) => theme.spacing(8)};
 `;
 
 const StyledFormSection = styled(Section)`
