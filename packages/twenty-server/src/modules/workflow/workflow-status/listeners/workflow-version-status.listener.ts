@@ -54,7 +54,7 @@ export class WorkflowVersionStatusListener {
     );
   }
 
-  @OnEvent('workflowVersion.statusUpdated')
+  @OnEvent(`workflowVersion.${EventOperation.UPDATED}`)
   async handleWorkflowVersionUpdated(
     payload: WorkspaceEventBatch<WorkflowVersionStatusUpdate>,
   ): Promise<void> {
