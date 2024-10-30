@@ -74,6 +74,8 @@ export const ActivateWorkflowActionEffect = ({
   }, [
     activateWorkflowVersion,
     addActionMenuEntry,
+    deactivateWorkflowVersion,
+    isWorkflowActive,
     objectMetadataItem,
     position,
     removeActionMenuEntry,
