@@ -7,6 +7,7 @@ import {
   IconCircleX,
   IconCreditCard,
   Info,
+  Section,
 } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -20,7 +21,6 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
   OnboardingStatus,

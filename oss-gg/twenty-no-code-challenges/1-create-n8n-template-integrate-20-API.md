@@ -18,4 +18,6 @@ Your turn 👇
 
 » 02-October-2024 by [yourhandle](https://oss.gg/yourhandle) template Link: [template](https://twenty.com/)
 
+» 25-October-2024 by [sateshcharan](https://oss.gg/sateshcharan) template Link: [template]()
+
 ---

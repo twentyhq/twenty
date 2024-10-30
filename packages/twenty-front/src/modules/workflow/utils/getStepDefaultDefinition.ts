@@ -17,7 +17,9 @@ export const getStepDefaultDefinition = (
         settings: {
           input: {
             serverlessFunctionId: '',
+            serverlessFunctionVersion: '',
           },
+          outputSchema: {},
           errorHandlingOptions: {
             continueOnFailure: {
               value: false,
@@ -42,6 +44,7 @@ export const getStepDefaultDefinition = (
             subject: '',
             body: '',
           },
+          outputSchema: {},
           errorHandlingOptions: {
             continueOnFailure: {
               value: false,

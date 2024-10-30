@@ -115,7 +115,7 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(AppPath.CreateWorkspace): {
-        setHotkeyScope(PageHotkeyScope.CreateWokspace);
+        setHotkeyScope(PageHotkeyScope.CreateWorkspace);
         break;
       }
       case isMatchingLocation(AppPath.SyncEmails): {

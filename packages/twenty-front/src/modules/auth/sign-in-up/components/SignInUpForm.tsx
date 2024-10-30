@@ -27,6 +27,7 @@ import {
   IconMicrosoft,
   Loader,
   MainButton,
+  StyledText,
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
@@ -187,7 +188,9 @@ export const SignInUpForm = () => {
           </>
         )}
 
-        <HorizontalSeparator visible={true} />
+        {(authProviders.google ||
+          authProviders.microsoft ||
+          authProviders.sso) && <HorizontalSeparator visible />}
 
         {authProviders.password &&
           (signInUpStep === SignInUpStep.Password ||
@@ -267,6 +270,12 @@ export const SignInUpForm = () => {
                           disableHotkeys
                           onKeyDown={handleKeyDown}
                         />
+                        {signInUpMode === SignInUpMode.SignUp && (
+                          <StyledText
+                            text={'At least 8 characters long.'}
+                            color={theme.font.color.secondary}
+                          />
+                        )}
                       </StyledInputContainer>
                     )}
                   />

@@ -1,13 +1,14 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
+import { ObjectLiteral, Repository } from 'typeorm';
 import chalk from 'chalk';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { BaseCommandOptions } from 'src/database/commands/base.command';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 @Command({
   name: 'upgrade-0.32:copy-webhook-operation-into-operations',
@@ -43,11 +44,21 @@ export class CopyWebhookOperationIntoOperationsCommand extends ActiveWorkspacesC
 
       for (const webhook of webhooks) {
         if ('operation' in webhook) {
+          let newOperation = webhook.operation;
+
+          const [firstWebhookPart, lastWebhookPart] = newOperation.split('.');
+
+          if (['created', 'updated', 'deleted'].includes(firstWebhookPart)) {
+            newOperation = `${lastWebhookPart}.${firstWebhookPart}`;
+          }
+
           await webhookRepository.update(webhook.id, {
-            operations: [webhook.operation],
+            operation: newOperation,
+            operations: [newOperation],
           });
+
           this.logger.log(
-            chalk.yellow(`Copied webhook operation to operations`),
+            chalk.yellow(`Handled webhook operation updates for ${webhook.id}`),
           );
         }
       }

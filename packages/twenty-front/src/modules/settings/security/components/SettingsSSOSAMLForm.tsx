@@ -5,7 +5,6 @@ import { parseSAMLMetadataFromXMLFile } from '@/settings/security/utils/parseSAM
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Section } from '@/ui/layout/section/components/Section';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ChangeEvent, useRef } from 'react';
@@ -17,6 +16,7 @@ import {
   IconCopy,
   IconDownload,
   IconUpload,
+  Section,
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { isDefined } from '~/utils/isDefined';

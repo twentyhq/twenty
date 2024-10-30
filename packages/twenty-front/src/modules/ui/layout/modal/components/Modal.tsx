@@ -219,6 +219,7 @@ export const Modal = ({
 
   return (
     <StyledBackDrop
+      className="modal-backdrop"
       onMouseDown={stopEventPropagation}
       modalVariant={modalVariant}
     >

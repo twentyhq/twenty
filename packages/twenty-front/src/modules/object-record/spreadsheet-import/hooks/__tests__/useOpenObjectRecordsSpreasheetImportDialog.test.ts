@@ -46,22 +46,6 @@ const companyMocks = [
               userId
             }
             accountOwnerId
-            activityTargets {
-              edges {
-                node {
-                  __typename
-                  activityId
-                  companyId
-                  createdAt
-                  deletedAt
-                  id
-                  opportunityId
-                  personId
-                  rocketId
-                  updatedAt
-                }
-              }
-            }
             address {
               addressStreet1
               addressStreet2
@@ -80,7 +64,6 @@ const companyMocks = [
               edges {
                 node {
                   __typename
-                  activityId
                   authorId
                   companyId
                   createdAt
@@ -128,6 +111,8 @@ const companyMocks = [
                   updatedAt
                   viewId
                   workflowId
+                  workflowRunId
+                  workflowVersionId
                   workspaceMemberId
                 }
               }
@@ -277,6 +262,9 @@ const companyMocks = [
                   rocketId
                   taskId
                   updatedAt
+                  workflowId
+                  workflowRunId
+                  workflowVersionId
                   workspaceMemberId
                 }
               }

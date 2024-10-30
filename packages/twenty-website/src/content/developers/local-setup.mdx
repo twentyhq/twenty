@@ -276,6 +276,10 @@ Make sure to run yarn in the root directory and then run `npx nx server:dev twen
 
 This should work out of the box with the eslint extension installed. If this doesn't work try adding this to your vscode setting (on the dev container scope):
 
+#### While running `npx nx start` or `npx nx start twenty-front`, Out of memory is thrown
+
+In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` and `VITE_DISABLE_ESLINT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
+
 ```
 "editor.codeActionsOnSave": {
 

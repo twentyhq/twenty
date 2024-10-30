@@ -162,6 +162,11 @@ export type ClientConfig = {
   support: Support;
 };
 
+export type ComputeStepOutputSchemaInput = {
+  /** Step JSON format */
+  step: Scalars['JSON']['input'];
+};
+
 export type CreateAppTokenInput = {
   expiresAt: Scalars['DateTime']['input'];
 };
@@ -529,6 +534,7 @@ export type Mutation = {
   authorizeApp: AuthorizeApp;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
+  computeStepOutputSchema: Scalars['JSON']['output'];
   createOIDCIdentityProvider: SetupSsoOutput;
   createOneAppToken: AppToken;
   createOneField: Field;
@@ -622,6 +628,11 @@ export type MutationChallengeArgs = {
 export type MutationCheckoutSessionArgs = {
   recurringInterval: SubscriptionInterval;
   successUrlPath?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationComputeStepOutputSchemaArgs = {
+  input: ComputeStepOutputSchemaInput;
 };
 
 
