@@ -163,7 +163,19 @@ export class GraphqlQueryRunnerService {
     >(
       'findOne',
       {
-        filter: { id: { eq: args.id } },
+        filter: {
+          and: [
+            { id: { eq: args.id } },
+            {
+              // Hack to include soft deleted records
+              // Search for "withSoftDeleted" and "applyDeletedAtToBuilder" for more context
+              or: [
+                { deletedAt: { is: 'NULL' } },
+                { deletedAt: { is: 'NOT_NULL' } },
+              ],
+            },
+          ],
+        },
       },
       options,
     );
