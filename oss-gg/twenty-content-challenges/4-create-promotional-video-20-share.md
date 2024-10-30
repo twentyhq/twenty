@@ -26,4 +26,5 @@ Your turn 👇
 
 » 28-October-2024 by [adityadeshlahre](https://oss.gg/adityadeshlahre) video link: [video](https://youtu.be/65sOHce1gjw)
 
+» 30-October-2024 by [harshsbhat](https://oss.gg/harshsbhat) video link: [video](https://x.com/HarshBhatX/status/1851481457761370559)
 ---
