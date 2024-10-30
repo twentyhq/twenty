@@ -7,7 +7,7 @@ import requestDb, {
   requestSchema,
 } from '../../utils/requestDb';
 
-export enum EventOperation {
+export enum DatabaseEventAction {
   CREATED = 'created',
   UPDATED = 'updated',
   DELETED = 'deleted',
@@ -17,7 +17,7 @@ export enum EventOperation {
 export const subscribe = async (
   z: ZObject,
   bundle: Bundle,
-  operation: EventOperation,
+  operation: DatabaseEventAction,
 ) => {
   try {
     const data = {

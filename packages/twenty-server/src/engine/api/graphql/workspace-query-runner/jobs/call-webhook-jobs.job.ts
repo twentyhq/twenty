@@ -15,11 +15,15 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
+import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
+import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 export type CallWebhookJobsJobData = {
   workspaceId: string;
   objectMetadataItem: ObjectMetadataInterface;
-  record: any;
+  record: ObjectRecordBaseEvent;
   eventName: string;
 };
 
@@ -55,6 +59,36 @@ export class CallWebhookJobsJob {
       ],
     });
 
+    let formattedRecord = {};
+
+    if (operation === DatabaseEventAction.CREATED) {
+      formattedRecord = (data.record as ObjectRecordCreateEvent<any>).properties
+        .after;
+    } else if (operation === DatabaseEventAction.UPDATED) {
+      formattedRecord = (
+        data.record as ObjectRecordUpdateEvent<any>
+      ).properties.diff?.reduce(
+        (acc, [key, value]) => {
+          acc[key] = value.after;
+
+          return acc;
+        },
+        { id: data.record.recordId },
+      );
+    } else if (
+      [DatabaseEventAction.DELETED, DatabaseEventAction.DESTROYED].includes(
+        operation as DatabaseEventAction,
+      )
+    ) {
+      formattedRecord = {
+        id: data.record.recordId,
+      };
+    } else {
+      throw new Error(
+        `operation '${operation}' invalid for webhook event ${data.eventName}`,
+      );
+    }
+
     webhooks.forEach((webhook) => {
       this.messageQueueService.add<CallWebhookJobData>(
         CallWebhookJob.name,
@@ -68,7 +102,7 @@ export class CallWebhookJobsJob {
           workspaceId: data.workspaceId,
           webhookId: webhook.id,
           eventDate: new Date(),
-          record: data.record,
+          record: formattedRecord,
         },
         { retryLimit: 3 },
       );

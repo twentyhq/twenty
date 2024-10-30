@@ -4,14 +4,14 @@ import App from '../../index';
 import { triggerRecordKey } from '../../triggers/trigger_record';
 import getBundle from '../../utils/getBundle';
 import requestDb from '../../utils/requestDb';
-import { EventOperation } from '../../utils/triggers/triggers.utils';
+import { DatabaseEventAction } from '../../utils/triggers/triggers.utils';
 const appTester = createAppTester(App);
 
 describe('triggers.trigger_record.created', () => {
   test('should succeed to subscribe', async () => {
     const bundle = getBundle({});
     bundle.inputData.nameSingular = 'company';
-    bundle.inputData.operation = EventOperation.CREATED;
+    bundle.inputData.operation = DatabaseEventAction.CREATED;
     bundle.targetUrl = 'https://test.com';
     const result = await appTester(
       App.triggers[triggerRecordKey].operation.performSubscribe,

@@ -4,7 +4,7 @@ import { crudRecordKey } from '../../creates/crud_record';
 import App from '../../index';
 import getBundle from '../../utils/getBundle';
 import requestDb from '../../utils/requestDb';
-import { EventOperation } from '../../utils/triggers/triggers.utils';
+import { DatabaseEventAction } from '../../utils/triggers/triggers.utils';
 const appTester = createAppTester(App);
 tools.env.inject();
 
@@ -12,7 +12,7 @@ describe('creates.create_company', () => {
   test('should run to create a Company Record', async () => {
     const bundle = getBundle({
       nameSingular: 'Company',
-      crudZapierOperation: EventOperation.CREATED,
+      crudZapierOperation: DatabaseEventAction.CREATED,
       name: 'Company Name',
       address: { addressCity: 'Paris' },
       linkedinLink: {

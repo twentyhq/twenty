@@ -14,7 +14,13 @@ export const triggerRecordKey = 'trigger_record';
 const performSubscribe = (z: ZObject, bundle: Bundle) =>
   subscribe(z, bundle, bundle.inputData.operation);
 const performList = (z: ZObject, bundle: Bundle) =>
-  listSample(z, bundle, bundle.inputData.operation === EventOperation.DELETED);
+  listSample(
+    z,
+    bundle,
+    [EventOperation.DELETED, EventOperation.DESTROYED].includes(
+      bundle.inputData.operation,
+    ),
+  );
 
 export default {
   key: triggerRecordKey,
