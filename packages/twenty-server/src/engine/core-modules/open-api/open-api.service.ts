@@ -86,11 +86,11 @@ export class OpenApiService {
           item,
         );
         paths[`Update ${item.nameSingular}`] = computeWebhooks(
-          DatabaseEventAction.CREATED,
+          DatabaseEventAction.UPDATED,
           item,
         );
         paths[`Delete ${item.nameSingular}`] = computeWebhooks(
-          DatabaseEventAction.CREATED,
+          DatabaseEventAction.DELETED,
           item,
         );
 

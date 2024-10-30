@@ -8,12 +8,41 @@ export const computeWebhooks = (
   type: DatabaseEventAction,
   item: ObjectMetadataEntity,
 ): OpenAPIV3_1.PathItemObject => {
+  const record = [
+    DatabaseEventAction.DELETED,
+    DatabaseEventAction.DESTROYED,
+  ].includes(type)
+    ? {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            format: 'uuid',
+          },
+        },
+      }
+    : type === DatabaseEventAction.UPDATED
+      ? {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              format: 'uuid',
+            },
+            updatedField: {
+              type: 'string',
+            },
+          },
+        }
+      : {
+          $ref: `#/components/schemas/${capitalize(item.nameSingular)} for Response`,
+        };
+
   return {
     post: {
       tags: [item.nameSingular],
       security: [],
       requestBody: {
-        description: `*${type}*.**${item.nameSingular}**, *&#42;*.**${item.nameSingular}**, *&#42;*.**&#42;**`,
         content: {
           'application/json': {
             schema: {
@@ -23,17 +52,9 @@ export const computeWebhooks = (
                   type: 'string',
                   example: 'https://example.com/incomingWebhook',
                 },
-                description: {
+                eventName: {
                   type: 'string',
-                  example: 'A sample description',
-                },
-                eventType: {
-                  type: 'string',
-                  enum: [
-                    '*.*',
-                    '*.' + item.nameSingular,
-                    type + '.' + item.nameSingular,
-                  ],
+                  example: `${item.nameSingular}.${type}`,
                 },
                 objectMetadata: {
                   type: 'object',
@@ -60,9 +81,7 @@ export const computeWebhooks = (
                   type: 'string',
                   example: '2024-02-14T11:27:01.779Z',
                 },
-                record: {
-                  $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
-                },
+                record,
               },
             },
           },
