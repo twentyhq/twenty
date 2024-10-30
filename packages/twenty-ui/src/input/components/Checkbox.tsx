@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import * as React from 'react';
 import { IconCheck, IconMinus } from '@ui/display/icon/components/TablerIcons';
+import * as React from 'react';
 
 export enum CheckboxVariant {
   Primary = 'primary',
@@ -53,9 +53,7 @@ const StyledInputContainer = styled.div<InputProps>`
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   padding: ${({ theme, checkboxSize }) =>
-    checkboxSize === CheckboxSize.Large
-      ? theme.spacing(1.5)
-      : theme.spacing(1.25)};
+    checkboxSize === CheckboxSize.Large ? theme.spacing(1.5) : 0};
   position: relative;
   ${({ hoverable, isChecked, theme, indeterminate, disabled }) => {
     if (!hoverable || disabled === true) return '';
