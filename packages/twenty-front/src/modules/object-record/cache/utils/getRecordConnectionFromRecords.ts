@@ -28,16 +28,17 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
 }) => {
   return {
     __typename: getConnectionTypename(objectMetadataItem.nameSingular),
-    edges: records?.map((record) => {
-      return getRecordEdgeFromRecord({
-        objectMetadataItems,
-        objectMetadataItem,
-        recordGqlFields,
-        record,
-        isRootLevel,
-        computeReferences,
-      });
-    }),
+    edges:
+      records?.map((record) => {
+        return getRecordEdgeFromRecord({
+          objectMetadataItems,
+          objectMetadataItem,
+          recordGqlFields,
+          record,
+          isRootLevel,
+          computeReferences,
+        });
+      }) ?? [],
     ...(withPageInfo && { pageInfo: getEmptyPageInfo() }),
     ...(withPageInfo && { totalCount: records.length }),
   } as RecordGqlConnection;
