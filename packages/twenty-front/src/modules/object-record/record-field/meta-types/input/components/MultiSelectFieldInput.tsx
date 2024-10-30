@@ -12,9 +12,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { MenuItemMultiSelectTag } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectTag';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { MenuItemMultiSelectTag } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 

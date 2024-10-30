@@ -9,10 +9,10 @@ import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-me
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { MenuItem } from 'twenty-ui';
 
 type StyledContainerProps = {
   position: PositionType;

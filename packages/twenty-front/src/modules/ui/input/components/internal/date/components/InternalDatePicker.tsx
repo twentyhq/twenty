@@ -2,12 +2,15 @@ import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 import ReactDatePicker from 'react-datepicker';
 import { Key } from 'ts-key-enum';
-import { IconCalendarX, OVERLAY_BACKGROUND } from 'twenty-ui';
+import {
+  IconCalendarX,
+  MenuItemLeftContent,
+  OVERLAY_BACKGROUND,
+  StyledHoverableMenuItemBase,
+} from 'twenty-ui';
 
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
-import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
 import { isDefined } from '~/utils/isDefined';
 
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';

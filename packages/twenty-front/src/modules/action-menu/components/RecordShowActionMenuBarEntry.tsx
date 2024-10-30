@@ -2,7 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
-import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
+import { MenuItemAccent } from 'twenty-ui';
 
 type RecordShowActionMenuBarEntryProps = {
   entry: ActionMenuEntry;

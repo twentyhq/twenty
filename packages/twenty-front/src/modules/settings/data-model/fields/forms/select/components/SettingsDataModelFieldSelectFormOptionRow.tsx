@@ -10,6 +10,8 @@ import {
   IconX,
   LightIconButton,
   MAIN_COLOR_NAMES,
+  MenuItem,
+  MenuItemSelectColor,
 } from 'twenty-ui';
 import { v4 } from 'uuid';
 
@@ -22,8 +24,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';

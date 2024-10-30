@@ -5,6 +5,7 @@ import {
   IconEyeOff,
   IconFilter,
   IconSortDescending,
+  MenuItem,
 } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -12,7 +13,6 @@ import { useRecordTableStates } from '@/object-record/record-table/hooks/interna
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { ColumnDefinition } from '../../types/ColumnDefinition';

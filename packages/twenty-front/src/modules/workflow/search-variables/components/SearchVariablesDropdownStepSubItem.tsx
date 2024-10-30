@@ -1,9 +1,8 @@
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
-import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
 import { isObject } from '@sniptt/guards';
 import { useState } from 'react';
-import { IconChevronLeft } from 'twenty-ui';
+import { IconChevronLeft, MenuItemSelect } from 'twenty-ui';
 
 type SearchVariablesDropdownStepSubItemProps = {
   step: StepOutputSchema;

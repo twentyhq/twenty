@@ -5,7 +5,7 @@ import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts
 import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
-import { H2Title, Toggle, Card } from 'twenty-ui';
+import { Card, H2Title, Toggle } from 'twenty-ui';
 import { CalendarChannelVisibility } from '~/generated-metadata/graphql';
 
 const StyledDetailsContainer = styled.div`

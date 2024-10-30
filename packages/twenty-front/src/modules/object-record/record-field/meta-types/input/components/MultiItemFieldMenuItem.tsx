@@ -1,7 +1,6 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import {
@@ -11,6 +10,7 @@ import {
   IconDotsVertical,
   IconPencil,
   IconTrash,
+  MenuItem,
 } from 'twenty-ui';
 
 type MultiItemFieldMenuItemProps<T> = {
