@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import {
@@ -14,6 +13,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 
 @Injectable()
 export class WorkspaceWorkspaceMemberListener {
@@ -23,7 +23,7 @@ export class WorkspaceWorkspaceMemberListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent(`workspaceMember.${EventOperation.UPDATED}`)
+  @OnDatabaseEvent('workspaceMember', EventOperation.UPDATED)
   async handleUpdateEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>
@@ -51,7 +51,7 @@ export class WorkspaceWorkspaceMemberListener {
     );
   }
 
-  @OnEvent(`workspaceMember.${EventOperation.DELETED}`)
+  @OnDatabaseEvent('workspaceMember', EventOperation.DELETED)
   async handleDeleteEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>

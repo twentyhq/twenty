@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
@@ -15,6 +14,7 @@ import {
   CallWebhookJobsJobData,
 } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 
 @Injectable()
 export class EntityEventsToDbListener {
@@ -23,28 +23,28 @@ export class EntityEventsToDbListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent(`*.${EventOperation.CREATED}`)
+  @OnDatabaseEvent('*', EventOperation.CREATED)
   async handleCreate(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
   ) {
     return this.handle(payload);
   }
 
-  @OnEvent(`*.${EventOperation.UPDATED}`)
+  @OnDatabaseEvent('*', EventOperation.UPDATED)
   async handleUpdate(
     payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
   ) {
     return this.handle(payload);
   }
 
-  @OnEvent(`*.${EventOperation.DELETED}`)
+  @OnDatabaseEvent('*', EventOperation.DELETED)
   async handleDelete(
     payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
   ) {
     return this.handle(payload);
   }
 
-  @OnEvent(`*.${EventOperation.DESTROYED}`)
+  @OnDatabaseEvent('*', EventOperation.DESTROYED)
   async handleDestroy(
     payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
   ) {

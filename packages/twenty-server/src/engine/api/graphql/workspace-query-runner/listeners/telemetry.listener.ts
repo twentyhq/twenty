@@ -6,6 +6,7 @@ import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/t
 import { TelemetryService } from 'src/engine/core-modules/telemetry/telemetry.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 
 @Injectable()
 export class TelemetryListener {
@@ -14,7 +15,7 @@ export class TelemetryListener {
     private readonly telemetryService: TelemetryService,
   ) {}
 
-  @OnEvent(`*.${EventOperation.CREATED}`)
+  @OnDatabaseEvent('*', EventOperation.CREATED)
   async handleAllCreate(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
   ) {

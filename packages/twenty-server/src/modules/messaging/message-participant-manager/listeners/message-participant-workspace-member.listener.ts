@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -25,6 +24,7 @@ import {
 } from 'src/modules/messaging/message-participant-manager/jobs/message-participant-unmatch-participant.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 
 @Injectable()
 export class MessageParticipantWorkspaceMemberListener {
@@ -35,7 +35,7 @@ export class MessageParticipantWorkspaceMemberListener {
     private readonly workspaceRepository: Repository<Workspace>,
   ) {}
 
-  @OnEvent(`workspaceMember.${EventOperation.CREATED}`)
+  @OnDatabaseEvent('workspaceMember', EventOperation.CREATED)
   async handleCreatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>
@@ -68,7 +68,7 @@ export class MessageParticipantWorkspaceMemberListener {
     }
   }
 
-  @OnEvent(`workspaceMember.${EventOperation.UPDATED}`)
+  @OnDatabaseEvent('workspaceMember', EventOperation.UPDATED)
   async handleUpdatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>

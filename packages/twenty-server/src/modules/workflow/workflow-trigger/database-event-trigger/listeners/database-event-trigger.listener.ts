@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
@@ -18,6 +17,7 @@ import {
   WorkflowEventTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-event-trigger.job';
 import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 
 @Injectable()
 export class DatabaseEventTriggerListener {
@@ -30,28 +30,28 @@ export class DatabaseEventTriggerListener {
     private readonly isFeatureFlagEnabledService: FeatureFlagService,
   ) {}
 
-  @OnEvent(`*.${EventOperation.CREATED}`)
+  @OnDatabaseEvent('*', EventOperation.CREATED)
   async handleObjectRecordCreateEvent(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
   ) {
     await this.handleEvent(payload);
   }
 
-  @OnEvent(`*.${EventOperation.UPDATED}`)
+  @OnDatabaseEvent('*', EventOperation.UPDATED)
   async handleObjectRecordUpdateEvent(
     payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
   ) {
     await this.handleEvent(payload);
   }
 
-  @OnEvent(`*.${EventOperation.DELETED}`)
+  @OnDatabaseEvent('*', EventOperation.DELETED)
   async handleObjectRecordDeleteEvent(
     payload: WorkspaceEventBatch<ObjectRecordDeleteEvent<any>>,
   ) {
     await this.handleEvent(payload);
   }
 
-  @OnEvent(`*.${EventOperation.DESTROYED}`)
+  @OnDatabaseEvent('*', EventOperation.DESTROYED)
   async handleObjectRecordDestroyEvent(
     payload: WorkspaceEventBatch<ObjectRecordDestroyEvent<any>>,
   ) {
