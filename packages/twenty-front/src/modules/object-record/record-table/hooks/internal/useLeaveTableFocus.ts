@@ -7,13 +7,10 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
-import { useCloseCurrentTableCellInEditMode } from './useCloseCurrentTableCellInEditMode';
 import { useDisableSoftFocus } from './useDisableSoftFocus';
 
 export const useLeaveTableFocus = (recordTableId?: string) => {
   const disableSoftFocus = useDisableSoftFocus(recordTableId);
-  const closeCurrentCellInEditMode =
-    useCloseCurrentTableCellInEditMode(recordTableId);
 
   const { isSoftFocusActiveState } = useRecordTableStates(recordTableId);
 
@@ -41,14 +38,8 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
           return;
         }
 
-        closeCurrentCellInEditMode();
         disableSoftFocus();
       },
-    [
-      closeCurrentCellInEditMode,
-      disableSoftFocus,
-      isSoftFocusActiveState,
-      resetTableRowSelection,
-    ],
+    [disableSoftFocus, isSoftFocusActiveState, resetTableRowSelection],
   );
 };
