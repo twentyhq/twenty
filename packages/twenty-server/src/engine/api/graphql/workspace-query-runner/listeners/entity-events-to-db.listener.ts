@@ -75,8 +75,8 @@ export class EntityEventsToDbListener {
         CallWebhookJobsJob.name,
         {
           record: event,
-          workspaceId: event.workspaceId,
-          eventName: event.name,
+          workspaceId: payload.workspaceId,
+          eventName: payload.name,
           objectMetadataItem: event.objectMetadata,
         },
         { retryLimit: 3 },

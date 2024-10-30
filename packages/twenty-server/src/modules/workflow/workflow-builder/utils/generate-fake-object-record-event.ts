@@ -6,10 +6,11 @@ import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
+import { EventOperation } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 
 export const generateFakeObjectRecordEvent = <Entity>(
   objectMetadataEntity: ObjectMetadataEntity,
-  action: 'created' | 'updated' | 'deleted' | 'destroyed',
+  action: EventOperation,
 ):
   | ObjectRecordCreateEvent<Entity>
   | ObjectRecordUpdateEvent<Entity>
@@ -21,7 +22,7 @@ export const generateFakeObjectRecordEvent = <Entity>(
 
   const after = generateFakeObjectRecord<Entity>(objectMetadataEntity);
 
-  if (action === 'created') {
+  if (action === EventOperation.CREATED) {
     return {
       recordId,
       userId,
@@ -35,7 +36,7 @@ export const generateFakeObjectRecordEvent = <Entity>(
 
   const before = generateFakeObjectRecord<Entity>(objectMetadataEntity);
 
-  if (action === 'updated') {
+  if (action === EventOperation.UPDATED) {
     return {
       recordId,
       userId,
@@ -49,7 +50,7 @@ export const generateFakeObjectRecordEvent = <Entity>(
     } satisfies ObjectRecordUpdateEvent<Entity>;
   }
 
-  if (action === 'deleted') {
+  if (action === EventOperation.DELETED) {
     return {
       recordId,
       userId,
@@ -61,7 +62,7 @@ export const generateFakeObjectRecordEvent = <Entity>(
     } satisfies ObjectRecordDeleteEvent<Entity>;
   }
 
-  if (action === 'destroyed') {
+  if (action === EventOperation.DESTROYED) {
     return {
       recordId,
       userId,
