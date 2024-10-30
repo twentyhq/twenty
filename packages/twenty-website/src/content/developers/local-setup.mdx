@@ -115,6 +115,7 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
     ```
+    Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
 
     <b>Option 2:</b> If you have docker installed:
     ```bash
@@ -143,6 +144,7 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
     ```
+    Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
 
     <b>Option 2:</b> If you have docker installed:  
     Running Docker on WSL adds an extra layer of complexity.
