@@ -19,6 +19,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
@@ -139,10 +140,15 @@ export const ObjectFilterDropdownFilterSelect = ({
   const { currentViewId, currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView();
 
+  const isAdvancedFiltersEnabled = useIsFeatureEnabled(
+    'IS_ADVANCED_FILTERS_ENABLED',
+  );
+
   const shouldShowAdvancedFilterButton =
     isDefined(currentViewId) &&
     isDefined(currentViewWithCombinedFiltersAndSorts?.objectMetadataId) &&
-    isAdvancedFilterButtonVisible;
+    isAdvancedFilterButtonVisible &&
+    isAdvancedFiltersEnabled;
 
   return (
     <>

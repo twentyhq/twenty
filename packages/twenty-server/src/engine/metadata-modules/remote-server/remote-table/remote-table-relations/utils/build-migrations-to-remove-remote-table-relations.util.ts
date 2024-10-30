@@ -1,9 +1,9 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
-  WorkspaceMigrationTableAction,
-  WorkspaceMigrationTableActionType,
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnDrop,
+  WorkspaceMigrationTableAction,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
