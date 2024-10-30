@@ -23,6 +23,7 @@ export const generateEmptyJestRecordNode = ({
   }
 
   const prefilledRecord = prefillRecord({ objectMetadataItem, input });
+  console.log(prefilledRecord);
 
   return getRecordNodeFromRecord({
     record: prefilledRecord,
