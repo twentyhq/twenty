@@ -1,5 +1,5 @@
 import { test as setup, expect } from '@playwright/test';
-import path from "path";
+import path from 'path';
 
 setup('Login test', async ({ page }) => {
   await page.goto('/');
