@@ -42,6 +42,9 @@ export class CallWebhookJobsJob {
 
   @Process(CallWebhookJobsJob.name)
   async handle(data: CallWebhookJobsJobData): Promise<void> {
+    // If you change that function, double check it does not break Zapier
+    // trigger in packages/twenty-zapier/src/triggers/trigger_record.ts
+
     const webhookRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WebhookWorkspaceEntity>(
         data.workspaceId,

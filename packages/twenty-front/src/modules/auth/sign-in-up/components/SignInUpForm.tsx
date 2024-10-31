@@ -188,7 +188,9 @@ export const SignInUpForm = () => {
           </>
         )}
 
-        <HorizontalSeparator visible={true} />
+        {(authProviders.google ||
+          authProviders.microsoft ||
+          authProviders.sso) && <HorizontalSeparator visible />}
 
         {authProviders.password &&
           (signInUpStep === SignInUpStep.Password ||

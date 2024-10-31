@@ -13,13 +13,14 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { VIEW_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
 import { ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
-import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
+import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.view,
@@ -27,7 +28,7 @@ import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view
   labelSingular: 'View',
   labelPlural: 'Views',
   description: '(System) Views',
-  icon: 'IconLayoutCollage',
+  icon: STANDARD_OBJECT_ICONS.view,
   labelIdentifierStandardId: VIEW_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsNotAuditLogged()

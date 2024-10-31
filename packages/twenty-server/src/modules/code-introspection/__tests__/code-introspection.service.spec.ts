@@ -103,4 +103,34 @@ describe('CodeIntrospectionService', () => {
       ]);
     });
   });
+
+  describe('generateFakeDataForFunction', () => {
+    it('should generate fake data for function', () => {
+      const fileContent = `
+        const testArrowFunction = (param1: string, param2: number): void => {
+          console.log(param1, param2);
+        };
+      `;
+
+      const result = service.generateInputData(fileContent);
+
+      expect(typeof result['param1']).toEqual('string');
+      expect(typeof result['param2']).toEqual('number');
+    });
+
+    it('should generate fake data for complex function', () => {
+      const fileContent = `
+        const testArrowFunction = (param1: string[], param2: { key: number }): void => {
+          console.log(param1, param2);
+        };
+      `;
+
+      const result = service.generateInputData(fileContent);
+
+      expect(Array.isArray(result['param1'])).toBeTruthy();
+      expect(typeof result['param1'][0]).toEqual('string');
+      expect(typeof result['param2']).toEqual('object');
+      expect(typeof result['param2']['key']).toEqual('number');
+    });
+  });
 });

@@ -31,3 +31,5 @@ Your turn 👇
 » 27-October-2024 by [Vardhaman619](https://oss.gg/vardhaman619) blog Link: [blog](https://dev.to/vardhaman619/my-experience-with-modern-open-source-crm-twenty-crm-2hen)
 
 » 28-October-2024 by [harshsbhat](https://oss.gg/harshsbhat) blog Link: [blog](https://www.harshbhat.me/blog/twenty-crm)
+
+» 28-October-2024 by [AshishViradiya153](https://oss.gg/AshishViradiya153) blog Link: [blog](https://medium.com/@ashishviradiya153/is-twenty-crm-the-right-tool-for-your-business-heres-my-honest-review-0d41e9d8a7eb)

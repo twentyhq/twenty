@@ -13,7 +13,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -119,22 +118,15 @@ export const MultiRecordSelect = ({
           );
         })}
       </SelectableList>
-      {objectRecordsIdsMultiSelect?.length === 0 &&
-        !recordMultiSelectIsLoading && <MenuItem text="No result" />}
     </DropdownMenuItemsContainer>
   );
 
   const createNewButton = isDefined(onCreate) && (
-    <>
-      <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
-        <CreateNewButton
-          onClick={() => onCreate?.(relationPickerSearchFilter)}
-          LeftIcon={IconPlus}
-          text="Add New"
-        />
-      </DropdownMenuItemsContainer>
-    </>
+    <CreateNewButton
+      onClick={() => onCreate?.(relationPickerSearchFilter)}
+      LeftIcon={IconPlus}
+      text="Add New"
+    />
   );
 
   return (
@@ -148,12 +140,20 @@ export const MultiRecordSelect = ({
       <DropdownMenu ref={containerRef} data-select-disable>
         {dropdownPlacement?.includes('end') && (
           <>
-            {createNewButton}
+            <DropdownMenuItemsContainer>
+              {createNewButton}
+            </DropdownMenuItemsContainer>
+            <DropdownMenuSeparator />
             {results}
             {recordMultiSelectIsLoading && !relationPickerSearchFilter && (
-              <DropdownMenuSkeletonItem />
+              <>
+                <DropdownMenuSkeletonItem />
+                <DropdownMenuSeparator />
+              </>
             )}
-            <DropdownMenuSeparator />
+            {objectRecordsIdsMultiSelect?.length > 0 && (
+              <DropdownMenuSeparator />
+            )}
           </>
         )}
         <DropdownMenuSearchInput
@@ -166,10 +166,18 @@ export const MultiRecordSelect = ({
           <>
             <DropdownMenuSeparator />
             {recordMultiSelectIsLoading && !relationPickerSearchFilter && (
-              <DropdownMenuSkeletonItem />
+              <>
+                <DropdownMenuSkeletonItem />
+                <DropdownMenuSeparator />
+              </>
             )}
             {results}
-            {createNewButton}
+            {objectRecordsIdsMultiSelect?.length > 0 && (
+              <DropdownMenuSeparator />
+            )}
+            <DropdownMenuItemsContainer>
+              {createNewButton}
+            </DropdownMenuItemsContainer>
           </>
         )}
       </DropdownMenu>

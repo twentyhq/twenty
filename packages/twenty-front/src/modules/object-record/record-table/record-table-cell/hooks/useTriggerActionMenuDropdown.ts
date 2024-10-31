@@ -1,11 +1,13 @@
 import { useRecoilCallback } from 'recoil';
 
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 export const useTriggerActionMenuDropdown = ({
@@ -13,6 +15,10 @@ export const useTriggerActionMenuDropdown = ({
 }: {
   recordTableId: string;
 }) => {
+  const actionMenuInstanceId = useAvailableComponentInstanceIdOrThrow(
+    ActionMenuComponentInstanceContext,
+  );
+
   const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
     isRowSelectedComponentFamilyState,
     recordTableId,
@@ -26,7 +32,7 @@ export const useTriggerActionMenuDropdown = ({
         set(
           extractComponentState(
             recordIndexActionMenuDropdownPositionComponentState,
-            `action-menu-dropdown-${recordTableId}`,
+            `action-menu-dropdown-${actionMenuInstanceId}`,
           ),
           {
             x: event.clientX,
@@ -45,19 +51,19 @@ export const useTriggerActionMenuDropdown = ({
 
         const isActionMenuDropdownOpenState = extractComponentState(
           isDropdownOpenComponentState,
-          `action-menu-dropdown-${recordTableId}`,
+          `action-menu-dropdown-${actionMenuInstanceId}`,
         );
 
         const isActionBarOpenState = isBottomBarOpenedComponentState.atomFamily(
           {
-            instanceId: `action-bar-${recordTableId}`,
+            instanceId: `action-bar-${actionMenuInstanceId}`,
           },
         );
 
         set(isActionBarOpenState, false);
         set(isActionMenuDropdownOpenState, true);
       },
-    [isRowSelectedFamilyState, recordTableId],
+    [actionMenuInstanceId, isRowSelectedFamilyState, recordTableId],
   );
 
   return { triggerActionMenuDropdown };
