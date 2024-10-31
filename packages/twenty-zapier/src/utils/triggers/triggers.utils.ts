@@ -89,5 +89,14 @@ export const performList = async (
     bundle,
     nameSingular,
   );
-  return await requestDbViaRestApi(z, bundle, namePlural);
+  const results = await requestDbViaRestApi(z, bundle, namePlural);
+  return results.map((result) => ({
+    eventName: `${bundle.inputData.nameSingular}.${bundle.inputData.operation}`,
+    record: result,
+    ...(bundle.inputData.operation === DatabaseEventAction.UPDATED && {
+      updatedFields: Object.keys(result).filter((key) => key !== 'id')?.[0] || [
+        'updatedField',
+      ],
+    }),
+  }));
 };
