@@ -78,41 +78,11 @@ resource "kubernetes_deployment" "twentycrm_worker" {
           }
 
           env {
-            name = "ACCESS_TOKEN_SECRET"
+            name = "APP_SECRET"
             value_from {
               secret_key_ref {
                 name = "tokens"
                 key  = "accessToken"
-              }
-            }
-          }
-
-          env {
-            name = "LOGIN_TOKEN_SECRET"
-            value_from {
-              secret_key_ref {
-                name = "tokens"
-                key  = "loginToken"
-              }
-            }
-          }
-
-          env {
-            name = "REFRESH_TOKEN_SECRET"
-            value_from {
-              secret_key_ref {
-                name = "tokens"
-                key  = "refreshToken"
-              }
-            }
-          }
-
-          env {
-            name = "FILE_TOKEN_SECRET"
-            value_from {
-              secret_key_ref {
-                name = "tokens"
-                key  = "fileToken"
               }
             }
           }

@@ -10,6 +10,7 @@ export enum ClickOutsideMode {
 
 export type ClickOutsideListenerProps<T extends Element> = {
   refs: Array<React.RefObject<T>>;
+  excludeClassNames?: string[];
   callback: (event: MouseEvent | TouchEvent) => void;
   mode?: ClickOutsideMode;
   listenerId: string;
@@ -18,6 +19,7 @@ export type ClickOutsideListenerProps<T extends Element> = {
 
 export const useListenClickOutsideV2 = <T extends Element>({
   refs,
+  excludeClassNames,
   callback,
   mode = ClickOutsideMode.compareHTMLRef,
   listenerId,
@@ -106,11 +108,34 @@ export const useListenClickOutsideV2 = <T extends Element>({
           .getValue();
 
         if (mode === ClickOutsideMode.compareHTMLRef) {
+          const clickedElement = event.target as HTMLElement;
+          let isClickedOnExcluded = false;
+          let currentElement: HTMLElement | null = clickedElement;
+
+          while (currentElement) {
+            const currentClassList = currentElement.classList;
+
+            isClickedOnExcluded =
+              excludeClassNames?.some((className) =>
+                currentClassList.contains(className),
+              ) ?? false;
+
+            if (isClickedOnExcluded) {
+              break;
+            }
+
+            currentElement = currentElement.parentElement;
+          }
+
           const clickedOnAtLeastOneRef = refs
             .filter((ref) => !!ref.current)
             .some((ref) => ref.current?.contains(event.target as Node));
 
-          if (!clickedOnAtLeastOneRef && !isMouseDownInside) {
+          if (
+            !clickedOnAtLeastOneRef &&
+            !isMouseDownInside &&
+            !isClickedOnExcluded
+          ) {
             callback(event);
           }
         }
@@ -151,7 +176,13 @@ export const useListenClickOutsideV2 = <T extends Element>({
           }
         }
       },
-    [mode, refs, callback, getClickOutsideListenerIsMouseDownInsideState],
+    [
+      getClickOutsideListenerIsMouseDownInsideState,
+      mode,
+      refs,
+      excludeClassNames,
+      callback,
+    ],
   );
 
   useEffect(() => {

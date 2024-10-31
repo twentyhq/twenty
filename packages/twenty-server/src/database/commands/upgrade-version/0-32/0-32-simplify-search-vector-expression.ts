@@ -79,11 +79,10 @@ export class SimplifySearchVectorExpressionCommand extends ActiveWorkspacesComma
               fieldsUsedForSearch = SEARCH_FIELDS_FOR_OPPORTUNITY;
               break;
             }
-            default: {
-              throw new Error(
-                `search vector has unexpected standardId: ${searchVectorField.standardId}`,
-              );
-            }
+          }
+
+          if (fieldsUsedForSearch.length === 0) {
+            continue;
           }
 
           await this.searchService.updateSearchVector(

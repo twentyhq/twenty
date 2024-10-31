@@ -100,7 +100,6 @@ type SettingsDataModelFieldSettingsFormCardProps = {
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
-  display: grid;
   flex: 1 1 100%;
 `;
 

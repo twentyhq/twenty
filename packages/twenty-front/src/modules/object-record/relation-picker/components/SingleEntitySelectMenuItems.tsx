@@ -36,6 +36,8 @@ export type SingleEntitySelectMenuItemsProps = {
   isAllEntitySelectShown?: boolean;
   onAllEntitySelected?: () => void;
   hotkeyScope?: string;
+  isFiltered: boolean;
+  shouldSelectEmptyOption?: boolean;
 };
 
 export const SingleEntitySelectMenuItems = ({
@@ -54,6 +56,8 @@ export const SingleEntitySelectMenuItems = ({
   isAllEntitySelectShown,
   onAllEntitySelected,
   hotkeyScope = RelationPickerHotkeyScope.RelationPicker,
+  isFiltered,
+  shouldSelectEmptyOption,
 }: SingleEntitySelectMenuItemsProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -139,9 +143,11 @@ export const SingleEntitySelectMenuItems = ({
         }}
       >
         <DropdownMenuItemsContainer hasMaxHeight>
-          {loading ? (
+          {loading && !isFiltered ? (
             <DropdownMenuSkeletonItem />
-          ) : entitiesInDropdown.length === 0 && !isAllEntitySelectShown ? (
+          ) : entitiesInDropdown.length === 0 &&
+            !isAllEntitySelectShown &&
+            !loading ? (
             <>
               <MenuItem text="No result" />
               {entitiesToSelect.length > 0 && <DropdownMenuSeparator />}
@@ -177,7 +183,7 @@ export const SingleEntitySelectMenuItems = ({
                         onClick={() => onEntitySelected()}
                         LeftIcon={EmptyIcon}
                         text={emptyLabel}
-                        selected={!selectedEntity}
+                        selected={shouldSelectEmptyOption === true}
                         hovered={isSelectedSelectNoneButton}
                       />
                     )

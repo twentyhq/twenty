@@ -1,11 +1,15 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui';
+import {
+  Checkbox,
+  CheckboxShape,
+  IconCalendar,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
-import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
 import { ActivityRow } from '@/activities/components/ActivityRow';

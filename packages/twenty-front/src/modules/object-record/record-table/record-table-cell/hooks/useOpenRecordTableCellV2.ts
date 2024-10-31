@@ -21,6 +21,8 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from '~/utils/isDefined';
 
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
+import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
@@ -42,6 +44,9 @@ export type OpenTableCellArgs = {
 };
 
 export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
+  const { getClickOutsideListenerIsActivatedState } =
+    useClickOustideListenerStates(RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID);
+
   const { indexIdentifierUrl } = useContext(RecordIndexRootPropsContext);
   const moveEditModeToTableCellPosition =
     useMoveEditModeToTableCellPosition(tableScopeId);
@@ -65,7 +70,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
   const navigate = useNavigate();
 
   const openTableCell = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       ({
         initialValue,
         cellPosition,
@@ -79,6 +84,8 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         if (isReadOnly) {
           return;
         }
+
+        set(getClickOutsideListenerIsActivatedState, false);
 
         const isFirstColumnCell = cellPosition.column === 0;
 
@@ -137,17 +144,18 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         }
       },
     [
+      getClickOutsideListenerIsActivatedState,
       setDragSelectionStartEnabled,
+      moveEditModeToTableCellPosition,
+      initDraftValue,
       toggleClickOutsideListener,
       leaveTableFocus,
-      setHotkeyScope,
-      initDraftValue,
-      moveEditModeToTableCellPosition,
-      openRightDrawer,
+      navigate,
+      indexIdentifierUrl,
       setViewableRecordId,
       setViewableRecordNameSingular,
-      indexIdentifierUrl,
-      navigate,
+      openRightDrawer,
+      setHotkeyScope,
     ],
   );
 
