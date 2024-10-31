@@ -88,8 +88,8 @@ export const RecordTableWithWrappers = ({
                 />
               </StyledTableInternalContainer>
               <RecordTableInternalEffect
-                recordTableId={recordTableId}
                 tableBodyRef={tableBodyRef}
+                recordTableId={recordTableId}
               />
             </StyledTableContainer>
           </StyledTableWithHeader>

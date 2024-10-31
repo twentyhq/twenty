@@ -10,15 +10,13 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { Command, CommandType } from '@/command-menu/types/Command';
 import { Company } from '@/companies/types/Company';
+import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
-import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
-import { Opportunity } from '@/opportunities/Opportunity';
+import { Opportunity } from '@/opportunities/types/Opportunity';
 import { Person } from '@/people/types/Person';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -32,7 +30,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { Avatar, IconNotes, IconSparkles, IconX, isDefined } from 'twenty-ui';
+import {
+  Avatar,
+  IconNotes,
+  IconSparkles,
+  IconX,
+  LightIconButton,
+  isDefined,
+} from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
 import { getLogoUrlFromDomainName } from '~/utils';
 
@@ -181,16 +186,11 @@ export const CommandMenu = () => {
       searchInput: deferredCommandMenuSearch ?? undefined,
     });
 
-  const { loading: isNotesLoading, records: notes } = useFindManyRecords<Note>({
+  const { loading: isNotesLoading, records: notes } = useSearchRecords<Note>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Note,
-    filter: deferredCommandMenuSearch
-      ? makeOrFilterVariables([
-          { title: { ilike: `%${deferredCommandMenuSearch}%` } },
-          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
-        ])
-      : undefined,
     limit: 3,
+    searchInput: deferredCommandMenuSearch ?? undefined,
   });
 
   const { loading: isOpportunitiesLoading, records: opportunities } =
@@ -288,6 +288,14 @@ export const CommandMenu = () => {
         : true) && cmd.type === CommandType.Create,
   );
 
+  const matchingActionCommands = commandMenuCommands.filter(
+    (cmd) =>
+      (deferredCommandMenuSearch.length > 0
+        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
+          checkInLabels(cmd, deferredCommandMenuSearch)
+        : true) && cmd.type === CommandType.Action,
+  );
+
   useListenClickOutside({
     refs: [commandMenuRef],
     callback: closeCommandMenu,
@@ -313,6 +321,7 @@ export const CommandMenu = () => {
 
   const selectableItemIds = copilotCommands
     .map((cmd) => cmd.id)
+    .concat(matchingActionCommands.map((cmd) => cmd.id))
     .concat(matchingCreateCommand.map((cmd) => cmd.id))
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people?.map((person) => person.id))
@@ -321,22 +330,28 @@ export const CommandMenu = () => {
     .concat(notes?.map((note) => note.id));
 
   const isNoResults =
+    !matchingActionCommands.length &&
     !matchingCreateCommand.length &&
     !matchingNavigateCommand.length &&
     !people?.length &&
     !companies?.length &&
     !notes?.length &&
     !opportunities?.length;
+
   const isLoading =
     isPeopleLoading ||
     isNotesLoading ||
     isOpportunitiesLoading ||
     isCompaniesLoading;
 
+  const mainContextStoreComponentInstanceId = useRecoilValue(
+    mainContextStoreComponentInstanceIdState,
+  );
+
   return (
     <>
       {isCommandMenuOpened && (
-        <StyledCommandMenu ref={commandMenuRef}>
+        <StyledCommandMenu ref={commandMenuRef} className="command-menu">
           <StyledInputContainer>
             <StyledInput
               autoFocus
@@ -392,6 +407,23 @@ export const CommandMenu = () => {
                           onClick={copilotCommand.onCommandClick}
                         />
                       </SelectableItem>
+                    </CommandGroup>
+                  )}
+                  {mainContextStoreComponentInstanceId && (
+                    <CommandGroup heading="Actions">
+                      {matchingActionCommands?.map((actionCommand) => (
+                        <SelectableItem
+                          itemId={actionCommand.id}
+                          key={actionCommand.id}
+                        >
+                          <CommandMenuItem
+                            id={actionCommand.id}
+                            label={actionCommand.label}
+                            Icon={actionCommand.Icon}
+                            onClick={actionCommand.onCommandClick}
+                          />
+                        </SelectableItem>
+                      ))}
                     </CommandGroup>
                   )}
                   <CommandGroup heading="Create">

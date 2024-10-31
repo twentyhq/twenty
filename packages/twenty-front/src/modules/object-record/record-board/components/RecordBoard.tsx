@@ -6,17 +6,18 @@ import { Key } from 'ts-key-enum';
 
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
+import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
-import { getDraggedRecordPosition } from '@/object-record/record-board/utils/get-dragged-record-position.util';
+import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
@@ -31,16 +32,21 @@ const StyledContainer = styled.div`
 
 const StyledColumnContainer = styled.div`
   display: flex;
+  & > *:not(:first-of-type) {
+    border-left: 1px solid ${({ theme }) => theme.border.color.light};
+  }
 `;
 
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 const StyledBoardContentContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: calc(100% - 48px);
 `;
 
 const RecordBoardScrollRestoreEffect = () => {
@@ -64,9 +70,15 @@ export const RecordBoard = () => {
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);
 
-  useListenClickOutsideByClassName({
-    classNames: ['record-board-card'],
-    excludeClassNames: ['bottom-bar', 'context-menu'],
+  useListenClickOutsideV2({
+    excludeClassNames: [
+      'bottom-bar',
+      'action-menu-dropdown',
+      'command-menu',
+      'modal-backdrop',
+    ],
+    listenerId: RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
+    refs: [boardRef],
     callback: resetRecordSelection,
   });
 
@@ -136,6 +148,12 @@ export const RecordBoard = () => {
       updateOneRecord,
     ],
   );
+
+  // FixMe: Check if we really need this as it depends on the times it takes to update the view groups
+  // if (isPersistingViewGroups) {
+  //   // TODO: Add skeleton state
+  //   return null;
+  // }
 
   return (
     <RecordBoardScope

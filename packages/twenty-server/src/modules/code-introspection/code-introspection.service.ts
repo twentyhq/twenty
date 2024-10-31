@@ -12,6 +12,7 @@ import {
   CodeIntrospectionException,
   CodeIntrospectionExceptionCode,
 } from 'src/modules/code-introspection/code-introspection.exception';
+import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 
 type FunctionParameter = {
   name: string;
@@ -88,5 +89,25 @@ export class CodeIntrospectionService {
       name: parameter.getName(),
       type: parameter.getType().getText(),
     };
+  }
+
+  public generateInputData(fileContent: string, fileName = 'temp.ts') {
+    const parameters = this.analyze(fileContent, fileName);
+
+    return this.generateFakeDataFromParams(parameters);
+  }
+
+  private generateFakeDataFromParams(
+    params: FunctionParameter[],
+  ): Record<string, any> {
+    const data: Record<string, any> = {};
+
+    params.forEach((param) => {
+      const type = param.type;
+
+      data[param.name] = generateFakeValue(type);
+    });
+
+    return data;
   }
 }

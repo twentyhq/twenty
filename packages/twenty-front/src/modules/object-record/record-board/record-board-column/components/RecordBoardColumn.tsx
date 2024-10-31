@@ -6,11 +6,8 @@ import { useRecordBoardStates } from '@/object-record/record-board/hooks/interna
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 
-const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
+const StyledColumn = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
-  border-left: 1px solid
-    ${({ theme, isFirstColumn }) =>
-      isFirstColumn ? 'none' : theme.border.color.light};
   display: flex;
   flex-direction: column;
   max-width: 200px;
@@ -32,22 +29,10 @@ type RecordBoardColumnProps = {
 export const RecordBoardColumn = ({
   recordBoardColumnId,
 }: RecordBoardColumnProps) => {
-  const {
-    isFirstColumnFamilyState,
-    isLastColumnFamilyState,
-    columnsFamilySelector,
-    recordIdsByColumnIdFamilyState,
-  } = useRecordBoardStates();
+  const { columnsFamilySelector, recordIdsByColumnIdFamilyState } =
+    useRecordBoardStates();
   const columnDefinition = useRecoilValue(
     columnsFamilySelector(recordBoardColumnId),
-  );
-
-  const isFirstColumn = useRecoilValue(
-    isFirstColumnFamilyState(recordBoardColumnId),
-  );
-
-  const isLastColumn = useRecoilValue(
-    isLastColumnFamilyState(recordBoardColumnId),
   );
 
   const recordIds = useRecoilValue(
@@ -62,8 +47,6 @@ export const RecordBoardColumn = ({
     <RecordBoardColumnContext.Provider
       value={{
         columnDefinition: columnDefinition,
-        isFirstColumn: isFirstColumn,
-        isLastColumn: isLastColumn,
         recordCount: recordIds.length,
         columnId: recordBoardColumnId,
         recordIds,
@@ -71,7 +54,7 @@ export const RecordBoardColumn = ({
     >
       <Droppable droppableId={recordBoardColumnId}>
         {(droppableProvided) => (
-          <StyledColumn isFirstColumn={isFirstColumn}>
+          <StyledColumn>
             <RecordBoardColumnCardsContainer
               droppableProvided={droppableProvided}
               recordIds={recordIds}

@@ -129,6 +129,7 @@ export const ObjectFilterDropdownRecordSelect = ({
         displayValue: filterDisplayValue,
         fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
         value: newFilterValue,
+        viewFilterGroupId: selectedFilter?.viewFilterGroupId,
       });
     }
   };

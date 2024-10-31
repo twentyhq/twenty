@@ -1,13 +1,13 @@
 import { Meta } from '@storybook/react';
 
+import {
+  headerSelectionTableFields,
+  mockRsiValues,
+} from '@/spreadsheet-import/__mocks__/mockRsiValues';
 import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
 import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
 import { SelectHeaderStep } from '@/spreadsheet-import/steps/components/SelectHeaderStep/SelectHeaderStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
-import {
-  headerSelectionTableFields,
-  mockRsiValues,
-} from '@/spreadsheet-import/tests/mockRsiValues';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 
 const meta: Meta<typeof SelectHeaderStep> = {

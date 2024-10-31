@@ -1,0 +1,18 @@
+
+VERSION=0.0.0
+
+
+
+##########
+# OPTIONAL env vars
+
+# Don't print CLI version warning message if there's a new available version
+# TB_VERSION_WARNING=0
+
+# Skip regression tests
+# TB_SKIP_REGRESSION=0
+
+# Use `OBFUSCATE_REGEX_PATTERN` and `OBFUSCATE_PATTERN_SEPARATOR` environment variables to define a regex pattern and a separator (in case of a single string with multiple regex) to obfuscate secrets in the CLI output.
+# OBFUSCATE_REGEX_PATTERN="https://(www\.)?[^/]+||^Follow these instructions =>"
+# OBFUSCATE_PATTERN_SEPARATOR=||
+##########

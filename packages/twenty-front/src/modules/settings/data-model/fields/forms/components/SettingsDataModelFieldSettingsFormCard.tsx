@@ -100,7 +100,6 @@ type SettingsDataModelFieldSettingsFormCardProps = {
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
-  display: grid;
   flex: 1 1 100%;
 `;
 
@@ -129,7 +128,9 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
-  if (!previewableTypes.includes(fieldMetadataItem.type)) return null;
+  if (!previewableTypes.includes(fieldMetadataItem.type)) {
+    return null;
+  }
 
   if (fieldMetadataItem.type === FieldMetadataType.Boolean) {
     return (
