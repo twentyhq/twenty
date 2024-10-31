@@ -3,7 +3,7 @@ import { mainContextStoreComponentInstanceIdState } from '@/context-store/states
 import { useContext, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
-export const SetMainContextStoreComponentInstanceIdEffect = () => {
+export const MainContextStoreComponentInstanceIdSetterEffect = () => {
   const setMainContextStoreComponentInstanceId = useSetRecoilState(
     mainContextStoreComponentInstanceIdState,
   );

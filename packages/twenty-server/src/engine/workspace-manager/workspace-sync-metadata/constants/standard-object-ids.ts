@@ -6,6 +6,7 @@
  */
 
 export const STANDARD_OBJECT_IDS = {
+  // TODO: check if activity, activityTarget and comment can be deleted
   activityTarget: '20202020-2945-440e-8d1a-f84672d33d5e',
   activity: '20202020-39aa-4a89-843b-eb5f2a8b677f',
   apiKey: '20202020-4c00-401d-8cda-ec6a4c41cd7d',

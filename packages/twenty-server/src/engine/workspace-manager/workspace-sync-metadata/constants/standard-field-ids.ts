@@ -5,6 +5,7 @@
  * For readability keys can be edited but the values should not be changed.
  */
 
+// TODO: check if this can be deleted
 export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
   activity: '20202020-ca58-478c-a4f5-ae825671c30e',
   person: '20202020-4afd-4ae7-99c2-de57d795a93f',
@@ -13,6 +14,7 @@ export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
   custom: '20202020-7f21-442f-94be-32462281b1ca',
 };
 
+// TODO: check if this can be deleted
 export const ACTIVITY_STANDARD_FIELD_IDS = {
   title: '20202020-24a1-4d94-a071-617f3eeed7b0',
   body: '20202020-209b-440a-b2a8-043fa36a7d37',
@@ -109,6 +111,7 @@ export const CALENDAR_EVENT_STANDARD_FIELD_IDS = {
   calendarEventParticipants: '20202020-e07e-4ccb-88f5-6f3d00458eec',
 };
 
+// TODO: check if this can be deleted
 export const COMMENT_STANDARD_FIELD_IDS = {
   body: '20202020-d5eb-49d2-b3e0-1ed04145ebb7',
   author: '20202020-2ab1-427e-a981-cf089de3a9bd',
@@ -129,6 +132,7 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   createdBy: '20202020-fabc-451d-ab7d-412170916baa',
   people: '20202020-3213-4ddf-9494-6422bcff8d7c',
   accountOwner: '20202020-95b8-4e10-9881-edb5d4765f9d',
+  // TODO: check if activityTargets field can be deleted
   activityTargets: '20202020-c2a5-4c9b-9d9a-582bcd57fbc8',
   taskTargets: '20202020-cb17-4a61-8f8f-3be6730480de',
   noteTargets: '20202020-bae0-4556-a74a-a9c686f77a88',
@@ -304,6 +308,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   pointOfContact: '20202020-8dfb-42fc-92b6-01afb759ed16',
   company: '20202020-cbac-457e-b565-adece5fc815f',
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
+  // TODO: check if activityTargets field can be deleted
   activityTargets: '20202020-220a-42d6-8261-b2102d6eab35',
   taskTargets: '20202020-59c0-4179-a208-4a255f04a5be',
   noteTargets: '20202020-dd3f-42d5-a382-db58aabf43d3',
@@ -327,6 +332,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   createdBy: '20202020-f6ab-4d98-af24-a3d5b664148a',
   company: '20202020-e2f3-448e-b34c-2d625f0025fd',
   pointOfContactForOpportunities: '20202020-911b-4a7d-b67b-918aa9a5b33a',
+  // TODO: check if activityTargets field can be deleted
   activityTargets: '20202020-dee7-4b7f-b50a-1f50bd3be452',
   taskTargets: '20202020-584b-4d3e-88b6-53ab1fa03c3a',
   noteTargets: '20202020-c8fc-4258-8250-15905d3fcfec',
@@ -498,6 +504,7 @@ export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   name: '20202020-ba07-4ffd-ba63-009491f5749c',
   position: '20202020-c2bd-4e16-bb9a-c8b0411bf49d',
   createdBy: '20202020-be0e-4971-865b-32ca87cbb315',
+  // TODO: check if activityTargets field can be deleted
   activityTargets: '20202020-7f42-40ae-b96c-c8a61acc83bf',
   noteTargets: '20202020-01fd-4f37-99dc-9427a444018a',
   taskTargets: '20202020-0860-4566-b865-bff3c626c303',

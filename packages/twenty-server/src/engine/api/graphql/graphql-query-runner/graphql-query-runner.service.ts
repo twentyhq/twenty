@@ -32,9 +32,6 @@ import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-run
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/query-result-getters.factory';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
 import { capitalize } from 'src/utils/capitalize';
 
@@ -44,8 +41,6 @@ export class GraphqlQueryRunnerService {
     private readonly workspaceQueryHookService: WorkspaceQueryHookService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
     private readonly queryResultGettersFactory: QueryResultGettersFactory,
-    @InjectMessageQueue(MessageQueue.webhookQueue)
-    private readonly messageQueueService: MessageQueueService,
     private readonly graphqlQueryResolverFactory: GraphqlQueryResolverFactory,
     private readonly apiEventEmitterService: ApiEventEmitterService,
   ) {}

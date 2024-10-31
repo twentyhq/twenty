@@ -95,7 +95,7 @@ export class WorkspaceResolver {
     });
 
     const workspaceLogoToken = await this.fileService.encodeFileToken({
-      workspace_id: id,
+      workspaceId: id,
     });
 
     return `${paths[0]}?token=${workspaceLogoToken}`;
@@ -128,7 +128,7 @@ export class WorkspaceResolver {
     if (workspace.logo) {
       try {
         const workspaceLogoToken = await this.fileService.encodeFileToken({
-          workspace_id: workspace.id,
+          workspaceId: workspace.id,
         });
 
         return `${workspace.logo}?token=${workspaceLogoToken}`;

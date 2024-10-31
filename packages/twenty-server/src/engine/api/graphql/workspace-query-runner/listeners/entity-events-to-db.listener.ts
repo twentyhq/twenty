@@ -17,7 +17,9 @@ import { CallWebhookJobsJob } from 'src/modules/webhook/jobs/call-webhook-jobs.j
 export class EntityEventsToDbListener {
   constructor(
     @InjectMessageQueue(MessageQueue.entityEventsToDbQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly entityEventsToDbQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.webhookQueue)
+    private readonly webhookQueueService: MessageQueueService,
   ) {}
 
   @OnDatabaseEvent('*', DatabaseEventAction.CREATED)
@@ -53,21 +55,21 @@ export class EntityEventsToDbListener {
       (event) => event.objectMetadata?.isAuditLogged,
     );
 
-    await this.messageQueueService.add<
+    await this.entityEventsToDbQueueService.add<
       WorkspaceEventBatch<ObjectRecordBaseEvent>
     >(CreateAuditLogFromInternalEvent.name, {
       ...payload,
       events: filteredEvents,
     });
 
-    await this.messageQueueService.add<
+    await this.entityEventsToDbQueueService.add<
       WorkspaceEventBatch<ObjectRecordBaseEvent>
     >(UpsertTimelineActivityFromInternalEvent.name, {
       ...payload,
       events: filteredEvents,
     });
 
-    await this.messageQueueService.add<
+    await this.webhookQueueService.add<
       WorkspaceEventBatch<ObjectRecordBaseEvent>
     >(CallWebhookJobsJob.name, payload, { retryLimit: 3 });
   }
