@@ -320,7 +320,7 @@ export const RecordIndexOptionsDropdownContent = ({
             Hidden Fields
           </DropdownMenuHeader>
           {hiddenRecordFields.length > 0 && (
-            <>
+            <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
               <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
                 fields={hiddenRecordFields}
@@ -329,7 +329,7 @@ export const RecordIndexOptionsDropdownContent = ({
                 showSubheader={false}
                 showDragGrip={false}
               />
-            </>
+            </ScrollWrapper>
           )}
           <DropdownMenuSeparator />
 
