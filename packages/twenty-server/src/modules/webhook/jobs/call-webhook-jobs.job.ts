@@ -10,14 +10,11 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
 import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import {
   CallWebhookJob,
   CallWebhookJobData,
 } from 'src/modules/webhook/jobs/call-webhook.job';
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
-import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJobsJob {
@@ -56,52 +53,30 @@ export class CallWebhookJobsJob {
     });
 
     for (const eventData of data.events) {
-      let formattedRecord = {};
-
-      if (operation === DatabaseEventAction.CREATED) {
-        const createdEvent = eventData as ObjectRecordCreateEvent<any>;
-
-        formattedRecord = createdEvent.properties.after;
-      } else if (operation === DatabaseEventAction.UPDATED) {
-        const updatedEvent = eventData as ObjectRecordUpdateEvent<any>;
-
-        formattedRecord = (updatedEvent.properties.updatedFields || [])?.reduce(
-          (acc, key) => {
-            acc[key] = updatedEvent.properties.diff;
-
-            return acc;
-          },
-          { id: eventData.recordId },
-        );
-      } else if (
-        [DatabaseEventAction.DELETED, DatabaseEventAction.DESTROYED].includes(
-          operation as DatabaseEventAction,
-        )
-      ) {
-        formattedRecord = {
-          id: eventData.recordId,
-        };
-      } else {
-        throw new Error(
-          `operation '${operation}' invalid for webhook event ${data.name}`,
-        );
-      }
+      const eventName = data.name;
+      const objectMetadata = {
+        id: eventData.objectMetadata.id,
+        nameSingular: eventData.objectMetadata.nameSingular,
+      };
+      const workspaceId = data.workspaceId;
+      const record = eventData.properties.after || eventData.properties.before;
+      const updatedFields = eventData.properties.updatedFields;
 
       webhooks.forEach((webhook) => {
+        const webhookData = {
+          targetUrl: webhook.targetUrl,
+          eventName,
+          objectMetadata,
+          workspaceId,
+          webhookId: webhook.id,
+          eventDate: new Date(),
+          record,
+          ...(updatedFields && { updatedFields }),
+        };
+
         this.messageQueueService.add<CallWebhookJobData>(
           CallWebhookJob.name,
-          {
-            targetUrl: webhook.targetUrl,
-            eventName: data.name,
-            objectMetadata: {
-              id: eventData.objectMetadata.id,
-              nameSingular: eventData.objectMetadata.nameSingular,
-            },
-            workspaceId: data.workspaceId,
-            webhookId: webhook.id,
-            eventDate: new Date(),
-            record: formattedRecord,
-          },
+          webhookData,
           { retryLimit: 3 },
         );
       });

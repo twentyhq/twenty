@@ -8,35 +8,12 @@ export const computeWebhooks = (
   type: DatabaseEventAction,
   item: ObjectMetadataEntity,
 ): OpenAPIV3_1.PathItemObject => {
-  const record = [
-    DatabaseEventAction.DELETED,
-    DatabaseEventAction.DESTROYED,
-  ].includes(type)
-    ? {
-        type: 'object',
-        properties: {
-          id: {
-            type: 'string',
-            format: 'uuid',
-          },
-        },
-      }
-    : type === DatabaseEventAction.UPDATED
-      ? {
-          type: 'object',
-          properties: {
-            id: {
-              type: 'string',
-              format: 'uuid',
-            },
-            updatedField: {
-              type: 'string',
-            },
-          },
-        }
-      : {
-          $ref: `#/components/schemas/${capitalize(item.nameSingular)} for Response`,
-        };
+  const updatedFields = {
+    type: 'array',
+    items: {
+      type: 'string',
+    },
+  };
 
   return {
     post: {
@@ -81,7 +58,10 @@ export const computeWebhooks = (
                   type: 'string',
                   example: '2024-02-14T11:27:01.779Z',
                 },
-                record,
+                record: {
+                  $ref: `#/components/schemas/${capitalize(item.nameSingular)} for Response`,
+                },
+                ...(type === DatabaseEventAction.UPDATED && { updatedFields }),
               },
             },
           },
