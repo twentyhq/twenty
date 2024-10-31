@@ -1,4 +1,3 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
@@ -8,7 +7,9 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext } from 'react';
 import { RecoilState, useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-ui';
 import { v4 as uuidv4 } from 'uuid';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SetFunction = <T>(
   recoilVal: RecoilState<T>,
@@ -83,7 +84,16 @@ export const useAddNewCard = () => {
         // - and follow record table pending record creation logic
         let computedLabelIdentifierValue: any = labelValue;
 
-        if (objectMetadataItem.nameSingular === CoreObjectNameSingular.Person) {
+        const labelIdentifierField = objectMetadataItem?.fields.find(
+          (field) =>
+            field.id === objectMetadataItem.labelIdentifierFieldMetadataId,
+        );
+
+        if (!isDefined(labelIdentifierField)) {
+          throw new Error('Label identifier field not found');
+        }
+
+        if (labelIdentifierField.type === FieldMetadataType.FullName) {
           computedLabelIdentifierValue = {
             firstName: labelValue,
             lastName: '',
@@ -101,7 +111,13 @@ export const useAddNewCard = () => {
         });
       }
     },
-    [createOneRecord, columnContext, selectFieldMetadataItem],
+    [
+      objectMetadataItem?.fields,
+      objectMetadataItem?.labelIdentifierFieldMetadataId,
+      createOneRecord,
+      selectFieldMetadataItem?.name,
+      columnContext?.columnDefinition?.value,
+    ],
   );
 
   const handleAddNewCardClick = useRecoilCallback(
