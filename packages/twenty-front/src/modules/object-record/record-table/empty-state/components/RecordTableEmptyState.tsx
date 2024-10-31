@@ -9,7 +9,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useContext } from 'react';
 
 export const RecordTableEmptyState = () => {
-  const { objectNameSingular, objectMetadataItem } =
+  const { objectNameSingular, recordTableId, objectMetadataItem } =
     useContext(RecordTableContext);
 
   const { totalCount } = useFindManyRecords({ objectNameSingular, limit: 1 });
@@ -19,6 +19,7 @@ export const RecordTableEmptyState = () => {
 
   const isSoftDeleteActive = useRecoilComponentValueV2(
     isSoftDeleteFilterActiveComponentState,
+    recordTableId,
   );
 
   if (isRemote) {

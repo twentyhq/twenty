@@ -10,9 +10,11 @@ import { moveArrayItem } from '~/utils/array/moveArrayItem';
 export const useRecordIndexOptionsForTable = (recordTableId: string) => {
   const hiddenTableColumns = useRecoilComponentValueV2(
     hiddenTableColumnsComponentSelector,
+    recordTableId,
   );
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
+    recordTableId,
   );
 
   const { handleColumnVisibilityChange, handleColumnReorder } = useTableColumns(

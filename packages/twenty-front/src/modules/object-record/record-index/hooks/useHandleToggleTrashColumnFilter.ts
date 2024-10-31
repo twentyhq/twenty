@@ -31,7 +31,7 @@ export const useHandleToggleTrashColumnFilter = ({
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters(viewBarId);
 
   const isSoftDeleteFilterActiveComponentRecoilState =
-    useRecoilComponentCallbackStateV2(isSoftDeleteFilterActiveComponentState);
+    useRecoilComponentCallbackStateV2(isSoftDeleteFilterActiveComponentState, viewBarId);
 
   const handleToggleTrashColumnFilter = useCallback(() => {
     const trashFieldMetadata = objectMetadataItem.fields.find(

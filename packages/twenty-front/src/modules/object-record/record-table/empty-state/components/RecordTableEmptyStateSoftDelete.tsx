@@ -16,7 +16,7 @@ export const RecordTableEmptyStateSoftDelete = () => {
   const { deleteCombinedViewFilter } =
     useDeleteCombinedViewFilters(recordTableId);
 
-  const tableFilters = useRecoilComponentValueV2(tableFiltersComponentState);
+  const tableFilters = useRecoilComponentValueV2(tableFiltersComponentState, recordTableId);
 
   const { toggleSoftDeleteFilterState } = useHandleToggleTrashColumnFilter({
     objectNameSingular,

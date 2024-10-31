@@ -91,6 +91,7 @@ export const RecordTableContextProvider = ({
 
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
+    recordTableId,
   );
 
   return (

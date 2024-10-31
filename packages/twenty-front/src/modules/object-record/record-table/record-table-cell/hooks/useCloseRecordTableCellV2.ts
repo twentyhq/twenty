@@ -10,7 +10,7 @@ import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/componen
 import { useCloseCurrentTableCellInEditMode } from '../../hooks/internal/useCloseCurrentTableCellInEditMode';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
-export const useCloseRecordTableCellV2 = (recordTableScopeId: string) => {
+export const useCloseRecordTableCellV2 = (recordTableId: string) => {
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
 
@@ -19,10 +19,11 @@ export const useCloseRecordTableCellV2 = (recordTableScopeId: string) => {
   );
 
   const closeCurrentTableCellInEditMode =
-    useCloseCurrentTableCellInEditMode(recordTableScopeId);
+    useCloseCurrentTableCellInEditMode(recordTableId);
 
   const pendingRecordIdState = useRecoilComponentCallbackStateV2(
     recordTablePendingRecordIdComponentState,
+    recordTableId,
   );
   const resetRecordTablePendingRecordId =
     useResetRecoilState(pendingRecordIdState);
