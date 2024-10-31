@@ -31,3 +31,5 @@ Your turn 👇
 » 28-October-2024 by [harshsbhat](https://oss.gg/harshsbhat) blog Link: [blog](https://www.harshbhat.me/blog/twenty-self-host)
 
 » 28-October-2024 by [AshishViradiya153](https://oss.gg/AshishViradiya153) blog Link: [blog](https://medium.com/@ashishviradiya153/comprehensive-guide-to-self-hosting-twenty-crm-26e7fa36c846)
+
+» 30-October-2024 by [RajuGangitla](https://oss.gg/RajuGangitla) blog Link: [blog](https://dev.to/raju_gangitla_91920e1427f/self-hosting-twenty-crm-a-complete-guide-559n)
