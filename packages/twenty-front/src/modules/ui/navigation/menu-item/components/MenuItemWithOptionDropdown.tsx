@@ -8,6 +8,7 @@ import {
   LightIconButtonProps,
 } from 'twenty-ui';
 
+import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
@@ -89,7 +90,7 @@ export const MenuItemWithOptionDropdown = ({
           }
           dropdownComponents={dropdownContent}
           dropdownId={dropdownId}
-          dropdownHotkeyScope={{ scope: 'sd' }}
+          dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
           disableBlur
         />
       </div>
