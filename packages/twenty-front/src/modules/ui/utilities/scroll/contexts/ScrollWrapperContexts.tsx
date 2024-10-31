@@ -18,9 +18,7 @@ export type ContextProviderName =
   | 'releases'
   | 'test'
   | 'showPageActivityContainer'
-  | 'navigationDrawer'
-  | 'filterSelectDropdown'
-  | 'sortSelectDropdown';
+  | 'navigationDrawer';
 
 const createScrollWrapperContext = (id: string) =>
   createContext<ScrollWrapperContextValue>({
@@ -53,10 +51,6 @@ export const ShowPageActivityContainerScrollWrapperContext =
 export const NavigationDrawerScrollWrapperContext =
   createScrollWrapperContext('navigationDrawer');
 export const TestScrollWrapperContext = createScrollWrapperContext('test');
-export const FilterSelectDropdownScrollWrapperContext =
-  createScrollWrapperContext('filterSelectDropdown');
-export const SortSelectDropdownScrollWrapperContext =
-  createScrollWrapperContext('sortSelectDropdown');
 
 export const getContextByProviderName = (
   contextProviderName: ContextProviderName,
@@ -88,10 +82,6 @@ export const getContextByProviderName = (
       return ShowPageActivityContainerScrollWrapperContext;
     case 'navigationDrawer':
       return NavigationDrawerScrollWrapperContext;
-    case 'filterSelectDropdown':
-      return FilterSelectDropdownScrollWrapperContext;
-    case 'sortSelectDropdown':
-      return SortSelectDropdownScrollWrapperContext;
     default:
       throw new Error('Context Provider not available');
   }
