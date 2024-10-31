@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableEmptyStateNoRecordFoundForFilter } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter';
-import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { ComponentDecorator } from 'twenty-ui';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -20,9 +20,9 @@ const meta: Meta = {
     RecordTableDecorator,
     (Story) => (
       <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-        <RecordTableScope recordTableId="persons" onColumnsChange={() => {}}>
+        <RecordTableComponentInstance recordTableId="persons" onColumnsChange={() => {}}>
           <Story />
-        </RecordTableScope>
+        </RecordTableComponentInstance>
       </SnackBarProviderScope>
     ),
   ],

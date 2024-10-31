@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { CallbackInterface, RecoilRoot } from 'recoil';
 
+import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import {
@@ -8,7 +9,6 @@ import {
   recordTableRow,
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
 import { useMoveSoftFocusToCurrentCellOnHover } from '@/object-record/record-table/record-table-cell/hooks/useMoveSoftFocusToCurrentCellOnHover';
-import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 
@@ -76,13 +76,13 @@ jest.mock('@/ui/utilities/hotkey/hooks/useSetHotkeyScope', () => ({
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
-    <RecordTableScope recordTableId="scopeId" onColumnsChange={jest.fn()}>
+    <RecordTableComponentInstance recordTableId="scopeId" onColumnsChange={jest.fn()}>
       <RecordTableRowContext.Provider value={recordTableRow}>
         <RecordTableCellContext.Provider value={recordTableCell}>
           {children}
         </RecordTableCellContext.Provider>
       </RecordTableRowContext.Provider>
-    </RecordTableScope>
+    </RecordTableComponentInstance>
   </RecoilRoot>
 );
 

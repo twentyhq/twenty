@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString, isNull } from '@sniptt/guards';
 
+import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyEffect';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
-import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
@@ -57,7 +57,7 @@ export const RecordTable = ({
   }
 
   return (
-    <RecordTableScope
+    <RecordTableComponentInstance
       recordTableId={recordTableId}
       onColumnsChange={onColumnsChange}
     >
@@ -78,6 +78,6 @@ export const RecordTable = ({
           </StyledTable>
         )}
       </RecordTableContextProvider>
-    </RecordTableScope>
+    </RecordTableComponentInstance>
   );
 };

@@ -1,7 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
-import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
+import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 
 import { useCurrentTableCellEditMode } from '../useCurrentTableCellEditMode';
 
@@ -11,12 +11,12 @@ const recordTableId = 'scopeId';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
-    <RecordTableScope
+    <RecordTableComponentInstance
       recordTableId={recordTableId}
       onColumnsChange={onColumnsChange}
     >
       {children}
-    </RecordTableScope>
+    </RecordTableComponentInstance>
   </RecoilRoot>
 );
 

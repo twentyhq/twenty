@@ -2,8 +2,8 @@ import styled from '@emotion/styled';
 
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { Checkbox } from '@/ui/input/components/Checkbox';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { Checkbox } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   align-items: center;

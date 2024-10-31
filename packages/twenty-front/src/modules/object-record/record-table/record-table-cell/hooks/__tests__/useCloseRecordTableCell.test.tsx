@@ -3,6 +3,7 @@ import { RecoilRoot } from 'recoil';
 
 import { textfieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import {
@@ -10,7 +11,6 @@ import {
   recordTableRow,
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
 import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCell';
-import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
 import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
@@ -29,7 +29,7 @@ const recordTableId = 'scopeId';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
-    <RecordTableScope
+    <RecordTableComponentInstance
       recordTableId={recordTableId}
       onColumnsChange={onColumnsChange}
     >
@@ -49,7 +49,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
           </RecordTableCellContext.Provider>
         </RecordTableRowContext.Provider>
       </FieldContext.Provider>
-    </RecordTableScope>
+    </RecordTableComponentInstance>
   </RecoilRoot>
 );
 

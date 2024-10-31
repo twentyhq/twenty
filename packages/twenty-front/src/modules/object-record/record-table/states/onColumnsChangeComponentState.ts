@@ -1,5 +1,5 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
+import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
@@ -8,5 +8,5 @@ export const onColumnsChangeComponentState = createComponentStateV2<
 >({
   key: 'onColumnsChangeComponentState',
   defaultValue: undefined,
-  componentInstanceContext: RecordTableScopeInternalContext,
+  componentInstanceContext: RecordTableComponentInstanceContext,
 });

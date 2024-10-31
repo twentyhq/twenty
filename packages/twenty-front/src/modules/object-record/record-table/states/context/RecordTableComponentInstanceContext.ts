@@ -5,9 +5,9 @@ import { createComponentInstanceContext } from '@/ui/utilities/state/component-s
 import { ColumnDefinition } from '../../types/ColumnDefinition';
 
 // TODO: separate scope contexts from event contexts
-type RecordTableScopeInternalContextProps = ComponentStateKeyV2 & {
+type RecordTableComponentInstanceContextProps = ComponentStateKeyV2 & {
   onColumnsChange: (columns: ColumnDefinition<FieldMetadata>[]) => void;
 };
 
-export const RecordTableScopeInternalContext =
-  createComponentInstanceContext<RecordTableScopeInternalContextProps>();
+export const RecordTableComponentInstanceContext =
+  createComponentInstanceContext<RecordTableComponentInstanceContextProps>();

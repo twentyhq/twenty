@@ -1,4 +1,4 @@
-import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
+import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 
 export const recordTablePendingRecordIdComponentState = createComponentStateV2<
@@ -6,5 +6,5 @@ export const recordTablePendingRecordIdComponentState = createComponentStateV2<
 >({
   key: 'recordTablePendingRecordIdState',
   defaultValue: null,
-  componentInstanceContext: RecordTableScopeInternalContext,
+  componentInstanceContext: RecordTableComponentInstanceContext,
 });

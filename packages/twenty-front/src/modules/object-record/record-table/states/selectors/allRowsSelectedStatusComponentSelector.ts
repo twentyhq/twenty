@@ -1,14 +1,14 @@
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
 
-import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
+import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 import { AllRowsSelectedStatus } from '../../types/AllRowSelectedStatus';
 
 export const allRowsSelectedStatusComponentSelector =
   createComponentSelectorV2<AllRowsSelectedStatus>({
     key: 'allRowsSelectedStatusComponentSelector',
-    componentInstanceContext: RecordTableScopeInternalContext,
+    componentInstanceContext: RecordTableComponentInstanceContext,
     get:
       ({ instanceId }) =>
       ({ get }) => {
