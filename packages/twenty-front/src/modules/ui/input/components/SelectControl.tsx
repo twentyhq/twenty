@@ -26,6 +26,7 @@ const StyledControlContainer = styled.div<{
   color: ${({ disabled, theme }) =>
     disabled ? theme.font.color.tertiary : theme.font.color.primary};
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  text-align: left;
 `;
 
 const StyledIconChevronDown = styled(IconChevronDown)<{

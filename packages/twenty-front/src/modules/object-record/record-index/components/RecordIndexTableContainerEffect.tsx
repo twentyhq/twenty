@@ -6,6 +6,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
+import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
@@ -91,12 +92,14 @@ export const RecordIndexTableContainerEffect = () => {
     recordIndexId,
   );
 
+  const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
+
   useEffect(() => {
     if (hasUserSelectedAllRows) {
       setContextStoreTargetedRecords({
         mode: 'exclusion',
         excludedRecordIds: unselectedRowIds,
-        filters: [],
+        filters: recordIndexFilters,
       });
     } else {
       setContextStoreTargetedRecords({
@@ -113,6 +116,7 @@ export const RecordIndexTableContainerEffect = () => {
     };
   }, [
     hasUserSelectedAllRows,
+    recordIndexFilters,
     selectedRowIds,
     setContextStoreTargetedRecords,
     unselectedRowIds,
