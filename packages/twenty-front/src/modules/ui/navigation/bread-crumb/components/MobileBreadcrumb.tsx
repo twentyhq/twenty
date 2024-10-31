@@ -1,7 +1,8 @@
-import { PAGES_REDIRECT_TO_APP } from '@/ui/navigation/bread-crumb/constants/PagesRedirectToApp';
+import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Fragment, ReactNode } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { IconChevronLeft } from 'twenty-ui';
 
@@ -31,7 +32,7 @@ const StyledLink = styled(Link)`
 `;
 
 const StyledText = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
+  color: inherit;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -42,31 +43,36 @@ export const MobileBreadcrumb = ({
   links,
 }: MobileBreadcrumbProps) => {
   const theme = useTheme();
-  const currentPage = links[links.length - 1].children;
-  const previousLink = links[links.length - 2];
-  const shouldRedirectToApp =
-    typeof currentPage === 'string' &&
-    PAGES_REDIRECT_TO_APP.includes(currentPage);
 
-  const text =
-    typeof previousLink.children === 'string' ? previousLink.children : '';
+  const { openSettingsMenu } = useOpenSettingsMenu();
+
+  const handleBackToSettingsClick = () => {
+    openSettingsMenu();
+  };
+
+  const previousLink = links[links.length - 2];
+  const shouldRedirectToSettings = links.length === 2;
+
+  const text = isNonEmptyString(previousLink.children)
+    ? previousLink.children
+    : '';
 
   return (
     <StyledWrapper className={className}>
-      {shouldRedirectToApp ? (
-        <Fragment>
+      {shouldRedirectToSettings ? (
+        <>
           <IconChevronLeft size={theme.icon.size.md} />
-          <StyledLink title="Back to App" to="/">
-            Back to App
-          </StyledLink>
-        </Fragment>
+          <StyledText onClick={handleBackToSettingsClick}>
+            Back to Settings
+          </StyledText>
+        </>
       ) : previousLink?.href ? (
-        <Fragment>
+        <>
           <IconChevronLeft size={theme.icon.size.md} />
           <StyledLink title={text} to={previousLink.href}>
             Back to {previousLink.children}
           </StyledLink>
-        </Fragment>
+        </>
       ) : (
         <StyledText title={text}>{previousLink?.children}</StyledText>
       )}
