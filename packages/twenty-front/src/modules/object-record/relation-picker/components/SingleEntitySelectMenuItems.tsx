@@ -35,6 +35,7 @@ export type SingleEntitySelectMenuItemsProps = {
   onAllEntitySelected?: () => void;
   hotkeyScope?: string;
   isFiltered: boolean;
+  shouldSelectEmptyOption?: boolean;
 };
 
 export const SingleEntitySelectMenuItems = ({
@@ -54,6 +55,7 @@ export const SingleEntitySelectMenuItems = ({
   onAllEntitySelected,
   hotkeyScope = RelationPickerHotkeyScope.RelationPicker,
   isFiltered,
+  shouldSelectEmptyOption,
 }: SingleEntitySelectMenuItemsProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -179,7 +181,7 @@ export const SingleEntitySelectMenuItems = ({
                         onClick={() => onEntitySelected()}
                         LeftIcon={EmptyIcon}
                         text={emptyLabel}
-                        selected={!selectedEntity}
+                        selected={shouldSelectEmptyOption === true}
                         hovered={isSelectedSelectNoneButton}
                       />
                     )
