@@ -56,7 +56,7 @@ describe('creates.create_company', () => {
   test('should run to create a Person Record', async () => {
     const bundle = getBundle({
       nameSingular: 'Person',
-      crudZapierOperation: EventOperation.CREATED,
+      crudZapierOperation: DatabaseEventAction.CREATED,
       name: { firstName: 'John', lastName: 'Doe' },
       phones: {
         primaryPhoneNumber: '610203040',
@@ -90,7 +90,7 @@ describe('creates.update_company', () => {
   test('should run to update a Company record', async () => {
     const createBundle = getBundle({
       nameSingular: 'Company',
-      crudZapierOperation: EventOperation.CREATED,
+      crudZapierOperation: DatabaseEventAction.CREATED,
       name: 'Company Name',
       employees: 25,
     });
@@ -104,7 +104,7 @@ describe('creates.update_company', () => {
 
     const updateBundle = getBundle({
       nameSingular: 'Company',
-      crudZapierOperation: EventOperation.UPDATED,
+      crudZapierOperation: DatabaseEventAction.UPDATED,
       id: companyId,
       name: 'Updated Company Name',
     });
@@ -133,7 +133,7 @@ describe('creates.delete_company', () => {
   test('should run to delete a Company record', async () => {
     const createBundle = getBundle({
       nameSingular: 'Company',
-      crudZapierOperation: EventOperation.CREATED,
+      crudZapierOperation: DatabaseEventAction.CREATED,
       name: 'Delete Company Name',
       employees: 25,
     });
@@ -147,7 +147,7 @@ describe('creates.delete_company', () => {
 
     const deleteBundle = getBundle({
       nameSingular: 'Company',
-      crudZapierOperation: EventOperation.DELETED,
+      crudZapierOperation: DatabaseEventAction.DELETED,
       id: companyId,
     });
 

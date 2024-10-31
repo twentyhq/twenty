@@ -14,41 +14,21 @@ export enum DatabaseEventAction {
   DESTROYED = 'destroyed',
 }
 
-export const subscribe = async (
-  z: ZObject,
-  bundle: Bundle,
-  operation: DatabaseEventAction,
-) => {
-  try {
-    const data = {
-      targetUrl: bundle.targetUrl,
-      operations: [`${bundle.inputData.nameSingular}.${operation}`],
-    };
-    const result = await requestDb(
-      z,
-      bundle,
-      `mutation createWebhook {createWebhook(data:{${handleQueryParams(
-        data,
-      )}}) {id}}`,
-    );
-    return result.data.createWebhook;
-  } catch (e) {
-    // Remove that catch code when VERSION 0.32 is deployed
-    // probably removable after 01/11/2024
-    // (ie: when operations column exists in all active workspace schemas)
-    const data = {
-      targetUrl: bundle.targetUrl,
-      operation: `${bundle.inputData.nameSingular}.${operation}`,
-    };
-    const result = await requestDb(
-      z,
-      bundle,
-      `mutation createWebhook {createWebhook(data:{${handleQueryParams(
-        data,
-      )}}) {id}}`,
-    );
-    return result.data.createWebhook;
-  }
+export const performSubscribe = async (z: ZObject, bundle: Bundle) => {
+  const data = {
+    targetUrl: bundle.targetUrl,
+    operations: [
+      `${bundle.inputData.nameSingular}.${bundle.inputData.operation}`,
+    ],
+  };
+  const result = await requestDb(
+    z,
+    bundle,
+    `mutation createWebhook {createWebhook(data:{${handleQueryParams(
+      data,
+    )}}) {id}}`,
+  );
+  return result.data.createWebhook;
 };
 
 export const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
@@ -62,24 +42,27 @@ export const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
 };
 
 export const perform = (z: ZObject, bundle: Bundle) => {
-  const record = bundle.cleanedRequest.record;
-  if (record.createdAt) {
-    record.createdAt = record.createdAt + 'Z';
+  const data = {
+    eventName: bundle.cleanedRequest.eventName,
+    record: bundle.cleanedRequest.record,
+    ...(bundle.cleanedRequest.updatedFields && {
+      updatedFields: bundle.cleanedRequest.updatedFields,
+    }),
+  };
+  if (data.record.createdAt) {
+    data.record.createdAt = data.record.createdAt + 'Z';
   }
-  if (record.updatedAt) {
-    record.updatedAt = record.updatedAt + 'Z';
+  if (data.record.updatedAt) {
+    data.record.updatedAt = data.record.updatedAt + 'Z';
   }
-  if (record.revokedAt) {
-    record.revokedAt = record.revokedAt + 'Z';
+  if (data.record.revokedAt) {
+    data.record.revokedAt = data.record.revokedAt + 'Z';
   }
-  if (record.expiresAt) {
-    record.expiresAt = record.expiresAt + 'Z';
+  if (data.record.expiresAt) {
+    data.record.expiresAt = data.record.expiresAt + 'Z';
   }
-  const result = [record];
-  if (bundle.cleanedRequest.updatedFields) {
-    result.push(bundle.cleanedRequest.updatedFields);
-  }
-  return result;
+
+  return [data];
 };
 
 const getNamePluralFromNameSingular = async (
@@ -96,10 +79,9 @@ const getNamePluralFromNameSingular = async (
   throw new Error(`Unknown Object Name Singular ${nameSingular}`);
 };
 
-export const listSample = async (
+export const performList = async (
   z: ZObject,
   bundle: Bundle,
-  onlyIds = false,
 ): Promise<ObjectData[]> => {
   const nameSingular = bundle.inputData.nameSingular;
   const namePlural = await getNamePluralFromNameSingular(
@@ -107,19 +89,5 @@ export const listSample = async (
     bundle,
     nameSingular,
   );
-  const result: { [key: string]: string }[] = await requestDbViaRestApi(
-    z,
-    bundle,
-    namePlural,
-  );
-
-  if (onlyIds) {
-    return result.map((res) => {
-      return {
-        id: res.id,
-      };
-    });
-  }
-
-  return result;
+  return await requestDbViaRestApi(z, bundle, namePlural);
 };

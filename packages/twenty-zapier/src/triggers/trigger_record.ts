@@ -1,26 +1,21 @@
-import { Bundle, ZObject } from 'zapier-platform-core';
-
 import { findObjectNamesSingularKey } from '../triggers/find_object_names_singular';
 import {
-  listSample,
-  EventOperation,
-  perform,
+  performSubscribe,
   performUnsubscribe,
-  subscribe,
+  perform,
+  performList,
+  DatabaseEventAction,
 } from '../utils/triggers/triggers.utils';
 
 export const triggerRecordKey = 'trigger_record';
 
-const performSubscribe = (z: ZObject, bundle: Bundle) =>
-  subscribe(z, bundle, bundle.inputData.operation);
-const performList = (z: ZObject, bundle: Bundle) =>
-  listSample(
-    z,
-    bundle,
-    [EventOperation.DELETED, EventOperation.DESTROYED].includes(
-      bundle.inputData.operation,
-    ),
-  );
+const choices = Object.values(DatabaseEventAction).reduce(
+  (acc, action) => {
+    acc[action] = action;
+    return acc;
+  },
+  {} as Record<DatabaseEventAction, DatabaseEventAction>,
+);
 
 export default {
   key: triggerRecordKey,
@@ -43,12 +38,7 @@ export default {
         key: 'operation',
         required: true,
         label: 'Operation',
-        choices: {
-          [EventOperation.CREATED]: EventOperation.CREATED,
-          [EventOperation.UPDATED]: EventOperation.UPDATED,
-          [EventOperation.DELETED]: EventOperation.DELETED,
-          [EventOperation.DESTROYED]: EventOperation.DESTROYED,
-        },
+        choices,
         altersDynamicFields: true,
       },
     ],
