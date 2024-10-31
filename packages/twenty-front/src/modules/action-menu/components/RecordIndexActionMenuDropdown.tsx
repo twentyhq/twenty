@@ -8,6 +8,7 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -75,17 +76,19 @@ export const RecordIndexActionMenuDropdown = () => {
         data-select-disable
         dropdownMenuWidth={width}
         dropdownComponents={
-          <DropdownMenuItemsContainer>
-            {actionMenuEntries.map((item, index) => (
-              <MenuItem
-                key={index}
-                LeftIcon={item.Icon}
-                onClick={item.onClick}
-                accent={item.accent}
-                text={item.label}
-              />
-            ))}
-          </DropdownMenuItemsContainer>
+          <DropdownMenu>
+            <DropdownMenuItemsContainer>
+              {actionMenuEntries.map((item, index) => (
+                <MenuItem
+                  key={index}
+                  LeftIcon={item.Icon}
+                  onClick={item.onClick}
+                  accent={item.accent}
+                  text={item.label}
+                />
+              ))}
+            </DropdownMenuItemsContainer>
+          </DropdownMenu>
         }
       />
     </StyledContainerActionMenuDropdown>
