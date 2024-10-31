@@ -24,7 +24,6 @@ const StyledDropdownMenu = styled.div<{
   display: flex;
 
   height: 100%;
-  overflow: hidden;
 
   flex-direction: column;
   z-index: 30;

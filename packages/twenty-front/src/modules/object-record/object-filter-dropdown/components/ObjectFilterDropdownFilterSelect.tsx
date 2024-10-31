@@ -161,7 +161,7 @@ export const ObjectFilterDropdownFilterSelect = ({
           setObjectFilterDropdownSearchInput(event.target.value)
         }
       />
-      <ScrollWrapper contextProviderName="filterSelectDropdown">
+      <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
         <SelectableList
           hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
           selectableItemIdArray={selectableListItemIds}

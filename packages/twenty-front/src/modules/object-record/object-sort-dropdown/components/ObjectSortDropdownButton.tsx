@@ -179,7 +179,7 @@ export const ObjectSortDropdownButton = ({
                 setObjectSortDropdownSearchInput(event.target.value)
               }
             />
-            <ScrollWrapper contextProviderName="sortSelectDropdown">
+            <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
               <DropdownMenuItemsContainer>
                 {visibleColumnsSortDefinitions.map(
                   (visibleSortDefinition, index) => (
