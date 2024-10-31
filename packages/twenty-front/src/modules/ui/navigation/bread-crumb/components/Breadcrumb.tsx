@@ -1,3 +1,5 @@
+import { MobileBreadcrumb } from '@/ui/navigation/bread-crumb/components/MobileBreadcrumb';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { Fragment, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
@@ -39,6 +41,12 @@ const StyledDivider = styled.span`
 `;
 
 export const Breadcrumb = ({ className, links }: BreadcrumbProps) => {
+  const isMobile = useIsMobile();
+
+  if (isMobile && links.length > 0) {
+    return <MobileBreadcrumb className={className} links={links} />;
+  }
+
   return (
     <StyledWrapper className={className}>
       {links.map((link, index) => {
