@@ -16,6 +16,8 @@ import {
   CallWebhookJob,
   CallWebhookJobData,
 } from 'src/modules/webhook/jobs/call-webhook.job';
+import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 
 @Processor(MessageQueue.webhookQueue)
 export class CallWebhookJobsJob {
@@ -59,11 +61,15 @@ export class CallWebhookJobsJob {
       let formattedRecord = {};
 
       if (operation === DatabaseEventAction.CREATED) {
-        formattedRecord = eventData.properties.after;
+        const createdEvent = eventData as ObjectRecordCreateEvent<any>;
+
+        formattedRecord = createdEvent.properties.after;
       } else if (operation === DatabaseEventAction.UPDATED) {
-        formattedRecord = eventData.properties.diff?.reduce(
-          (acc, [key, value]) => {
-            acc[key] = value.after;
+        const updatedEvent = eventData as ObjectRecordUpdateEvent<any>;
+
+        formattedRecord = (updatedEvent.properties.updatedFields || [])?.reduce(
+          (acc, key) => {
+            acc[key] = updatedEvent.properties.diff;
 
             return acc;
           },

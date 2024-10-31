@@ -45,7 +45,6 @@ export const generateFakeObjectRecordEvent = <Entity>(
       properties: {
         before,
         after,
-        diff: after,
       },
     } satisfies ObjectRecordUpdateEvent<Entity>;
   }

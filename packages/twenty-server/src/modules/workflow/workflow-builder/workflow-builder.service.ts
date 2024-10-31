@@ -5,7 +5,6 @@ import { join } from 'path';
 
 import { Repository } from 'typeorm';
 
-import { generateFakeObjectRecordEvent } from 'src/engine/core-modules/event-emitter/utils/generate-fake-object-record-event';
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
@@ -23,6 +22,7 @@ import {
 import { isDefined } from 'src/utils/is-defined';
 import { checkStringIsEventOperation } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-event-operation';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
 
 @Injectable()
 export class WorkflowBuilderService {
