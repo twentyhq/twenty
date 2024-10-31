@@ -6,6 +6,8 @@ import { AxiosRequestConfig } from 'axios';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
+import { TINYBIRD_ENDPOINTS_MAP } from './constants/tinybirdEndpoints.constants';
+
 type CreateEventInput = {
   action: string;
   payload: object;
@@ -89,24 +91,40 @@ export class AnalyticsService {
     return { success: true };
   }
 
-  async generateWorkspaceJwt(workspaceId: string | undefined) {
-    const pipeId = 't_b49e0fe60f9e438eae81cb31c5260df2'; // refactor this pass as params
-    //perhaps a constant of name:pipeId??? better typing in this func^
-    const payload = {
-      name: 'my_demo_jwt',
-      workspace_id: this.environmentService.get('TINYBIRD_WORKSPACE_UUID'),
-      scopes: [
-        {
-          type: 'PIPES:READ',
-          resource: pipeId,
-          fixed_params: { workspaceId: workspaceId },
-        },
-      ],
-    };
+  generateWorkspaceJwt(workspaceId: string | undefined) {
+    //put a verification if analytics is enabled
+    if (!this.environmentService.get('ANALYTICS_ENABLED')) {
+      return {};
+    }
+    const tinybirdJwtMap = Object.fromEntries(
+      Object.entries(TINYBIRD_ENDPOINTS_MAP).map(
+        ([endpointName, endpointUuid]) => [
+          endpointName,
+          this.jwtWrapperService.sign(
+            {
+              name: 'analytics_jwt',
+              workspace_id: this.environmentService.get(
+                'TINYBIRD_WORKSPACE_UUID',
+              ),
+              scopes: [
+                {
+                  type: 'PIPES:READ',
+                  resource: endpointUuid,
+                  fixed_params: { workspaceId: workspaceId },
+                },
+              ],
+            },
+            {
+              secret: this.environmentService.get(
+                'TINYBIRD_GENERATE_JWT_TOKEN',
+              ),
+              expiresIn: '7d',
+            },
+          ),
+        ],
+      ),
+    );
 
-    return this.jwtWrapperService.sign(payload, {
-      secret: this.environmentService.get('TINYBIRD_GENERATE_JWT_TOKEN'),
-      expiresIn: '7d',
-    });
+    return tinybirdJwtMap;
   }
 }

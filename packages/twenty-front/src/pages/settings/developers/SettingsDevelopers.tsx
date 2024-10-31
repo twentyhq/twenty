@@ -1,3 +1,4 @@
+import { currentUserState } from '@/auth/states/currentUserState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
@@ -7,6 +8,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import { Button, H2Title, IconPlus, MOBILE_VIEWPORT, Section } from 'twenty-ui';
 
 const StyledButtonContainer = styled.div`
@@ -27,6 +29,8 @@ const StyledContainer = styled.div<{ isMobile: boolean }>`
 
 export const SettingsDevelopers = () => {
   const isMobile = useIsMobile();
+  const currentUser = useRecoilValue(currentUserState);
+  console.log('currentUser', currentUser);
   return (
     <SubMenuTopBarContainer
       title="Developers"

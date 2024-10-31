@@ -1,6 +1,7 @@
-import { SettingsDevelopersWebhookTooltip } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookTooltip';
-import { useGraphData } from '@/settings/developers/webhook/hooks/useGraphData';
-import { webhookGraphDataState } from '@/settings/developers/webhook/states/webhookGraphDataState';
+import { useGraphData } from '@/analytics/hooks/useGraphData';
+
+import { WebhookAnalyticsTooltip } from '@/analytics/components/WebhookAnalyticsTooltip';
+import { useAnalyticsGraphDataState } from '@/analytics/hooks/useAnalyticsGraphDataState';
 import { Select } from '@/ui/input/components/Select';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -10,14 +11,6 @@ import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { H2Title } from 'twenty-ui';
 
-export type NivoLineInput = {
-  id: string | number;
-  color?: string;
-  data: Array<{
-    x: number | string | Date;
-    y: number | string | Date;
-  }>;
-};
 const StyledGraphContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -33,34 +26,44 @@ const StyledTitleContainer = styled.div`
   justify-content: space-between;
 `;
 
-type SettingsDevelopersWebhookUsageGraphProps = {
-  webhookId: string;
+type AnalyticsActivityGraphProps = {
+  recordId: string;
+  recordType: string;
+  endpointName: string;
 };
 
-export const SettingsDevelopersWebhookUsageGraph = ({
-  webhookId,
-}: SettingsDevelopersWebhookUsageGraphProps) => {
-  const webhookGraphData = useRecoilValue(webhookGraphDataState);
-  const setWebhookGraphData = useSetRecoilState(webhookGraphDataState);
+export const AnalyticsActivityGraph = ({
+  recordId,
+  recordType,
+  endpointName,
+}: AnalyticsActivityGraphProps) => {
+  const { analyticsState, transformDataFunction } =
+    useAnalyticsGraphDataState(endpointName);
+  const analytics = useRecoilValue(analyticsState);
+  const setAnalyticsGraphData = useSetRecoilState(analyticsState);
   const theme = useTheme();
 
   const [windowLengthGraphOption, setWindowLengthGraphOption] = useState<
     '7D' | '1D' | '12H' | '4H'
   >('7D');
 
-  const { fetchGraphData } = useGraphData(webhookId);
+  const { fetchGraphData } = useGraphData({
+    recordId,
+    recordType,
+    endpointName,
+  });
 
   return (
     <>
-      {webhookGraphData.length ? (
+      {analytics.length ? (
         <Section>
           <StyledTitleContainer>
             <H2Title
               title="Activity"
-              description="See your webhook activity over time"
+              description={`See your ${recordType} activity over time`}
             />
             <Select
-              dropdownId="test-id-webhook-graph"
+              dropdownId={`test-id-${endpointName}-graph`}
               value={windowLengthGraphOption}
               options={[
                 { value: '7D', label: 'This week' },
@@ -71,7 +74,7 @@ export const SettingsDevelopersWebhookUsageGraph = ({
               onChange={(windowLengthGraphOption) => {
                 setWindowLengthGraphOption(windowLengthGraphOption);
                 fetchGraphData(windowLengthGraphOption).then((graphInput) => {
-                  setWebhookGraphData(graphInput);
+                  setAnalyticsGraphData(transformDataFunction(graphInput));
                 });
               }}
             />
@@ -79,7 +82,7 @@ export const SettingsDevelopersWebhookUsageGraph = ({
 
           <StyledGraphContainer>
             <ResponsiveLine
-              data={webhookGraphData}
+              data={analytics}
               curve={'monotoneX'}
               enableArea={true}
               colors={(d) => d.color}
@@ -167,9 +170,7 @@ export const SettingsDevelopersWebhookUsageGraph = ({
               useMesh={true}
               enableSlices={false}
               enableCrosshair={false}
-              tooltip={({ point }) => (
-                <SettingsDevelopersWebhookTooltip point={point} />
-              )}
+              tooltip={({ point }) => <WebhookAnalyticsTooltip point={point} />} // later add a condition to get different tooltips
             />
           </StyledGraphContainer>
         </Section>

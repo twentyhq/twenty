@@ -1,24 +1,36 @@
-import { useAnalyticsTinybirdJwt } from '@/settings/developers/webhook/hooks/useAnalyticsTinybirdJwt';
-import { fetchGraphDataOrThrow } from '@/settings/developers/webhook/utils/fetchGraphDataOrThrow';
+import { useAnalyticsTinybirdJwt } from '@/analytics/hooks/useAnalyticsTinybirdJwt';
+import { fetchGraphDataOrThrow } from '@/analytics/utils/fetchGraphDataOrThrow';
+
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isUndefined } from '@sniptt/guards';
 
-export const useGraphData = (webhookId: string) => {
+export const useGraphData = ({
+  recordType,
+  recordId,
+  endpointName,
+}: {
+  recordType: string;
+  recordId: string;
+  endpointName: string;
+}) => {
   const { enqueueSnackBar } = useSnackBar();
-  const analyticsTinybirdJwt = useAnalyticsTinybirdJwt();
+  const tinybirdJwt = useAnalyticsTinybirdJwt(endpointName);
+
   const fetchGraphData = async (
     windowLengthGraphOption: '7D' | '1D' | '12H' | '4H',
   ) => {
     try {
-      if (isUndefined(analyticsTinybirdJwt)) {
-        throw new Error('No analyticsTinybirdJwt found');
+      if (isUndefined(tinybirdJwt)) {
+        throw new Error('No jwt associated with this endpoint found');
       }
 
       return await fetchGraphDataOrThrow({
-        webhookId,
+        recordId,
+        recordType,
         windowLength: windowLengthGraphOption,
-        tinybirdJwt: analyticsTinybirdJwt,
+        tinybirdJwt,
+        endpointName,
       });
     } catch (error) {
       enqueueSnackBar('Something went wrong while fetching webhook usage', {
