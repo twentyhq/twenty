@@ -10,7 +10,12 @@ import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedVie
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import styled from '@emotion/styled';
-import { IconFilter, MenuItemLeftContent, Pill, StyledMenuItemBase } from 'twenty-ui';
+import {
+  IconFilter,
+  MenuItemLeftContent,
+  Pill,
+  StyledMenuItemBase,
+} from 'twenty-ui';
 import { v4 } from 'uuid';
 
 export const StyledContainer = styled.div`
