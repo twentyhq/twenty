@@ -12,7 +12,13 @@ import { availableFilterDefinitionsComponentState } from '@/views/states/availab
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { useCallback } from 'react';
-import { IconLibraryPlus, IconPlus, isDefined, LightButton, MenuItem } from 'twenty-ui';
+import {
+  IconLibraryPlus,
+  IconPlus,
+  isDefined,
+  LightButton,
+  MenuItem,
+} from 'twenty-ui';
 import { v4 } from 'uuid';
 
 type AdvancedFilterAddFilterRuleSelectProps = {
