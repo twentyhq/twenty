@@ -1,3 +1,4 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
@@ -16,7 +17,7 @@ type SetFunction = <T>(
 
 export const useAddNewCard = () => {
   const columnContext = useContext(RecordBoardColumnContext);
-  const { createOneRecord, selectFieldMetadataItem } =
+  const { createOneRecord, selectFieldMetadataItem, objectMetadataItem } =
     useContext(RecordBoardContext);
   const { resetSearchFilter } = useEntitySelectSearch({
     relationPickerScopeId: 'relation-picker',
@@ -75,12 +76,28 @@ export const useAddNewCard = () => {
         (isOpportunity && company !== null) ||
         (!isOpportunity && labelValue !== '')
       ) {
+        // TODO: Refactor this whole section (Add new card): this should be:
+        // - simpler
+        // - piloted by metadata,
+        // - avoid drill down props, especially internal stuff
+        // - and follow record table pending record creation logic
+        let computedLabelIdentifierValue: any = labelValue;
+
+        if (objectMetadataItem.nameSingular === CoreObjectNameSingular.Person) {
+          computedLabelIdentifierValue = {
+            firstName: labelValue,
+            lastName: '',
+          };
+        }
+
         createOneRecord({
           [selectFieldMetadataItem.name]: columnContext?.columnDefinition.value,
           position,
           ...(isOpportunity
             ? { companyId: company?.id, name: company?.name }
-            : { [labelIdentifier.toLowerCase()]: labelValue }),
+            : {
+                [labelIdentifier.toLowerCase()]: computedLabelIdentifierValue,
+              }),
         });
       }
     },
