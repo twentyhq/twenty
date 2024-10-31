@@ -75,7 +75,11 @@ export const perform = (z: ZObject, bundle: Bundle) => {
   if (record.expiresAt) {
     record.expiresAt = record.expiresAt + 'Z';
   }
-  return [record];
+  const result = [record];
+  if (bundle.cleanedRequest.updatedFields) {
+    result.push(bundle.cleanedRequest.updatedFields);
+  }
+  return result;
 };
 
 const getNamePluralFromNameSingular = async (
