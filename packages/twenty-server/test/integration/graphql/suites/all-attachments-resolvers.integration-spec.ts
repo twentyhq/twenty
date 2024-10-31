@@ -25,7 +25,6 @@ const ATTACHMENT_GQL_FIELDS = `
   updatedAt
   deletedAt
   authorId
-  activityId
   taskId
   noteId
   personId
@@ -70,7 +69,6 @@ describe('attachments resolvers (integration)', () => {
       expect(attachment).toHaveProperty('updatedAt');
       expect(attachment).toHaveProperty('deletedAt');
       expect(attachment).toHaveProperty('authorId');
-      expect(attachment).toHaveProperty('activityId');
       expect(attachment).toHaveProperty('taskId');
       expect(attachment).toHaveProperty('noteId');
       expect(attachment).toHaveProperty('personId');
@@ -104,7 +102,6 @@ describe('attachments resolvers (integration)', () => {
     expect(createdAttachment).toHaveProperty('updatedAt');
     expect(createdAttachment).toHaveProperty('deletedAt');
     expect(createdAttachment).toHaveProperty('authorId');
-    expect(createdAttachment).toHaveProperty('activityId');
     expect(createdAttachment).toHaveProperty('taskId');
     expect(createdAttachment).toHaveProperty('noteId');
     expect(createdAttachment).toHaveProperty('personId');
@@ -137,7 +134,6 @@ describe('attachments resolvers (integration)', () => {
       expect(attachments).toHaveProperty('updatedAt');
       expect(attachments).toHaveProperty('deletedAt');
       expect(attachments).toHaveProperty('authorId');
-      expect(attachments).toHaveProperty('activityId');
       expect(attachments).toHaveProperty('taskId');
       expect(attachments).toHaveProperty('noteId');
       expect(attachments).toHaveProperty('personId');
@@ -169,7 +165,6 @@ describe('attachments resolvers (integration)', () => {
     expect(attachment).toHaveProperty('updatedAt');
     expect(attachment).toHaveProperty('deletedAt');
     expect(attachment).toHaveProperty('authorId');
-    expect(attachment).toHaveProperty('activityId');
     expect(attachment).toHaveProperty('taskId');
     expect(attachment).toHaveProperty('noteId');
     expect(attachment).toHaveProperty('personId');

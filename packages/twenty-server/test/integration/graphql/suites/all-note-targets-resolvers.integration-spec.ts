@@ -14,8 +14,8 @@ import { generateRecordName } from 'test/integration/utils/generate-record-name'
 const NOTE_TARGET_1_ID = '777a8457-eb2d-40ac-a707-551b615b6987';
 const NOTE_TARGET_2_ID = '777a8457-eb2d-40ac-a707-551b615b6988';
 const NOTE_TARGET_3_ID = '777a8457-eb2d-40ac-a707-551b615b6989';
-const PERSON_1_ID = '777a8457-eb2d-40ac-a707-441b615b6989';
-const PERSON_2_ID = '777a8457-eb2d-40ac-a707-331b615b6989';
+const PERSON_1_ID = 'f875ff46-b881-41ba-973a-b9cd5345e8f0';
+const PERSON_2_ID = '1fe0f78c-8c59-4ce6-ae02-56571331b252';
 const NOTE_TARGET_GQL_FIELDS = `
     id
     createdAt

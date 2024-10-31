@@ -386,7 +386,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   ) {
     const relatedObjectTypes = [
       'timelineActivity',
-      'activityTarget',
       'favorite',
       'attachment',
       'noteTarget',

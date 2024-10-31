@@ -101,7 +101,10 @@ export const SettingsDataModelFieldRelationForm = ({
   });
 
   const selectedObjectMetadataItem = findObjectMetadataItemById(
-    watchFormValue('relation.objectMetadataId'),
+    watchFormValue(
+      'relation.objectMetadataId',
+      initialRelationObjectMetadataItem?.id,
+    ),
   );
 
   const isMobile = useIsMobile();

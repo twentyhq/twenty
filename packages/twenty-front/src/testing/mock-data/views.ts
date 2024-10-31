@@ -25,7 +25,8 @@ export const mockedViewsData = [
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
     isCompact: false,
-
+    viewFilterGroups: [],
+    viewGroups: [],
     __typename: 'View',
   },
   {
@@ -40,6 +41,8 @@ export const mockedViewsData = [
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
     isCompact: false,
+    viewFilterGroups: [],
+    viewGroups: [],
     __typename: 'View',
   },
   {
@@ -54,6 +57,8 @@ export const mockedViewsData = [
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
     isCompact: false,
+    viewFilterGroups: [],
+    viewGroups: [],
     __typename: 'View',
   },
   {
@@ -68,6 +73,8 @@ export const mockedViewsData = [
     createdAt: '2021-09-01T00:00:00.000Z',
     updatedAt: '2021-09-01T00:00:00.000Z',
     isCompact: false,
+    viewFilterGroups: [],
+    viewGroups: [],
     __typename: 'View',
   },
 ];

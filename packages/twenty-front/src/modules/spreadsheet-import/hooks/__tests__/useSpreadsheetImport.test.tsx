@@ -1,4 +1,4 @@
-import { act, renderHook } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilState } from 'recoil';
 
 import { useOpenSpreadsheetImportDialog } from '@/spreadsheet-import/hooks/useOpenSpreadsheetImportDialog';
@@ -8,6 +8,7 @@ import {
   ImportedRow,
   SpreadsheetImportDialogOptions,
 } from '@/spreadsheet-import/types';
+import { act } from 'react';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>{children}</RecoilRoot>
