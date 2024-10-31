@@ -33,6 +33,12 @@ export const RecordTableInternalEffect = ({
   );
 
   useListenClickOutsideV2({
+    excludeClassNames: [
+      'bottom-bar',
+      'action-menu-dropdown',
+      'command-menu',
+      'modal-backdrop',
+    ],
     listenerId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
     refs: [tableBodyRef],
     callback: () => {
