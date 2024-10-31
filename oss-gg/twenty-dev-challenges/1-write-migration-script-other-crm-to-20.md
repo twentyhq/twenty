@@ -21,3 +21,5 @@ Your turn 👇
 » 22-October-2024 by [FaheemOnHub](https://oss.gg/FaheemOnHub) video Link: [video](https://drive.google.com/file/d/1bR59Q5gqoqHjzgdrF6K68U2hloexkQYM/view)
 
 » 27-October-2024 by [Khaan25](https://oss.gg/Khaan25) video Link: [video](https://drive.google.com/file/d/1-wgzofJaWmnMcFgZZV5uYNNgtbJKJ_1G/view?usp=sharing/)
+
+» 30-October-2024 by [RajuGangitla](https://oss.gg/RajuGangitla) video Link: [video](https://www.loom.com/share/f072bf31fb46449d98d6826a3a824fe9?sid=21f2c3f4-f286-43a2-98aa-d1fb92c3a86e)
