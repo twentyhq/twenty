@@ -1,14 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Command } from 'nest-commander';
-import { ObjectLiteral, Repository } from 'typeorm';
 import chalk from 'chalk';
+import { Command } from 'nest-commander';
+import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
+import { BaseCommandOptions } from 'src/database/commands/base.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { BaseCommandOptions } from 'src/database/commands/base.command';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 @Command({
   name: 'upgrade-0.32:copy-webhook-operation-into-operations',
