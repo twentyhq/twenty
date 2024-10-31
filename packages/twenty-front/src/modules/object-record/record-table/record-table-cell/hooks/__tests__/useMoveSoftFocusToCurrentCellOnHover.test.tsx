@@ -13,19 +13,22 @@ import { TableCellPosition } from '@/object-record/record-table/types/TableCellP
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 
 const mockSoftFocusPositionState = {
-  key: 'softFocusPositionComponentState__{"scopeId":"scopeId"}',
+  key: 'softFocusPositionComponentState__{"instanceId":"scopeId"}',
 };
 const mockSoftFocusActiveState = {
   key: 'isSoftFocusActiveComponentState__{"instanceId":"scopeId"}',
 };
-const mockIsSoftFocusOnTableCellFamilyState = {
-  key: 'isSoftFocusOnTableCellFamilyComponentState__{"familyKey":{"column":1,"row":0},"scopeId":"scopeId"}',
+const mockIsSoftFocusOnTableCellFamilyStateCurrentPosition = {
+  key: 'isSoftFocusOnTableCellComponentFamilyState__{"familyKey":{"column":1,"row":0},"instanceId":"scopeId"}',
+};
+const mockIsSoftFocusOnTableCellFamilyStateNewPosition = {
+  key: 'isSoftFocusOnTableCellComponentFamilyState__{"familyKey":{"column":3,"row":2},"instanceId":"scopeId"}',
 };
 const mockCurrentTableCellInEditModePositionState = {
   key: 'currentTableCellInEditModePositionComponentState__{"instanceId":"scopeId"}',
 };
 const mockIsTableCellInEditModeFamilyState = {
-  key: 'isTableCellInEditModeFamilyComponentState__{"familyKey":{"column":1,"row":0},"scopeId":"scopeId"}',
+  key: 'isTableCellInEditModeComponentFamilyState__{"familyKey":{"column":1,"row":0},"instanceId":"scopeId"}',
 };
 const mockCurrentHotKeyScopeState = {
   key: 'currentHotkeyScopeState',
@@ -99,26 +102,36 @@ describe('useMoveSoftFocusToCurrentCellOnHover', () => {
       result.current.moveSoftFocusToCurrentCellOnHover();
     });
 
-    expect(mockCallbackInterface.set).toHaveBeenCalledWith(
+    expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(
+      1,
       mockSoftFocusActiveState,
       true,
     );
-    expect(mockCallbackInterface.set).toHaveBeenCalledWith(
-      mockIsSoftFocusOnTableCellFamilyState,
+
+    expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(
+      2,
+      mockIsSoftFocusOnTableCellFamilyStateCurrentPosition,
       false,
     );
-    expect(mockCallbackInterface.set).toHaveBeenCalledWith(
+
+    expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(
+      3,
       mockSoftFocusPositionState,
       { column: 3, row: 2 },
     );
-    expect(mockCallbackInterface.set).toHaveBeenCalledWith(
-      mockIsSoftFocusOnTableCellFamilyState,
+
+    expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(
+      4,
+      mockIsSoftFocusOnTableCellFamilyStateNewPosition,
       true,
     );
-    expect(mockCallbackInterface.set).toHaveBeenCalledWith(
+
+    expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(
+      5,
       mockSoftFocusActiveState,
       true,
     );
+
     expect(setHotkeyScope).toHaveBeenCalledWith(
       TableHotkeyScope.TableSoftFocus,
     );

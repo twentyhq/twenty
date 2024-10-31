@@ -74,6 +74,7 @@ export const useRecordData = ({
   );
   const columns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
+    recordIndexId,
   );
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(

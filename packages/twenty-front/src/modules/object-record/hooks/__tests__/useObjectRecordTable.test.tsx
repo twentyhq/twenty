@@ -37,7 +37,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
 describe('useObjectRecordTable', () => {
   it('should skip fetch if currentWorkspace is undefined', async () => {
     const { result } = renderHook(
-      () => useLoadRecordIndexTable({ objectNameSingular }),
+      () => useLoadRecordIndexTable(objectNameSingular),
       {
         wrapper: Wrapper,
       },
