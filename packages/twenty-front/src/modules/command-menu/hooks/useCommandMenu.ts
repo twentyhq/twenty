@@ -53,7 +53,7 @@ export const useCommandMenu = () => {
               type: CommandType.Action,
             }));
 
-          setCommands(actionCommands);
+          setCommands((prev) => [...prev, ...actionCommands]);
         }
 
         setIsCommandMenuOpened(true);
@@ -76,11 +76,19 @@ export const useCommandMenu = () => {
 
         if (isCommandMenuOpened) {
           setIsCommandMenuOpened(false);
+          setCommands((prev) =>
+            prev.filter((command) => command.type !== CommandType.Action),
+          );
           resetSelectedItem();
           goBackToPreviousHotkeyScope();
         }
       },
-    [goBackToPreviousHotkeyScope, resetSelectedItem, setIsCommandMenuOpened],
+    [
+      goBackToPreviousHotkeyScope,
+      resetSelectedItem,
+      setCommands,
+      setIsCommandMenuOpened,
+    ],
   );
 
   const toggleCommandMenu = useRecoilCallback(
