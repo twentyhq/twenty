@@ -13,10 +13,11 @@ import { RecordBoardColumn } from '@/object-record/record-board/record-board-col
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
@@ -69,9 +70,10 @@ export const RecordBoard = () => {
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);
 
-  useListenClickOutsideByClassName({
-    classNames: ['record-board-card'],
+  useListenClickOutsideV2({
     excludeClassNames: ['bottom-bar', 'action-menu-dropdown', 'command-menu'],
+    listenerId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
+    refs: [boardRef],
     callback: resetRecordSelection,
   });
 
