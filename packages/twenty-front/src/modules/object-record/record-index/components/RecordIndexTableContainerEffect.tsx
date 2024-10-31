@@ -78,7 +78,6 @@ export const RecordIndexTableContainerEffect = () => {
 
   const setContextStoreTargetedRecords = useSetRecoilComponentStateV2(
     contextStoreTargetedRecordsRuleComponentState,
-    recordIndexId,
   );
   const hasUserSelectedAllRows = useRecoilComponentValueV2(
     hasUserSelectedAllRowsComponentState,
