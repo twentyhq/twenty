@@ -20,4 +20,6 @@ Your turn 👇
 
 » 26-October-2024 by [sateshcharan](https://oss.gg/sateshcharan) guide Link: [guide](https://dev.to/sateshcharan/supercharge-your-marketing-with-twentycrm-n8n-1hfd)
 
+» 31-October-2024 by [RajuGangitla](https://oss.gg/RajuGangitla) guide Link: [guide](https://dev.to/raju_gangitla_91920e1427f/automating-people-data-sync-n8n-workflow-for-twenty-crm-and-google-sheets-5789
+)
 ---
