@@ -6,6 +6,7 @@ import { Key } from 'ts-key-enum';
 
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
+import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
@@ -13,7 +14,6 @@ import { RecordBoardColumn } from '@/object-record/record-board/record-board-col
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -71,8 +71,13 @@ export const RecordBoard = () => {
     useRecordBoardSelection(recordBoardId);
 
   useListenClickOutsideV2({
-    excludeClassNames: ['bottom-bar', 'action-menu-dropdown', 'command-menu'],
-    listenerId: RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
+    excludeClassNames: [
+      'bottom-bar',
+      'action-menu-dropdown',
+      'command-menu',
+      'modal-backdrop',
+    ],
+    listenerId: RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
     refs: [boardRef],
     callback: resetRecordSelection,
   });
