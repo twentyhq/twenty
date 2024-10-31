@@ -84,9 +84,9 @@ export const MultiItemFieldInput = <T,>({
     setInputValue(value);
     if (!validateInput) return;
 
-    if (errorData.isValid) {
-      setErrorData(errorData);
-    }
+    setErrorData(
+      errorData.isValid ? errorData : { isValid: true, errorMessage: '' },
+    );
   };
 
   const handleAddButtonClick = () => {
