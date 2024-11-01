@@ -1,5 +1,6 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
+import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
 import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
 import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
@@ -19,22 +20,10 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  Avatar,
-  IconFolder,
-  IconFolderPlus,
-  IconHeartOff,
-  isDefined,
-} from 'twenty-ui';
+import { IconFolder, IconFolderPlus, IconHeartOff, isDefined } from 'twenty-ui';
 
 const StyledContainer = styled(NavigationDrawerSection)`
   width: 100%;
-`;
-
-const StyledAvatar = styled(Avatar)`
-  :hover {
-    cursor: grab;
-  }
 `;
 
 const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
@@ -53,6 +42,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const { deleteFavorite } = useFavorites();
   const [folderName, setFolderName] = useState('');
   const currentPath = useLocation().pathname;
+  const currentPathView = useLocation().pathname + useLocation().search;
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
     useRecoilState(isFavoriteFolderCreatingState);
   const theme = useTheme();
@@ -176,21 +166,17 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
                       key={favorite.id}
                       className="navigation-drawer-item"
                       label={favorite.labelIdentifier}
-                      Icon={() => (
-                        <StyledAvatar
-                          placeholderColorSeed={favorite.recordId}
-                          avatarUrl={favorite.avatarUrl}
-                          type={favorite.avatarType}
-                          placeholder={favorite.labelIdentifier}
-                          className="unorganised-fav-avatar"
-                        />
-                      )}
-                      active={favorite.link === currentPath}
+                      Icon={() => <FavoriteIcon favorite={favorite} />}
+                      active={
+                        favorite.objectNameSingular === 'view'
+                          ? favorite.link === currentPathView
+                          : favorite.link === currentPath
+                      }
                       to={favorite.link}
                       rightOptions={
                         <IconHeartOff
                           size={theme.icon.size.sm}
-                          color={theme.color.red}
+                          color={theme.color.gray50}
                           onClick={() => deleteFavorite(favorite.id)}
                         />
                       }

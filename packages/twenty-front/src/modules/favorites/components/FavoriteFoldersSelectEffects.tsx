@@ -64,10 +64,13 @@ export const FavoriteFoldersMultiSelectEffect = ({
   ]);
 
   useEffect(() => {
+    const targetId = record?.id;
     const checkedFolderIds = favorites
-      .filter((favorite) => favorite.recordId === record?.id)
+      .filter(
+        (favorite) =>
+          favorite.recordId === targetId && favorite.workspaceMemberId,
+      )
       .map((favorite) => favorite.favoriteFolderId || 'no-folder');
-
     setCheckedState(checkedFolderIds);
   }, [favorites, setCheckedState, record]);
 

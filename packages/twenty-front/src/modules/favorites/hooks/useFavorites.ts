@@ -2,19 +2,27 @@ import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { sortFavorites } from '@/favorites/utils/sortFavorites';
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { View } from '@/views/types/View';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 
 export const useFavorites = () => {
   const { favorites, workspaceFavorites, folders, currentWorkspaceMemberId } =
     usePrefetchedFavoritesData();
+
+  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const { objectMetadataItem: favoriteObjectMetadataItem } =
     useObjectMetadataItem({
@@ -53,11 +61,15 @@ export const useFavorites = () => {
       favoriteRelationFieldMetadataItems,
       getObjectRecordIdentifierByNameSingular,
       true,
+      views,
+      objectMetadataItems,
     );
   }, [
     favoriteRelationFieldMetadataItems,
     favorites,
     getObjectRecordIdentifierByNameSingular,
+    views,
+    objectMetadataItems,
   ]);
 
   const workspaceFavoritesSorted = useMemo(() => {
@@ -66,11 +78,15 @@ export const useFavorites = () => {
       favoriteRelationFieldMetadataItems,
       getObjectRecordIdentifierByNameSingular,
       false,
+      views,
+      objectMetadataItems,
     );
   }, [
     favoriteRelationFieldMetadataItems,
     getObjectRecordIdentifierByNameSingular,
     workspaceFavorites,
+    views,
+    objectMetadataItems,
   ]);
 
   const favoritesByFolder = useMemo(() => {
@@ -82,6 +98,8 @@ export const useFavorites = () => {
         favoriteRelationFieldMetadataItems,
         getObjectRecordIdentifierByNameSingular,
         true,
+        views,
+        objectMetadataItems,
       ),
     }));
   }, [
@@ -89,6 +107,8 @@ export const useFavorites = () => {
     favorites,
     favoriteRelationFieldMetadataItems,
     getObjectRecordIdentifierByNameSingular,
+    views,
+    objectMetadataItems,
   ]);
 
   const createFavorite = (
@@ -98,7 +118,9 @@ export const useFavorites = () => {
   ) => {
     const relevantFavorites = favoriteFolderId
       ? favorites.filter((fav) => fav.favoriteFolderId === favoriteFolderId)
-      : favorites.filter((fav) => !fav.favoriteFolderId);
+      : favorites.filter(
+          (fav) => !fav.favoriteFolderId && fav.workspaceMemberId,
+        );
 
     const maxPosition = Math.max(
       ...relevantFavorites.map((fav) => fav.position),
@@ -134,16 +156,20 @@ export const useFavorites = () => {
           favoriteRelationFieldMetadataItems,
           getObjectRecordIdentifierByNameSingular,
           true,
+          views,
+          objectMetadataItems,
         )
       : sortFavorites(
           favorites.filter(
-            (favorite) => !favorite.favoriteFolderId && !favorite.viewId,
+            (favorite) =>
+              !favorite.favoriteFolderId && favorite.workspaceMemberId,
           ),
           favoriteRelationFieldMetadataItems,
           getObjectRecordIdentifierByNameSingular,
           true,
+          views,
+          objectMetadataItems,
         );
-
     if (!relevantFavorites.length) return;
 
     const newPosition = calculateNewPosition({

@@ -50,10 +50,17 @@ export const useMultiFavoriteFolder = ({
   const toggleFolderSelection = useRecoilCallback(
     ({ snapshot, set }) =>
       async (folderId: string) => {
+        const targetId = record?.id;
+        const targetObject = record;
+
+        if (!isDefined(targetObject) || !isDefined(targetId)) {
+          return;
+        }
+
         const handleNoFolderDeletion = async () => {
           const favoritesToDelete = favorites.filter(
             (favorite) =>
-              !favorite.favoriteFolderId && favorite.recordId === record?.id,
+              !favorite.favoriteFolderId && favorite.recordId === targetId,
           );
 
           for (const favorite of favoritesToDelete) {
@@ -63,7 +70,9 @@ export const useMultiFavoriteFolder = ({
 
         const handleFolderDeletion = async (folderId: string) => {
           const favoriteToDelete = favorites.find(
-            (favorite) => favorite.favoriteFolderId === folderId,
+            (favorite) =>
+              favorite.favoriteFolderId === folderId &&
+              favorite.recordId === targetId,
           );
 
           if (!isDefined(favoriteToDelete)) {
@@ -93,12 +102,11 @@ export const useMultiFavoriteFolder = ({
           return;
         }
 
-        if (!isDefined(record)) {
-          return;
-        }
-
         const folderIdToUse = folderId === 'no-folder' ? undefined : folderId;
-        await createFavorite(record, objectNameSingular, folderIdToUse);
+
+        if (isDefined(record)) {
+          await createFavorite(record, objectNameSingular, folderIdToUse);
+        }
 
         set(favoriteFoldersMultiSelectCheckedState, [...checkedIds, folderId]);
       },

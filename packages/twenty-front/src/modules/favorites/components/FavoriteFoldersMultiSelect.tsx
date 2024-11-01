@@ -6,6 +6,7 @@ import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFold
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -134,7 +135,8 @@ export const FavoriteFoldersMultiSelect = ({
           autoFocus
         />
         <DropdownMenuSeparator />
-        <StyledItemsContainer>
+
+        <DropdownMenuItemsContainer>
           {showNoFolderOption && (
             <MenuItem
               key={NO_FOLDER_ID}
@@ -168,7 +170,7 @@ export const FavoriteFoldersMultiSelect = ({
                 />
               ))
             : !showNoFolderOption && <MenuItem text="No folders found" />}
-        </StyledItemsContainer>
+        </DropdownMenuItemsContainer>
         <StyledFooter>
           <MenuItem
             className="add-folder"

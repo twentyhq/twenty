@@ -33,6 +33,15 @@ const StyledRightIcon = styled.div<StyledRightIconProps>`
   margin-left: ${({ theme }) => theme.spacing(2)};
   transition: opacity 150ms ease-in-out;
   opacity: ${({ isMobile }) => (isMobile ? 1 : 0)};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  width: ${({ theme }) => theme.spacing(5)};
+  height: ${({ theme }) => theme.spacing(5)};
+  :hover {
+    background: ${({ theme }) => theme.background.transparent.light};
+  }
 
   .title-container:hover & {
     opacity: 1;

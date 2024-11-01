@@ -165,7 +165,12 @@ const StyledRightOptionsContainer = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
-
+  :hover {
+    background: ${({ theme }) => theme.background.transparent.light};
+  }
+  width: ${({ theme }) => theme.spacing(6)};
+  height: ${({ theme }) => theme.spacing(6)};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   .navigation-drawer-item:hover & {
     visibility: visible;
   }

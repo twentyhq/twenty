@@ -14,6 +14,11 @@ import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/n
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import styled from '@emotion/styled';
+
+const StyledContainer = styled.div`
+  overflow: scroll;
+`;
 
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
@@ -53,19 +58,20 @@ export const MainNavigationDrawerItems = () => {
           />
         </NavigationDrawerSection>
       )}
+      <StyledContainer>
+        {isWorkspaceFavoriteEnabled && <NavigationDrawerOpenedSection />}
 
-      {isWorkspaceFavoriteEnabled && <NavigationDrawerOpenedSection />}
+        <CurrentWorkspaceMemberFavoritesFolders />
 
-      <CurrentWorkspaceMemberFavoritesFolders />
-
-      {isWorkspaceFavoriteEnabled ? (
-        <WorkspaceFavorites />
-      ) : (
-        <NavigationDrawerSectionForObjectMetadataItemsWrapper
-          isRemote={false}
-        />
-      )}
-      <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
+        {isWorkspaceFavoriteEnabled ? (
+          <WorkspaceFavorites />
+        ) : (
+          <NavigationDrawerSectionForObjectMetadataItemsWrapper
+            isRemote={false}
+          />
+        )}
+        <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
+      </StyledContainer>
     </>
   );
 };

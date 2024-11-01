@@ -28,7 +28,7 @@ type NavigationDrawerInputProps = {
 
 const StyledItem = styled.div<{ isNavigationDrawerExpanded: boolean }>`
   align-items: center;
-  background: inherit;
+  background-color: ${({ theme }) => theme.background.primary};
   border: 1px solid ${({ theme }) => theme.color.blue};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: content-box;
@@ -44,13 +44,14 @@ const StyledItem = styled.div<{ isNavigationDrawerExpanded: boolean }>`
 
 const StyledItemElementsContainer = styled.span`
   align-items: center;
+
   display: flex;
   width: 100%;
 `;
 
 const StyledTextInput = styled.input`
-  margin: 0;
   ${TEXT_INPUT_STYLE}
+  margin: 0;
   width: 100%;
 `;
 
