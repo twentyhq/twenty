@@ -29,7 +29,7 @@ const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
 
   height: 32px;
 
-  padding-left: ${({ theme }) => theme.spacing(1.25)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(1)};
   user-select: none;
 
@@ -51,6 +51,17 @@ const StyledIconContainer = styled.div`
     align-items: center;
     display: flex;
     height: 12px;
+    width: 16px;
+    justify-content: center;
+  }
+`;
+
+const StyledCheveronIconContainer = styled.div`
+  svg {
+    align-items: center;
+    display: flex;
+    height: 14px;
+    width: 14px;
     justify-content: center;
   }
 `;
@@ -93,7 +104,9 @@ export const PhoneCountryPickerDropdownButton = ({
         <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
           <StyledIconContainer>
             {selectedCountry ? <selectedCountry.Flag /> : <IconWorld />}
-            <IconChevronDown size={theme.icon.size.sm} />
+            <StyledCheveronIconContainer>
+              <IconChevronDown size={theme.icon.size.sm} />
+            </StyledCheveronIconContainer>
           </StyledIconContainer>
         </StyledDropdownButtonContainer>
       }
