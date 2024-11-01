@@ -170,7 +170,6 @@ export const useRecordData = ({
     previousRecordCount,
     hiddenKanbanFieldColumn,
     viewType,
-    isDownloadingRef.current,
   ]);
 
   return {
