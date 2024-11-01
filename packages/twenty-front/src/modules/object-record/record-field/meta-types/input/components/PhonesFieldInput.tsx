@@ -18,8 +18,17 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
   ${TEXT_INPUT_STYLE}
   padding: 0;
 
+  &.PhoneInput {
+    display: flex;
+    align-items: center;
+    gap: ${({ theme }) => theme.spacing(1)};
+    background-color: ${({ theme }) => theme.background.transparent.secondary};
+    backdrop-filter: ${({ theme }) => theme.blur.medium};
+    border-radius: ${({ theme }) => theme.border.radius.sm};
+  }
+
   .PhoneInputInput {
-    background: none;
+    background: transparent;
     border: none;
     color: ${({ theme }) => theme.font.color.primary};
 
