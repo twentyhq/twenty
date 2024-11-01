@@ -4,7 +4,6 @@ import { useMultiFavoriteFolder } from '@/favorites/hooks/useMultiFavoriteFolder
 import { FavoriteFoldersScopeInternalContext } from '@/favorites/scopes/scope-internal-context/favoritesScopeInternalContext';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { Checkbox } from '@/ui/input/components/Checkbox';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -18,7 +17,7 @@ import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconPlus } from 'twenty-ui';
+import { Checkbox, IconPlus } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledDropdownContainer = styled.div`
