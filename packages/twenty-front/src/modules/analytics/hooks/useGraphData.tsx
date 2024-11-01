@@ -33,9 +33,14 @@ export const useGraphData = ({
         endpointName,
       });
     } catch (error) {
-      enqueueSnackBar('Something went wrong while fetching webhook usage', {
-        variant: SnackBarVariant.Error,
-      });
+      if (error instanceof Error) {
+        enqueueSnackBar(
+          `Something went wrong while fetching webhook usage: ${error.message}`,
+          {
+            variant: SnackBarVariant.Error,
+          },
+        );
+      }
       return [];
     }
   };
