@@ -10,13 +10,11 @@ import { RecordShowPageBaseHeader } from '~/pages/object-record/RecordShowPageBa
 
 export const RecordShowActionMenu = ({
   isFavorite,
-  handleFavoriteButtonClick,
   record,
   objectMetadataItem,
   objectNameSingular,
 }: {
   isFavorite: boolean;
-  handleFavoriteButtonClick: () => void;
   record: ObjectRecord | undefined;
   objectMetadataItem: ObjectMetadataItem;
   objectNameSingular: string;
@@ -39,7 +37,6 @@ export const RecordShowActionMenu = ({
           <RecordShowPageBaseHeader
             {...{
               isFavorite,
-              handleFavoriteButtonClick,
               record,
               objectMetadataItem,
               objectNameSingular,
