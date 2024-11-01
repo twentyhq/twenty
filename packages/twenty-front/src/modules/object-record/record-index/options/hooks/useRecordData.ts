@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -53,12 +53,12 @@ export const useRecordData = ({
   callback,
   viewType = ViewType.Table,
 }: UseRecordDataOptions) => {
-  const [isDownloading, setIsDownloading] = useState(false);
   const [inflight, setInflight] = useState(false);
   const [pageCount, setPageCount] = useState(0);
   const [progress, setProgress] = useState<ExportProgress>({
     displayType: 'number',
   });
+  const isDownloadingRef = useRef(false);
   const [previousRecordCount, setPreviousRecordCount] = useState(0);
 
   const { visibleTableColumnsSelector } = useRecordTableStates(recordIndexId);
@@ -119,7 +119,7 @@ export const useRecordData = ({
       setInflight(false);
     };
 
-    if (!isDownloading || inflight || loading) {
+    if (!isDownloadingRef.current || inflight || loading) {
       return;
     }
 
@@ -132,7 +132,7 @@ export const useRecordData = ({
       const complete = () => {
         setPageCount(0);
         setPreviousRecordCount(0);
-        setIsDownloading(false);
+        isDownloadingRef.current = false;
         setProgress({
           displayType: 'number',
         });
@@ -159,7 +159,6 @@ export const useRecordData = ({
     delayMs,
     fetchMoreRecordsWithPagination,
     inflight,
-    isDownloading,
     pageCount,
     records,
     totalCount,
@@ -171,16 +170,19 @@ export const useRecordData = ({
     previousRecordCount,
     hiddenKanbanFieldColumn,
     viewType,
+    isDownloadingRef.current,
   ]);
 
   return {
     progress,
-    isDownloading,
+    isDownloading: isDownloadingRef.current,
     getTableData: () => {
-      setPageCount(0);
-      setPreviousRecordCount(0);
-      setIsDownloading(true);
-      findManyRecords?.();
+      if (!isDownloadingRef.current) {
+        setPageCount(0);
+        setPreviousRecordCount(0);
+        isDownloadingRef.current = true;
+        findManyRecords?.();
+      }
     },
   };
 };
