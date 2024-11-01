@@ -1,9 +1,10 @@
 import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { AnalyticsTinybirdJwtMap } from '~/generated-metadata/graphql';
 
-export const useAnalyticsTinybirdJwt = (
-  jwtName: string,
+export const useAnalyticsTinybirdJwts = (
+  jwtName: keyof AnalyticsTinybirdJwtMap,
 ): string | undefined => {
   const currentUser = useRecoilValue(currentUserState);
 
@@ -11,5 +12,5 @@ export const useAnalyticsTinybirdJwt = (
     return undefined;
   }
 
-  return currentUser.analyticsTinybirdJwt?.[jwtName];
+  return currentUser.analyticsTinybirdJwts?.[jwtName];
 };

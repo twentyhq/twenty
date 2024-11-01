@@ -20,6 +20,7 @@ import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/su
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
+import { AnalyticsTinybirdJwtMap } from 'src/engine/core-modules/analytics/entities/analytics-tinybird-jwts.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -156,10 +157,8 @@ export class UserResolver {
     return getHMACKey(parent.email, key);
   }
 
-  @ResolveField(() => GraphQLJSONObject)
-  analyticsTinybirdJwt(
-    @AuthWorkspace() workspace: Workspace | undefined,
-  ): Record<string, any> {
+  @ResolveField(() => AnalyticsTinybirdJwtMap, { nullable: true })
+  analyticsTinybirdJwts(@AuthWorkspace() workspace: Workspace | undefined) {
     return this.analyticsService.generateWorkspaceJwt(workspace?.id);
   }
 

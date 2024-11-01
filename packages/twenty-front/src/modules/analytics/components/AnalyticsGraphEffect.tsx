@@ -3,11 +3,12 @@ import { useGraphData } from '@/analytics/hooks/useGraphData';
 
 import { useEffect, useState } from 'react';
 import { useSetRecoilState } from 'recoil';
+import { AnalyticsTinybirdJwtMap } from '~/generated-metadata/graphql';
 
 type AnalyticsGraphEffectProps = {
   recordId: string;
   recordType: string;
-  endpointName: string;
+  endpointName: keyof AnalyticsTinybirdJwtMap;
 };
 
 export const AnalyticsGraphEffect = ({

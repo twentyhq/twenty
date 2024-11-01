@@ -3,10 +3,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { AxiosRequestConfig } from 'axios';
 
+import { AnalyticsTinybirdJwtMap } from 'src/engine/core-modules/analytics/entities/analytics-tinybird-jwts.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-
-import { TINYBIRD_ENDPOINTS_MAP } from './constants/tinybirdEndpoints.constants';
 
 type CreateEventInput = {
   action: string;
@@ -91,40 +90,53 @@ export class AnalyticsService {
     return { success: true };
   }
 
-  generateWorkspaceJwt(workspaceId: string | undefined) {
-    //put a verification if analytics is enabled
+  generateWorkspaceJwt(
+    workspaceId: string | undefined,
+  ): AnalyticsTinybirdJwtMap | null {
     if (!this.environmentService.get('ANALYTICS_ENABLED')) {
-      return {};
+      return null;
     }
-    const tinybirdJwtMap = Object.fromEntries(
-      Object.entries(TINYBIRD_ENDPOINTS_MAP).map(
-        ([endpointName, endpointUuid]) => [
-          endpointName,
-          this.jwtWrapperService.sign(
-            {
-              name: 'analytics_jwt',
-              workspace_id: this.environmentService.get(
-                'TINYBIRD_WORKSPACE_UUID',
-              ),
-              scopes: [
-                {
-                  type: 'PIPES:READ',
-                  resource: endpointUuid,
-                  fixed_params: { workspaceId: workspaceId },
-                },
-              ],
-            },
-            {
-              secret: this.environmentService.get(
-                'TINYBIRD_GENERATE_JWT_TOKEN',
-              ),
-              expiresIn: '7d',
-            },
-          ),
-        ],
-      ),
-    );
 
-    return tinybirdJwtMap;
+    const jwtPayload = {
+      name: 'analytics_jwt',
+      workspace_id: this.environmentService.get('TINYBIRD_WORKSPACE_UUID'),
+      scopes: [
+        {
+          type: 'PIPES:READ',
+          resource: '',
+          fixed_params: { workspaceId },
+        },
+      ],
+    };
+
+    const jwtOptions = {
+      secret: this.environmentService.get('TINYBIRD_GENERATE_JWT_TOKEN'),
+      expiresIn: '7d',
+    };
+
+    const analyticsProperties = [
+      'getWebhookAnalytics',
+      'getPageviewsAnalytics',
+      'getUsersAnalytics',
+    ];
+
+    return analyticsProperties.reduce(
+      (acc, property) => ({
+        ...acc,
+        [property]: this.jwtWrapperService.sign(
+          {
+            ...jwtPayload,
+            scopes: [
+              {
+                ...jwtPayload.scopes[0],
+                resource: property,
+              },
+            ],
+          },
+          jwtOptions,
+        ),
+      }),
+      {},
+    ) as AnalyticsTinybirdJwtMap;
   }
 }

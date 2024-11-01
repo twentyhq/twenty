@@ -8,7 +8,11 @@ export const USER_QUERY_FRAGMENT = gql`
     email
     canImpersonate
     supportUserHash
-    analyticsTinybirdJwt
+    analyticsTinybirdJwts {
+      getWebhookAnalytics
+      getPageviewsAnalytics
+      getUsersAnalytics
+    }
     onboardingStatus
     workspaceMember {
       ...WorkspaceMemberQueryFragment

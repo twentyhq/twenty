@@ -1,9 +1,10 @@
-import { useAnalyticsTinybirdJwt } from '@/analytics/hooks/useAnalyticsTinybirdJwt';
+import { useAnalyticsTinybirdJwts } from '@/analytics/hooks/useAnalyticsTinybirdJwts';
 import { fetchGraphDataOrThrow } from '@/analytics/utils/fetchGraphDataOrThrow';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isUndefined } from '@sniptt/guards';
+import { AnalyticsTinybirdJwtMap } from '~/generated-metadata/graphql';
 
 export const useGraphData = ({
   recordType,
@@ -12,10 +13,10 @@ export const useGraphData = ({
 }: {
   recordType: string;
   recordId: string;
-  endpointName: string;
+  endpointName: keyof AnalyticsTinybirdJwtMap;
 }) => {
   const { enqueueSnackBar } = useSnackBar();
-  const tinybirdJwt = useAnalyticsTinybirdJwt(endpointName);
+  const tinybirdJwt = useAnalyticsTinybirdJwts(endpointName);
 
   const fetchGraphData = async (
     windowLengthGraphOption: '7D' | '1D' | '12H' | '4H',

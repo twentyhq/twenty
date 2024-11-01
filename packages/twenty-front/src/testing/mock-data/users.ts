@@ -21,7 +21,7 @@ type MockedUser = Pick<
   | 'supportUserHash'
   | 'onboardingStatus'
   | 'userVars'
-  | 'analyticsTinybirdJwt'
+  | 'analyticsTinybirdJwts'
 > & {
   workspaceMember: WorkspaceMember | null;
   locale: string;
@@ -114,7 +114,7 @@ export const mockedUserData: MockedUser = {
   workspaceMembers: [mockedWorkspaceMemberData],
   onboardingStatus: OnboardingStatus.Completed,
   userVars: {},
-  analyticsTinybirdJwt: {},
+  analyticsTinybirdJwts: null,
 };
 
 export const mockedOnboardingUserData = (

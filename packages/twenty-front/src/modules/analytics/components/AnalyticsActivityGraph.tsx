@@ -10,6 +10,7 @@ import { Section } from '@react-email/components';
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { H2Title } from 'twenty-ui';
+import { AnalyticsTinybirdJwtMap } from '~/generated-metadata/graphql';
 
 const StyledGraphContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -29,7 +30,7 @@ const StyledTitleContainer = styled.div`
 type AnalyticsActivityGraphProps = {
   recordId: string;
   recordType: string;
-  endpointName: string;
+  endpointName: keyof AnalyticsTinybirdJwtMap;
 };
 
 export const AnalyticsActivityGraph = ({

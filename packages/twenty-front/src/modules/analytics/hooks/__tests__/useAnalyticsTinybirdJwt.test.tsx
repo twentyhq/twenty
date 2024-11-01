@@ -1,4 +1,4 @@
-import { useAnalyticsTinybirdJwt } from '@/analytics/hooks/useAnalyticsTinybirdJwt';
+import { useAnalyticsTinybirdJwts } from '@/analytics/hooks/useAnalyticsTinybirdJwts';
 import { CurrentUser, currentUserState } from '@/auth/states/currentUserState';
 import { act, renderHook } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
@@ -8,91 +8,35 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
-describe('useAnalyticsTinybirdJwt', () => {
-  const TEST_JWT_NAME = 'testJwt';
+describe('useAnalyticsTinybirdJwts', () => {
+  const JWT_NAME = 'getWebhookAnalytics';
+  const TEST_JWT_TOKEN = 'test-jwt-token';
 
-  it('should return the specific analytics jwt token when available', () => {
+  it('should return undefined when no user is logged in', () => {
     const { result } = renderHook(
       () => {
         const setCurrentUserState = useSetRecoilState(currentUserState);
-
         return {
-          hook: useAnalyticsTinybirdJwt(TEST_JWT_NAME),
+          hook: useAnalyticsTinybirdJwts(JWT_NAME),
           setCurrentUserState,
         };
       },
       { wrapper: Wrapper },
     );
 
-    // Test with valid JWT
-    act(() => {
-      result.current.setCurrentUserState({
-        analyticsTinybirdJwt: {
-          [TEST_JWT_NAME]: 'test-jwt-token',
-        },
-      } as CurrentUser);
-    });
-    expect(result.current.hook).toBe('test-jwt-token');
-
-    // Test with null user
     act(() => {
       result.current.setCurrentUserState(null);
     });
-    expect(result.current.hook).toBeUndefined();
 
-    // Test with empty user object
-    act(() => {
-      result.current.setCurrentUserState({} as CurrentUser);
-    });
     expect(result.current.hook).toBeUndefined();
-
-    // Test with user but missing specific JWT
-    act(() => {
-      result.current.setCurrentUserState({
-        analyticsTinybirdJwt: {
-          otherJwt: 'other-token',
-        },
-      } as CurrentUser);
-    });
-    expect(result.current.hook).toBeUndefined();
-
-    // Test with user but empty JWT object
-    act(() => {
-      result.current.setCurrentUserState({
-        analyticsTinybirdJwt: {},
-      } as CurrentUser);
-    });
-    expect(result.current.hook).toBeUndefined();
-
-    // Test with undefined analyticsTinybirdJwt
-    act(() => {
-      result.current.setCurrentUserState({
-        analyticsTinybirdJwt: undefined,
-      } as CurrentUser);
-    });
-    expect(result.current.hook).toBeUndefined();
-
-    // Test with multiple JWT tokens
-    act(() => {
-      result.current.setCurrentUserState({
-        analyticsTinybirdJwt: {
-          [TEST_JWT_NAME]: 'correct-token',
-          otherJwt: 'other-token',
-          thirdJwt: 'third-token',
-        },
-      } as CurrentUser);
-    });
-    expect(result.current.hook).toBe('correct-token');
   });
 
-  it('should handle different JWT names correctly', () => {
-    const DIFFERENT_JWT_NAME = 'differentJwt';
+  it('should return the correct JWT token when available', () => {
     const { result } = renderHook(
       () => {
         const setCurrentUserState = useSetRecoilState(currentUserState);
-
         return {
-          hook: useAnalyticsTinybirdJwt(DIFFERENT_JWT_NAME),
+          hook: useAnalyticsTinybirdJwts(JWT_NAME),
           setCurrentUserState,
         };
       },
@@ -101,12 +45,43 @@ describe('useAnalyticsTinybirdJwt', () => {
 
     act(() => {
       result.current.setCurrentUserState({
-        analyticsTinybirdJwt: {
-          [DIFFERENT_JWT_NAME]: 'different-token',
-          [TEST_JWT_NAME]: 'test-token',
+        id: '1',
+        email: 'test@test.com',
+        canImpersonate: false,
+        userVars: {},
+        analyticsTinybirdJwts: {
+          [JWT_NAME]: TEST_JWT_TOKEN,
         },
       } as CurrentUser);
     });
-    expect(result.current.hook).toBe('different-token');
+
+    expect(result.current.hook).toBe(TEST_JWT_TOKEN);
+  });
+
+  it('should return undefined when JWT token is not available', () => {
+    const { result } = renderHook(
+      () => {
+        const setCurrentUserState = useSetRecoilState(currentUserState);
+        return {
+          hook: useAnalyticsTinybirdJwts(JWT_NAME),
+          setCurrentUserState,
+        };
+      },
+      { wrapper: Wrapper },
+    );
+
+    act(() => {
+      result.current.setCurrentUserState({
+        id: '1',
+        email: 'test@test.com',
+        canImpersonate: false,
+        userVars: {},
+        analyticsTinybirdJwts: {
+          getPageviewsAnalytics: TEST_JWT_TOKEN,
+        },
+      } as CurrentUser);
+    });
+
+    expect(result.current.hook).toBeUndefined();
   });
 });
