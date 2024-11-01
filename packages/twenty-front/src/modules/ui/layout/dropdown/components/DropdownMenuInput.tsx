@@ -39,7 +39,7 @@ const StyledInput = styled.input<{
 
 const StyledInputContainer = styled.div`
   box-sizing: border-box;
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(0)};
   position: relative;
   width: 100%;
 `;
@@ -53,7 +53,7 @@ const StyledRightContainer = styled.div`
 
 const StyledErrorDiv = styled.div`
   color: ${({ theme }) => theme.color.red};
-  padding: 0 ${({ theme }) => theme.spacing(2)}
+  padding: 0 ${({ theme }) => theme.spacing(2)};
     ${({ theme }) => theme.spacing(1)};
 `;
 
