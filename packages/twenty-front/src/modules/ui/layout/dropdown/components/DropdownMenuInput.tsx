@@ -21,14 +21,14 @@ const StyledInput = styled.input<{
   height: 32px;
   position: relative;
   width: 100%;
-
+/* 
   &:focus {
     ${({ theme, hasError = false }) => {
       if (hasError) return '';
       return `box-shadow: 0px 0px 0px 3px ${RGBA(theme.color.blue, 0.1)};
       border-color: ${theme.color.blue};`;
     }};
-  }
+  } */
 
   ${({ withRightComponent }) =>
     withRightComponent &&
