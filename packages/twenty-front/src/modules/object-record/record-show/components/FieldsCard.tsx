@@ -77,10 +77,10 @@ export const FieldsCard = ({
 
   const boxedRelationFieldMetadataItems = relationFieldMetadataItems?.filter(
     (fieldMetadataItem) =>
-      objectNameSingular !== CoreObjectNameSingular.Note &&
-      fieldMetadataItem.name !== 'noteTargets' &&
-      objectNameSingular !== CoreObjectNameSingular.Task &&
-      fieldMetadataItem.name !== 'taskTargets',
+      !((objectNameSingular === CoreObjectNameSingular.Note &&
+        fieldMetadataItem.name === 'noteTargets') ||
+      (objectNameSingular === CoreObjectNameSingular.Task &&
+        fieldMetadataItem.name === 'taskTargets')),
   );
   const isReadOnly = objectMetadataItem.isRemote;
 
