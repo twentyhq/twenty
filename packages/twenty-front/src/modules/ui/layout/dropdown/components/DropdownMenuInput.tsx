@@ -22,13 +22,13 @@ const StyledInput = styled.input<{
   position: relative;
   width: 100%;
 
-  &:focus {
+  /* &:focus {
     ${({ theme, hasError = false }) => {
       if (hasError) return '';
       return `box-shadow: 0px 0px 0px 3px ${RGBA(theme.color.blue, 0.1)};
       border-color: ${theme.color.blue};`;
     }};
-  }
+  } */
 
   ${({ withRightComponent }) =>
     withRightComponent &&
@@ -53,8 +53,7 @@ const StyledRightContainer = styled.div`
 
 const StyledErrorDiv = styled.div`
   color: ${({ theme }) => theme.color.red};
-  padding: 0 ${({ theme }) => theme.spacing(2)}
-    ${({ theme }) => theme.spacing(1)};
+  padding: 0 ${({ theme }) => theme.spacing(2)};
 `;
 
 type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;
