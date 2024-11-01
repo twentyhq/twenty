@@ -19,7 +19,7 @@ module.exports = {
     {
       files: ['*.ts', '*.tsx'],
       parserOptions: {
-        project: ['packages/twenty-front/tsconfig.{json,*.json}'],
+        project: ['tsconfig.{json,*.json}'],
       },
       plugins: ['project-structure'],
       settings: {
