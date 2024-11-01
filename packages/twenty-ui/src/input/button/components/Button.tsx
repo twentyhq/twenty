@@ -60,7 +60,7 @@ const StyledButton = styled('button', {
                 ? theme.background.secondary
                 : theme.background.primary};
               border-color: ${!inverted
-                ? focus
+                ? !disabled && focus
                   ? theme.color.blue
                   : theme.background.transparent.light
                 : theme.background.transparent.light};
@@ -286,9 +286,7 @@ const StyledButton = styled('button', {
                 : 'none'};
               opacity: ${disabled ? 0.24 : 1};
               color: ${!inverted
-                ? !disabled
-                  ? theme.font.color.danger
-                  : theme.color.red20
+                ? theme.font.color.danger
                 : theme.font.color.inverted};
               &:hover {
                 background: ${!inverted

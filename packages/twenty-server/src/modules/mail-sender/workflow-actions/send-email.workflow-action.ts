@@ -19,7 +19,10 @@ import {
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/types/workflow-action-result.type';
-import { WorkflowSendEmailStepInput } from 'src/modules/workflow/workflow-executor/types/workflow-step-settings.type';
+import {
+  WorkflowSendEmailStepInput,
+  WorkflowSendEmailStepOutputSchema,
+} from 'src/modules/workflow/workflow-executor/types/workflow-step-settings.type';
 import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
@@ -112,7 +115,9 @@ export class SendEmailWorkflowAction implements WorkflowAction {
 
       this.logger.log(`Email sent successfully`);
 
-      return { result: { success: true } };
+      return {
+        result: { success: true } satisfies WorkflowSendEmailStepOutputSchema,
+      };
     } catch (error) {
       return { error };
     }

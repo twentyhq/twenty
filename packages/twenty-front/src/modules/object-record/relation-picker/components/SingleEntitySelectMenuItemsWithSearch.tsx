@@ -35,7 +35,6 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
   onEntitySelected,
   relationObjectNameSingular,
   relationPickerScopeId = 'relation-picker',
-  selectedEntity,
   selectedRelationRecordIds,
   dropdownPlacement,
 }: SingleEntitySelectMenuItemsWithSearchProps) => {
@@ -71,11 +70,11 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
       entitiesToSelect={entities.entitiesToSelect}
       loading={entities.loading}
       selectedEntity={
-        selectedEntity ??
-        (entities.selectedEntities.length === 1
+        entities.selectedEntities.length === 1
           ? entities.selectedEntities[0]
-          : undefined)
+          : undefined
       }
+      shouldSelectEmptyOption={selectedRelationRecordIds?.length === 0}
       hotkeyScope={relationPickerScopeId}
       onCreate={onCreateWithInput}
       isFiltered={!!relationPickerSearchFilter}

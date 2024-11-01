@@ -13,7 +13,9 @@ describe('replaceStep', () => {
         },
         input: {
           serverlessFunctionId: 'first',
+          serverlessFunctionVersion: '1',
         },
+        outputSchema: {},
       },
       type: 'CODE',
       valid: true,
@@ -26,7 +28,7 @@ describe('replaceStep', () => {
       name: '',
       steps: [stepToBeReplaced],
       trigger: {
-        settings: { eventName: 'company.created' },
+        settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
       updatedAt: '',
@@ -43,7 +45,9 @@ describe('replaceStep', () => {
           },
           input: {
             serverlessFunctionId: 'second',
+            serverlessFunctionVersion: '1',
           },
+          outputSchema: {},
         },
       },
       stepId: stepToBeReplaced.id,
@@ -63,7 +67,9 @@ describe('replaceStep', () => {
         },
         input: {
           serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+          serverlessFunctionVersion: '1',
         },
+        outputSchema: {},
       },
       type: 'CODE',
       valid: true,
@@ -85,7 +91,9 @@ describe('replaceStep', () => {
             },
             input: {
               serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+              serverlessFunctionVersion: '1',
             },
+            outputSchema: {},
           },
           type: 'CODE',
           valid: true,
@@ -101,14 +109,19 @@ describe('replaceStep', () => {
             },
             input: {
               serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+              serverlessFunctionVersion: '1',
             },
+            outputSchema: {},
           },
           type: 'CODE',
           valid: true,
         },
       ],
       trigger: {
-        settings: { eventName: 'company.created' },
+        settings: {
+          eventName: 'company.created',
+          outputSchema: {},
+        },
         type: 'DATABASE_EVENT',
       },
       updatedAt: '',

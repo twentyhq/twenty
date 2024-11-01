@@ -5,10 +5,9 @@ import { SettingsWebhooksTable } from '@/settings/developers/components/Settings
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
-import { Button, H2Title, IconPlus, MOBILE_VIEWPORT } from 'twenty-ui';
+import { Button, H2Title, IconPlus, MOBILE_VIEWPORT, Section } from 'twenty-ui';
 
 const StyledButtonContainer = styled.div`
   display: flex;

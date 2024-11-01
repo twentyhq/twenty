@@ -5,7 +5,9 @@ import { Key } from 'ts-key-enum';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
+import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/country/constants/SelectCountryDropdownId';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
@@ -19,13 +21,13 @@ const StyledAddressContainer = styled.div`
 
   padding: 4px 8px;
 
-  width: 100%;
-  min-width: 260px;
+  width: 344px;
   > div {
     margin-bottom: 6px;
   }
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
+    width: auto;
     min-width: 100px;
     max-width: 200px;
     overflow: hidden;
@@ -36,7 +38,8 @@ const StyledAddressContainer = styled.div`
 `;
 
 const StyledHalfRowContainer = styled.div`
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -91,6 +94,10 @@ export const AddressInput = ({
 
   const [focusPosition, setFocusPosition] =
     useState<keyof FieldAddressDraftValue>('addressStreet1');
+
+  const { closeDropdown: closeCountryDropdown } = useDropdown(
+    SELECT_COUNTRY_DROPDOWN_ID,
+  );
 
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -184,6 +191,8 @@ export const AddressInput = ({
     refs: [wrapperRef],
     callback: (event) => {
       event.stopImmediatePropagation();
+
+      closeCountryDropdown();
 
       onClickOutside?.(event, internalValue);
     },

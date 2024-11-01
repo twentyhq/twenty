@@ -1,16 +1,23 @@
-import { MultipleRecordsActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/MultipleRecordsActionMenuEntriesSetter';
-import { SingleRecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/SingleRecordActionMenuEntriesSetter';
-import { ActionMenuType } from '@/action-menu/types/ActionMenuType';
+import { DeleteRecordsActionEffect } from '@/action-menu/actions/record-actions/components/DeleteRecordsActionEffect';
+import { ExportRecordsActionEffect } from '@/action-menu/actions/record-actions/components/ExportRecordsActionEffect';
+import { ManageFavoritesActionEffect } from '@/action-menu/actions/record-actions/components/ManageFavoritesActionEffect';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-export const RecordActionMenuEntriesSetter = ({
-  actionMenuType,
-}: {
-  actionMenuType: ActionMenuType;
-}) => {
+const singleRecordActionEffects = [
+  ManageFavoritesActionEffect,
+  ExportRecordsActionEffect,
+  DeleteRecordsActionEffect,
+];
+
+const multipleRecordActionEffects = [
+  ExportRecordsActionEffect,
+  DeleteRecordsActionEffect,
+];
+
+export const RecordActionMenuEntriesSetter = () => {
   const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
@@ -33,19 +40,20 @@ export const RecordActionMenuEntriesSetter = ({
     return null;
   }
 
-  if (contextStoreNumberOfSelectedRecords === 1) {
-    return (
-      <SingleRecordActionMenuEntriesSetter
-        objectMetadataItem={objectMetadataItem}
-        actionMenuType={actionMenuType}
-      />
-    );
-  }
+  const actions =
+    contextStoreNumberOfSelectedRecords === 1
+      ? singleRecordActionEffects
+      : multipleRecordActionEffects;
 
   return (
-    <MultipleRecordsActionMenuEntriesSetter
-      objectMetadataItem={objectMetadataItem}
-      actionMenuType={actionMenuType}
-    />
+    <>
+      {actions.map((ActionEffect, index) => (
+        <ActionEffect
+          key={index}
+          position={index}
+          objectMetadataItem={objectMetadataItem}
+        />
+      ))}
+    </>
   );
 };
