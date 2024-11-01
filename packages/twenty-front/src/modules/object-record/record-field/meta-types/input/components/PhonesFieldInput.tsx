@@ -36,10 +36,6 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
     }
   }
 
-  .PhoneInputCountrySelectArrow {
-    background-color: black;
-  }
-
   & svg {
     border-radius: ${({ theme }) => theme.border.radius.xs};
     height: 12px;
