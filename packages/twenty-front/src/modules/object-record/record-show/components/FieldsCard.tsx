@@ -55,8 +55,6 @@ export const FieldsCard = ({
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
     );
 
-    // console.log(JSON.st(availableFieldMetadataItems))
-
   const { inlineFieldMetadataItems, relationFieldMetadataItems } = groupBy(
     availableFieldMetadataItems.filter(
       (fieldMetadataItem) =>
