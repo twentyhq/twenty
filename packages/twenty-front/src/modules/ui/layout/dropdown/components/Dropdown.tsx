@@ -116,7 +116,6 @@ export const Dropdown = ({
     refs: [refs.floating],
     callback: () => {
       onClickOutside?.();
-
       if (isDropdownOpen) {
         closeDropdown();
       }
@@ -131,10 +130,12 @@ export const Dropdown = ({
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      closeDropdown();
+      if (isDropdownOpen) {
+        closeDropdown();
+      }
     },
     dropdownHotkeyScope.scope,
-    [closeDropdown],
+    [closeDropdown, isDropdownOpen],
   );
 
   return (

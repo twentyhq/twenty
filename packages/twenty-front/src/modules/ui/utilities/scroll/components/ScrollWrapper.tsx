@@ -78,7 +78,12 @@ export const ScrollWrapper = ({
   }, [instance, setOverlayScrollbars]);
 
   return (
-    <Context.Provider value={{ ref: scrollableRef, id: contextProviderName }}>
+    <Context.Provider
+      value={{
+        ref: scrollableRef,
+        id: contextProviderName,
+      }}
+    >
       <StyledScrollWrapper ref={scrollableRef} className={className}>
         {children}
       </StyledScrollWrapper>

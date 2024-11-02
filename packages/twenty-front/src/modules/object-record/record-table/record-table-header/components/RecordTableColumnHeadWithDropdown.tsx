@@ -6,6 +6,8 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
 import { RecordTableColumnHeadDropdownMenu } from './RecordTableColumnHeadDropdownMenu';
 
+import { RecordTableScrollContext } from '@/object-record/record-table/contexts/RecordTableScrollContext';
+import { useCallback, useContext } from 'react';
 import { RecordTableColumnHead } from './RecordTableColumnHead';
 
 type RecordTableColumnHeadWithDropdownProps = {
@@ -22,8 +24,21 @@ const StyledDropdown = styled(Dropdown)`
 export const RecordTableColumnHeadWithDropdown = ({
   column,
 }: RecordTableColumnHeadWithDropdownProps) => {
+  const { setEnableXScroll, setEnableYScroll } = useContext(
+    RecordTableScrollContext,
+  );
+  const handleDropdownOpen = useCallback(() => {
+    setEnableXScroll(false);
+    setEnableYScroll(false);
+  }, [setEnableXScroll, setEnableYScroll]);
+  const handleDropdownClose = useCallback(() => {
+    setEnableXScroll(true);
+    setEnableYScroll(true);
+  }, [setEnableXScroll, setEnableYScroll]);
   return (
     <StyledDropdown
+      onOpen={handleDropdownOpen}
+      onClose={handleDropdownClose}
       dropdownId={column.fieldMetadataId + '-header'}
       clickableComponent={<RecordTableColumnHead column={column} />}
       dropdownComponents={<RecordTableColumnHeadDropdownMenu column={column} />}
