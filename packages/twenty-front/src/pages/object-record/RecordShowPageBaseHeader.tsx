@@ -21,6 +21,7 @@ export const RecordShowPageBaseHeader = ({
   return (
     <>
       <PageFavoriteFoldersDropdown
+        key={FAVORITE_FOLDERS_DROPDOWN_ID}
         dropdownId={FAVORITE_FOLDERS_DROPDOWN_ID}
         isFavorite={isFavorite}
         record={record}

@@ -2,7 +2,7 @@ import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Avatar, isDefined, useIcons } from 'twenty-ui';
+import { Avatar, useIcons } from 'twenty-ui';
 
 const StyledIconWrapper = styled.div`
   display: flex;
@@ -11,6 +11,7 @@ const StyledIconWrapper = styled.div`
 `;
 
 const StyledAvatar = styled(Avatar)`
+  background: inherit;
   :hover {
     cursor: grab;
   }
@@ -22,33 +23,18 @@ export const FavoriteIcon = ({ favorite }: { favorite: ProcessedFavorite }) => {
   const { Icon: StandardIcon, IconColor } = useGetStandardObjectIcon(
     favorite.objectNameSingular || '',
   );
-
-  if (isDefined(favorite.objectNameSingular) && isDefined(StandardIcon)) {
-    return (
-      <StyledIconWrapper>
-        <StandardIcon color={IconColor} size={theme.icon.size.md} />
-      </StyledIconWrapper>
-    );
-  }
-
-  if (isDefined(favorite.Icon)) {
-    const IconComponent = getIcon(favorite.Icon);
-    return (
-      <StyledIconWrapper>
-        <IconComponent size={theme.icon.size.md} />
-      </StyledIconWrapper>
-    );
-  }
+  const IconToUse = StandardIcon || (favorite.Icon ? getIcon(favorite.Icon) : undefined);
+  const iconColorToUse = StandardIcon ? IconColor : theme.font.color.secondary
 
   return (
-    <StyledIconWrapper>
-      <StyledAvatar
-        placeholderColorSeed={favorite.recordId}
-        avatarUrl={favorite.avatarUrl}
-        type={favorite.avatarType}
-        placeholder={favorite.labelIdentifier}
-        className="unorganised-fav-avatar"
-      />
-    </StyledIconWrapper>
+    <StyledAvatar
+      size="md"
+      type={favorite.avatarType}
+      Icon={IconToUse}
+      iconColor={iconColorToUse}
+      avatarUrl={favorite.avatarUrl}
+      placeholder={favorite.labelIdentifier}
+      placeholderColorSeed={favorite.recordId}
+    />
   );
 };
