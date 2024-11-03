@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { CommandMenu } from '@/command-menu/components/CommandMenu';
 
 const SettingsAccountsCalendars = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
@@ -200,7 +201,8 @@ const SettingsIntegrationShowDatabaseConnection = lazy(() =>
     '~/pages/settings/integrations/SettingsIntegrationShowDatabaseConnection'
   ).then((module) => ({
     default: module.SettingsIntegrationShowDatabaseConnection,
-  })),
+    }),
+  ),
 );
 
 const SettingsObjectNewFieldSelect = lazy(() =>
@@ -262,6 +264,7 @@ export const SettingsRoutes = ({
   isSSOEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
+    <CommandMenu />
     <Routes>
       <Route path={SettingsPath.ProfilePage} element={<SettingsProfile />} />
       <Route path={SettingsPath.Appearance} element={<SettingsAppearance />} />

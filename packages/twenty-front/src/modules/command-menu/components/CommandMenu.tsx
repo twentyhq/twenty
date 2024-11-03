@@ -550,3 +550,5 @@ export const CommandMenu = () => {
     </>
   );
 };
+
+export { CommandMenu };

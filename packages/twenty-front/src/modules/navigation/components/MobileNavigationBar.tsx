@@ -12,6 +12,7 @@ import {
 } from 'twenty-ui';
 import { useIsSettingsPage } from '../hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '../states/currentMobileNavigationDrawerState';
+import { useNavigate } from 'react-router-dom';
 
 type NavigationBarItemName = 'main' | 'search' | 'tasks' | 'settings';
 
@@ -25,6 +26,7 @@ export const MobileNavigationBar = () => {
     useRecoilState(currentMobileNavigationDrawerState);
 
   const { openSettingsMenu } = useOpenSettingsMenu();
+  const navigate = useNavigate();
 
   const activeItemName = isNavigationDrawerExpanded
     ? currentMobileNavigationDrawer
@@ -58,6 +60,7 @@ export const MobileNavigationBar = () => {
           openCommandMenu();
         }
         setIsNavigationDrawerExpanded(false);
+        navigate('/settings/profile');
       },
     },
     {

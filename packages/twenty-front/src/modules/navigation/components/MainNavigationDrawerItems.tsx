@@ -37,6 +37,7 @@ export const MainNavigationDrawerItems = () => {
         <NavigationDrawerSection>
           <NavigationDrawerItem
             label="Search"
+            to="/settings/profile"
             Icon={IconSearch}
             onClick={toggleCommandMenu}
             keyboard={['⌘', 'K']}
