@@ -28,7 +28,7 @@ export class CallWebhookJobsJob {
 
   @Process(CallWebhookJobsJob.name)
   async handle(
-    data: WorkspaceEventBatch<ObjectRecordBaseEvent>,
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordBaseEvent>,
   ): Promise<void> {
     // If you change that function, double check it does not break Zapier
     // trigger in packages/twenty-zapier/src/triggers/trigger_record.ts
@@ -37,28 +37,28 @@ export class CallWebhookJobsJob {
 
     const webhookRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<WebhookWorkspaceEntity>(
-        data.workspaceId,
+        workspaceEventBatch.workspaceId,
         'webhook',
       );
 
-    const [nameSingular, operation] = data.name.split('.');
+    const [nameSingular, operation] = workspaceEventBatch.name.split('.');
 
     const webhooks = await webhookRepository.find({
       where: [
-        { operations: ArrayContains([data.name]) },
+        { operations: ArrayContains([`${nameSingular}.${operation}`]) },
         { operations: ArrayContains([`*.${operation}`]) },
         { operations: ArrayContains([`${nameSingular}.*`]) },
         { operations: ArrayContains(['*.*']) },
       ],
     });
 
-    for (const eventData of data.events) {
-      const eventName = data.name;
+    for (const eventData of workspaceEventBatch.events) {
+      const eventName = workspaceEventBatch.name;
       const objectMetadata = {
         id: eventData.objectMetadata.id,
         nameSingular: eventData.objectMetadata.nameSingular,
       };
-      const workspaceId = data.workspaceId;
+      const workspaceId = workspaceEventBatch.workspaceId;
       const record = eventData.properties.after || eventData.properties.before;
       const updatedFields = eventData.properties.updatedFields;
 
@@ -83,7 +83,7 @@ export class CallWebhookJobsJob {
 
       webhooks.length > 0 &&
         this.logger.log(
-          `CallWebhookJobsJob on eventName '${data.name}' triggered webhooks with ids [\n"${webhooks.map((webhook) => webhook.id).join('",\n"')}"\n]`,
+          `CallWebhookJobsJob on eventName '${workspaceEventBatch.name}' triggered webhooks with ids [\n"${webhooks.map((webhook) => webhook.id).join('",\n"')}"\n]`,
         );
     }
   }

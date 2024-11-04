@@ -26,12 +26,16 @@ export class TimelineActivityService {
     task: 'taskTarget',
   };
 
-  async upsertEvent(
-    event: ObjectRecordBaseEvent,
-    eventName: string,
-    workspaceId: string,
-  ) {
-    const events = await this.transformEvent(event, workspaceId, eventName);
+  async upsertEvent({
+    event,
+    eventName,
+    workspaceId,
+  }: {
+    event: ObjectRecordBaseEvent;
+    eventName: string;
+    workspaceId: string;
+  }) {
+    const events = await this.transformEvent({ event, workspaceId, eventName });
 
     if (!events || events.length === 0) return;
 
@@ -50,17 +54,21 @@ export class TimelineActivityService {
     }
   }
 
-  private async transformEvent(
-    event: ObjectRecordBaseEvent,
-    workspaceId: string,
-    eventName: string,
-  ): Promise<TransformedEvent[]> {
+  private async transformEvent({
+    event,
+    workspaceId,
+    eventName,
+  }: {
+    event: ObjectRecordBaseEvent;
+    workspaceId: string;
+    eventName: string;
+  }): Promise<TransformedEvent[]> {
     if (['note', 'task'].includes(event.objectMetadata.nameSingular)) {
-      const linkedObjects = await this.handleLinkedObjects(
+      const linkedObjects = await this.handleLinkedObjects({
         event,
         workspaceId,
         eventName,
-      );
+      });
 
       // 2 timelines, one for the linked object and one for the task/note
       if (linkedObjects?.length > 0) return [...linkedObjects, event];
@@ -71,58 +79,68 @@ export class TimelineActivityService {
         event.objectMetadata.nameSingular,
       )
     ) {
-      return await this.handleLinkedObjects(event, workspaceId, eventName);
+      return await this.handleLinkedObjects({ event, workspaceId, eventName });
     }
 
     return [event];
   }
 
-  private async handleLinkedObjects(
-    event: ObjectRecordBaseEvent,
-    workspaceId: string,
-    eventName: string,
-  ) {
+  private async handleLinkedObjects({
+    event,
+    workspaceId,
+    eventName,
+  }: {
+    event: ObjectRecordBaseEvent;
+    workspaceId: string;
+    eventName: string;
+  }) {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     switch (event.objectMetadata.nameSingular) {
       case 'noteTarget':
-        return this.processActivityTarget(
+        return this.processActivityTarget({
           event,
           dataSourceSchema,
-          'note',
+          activityType: 'note',
           eventName,
           workspaceId,
-        );
+        });
       case 'taskTarget':
-        return this.processActivityTarget(
+        return this.processActivityTarget({
           event,
           dataSourceSchema,
-          'task',
+          activityType: 'task',
           eventName,
           workspaceId,
-        );
+        });
       case 'note':
       case 'task':
-        return this.processActivity(
+        return this.processActivity({
           event,
           dataSourceSchema,
-          event.objectMetadata.nameSingular,
+          activityType: event.objectMetadata.nameSingular,
           eventName,
           workspaceId,
-        );
+        });
       default:
         return [];
     }
   }
 
-  private async processActivity(
-    event: ObjectRecordBaseEvent,
-    dataSourceSchema: string,
-    activityType: string,
-    eventName: string,
-    workspaceId: string,
-  ) {
+  private async processActivity({
+    event,
+    dataSourceSchema,
+    activityType,
+    eventName,
+    workspaceId,
+  }: {
+    event: ObjectRecordBaseEvent;
+    dataSourceSchema: string;
+    activityType: string;
+    eventName: string;
+    workspaceId: string;
+  }) {
     const activityTargets =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT * FROM ${dataSourceSchema}."${this.targetObjects[activityType]}"
@@ -171,13 +189,19 @@ export class TimelineActivityService {
       .filter((event): event is TransformedEvent => event !== undefined);
   }
 
-  private async processActivityTarget(
-    event: ObjectRecordBaseEvent,
-    dataSourceSchema: string,
-    activityType: string,
-    eventName: string,
-    workspaceId: string,
-  ) {
+  private async processActivityTarget({
+    event,
+    dataSourceSchema,
+    activityType,
+    eventName,
+    workspaceId,
+  }: {
+    event: ObjectRecordBaseEvent;
+    dataSourceSchema: string;
+    activityType: string;
+    eventName: string;
+    workspaceId: string;
+  }) {
     const activityTarget =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT * FROM ${dataSourceSchema}."${this.targetObjects[activityType]}"
