@@ -13,7 +13,9 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { IconKey } from 'twenty-ui';
 
-const StyledLink = styled(Link)<{ isDisabled: boolean }>`
+const StyledLink = styled(Link, {
+  shouldForwardProp: (prop) => prop !== 'isDisabled',
+})<{ isDisabled: boolean }>`
   pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
   text-decoration: none;
 `;
