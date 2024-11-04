@@ -42,7 +42,7 @@ describe('getWorkflowVersionDiagram', () => {
       name: '',
       steps: null,
       trigger: {
-        settings: { eventName: 'company.created' },
+        settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
       updatedAt: '',
@@ -83,14 +83,16 @@ describe('getWorkflowVersionDiagram', () => {
             },
             input: {
               serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+              serverlessFunctionVersion: '1',
             },
+            outputSchema: {},
           },
           type: 'CODE',
           valid: true,
         },
       ],
       trigger: {
-        settings: { eventName: 'company.created' },
+        settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
       updatedAt: '',

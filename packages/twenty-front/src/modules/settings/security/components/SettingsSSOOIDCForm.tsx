@@ -3,11 +3,10 @@
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Section } from '@/ui/layout/section/components/Section';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Button, H2Title, IconCopy } from 'twenty-ui';
+import { Button, H2Title, IconCopy, Section } from 'twenty-ui';
 
 const StyledInputsContainer = styled.div`
   display: flex;

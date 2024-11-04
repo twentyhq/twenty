@@ -126,7 +126,6 @@ const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
   }
   & .react-datepicker__month-dropdown {
     left: ${({ theme }) => theme.spacing(2)};
-    width: 160px;
     height: 260px;
   }
 

@@ -1,10 +1,11 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
 
-import { SetMainContextStoreComponentInstanceIdEffect } from '@/context-store/components/SetMainContextStoreComponentInstanceIdEffect';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { MainContextStoreComponentInstanceIdSetterEffect } from '@/context-store/components/MainContextStoreComponentInstanceIdSetterEffect';
 import { InformationBannerDeletedRecord } from '@/information-banner/components/deleted-record/InformationBannerDeletedRecord';
-import { RecordShowContainerContextStoreEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreEffect';
+
+import { RecordShowContainerContextStoreObjectMetadataIdEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreObjectMetadataIdEffect';
+import { RecordShowContainerContextStoreTargetedRecordsEffect } from '@/object-record/record-show/components/RecordShowContainerContextStoreTargetedRecordsEffect';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';
 import { ShowPageSubContainer } from '@/ui/layout/show-page/components/ShowPageSubContainer';
@@ -41,16 +42,15 @@ export const RecordShowContainer = ({
   );
 
   return (
-    <ContextStoreComponentInstanceContext.Provider
-      value={{
-        instanceId: 'record-show',
-      }}
-    >
-      <RecordShowContainerContextStoreEffect
+    <>
+      <RecordShowContainerContextStoreObjectMetadataIdEffect
         recordId={objectRecordId}
         objectNameSingular={objectNameSingular}
       />
-      {!isInRightDrawer && <SetMainContextStoreComponentInstanceIdEffect />}
+      <RecordShowContainerContextStoreTargetedRecordsEffect
+        recordId={objectRecordId}
+      />
+      {!isInRightDrawer && <MainContextStoreComponentInstanceIdSetterEffect />}
       {recordFromStore && recordFromStore.deletedAt && (
         <InformationBannerDeletedRecord
           recordId={objectRecordId}
@@ -69,6 +69,6 @@ export const RecordShowContainer = ({
           isNewRightDrawerItemLoading={isNewRightDrawerItemLoading}
         />
       </ShowPageContainer>
-    </ContextStoreComponentInstanceContext.Provider>
+    </>
   );
 };

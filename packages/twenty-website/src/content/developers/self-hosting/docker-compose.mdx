@@ -50,23 +50,19 @@ Follow these steps for a manual setup.
 
 2. **Generate Secret Tokens**
 
-    Run the following command four times to generate four unique random strings:
+    Run the following command to generate a unique random string:
     ```bash
     openssl rand -base64 32
     ```
-    **Important:** Keep these tokens secure and do not share them.
+    **Important:** Keep this value secret / do not share it.
 
 3. **Update the `.env`**
 
-    Replace the placeholder values in your .env file with the generated tokens:
+    Replace the placeholder value in your .env file with the generated token:
 
     ```ini
-    ACCESS_TOKEN_SECRET=first_random_string
-    LOGIN_TOKEN_SECRET=second_random_string
-    REFRESH_TOKEN_SECRET=third_random_string
-    FILE_TOKEN_SECRET=fourth_random_string
+    APP_SECRET=first_random_string
     ```
-    **Note:** Only modify these lines unless instructed otherwise.
 
 4. **Set the Postgres Password**
 
