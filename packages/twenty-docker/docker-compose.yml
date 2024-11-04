@@ -73,7 +73,7 @@ services:
     restart: always
 
   db:
-    image: twentycrm/twenty-postgres:${TAG}
+    image: twentycrm/twenty-postgres-spilo:${TAG}
     volumes:
       - db-data:/bitnami/postgresql
     environment:

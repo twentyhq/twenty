@@ -120,6 +120,10 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     ```bash
       make postgres-on-docker
     ```
+    Then run:
+    ```bash
+      PGPASSWORD=twenty psql -h localhost -p 5432 -U twenty -d postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
+    ```
   </ArticleTab>
   <ArticleTab>
     <b>Option 1:</b> To provision your database locally with `brew`:
@@ -133,6 +137,10 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     <b>Option 2:</b> If you have docker installed:
     ```bash
       make postgres-on-docker
+    ```
+    Then run:
+    ```bash
+      PGPASSWORD=twenty psql -h localhost -p 5432 -U twenty -d postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
   </ArticleTab>
   <ArticleTab>
@@ -150,6 +158,10 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     Only use this option if you are comfortable with the extra steps involved, including turning on [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
     ```bash
       make postgres-on-docker
+    ```
+    Then run:
+    ```bash
+      PGPASSWORD=twenty psql -h localhost -p 5432 -U twenty -d postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
   </ArticleTab>
 </ArticleTabs>

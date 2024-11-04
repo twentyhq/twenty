@@ -8,6 +8,21 @@ rawDataSource
   .initialize()
   .then(async () => {
     await performQuery(
+      'CREATE EXTENSION IF NOT EXISTS "pgvector"',
+      'create extension "pgvector"',
+    );
+
+    await performQuery(
+      'CREATE EXTENSION IF NOT EXISTS "hydra_columnar"',
+      'create extension "hydra_columnar"',
+    );
+
+    await performQuery(
+      `ALTER DATABASE SET default_table_access_method = "heap"`,
+      `alter database set default_table_access_method = "heap"`,
+    );
+
+    await performQuery(
       'CREATE SCHEMA IF NOT EXISTS "public"',
       'create schema "public"',
     );

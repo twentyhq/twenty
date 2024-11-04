@@ -3,10 +3,10 @@ ARG SPILO_VERSION=3.2-p1
 ARG WRAPPERS_VERSION=0.2.0
 
 # Build the mysql_fdw extension
-FROM debian:bookworm as build-mysql_fdw
+FROM debian:bookworm AS build-mysql_fdw
 ARG POSTGRES_VERSION
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt install -y \
     build-essential \
@@ -17,14 +17,14 @@ RUN apt update && \
 
 # Install mysql_fdw
 RUN git clone https://github.com/EnterpriseDB/mysql_fdw.git
-WORKDIR mysql_fdw
+WORKDIR /mysql_fdw
 RUN make USE_PGXS=1
 
 
 # Build libssl for wrappers
-FROM ubuntu:22.04 as build-libssl
+FROM ubuntu:22.04 AS build-libssl
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt install -y \
     build-essential \
@@ -57,6 +57,11 @@ RUN apt update && apt install default-libmysqlclient-dev -y && rm -rf /var/lib/a
 RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_VERSION}/wrappers-v${WRAPPERS_VERSION}-pg${POSTGRES_VERSION}-${TARGETARCH}-linux-gnu.deb" -o wrappers.deb && \
     dpkg --install wrappers.deb && \
     rm wrappers.deb
+
+# Install pgx package package manager for PostgreSQL
+RUN curl -sfL https://install.pgx.sh | sh -
+
+RUN pgxman install hydra_columnar=1.1.2
 
 COPY --from=build-libssl /usr/local/lib/libssl* /usr/local/lib/libcrypto*  /usr/lib/
 COPY --from=build-libssl /usr/local/lib/engines-1.1 /usr/lib/engines-1.1
