@@ -65,8 +65,9 @@ const StyledListItem = styled(RecordDetailRecordsListItem)<{
 const StyledPropertyBox = styled(PropertyBox)`
   align-items: flex-start;
   display: flex;
-  padding-left: ${({ theme }) => theme.spacing(0.5)};
-  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(0)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(0)};
 `;
 
 const StyledClickableZone = styled.div`
