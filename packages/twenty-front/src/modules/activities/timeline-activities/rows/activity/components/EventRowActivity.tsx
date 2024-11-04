@@ -16,7 +16,7 @@ const StyledLinkedActivity = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
   cursor: pointer;
   text-decoration: underline;
-  width: calc(100% - 25px);
+  width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
