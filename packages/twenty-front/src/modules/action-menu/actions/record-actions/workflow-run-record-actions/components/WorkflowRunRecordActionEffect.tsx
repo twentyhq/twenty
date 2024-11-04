@@ -53,7 +53,6 @@ export const WorkflowRunRecordActionEffect = ({
       index,
       activeWorkflowVersion,
     ] of activeWorkflowVersions.entries()) {
-      console.log('activeWorkflowVersion', activeWorkflowVersion);
       addActionMenuEntry({
         type: 'workflow-run',
         key: `workflow-run-${activeWorkflowVersion.workflow.name}`,
