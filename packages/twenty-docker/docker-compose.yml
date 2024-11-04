@@ -75,9 +75,13 @@ services:
   db:
     image: twentycrm/twenty-postgres-spilo:${TAG}
     volumes:
-      - db-data:/bitnami/postgresql
+      - db-data:/home/postgres/pgdata
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+      PGUSER_SUPERUSER: twenty
+      PGPASSWORD_SUPERUSER: twenty
+      PGUSER_ADMIN: postgres
+      PGPASSWORD_ADMIN: postgres
+      ALLOW_NOSSL: "true"
     healthcheck:
       test: pg_isready -U twenty -d default
       interval: 5s
