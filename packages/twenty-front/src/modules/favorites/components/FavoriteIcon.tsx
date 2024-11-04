@@ -4,12 +4,6 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Avatar, useIcons } from 'twenty-ui';
 
-const StyledIconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
 const StyledAvatar = styled(Avatar)`
   background: inherit;
   :hover {
@@ -23,8 +17,9 @@ export const FavoriteIcon = ({ favorite }: { favorite: ProcessedFavorite }) => {
   const { Icon: StandardIcon, IconColor } = useGetStandardObjectIcon(
     favorite.objectNameSingular || '',
   );
-  const IconToUse = StandardIcon || (favorite.Icon ? getIcon(favorite.Icon) : undefined);
-  const iconColorToUse = StandardIcon ? IconColor : theme.font.color.secondary
+  const IconToUse =
+    StandardIcon || (favorite.Icon ? getIcon(favorite.Icon) : undefined);
+  const iconColorToUse = StandardIcon ? IconColor : theme.font.color.secondary;
 
   return (
     <StyledAvatar

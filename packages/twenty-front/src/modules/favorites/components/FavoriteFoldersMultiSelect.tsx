@@ -26,8 +26,16 @@ const StyledDropdownContainer = styled.div`
 `;
 
 const StyledItemsContainer = styled.div`
+  width: 100%;
   max-height: 160px;
   overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
 
 const StyledFooter = styled.div`
@@ -51,6 +59,11 @@ type FavoriteFoldersMultiSelectProps = {
 
 const StyledIconPlus = styled(IconPlus)`
   padding-left: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledDropdownMenuSeparator = styled(DropdownMenuSeparator)`
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 const NO_FOLDER_ID = 'no-folder';
@@ -136,39 +149,41 @@ export const FavoriteFoldersMultiSelect = ({
         <DropdownMenuSeparator />
 
         <DropdownMenuItemsContainer>
-          {showNoFolderOption && (
-            <MenuItem
-              key={NO_FOLDER_ID}
-              onClick={() => toggleFolderSelection(NO_FOLDER_ID)}
-              LeftIcon={() => (
-                <StyledCheckbox
-                  checked={favoriteFoldersMultiSelectChecked.includes(
-                    NO_FOLDER_ID,
-                  )}
-                />
-              )}
-              text="No folder"
-            />
-          )}
-          {showNoFolderOption && filteredFolders.length > 0 && (
-            <DropdownMenuSeparator />
-          )}
-          {filteredFolders.length > 0
-            ? filteredFolders.map((folder) => (
-                <MenuItem
-                  key={folder.id}
-                  onClick={() => toggleFolderSelection(folder.id)}
-                  LeftIcon={() => (
-                    <StyledCheckbox
-                      checked={favoriteFoldersMultiSelectChecked.includes(
-                        folder.id,
-                      )}
-                    />
-                  )}
-                  text={folder.name}
-                />
-              ))
-            : !showNoFolderOption && <MenuItem text="No folders found" />}
+          <StyledItemsContainer>
+            {showNoFolderOption && (
+              <MenuItem
+                key={NO_FOLDER_ID}
+                onClick={() => toggleFolderSelection(NO_FOLDER_ID)}
+                LeftIcon={() => (
+                  <StyledCheckbox
+                    checked={favoriteFoldersMultiSelectChecked.includes(
+                      NO_FOLDER_ID,
+                    )}
+                  />
+                )}
+                text="No folder"
+              />
+            )}
+            {showNoFolderOption && filteredFolders.length > 0 && (
+              <StyledDropdownMenuSeparator />
+            )}
+            {filteredFolders.length > 0
+              ? filteredFolders.map((folder) => (
+                  <MenuItem
+                    key={folder.id}
+                    onClick={() => toggleFolderSelection(folder.id)}
+                    LeftIcon={() => (
+                      <StyledCheckbox
+                        checked={favoriteFoldersMultiSelectChecked.includes(
+                          folder.id,
+                        )}
+                      />
+                    )}
+                    text={folder.name}
+                  />
+                ))
+              : !showNoFolderOption && <MenuItem text="No folders found" />}
+          </StyledItemsContainer>
         </DropdownMenuItemsContainer>
         <StyledFooter>
           <MenuItem
