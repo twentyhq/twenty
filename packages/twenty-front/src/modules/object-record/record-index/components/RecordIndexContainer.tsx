@@ -206,6 +206,7 @@ export const RecordIndexContainer = () => {
             viewBarId={recordIndexId}
           />
         </SpreadsheetImportProvider>
+
         {recordIndexViewType === ViewType.Table && (
           <>
             <RecordIndexTableContainer
@@ -232,7 +233,7 @@ export const RecordIndexContainer = () => {
             />
           </StyledContainerWithPadding>
         )}
-        <RecordIndexActionMenu actionMenuId={recordIndexId} />
+        <RecordIndexActionMenu />
       </RecordFieldValueSelectorContextProvider>
     </StyledContainer>
   );

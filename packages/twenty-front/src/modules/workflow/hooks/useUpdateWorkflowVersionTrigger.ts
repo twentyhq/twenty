@@ -7,6 +7,7 @@ import {
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-ui';
+import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
 
 export const useUpdateWorkflowVersionTrigger = ({
   workflow,
@@ -20,12 +21,25 @@ export const useUpdateWorkflowVersionTrigger = ({
 
   const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
 
+  const { computeStepOutputSchema } = useComputeStepOutputSchema();
+
   const updateTrigger = async (updatedTrigger: WorkflowTrigger) => {
     if (!isDefined(workflow.currentVersion)) {
       throw new Error('Can not update an undefined workflow version.');
     }
 
     if (workflow.currentVersion.status === 'DRAFT') {
+      const outputSchema = (
+        await computeStepOutputSchema({
+          step: updatedTrigger,
+        })
+      )?.data?.computeStepOutputSchema;
+
+      updatedTrigger.settings = {
+        ...updatedTrigger.settings,
+        outputSchema: outputSchema || {},
+      };
+
       await updateOneWorkflowVersion({
         idToUpdate: workflow.currentVersion.id,
         updateOneRecordInput: {

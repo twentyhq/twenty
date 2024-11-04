@@ -88,12 +88,12 @@ export class GraphqlQuerySearchResolverService
           qb.where(
             searchTerms === ''
               ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
-              : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTerms)`,
+              : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTerms)`,
             searchTerms === '' ? {} : { searchTerms },
           ).orWhere(
             searchTermsOr === ''
               ? `"${SEARCH_VECTOR_FIELD.name}" IS NOT NULL`
-              : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery(:searchTermsOr)`,
+              : `"${SEARCH_VECTOR_FIELD.name}" @@ to_tsquery('simple', :searchTermsOr)`,
             searchTermsOr === '' ? {} : { searchTermsOr },
           );
         }),

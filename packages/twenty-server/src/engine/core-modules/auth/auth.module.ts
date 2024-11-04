@@ -12,11 +12,17 @@ import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/contro
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
 import { VerifyAuthController } from 'src/engine/core-modules/auth/controllers/verify-auth.controller';
+import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
+import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
+import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -86,11 +92,17 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     JwtAuthStrategy,
     SamlAuthStrategy,
     AuthResolver,
-    TokenService,
     GoogleAPIsService,
     MicrosoftAPIsService,
     AppTokenService,
+    AccessTokenService,
+    LoginTokenService,
+    ResetPasswordService,
+    SwitchWorkspaceService,
+    TransientTokenService,
+    ApiKeyService,
+    OAuthService,
   ],
-  exports: [TokenService],
+  exports: [AccessTokenService, LoginTokenService],
 })
 export class AuthModule {}

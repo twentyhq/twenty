@@ -87,6 +87,7 @@ export const WorkflowEditTriggerManualForm = ({
               ...trigger,
               settings: {
                 objectType: updatedObject,
+                outputSchema: {},
               },
             });
           }}

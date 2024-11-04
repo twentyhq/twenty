@@ -18,7 +18,6 @@ const mockActivityTarget = {
   updatedAt: '2021-08-03T19:20:06.000Z',
   createdAt: '2021-08-03T19:20:06.000Z',
   personId: '1',
-  activityId: '234',
   companyId: '1',
   id: '123',
 };

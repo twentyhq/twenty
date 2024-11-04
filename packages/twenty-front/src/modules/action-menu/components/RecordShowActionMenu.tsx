@@ -1,30 +1,53 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
-import { RecordShowActionMenuBar } from '@/action-menu/components/RecordShowActionMenuBar';
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 
-import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { RecordShowPageBaseHeader } from '~/pages/object-record/RecordShowPageBaseHeader';
 
 export const RecordShowActionMenu = ({
-  actionMenuId,
+  isFavorite,
+  handleFavoriteButtonClick,
+  record,
+  objectMetadataItem,
+  objectNameSingular,
 }: {
-  actionMenuId: string;
+  isFavorite: boolean;
+  handleFavoriteButtonClick: () => void;
+  record: ObjectRecord | undefined;
+  objectMetadataItem: ObjectMetadataItem;
+  objectNameSingular: string;
 }) => {
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
   );
 
+  // TODO: refactor RecordShowPageBaseHeader to use the context store
+
   return (
     <>
       {contextStoreCurrentObjectMetadataId && (
-        <ActionMenuComponentInstanceContext.Provider
-          value={{ instanceId: actionMenuId }}
+        <ActionMenuContext.Provider
+          value={{
+            isInRightDrawer: false,
+            onActionExecutedCallback: () => {},
+          }}
         >
-          <RecordShowActionMenuBar />
+          <RecordShowPageBaseHeader
+            {...{
+              isFavorite,
+              handleFavoriteButtonClick,
+              record,
+              objectMetadataItem,
+              objectNameSingular,
+            }}
+          />
           <ActionMenuConfirmationModals />
-          <RecordActionMenuEntriesSetter actionMenuType="recordShow" />
-        </ActionMenuComponentInstanceContext.Provider>
+          <RecordActionMenuEntriesSetter />
+        </ActionMenuContext.Provider>
       )}
     </>
   );

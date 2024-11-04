@@ -8,6 +8,7 @@ import {
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   H1Title,
   H1TitleFontColor,
+  Section,
 } from 'twenty-ui';
 
 import { ActivityList } from '@/activities/components/ActivityList';
@@ -20,7 +21,6 @@ import { getTimelineThreadsFromPersonId } from '@/activities/emails/graphql/quer
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { Section } from '@/ui/layout/section/components/Section';
 import { TimelineThread, TimelineThreadsWithTotal } from '~/generated/graphql';
 
 const StyledContainer = styled.div`

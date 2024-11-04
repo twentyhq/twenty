@@ -15,4 +15,5 @@ export enum FeatureFlagKey {
   IsAnalyticsV2Enabled = 'IS_ANALYTICS_V2_ENABLED',
   IsUniqueIndexesEnabled = 'IS_UNIQUE_INDEXES_ENABLED',
   IsMicrosoftSyncEnabled = 'IS_MICROSOFT_SYNC_ENABLED',
+  IsAdvancedFiltersEnabled = 'IS_ADVANCED_FILTERS_ENABLED',
 }

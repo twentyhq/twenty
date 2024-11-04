@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { H2Title, Toggle, Card } from 'twenty-ui';
+import { Card, H2Title, Section, Toggle } from 'twenty-ui';
 
 import {
   MessageChannel,
@@ -10,7 +10,6 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
 import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
-import { Section } from '@/ui/layout/section/components/Section';
 import { MessageChannelVisibility } from '~/generated-metadata/graphql';
 
 type SettingsAccountsMessageChannelDetailsProps = {
