@@ -14,6 +14,7 @@ export type CallWebhookJobData = {
   webhookId: string;
   eventDate: Date;
   record: any;
+  updatedFields?: string[];
 };
 
 @Processor(MessageQueue.webhookQueue)

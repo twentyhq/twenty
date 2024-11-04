@@ -31,6 +31,7 @@ const StyledColumnHeaderCell = styled.th<{
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: 0;
   text-align: left;
+  transition: 0.3s ease;
 
   background-color: ${({ theme }) => theme.background.primary};
   border-right: 1px solid ${({ theme }) => theme.border.color.light};

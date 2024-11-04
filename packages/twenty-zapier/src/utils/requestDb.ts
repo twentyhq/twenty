@@ -79,7 +79,7 @@ export const requestDbViaRestApi = (
   z: ZObject,
   bundle: Bundle,
   objectNamePlural: string,
-) => {
+): Promise<Record<string, any>[]> => {
   const options = {
     url: `${
       bundle.authData.apiUrl || process.env.SERVER_BASE_URL

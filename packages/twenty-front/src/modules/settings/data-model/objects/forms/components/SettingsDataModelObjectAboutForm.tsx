@@ -3,7 +3,6 @@ import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/o
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { SyncObjectLabelAndNameToggle } from '@/settings/data-model/objects/forms/components/SyncObjectLabelAndNameToggle';
 import { useExpandedHeightAnimation } from '@/settings/hooks/useExpandedHeightAnimation';
-import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
@@ -64,10 +63,6 @@ const StyledInputContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledSectionWrapper = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-`;
-
 const StyledAdvancedSettingsSectionInputWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -77,9 +72,10 @@ const StyledAdvancedSettingsSectionInputWrapper = styled.div`
 
 const StyledAdvancedSettingsContainer = styled.div`
   display: flex;
-  width: 100%;
   gap: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(4)};
   position: relative;
+  width: 100%;
 `;
 
 const StyledIconToolContainer = styled.div`
@@ -159,28 +155,13 @@ export const SettingsDataModelObjectAboutForm = ({
 
   return (
     <>
-      <StyledSectionWrapper>
-        <StyledInputsContainer>
-          <StyledInputContainer>
-            <StyledLabel>Icon</StyledLabel>
-            <Controller
-              name="icon"
-              control={control}
-              defaultValue={objectMetadataItem?.icon ?? 'IconListNumbers'}
-              render={({ field: { onChange, value } }) => (
-                <IconPicker
-                  disabled={disabled}
-                  selectedIconKey={value}
-                  onChange={({ iconKey }) => onChange(iconKey)}
-                />
-              )}
-            />
-          </StyledInputContainer>
+      <StyledInputsContainer>
+        <StyledInputContainer>
+          <StyledLabel>Icon</StyledLabel>
           <Controller
-            key={`object-labelSingular-text-input`}
-            name={'labelSingular'}
+            name="icon"
             control={control}
-            defaultValue={objectMetadataItem?.labelSingular}
+            defaultValue={objectMetadataItem?.icon ?? 'IconListNumbers'}
             render={({ field: { onChange, value } }) => (
               <TextInput
                 label={'Label Singular'}
@@ -223,11 +204,12 @@ export const SettingsDataModelObjectAboutForm = ({
               />
             )}
           />
-        </StyledInputsContainer>
+        </StyledInputContainer>
         <Controller
-          name="description"
+          key={`object-labelSingular-text-input`}
+          name={'labelSingular'}
           control={control}
-          defaultValue={objectMetadataItem?.description ?? null}
+          defaultValue={objectMetadataItem?.labelSingular}
           render={({ field: { onChange, value } }) => (
             <TextArea
               placeholder="Write a description"
@@ -241,7 +223,43 @@ export const SettingsDataModelObjectAboutForm = ({
             />
           )}
         />
-      </StyledSectionWrapper>
+        <Controller
+          key={`object-labelPlural-text-input`}
+          name={'labelPlural'}
+          control={control}
+          defaultValue={objectMetadataItem?.labelPlural}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              label={'Plural'}
+              placeholder={'Listings'}
+              value={value}
+              onChange={(value) => {
+                onChange(value);
+                if (isLabelSyncedWithName === true) {
+                  fillNamePluralFromLabelPlural(value);
+                }
+              }}
+              disabled={disabled || disableNameEdit}
+              fullWidth
+              maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
+            />
+          )}
+        />
+      </StyledInputsContainer>
+      <Controller
+        name="description"
+        control={control}
+        defaultValue={objectMetadataItem?.description ?? null}
+        render={({ field: { onChange, value } }) => (
+          <TextArea
+            placeholder="Write a description"
+            minRows={4}
+            value={value ?? undefined}
+            onChange={(nextValue) => onChange(nextValue ?? null)}
+            disabled={disabled}
+          />
+        )}
+      />
       <AnimatePresence>
         {isAdvancedModeEnabled && (
           <motion.div
