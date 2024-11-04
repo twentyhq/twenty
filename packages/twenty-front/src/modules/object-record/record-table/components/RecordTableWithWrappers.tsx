@@ -15,8 +15,6 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 
-import { RecordTableInternalEffect } from './RecordTableInternalEffect';
-
 const StyledTableWithHeader = styled.div`
   height: 100%;
 `;
@@ -45,7 +43,7 @@ export const RecordTableWithWrappers = ({
   recordTableId,
   viewBarId,
 }: RecordTableWithWrappersProps) => {
-  const tableBodyRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLDivElement>(null);
 
   const { resetTableRowSelection, setRowSelected } = useRecordTable({
     recordTableId,
@@ -72,7 +70,7 @@ export const RecordTableWithWrappers = ({
         <RecordUpdateContext.Provider value={updateRecordMutation}>
           <StyledTableWithHeader>
             <StyledTableContainer>
-              <StyledTableInternalContainer ref={tableBodyRef}>
+              <StyledTableInternalContainer ref={tableRef}>
                 <RecordTable
                   viewBarId={viewBarId}
                   recordTableId={recordTableId}
@@ -80,17 +78,13 @@ export const RecordTableWithWrappers = ({
                   onColumnsChange={handleColumnsChange}
                 />
                 <DragSelect
-                  dragSelectable={tableBodyRef}
+                  dragSelectable={tableRef}
                   onDragSelectionStart={() => {
                     resetTableRowSelection();
                   }}
                   onDragSelectionChange={setRowSelected}
                 />
               </StyledTableInternalContainer>
-              <RecordTableInternalEffect
-                tableBodyRef={tableBodyRef}
-                recordTableId={recordTableId}
-              />
             </StyledTableContainer>
           </StyledTableWithHeader>
         </RecordUpdateContext.Provider>
