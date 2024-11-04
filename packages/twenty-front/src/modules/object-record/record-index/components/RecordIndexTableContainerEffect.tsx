@@ -1,5 +1,4 @@
 import { useContext, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
@@ -9,8 +8,13 @@ import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
+import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
+import { unselectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/unselectedRowIdsComponentSelector';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
+import { useRecoilValue } from 'recoil';
 
 export const RecordIndexTableContainerEffect = () => {
   const { recordIndexId, objectNameSingular } = useContext(
@@ -22,11 +26,8 @@ export const RecordIndexTableContainerEffect = () => {
   const {
     setAvailableTableColumns,
     setOnEntityCountChange,
-    selectedRowIdsSelector,
     setOnToggleColumnFilter,
     setOnToggleColumnSort,
-    hasUserSelectedAllRowsState,
-    unselectedRowIdsSelector,
   } = useRecordTable({
     recordTableId: recordIndexId,
   });
@@ -78,9 +79,18 @@ export const RecordIndexTableContainerEffect = () => {
   const setContextStoreTargetedRecords = useSetRecoilComponentStateV2(
     contextStoreTargetedRecordsRuleComponentState,
   );
-  const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
-  const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
-  const unselectedRowIds = useRecoilValue(unselectedRowIdsSelector());
+  const hasUserSelectedAllRows = useRecoilComponentValueV2(
+    hasUserSelectedAllRowsComponentState,
+    recordIndexId,
+  );
+  const selectedRowIds = useRecoilComponentValueV2(
+    selectedRowIdsComponentSelector,
+    recordIndexId,
+  );
+  const unselectedRowIds = useRecoilComponentValueV2(
+    unselectedRowIdsComponentSelector,
+    recordIndexId,
+  );
 
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
 

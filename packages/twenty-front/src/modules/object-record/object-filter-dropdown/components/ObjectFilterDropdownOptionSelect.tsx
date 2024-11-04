@@ -16,6 +16,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelect } from '@/ui/navigation/menu-item/components/MenuItemMultiSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { isDefined } from '~/utils/isDefined';
 
 export const EMPTY_FILTER_VALUE = '';
@@ -162,22 +163,24 @@ export const ObjectFilterDropdownOptionSelect = () => {
         }
       }}
     >
-      <DropdownMenuItemsContainer hasMaxHeight>
-        {optionsInDropdown?.map((option) => (
-          <MenuItemMultiSelect
-            key={option.id}
-            selected={option.isSelected}
-            isKeySelected={option.id === selectedItemId}
-            onSelectChange={(selected) =>
-              handleMultipleOptionSelectChange(option, selected)
-            }
-            text={option.label}
-            color={option.color}
-            className=""
-          />
-        ))}
-      </DropdownMenuItemsContainer>
-      {showNoResult && <MenuItem text="No result" />}
+      <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
+        <DropdownMenuItemsContainer hasMaxHeight>
+          {optionsInDropdown?.map((option) => (
+            <MenuItemMultiSelect
+              key={option.id}
+              selected={option.isSelected}
+              isKeySelected={option.id === selectedItemId}
+              onSelectChange={(selected) =>
+                handleMultipleOptionSelectChange(option, selected)
+              }
+              text={option.label}
+              color={option.color}
+              className=""
+            />
+          ))}
+        </DropdownMenuItemsContainer>
+        {showNoResult && <MenuItem text="No result" />}
+      </ScrollWrapper>
     </SelectableList>
   );
 };
