@@ -43,6 +43,8 @@ export const useCommandMenu = () => {
             }),
           );
 
+          const commands = Object.values(COMMAND_MENU_COMMANDS);
+
           const actionCommands = actionMenuEntries
             .getValue()
             ?.map((actionMenuEntry) => ({
@@ -53,7 +55,7 @@ export const useCommandMenu = () => {
               type: CommandType.Action,
             }));
 
-          setCommands((prev) => [...prev, ...actionCommands]);
+          setCommands( [...commands, ...actionCommands]);
         }
 
         setIsCommandMenuOpened(true);
@@ -76,9 +78,7 @@ export const useCommandMenu = () => {
 
         if (isCommandMenuOpened) {
           setIsCommandMenuOpened(false);
-          setCommands((prev) =>
-            prev.filter((command) => command.type !== CommandType.Action),
-          );
+          setCommands([]);
           resetSelectedItem();
           goBackToPreviousHotkeyScope();
         }
