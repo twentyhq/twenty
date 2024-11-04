@@ -87,9 +87,9 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         }
 
         // Here we might instead want to get view from unsaved filters ?
-        const view = await getViewFromCache(currentViewId);
+        const sourceView = await getViewFromCache(currentViewId);
 
-        if (!isDefined(view)) {
+        if (!isDefined(sourceView)) {
           return;
         }
 
@@ -97,23 +97,23 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
         const newView = await createOneRecord({
           id: id ?? v4(),
-          name: name ?? view.name,
-          icon: icon ?? view.icon,
+          name: name ?? sourceView.name,
+          icon: icon ?? sourceView.icon,
           key: null,
           kanbanFieldMetadataId:
-            kanbanFieldMetadataId ?? view.kanbanFieldMetadataId,
-          type: type ?? view.type,
-          objectMetadataId: view.objectMetadataId,
+            kanbanFieldMetadataId ?? sourceView.kanbanFieldMetadataId,
+          type: type ?? sourceView.type,
+          objectMetadataId: sourceView.objectMetadataId,
         });
 
         if (isUndefinedOrNull(newView)) {
           throw new Error('Failed to create view');
         }
 
-        await createViewFieldRecords(view.viewFields, newView);
+        await createViewFieldRecords(sourceView.viewFields, newView);
 
         if (type === ViewType.Kanban) {
-          if (!isNonEmptyArray(view.viewGroups)) {
+          if (!isNonEmptyArray(sourceView.viewGroups)) {
             if (!isDefined(kanbanFieldMetadataId)) {
               throw new Error('Kanban view must have a kanban field');
             }
@@ -144,22 +144,24 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
             await createViewGroupRecords(viewGroupsToCreate, newView);
           } else {
-            await createViewGroupRecords(view.viewGroups, newView);
+            await createViewGroupRecords(sourceView.viewGroups, newView);
           }
         }
 
         if (shouldCopyFiltersAndSorts === true) {
           const sourceViewCombinedFilterGroups = getViewFilterGroupsCombined(
-            view.id,
+            sourceView.id,
           );
-          const sourceViewCombinedFilters = getViewFiltersCombined(view.id);
-          const sourceViewCombinedSorts = getViewSortsCombined(view.id);
+          const sourceViewCombinedFilters = getViewFiltersCombined(
+            sourceView.id,
+          );
+          const sourceViewCombinedSorts = getViewSortsCombined(sourceView.id);
 
-          await createViewSortRecords(sourceViewCombinedSorts, view);
-          await createViewFilterRecords(sourceViewCombinedFilters, view);
+          await createViewSortRecords(sourceViewCombinedSorts, newView);
+          await createViewFilterRecords(sourceViewCombinedFilters, newView);
           await createViewFilterGroupRecords(
             sourceViewCombinedFilterGroups,
-            view,
+            newView,
           );
         }
 

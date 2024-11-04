@@ -15272,7 +15272,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       "id": "065d70d4-2840-4f1d-8ad1-2d5eac4e185e",
                       "color": "purple",
                       "label": "In progress",
-                      "value": "IN_PROGESS",
+                      "value": "IN_PROGRESS",
                       "position": 1
                     },
                     {

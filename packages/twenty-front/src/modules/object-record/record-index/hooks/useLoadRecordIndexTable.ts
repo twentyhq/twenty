@@ -7,9 +7,12 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { useRecordTableRecordGqlFields } from '@/object-record/record-index/hooks/useRecordTableRecordGqlFields';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { tableFiltersComponentState } from '@/object-record/record-table/states/tableFiltersComponentState';
+import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
+import { tableViewFilterGroupsComponentState } from '@/object-record/record-table/states/tableViewFilterGroupsComponentState';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isNull } from '@sniptt/guards';
 import { WorkspaceActivationStatus } from '~/generated/graphql';
 
@@ -21,12 +24,18 @@ export const useFindManyParams = (
     objectNameSingular,
   });
 
-  const { tableFiltersState, tableSortsState, tableViewFilterGroupsState } =
-    useRecordTableStates(recordTableId);
-
-  const tableViewFilterGroups = useRecoilValue(tableViewFilterGroupsState);
-  const tableFilters = useRecoilValue(tableFiltersState);
-  const tableSorts = useRecoilValue(tableSortsState);
+  const tableViewFilterGroups = useRecoilComponentValueV2(
+    tableViewFilterGroupsComponentState,
+    recordTableId,
+  );
+  const tableFilters = useRecoilComponentValueV2(
+    tableFiltersComponentState,
+    recordTableId,
+  );
+  const tableSorts = useRecoilComponentValueV2(
+    tableSortsComponentState,
+    recordTableId,
+  );
 
   const filter = computeViewRecordGqlOperationFilter(
     tableFilters,

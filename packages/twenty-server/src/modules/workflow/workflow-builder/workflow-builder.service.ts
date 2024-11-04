@@ -5,7 +5,6 @@ import { join } from 'path';
 
 import { Repository } from 'typeorm';
 
-import { generateFakeObjectRecordEvent } from 'src/engine/core-modules/event-emitter/utils/generate-fake-object-record-event';
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
@@ -21,6 +20,9 @@ import {
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { isDefined } from 'src/utils/is-defined';
+import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
+import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class WorkflowBuilderService {
@@ -92,7 +94,7 @@ export class WorkflowBuilderService {
   }) {
     const [nameSingular, action] = eventName.split('.');
 
-    if (!['created', 'updated', 'deleted', 'destroyed'].includes(action)) {
+    if (!checkStringIsDatabaseEventAction(action)) {
       return {};
     }
 
@@ -110,7 +112,7 @@ export class WorkflowBuilderService {
 
     return generateFakeObjectRecordEvent(
       objectMetadata,
-      action as 'created' | 'updated' | 'deleted' | 'destroyed',
+      action as DatabaseEventAction,
     );
   }
 

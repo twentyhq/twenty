@@ -10,17 +10,28 @@ export const ObjectFilterDropdownOperandButton = () => {
   const {
     selectedOperandInDropdownState,
     setIsObjectFilterDropdownOperandSelectUnfolded,
+    isObjectFilterDropdownOperandSelectUnfoldedState,
   } = useFilterDropdown();
 
   const selectedOperandInDropdown = useRecoilValue(
     selectedOperandInDropdownState,
   );
 
+  const isObjectFilterDropdownOperandSelectUnfolded = useRecoilValue(
+    isObjectFilterDropdownOperandSelectUnfoldedState,
+  );
+
+  const handleButtonClick = () => {
+    setIsObjectFilterDropdownOperandSelectUnfolded(
+      !isObjectFilterDropdownOperandSelectUnfolded,
+    );
+  };
+
   return (
     <DropdownMenuHeader
       key={'selected-filter-operand'}
       EndIcon={IconChevronDown}
-      onClick={() => setIsObjectFilterDropdownOperandSelectUnfolded(true)}
+      onClick={handleButtonClick}
     >
       {getOperandLabel(selectedOperandInDropdown)}
     </DropdownMenuHeader>

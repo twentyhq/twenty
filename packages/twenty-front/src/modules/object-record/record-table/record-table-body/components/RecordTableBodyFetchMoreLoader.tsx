@@ -7,7 +7,7 @@ import { GRAY_SCALE } from 'twenty-ui';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
 import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 const StyledText = styled.div`
   align-items: center;
@@ -33,7 +33,7 @@ export const RecordTableBodyFetchMoreLoader = () => {
     RecordTableWithWrappersScrollWrapperContext,
   );
 
-  const hasRecordTableFetchedAllRecordsComponents = useRecoilComponentValue(
+  const hasRecordTableFetchedAllRecordsComponents = useRecoilComponentValueV2(
     hasRecordTableFetchedAllRecordsComponentStateV2,
   );
 

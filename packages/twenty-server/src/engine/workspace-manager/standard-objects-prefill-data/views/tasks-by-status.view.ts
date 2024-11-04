@@ -105,7 +105,7 @@ export const tasksByStatusView = (
             TASK_STANDARD_FIELD_IDS.status
           ],
         isVisible: true,
-        fieldValue: 'IN_PROGESS',
+        fieldValue: 'IN_PROGRESS',
         position: 1,
       },
       {

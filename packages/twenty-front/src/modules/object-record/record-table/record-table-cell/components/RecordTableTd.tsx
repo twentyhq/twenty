@@ -26,6 +26,7 @@ const StyledTd = styled.td<{
       hasRightBorder ? borderColor : 'transparent'};
 
   padding: 0;
+  transition: 0.3s ease;
 
   text-align: left;
 
