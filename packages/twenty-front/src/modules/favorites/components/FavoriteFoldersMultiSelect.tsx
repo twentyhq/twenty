@@ -107,6 +107,24 @@ export const FavoriteFoldersMultiSelect = ({
     { leading: true },
   );
 
+  const folders = getFoldersByIds();
+  const filteredFolders = folders.filter((folder) =>
+    folder.name
+      .toLowerCase()
+      .includes(favoriteFoldersSearchFilter.toLowerCase()),
+  );
+
+  const showNoFolderOption =
+    !favoriteFoldersSearchFilter ||
+    'no folder'.includes(favoriteFoldersSearchFilter.toLowerCase());
+
+  const handleFilterChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      debouncedSetSearchFilter(event.currentTarget.value);
+    },
+    [debouncedSetSearchFilter],
+  );
+
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -120,23 +138,24 @@ export const FavoriteFoldersMultiSelect = ({
     [onSubmit, isFavoriteFolderCreating],
   );
 
-  const handleFilterChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      debouncedSetSearchFilter(event.currentTarget.value);
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
+      if (filteredFolders.length === 1 && !showNoFolderOption) {
+        toggleFolderSelection(filteredFolders[0].id);
+        onSubmit?.();
+        return;
+      }
+
+      if (showNoFolderOption && filteredFolders.length === 0) {
+        toggleFolderSelection(NO_FOLDER_ID);
+        onSubmit?.();
+        return;
+      }
     },
-    [debouncedSetSearchFilter],
+    scopeId,
+    [filteredFolders, showNoFolderOption, toggleFolderSelection, onSubmit],
   );
-
-  const folders = getFoldersByIds();
-  const filteredFolders = folders.filter((folder) =>
-    folder.name
-      .toLowerCase()
-      .includes(favoriteFoldersSearchFilter.toLowerCase()),
-  );
-
-  const showNoFolderOption =
-    !favoriteFoldersSearchFilter ||
-    'no folder'.includes(favoriteFoldersSearchFilter.toLowerCase());
 
   return (
     <DropdownMenu data-select-disable>
