@@ -1,3 +1,3 @@
 export enum CurrencyPickerHotkeyScope {
-  CurrencyPicker = 'currency-picker',
+  CurrencyPicker = 'currncy-picker-dropdown-id',
 }
