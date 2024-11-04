@@ -26,6 +26,7 @@ export const useEntitySelectSearch = ({
   const handleSearchFilterChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
+    console.log('set search filter', event.currentTarget.value);
     debouncedSetSearchFilter(event.currentTarget.value);
     setRelationPickerPreselectedId('');
   };
