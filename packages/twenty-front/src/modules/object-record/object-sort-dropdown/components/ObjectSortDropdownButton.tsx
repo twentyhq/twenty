@@ -15,6 +15,7 @@ import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/Styl
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useContext } from 'react';
 import { SORT_DIRECTIONS } from '../types/SortDirection';
 
@@ -42,17 +43,13 @@ export const StyledInput = styled.input`
   }
 `;
 
-const StyledContainer = styled.div`
-  position: relative;
-`;
-
 const StyledSelectedSortDirectionContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  left: 10px;
+
   position: absolute;
-  top: 10px;
+  top: 32px;
   width: 100%;
   z-index: 1000;
 `;
@@ -166,21 +163,23 @@ export const ObjectSortDropdownButton = ({
                 </DropdownMenuItemsContainer>
               </StyledSelectedSortDirectionContainer>
             )}
-            <StyledContainer>
-              <DropdownMenuHeader
-                EndIcon={IconChevronDown}
-                onClick={() => setIsSortDirectionMenuUnfolded(true)}
-              >
-                {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
-              </DropdownMenuHeader>
-              <StyledInput
-                autoFocus
-                value={objectSortDropdownSearchInput}
-                placeholder="Search fields"
-                onChange={(event) =>
-                  setObjectSortDropdownSearchInput(event.target.value)
-                }
-              />
+            <DropdownMenuHeader
+              EndIcon={IconChevronDown}
+              onClick={() =>
+                setIsSortDirectionMenuUnfolded(!isSortDirectionMenuUnfolded)
+              }
+            >
+              {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
+            </DropdownMenuHeader>
+            <StyledInput
+              autoFocus
+              value={objectSortDropdownSearchInput}
+              placeholder="Search fields"
+              onChange={(event) =>
+                setObjectSortDropdownSearchInput(event.target.value)
+              }
+            />
+            <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
               <DropdownMenuItemsContainer>
                 {visibleColumnsSortDefinitions.map(
                   (visibleSortDefinition, index) => (
@@ -214,7 +213,7 @@ export const ObjectSortDropdownButton = ({
                   ),
                 )}
               </DropdownMenuItemsContainer>
-            </StyledContainer>
+            </ScrollWrapper>
           </>
         }
         onClose={handleDropdownButtonClose}

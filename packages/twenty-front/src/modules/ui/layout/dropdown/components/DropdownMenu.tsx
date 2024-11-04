@@ -23,10 +23,10 @@ const StyledDropdownMenu = styled.div<{
 
   display: flex;
 
+  height: 100%;
+
   flex-direction: column;
   z-index: 30;
-  overflow-y: auto;
-  overflow-x: hidden;
   width: ${({ width = 160 }) =>
     typeof width === 'number' ? `${width}px` : width};
 `;

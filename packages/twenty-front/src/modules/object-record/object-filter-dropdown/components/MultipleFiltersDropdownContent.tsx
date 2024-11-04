@@ -5,14 +5,9 @@ import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from './MultipleFiltersDropdownFilterOnFilterChangedEffect';
 import { ObjectFilterDropdownFilterSelect } from './ObjectFilterDropdownFilterSelect';
-
-const StyledContainer = styled.div`
-  position: relative;
-`;
 
 type MultipleFiltersDropdownContentProps = {
   filterDropdownId?: string;
@@ -46,7 +41,7 @@ export const MultipleFiltersDropdownContent = ({
   const shoudShowFilterInput = objectFilterDropdownFilterIsSelected;
 
   return (
-    <StyledContainer>
+    <>
       {shoudShowFilterInput ? (
         <ObjectFilterOperandSelectAndInput
           filterDropdownId={filterDropdownId}
@@ -61,6 +56,6 @@ export const MultipleFiltersDropdownContent = ({
           filterDefinitionUsedInDropdown?.type
         }
       />
-    </StyledContainer>
+    </>
   );
 };
