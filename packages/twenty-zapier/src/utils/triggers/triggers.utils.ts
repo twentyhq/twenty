@@ -43,7 +43,6 @@ export const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
 
 export const perform = (z: ZObject, bundle: Bundle) => {
   const data = {
-    eventName: bundle.cleanedRequest.eventName,
     record: bundle.cleanedRequest.record,
     ...(bundle.cleanedRequest.updatedFields && {
       updatedFields: bundle.cleanedRequest.updatedFields,
@@ -91,7 +90,6 @@ export const performList = async (
   );
   const results = await requestDbViaRestApi(z, bundle, namePlural);
   return results.map((result) => ({
-    eventName: `${bundle.inputData.nameSingular}.${bundle.inputData.operation}`,
     record: result,
     ...(bundle.inputData.operation === DatabaseEventAction.UPDATED && {
       updatedFields: Object.keys(result).filter((key) => key !== 'id')?.[0] || [
