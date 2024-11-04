@@ -2,9 +2,12 @@ import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useActiveWorkflowVersionsWithTriggerRecordType } from '@/workflow/hooks/useActiveWorkflowVersionsWithTriggerRecordType';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
+import { useTheme } from '@emotion/react';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconSettingsAutomation, isDefined } from 'twenty-ui';
@@ -37,6 +40,10 @@ export const WorkflowRunRecordActionEffect = ({
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
+  const { enqueueSnackBar } = useSnackBar();
+
+  const theme = useTheme();
+
   useEffect(() => {
     if (!isDefined(objectMetadataItem) || objectMetadataItem.isRemote) {
       return;
@@ -53,11 +60,23 @@ export const WorkflowRunRecordActionEffect = ({
         label: capitalize(activeWorkflowVersion.workflow.name),
         position: index,
         Icon: IconSettingsAutomation,
-        onClick: () => {
+        onClick: async () => {
           if (!isDefined(selectedRecord)) {
             return;
           }
-          runWorkflowVersion(activeWorkflowVersion.id, selectedRecord);
+
+          await runWorkflowVersion(activeWorkflowVersion.id, selectedRecord);
+
+          enqueueSnackBar(
+            '',
+            {
+              variant: SnackBarVariant.Success,
+              title: `${capitalize(activeWorkflowVersion.workflow.name)} starting...`,
+              icon: (
+                <IconSettingsAutomation size={16} color={theme.snackBar.success.color} />
+              ),
+            },
+          );
         },
       });
     }
