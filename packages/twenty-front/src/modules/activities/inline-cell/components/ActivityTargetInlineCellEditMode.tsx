@@ -179,15 +179,16 @@ export const ActivityTargetInlineCellEditMode = ({
 
           const newActivityTarget = prefillRecord<NoteTarget | TaskTarget>({
             objectMetadataItem: objectMetadataItemActivityTarget,
+
             input: {
               id: newActivityTargetId,
-              taskId:
+              task:
                 activityObjectNameSingular === CoreObjectNameSingular.Task
-                  ? activity.id
+                  ? activity
                   : null,
-              noteId:
+              note:
                 activityObjectNameSingular === CoreObjectNameSingular.Note
-                  ? activity.id
+                  ? activity
                   : null,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
