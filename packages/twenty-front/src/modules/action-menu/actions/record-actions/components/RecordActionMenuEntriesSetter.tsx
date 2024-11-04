@@ -7,14 +7,16 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
+const globalRecordActionEffects = [
+  ExportRecordsActionEffect,
+];
+
 const singleRecordActionEffects = [
   ManageFavoritesActionEffect,
-  ExportRecordsActionEffect,
   DeleteRecordsActionEffect,
 ];
 
 const multipleRecordActionEffects = [
-  ExportRecordsActionEffect,
   DeleteRecordsActionEffect,
 ];
 
@@ -37,11 +39,6 @@ export const RecordActionMenuEntriesSetter = () => {
     );
   }
 
-
-  if (!contextStoreNumberOfSelectedRecords) {
-    return null;
-  }
-
   const actions =
     contextStoreNumberOfSelectedRecords === 1
       ? singleRecordActionEffects
@@ -49,10 +46,17 @@ export const RecordActionMenuEntriesSetter = () => {
 
   return (
     <>
-      {actions.map((ActionEffect, index) => (
+      {globalRecordActionEffects.map((ActionEffect, index) => (
         <ActionEffect
           key={index}
           position={index}
+          objectMetadataItem={objectMetadataItem}
+        />
+      ))}
+      {actions.map((ActionEffect, index) => (
+        <ActionEffect
+          key={index}
+          position={globalRecordActionEffects.length + index}
           objectMetadataItem={objectMetadataItem}
         />
       ))}
