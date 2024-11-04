@@ -8,13 +8,13 @@ rawDataSource
   .initialize()
   .then(async () => {
     await performQuery(
-      'CREATE EXTENSION IF NOT EXISTS "pgvector"',
-      'create extension "pgvector"',
+      'CREATE EXTENSION IF NOT EXISTS "vector"',
+      'create extension "vector (pgvector)"',
     );
 
     await performQuery(
-      'CREATE EXTENSION IF NOT EXISTS "hydra_columnar"',
-      'create extension "hydra_columnar"',
+      'CREATE EXTENSION IF NOT EXISTS "columnar"',
+      'create extension "columnar (hydra)"',
     );
 
     await performQuery(
