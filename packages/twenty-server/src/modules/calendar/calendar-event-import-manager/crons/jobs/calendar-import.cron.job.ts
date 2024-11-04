@@ -14,11 +14,11 @@ import {
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { CalendarEventsImportJobData } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
+import { CalendarEventListFetchJobData } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarEventsImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-import.job';
 import { CalendarChannelSyncStage } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
-export const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/5 * * * *';
+export const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/1 * * * *';
 
 @Processor({
   queueName: MessageQueue.cronQueue,
@@ -65,7 +65,7 @@ export class CalendarEventsImportCronJob {
         });
 
         for (const calendarChannel of calendarChannels) {
-          await this.messageQueueService.add<CalendarEventsImportJobData>(
+          await this.messageQueueService.add<CalendarEventListFetchJobData>(
             CalendarEventsImportJob.name,
             {
               calendarChannelId: calendarChannel.id,

@@ -4,15 +4,13 @@ import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { getMicrosoftApisOauthScopes } from 'src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
   CalendarEventListFetchJob,
-  CalendarEventsImportJobData,
+  CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import {
   CalendarChannelVisibility,
@@ -30,23 +28,15 @@ import {
   MessageChannelVisibility,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import {
-  MessagingMessageListFetchJob,
-  MessagingMessageListFetchJobData,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class MicrosoftAPIsService {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
-    private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
-    private readonly environmentService: EnvironmentService,
     private readonly accountsToReconnectService: AccountsToReconnectService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async refreshMicrosoftRefreshToken(input: {
@@ -112,6 +102,7 @@ export class MicrosoftAPIsService {
           manager,
         );
 
+        // TODO: Modify this when the email sync is implemented
         await messageChannelRepository.save(
           {
             id: v4(),
@@ -120,7 +111,7 @@ export class MicrosoftAPIsService {
             handle,
             visibility:
               messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
-            syncStatus: MessageChannelSyncStatus.ONGOING,
+            syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
           },
           {},
           manager,
@@ -168,6 +159,7 @@ export class MicrosoftAPIsService {
           newOrExistingConnectedAccountId,
         );
 
+        // TODO: Modify this when the email sync is implemented
         await messageChannelRepository.update(
           {
             connectedAccountId: newOrExistingConnectedAccountId,
@@ -183,21 +175,22 @@ export class MicrosoftAPIsService {
       }
     });
 
-    const messageChannels = await messageChannelRepository.find({
-      where: {
-        connectedAccountId: newOrExistingConnectedAccountId,
-      },
-    });
+    // TODO: Uncomment this when the email sync is implemented
+    // const messageChannels = await messageChannelRepository.find({
+    //   where: {
+    //     connectedAccountId: newOrExistingConnectedAccountId,
+    //   },
+    // });
 
-    for (const messageChannel of messageChannels) {
-      await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-        MessagingMessageListFetchJob.name,
-        {
-          workspaceId,
-          messageChannelId: messageChannel.id,
-        },
-      );
-    }
+    // for (const messageChannel of messageChannels) {
+    //   await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+    //     MessagingMessageListFetchJob.name,
+    //     {
+    //       workspaceId,
+    //       messageChannelId: messageChannel.id,
+    //     },
+    //   );
+    // }
 
     const calendarChannels = await calendarChannelRepository.find({
       where: {
@@ -206,7 +199,7 @@ export class MicrosoftAPIsService {
     });
 
     for (const calendarChannel of calendarChannels) {
-      await this.calendarQueueService.add<CalendarEventsImportJobData>(
+      await this.calendarQueueService.add<CalendarEventListFetchJobData>(
         CalendarEventListFetchJob.name,
         {
           calendarChannelId: calendarChannel.id,

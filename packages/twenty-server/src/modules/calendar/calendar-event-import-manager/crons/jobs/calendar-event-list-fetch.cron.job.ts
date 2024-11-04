@@ -10,13 +10,13 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
-  Workspace,
-  WorkspaceActivationStatus,
+    Workspace,
+    WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-  CalendarEventListFetchJob,
-  CalendarEventsImportJobData,
+    CalendarEventListFetchJob,
+    CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarChannelSyncStage } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
@@ -68,7 +68,7 @@ export class CalendarEventListFetchCronJob {
         });
 
         for (const calendarChannel of calendarChannels) {
-          await this.messageQueueService.add<CalendarEventsImportJobData>(
+          await this.messageQueueService.add<CalendarEventListFetchJobData>(
             CalendarEventListFetchJob.name,
             {
               calendarChannelId: calendarChannel.id,
