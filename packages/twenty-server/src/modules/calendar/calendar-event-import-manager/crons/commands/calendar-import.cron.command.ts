@@ -6,7 +6,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import {
   CALENDAR_EVENTS_IMPORT_CRON_PATTERN,
   CalendarEventsImportCronJob,
-} from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-import.cron.job';
+} from 'src/modules/calendar/calendar-event-import-manager/crons/jobs/calendar-events-import.cron.job';
 
 @Command({
   name: 'cron:calendar:calendar-events-import',

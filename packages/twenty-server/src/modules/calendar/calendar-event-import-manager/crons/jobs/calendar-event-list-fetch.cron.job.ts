@@ -10,17 +10,17 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
-    Workspace,
-    WorkspaceActivationStatus,
+  Workspace,
+  WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import {
-    CalendarEventListFetchJob,
-    CalendarEventListFetchJobData,
+  CalendarEventListFetchJob,
+  CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarChannelSyncStage } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 
-export const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/5 * * * *';
+export const CALENDAR_EVENT_LIST_FETCH_CRON_PATTERN = '*/5 * * * *';
 
 @Processor({
   queueName: MessageQueue.cronQueue,
@@ -38,7 +38,7 @@ export class CalendarEventListFetchCronJob {
   @Process(CalendarEventListFetchCronJob.name)
   @SentryCronMonitor(
     CalendarEventListFetchCronJob.name,
-    CALENDAR_EVENTS_IMPORT_CRON_PATTERN,
+    CALENDAR_EVENT_LIST_FETCH_CRON_PATTERN,
   )
   async handle(): Promise<void> {
     console.time('CalendarEventListFetchCronJob time');

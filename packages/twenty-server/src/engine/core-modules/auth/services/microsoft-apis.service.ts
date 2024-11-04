@@ -112,6 +112,7 @@ export class MicrosoftAPIsService {
             visibility:
               messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
             syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
+            syncStage: MessageChannelSyncStage.FAILED,
           },
           {},
           manager,
