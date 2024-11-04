@@ -55,7 +55,7 @@ export const seedWorkspaceMember = async (
       {
         id: DEV_SEED_WORKSPACE_MEMBER_IDS.PHIL,
         nameFirstName: 'Phil',
-        nameLastName: 'Shiler',
+        nameLastName: 'Schiler',
         locale: 'en',
         colorScheme: 'Light',
         userEmail: 'phil.schiler@apple.dev',
