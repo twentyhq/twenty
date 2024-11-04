@@ -107,11 +107,10 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
     dryRun: boolean,
     options: EnforceUniqueConstraintsCommandOptions,
   ): Promise<void> {
+    await this.enforceUniquePersonEmail(workspaceId, dryRun);
+
     if (options.company) {
       await this.enforceUniqueCompanyDomainName(workspaceId, dryRun);
-    }
-    if (options.person) {
-      await this.enforceUniquePersonEmail(workspaceId, dryRun);
     }
     if (options.viewField) {
       await this.enforceUniqueViewField(workspaceId, dryRun);
