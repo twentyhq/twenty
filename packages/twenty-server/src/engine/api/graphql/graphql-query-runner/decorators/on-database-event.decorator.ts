@@ -1,6 +1,6 @@
 import { OnEvent } from '@nestjs/event-emitter';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 export function OnDatabaseEvent(
   object: string,
@@ -8,7 +8,11 @@ export function OnDatabaseEvent(
 ): MethodDecorator {
   const event = `${object}.${action}`;
 
-  return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
+  return (
+    target: object,
+    propertyKey: string,
+    descriptor: PropertyDescriptor,
+  ) => {
     OnEvent(event)(target, propertyKey, descriptor);
   };
 }

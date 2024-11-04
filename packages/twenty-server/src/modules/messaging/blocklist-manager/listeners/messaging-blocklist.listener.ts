@@ -16,8 +16,8 @@ import {
   BlocklistReimportMessagesJob,
   BlocklistReimportMessagesJobData,
 } from 'src/modules/messaging/blocklist-manager/jobs/messaging-blocklist-reimport-messages.job';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable({ scope: Scope.REQUEST })
 export class MessagingBlocklistListener {

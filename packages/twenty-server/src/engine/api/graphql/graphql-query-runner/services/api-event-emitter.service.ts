@@ -6,13 +6,7 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
-
-export enum DatabaseEventAction {
-  CREATED = 'created',
-  UPDATED = 'updated',
-  DELETED = 'deleted',
-  DESTROYED = 'destroyed',
-}
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class ApiEventEmitterService {

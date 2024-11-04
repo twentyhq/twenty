@@ -11,8 +11,8 @@ import {
   MessagingCreateCompanyAndContactAfterSyncJob,
   MessagingCreateCompanyAndContactAfterSyncJobData,
 } from 'src/modules/messaging/message-participant-manager/jobs/messaging-create-company-and-contact-after-sync.job';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class AutoCompaniesAndContactsCreationMessageChannelListener {

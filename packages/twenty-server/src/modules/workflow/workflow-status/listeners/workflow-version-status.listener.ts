@@ -16,8 +16,8 @@ import {
   WorkflowVersionEventType,
   WorkflowVersionStatusUpdate,
 } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class WorkflowVersionStatusListener {
