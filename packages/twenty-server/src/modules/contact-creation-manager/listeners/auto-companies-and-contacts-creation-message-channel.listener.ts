@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { objectRecordChangedProperties } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-properties.util';
@@ -12,6 +11,8 @@ import {
   MessagingCreateCompanyAndContactAfterSyncJob,
   MessagingCreateCompanyAndContactAfterSyncJobData,
 } from 'src/modules/messaging/message-participant-manager/jobs/messaging-create-company-and-contact-after-sync.job';
+import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class AutoCompaniesAndContactsCreationMessageChannelListener {
@@ -20,7 +21,7 @@ export class AutoCompaniesAndContactsCreationMessageChannelListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('messageChannel.updated')
+  @OnDatabaseEvent('messageChannel', DatabaseEventAction.UPDATED)
   async handleUpdatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<MessageChannelWorkspaceEntity>
