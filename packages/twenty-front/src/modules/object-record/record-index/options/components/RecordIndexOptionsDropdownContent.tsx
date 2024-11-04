@@ -40,6 +40,7 @@ import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemN
 import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { ViewGroupsVisibilityDropdownSection } from '@/views/components/ViewGroupsVisibilityDropdownSection';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -259,15 +260,17 @@ export const RecordIndexOptionsDropdownContent = ({
           <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
             Fields
           </DropdownMenuHeader>
-          <ViewFieldsVisibilityDropdownSection
-            title="Visible"
-            fields={visibleRecordFields}
-            isDraggable
-            onDragEnd={handleReorderFields}
-            onVisibilityChange={handleChangeFieldVisibility}
-            showSubheader={false}
-            showDragGrip={true}
-          />
+          <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
+            <ViewFieldsVisibilityDropdownSection
+              title="Visible"
+              fields={visibleRecordFields}
+              isDraggable
+              onDragEnd={handleReorderFields}
+              onVisibilityChange={handleChangeFieldVisibility}
+              showSubheader={false}
+              showDragGrip={true}
+            />
+          </ScrollWrapper>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
             <MenuItemNavigate
@@ -317,7 +320,7 @@ export const RecordIndexOptionsDropdownContent = ({
             Hidden Fields
           </DropdownMenuHeader>
           {hiddenRecordFields.length > 0 && (
-            <>
+            <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
               <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
                 fields={hiddenRecordFields}
@@ -326,7 +329,7 @@ export const RecordIndexOptionsDropdownContent = ({
                 showSubheader={false}
                 showDragGrip={false}
               />
-            </>
+            </ScrollWrapper>
           )}
           <DropdownMenuSeparator />
 

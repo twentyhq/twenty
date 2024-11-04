@@ -7,7 +7,7 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import { MouseEvent, useEffect, useRef } from 'react';
+import { MouseEvent, ReactNode, useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -27,8 +27,8 @@ import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
 type DropdownProps = {
   className?: string;
-  clickableComponent?: JSX.Element | JSX.Element[];
-  dropdownComponents: JSX.Element | JSX.Element[];
+  clickableComponent?: ReactNode;
+  dropdownComponents: ReactNode;
   hotkey?: {
     key: Keys;
     scope: string;
@@ -65,13 +65,8 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const {
-    isDropdownOpen,
-    toggleDropdown,
-    closeDropdown,
-    dropdownWidth,
-    setDropdownPlacement,
-  } = useDropdown(dropdownId);
+  const { isDropdownOpen, toggleDropdown, closeDropdown, dropdownWidth } =
+    useDropdown(dropdownId);
 
   const offsetMiddlewares = [];
 
@@ -83,28 +78,27 @@ export const Dropdown = ({
     offsetMiddlewares.push(offset({ mainAxis: dropdownOffset.y }));
   }
 
-  const { refs, floatingStyles, placement } = useFloating({
+  const { refs, floatingStyles } = useFloating({
     placement: dropdownPlacement,
     middleware: [
       flip(),
       size({
-        padding: 12 + 20, // 12px for padding bottom, 20px for dropdown bottom margin target
+        padding: 32,
         apply: ({ availableHeight, elements }) => {
           elements.floating.style.maxHeight =
             availableHeight >= elements.floating.scrollHeight
               ? ''
               : `${availableHeight}px`;
+
+          elements.floating.style.height = 'auto';
         },
+        boundary: document.querySelector('#root') ?? undefined,
       }),
       ...offsetMiddlewares,
     ],
     whileElementsMounted: autoUpdate,
     strategy: dropdownStrategy,
   });
-
-  useEffect(() => {
-    setDropdownPlacement(placement);
-  }, [placement, setDropdownPlacement]);
 
   const handleHotkeyTriggered = () => {
     toggleDropdown();
