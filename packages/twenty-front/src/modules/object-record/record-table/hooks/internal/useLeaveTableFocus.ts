@@ -1,15 +1,19 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
 import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { isSoftFocusActiveComponentState } from '@/object-record/record-table/states/isSoftFocusActiveComponentState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useDisableSoftFocus } from './useDisableSoftFocus';
 
 export const useLeaveTableFocus = (recordTableId?: string) => {
   const disableSoftFocus = useDisableSoftFocus(recordTableId);
 
-  const { isSoftFocusActiveState } = useRecordTableStates(recordTableId);
+  const isSoftFocusActiveState = useRecoilComponentCallbackStateV2(
+    isSoftFocusActiveComponentState,
+    recordTableId,
+  );
 
   const resetTableRowSelection = useResetTableRowSelection(recordTableId);
 
