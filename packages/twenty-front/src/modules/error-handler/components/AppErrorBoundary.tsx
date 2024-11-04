@@ -3,33 +3,8 @@ import { ErrorInfo, ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 
 import { GenericErrorFallback } from '@/error-handler/components/GenericErrorFallback';
-import { RecordIndexErrorFallback } from '@/error-handler/components/RecordIndexErrorFallback';
-import { RecordShowErrorFallback } from '@/error-handler/components/RecordShowErrorFallback';
-import { SettingsErrorFallback } from '@/error-handler/components/SettingsErrorFallback';
-import { ErrorFallbackType } from '@/error-handler/utils/errorFallbackType';
 
-type AppErrorBoundaryProps = {
-  children: ReactNode;
-  errorFallbackType?: ErrorFallbackType;
-};
-
-const getFallbackComponent = (type: ErrorFallbackType) => {
-  switch (type) {
-    case ErrorFallbackType.Settings:
-      return SettingsErrorFallback;
-    case ErrorFallbackType.RecordShow:
-      return RecordShowErrorFallback;
-    case ErrorFallbackType.RecordIndex:
-      return RecordIndexErrorFallback;
-    default:
-      return GenericErrorFallback;
-  }
-};
-
-export const AppErrorBoundary = ({
-  children,
-  errorFallbackType = ErrorFallbackType.Default,
-}: AppErrorBoundaryProps) => {
+export const AppErrorBoundary = ({ children }: { children: ReactNode }) => {
   const handleError = (_error: Error, _info: ErrorInfo) => {
     Sentry.captureException(_error, (scope) => {
       scope.setExtras({ _info });
@@ -39,7 +14,7 @@ export const AppErrorBoundary = ({
 
   return (
     <ErrorBoundary
-      FallbackComponent={getFallbackComponent(errorFallbackType)}
+      FallbackComponent={GenericErrorFallback}
       onError={handleError}
     >
       {children}

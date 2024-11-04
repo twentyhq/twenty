@@ -80,7 +80,7 @@ const StyledTopBarButtonContainer = styled.div`
 `;
 
 type PageHeaderProps = {
-  title: ReactNode;
+  title?: ReactNode;
   hasClosePageButton?: boolean;
   onClosePage?: () => void;
   hasPaginationButtons?: boolean;
@@ -147,13 +147,15 @@ export const PageHeader = ({
             </>
           )}
           {Icon && <Icon size={theme.icon.size.md} />}
-          <StyledTitleContainer data-testid="top-bar-title">
-            {typeof title === 'string' ? (
-              <OverflowingTextWithTooltip text={title} />
-            ) : (
-              title
-            )}
-          </StyledTitleContainer>
+          {title && (
+            <StyledTitleContainer data-testid="top-bar-title">
+              {typeof title === 'string' ? (
+                <OverflowingTextWithTooltip text={title} />
+              ) : (
+                title
+              )}
+            </StyledTitleContainer>
+          )}
         </StyledTopBarIconStyledTitleContainer>
       </StyledLeftContainer>
       <StyledPageActionContainer>{children}</StyledPageActionContainer>

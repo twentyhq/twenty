@@ -1,6 +1,6 @@
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
-import { ErrorBoundaryWrapper } from '@/error-handler/components/ErrorBoundaryWrapper';
+import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
@@ -107,9 +107,9 @@ export const DefaultLayout = () => {
                 </AnimatePresence>
               </>
             ) : (
-              <ErrorBoundaryWrapper>
+              <AppErrorBoundary>
                 <Outlet />
-              </ErrorBoundaryWrapper>
+              </AppErrorBoundary>
             )}
           </StyledMainContainer>
         </StyledPageContainer>
