@@ -1,14 +1,16 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString, isNull } from '@sniptt/guards';
 
+import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyEffect';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
-import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
-import { useRecoilValue } from 'recoil';
+import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
+import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
+import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 const StyledTable = styled.table`
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -30,21 +32,20 @@ export const RecordTable = ({
   objectNameSingular,
   onColumnsChange,
 }: RecordTableProps) => {
-  const { scopeId } = useRecordTableStates(recordTableId);
-
-  const {
-    isRecordTableInitialLoadingState,
-    tableRowIdsState,
-    pendingRecordIdState,
-  } = useRecordTableStates(recordTableId);
-
-  const isRecordTableInitialLoading = useRecoilValue(
-    isRecordTableInitialLoadingState,
+  const isRecordTableInitialLoading = useRecoilComponentValueV2(
+    isRecordTableInitialLoadingComponentState,
+    recordTableId,
   );
 
-  const tableRowIds = useRecoilValue(tableRowIdsState);
+  const tableRowIds = useRecoilComponentValueV2(
+    tableRowIdsComponentState,
+    recordTableId,
+  );
 
-  const pendingRecordId = useRecoilValue(pendingRecordIdState);
+  const pendingRecordId = useRecoilComponentValueV2(
+    recordTablePendingRecordIdComponentState,
+    recordTableId,
+  );
 
   const recordTableIsEmpty =
     !isRecordTableInitialLoading &&
@@ -56,8 +57,8 @@ export const RecordTable = ({
   }
 
   return (
-    <RecordTableScope
-      recordTableScopeId={scopeId}
+    <RecordTableComponentInstance
+      recordTableId={recordTableId}
       onColumnsChange={onColumnsChange}
     >
       <RecordTableContextProvider
@@ -77,6 +78,6 @@ export const RecordTable = ({
           </StyledTable>
         )}
       </RecordTableContextProvider>
-    </RecordTableScope>
+    </RecordTableComponentInstance>
   );
 };

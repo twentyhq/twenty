@@ -42,7 +42,7 @@ const StyledTag = styled.h3<{
   padding: 0 ${spacing2};
   border: ${({ variant, theme }) =>
     variant === 'outline' || variant === 'border'
-      ? `1px ${variant === 'border' ? 'solid' : 'dash'} ${theme.border.color.strong}`
+      ? `1px ${variant === 'border' ? 'solid' : 'dashed'} ${theme.border.color.strong}`
       : ''};
 
   gap: ${spacing1};
