@@ -1232,7 +1232,7 @@ export type ServerlessFunction = {
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['UUID']['output'];
-  inputSchema: Array<FunctionParameter>;
+  inputSchema?: Maybe<Array<FunctionParameter>>;
   latestVersion?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
   publishedVersions: Array<Scalars['String']['output']>;
@@ -1987,21 +1987,21 @@ export type ObjectMetadataItemsQueryVariables = Exact<{
 
 export type ObjectMetadataItemsQuery = { __typename?: 'Query', objects: { __typename?: 'ObjectConnection', edges: Array<{ __typename?: 'objectEdge', node: { __typename?: 'object', id: any, dataSourceId: string, nameSingular: string, namePlural: string, labelSingular: string, labelPlural: string, description?: string | null, icon?: string | null, isCustom: boolean, isRemote: boolean, isActive: boolean, isSystem: boolean, createdAt: any, updatedAt: any, labelIdentifierFieldMetadataId?: string | null, imageIdentifierFieldMetadataId?: string | null, shortcut?: string | null, isLabelSyncedWithName: boolean, indexMetadatas: { __typename?: 'ObjectIndexMetadatasConnection', edges: Array<{ __typename?: 'indexEdge', node: { __typename?: 'index', id: any, createdAt: any, updatedAt: any, name: string, indexWhereClause?: string | null, indexType: IndexType, isUnique: boolean, indexFieldMetadatas: { __typename?: 'IndexIndexFieldMetadatasConnection', edges: Array<{ __typename?: 'indexFieldEdge', node: { __typename?: 'indexField', id: any, createdAt: any, updatedAt: any, order: number, fieldMetadataId: any } }> } } }> }, fields: { __typename?: 'ObjectFieldsConnection', edges: Array<{ __typename?: 'fieldEdge', node: { __typename?: 'field', id: any, type: FieldMetadataType, name: string, label: string, description?: string | null, icon?: string | null, isCustom?: boolean | null, isActive?: boolean | null, isSystem?: boolean | null, isNullable?: boolean | null, isUnique?: boolean | null, createdAt: any, updatedAt: any, defaultValue?: any | null, options?: any | null, settings?: any | null, relationDefinition?: { __typename?: 'RelationDefinition', relationId: any, direction: RelationDefinitionType, sourceObjectMetadata: { __typename?: 'object', id: any, nameSingular: string, namePlural: string }, sourceFieldMetadata: { __typename?: 'field', id: any, name: string }, targetObjectMetadata: { __typename?: 'object', id: any, nameSingular: string, namePlural: string }, targetFieldMetadata: { __typename?: 'field', id: any, name: string } } | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, hasPreviousPage?: boolean | null, startCursor?: any | null, endCursor?: any | null } } };
 
-export type ServerlessFunctionFieldsFragment = { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any, inputSchema: Array<{ __typename?: 'FunctionParameter', name: string, type: string }> };
+export type ServerlessFunctionFieldsFragment = { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any, inputSchema?: Array<{ __typename?: 'FunctionParameter', name: string, type: string }> | null };
 
 export type CreateOneServerlessFunctionItemMutationVariables = Exact<{
   input: CreateServerlessFunctionInput;
 }>;
 
 
-export type CreateOneServerlessFunctionItemMutation = { __typename?: 'Mutation', createOneServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any, inputSchema: Array<{ __typename?: 'FunctionParameter', name: string, type: string }> } };
+export type CreateOneServerlessFunctionItemMutation = { __typename?: 'Mutation', createOneServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any, inputSchema?: Array<{ __typename?: 'FunctionParameter', name: string, type: string }> | null } };
 
 export type DeleteOneServerlessFunctionMutationVariables = Exact<{
   input: ServerlessFunctionIdInput;
 }>;
 
 
-export type DeleteOneServerlessFunctionMutation = { __typename?: 'Mutation', deleteOneServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any, inputSchema: Array<{ __typename?: 'FunctionParameter', name: string, type: string }> } };
+export type DeleteOneServerlessFunctionMutation = { __typename?: 'Mutation', deleteOneServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any, inputSchema?: Array<{ __typename?: 'FunctionParameter', name: string, type: string }> | null } };
 
 export type ExecuteOneServerlessFunctionMutationVariables = Exact<{
   input: ExecuteServerlessFunctionInput;
@@ -2015,14 +2015,14 @@ export type PublishOneServerlessFunctionMutationVariables = Exact<{
 }>;
 
 
-export type PublishOneServerlessFunctionMutation = { __typename?: 'Mutation', publishServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any, inputSchema: Array<{ __typename?: 'FunctionParameter', name: string, type: string }> } };
+export type PublishOneServerlessFunctionMutation = { __typename?: 'Mutation', publishServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any, inputSchema?: Array<{ __typename?: 'FunctionParameter', name: string, type: string }> | null } };
 
 export type UpdateOneServerlessFunctionMutationVariables = Exact<{
   input: UpdateServerlessFunctionInput;
 }>;
 
 
-export type UpdateOneServerlessFunctionMutation = { __typename?: 'Mutation', updateOneServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any, inputSchema: Array<{ __typename?: 'FunctionParameter', name: string, type: string }> } };
+export type UpdateOneServerlessFunctionMutation = { __typename?: 'Mutation', updateOneServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any, inputSchema?: Array<{ __typename?: 'FunctionParameter', name: string, type: string }> | null } };
 
 export type FindManyAvailablePackagesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -2032,14 +2032,14 @@ export type FindManyAvailablePackagesQuery = { __typename?: 'Query', getAvailabl
 export type GetManyServerlessFunctionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetManyServerlessFunctionsQuery = { __typename?: 'Query', findManyServerlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any, inputSchema: Array<{ __typename?: 'FunctionParameter', name: string, type: string }> }> };
+export type GetManyServerlessFunctionsQuery = { __typename?: 'Query', findManyServerlessFunctions: Array<{ __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any, inputSchema?: Array<{ __typename?: 'FunctionParameter', name: string, type: string }> | null }> };
 
 export type GetOneServerlessFunctionQueryVariables = Exact<{
   input: ServerlessFunctionIdInput;
 }>;
 
 
-export type GetOneServerlessFunctionQuery = { __typename?: 'Query', findOneServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any, inputSchema: Array<{ __typename?: 'FunctionParameter', name: string, type: string }> } };
+export type GetOneServerlessFunctionQuery = { __typename?: 'Query', findOneServerlessFunction: { __typename?: 'ServerlessFunction', id: any, name: string, description?: string | null, runtime: string, syncStatus: ServerlessFunctionSyncStatus, latestVersion?: string | null, publishedVersions: Array<string>, createdAt: any, updatedAt: any, inputSchema?: Array<{ __typename?: 'FunctionParameter', name: string, type: string }> | null } };
 
 export type FindOneServerlessFunctionSourceCodeQueryVariables = Exact<{
   input: GetServerlessFunctionSourceCodeInput;

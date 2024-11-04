@@ -116,8 +116,10 @@ export const WorkflowEditActionFormServerlessFunction = (
                 serverlessFunction?.latestVersion || 'latest';
 
               const defaultFunctionInput = serverlessFunction?.inputSchema
-                .map((parameter) => parameter.name)
-                .reduce((acc, name) => ({ ...acc, [name]: null }), {});
+                ? serverlessFunction.inputSchema
+                    .map((parameter) => parameter.name)
+                    .reduce((acc, name) => ({ ...acc, [name]: null }), {})
+                : {};
 
               form.handleSubmit(async () => {
                 if (props.readonly === true) {
@@ -143,6 +145,7 @@ export const WorkflowEditActionFormServerlessFunction = (
       {defaultFunctionInput &&
         Object.keys(defaultFunctionInput).map((inputKey) => (
           <Controller
+            key={inputKey}
             name={inputKey}
             control={form.control}
             render={({ field }) => (

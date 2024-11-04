@@ -19,7 +19,7 @@ describe('CodeIntrospectionService', () => {
   });
 
   describe('getFunctionInputSchema', () => {
-    it('should getFunctionInputSchema a function declaration correctly', () => {
+    it('should analyze a function declaration correctly', () => {
       const fileContent = `
         function testFunction(param1: string, param2: number): void {
           console.log(param1, param2);
@@ -34,7 +34,7 @@ describe('CodeIntrospectionService', () => {
       ]);
     });
 
-    it('should getFunctionInputSchema an arrow function correctly', () => {
+    it('should analyze an arrow function correctly', () => {
       const fileContent = `
         const testArrowFunction = (param1: string, param2: number): void => {
           console.log(param1, param2);
@@ -88,7 +88,7 @@ describe('CodeIntrospectionService', () => {
       );
     });
 
-    it('should correctly getFunctionInputSchema complex types', () => {
+    it('should correctly analyze complex types', () => {
       const fileContent = `
         function complexFunction(param1: string[], param2: { key: number }): Promise<boolean> {
           return Promise.resolve(true);
