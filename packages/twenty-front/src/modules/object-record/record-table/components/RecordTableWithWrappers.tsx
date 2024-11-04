@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -7,13 +6,11 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
-import { useRecordTable } from '../hooks/useRecordTable';
 
 const StyledTableWithHeader = styled.div`
   height: 100%;
@@ -43,12 +40,6 @@ export const RecordTableWithWrappers = ({
   recordTableId,
   viewBarId,
 }: RecordTableWithWrappersProps) => {
-  const tableRef = useRef<HTMLDivElement>(null);
-
-  const { resetTableRowSelection, setRowSelected } = useRecordTable({
-    recordTableId,
-  });
-
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
@@ -70,19 +61,12 @@ export const RecordTableWithWrappers = ({
         <RecordUpdateContext.Provider value={updateRecordMutation}>
           <StyledTableWithHeader>
             <StyledTableContainer>
-              <StyledTableInternalContainer ref={tableRef}>
+              <StyledTableInternalContainer>
                 <RecordTable
                   viewBarId={viewBarId}
                   recordTableId={recordTableId}
                   objectNameSingular={objectNameSingular}
                   onColumnsChange={handleColumnsChange}
-                />
-                <DragSelect
-                  dragSelectable={tableRef}
-                  onDragSelectionStart={() => {
-                    resetTableRowSelection();
-                  }}
-                  onDragSelectionChange={setRowSelected}
                 />
               </StyledTableInternalContainer>
             </StyledTableContainer>
