@@ -121,9 +121,9 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const actionOptions: SelectOption<string>[] = [
     { value: '*', label: 'All Actions', Icon: IconNorthStar },
-    { value: 'create', label: 'Created', Icon: IconPlus },
-    { value: 'update', label: 'Updated', Icon: IconRefresh },
-    { value: 'delete', label: 'Deleted', Icon: IconTrash },
+    { value: 'created', label: 'Created', Icon: IconPlus },
+    { value: 'updated', label: 'Updated', Icon: IconRefresh },
+    { value: 'deleted', label: 'Deleted', Icon: IconTrash },
   ];
 
   const { updateOneRecord } = useUpdateOneRecord<Webhook>({
