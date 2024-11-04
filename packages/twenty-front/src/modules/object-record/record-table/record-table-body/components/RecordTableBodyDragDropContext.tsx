@@ -3,11 +3,12 @@ import { ReactNode, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useCurrentRecordGroup } from '@/object-record/record-group/hooks/useCurrentRecordGroup';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useComputeNewRowPosition } from '@/object-record/record-table/hooks/useComputeNewRowPosition';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
-import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { isDefined } from '~/utils/isDefined';
 
@@ -22,7 +23,12 @@ export const RecordTableBodyDragDropContext = ({
     objectNameSingular,
   });
 
-  const tableRowIds = useRecoilComponentValueV2(tableRowIdsComponentState);
+  const recordGroup = useCurrentRecordGroup();
+
+  const tableRowIds = useRecoilComponentFamilyValueV2(
+    tableRowIdsByGroupComponentFamilyState,
+    recordGroup.id,
+  );
 
   const { currentViewWithCombinedFiltersAndSorts } =
     useGetCurrentView(recordTableId);

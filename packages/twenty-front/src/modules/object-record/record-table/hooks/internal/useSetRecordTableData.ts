@@ -4,7 +4,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { numberOfTableRowsComponentState } from '@/object-record/record-table/states/numberOfTableRowsComponentState';
-import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
+import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -20,7 +20,7 @@ export const useSetRecordTableData = ({
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
   const tableRowIdsState = useRecoilComponentCallbackStateV2(
-    tableRowIdsComponentState,
+    tableRowIdsByGroupComponentFamilyState,
     recordTableId,
   );
   const numberOfTableRowsState = useRecoilComponentCallbackStateV2(
@@ -38,7 +38,11 @@ export const useSetRecordTableData = ({
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends ObjectRecord>(newRecords: T[], totalCount?: number) => {
+      <T extends ObjectRecord>(
+        newRecords: T[],
+        recordGroupId: string,
+        totalCount?: number,
+      ) => {
         for (const record of newRecords) {
           // TODO: refactor with scoped state later
           const currentRecord = snapshot
@@ -50,7 +54,10 @@ export const useSetRecordTableData = ({
           }
         }
 
-        const currentRowIds = getSnapshotValue(snapshot, tableRowIdsState);
+        const currentRowIds = getSnapshotValue(
+          snapshot,
+          tableRowIdsState(recordGroupId),
+        );
 
         const hasUserSelectedAllRows = getSnapshotValue(
           snapshot,
@@ -66,7 +73,7 @@ export const useSetRecordTableData = ({
             }
           }
 
-          set(tableRowIdsState, recordIds);
+          set(tableRowIdsState(recordGroupId), recordIds);
           set(numberOfTableRowsState, totalCount ?? 0);
           onEntityCountChange(totalCount);
         }

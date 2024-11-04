@@ -3,6 +3,7 @@ import { useContext, useEffect } from 'react';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useCurrentRecordGroup } from '@/object-record/record-group/hooks/useCurrentRecordGroup';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
@@ -11,6 +12,7 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 import { unselectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/unselectedRowIdsComponentSelector';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
@@ -29,6 +31,10 @@ export const RecordIndexTableContainerEffect = () => {
     setOnToggleColumnFilter,
     setOnToggleColumnSort,
   } = useRecordTable({
+    recordTableId: recordIndexId,
+  });
+
+  const recordGroup = useCurrentRecordGroup({
     recordTableId: recordIndexId,
   });
 
@@ -83,12 +89,14 @@ export const RecordIndexTableContainerEffect = () => {
     hasUserSelectedAllRowsComponentState,
     recordIndexId,
   );
-  const selectedRowIds = useRecoilComponentValueV2(
+  const selectedRowIds = useRecoilComponentFamilyValueV2(
     selectedRowIdsComponentSelector,
+    recordGroup.id,
     recordIndexId,
   );
-  const unselectedRowIds = useRecoilComponentValueV2(
+  const unselectedRowIds = useRecoilComponentFamilyValueV2(
     unselectedRowIdsComponentSelector,
+    recordGroup.id,
     recordIndexId,
   );
 

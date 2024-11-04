@@ -5,6 +5,8 @@ export const enum RecordGroupDefinitionType {
   NoValue = 'no-value',
 }
 
+export const recordGroupDefaultId = 'default' as const;
+
 export type RecordGroupDefinition = {
   id: string;
   fieldMetadataId: string;
@@ -15,3 +17,7 @@ export type RecordGroupDefinition = {
   position: number;
   isVisible: boolean;
 };
+
+export type RecordGroupDefinitionId =
+  | RecordGroupDefinition['id']
+  | typeof recordGroupDefaultId;

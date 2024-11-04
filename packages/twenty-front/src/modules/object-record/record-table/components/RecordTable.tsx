@@ -1,16 +1,13 @@
 import styled from '@emotion/styled';
-import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 
+import { RecordGroupContextProvider } from '@/object-record/record-group/components/RecordGroupContextProvider';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
-import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
+import { RecordTableEmptyHandler } from '@/object-record/record-table/empty-state/components/RecordTableEmptyHandler';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyEffect';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
-import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
-import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 const StyledTable = styled.table`
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -32,26 +29,6 @@ export const RecordTable = ({
   objectNameSingular,
   onColumnsChange,
 }: RecordTableProps) => {
-  const isRecordTableInitialLoading = useRecoilComponentValueV2(
-    isRecordTableInitialLoadingComponentState,
-    recordTableId,
-  );
-
-  const tableRowIds = useRecoilComponentValueV2(
-    tableRowIdsComponentState,
-    recordTableId,
-  );
-
-  const pendingRecordId = useRecoilComponentValueV2(
-    recordTablePendingRecordIdComponentState,
-    recordTableId,
-  );
-
-  const recordTableIsEmpty =
-    !isRecordTableInitialLoading &&
-    tableRowIds.length === 0 &&
-    isNull(pendingRecordId);
-
   if (!isNonEmptyString(objectNameSingular)) {
     return <></>;
   }
@@ -66,17 +43,17 @@ export const RecordTable = ({
         recordTableId={recordTableId}
         viewBarId={viewBarId}
       >
-        <RecordTableBodyEffect />
-        {recordTableIsEmpty ? (
-          <RecordTableEmptyState />
-        ) : (
-          <StyledTable className="entity-table-cell">
-            <RecordTableHeader
-              objectMetadataNameSingular={objectNameSingular}
-            />
-            <RecordTableBody />
-          </StyledTable>
-        )}
+        <RecordGroupContextProvider objectNameSingular={objectNameSingular}>
+          <RecordTableBodyEffect />
+          <RecordTableEmptyHandler recordTableId={recordTableId}>
+            <StyledTable className="entity-table-cell">
+              <RecordTableHeader
+                objectMetadataNameSingular={objectNameSingular}
+              />
+              <RecordTableBody />
+            </StyledTable>
+          </RecordTableEmptyHandler>
+        </RecordGroupContextProvider>
       </RecordTableContextProvider>
     </RecordTableComponentInstance>
   );

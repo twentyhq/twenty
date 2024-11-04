@@ -1,18 +1,24 @@
 import { useRecoilCallback } from 'recoil';
 
+import { useCurrentRecordGroup } from '@/object-record/record-group/hooks/useCurrentRecordGroup';
+import { useTableRowIds } from '@/object-record/record-table/hooks/internal/useTableRowIds';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
+import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 
 export const useSelectAllRows = (recordTableId?: string) => {
+  const recordGroup = useCurrentRecordGroup({
+    recordTableId,
+  });
+
   const allRowsSelectedStatusSelector = useRecoilComponentCallbackStateV2(
     allRowsSelectedStatusComponentSelector,
     recordTableId,
   );
   const tableRowIdsState = useRecoilComponentCallbackStateV2(
-    tableRowIdsComponentState,
+    tableRowIdsByGroupComponentFamilyState,
     recordTableId,
   );
   const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
@@ -20,15 +26,17 @@ export const useSelectAllRows = (recordTableId?: string) => {
     recordTableId,
   );
 
+  const getTableRowIds = useTableRowIds();
+
   const selectAllRows = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
         const allRowsSelectedStatus = getSnapshotValue(
           snapshot,
-          allRowsSelectedStatusSelector,
+          allRowsSelectedStatusSelector(recordGroup.id),
         );
 
-        const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState);
+        const tableRowIds = getTableRowIds();
 
         if (
           allRowsSelectedStatus === 'none' ||
@@ -43,7 +51,12 @@ export const useSelectAllRows = (recordTableId?: string) => {
           }
         }
       },
-    [allRowsSelectedStatusSelector, tableRowIdsState, isRowSelectedFamilyState],
+    [
+      allRowsSelectedStatusSelector,
+      recordGroup.id,
+      getTableRowIds,
+      isRowSelectedFamilyState,
+    ],
   );
 
   return {

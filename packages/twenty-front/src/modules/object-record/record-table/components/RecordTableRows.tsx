@@ -1,10 +1,16 @@
+import { useCurrentRecordGroup } from '@/object-record/record-group/hooks/useCurrentRecordGroup';
 import { RecordTableBodyFetchMoreLoader } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFetchMoreLoader';
 import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
-import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 
 export const RecordTableRows = () => {
-  const tableRowIds = useRecoilComponentValueV2(tableRowIdsComponentState);
+  const recordGroup = useCurrentRecordGroup();
+
+  const tableRowIds = useRecoilComponentFamilyValueV2(
+    tableRowIdsByGroupComponentFamilyState,
+    recordGroup.id,
+  );
 
   return (
     <>

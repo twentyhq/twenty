@@ -1,23 +1,33 @@
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
-import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
+import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
 
+import { RecordGroupDefinitionId } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
+import { createComponentFamilySelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelectorV2';
 import { AllRowsSelectedStatus } from '../../types/AllRowSelectedStatus';
 
 export const allRowsSelectedStatusComponentSelector =
-  createComponentSelectorV2<AllRowsSelectedStatus>({
+  createComponentFamilySelectorV2<
+    AllRowsSelectedStatus,
+    RecordGroupDefinitionId
+  >({
     key: 'allRowsSelectedStatusComponentSelector',
     componentInstanceContext: RecordTableComponentInstanceContext,
     get:
-      ({ instanceId }) =>
+      ({ instanceId, familyKey }) =>
       ({ get }) => {
         const tableRowIds = get(
-          tableRowIdsComponentState.atomFamily({ instanceId }),
+          tableRowIdsByGroupComponentFamilyState.atomFamily({
+            instanceId,
+            familyKey,
+          }),
         );
 
         const selectedRowIds = get(
-          selectedRowIdsComponentSelector.selectorFamily({ instanceId }),
+          selectedRowIdsComponentSelector.selectorFamily({
+            instanceId,
+            familyKey,
+          }),
         );
 
         const numberOfSelectedRows = selectedRowIds.length;
