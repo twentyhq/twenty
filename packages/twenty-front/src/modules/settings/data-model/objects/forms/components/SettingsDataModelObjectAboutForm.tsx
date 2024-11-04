@@ -73,7 +73,7 @@ const StyledAdvancedSettingsSectionInputWrapper = styled.div`
 const StyledAdvancedSettingsContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  margin-top: ${({ theme }) => theme.spacing(4)};
+  padding-top: ${({ theme }) => theme.spacing(4)};
   position: relative;
   width: 100%;
 `;
@@ -227,17 +227,16 @@ export const SettingsDataModelObjectAboutForm = ({
           />
         )}
       />
-
       <AnimatePresence>
         {isAdvancedModeEnabled && (
-          <StyledAdvancedSettingsContainer>
-            <motion.div
-              ref={contentRef}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              variants={motionAnimationVariants}
-            >
+          <motion.div
+            ref={contentRef}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={motionAnimationVariants}
+          >
+            <StyledAdvancedSettingsContainer>
               <StyledIconToolContainer>
                 <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
               </StyledIconToolContainer>
@@ -335,8 +334,8 @@ export const SettingsDataModelObjectAboutForm = ({
                   )}
                 />
               </StyledAdvancedSettingsSectionInputWrapper>
-            </motion.div>
-          </StyledAdvancedSettingsContainer>
+            </StyledAdvancedSettingsContainer>
+          </motion.div>
         )}
       </AnimatePresence>
     </>
