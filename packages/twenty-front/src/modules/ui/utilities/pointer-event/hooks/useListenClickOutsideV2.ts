@@ -103,6 +103,12 @@ export const useListenClickOutsideV2 = <T extends Element>({
   const handleClickOutside = useRecoilCallback(
     ({ snapshot }) =>
       (event: MouseEvent | TouchEvent) => {
+        const clickOutsideListenerIsActivated = snapshot
+          .getLoadable(getClickOutsideListenerIsActivatedState)
+          .getValue();
+
+        const isListening = clickOutsideListenerIsActivated && enabled;
+
         const isMouseDownInside = snapshot
           .getLoadable(getClickOutsideListenerIsMouseDownInsideState)
           .getValue();
@@ -131,7 +137,10 @@ export const useListenClickOutsideV2 = <T extends Element>({
             .filter((ref) => !!ref.current)
             .some((ref) => ref.current?.contains(event.target as Node));
 
+          console.log('isListening', isListening, listenerId);
+
           if (
+            isListening &&
             !clickedOnAtLeastOneRef &&
             !isMouseDownInside &&
             !isClickedOnExcluded
@@ -177,9 +186,12 @@ export const useListenClickOutsideV2 = <T extends Element>({
         }
       },
     [
+      getClickOutsideListenerIsActivatedState,
+      enabled,
       getClickOutsideListenerIsMouseDownInsideState,
       mode,
       refs,
+      listenerId,
       excludeClassNames,
       callback,
     ],

@@ -7,14 +7,10 @@ import {
   useListenClickOutsideV2,
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { ClickOutsideListenerCallback } from '@/ui/utilities/pointer-event/types/ClickOutsideListenerCallback';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { isDefined } from '~/utils/isDefined';
 
 export const useClickOutsideListener = (componentId: string) => {
-  // TODO: improve typing
-  const scopeId = getScopeIdFromComponentId(componentId) ?? '';
-
   const {
     getClickOutsideListenerIsActivatedState,
     getClickOutsideListenerCallbacksState,
@@ -148,7 +144,6 @@ export const useClickOutsideListener = (componentId: string) => {
   };
 
   return {
-    scopeId,
     useListenClickOutside,
     toggleClickOutsideListener,
     useRegisterClickOutsideListenerCallback,

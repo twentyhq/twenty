@@ -3,6 +3,7 @@ import { isNonEmptyString, isNull } from '@sniptt/guards';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
+import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
@@ -13,6 +14,7 @@ import { isRecordTableInitialLoadingComponentState } from '@/object-record/recor
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRef } from 'react';
 
@@ -41,6 +43,10 @@ export const RecordTable = ({
   const isRecordTableInitialLoading = useRecoilComponentValueV2(
     isRecordTableInitialLoadingComponentState,
     recordTableId,
+  );
+
+  const { toggleClickOutsideListener } = useClickOutsideListener(
+    RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
   );
 
   const tableRowIds = useRecoilComponentValueV2(
@@ -90,14 +96,18 @@ export const RecordTable = ({
                 objectMetadataNameSingular={objectNameSingular}
               />
               <RecordTableBody />
-              <DragSelect
-                dragSelectable={tableBodyRef}
-                onDragSelectionStart={() => {
-                  resetTableRowSelection();
-                }}
-                onDragSelectionChange={setRowSelected}
-              />
             </StyledTable>
+            <DragSelect
+              dragSelectable={tableBodyRef}
+              onDragSelectionStart={() => {
+                resetTableRowSelection();
+                toggleClickOutsideListener(false);
+              }}
+              onDragSelectionChange={setRowSelected}
+              onDragSelectionEnd={() => {
+                setTimeout(() => toggleClickOutsideListener(true), 10);
+              }}
+            />
           </>
         )}
       </RecordTableContextProvider>
