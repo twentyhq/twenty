@@ -31,6 +31,7 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
 
       const setTableColumns = useSetRecoilComponentStateV2(
         tableColumnsComponentState,
+        instanceId,
       );
 
       setTableColumns([
