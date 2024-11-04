@@ -20,6 +20,11 @@ export const useActiveWorkflowVersionsWithTriggerRecordType = ({
     filter: {
       and: [
         {
+          status: {
+            eq: 'ACTIVE',
+          },
+        },
+        {
           trigger: {
             like: '%"type": "MANUAL"%',
           },
