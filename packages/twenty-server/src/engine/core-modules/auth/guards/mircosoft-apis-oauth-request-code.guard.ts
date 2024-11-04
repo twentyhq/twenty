@@ -6,7 +6,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { MicrosoftAPIsOauthRequestCodeStrategy } from 'src/engine/core-modules/auth/strategies/microsoft-apis-oauth-request-code.auth.strategy';
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -19,7 +19,7 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly tokenService: TokenService,
+    private readonly transientTokenService: TransientTokenService,
   ) {
     super({
       prompt: 'select_account',
@@ -29,9 +29,10 @@ export class MicrosoftAPIsOauthRequestCodeGuard extends AuthGuard(
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
 
-    const { workspaceId } = await this.tokenService.verifyTransientToken(
-      request.query.transientToken,
-    );
+    const { workspaceId } =
+      await this.transientTokenService.verifyTransientToken(
+        request.query.transientToken,
+      );
     const isMicrosoftSyncEnabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IsMicrosoftSyncEnabled,

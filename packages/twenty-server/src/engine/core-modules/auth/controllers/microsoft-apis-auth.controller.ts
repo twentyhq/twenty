@@ -17,7 +17,7 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
 import { MicrosoftAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/microsoft-apis-oauth-exchange-code-for-token.guard';
 import { MicrosoftAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/mircosoft-apis-oauth-request-code.guard';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { MicrosoftAPIsRequest } from 'src/engine/core-modules/auth/types/microsoft-api-request.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -27,7 +27,7 @@ import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding
 export class MicrosoftAPIsAuthController {
   constructor(
     private readonly microsoftAPIsService: MicrosoftAPIsService,
-    private readonly tokenService: TokenService,
+    private readonly transientTokenService: TransientTokenService,
     private readonly environmentService: EnvironmentService,
     private readonly onboardingService: OnboardingService,
   ) {}
@@ -58,7 +58,7 @@ export class MicrosoftAPIsAuthController {
     } = user;
 
     const { workspaceMemberId, userId, workspaceId } =
-      await this.tokenService.verifyTransientToken(transientToken);
+      await this.transientTokenService.verifyTransientToken(transientToken);
 
     const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
 
