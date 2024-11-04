@@ -1,21 +1,24 @@
 import styled from '@emotion/styled';
 import { useCallback, useMemo, useState } from 'react';
-import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { IconPlus, LightIconButton } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
+import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
+import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useRecoilComponentValue } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValue';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 const COLUMN_MIN_WIDTH = 104;
@@ -96,17 +99,19 @@ export const RecordTableHeaderCell = ({
   column: ColumnDefinition<FieldMetadata>;
   objectMetadataNameSingular: string;
 }) => {
-  const { resizeFieldOffsetState, tableColumnsState } = useRecordTableStates();
-
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: objectMetadataNameSingular,
   });
 
-  const [resizeFieldOffset, setResizeFieldOffset] = useRecoilState(
-    resizeFieldOffsetState,
+  const resizeFieldOffsetState = useRecoilComponentCallbackStateV2(
+    resizeFieldOffsetComponentState,
   );
 
-  const tableColumns = useRecoilValue(tableColumnsState);
+  const [resizeFieldOffset, setResizeFieldOffset] = useRecoilComponentStateV2(
+    resizeFieldOffsetComponentState,
+  );
+
+  const tableColumns = useRecoilComponentValueV2(tableColumnsComponentState);
   const tableColumnsByKey = useMemo(
     () =>
       mapArrayToObject(tableColumns, ({ fieldMetadataId }) => fieldMetadataId),
@@ -181,7 +186,7 @@ export const RecordTableHeaderCell = ({
     onMouseUp: handleResizeHandlerEnd,
   });
 
-  const isRecordTableScrolledLeft = useRecoilComponentValue(
+  const isRecordTableScrolledLeft = useRecoilComponentValueV2(
     isRecordTableScrolledLeftComponentState,
   );
 

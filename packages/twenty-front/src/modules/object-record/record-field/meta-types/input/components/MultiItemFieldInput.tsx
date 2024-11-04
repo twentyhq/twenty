@@ -21,7 +21,6 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 
 const StyledDropdownMenu = styled(DropdownMenu)`
   left: -1px;
-  position: absolute;
   top: -1px;
 `;
 
@@ -46,6 +45,7 @@ type MultiItemFieldInputProps<T> = {
 };
 
 // Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
+// This should be refactored with a hook instead that exposes those events in a context around this component and its children.
 export const MultiItemFieldInput = <T,>({
   items,
   onPersist,

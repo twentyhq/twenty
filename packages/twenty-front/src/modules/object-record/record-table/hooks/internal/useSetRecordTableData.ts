@@ -1,9 +1,13 @@
 import { useRecoilCallback } from 'recoil';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
+import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { numberOfTableRowsComponentState } from '@/object-record/record-table/states/numberOfTableRowsComponentState';
+import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type useSetRecordTableDataProps = {
@@ -15,12 +19,22 @@ export const useSetRecordTableData = ({
   recordTableId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const {
-    tableRowIdsState,
-    numberOfTableRowsState,
-    isRowSelectedFamilyState,
-    hasUserSelectedAllRowsState,
-  } = useRecordTableStates(recordTableId);
+  const tableRowIdsState = useRecoilComponentCallbackStateV2(
+    tableRowIdsComponentState,
+    recordTableId,
+  );
+  const numberOfTableRowsState = useRecoilComponentCallbackStateV2(
+    numberOfTableRowsComponentState,
+    recordTableId,
+  );
+  const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
+    isRowSelectedComponentFamilyState,
+    recordTableId,
+  );
+  const hasUserSelectedAllRowsState = useRecoilComponentCallbackStateV2(
+    hasUserSelectedAllRowsComponentState,
+    recordTableId,
+  );
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
