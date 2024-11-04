@@ -4,6 +4,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useActiveWorkflowVersionsWithTriggerRecordType } from '@/workflow/hooks/useActiveWorkflowVersionsWithTriggerRecordType';
+import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconSettingsAutomation, isDefined } from 'twenty-ui';
@@ -34,7 +35,7 @@ export const WorkflowRunRecordActionEffect = ({
       objectNameSingular: objectMetadataItem.nameSingular,
     });
 
-  console.log('activeWorkflowVersions', activeWorkflowVersions);
+  const { runWorkflowVersion } = useRunWorkflowVersion();
 
   useEffect(() => {
     if (!isDefined(objectMetadataItem) || objectMetadataItem.isRemote) {
@@ -45,6 +46,7 @@ export const WorkflowRunRecordActionEffect = ({
       index,
       activeWorkflowVersion,
     ] of activeWorkflowVersions.entries()) {
+      console.log('activeWorkflowVersion', activeWorkflowVersion);
       addActionMenuEntry({
         type: 'workflow-run',
         key: `workflow-run-${activeWorkflowVersion.workflow.name}`,
@@ -52,7 +54,10 @@ export const WorkflowRunRecordActionEffect = ({
         position: index,
         Icon: IconSettingsAutomation,
         onClick: () => {
-          console.log('run workflow');
+          if (!isDefined(selectedRecord)) {
+            return;
+          }
+          runWorkflowVersion(activeWorkflowVersion.id, selectedRecord);
         },
       });
     }

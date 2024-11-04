@@ -1,4 +1,6 @@
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
 
@@ -7,6 +9,10 @@ export const useActiveWorkflowVersionsWithTriggerRecordType = ({
 }: {
   objectNameSingular: string;
 }) => {
+  const {objectMetadataItem} = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   const { records } = useFindManyRecords<
     WorkflowVersion & { workflow: Workflow }
   >({
@@ -26,6 +32,7 @@ export const useActiveWorkflowVersionsWithTriggerRecordType = ({
       ],
     },
     recordGqlFields: {
+      ...generateDepthOneRecordGqlFields({ objectMetadataItem }),
       workflow: true,
     },
   });
