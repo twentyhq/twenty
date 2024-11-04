@@ -18,7 +18,7 @@ describe('formatTimeZoneLabel', () => {
 
   it('should format the time zone label correctly when location is not included in the label', () => {
     const ianaTimeZone = 'America/New_York';
-    const expectedLabel = '(GMT-04:00) Eastern Daylight Time - New York';
+    const expectedLabel = '(GMT-05:00) Eastern Standard Time - New York';
 
     const formattedLabel = formatTimeZoneLabel(ianaTimeZone);
 

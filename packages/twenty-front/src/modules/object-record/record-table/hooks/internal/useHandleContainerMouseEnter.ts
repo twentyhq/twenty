@@ -6,10 +6,8 @@ import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/reco
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 
 export type HandleContainerMouseEnterArgs = {
   cellPosition: TableCellPosition;
@@ -20,24 +18,28 @@ export const useHandleContainerMouseEnter = ({
 }: {
   recordTableId: string;
 }) => {
-  const tableScopeId = getScopeIdFromComponentId(recordTableId);
-
   const { moveSoftFocusToCell } =
     useMoveSoftFocusToCellOnHoverV2(recordTableId);
+
+  const currentTableCellInEditModePositionState =
+    useRecoilComponentCallbackStateV2(
+      currentTableCellInEditModePositionComponentState,
+      recordTableId,
+    );
+
+  const isSoftFocusOnTableCellFamilyState = useRecoilComponentCallbackStateV2(
+    isSoftFocusOnTableCellComponentFamilyState,
+    recordTableId,
+  );
+
+  const isTableCellInEditModeFamilyState = useRecoilComponentCallbackStateV2(
+    isTableCellInEditModeComponentFamilyState,
+    recordTableId,
+  );
 
   const handleContainerMouseEnter = useRecoilCallback(
     ({ snapshot, set }) =>
       ({ cellPosition }: HandleContainerMouseEnterArgs) => {
-        const currentTableCellInEditModePositionState = extractComponentState(
-          currentTableCellInEditModePositionComponentState,
-          tableScopeId,
-        );
-
-        const isSoftFocusOnTableCellFamilyState = extractComponentFamilyState(
-          isSoftFocusOnTableCellComponentFamilyState,
-          tableScopeId,
-        );
-
         const isSoftFocusOnTableCell = getSnapshotValue(
           snapshot,
           isSoftFocusOnTableCellFamilyState(cellPosition),
@@ -46,11 +48,6 @@ export const useHandleContainerMouseEnter = ({
         const currentTableCellInEditModePosition = getSnapshotValue(
           snapshot,
           currentTableCellInEditModePositionState,
-        );
-
-        const isTableCellInEditModeFamilyState = extractComponentFamilyState(
-          isTableCellInEditModeComponentFamilyState,
-          tableScopeId,
         );
 
         const isSomeCellInEditMode = getSnapshotValue(
@@ -63,7 +60,12 @@ export const useHandleContainerMouseEnter = ({
           set(isSoftFocusUsingMouseState, true);
         }
       },
-    [tableScopeId, moveSoftFocusToCell],
+    [
+      isSoftFocusOnTableCellFamilyState,
+      currentTableCellInEditModePositionState,
+      isTableCellInEditModeFamilyState,
+      moveSoftFocusToCell,
+    ],
   );
 
   return {

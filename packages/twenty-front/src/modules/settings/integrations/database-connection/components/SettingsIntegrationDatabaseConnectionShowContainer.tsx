@@ -4,9 +4,10 @@ import { SettingsIntegrationDatabaseTablesListCard } from '@/settings/integratio
 import { useDatabaseConnection } from '@/settings/integrations/database-connection/hooks/useDatabaseConnection';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { Section } from '@react-email/components';
 import { useNavigate } from 'react-router-dom';
-import { Breadcrumb, H2Title } from 'twenty-ui';
+import { H2Title } from 'twenty-ui';
 
 export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
   const navigate = useNavigate();
