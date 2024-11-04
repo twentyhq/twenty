@@ -85,7 +85,7 @@ const StyledAdvancedSettingsContainer = styled.div`
 const StyledIconToolContainer = styled.div`
   border-right: 1px solid ${MAIN_COLORS.yellow};
   display: flex;
-  left: ${({ theme }) => theme.spacing(-5)};
+  left: ${({ theme }) => theme.spacing(-6)};
   position: absolute;
   height: 100%;
 `;
@@ -310,7 +310,6 @@ export const SettingsDataModelObjectAboutForm = ({
                                       size={theme.icon.size.md}
                                       color={theme.font.color.tertiary}
                                     />
-
                                     <AppTooltip
                                       anchorSelect={`#${infoCircleElementId}${fieldName}`}
                                       content={tooltip}
