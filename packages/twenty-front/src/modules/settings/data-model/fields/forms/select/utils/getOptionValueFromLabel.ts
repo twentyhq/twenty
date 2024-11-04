@@ -7,7 +7,7 @@ export const getOptionValueFromLabel = (label: string) => {
   try {
     transliteratedLabel = computeOptionValueFromLabelOrThrow(label);
   } catch (error) {
-    return label;
+    return "";
   }
 
   return snakeCase(transliteratedLabel).toUpperCase();
