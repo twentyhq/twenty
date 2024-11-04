@@ -39,7 +39,8 @@ export const CustomObject: Story = {
   },
 };
 
-export const ObjectDropdownMenu: Story = {
+export const ObjectTabs: Story = {
+  // TO DO update story
   play: async () => {
     const canvas = within(document.body);
     const objectSummaryVerticalDotsIconButton = await canvas.findByRole(

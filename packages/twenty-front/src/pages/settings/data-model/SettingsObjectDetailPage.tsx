@@ -61,7 +61,6 @@ const StyledObjectTypeTag = styled(SettingsDataModelObjectTypeTag)`
 
 const StyledTitleContainer = styled.div`
   display: flex;
-  padding-left: ${({ theme }) => theme.spacing(8)};
 `;
 
 const TAB_LIST_COMPONENT_ID = 'object-details-tab-list';
