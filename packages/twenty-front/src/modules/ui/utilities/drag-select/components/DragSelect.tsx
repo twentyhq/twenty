@@ -11,8 +11,8 @@ import { useDragSelect } from '../hooks/useDragSelect';
 type DragSelectProps = {
   dragSelectable: RefObject<HTMLElement>;
   onDragSelectionChange: (id: string, selected: boolean) => void;
-  onDragSelectionStart?: () => void;
-  onDragSelectionEnd?: () => void;
+  onDragSelectionStart?: (event: MouseEvent) => void;
+  onDragSelectionEnd?: (event: MouseEvent) => void;
 };
 
 export const DragSelect = ({

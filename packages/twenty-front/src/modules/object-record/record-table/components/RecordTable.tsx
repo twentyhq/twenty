@@ -105,7 +105,7 @@ export const RecordTable = ({
               }}
               onDragSelectionChange={setRowSelected}
               onDragSelectionEnd={() => {
-                setTimeout(() => toggleClickOutsideListener(true), 10);
+                toggleClickOutsideListener(true);
               }}
             />
           </>

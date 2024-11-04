@@ -14,6 +14,7 @@ export const useClickOutsideListener = (componentId: string) => {
   const {
     getClickOutsideListenerIsActivatedState,
     getClickOutsideListenerCallbacksState,
+    getClickOutsideListenerMouseDownHappenedState,
   } = useClickOustideListenerStates(componentId);
 
   const useListenClickOutside = <T extends Element>({
@@ -49,8 +50,15 @@ export const useClickOutsideListener = (componentId: string) => {
     ({ set }) =>
       (activated: boolean) => {
         set(getClickOutsideListenerIsActivatedState, activated);
+
+        if (!activated) {
+          set(getClickOutsideListenerMouseDownHappenedState, false);
+        }
       },
-    [getClickOutsideListenerIsActivatedState],
+    [
+      getClickOutsideListenerIsActivatedState,
+      getClickOutsideListenerMouseDownHappenedState,
+    ],
   );
 
   const registerOnClickOutsideCallback = useRecoilCallback(
