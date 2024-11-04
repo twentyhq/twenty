@@ -182,13 +182,13 @@ export const ActivityTargetInlineCellEditMode = ({
 
             input: {
               id: newActivityTargetId,
-              task:
+              taskId:
                 activityObjectNameSingular === CoreObjectNameSingular.Task
-                  ? activity
+                  ? activity.id
                   : null,
-              note:
+              noteId:
                 activityObjectNameSingular === CoreObjectNameSingular.Note
-                  ? activity
+                  ? activity.id
                   : null,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
