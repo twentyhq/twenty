@@ -1,0 +1,29 @@
+
+##############################################################################################################################
+###   Visit https://www.tinybird.co/docs/production/implementing-test-strategies.html#data-quality-tests              ###
+###   for more details on Data Quality tests                                                                               ###
+##############################################################################################################################
+
+- example_no_negative_numbers:
+    max_bytes_read: null
+    max_time: null
+    sql: |
+        SELECT
+            number
+        FROM numbers(10)
+        WHERE
+            number < 0
+
+#    - example_top_products_params_no_empty_top_10_on_2023:
+#       max_bytes_read: null
+#       max_time: null
+#       sql: |
+#          SELECT *
+#          FROM top_products_params
+#          WHERE empty(top_10)
+#       pipe:
+#          name: top_products_params
+#          params:
+#             start: '2023-01-01'
+#             end: '2023-12-31'
+

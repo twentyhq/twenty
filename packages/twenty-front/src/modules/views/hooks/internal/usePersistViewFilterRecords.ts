@@ -50,11 +50,13 @@ export const usePersistViewFilterRecords = () => {
             mutation: createOneRecordMutation,
             variables: {
               input: {
+                id: viewFilter.id,
                 fieldMetadataId: viewFilter.fieldMetadataId,
                 viewId: view.id,
                 value: viewFilter.value,
                 displayValue: viewFilter.displayValue,
                 operand: viewFilter.operand,
+                viewFilterGroupId: viewFilter.viewFilterGroupId,
               },
             },
             update: (cache, { data }) => {

@@ -1,7 +1,3 @@
-import styled from '@emotion/styled';
-import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
-
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
@@ -9,16 +5,17 @@ import { SignInUpForm } from '@/auth/sign-in-up/components/SignInUpForm';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { Loader } from '@/ui/feedback/loader/components/Loader';
-import { MainButton } from '@/ui/input/button/components/MainButton';
 import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
-import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
+import styled from '@emotion/styled';
+import { useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { AnimatedEaseIn, Loader, MainButton } from 'twenty-ui';
 import {
-  useAddUserToWorkspaceMutation,
   useAddUserToWorkspaceByInviteTokenMutation,
+  useAddUserToWorkspaceMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { useSearchParams } from 'react-router-dom';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -91,25 +88,7 @@ export const Invite = () => {
               fullWidth
             />
           </StyledContentContainer>
-          <FooterNote>
-            By using Twenty, you agree to the{' '}
-            <a
-              href="https://twenty.com/legal/terms"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Terms of Service
-            </a>{' '}
-            and{' '}
-            <a
-              href="https://twenty.com/legal/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Privacy Policy
-            </a>
-            .
-          </FooterNote>
+          <FooterNote />
         </>
       ) : (
         <SignInUpForm />

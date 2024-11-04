@@ -62,6 +62,57 @@ export const graphqlMocks = {
         });
       },
     ),
+    graphql.query('SearchPeople', () => {
+      return HttpResponse.json({
+        data: {
+          searchPeople: {
+            edges: peopleMock.slice(0, 3).map((person) => ({
+              node: person,
+              cursor: null,
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+        },
+      });
+    }),
+    graphql.query('SearchCompanies', () => {
+      return HttpResponse.json({
+        data: {
+          searchCompanies: {
+            edges: companiesMock.slice(0, 3).map((company) => ({
+              node: company,
+              cursor: null,
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+        },
+      });
+    }),
+    graphql.query('SearchOpportunities', () => {
+      return HttpResponse.json({
+        data: {
+          searchOpportunities: {
+            edges: [],
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+        },
+      });
+    }),
     graphql.query('FindManyViews', ({ variables }) => {
       const objectMetadataId = variables.filter?.objectMetadataId?.eq;
       const viewType = variables.filter?.type?.eq;
@@ -85,6 +136,52 @@ export const graphqlMocks = {
               startCursor: null,
               endCursor: null,
             },
+          },
+        },
+      });
+    }),
+    graphql.query('SearchWorkspaceMembers', () => {
+      return HttpResponse.json({
+        data: {
+          searchWorkspaceMembers: {
+            edges: mockWorkspaceMembers.map((member) => ({
+              node: {
+                ...member,
+                messageParticipants: {
+                  edges: [],
+                  __typename: 'MessageParticipantConnection',
+                },
+                authoredAttachments: {
+                  edges: [],
+                  __typename: 'AttachmentConnection',
+                },
+                authoredComments: {
+                  edges: [],
+                  __typename: 'CommentConnection',
+                },
+                accountOwnerForCompanies: {
+                  edges: [],
+                  __typename: 'CompanyConnection',
+                },
+                authoredActivities: {
+                  edges: [],
+                  __typename: 'ActivityConnection',
+                },
+                favorites: {
+                  edges: [],
+                  __typename: 'FavoriteConnection',
+                },
+                connectedAccounts: {
+                  edges: [],
+                  __typename: 'ConnectedAccountConnection',
+                },
+                assignedActivities: {
+                  edges: [],
+                  __typename: 'ActivityConnection',
+                },
+              },
+              cursor: null,
+            })),
           },
         },
       });
@@ -189,9 +286,13 @@ export const graphqlMocks = {
                   edges: [],
                   __typename: 'OpportunityConnection',
                 },
-                activityTargets: {
+                taskTargets: {
                   edges: [],
-                  __typename: 'ActivityTargetConnection',
+                  __typename: 'TaskTargetConnection',
+                },
+                noteTargets: {
+                  edges: [],
+                  __typename: 'NoteTargetConnection',
                 },
               },
               cursor: null,
@@ -231,9 +332,13 @@ export const graphqlMocks = {
                       edges: [],
                       __typename: 'OpportunityConnection',
                     },
-                    activityTargets: {
+                    taskTargets: {
                       edges: [],
-                      __typename: 'ActivityTargetConnection',
+                      __typename: 'TaskTargetConnection',
+                    },
+                    noteTargets: {
+                      edges: [],
+                      __typename: 'NoteTargetConnection',
                     },
                   },
                   cursor: null,

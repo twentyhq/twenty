@@ -162,7 +162,7 @@
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "nx ts-node-no-deps -- ./scripts/generate-integration-tests/index.ts"
+          "nx ts-node-no-deps -- ./test/integration/graphql/codegen/index.ts"
         ],
         "parallel": false
       }

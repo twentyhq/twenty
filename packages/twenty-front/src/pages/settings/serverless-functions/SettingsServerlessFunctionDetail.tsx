@@ -14,17 +14,16 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { IconCode, IconSettings, IconTestPipe } from 'twenty-ui';
+import { IconCode, IconSettings, IconTestPipe, Section } from 'twenty-ui';
 import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
-import { isDefined } from '~/utils/isDefined';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isDefined } from '~/utils/isDefined';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -217,6 +216,7 @@ export const SettingsServerlessFunctionDetail = () => {
             formValues={formValues}
             serverlessFunctionId={serverlessFunctionId}
             onChange={onChange}
+            onCodeChange={onCodeChange}
           />
         );
       default:

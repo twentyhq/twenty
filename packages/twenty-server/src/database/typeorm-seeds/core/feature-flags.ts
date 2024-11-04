@@ -43,7 +43,7 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IsWorkflowEnabled,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
       {
         key: FeatureFlagKey.IsMessageThreadSubscriberEnabled,
@@ -53,16 +53,6 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IsWorkspaceFavoriteEnabled,
         workspaceId: workspaceId,
-        value: false,
-      },
-      {
-        key: FeatureFlagKey.IsSearchEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IsWorkspaceMigratedForSearch,
-        workspaceId: workspaceId,
         value: true,
       },
       {
@@ -71,9 +61,24 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
+        key: FeatureFlagKey.IsSSOEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
         key: FeatureFlagKey.IsGmailSendEmailScopeEnabled,
         workspaceId: workspaceId,
         value: true,
+      },
+      {
+        key: FeatureFlagKey.IsUniqueIndexesEnabled,
+        workspaceId: workspaceId,
+        value: false,
+      },
+      {
+        key: FeatureFlagKey.IsAdvancedFiltersEnabled,
+        workspaceId: workspaceId,
+        value: false,
       },
     ])
     .execute();

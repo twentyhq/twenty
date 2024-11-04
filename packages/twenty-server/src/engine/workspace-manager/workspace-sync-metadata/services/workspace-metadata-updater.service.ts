@@ -6,6 +6,7 @@ import {
   FindOptionsWhere,
   In,
   ObjectLiteral,
+  Repository,
 } from 'typeorm';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { v4 as uuidV4 } from 'uuid';
@@ -13,17 +14,22 @@ import { v4 as uuidV4 } from 'uuid';
 import { PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 import { PartialIndexMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-index-metadata.interface';
 
+import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { IndexFieldMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { FieldMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
 import { ObjectMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-object.factory';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
+import { capitalize } from 'src/utils/capitalize';
 
 @Injectable()
 export class WorkspaceMetadataUpdaterService {
@@ -122,6 +128,11 @@ export class WorkspaceMetadataUpdaterService {
     updatedFieldMetadataCollection: FieldMetadataUpdate[];
   }> {
     const fieldMetadataRepository = manager.getRepository(FieldMetadataEntity);
+    const indexFieldMetadataRepository = manager.getRepository(
+      IndexFieldMetadataEntity,
+    );
+    const indexMetadataRepository = manager.getRepository(IndexMetadataEntity);
+
     /**
      * Update field metadata
      */
@@ -152,6 +163,12 @@ export class WorkspaceMetadataUpdaterService {
       );
 
     if (fieldMetadataDeleteCollectionWithoutRelationType.length > 0) {
+      await this.deleteIndexFieldMetadata(
+        fieldMetadataDeleteCollectionWithoutRelationType,
+        indexFieldMetadataRepository,
+        indexMetadataRepository,
+      );
+
       await fieldMetadataRepository.delete(
         fieldMetadataDeleteCollectionWithoutRelationType.map(
           (field) => field.id,
@@ -164,6 +181,33 @@ export class WorkspaceMetadataUpdaterService {
         createdFieldMetadataCollection as FieldMetadataEntity[],
       updatedFieldMetadataCollection,
     };
+  }
+
+  async deleteIndexFieldMetadata(
+    fieldMetadataDeleteCollectionWithoutRelationType: Partial<FieldMetadataEntity>[],
+    indexFieldMetadataRepository: Repository<IndexFieldMetadataEntity>,
+    indexMetadataRepository: Repository<IndexMetadataEntity>,
+  ) {
+    const indexFieldMetadatas = await indexFieldMetadataRepository.find({
+      where: {
+        fieldMetadataId: In(
+          fieldMetadataDeleteCollectionWithoutRelationType.map(
+            (field) => field.id,
+          ),
+        ),
+      },
+      relations: {
+        indexMetadata: true,
+      },
+    });
+
+    const uniqueIndexMetadataIds = [
+      ...new Set(indexFieldMetadatas.map((field) => field.indexMetadataId)),
+    ];
+
+    if (uniqueIndexMetadataIds.length > 0) {
+      await indexMetadataRepository.delete(uniqueIndexMetadataIds);
+    }
   }
 
   async updateRelationMetadata(
@@ -241,10 +285,42 @@ export class WorkspaceMetadataUpdaterService {
       const convertIndexFieldMetadataForSaving = (
         column: string,
         order: number,
-      ) => {
+      ): DeepPartial<IndexFieldMetadataEntity> => {
+        // Ensure correct type
         const fieldMetadata = originalObjectMetadataCollection
           .find((object) => object.id === indexMetadata.objectMetadataId)
-          ?.fields.find((field) => column === field.name);
+          ?.fields.find((field) => {
+            if (field.name === column) {
+              return true;
+            }
+
+            if (!isCompositeFieldMetadataType(field.type)) {
+              return;
+            }
+
+            const compositeType = compositeTypeDefinitions.get(
+              field.type as CompositeFieldMetadataType,
+            );
+
+            if (!compositeType) {
+              throw new Error(
+                `Composite type definition not found for type: ${field.type}`,
+              );
+            }
+
+            const columnNames = compositeType.properties.reduce(
+              (acc, column) => {
+                acc.push(`${field.name}${capitalize(column.name)}`);
+
+                return acc;
+              },
+              [] as string[],
+            );
+
+            if (columnNames.includes(column)) {
+              return true;
+            }
+          });
 
         if (!fieldMetadata) {
           throw new Error(`

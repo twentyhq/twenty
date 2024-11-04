@@ -61,12 +61,8 @@ resource "kubernetes_deployment" "twentycrm_server" {
             value = "postgres://twenty:${var.twentycrm_pgdb_admin_password}@${kubernetes_service.twentycrm_db.metadata.0.name}.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local/default"
           }
           env {
-            name  = "REDIS_HOST"
-            value = "${kubernetes_service.twentycrm_redis.metadata.0.name}.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local"
-          }
-          env {
-            name  = "REDIS_PORT"
-            value = 6379
+            name  = "REDIS_URL"
+            value = "redis://${kubernetes_service.twentycrm_redis.metadata.0.name}.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local:6379"
           }
           env {
             name  = "ENABLE_DB_MIGRATIONS"
@@ -95,41 +91,11 @@ resource "kubernetes_deployment" "twentycrm_server" {
             value = "1h"
           }
           env {
-            name = "ACCESS_TOKEN_SECRET"
+            name = "APP_SECRET"
             value_from {
               secret_key_ref {
                 name = "tokens"
                 key  = "accessToken"
-              }
-            }
-          }
-
-          env {
-            name = "LOGIN_TOKEN_SECRET"
-            value_from {
-              secret_key_ref {
-                name = "tokens"
-                key  = "loginToken"
-              }
-            }
-          }
-
-          env {
-            name = "REFRESH_TOKEN_SECRET"
-            value_from {
-              secret_key_ref {
-                name = "tokens"
-                key  = "refreshToken"
-              }
-            }
-          }
-
-          env {
-            name = "FILE_TOKEN_SECRET"
-            value_from {
-              secret_key_ref {
-                name = "tokens"
-                key  = "fileToken"
               }
             }
           }

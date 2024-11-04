@@ -47,38 +47,36 @@ export const initialFavorites = [
   },
 ];
 
-export const sortedFavorites =  [
-      {
-       "avatarType": "rounded",
-       "avatarUrl": "",
-       "id": "1",
-       "labelIdentifier": " ",
-       "link": "/object/person/1",
-       "position": 0,
-       "recordId": "1",
-       "workspaceMemberId": undefined,
-     },
-      {
-       "avatarType": "rounded",
-       "avatarUrl": "",
-       "id": "2",
-       "labelIdentifier": " ",
-       "link": "/object/person/3",
-       "position": 1,
-       "recordId": "3",
-       "workspaceMemberId": undefined,
-     },
-      {
-       "avatarType": "squared",
-       "avatarUrl": "example.com",
-       "id": "3",
-       "key": "8f3b2121-f194-4ba4-9fbf-2d5a37126806",
-       "labelIdentifier": "favoriteLabel",
-       "link": "example.com",
-       "position": 2,
-       "recordId": "1",
-     },
-   ]
+export const sortedFavorites = [
+  {
+    id: '1',
+    recordId: '2',
+    position: 0,
+    avatarType: 'squared',
+    avatarUrl: undefined,
+    labelIdentifier: 'ABC Corp',
+    link: '/object/company/2',
+  },
+  {
+    id: '2',
+    recordId: '4',
+    position: 1,
+    avatarType: 'squared',
+    avatarUrl: undefined,
+    labelIdentifier: 'Company Test',
+    link: '/object/company/4',
+  },
+  {
+    id: '3',
+    position: 2,
+    key: '8f3b2121-f194-4ba4-9fbf-2d5a37126806',
+    labelIdentifier: 'favoriteLabel',
+    avatarUrl: 'example.com',
+    avatarType: 'squared',
+    link: 'example.com',
+    recordId: '1',
+  },
+];
 
 export const mocks = [
   {
@@ -86,7 +84,7 @@ export const mocks = [
       query: gql`
         mutation CreateOneFavorite($input: FavoriteCreateInput!) {
           createFavorite(data: $input) {
-            __typename
+        __typename
         company {
           __typename
           accountOwnerId
@@ -297,6 +295,41 @@ export const mocks = [
           updatedAt
         }
         workflowId
+        workflowRun {
+          __typename
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          endedAt
+          id
+          name
+          output
+          position
+          startedAt
+          status
+          updatedAt
+          workflowId
+          workflowVersionId
+        }
+        workflowRunId
+        workflowVersion {
+          __typename
+          createdAt
+          deletedAt
+          id
+          name
+          position
+          status
+          steps
+          trigger
+          updatedAt
+          workflowId
+        }
+        workflowVersionId
         workspaceMember {
           __typename
           avatarUrl
@@ -577,6 +610,41 @@ export const mocks = [
               updatedAt
             }
             workflowId
+            workflowRun {
+              __typename
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              endedAt
+              id
+              name
+              output
+              position
+              startedAt
+              status
+              updatedAt
+              workflowId
+              workflowVersionId
+            }
+            workflowRunId
+            workflowVersion {
+              __typename
+              createdAt
+              deletedAt
+              id
+              name
+              position
+              status
+              steps
+              trigger
+              updatedAt
+              workflowId
+            }
+            workflowVersionId
             workspaceMember {
               __typename
               avatarUrl

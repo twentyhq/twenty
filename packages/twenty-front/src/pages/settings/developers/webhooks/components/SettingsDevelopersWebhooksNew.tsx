@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { H2Title, isDefined } from 'twenty-ui';
+import { H2Title, isDefined, Section } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -10,8 +10,7 @@ import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { isValidUrl } from '~/utils/url/isValidUrl';
 
 export const SettingsDevelopersWebhooksNew = () => {
@@ -19,9 +18,11 @@ export const SettingsDevelopersWebhooksNew = () => {
   const [formValues, setFormValues] = useState<{
     targetUrl: string;
     operation: string;
+    operations: string[];
   }>({
     targetUrl: '',
     operation: '*.*',
+    operations: ['*.*'],
   });
   const [isTargetUrlValid, setIsTargetUrlValid] = useState(true);
 

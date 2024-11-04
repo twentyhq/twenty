@@ -4,9 +4,8 @@ import {
   SettingsDataModelFieldPreview,
   SettingsDataModelFieldPreviewProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreview';
-import { SettingsDataModelObjectSummary } from '@/settings/data-model/objects/SettingsDataModelObjectSummary';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { SettingsDataModelObjectSummary } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
+import { Card, CardContent } from 'twenty-ui';
 
 export type SettingsDataModelFieldPreviewCardProps =
   SettingsDataModelFieldPreviewProps & {
@@ -19,7 +18,6 @@ const StyledCard = styled(Card)`
 `;
 
 const StyledCardContent = styled(CardContent)`
-  display: grid;
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 

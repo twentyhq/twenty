@@ -89,5 +89,34 @@ export const tasksByStatusView = (
       },
       */
     ],
+    groups: [
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[
+            TASK_STANDARD_FIELD_IDS.status
+          ],
+        isVisible: true,
+        fieldValue: 'TODO',
+        position: 0,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[
+            TASK_STANDARD_FIELD_IDS.status
+          ],
+        isVisible: true,
+        fieldValue: 'IN_PROGRESS',
+        position: 1,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.task].fields[
+            TASK_STANDARD_FIELD_IDS.status
+          ],
+        isVisible: true,
+        fieldValue: 'DONE',
+        position: 2,
+      },
+    ],
   };
 };
