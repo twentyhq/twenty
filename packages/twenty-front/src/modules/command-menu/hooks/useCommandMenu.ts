@@ -45,15 +45,27 @@ export const useCommandMenu = () => {
 
           const actionCommands = actionMenuEntries
             .getValue()
+            ?.filter((actionMenuEntry) => actionMenuEntry.type === 'standard')
             ?.map((actionMenuEntry) => ({
               id: actionMenuEntry.key,
               label: actionMenuEntry.label,
               Icon: actionMenuEntry.Icon,
               onCommandClick: actionMenuEntry.onClick,
-              type: CommandType.Action,
+              type: CommandType.StandardAction,
             }));
 
-          setCommands(actionCommands);
+          const workflowRunCommands = actionMenuEntries
+            .getValue()
+            ?.filter((actionMenuEntry) => actionMenuEntry.type === 'workflow-run')
+            ?.map((actionMenuEntry) => ({
+              id: actionMenuEntry.key,
+              label: actionMenuEntry.label,
+              Icon: actionMenuEntry.Icon,
+              onCommandClick: actionMenuEntry.onClick,
+              type: CommandType.WorkflowRun,
+            }));
+
+          setCommands([...actionCommands, ...workflowRunCommands]);
         }
 
         setIsCommandMenuOpened(true);

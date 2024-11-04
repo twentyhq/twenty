@@ -34,6 +34,8 @@ export const WorkflowRunRecordActionEffect = ({
       objectNameSingular: objectMetadataItem.nameSingular,
     });
 
+  console.log('activeWorkflowVersions', activeWorkflowVersions);
+
   useEffect(() => {
     if (!isDefined(objectMetadataItem) || objectMetadataItem.isRemote) {
       return;
