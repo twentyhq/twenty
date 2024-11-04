@@ -1,27 +1,28 @@
 import { useCallback, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { IconSettings, UndecoratedLink, useIcons } from 'twenty-ui';
 
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
+import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTableHeaderPlusButtonContent = () => {
   const { objectMetadataItem } = useContext(RecordTableContext);
   const { closeDropdown } = useDropdown();
 
-  const { hiddenTableColumnsSelector } = useRecordTableStates();
-
-  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector());
+  const hiddenTableColumns = useRecoilComponentValueV2(
+    hiddenTableColumnsComponentSelector,
+  );
 
   const { getIcon } = useIcons();
   const { handleColumnVisibilityChange } = useTableColumns();
