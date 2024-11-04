@@ -6,8 +6,8 @@ import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 export const useTriggerActionMenuDropdown = ({
@@ -63,7 +63,7 @@ export const useTriggerActionMenuDropdown = ({
         set(isActionBarOpenState, false);
         set(isActionMenuDropdownOpenState, true);
       },
-    [actionMenuInstanceId, isRowSelectedFamilyState, recordTableId],
+    [actionMenuInstanceId, isRowSelectedFamilyState],
   );
 
   return { triggerActionMenuDropdown };

@@ -78,7 +78,10 @@ const meta: Meta = {
               recordTableId: 'recordTableId',
             }}
           >
-            <RecordTableComponentInstance recordTableId="asd" onColumnsChange={() => {}}>
+            <RecordTableComponentInstance
+              recordTableId="asd"
+              onColumnsChange={() => {}}
+            >
               <RecordTableRowContext.Provider
                 value={{
                   objectNameSingular:

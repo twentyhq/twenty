@@ -24,7 +24,10 @@ export const useTableColumns = (props?: useRecordTableProps) => {
     props?.recordTableId,
   );
 
-  const tableColumns = useRecoilComponentValueV2(tableColumnsComponentState, props?.recordTableId);
+  const tableColumns = useRecoilComponentValueV2(
+    tableColumnsComponentState,
+    props?.recordTableId,
+  );
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
     props?.recordTableId,

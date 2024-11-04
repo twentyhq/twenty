@@ -19,7 +19,10 @@ const meta: Meta = {
     RecordTableDecorator,
     (Story) => (
       <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-        <RecordTableComponentInstance recordTableId="persons" onColumnsChange={() => {}}>
+        <RecordTableComponentInstance
+          recordTableId="persons"
+          onColumnsChange={() => {}}
+        >
           <Story />
         </RecordTableComponentInstance>
       </SnackBarProviderScope>
