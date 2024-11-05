@@ -1,9 +1,11 @@
 import { useTheme } from '@emotion/react';
 import { FunctionComponent, MouseEvent, ReactElement, ReactNode } from 'react';
-import { IconChevronRight, IconComponent } from 'twenty-ui';
-
-import { LightIconButtonProps } from '@/ui/input/button/components/LightIconButton';
-import { LightIconButtonGroup } from '@/ui/input/button/components/LightIconButtonGroup';
+import {
+  IconChevronRight,
+  IconComponent,
+  LightIconButtonGroup,
+  LightIconButtonProps,
+} from 'twenty-ui';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {

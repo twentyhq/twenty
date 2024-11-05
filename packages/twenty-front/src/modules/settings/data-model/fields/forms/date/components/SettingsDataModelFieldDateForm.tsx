@@ -5,8 +5,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { StyledFormCardTitle } from '@/settings/data-model/fields/components/StyledFormCardTitle';
 import { SettingsDataModelFieldToggle } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldToggle';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { IconClockShare } from 'twenty-ui';
+import { IconClockShare, CardContent } from 'twenty-ui';
 
 export const settingsDataModelFieldDateFormSchema = z.object({
   settings: z

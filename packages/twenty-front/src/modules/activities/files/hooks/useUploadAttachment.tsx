@@ -1,13 +1,15 @@
-import { FileFolder } from "~/generated-metadata/graphql";
-import { useAddAttachmentMutation, useUploadFileMutation } from "~/generated/graphql";
-import { getFileAbsoluteURI } from "~/utils/file/getFileAbsoluteURI";
+import { FileFolder } from '~/generated-metadata/graphql';
+import {
+  useAddAttachmentMutation,
+  useUploadFileMutation,
+} from '~/generated/graphql';
+import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 
-const useUploadAttachment = () => {
+export const useUploadAttachment = () => {
   const [uploadFile] = useUploadFileMutation();
   const [addAttachmentMutation] = useAddAttachmentMutation();
 
   const uploadAttachment = async (file: File, fileFolder: FileFolder) => {
-    
     const result = await uploadFile({
       variables: {
         file,
@@ -17,18 +19,15 @@ const useUploadAttachment = () => {
 
     const uploadedFileData = result?.data?.uploadFile;
 
-   
     if (!uploadedFileData) {
       throw new Error("Couldn't upload the image.");
     }
 
-   
     const uploadedFileUrl = getFileAbsoluteURI(uploadedFileData);
 
-    
     await addAttachmentMutation({
       variables: {
-        fileId: uploadedFileData.id, // Assuming file ID is part of the upload response
+        fileId: uploadedFileData,
         fileName: file.name,
         fileUrl: uploadedFileUrl,
       },
@@ -39,5 +38,3 @@ const useUploadAttachment = () => {
 
   return { uploadAttachment };
 };
-
-export default useUploadAttachment;

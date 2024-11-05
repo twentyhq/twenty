@@ -1,25 +1,21 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { currentHotkeyScopeState } from '@/ui/utilities/hotkey/states/internal/currentHotkeyScopeState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
-import { TableHotkeyScope } from '../../types/TableHotkeyScope';
-
-import { useCloseCurrentTableCellInEditMode } from './useCloseCurrentTableCellInEditMode';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { isSoftFocusActiveComponentState } from '@/object-record/record-table/states/isSoftFocusActiveComponentState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useDisableSoftFocus } from './useDisableSoftFocus';
-import { useSetHasUserSelectedAllRows } from './useSetAllRowSelectedState';
 
 export const useLeaveTableFocus = (recordTableId?: string) => {
   const disableSoftFocus = useDisableSoftFocus(recordTableId);
-  const closeCurrentCellInEditMode =
-    useCloseCurrentTableCellInEditMode(recordTableId);
 
-  const setHasUserSelectedAllRows = useSetHasUserSelectedAllRows(recordTableId);
+  const isSoftFocusActiveState = useRecoilComponentCallbackStateV2(
+    isSoftFocusActiveComponentState,
+    recordTableId,
+  );
 
-  const selectAllRows = useSetHasUserSelectedAllRows(recordTableId);
-
-  const { isSoftFocusActiveState } = useRecordTableStates(recordTableId);
+  const resetTableRowSelection = useResetTableRowSelection(recordTableId);
 
   return useRecoilCallback(
     ({ snapshot }) =>
@@ -29,29 +25,14 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
           isSoftFocusActiveState,
         );
 
-        const currentHotkeyScope = snapshot
-          .getLoadable(currentHotkeyScopeState)
-          .getValue();
+        resetTableRowSelection();
 
         if (!isSoftFocusActive) {
           return;
         }
 
-        if (currentHotkeyScope?.scope === TableHotkeyScope.Table) {
-          return;
-        }
-
-        closeCurrentCellInEditMode();
         disableSoftFocus();
-        setHasUserSelectedAllRows(false);
-        selectAllRows(false);
       },
-    [
-      closeCurrentCellInEditMode,
-      disableSoftFocus,
-      isSoftFocusActiveState,
-      selectAllRows,
-      setHasUserSelectedAllRows,
-    ],
+    [disableSoftFocus, isSoftFocusActiveState, resetTableRowSelection],
   );
 };

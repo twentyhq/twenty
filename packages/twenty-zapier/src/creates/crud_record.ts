@@ -7,7 +7,7 @@ import { computeInputFields } from '../utils/computeInputFields';
 import { InputData } from '../utils/data.types';
 import handleQueryParams from '../utils/handleQueryParams';
 import requestDb, { requestSchema } from '../utils/requestDb';
-import { Operation } from '../utils/triggers/triggers.utils';
+import { DatabaseEventAction } from '../utils/triggers/triggers.utils';
 
 export const recordInputFields = async (
   z: ZObject,
@@ -24,7 +24,7 @@ export const recordInputFields = async (
 const computeFields = async (z: ZObject, bundle: Bundle) => {
   const operation = bundle.inputData.crudZapierOperation;
   switch (operation) {
-    case Operation.delete:
+    case DatabaseEventAction.DELETED:
       return [
         {
           key: 'id',
@@ -34,9 +34,9 @@ const computeFields = async (z: ZObject, bundle: Bundle) => {
           required: true,
         },
       ];
-    case Operation.update:
+    case DatabaseEventAction.UPDATED:
       return recordInputFields(z, bundle, true);
-    case Operation.create:
+    case DatabaseEventAction.CREATED:
       return recordInputFields(z, bundle, false);
     default:
       return [];
@@ -44,18 +44,18 @@ const computeFields = async (z: ZObject, bundle: Bundle) => {
 };
 
 const computeQueryParameters = (
-  operation: Operation,
+  operation: DatabaseEventAction,
   data: InputData,
 ): string => {
   switch (operation) {
-    case Operation.create:
+    case DatabaseEventAction.CREATED:
       return `data:{${handleQueryParams(data)}}`;
-    case Operation.update:
+    case DatabaseEventAction.UPDATED:
       return `
       data:{${handleQueryParams(data)}},
       id: "${data.id}"
       `;
-    case Operation.delete:
+    case DatabaseEventAction.DELETED:
       return `
       id: "${data.id}"
       `;
@@ -104,9 +104,9 @@ export default {
         required: true,
         label: 'Operation',
         choices: {
-          [Operation.create]: Operation.create,
-          [Operation.update]: Operation.update,
-          [Operation.delete]: Operation.delete,
+          [DatabaseEventAction.CREATED]: DatabaseEventAction.CREATED,
+          [DatabaseEventAction.UPDATED]: DatabaseEventAction.UPDATED,
+          [DatabaseEventAction.DELETED]: DatabaseEventAction.DELETED,
         },
         altersDynamicFields: true,
       },

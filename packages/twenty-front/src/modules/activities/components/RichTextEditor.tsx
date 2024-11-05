@@ -7,7 +7,6 @@ import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
-import { blockSchema } from '@/activities/blocks/schema';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { activityBodyFamilyState } from '@/activities/states/activityBodyFamilyState';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
@@ -27,15 +26,14 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { getFileType } from '../files/utils/getFileType';
 
-import useUploadAttachment from '@/activities/files/hooks/useUploadAttachment';
+import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { useUploadAttachment } from '@/activities/files/hooks/useUploadAttachment';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import '@blocknote/react/style.css';
-import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
-
 
 type RichTextEditorProps = {
   activityId: string;
@@ -123,40 +121,14 @@ export const RichTextEditor = ({
     canCreateActivityState,
   );
 
- const { uploadAttachment } = useUploadAttachment();
+  const { uploadAttachment } = useUploadAttachment();
 
   const handleUploadAttachment = async (file: File): Promise<string> => {
     if (isUndefinedOrNull(file)) {
       return '';
     }
-    const result = await uploadFile({
-      variables: {
-        file,
-        fileFolder: FileFolder.Attachment,
-      },
-    });
-    const uploadedFileData = result?.data?.uploadFile;
 
-  if (!uploadedFileData) {
-    throw new Error("Couldn't upload Image");
-  }
-
-  if (!result?.data?.uploadFile) {
-    throw new Error("Couldn't upload Image");
-  }
-
-  const uploadedFileUrl = getFileAbsoluteURI(result.data.uploadFile);
-
-  
-  await addAttachmentMutation({
-    variables: {
-      fileId: result.data.uploadFile, // Assuming file ID is returned from the upload
-      fileName: file.name,
-      fileUrl: uploadedFileUrl,
-    },
-  });
-
-  return uploadedFileUrl;
+    return await uploadAttachment(file, FileFolder.Attachment);
   };
 
   const prepareBody = (newStringifiedBody: string) => {
@@ -307,7 +279,7 @@ export const RichTextEditor = ({
   const editor = useCreateBlockNote({
     initialContent: initialBody,
     domAttributes: { editor: { class: 'editor' } },
-    schema: blockSchema,
+    schema: BLOCK_SCHEMA,
     uploadFile: handleUploadAttachment,
   });
 

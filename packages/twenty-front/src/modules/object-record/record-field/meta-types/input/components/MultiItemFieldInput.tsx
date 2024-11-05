@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
 import React, { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconCheck, IconPlus } from 'twenty-ui';
+import { IconCheck, IconPlus, LightIconButton } from 'twenty-ui';
 
 import { PhoneRecord } from '@/object-record/record-field/types/FieldMetadata';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import {
   DropdownMenuInput,
@@ -22,7 +21,6 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 
 const StyledDropdownMenu = styled(DropdownMenu)`
   left: -1px;
-  position: absolute;
   top: -1px;
 `;
 
@@ -47,6 +45,7 @@ type MultiItemFieldInputProps<T> = {
 };
 
 // Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
+// This should be refactored with a hook instead that exposes those events in a context around this component and its children.
 export const MultiItemFieldInput = <T,>({
   items,
   onPersist,
@@ -85,9 +84,9 @@ export const MultiItemFieldInput = <T,>({
     setInputValue(value);
     if (!validateInput) return;
 
-    if (errorData.isValid) {
-      setErrorData(errorData);
-    }
+    setErrorData(
+      errorData.isValid ? errorData : { isValid: true, errorMessage: '' },
+    );
   };
 
   const handleAddButtonClick = () => {

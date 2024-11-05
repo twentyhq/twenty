@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
@@ -17,6 +16,8 @@ import {
   WorkflowVersionEventType,
   WorkflowVersionStatusUpdate,
 } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
+import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class WorkflowVersionStatusListener {
@@ -25,7 +26,7 @@ export class WorkflowVersionStatusListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('workflowVersion.created')
+  @OnDatabaseEvent('workflowVersion', DatabaseEventAction.CREATED)
   async handleWorkflowVersionCreated(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<WorkflowVersionWorkspaceEntity>
@@ -53,7 +54,7 @@ export class WorkflowVersionStatusListener {
     );
   }
 
-  @OnEvent('workflowVersion.statusUpdated')
+  @OnDatabaseEvent('workflowVersion', DatabaseEventAction.UPDATED)
   async handleWorkflowVersionUpdated(
     payload: WorkspaceEventBatch<WorkflowVersionStatusUpdate>,
   ): Promise<void> {
@@ -67,7 +68,7 @@ export class WorkflowVersionStatusListener {
     );
   }
 
-  @OnEvent('workflowVersion.deleted')
+  @OnDatabaseEvent('workflowVersion', DatabaseEventAction.DELETED)
   async handleWorkflowVersionDeleted(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<WorkflowVersionWorkspaceEntity>
