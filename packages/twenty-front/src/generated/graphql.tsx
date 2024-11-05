@@ -972,8 +972,8 @@ export type ServerlessFunction = {
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
-  inputSchema?: Maybe<Array<FunctionParameter>>;
   latestVersion?: Maybe<Scalars['String']>;
+  latestVersionInputSchema?: Maybe<Array<FunctionParameter>>;
   name: Scalars['String'];
   publishedVersions: Array<Scalars['String']>;
   runtime: Scalars['String'];

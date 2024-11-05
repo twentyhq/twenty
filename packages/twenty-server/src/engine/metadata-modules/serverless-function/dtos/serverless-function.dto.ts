@@ -67,7 +67,7 @@ export class ServerlessFunctionDTO {
 
   @IsArray()
   @Field(() => [FunctionParameter], { nullable: true })
-  inputSchema: FunctionParameter[] | null;
+  latestVersionInputSchema: FunctionParameter[] | null;
 
   @IsEnum(ServerlessFunctionSyncStatus)
   @IsNotEmpty()

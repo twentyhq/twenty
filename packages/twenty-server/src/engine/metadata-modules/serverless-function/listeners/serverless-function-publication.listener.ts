@@ -47,12 +47,12 @@ export class ServerlessFunctionPublicationListener {
         return;
       }
 
-      const inputSchema =
+      const latestVersionInputSchema =
         await this.codeIntrospectionService.getFunctionInputSchema(indexCode);
 
       await this.serverlessFunctionRepository.update(
         { id: event.serverlessFunctionId },
-        { inputSchema },
+        { latestVersionInputSchema },
       );
     });
   }

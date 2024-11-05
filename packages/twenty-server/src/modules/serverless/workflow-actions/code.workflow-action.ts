@@ -30,19 +30,12 @@ export class CodeWorkflowAction implements WorkflowAction {
       );
     }
 
-    const functionInput = Object.fromEntries(
-      Object.entries(workflowStepInput).filter(
-        ([key]) =>
-          key !== 'serverlessFunctionId' && key !== 'serverlessFunctionVersion',
-      ),
-    );
-
     try {
       const result =
         await this.serverlessFunctionService.executeOneServerlessFunction(
           workflowStepInput.serverlessFunctionId,
           workspaceId,
-          functionInput,
+          workflowStepInput.serverlessFunctionInput,
         );
 
       if (result.error) {
