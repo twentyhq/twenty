@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -68,8 +68,11 @@ const FIELDS_TAB_ID = 'fields';
 const SETTINGS_TAB_ID = 'settings';
 const INDEXES_TAB_ID = 'indexes';
 
+const validHashes = [FIELDS_TAB_ID, SETTINGS_TAB_ID, INDEXES_TAB_ID];
+
 export const SettingsObjectDetailPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { objectSlug = '' } = useParams();
   const { findActiveObjectMetadataItemBySlug } =
@@ -83,12 +86,32 @@ export const SettingsObjectDetailPage = () => {
     findActiveObjectMetadataItemBySlug(updatedObjectSlug);
 
   const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { setActiveTabId } = useTabList(TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(activeTabIdState);
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
     'IS_UNIQUE_INDEXES_ENABLED',
   );
+
+  const hash = location.hash.replace('#', '');
+
+  useEffect(() => {
+    if (!hash) {
+      const initialTabId = activeTabId ?? FIELDS_TAB_ID;
+      navigate(`${location.pathname}#${initialTabId}`, { replace: true });
+    }
+  }, [activeTabId, hash, location.pathname, navigate]);
+
+  useEffect(() => {
+    if (hash === activeTabId) return;
+
+    if (isDefined(activeTabId)) {
+      navigate(`${location.pathname}#${activeTabId}`, { replace: true });
+    } else if (validHashes.includes(hash)) {
+      setActiveTabId(hash);
+    }
+  }, [hash, activeTabId, navigate, location.pathname, setActiveTabId]);
 
   useEffect(() => {
     if (objectSlug === updatedObjectSlug) setUpdatedObjectSlug('');
