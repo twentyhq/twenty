@@ -43,6 +43,8 @@ export const useCommandMenu = () => {
             }),
           );
 
+          const commands = Object.values(COMMAND_MENU_COMMANDS);
+
           const actionCommands = actionMenuEntries
             .getValue()
             ?.filter((actionMenuEntry) => actionMenuEntry.type === 'standard')
@@ -67,7 +69,7 @@ export const useCommandMenu = () => {
               type: CommandType.WorkflowRun,
             }));
 
-          setCommands([...actionCommands, ...workflowRunCommands]);
+          setCommands([...commands, ...actionCommands, ...workflowRunCommands]);
         }
 
         setIsCommandMenuOpened(true);
@@ -90,11 +92,17 @@ export const useCommandMenu = () => {
 
         if (isCommandMenuOpened) {
           setIsCommandMenuOpened(false);
+          setCommands([]);
           resetSelectedItem();
           goBackToPreviousHotkeyScope();
         }
       },
-    [goBackToPreviousHotkeyScope, resetSelectedItem, setIsCommandMenuOpened],
+    [
+      goBackToPreviousHotkeyScope,
+      resetSelectedItem,
+      setCommands,
+      setIsCommandMenuOpened,
+    ],
   );
 
   const toggleCommandMenu = useRecoilCallback(

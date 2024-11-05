@@ -7,6 +7,7 @@ import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/t
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @WorkspaceQueryHook(`connectedAccount.destroyOne`)
 export class ConnectedAccountDeleteOnePreQueryHook
@@ -34,7 +35,7 @@ export class ConnectedAccountDeleteOnePreQueryHook
     });
 
     this.workspaceEventEmitter.emit(
-      'messageChannel.destroyed',
+      `messageChannel.${DatabaseEventAction.DESTROYED}`,
       messageChannels.map(
         (messageChannel) =>
           ({

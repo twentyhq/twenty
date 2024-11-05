@@ -522,6 +522,10 @@ export class WorkspaceMigrationRunnerService {
     );
 
     if (!foreignKeyName) {
+      // Todo: Remove this temporary hack tied to 0.32 upgrade
+      if (migrationColumn.columnName === 'activityId') {
+        return;
+      }
       throw new Error(
         `Foreign key not found for column ${migrationColumn.columnName}`,
       );

@@ -63,10 +63,6 @@ const StyledInputContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledSectionWrapper = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-`;
-
 const StyledAdvancedSettingsSectionInputWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -76,9 +72,10 @@ const StyledAdvancedSettingsSectionInputWrapper = styled.div`
 
 const StyledAdvancedSettingsContainer = styled.div`
   display: flex;
-  width: 100%;
   gap: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(4)};
   position: relative;
+  width: 100%;
 `;
 
 const StyledIconToolContainer = styled.div`
@@ -154,84 +151,82 @@ export const SettingsDataModelObjectAboutForm = ({
 
   return (
     <>
-      <StyledSectionWrapper>
-        <StyledInputsContainer>
-          <StyledInputContainer>
-            <StyledLabel>Icon</StyledLabel>
-            <Controller
-              name="icon"
-              control={control}
-              defaultValue={objectMetadataItem?.icon ?? 'IconListNumbers'}
-              render={({ field: { onChange, value } }) => (
-                <IconPicker
-                  disabled={disabled}
-                  selectedIconKey={value}
-                  onChange={({ iconKey }) => onChange(iconKey)}
-                />
-              )}
-            />
-          </StyledInputContainer>
+      <StyledInputsContainer>
+        <StyledInputContainer>
+          <StyledLabel>Icon</StyledLabel>
           <Controller
-            key={`object-labelSingular-text-input`}
-            name={'labelSingular'}
+            name="icon"
             control={control}
-            defaultValue={objectMetadataItem?.labelSingular}
+            defaultValue={objectMetadataItem?.icon ?? 'IconListNumbers'}
             render={({ field: { onChange, value } }) => (
-              <TextInput
-                label={'Singular'}
-                placeholder={'Listing'}
-                value={value}
-                onChange={(value) => {
-                  onChange(value);
-                  fillLabelPlural(value);
-                  if (isLabelSyncedWithName === true) {
-                    fillNameSingularFromLabelSingular(value);
-                  }
-                }}
-                disabled={disabled || disableNameEdit}
-                fullWidth
-                maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
+              <IconPicker
+                disabled={disabled}
+                selectedIconKey={value}
+                onChange={({ iconKey }) => onChange(iconKey)}
               />
             )}
           />
-          <Controller
-            key={`object-labelPlural-text-input`}
-            name={'labelPlural'}
-            control={control}
-            defaultValue={objectMetadataItem?.labelPlural}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                label={'Plural'}
-                placeholder={'Listings'}
-                value={value}
-                onChange={(value) => {
-                  onChange(value);
-                  if (isLabelSyncedWithName === true) {
-                    fillNamePluralFromLabelPlural(value);
-                  }
-                }}
-                disabled={disabled || disableNameEdit}
-                fullWidth
-                maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
-              />
-            )}
-          />
-        </StyledInputsContainer>
+        </StyledInputContainer>
         <Controller
-          name="description"
+          key={`object-labelSingular-text-input`}
+          name={'labelSingular'}
           control={control}
-          defaultValue={objectMetadataItem?.description ?? null}
+          defaultValue={objectMetadataItem?.labelSingular}
           render={({ field: { onChange, value } }) => (
-            <TextArea
-              placeholder="Write a description"
-              minRows={4}
-              value={value ?? undefined}
-              onChange={(nextValue) => onChange(nextValue ?? null)}
-              disabled={disabled}
+            <TextInput
+              label={'Singular'}
+              placeholder={'Listing'}
+              value={value}
+              onChange={(value) => {
+                onChange(value);
+                fillLabelPlural(value);
+                if (isLabelSyncedWithName === true) {
+                  fillNameSingularFromLabelSingular(value);
+                }
+              }}
+              disabled={disabled || disableNameEdit}
+              fullWidth
+              maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
           )}
         />
-      </StyledSectionWrapper>
+        <Controller
+          key={`object-labelPlural-text-input`}
+          name={'labelPlural'}
+          control={control}
+          defaultValue={objectMetadataItem?.labelPlural}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              label={'Plural'}
+              placeholder={'Listings'}
+              value={value}
+              onChange={(value) => {
+                onChange(value);
+                if (isLabelSyncedWithName === true) {
+                  fillNamePluralFromLabelPlural(value);
+                }
+              }}
+              disabled={disabled || disableNameEdit}
+              fullWidth
+              maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
+            />
+          )}
+        />
+      </StyledInputsContainer>
+      <Controller
+        name="description"
+        control={control}
+        defaultValue={objectMetadataItem?.description ?? null}
+        render={({ field: { onChange, value } }) => (
+          <TextArea
+            placeholder="Write a description"
+            minRows={4}
+            value={value ?? undefined}
+            onChange={(nextValue) => onChange(nextValue ?? null)}
+            disabled={disabled}
+          />
+        )}
+      />
       <AnimatePresence>
         {isAdvancedModeEnabled && (
           <motion.div
