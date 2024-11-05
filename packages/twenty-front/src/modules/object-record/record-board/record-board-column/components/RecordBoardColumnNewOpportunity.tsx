@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
+import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
+import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
+import { useRecoilValue } from 'recoil';
 
 const StyledCompanyPickerContainer = styled.div`
   align-items: center;
@@ -23,8 +25,14 @@ export const RecordBoardColumnNewOpportunity = ({
   columnId: string;
   position: 'last' | 'first';
 }) => {
-  const { handleEntitySelect, handleCreateSuccess, newRecord } =
-    useColumnNewCardActions(columnId);
+  const newRecord = useRecoilValue(
+    recordBoardNewRecordByColumnIdSelector({
+      familyKey: columnId,
+      scopeId: columnId,
+    }),
+  );
+  const { handleCreateSuccess, handleEntitySelect } = useAddNewCard();
+
   return (
     <>
       {newRecord.isCreating && newRecord.position === position && (

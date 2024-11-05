@@ -1,5 +1,7 @@
 import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
-import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
+import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
+import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
+import { useRecoilValue } from 'recoil';
 
 export const RecordBoardColumnNewRecord = ({
   columnId,
@@ -8,7 +10,13 @@ export const RecordBoardColumnNewRecord = ({
   columnId: string;
   position: 'first' | 'last';
 }) => {
-  const { handleCreateSuccess, newRecord } = useColumnNewCardActions(columnId);
+  const newRecord = useRecoilValue(
+    recordBoardNewRecordByColumnIdSelector({
+      familyKey: columnId,
+      scopeId: columnId,
+    }),
+  );
+  const { handleCreateSuccess } = useAddNewCard();
 
   return (
     <>
