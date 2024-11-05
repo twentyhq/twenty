@@ -21,6 +21,8 @@ export class ApiKeyService {
     }
     const jwtPayload = {
       sub: workspaceId,
+      type: 'API_KEY',
+      workspaceId,
     };
     const secret = this.jwtWrapperService.generateAppSecret(
       'ACCESS',

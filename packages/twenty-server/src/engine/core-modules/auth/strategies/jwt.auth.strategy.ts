@@ -23,6 +23,7 @@ export type JwtPayload = {
   workspaceId: string;
   workspaceMemberId?: string;
   jti?: string;
+  type?: 'API_KEY' | null;
 };
 
 @Injectable()
@@ -104,7 +105,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       }
     }
 
-    if (payload.workspaceId) {
+    if (payload.type !== 'API_KEY') {
       user = await this.userRepository.findOne({
         where: { id: payload.sub },
       });
