@@ -33,10 +33,6 @@ export const RecordIndexActionMenuBar = () => {
 
   const pinnedEntries = actionMenuEntries.filter((entry) => entry.isPinned);
 
-  if (pinnedEntries.length === 0) {
-    return null;
-  }
-
   return (
     <BottomBar
       bottomBarId={`action-bar-${actionMenuId}`}

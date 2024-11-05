@@ -35,6 +35,7 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
                 selectedRecordIds: ['1', '2', '3'],
               },
             );
+
             set(
               contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
                 instanceId: 'story-action-menu',
@@ -45,6 +46,7 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
             const map = new Map<string, ActionMenuEntry>();
 
             map.set('delete', {
+              isPinned: true,
               type: 'standard',
               key: 'delete',
               label: 'Delete',
@@ -59,6 +61,7 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
               }),
               map,
             );
+
             set(
               isBottomBarOpenedComponentState.atomFamily({
                 instanceId: 'action-bar-story-action-menu',
