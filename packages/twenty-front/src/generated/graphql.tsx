@@ -1554,21 +1554,6 @@ export type RelationEdge = {
   node: Relation;
 };
 
-export type AddAttachmentMutation = {
-  addAttachment: {
-    id: string;
-    fileName: string;
-    fileUrl: string;
-  };
-};
-
-export type AddAttachmentMutationVariables = {
-  fileId: string;
-  fileName: string;
-  fileUrl: string;
-};
-
-
 export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
 
 export type TimelineCalendarEventParticipantFragmentFragment = { __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
@@ -3973,30 +3958,3 @@ export function useGetWorkspaceFromInviteHashLazyQuery(baseOptions?: Apollo.Lazy
 export type GetWorkspaceFromInviteHashQueryHookResult = ReturnType<typeof useGetWorkspaceFromInviteHashQuery>;
 export type GetWorkspaceFromInviteHashLazyQueryHookResult = ReturnType<typeof useGetWorkspaceFromInviteHashLazyQuery>;
 export type GetWorkspaceFromInviteHashQueryResult = Apollo.QueryResult<GetWorkspaceFromInviteHashQuery, GetWorkspaceFromInviteHashQueryVariables>;
-
-export const AddAttachmentDocument = gql`
-  mutation AddAttachment($fileId: ID!, $fileName: String!, $fileUrl: String!) {
-    addAttachment(fileId: $fileId, fileName: $fileName, fileUrl: $fileUrl) {
-      id
-      fileName
-      fileUrl
-    }
-  }
-`;
-
-export function useAddAttachmentMutation(
-  baseOptions?: Apollo.MutationHookOptions<AddAttachmentMutation, AddAttachmentMutationVariables>
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<AddAttachmentMutation, AddAttachmentMutationVariables>(
-    AddAttachmentDocument,
-    options
-  );
-}
-
-export type AddAttachmentMutationHookResult = ReturnType<typeof useAddAttachmentMutation>;
-export type AddAttachmentMutationResult = Apollo.MutationResult<AddAttachmentMutation>;
-export type AddAttachmentMutationOptions = Apollo.BaseMutationOptions<
-  AddAttachmentMutation,
-  AddAttachmentMutationVariables
->;
