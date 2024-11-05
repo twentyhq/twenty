@@ -1,12 +1,13 @@
 import { useContext, useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableCell } from '@/object-record/record-table/record-table-cell/components/RecordTableCell';
 import { RecordTableCellWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellWrapper';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
+import { resizedFieldKeyComponentState } from '@/object-record/record-table/states/resizedFieldKeyComponentState';
+import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
@@ -14,22 +15,24 @@ const COLUMN_MIN_WIDTH = 104;
 
 export const RecordTableCellsVisible = () => {
   const { isSelected, isDragging } = useContext(RecordTableRowContext);
-  const { tableColumnsState, resizedFieldKeyState, resizeFieldOffsetState } =
-    useRecordTableStates();
 
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
   );
-  const resizeFieldOffset = useRecoilValue(resizeFieldOffsetState);
+  const resizeFieldOffset = useRecoilComponentValueV2(
+    resizeFieldOffsetComponentState,
+  );
 
-  const tableColumns = useRecoilValue(tableColumnsState);
+  const tableColumns = useRecoilComponentValueV2(tableColumnsComponentState);
   const tableColumnsByKey = useMemo(
     () =>
       mapArrayToObject(tableColumns, ({ fieldMetadataId }) => fieldMetadataId),
     [tableColumns],
   );
 
-  const resizedFieldKey = useRecoilValue(resizedFieldKeyState);
+  const resizedFieldKey = useRecoilComponentValueV2(
+    resizedFieldKeyComponentState,
+  );
   const tableColumnsAfterFirst = visibleTableColumns.slice(1);
 
   return (
