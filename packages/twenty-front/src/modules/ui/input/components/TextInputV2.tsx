@@ -43,9 +43,7 @@ const StyledInput = styled.input<
   border: 1px solid
     ${({ theme, error }) =>
       error ? theme.border.color.danger : theme.border.color.medium};
-  border-left: ${({ LeftIcon }) => LeftIcon && 'none'};
-  border-radius: ${({ theme, LeftIcon }) =>
-    !LeftIcon && theme.border.radius.sm};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
@@ -55,6 +53,8 @@ const StyledInput = styled.input<
   height: 32px;
   outline: none;
   padding: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme, LeftIcon }) =>
+    LeftIcon ? `calc(${theme.spacing(4)} + 16px)` : theme.spacing(2)};
   width: 100%;
 
   &::placeholder,
@@ -84,14 +84,13 @@ const StyledErrorHelper = styled.div`
 
 const StyledLeftIconContainer = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
-  border-right: none;
-  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   justify-content: center;
   padding-left: ${({ theme }) => theme.spacing(2)};
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
 `;
 
 const StyledTrailingIconContainer = styled.div<
