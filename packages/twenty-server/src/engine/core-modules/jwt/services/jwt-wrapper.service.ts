@@ -11,13 +11,14 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
-type WorkspaceTokenType =
+export type WorkspaceTokenType =
   | 'ACCESS'
   | 'LOGIN'
   | 'REFRESH'
   | 'FILE'
   | 'POSTGRES_PROXY'
-  | 'REMOTE_SERVER';
+  | 'REMOTE_SERVER'
+  | 'API_KEY';
 
 @Injectable()
 export class JwtWrapperService {
@@ -58,6 +59,16 @@ export class JwtWrapperService {
     }
 
     try {
+      // we check that ACCESS_TOKEN_SECRET is set
+      const appSecret = this.environmentService.get('ACCESS_TOKEN_SECRET');
+
+      if (!type && !payload.workspaceId && appSecret) {
+        return this.jwtService.verify(token, {
+          ...options,
+          secret: this.generateAppSecretLegacy(type, payload.workspaceId),
+        });
+      }
+
       return this.jwtService.verify(token, {
         ...options,
         secret: this.generateAppSecret(type, payload.workspaceId),
@@ -87,6 +98,21 @@ export class JwtWrapperService {
 
     if (!appSecret) {
       throw new Error('APP_SECRET is not set');
+    }
+
+    return createHash('sha256')
+      .update(`${appSecret}${workspaceId}${type}`)
+      .digest('hex');
+  }
+
+  generateAppSecretLegacy(
+    type: WorkspaceTokenType,
+    workspaceId?: string,
+  ): string {
+    const appSecret = this.environmentService.get('ACCESS_TOKEN_SECRET');
+
+    if (!appSecret) {
+      throw new Error('ACCESS_TOKEN_SECRET is not set');
     }
 
     return createHash('sha256')

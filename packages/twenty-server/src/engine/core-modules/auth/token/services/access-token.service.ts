@@ -12,10 +12,8 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
-import {
-  JwtAuthStrategy,
-  JwtPayload,
-} from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
+import { JwtPayload } from 'src/engine/core-modules/auth/strategies/interfaces';
+import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';

@@ -10,6 +10,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { JwtPayload } from 'src/engine/core-modules/auth/strategies/interfaces';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -17,14 +18,6 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
-
-export type JwtPayload = {
-  sub: string;
-  workspaceId: string;
-  workspaceMemberId?: string;
-  jti?: string;
-  type?: 'API_KEY' | null;
-};
 
 @Injectable()
 export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -61,11 +54,31 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: JwtPayload): Promise<AuthContext> {
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: payload.workspaceId ?? payload.sub,
-    });
+    // We split in three different cases
+    // 1. API_KEY
+    // 2. API_KEY - backward compatibility with old api tokens based on
+    // no payload.workspaceId and no type
+    // 3. all other types of tokens (no backward compatibility)
+
     let user: User | null = null;
     let apiKey: ApiKeyWorkspaceEntity | null = null;
+
+    let propertyName: 'workspaceId' | 'sub';
+
+    // case 2.
+    if (!payload.type && !payload.workspaceId) {
+      propertyName = 'sub';
+    } else if (payload.type === 'API_KEY') {
+      // case 1.
+      propertyName = 'sub';
+    } else {
+      // case 3.
+      propertyName = 'workspaceId';
+    }
+
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: payload[propertyName],
+    });
 
     if (!workspace) {
       throw new AuthException(
@@ -74,6 +87,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
+    // the jti here let us know that this can be revoked. We need to check.
     if (payload.jti) {
       // TODO: Check why it's not working
       // const apiKeyRepository =
