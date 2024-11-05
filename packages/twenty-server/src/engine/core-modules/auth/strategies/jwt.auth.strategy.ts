@@ -121,33 +121,16 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: JwtPayload): Promise<AuthContext> {
-    let user: User | null = null;
-    let workspace: Workspace | null;
-    let apiKey: ApiKeyWorkspaceEntity | null = null;
-
-    if (!payload.type && !payload.workspaceId) {
-      const { apiKey: _apiKey, workspace: _workspace } =
-        await this.validateAPIKey(payload);
-
-      workspace = _workspace;
-      apiKey = _apiKey || null;
-    } else if (payload.type === 'API_KEY') {
-      const { apiKey: _apiKey, workspace: _workspace } =
-        await this.validateAPIKey(payload);
-
-      workspace = _workspace;
-      apiKey = _apiKey || null;
-    } else {
-      const { user: _user, workspace: _workspace } =
-        await this.validateAccessToken(payload);
-
-      workspace = _workspace;
-      user = _user || null;
-    }
-
-    // We don't check if the user is a member of the workspace yet
     const workspaceMemberId = payload.workspaceMemberId;
 
-    return { user, apiKey, workspace, workspaceMemberId };
+    if (!payload.type && !payload.workspaceId) {
+      return await { ...this.validateAPIKey(payload), workspaceMemberId };
+    }
+
+    if (payload.type === 'API_KEY') {
+      return await { ...this.validateAPIKey(payload), workspaceMemberId };
+    }
+
+    return await { ...this.validateAccessToken(payload), workspaceMemberId };
   }
 }
