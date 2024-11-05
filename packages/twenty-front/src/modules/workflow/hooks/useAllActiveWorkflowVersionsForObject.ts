@@ -8,7 +8,7 @@ import {
   WorkflowVersion,
 } from '@/workflow/types/Workflow';
 
-export const useAllActiveWorkflowVersions = ({
+export const useAllActiveWorkflowVersionsForObject = ({
   objectNameSingular,
   triggerType,
 }: {
