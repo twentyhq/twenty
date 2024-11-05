@@ -55,7 +55,7 @@ export const useCommandMenu = () => {
               type: CommandType.Action,
             }));
 
-          setCommands( [...commands, ...actionCommands]);
+          setCommands([...commands, ...actionCommands]);
         }
 
         setIsCommandMenuOpened(true);
