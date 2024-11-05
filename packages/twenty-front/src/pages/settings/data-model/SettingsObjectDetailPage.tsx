@@ -49,7 +49,7 @@ const StyledTabListContainer = styled.div`
 
 const StyledContentContainer = styled.div`
   flex: 1;
-  overflow-y: auto;
+  width: 100%;
   padding-left: 0;
 `;
 
@@ -142,6 +142,12 @@ export const SettingsObjectDetailPage = () => {
 
   return (
     <SubMenuTopBarContainer
+      title={
+        <StyledTitleContainer>
+          <H3Title title={objectMetadataItem.labelPlural} />
+          <StyledObjectTypeTag objectTypeLabel={objectTypeLabel} />
+        </StyledTitleContainer>
+      }
       links={[
         {
           children: 'Workspace',
@@ -167,10 +173,6 @@ export const SettingsObjectDetailPage = () => {
       }
     >
       <SettingsPageContainer>
-        <StyledTitleContainer>
-          <H3Title title={objectMetadataItem.labelPlural} />
-          <StyledObjectTypeTag objectTypeLabel={objectTypeLabel} />
-        </StyledTitleContainer>
         <StyledTabListContainer>
           <TabList
             tabListId={TAB_LIST_COMPONENT_ID}

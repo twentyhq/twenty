@@ -41,7 +41,7 @@ const StyledDescription = styled.h3`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin: 0;
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 type SyncObjectLabelAndNameToggleProps = {

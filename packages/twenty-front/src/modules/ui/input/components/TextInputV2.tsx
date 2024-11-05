@@ -102,7 +102,7 @@ const StyledTrailingIconContainer = styled.div<
   border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTrailingIcon = styled.div`
