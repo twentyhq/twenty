@@ -1,6 +1,6 @@
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
+import { RecordShowRightDrawerActionMenuButtonHotkeyScope } from '@/action-menu/types/RecordShowRightDrawerActionMenuButtonHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
@@ -27,7 +27,8 @@ export const RecordShowRightDrawerActionMenuButton = () => {
     <Dropdown
       dropdownId={`record-show-right-drawer-action-menu-dropdown-${actionMenuId}`}
       dropdownHotkeyScope={{
-        scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
+        scope:
+          RecordShowRightDrawerActionMenuButtonHotkeyScope.RecordShowRightDrawerActionMenuButton,
       }}
       data-select-disable
       clickableComponent={<Button title="Actions" shortcut="⌘O" />}
