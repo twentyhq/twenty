@@ -77,7 +77,7 @@ export const RecordBoardColumnCardsContainer = ({
     >
       <Draggable
         draggableId={`new-${columnDefinition.id}-top`}
-        index={recordIds.length}
+        index={-1}
         isDragDisabled={true}
       >
         {(draggableProvided) => (
