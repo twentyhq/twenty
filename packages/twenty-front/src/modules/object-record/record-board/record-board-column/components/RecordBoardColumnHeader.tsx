@@ -1,18 +1,16 @@
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
-import { IconDotsVertical, IconPlus, LightIconButton, Tag } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
 import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { IconDotsVertical, IconPlus, LightIconButton, Tag } from 'twenty-ui';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -102,12 +100,9 @@ export const RecordBoardColumnHeader = () => {
 
   const boardColumnTotal = 0;
 
-  const {
-    newRecord,
-    handleNewButtonClick,
-    handleCreateSuccess,
-    handleEntitySelect,
-  } = useColumnNewCardActions(columnDefinition?.id ?? '');
+  const { handleNewButtonClick } = useColumnNewCardActions(
+    columnDefinition?.id ?? '',
+  );
 
   const { isOpportunitiesCompanyFieldDisabled } =
     useIsOpportunitiesCompanyFieldDisabled();
@@ -173,26 +168,6 @@ export const RecordBoardColumnHeader = () => {
           stageId={columnDefinition.id}
         />
       )}
-      {newRecord?.isCreating &&
-        newRecord.position === 'first' &&
-        (newRecord.isOpportunity ? (
-          <SingleEntitySelect
-            disableBackgroundBlur
-            onCancel={() => handleCreateSuccess('first', columnDefinition.id)}
-            onEntitySelected={(company) =>
-              company && handleEntitySelect('first', company)
-            }
-            relationObjectNameSingular={CoreObjectNameSingular.Company}
-            relationPickerScopeId="relation-picker"
-            selectedRelationRecordIds={[]}
-          />
-        ) : (
-          <RecordBoardCard
-            isCreating={true}
-            onCreateSuccess={() => handleCreateSuccess('first')}
-            position="first"
-          />
-        ))}
     </StyledColumn>
   );
 };
