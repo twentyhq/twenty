@@ -10,7 +10,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
+import { IconComponent, IconEye, IconEyeOff, RGBA } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -33,6 +33,7 @@ const StyledInputContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+  position: relative;
 `;
 
 const StyledInput = styled.input<
@@ -42,11 +43,8 @@ const StyledInput = styled.input<
   border: 1px solid
     ${({ theme, error }) =>
       error ? theme.border.color.danger : theme.border.color.medium};
-  border-bottom-left-radius: ${({ theme, LeftIcon }) =>
-    !LeftIcon && theme.border.radius.sm};
-  border-right: none;
   border-left: ${({ LeftIcon }) => LeftIcon && 'none'};
-  border-top-left-radius: ${({ theme, LeftIcon }) =>
+  border-radius: ${({ theme, LeftIcon }) =>
     !LeftIcon && theme.border.radius.sm};
   box-sizing: border-box;
   color: ${({ theme }) => theme.font.color.primary};
@@ -68,6 +66,13 @@ const StyledInput = styled.input<
 
   &:disabled {
     color: ${({ theme }) => theme.font.color.tertiary};
+  }
+
+  &:focus {
+    ${({ theme }) => {
+      return `box-shadow: 0px 0px 0px 3px ${RGBA(theme.color.blue, 0.1)};
+      border-color: ${theme.color.blue};`;
+    }};
   }
 `;
 
@@ -93,16 +98,14 @@ const StyledTrailingIconContainer = styled.div<
   Pick<TextInputV2ComponentProps, 'error'>
 >`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid
-    ${({ theme, error }) =>
-      error ? theme.border.color.danger : theme.border.color.medium};
-  border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
-  border-left: none;
-  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   justify-content: center;
   padding-right: ${({ theme }) => theme.spacing(1)};
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto 0;
 `;
 
 const StyledTrailingIcon = styled.div`
