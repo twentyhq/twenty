@@ -1,6 +1,6 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
-import { RecordShowRightDrawerActionMenuBar } from '@/action-menu/components/RecordShowRightDrawerActionMenuBar';
+import { RecordShowRightDrawerActionMenuButton } from '@/action-menu/components/RecordShowRightDrawerActionMenuButton';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
@@ -20,7 +20,7 @@ export const RecordShowRightDrawerActionMenu = () => {
             onActionExecutedCallback: () => {},
           }}
         >
-          <RecordShowRightDrawerActionMenuBar />
+          <RecordShowRightDrawerActionMenuButton />
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />
         </ActionMenuContext.Provider>
