@@ -165,11 +165,7 @@ export const SignInUpForm = () => {
               Icon={() => <IconGoogle size={theme.icon.size.lg} />}
               title="Continue with Google"
               onClick={signInWithGoogle}
-              variant={
-                signInUpStep === SignInUpStep.Init
-                  ? undefined
-                  : 'secondary'
-              }
+              variant="secondary"
               fullWidth
             />
             <HorizontalSeparator visible={false} />
@@ -182,11 +178,7 @@ export const SignInUpForm = () => {
               Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
               title="Continue with Microsoft"
               onClick={signInWithMicrosoft}
-              variant={
-                signInUpStep === SignInUpStep.Init
-                  ? undefined
-                  : 'secondary'
-              }
+              variant="secondary"
               fullWidth
             />
             <HorizontalSeparator visible={false} />
@@ -196,11 +188,7 @@ export const SignInUpForm = () => {
           <>
             <MainButton
               Icon={() => <IconKey size={theme.icon.size.lg} />}
-              variant={
-                signInUpStep === SignInUpStep.Init
-                  ? undefined
-                  : 'secondary'
-              }
+              variant="secondary"
               title={
                 signInUpStep === SignInUpStep.SSOEmail
                   ? 'Continue with email'
@@ -213,11 +201,10 @@ export const SignInUpForm = () => {
           </>
         )}
 
-        {signInUpStep !== SignInUpStep.Init && (authProviders.google ||
-          authProviders.microsoft ||
-          authProviders.sso) &&(
-          <HorizontalSeparator visible />
-        )}
+        {signInUpStep !== SignInUpStep.Init &&
+          (authProviders.google ||
+            authProviders.microsoft ||
+            authProviders.sso) && <HorizontalSeparator visible />}
 
         {authProviders.password &&
           (signInUpStep === SignInUpStep.Password ||
@@ -311,7 +298,9 @@ export const SignInUpForm = () => {
               <MainButton
                 title={buttonTitle}
                 type="submit"
-                variant="primary"
+                variant={
+                  signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
+                }
                 onClick={async () => {
                   if (signInUpStep === SignInUpStep.Init) {
                     continueWithEmail();
@@ -331,9 +320,9 @@ export const SignInUpForm = () => {
                 Icon={() =>
                   form.formState.isSubmitting ? (
                     <Loader />
-                  ) : (
-                    signInUpStep === SignInUpStep.Init ? <IconMail size={theme.icon.size.lg} /> : null
-                  )
+                  ) : signInUpStep === SignInUpStep.Init ? (
+                    <IconMail size={theme.icon.size.lg} />
+                  ) : null
                 }
                 disabled={isSubmitButtonDisabled}
                 fullWidth
