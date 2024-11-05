@@ -11,4 +11,7 @@ export class FunctionParameter {
   @IsString()
   @Field(() => String)
   type: string;
+
+  @Field(() => [FunctionParameter])
+  properties?: FunctionParameter[];
 }
