@@ -20,14 +20,13 @@ import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDraw
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
-import { FileFolder } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { getFileType } from '../files/utils/getFileType';
 
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
-import { useUploadAttachment } from '@/activities/files/hooks/useUploadAttachment';
+import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -121,14 +120,17 @@ export const RichTextEditor = ({
     canCreateActivityState,
   );
 
-  const { uploadAttachment } = useUploadAttachment();
+  const { uploadAttachmentFile } = useUploadAttachmentFile();
 
-  const handleUploadAttachment = async (file: File): Promise<string> => {
+  const handleUploadAttachment = async (file: File) => {
     if (isUndefinedOrNull(file)) {
       return '';
     }
 
-    return await uploadAttachment(file, FileFolder.Attachment);
+    return await uploadAttachmentFile(file, {
+      id: activityId,
+      targetObjectNameSingular: activityObjectNameSingular,
+    });
   };
 
   const prepareBody = (newStringifiedBody: string) => {
@@ -142,7 +144,7 @@ export const RichTextEditor = ({
       }
 
       const imageProps = block.props;
-      const imageUrl = new URL(imageProps.url);
+      const imageUrl = new URL(`http://localhost:3000/files/${imageProps.url}`);
 
       imageUrl.searchParams.delete('token');
 
