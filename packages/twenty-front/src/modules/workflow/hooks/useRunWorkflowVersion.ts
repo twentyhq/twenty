@@ -1,6 +1,6 @@
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVersion';
-import { ApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import {
   RunWorkflowVersionMutation,
   RunWorkflowVersionMutationVariables,
@@ -12,7 +12,7 @@ export const useRunWorkflowVersion = () => {
     RunWorkflowVersionMutation,
     RunWorkflowVersionMutationVariables
   >(RUN_WORKFLOW_VERSION, {
-    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient,
   });
 
   const runWorkflowVersion = async (
