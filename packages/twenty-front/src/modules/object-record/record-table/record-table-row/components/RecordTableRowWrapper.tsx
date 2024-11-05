@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
-import { ReactNode, useContext, useEffect } from 'react';
+import { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
@@ -23,6 +23,8 @@ export const RecordTableRowWrapper = ({
   isPendingRow?: boolean;
   children: ReactNode;
 }) => {
+  const trRef = useRef<HTMLTableRowElement>(null);
+
   const { objectMetadataItem } = useContext(RecordTableContext);
   const { onIndexRecordsLoaded } = useContext(RecordIndexRootPropsContext);
 
@@ -44,6 +46,18 @@ export const RecordTableRowWrapper = ({
     rootMargin: '1000px',
   });
 
+  const [cellWidths, setCellWidths] = useState<number[]>([]);
+
+  useEffect(() => {
+    const tdArray = Array.from(trRef.current?.getElementsByTagName('td') ?? []);
+
+    const tdWidths = tdArray.map((td) => {
+      return td.getBoundingClientRect().width;
+    });
+
+    setCellWidths(tdWidths);
+  }, [trRef]);
+
   // TODO: find a better way to emit this event
   useEffect(() => {
     if (inView) {
@@ -56,6 +70,7 @@ export const RecordTableRowWrapper = ({
       {(draggableProvided, draggableSnapshot) => (
         <RecordTableTr
           ref={(node) => {
+            (trRef as any).current = node;
             elementRef(node);
             draggableProvided.innerRef(node);
           }}
@@ -89,6 +104,7 @@ export const RecordTableRowWrapper = ({
               isDragging: draggableSnapshot.isDragging,
               dragHandleProps: draggableProvided.dragHandleProps,
               inView,
+              cellWidths,
             }}
           >
             {children}

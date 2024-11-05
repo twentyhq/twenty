@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
 `;
 
 export const RecordTableCellCheckbox = () => {
-  const { isSelected, isDragging } = useContext(RecordTableRowContext);
+  const { isSelected } = useContext(RecordTableRowContext);
 
   const { setCurrentRowSelected } = useSetCurrentRowSelected();
 
@@ -27,7 +27,7 @@ export const RecordTableCellCheckbox = () => {
   return (
     <RecordTableTd isSelected={isSelected} hasRightBorder={false}>
       <StyledContainer onClick={handleClick}>
-        {!isDragging && <Checkbox hoverable checked={isSelected} />}
+        <Checkbox hoverable checked={isSelected} />
       </StyledContainer>
     </RecordTableTd>
   );
