@@ -56,7 +56,7 @@ export const useUpdateOneFieldMetadataItem = () => {
       | 'options'
     >;
   }) => {
-    await mutate({
+    const result = await mutate({
       variables: {
         idToUpdate: fieldMetadataIdToUpdate,
         updatePayload: {
@@ -79,6 +79,8 @@ export const useUpdateOneFieldMetadataItem = () => {
       },
       fetchPolicy: 'network-only',
     });
+
+    return result;
   };
 
   return {
