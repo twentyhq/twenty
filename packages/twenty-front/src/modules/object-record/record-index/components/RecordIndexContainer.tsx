@@ -171,6 +171,8 @@ export const RecordIndexContainer = () => {
                 return;
               }
 
+              console.log('CURRENT VIEW CHANGE !');
+
               onViewFieldsChange(view.viewFields);
               onViewGroupsChange(view.viewGroups);
               setTableViewFilterGroups(view.viewFilterGroups ?? []);

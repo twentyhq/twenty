@@ -38,6 +38,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useObjectMetadataViews } from '@/views/hooks/useObjectMetadataViews';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -65,6 +66,10 @@ export const SettingsObjectFieldEdit = () => {
   const { findObjectMetadataItemBySlug } = useFilteredObjectMetadataItems();
 
   const objectMetadataItem = findObjectMetadataItemBySlug(objectSlug);
+
+  const { fetchObjectMetadataViews } = useObjectMetadataViews({
+    objectMetadataId: objectMetadataItem?.id,
+  });
 
   const { deactivateMetadataField, activateMetadataField } =
     useFieldMetadataItem();
@@ -156,6 +161,8 @@ export const SettingsObjectFieldEdit = () => {
           updatePayload: formattedInput,
         });
       }
+
+      fetchObjectMetadataViews();
 
       navigate(`/settings/objects/${objectSlug}`);
 
