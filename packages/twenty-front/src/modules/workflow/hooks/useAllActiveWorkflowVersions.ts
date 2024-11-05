@@ -58,6 +58,7 @@ export const useAllActiveWorkflowVersions = ({
     },
   });
 
+  // TODO: refactor when we can use 'not like' in the RawJson filter
   if (!isDefined(objectMetadataItem)) {
     return {
       records: records.filter(
