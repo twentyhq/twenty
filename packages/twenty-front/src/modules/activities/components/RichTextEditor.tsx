@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 import { useCreateBlockNote } from '@blocknote/react';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
-import { ClipboardEvent, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
@@ -21,9 +21,6 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
 import { isDefined } from '~/utils/isDefined';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-
-import { getFileType } from '../files/utils/getFileType';
 
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
@@ -123,10 +120,6 @@ export const RichTextEditor = ({
   const { uploadAttachmentFile } = useUploadAttachmentFile();
 
   const handleUploadAttachment = async (file: File) => {
-    if (isUndefinedOrNull(file)) {
-      return '';
-    }
-
     return await uploadAttachmentFile(file, {
       id: activityId,
       targetObjectNameSingular: activityObjectNameSingular,
@@ -144,9 +137,7 @@ export const RichTextEditor = ({
       }
 
       const imageProps = block.props;
-      const imageUrl = new URL(`http://localhost:3000/files/${imageProps.url}`);
-
-      imageUrl.searchParams.delete('token');
+      const imageUrl = new URL(imageProps.url);
 
       return {
         ...block,
@@ -278,64 +269,18 @@ export const RichTextEditor = ({
     }
   }, [activity, activityBody]);
 
+  const handleEditorBuiltInUploadFile = async (file: File) => {
+    const { attachementAbsoluteURL } = await handleUploadAttachment(file);
+
+    return attachementAbsoluteURL;
+  };
+
   const editor = useCreateBlockNote({
     initialContent: initialBody,
     domAttributes: { editor: { class: 'editor' } },
     schema: BLOCK_SCHEMA,
-    uploadFile: handleUploadAttachment,
+    uploadFile: handleEditorBuiltInUploadFile,
   });
-
-  const handleImagePaste = async (event: ClipboardEvent) => {
-    const clipboardItems = event.clipboardData?.items;
-
-    if (isDefined(clipboardItems)) {
-      for (let i = 0; i < clipboardItems.length; i++) {
-        if (clipboardItems[i].kind === 'file') {
-          const isImage = clipboardItems[i].type.match('^image/');
-          const pastedFile = clipboardItems[i].getAsFile();
-          if (!pastedFile) {
-            return;
-          }
-
-          const attachmentUrl = await handleUploadAttachment(pastedFile);
-
-          if (!attachmentUrl) {
-            return;
-          }
-
-          if (isDefined(isImage)) {
-            editor?.insertBlocks(
-              [
-                {
-                  type: 'image',
-                  props: {
-                    url: attachmentUrl,
-                  },
-                },
-              ],
-              editor?.getTextCursorPosition().block,
-              'after',
-            );
-          } else {
-            editor?.insertBlocks(
-              [
-                {
-                  type: 'file',
-                  props: {
-                    url: attachmentUrl,
-                    fileType: getFileType(pastedFile.name),
-                    name: pastedFile.name,
-                  },
-                },
-              ],
-              editor?.getTextCursorPosition().block,
-              'after',
-            );
-          }
-        }
-      }
-    }
-  };
 
   useScopedHotkeys(
     Key.Escape,
@@ -421,7 +366,6 @@ export const RichTextEditor = ({
     <BlockEditor
       onFocus={handleBlockEditorFocus}
       onBlur={handlerBlockEditorBlur}
-      onPaste={handleImagePaste}
       onChange={handleEditorChange}
       editor={editor}
     />
