@@ -15,6 +15,9 @@ export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
   input: {
     serverlessFunctionId: string;
     serverlessFunctionVersion: string;
+    serverlessFunctionInput: {
+      [hello: string]: any;
+    };
   };
 };
 
