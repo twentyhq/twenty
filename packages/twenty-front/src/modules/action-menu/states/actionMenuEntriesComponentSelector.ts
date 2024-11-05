@@ -8,7 +8,7 @@ export const actionMenuEntriesComponentSelector = createComponentSelectorV2<
   ActionMenuEntry[]
 >({
   key: 'actionMenuEntriesComponentSelector',
-  instanceContext: ActionMenuComponentInstanceContext,
+  componentInstanceContext: ActionMenuComponentInstanceContext,
   get:
     ({ instanceId }) =>
     ({ get }) =>

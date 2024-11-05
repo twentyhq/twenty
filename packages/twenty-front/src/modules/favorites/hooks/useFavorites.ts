@@ -129,9 +129,9 @@ export const useFavorites = () => {
 
     createOneFavorite({
       [targetObjectNameSingular]: targetRecord,
+      [`${targetObjectNameSingular}Id`]: targetRecord.id,
       position: maxPosition + 1,
       workspaceMemberId: currentWorkspaceMemberId,
-      favoriteFolderId,
     });
   };
 

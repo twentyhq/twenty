@@ -1,14 +1,3 @@
-import { useTheme } from '@emotion/react';
-import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import {
-  IconDotsVertical,
-  IconFolder,
-  IconHeartOff,
-  IconPencil,
-  IconTrash,
-} from 'twenty-ui';
-
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
 import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
 import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
@@ -26,6 +15,16 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
+import { useTheme } from '@emotion/react';
+import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import {
+  IconDotsVertical,
+  IconFolder,
+  IconHeartOff,
+  IconPencil,
+  IconTrash,
+} from 'twenty-ui';
 
 type CurrentWorkspaceMemberFavoritesProps = {
   folder: {
