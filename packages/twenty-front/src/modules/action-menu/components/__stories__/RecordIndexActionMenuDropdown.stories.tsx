@@ -31,48 +31,42 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
             { x: 10, y: 10 },
           );
 
-          const entryType: ActionMenuEntry['type'] = 'standard';
+          const map = new Map<string, ActionMenuEntry>();
 
           set(
             actionMenuEntriesComponentState.atomFamily({
               instanceId: 'story-action-menu',
             }),
-            new Map([
-              [
-                'delete',
-                {
-                  type: entryType,
-                  key: 'delete',
-                  label: 'Delete',
-                  position: 0,
-                  Icon: IconTrash,
-                  onClick: deleteMock,
-                },
-              ],
-              [
-                'markAsDone',
-                {
-                  type: entryType,
-                  key: 'markAsDone',
-                  label: 'Mark as done',
-                  position: 1,
-                  Icon: IconCheckbox,
-                  onClick: markAsDoneMock,
-                },
-              ],
-              [
-                'addToFavorites',
-                {
-                  type: entryType,
-                  key: 'addToFavorites',
-                  label: 'Add to favorites',
-                  position: 2,
-                  Icon: IconHeart,
-                  onClick: addToFavoritesMock,
-                },
-              ],
-            ]),
+            map,
           );
+
+          map.set('delete', {
+            type: 'standard',
+            key: 'delete',
+            label: 'Delete',
+            position: 0,
+            Icon: IconTrash,
+            onClick: deleteMock,
+          });
+
+          map.set('markAsDone', {
+            type: 'standard',
+            key: 'markAsDone',
+            label: 'Mark as done',
+            position: 1,
+            Icon: IconCheckbox,
+            onClick: markAsDoneMock,
+          });
+
+          map.set('addToFavorites', {
+            type: 'standard',
+            key: 'addToFavorites',
+            label: 'Add to favorites',
+            position: 2,
+            Icon: IconHeart,
+            onClick: addToFavoritesMock,
+          });
+
           set(
             extractComponentState(
               isDropdownOpenComponentState,

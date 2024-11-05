@@ -44,49 +44,42 @@ const meta: Meta<typeof RecordShowRightDrawerActionMenuBar> = {
             1,
           );
 
-          const entryType: ActionMenuEntry['type'] = 'standard';
+          const map = new Map<string, ActionMenuEntry>();
 
           set(
             actionMenuEntriesComponentState.atomFamily({
               instanceId: 'story-action-menu',
             }),
-            new Map([
-              [
-                'addToFavorites',
-                {
-                  type: entryType,
-                  key: 'addToFavorites',
-                  label: 'Add to favorites',
-                  position: 0,
-                  Icon: IconHeart,
-                  onClick: addToFavoritesMock,
-                },
-              ],
-              [
-                'export',
-                {
-                  type: entryType,
-                  key: 'export',
-                  label: 'Export',
-                  position: 1,
-                  Icon: IconFileExport,
-                  onClick: exportMock,
-                },
-              ],
-              [
-                'delete',
-                {
-                  type: entryType,
-                  key: 'delete',
-                  label: 'Delete',
-                  position: 2,
-                  Icon: IconTrash,
-                  onClick: deleteMock,
-                  accent: 'danger' as MenuItemAccent,
-                },
-              ],
-            ]),
+            map,
           );
+
+          map.set('addToFavorites', {
+            type: 'standard',
+            key: 'addToFavorites',
+            label: 'Add to favorites',
+            position: 0,
+            Icon: IconHeart,
+            onClick: addToFavoritesMock,
+          });
+
+          map.set('export', {
+            type: 'standard',
+            key: 'export',
+            label: 'Export',
+            position: 1,
+            Icon: IconFileExport,
+            onClick: exportMock,
+          });
+
+          map.set('delete', {
+            type: 'standard',
+            key: 'delete',
+            label: 'Delete',
+            position: 2,
+            Icon: IconTrash,
+            onClick: deleteMock,
+            accent: 'danger' as MenuItemAccent,
+          });
         }}
       >
         <ActionMenuComponentInstanceContext.Provider

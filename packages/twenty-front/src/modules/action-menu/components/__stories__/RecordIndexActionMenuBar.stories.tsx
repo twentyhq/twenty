@@ -42,25 +42,22 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
               3,
             );
 
-            const entryType: ActionMenuEntry['type'] = 'standard';
+            const map = new Map<string, ActionMenuEntry>();
+
+            map.set('delete', {
+              type: 'standard',
+              key: 'delete',
+              label: 'Delete',
+              position: 0,
+              Icon: IconTrash,
+              onClick: deleteMock,
+            });
 
             set(
               actionMenuEntriesComponentState.atomFamily({
                 instanceId: 'story-action-menu',
               }),
-              new Map([
-                [
-                  'delete',
-                  {
-                    type: entryType,
-                    key: 'delete',
-                    label: 'Delete',
-                    position: 0,
-                    Icon: IconTrash,
-                    onClick: deleteMock,
-                  },
-                ],
-              ]),
+              map,
             );
             set(
               isBottomBarOpenedComponentState.atomFamily({
