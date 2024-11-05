@@ -204,7 +204,9 @@ export const SignInUpForm = () => {
           </>
         )}
 
-        {signInUpStep !== SignInUpStep.Init && (
+        {signInUpStep !== SignInUpStep.Init && (authProviders.google ||
+          authProviders.microsoft ||
+          authProviders.sso) &&(
           <HorizontalSeparator visible />
         )}
 
