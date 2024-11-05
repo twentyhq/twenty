@@ -13,6 +13,7 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const MainNavigationDrawerItems = () => {
@@ -35,22 +36,26 @@ export const MainNavigationDrawerItems = () => {
     <>
       {!isMobile && (
         <NavigationDrawerSection>
-          <NavigationDrawerItem
-            label="Search"
-            Icon={IconSearch}
-            onClick={toggleCommandMenu}
-            keyboard={['⌘', 'K']}
-          />
-          <NavigationDrawerItem
-            label="Settings"
-            to={'/settings/profile'}
-            onClick={() => {
-              setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
-              setIsNavigationDrawerExpanded(true);
-              setNavigationMemorizedUrl(location.pathname + location.search);
-            }}
-            Icon={IconSettings}
-          />
+          <ScrollWrapper contextProviderName="navigationDrawer">
+            <NavigationDrawerItem
+              label="Search"
+              Icon={IconSearch}
+              onClick={toggleCommandMenu}
+              keyboard={['⌘', 'K']}
+            />
+            <NavigationDrawerItem
+              label="Settings"
+              to={'/settings/profile'}
+              onClick={() => {
+                setNavigationDrawerExpandedMemorized(
+                  isNavigationDrawerExpanded,
+                );
+                setIsNavigationDrawerExpanded(true);
+                setNavigationMemorizedUrl(location.pathname + location.search);
+              }}
+              Icon={IconSettings}
+            />
+          </ScrollWrapper>
         </NavigationDrawerSection>
       )}
 
