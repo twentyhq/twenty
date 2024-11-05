@@ -2,9 +2,9 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 import {
-  IconButton,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
+  LightIconButton,
 } from 'twenty-ui';
 
 const StyledCollapseButton = styled.div`
@@ -39,13 +39,13 @@ export const NavigationDrawerCollapseButton = ({
         )
       }
     >
-      <IconButton
+      <LightIconButton
         Icon={
           direction === 'left'
             ? IconLayoutSidebarLeftCollapse
             : IconLayoutSidebarRightCollapse
         }
-        variant="tertiary"
+        accent="tertiary"
         size="small"
       />
     </StyledCollapseButton>
