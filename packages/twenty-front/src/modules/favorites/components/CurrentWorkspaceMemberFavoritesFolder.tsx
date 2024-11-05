@@ -15,6 +15,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -139,7 +140,8 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
               }
             />
           )}
-          {favoritesByFolder.map((folder) => (
+        <ScrollWrapper contextProviderName="navigationDrawer">
+        {favoritesByFolder.map((folder) => (
             <CurrentWorkspaceMemberFavorites
               key={folder.folderId}
               folder={folder}
@@ -186,6 +188,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
               ))}
             />
           )}
+          </ScrollWrapper>
         </>
       )}
     </StyledContainer>

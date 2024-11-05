@@ -16,8 +16,8 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 
-const StyledContainer = styled.div`
-  overflow: scroll;
+const StyledMainSection = styled(NavigationDrawerSection)`
+  min-height: fit-content;
 `;
 
 export const MainNavigationDrawerItems = () => {
@@ -39,7 +39,7 @@ export const MainNavigationDrawerItems = () => {
   return (
     <>
       {!isMobile && (
-        <NavigationDrawerSection>
+        <StyledMainSection>
           <NavigationDrawerItem
             label="Search"
             Icon={IconSearch}
@@ -56,9 +56,8 @@ export const MainNavigationDrawerItems = () => {
             }}
             Icon={IconSettings}
           />
-        </NavigationDrawerSection>
+        </StyledMainSection>
       )}
-      <StyledContainer>
         {isWorkspaceFavoriteEnabled && <NavigationDrawerOpenedSection />}
 
         <CurrentWorkspaceMemberFavoritesFolders />
@@ -71,7 +70,6 @@ export const MainNavigationDrawerItems = () => {
           />
         )}
         <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
-      </StyledContainer>
     </>
   );
 };
