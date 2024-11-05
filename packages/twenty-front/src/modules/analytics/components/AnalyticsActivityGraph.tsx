@@ -1,16 +1,16 @@
-import { useGraphData } from '@/analytics/hooks/useGraphData';
-
 import { WebhookAnalyticsTooltip } from '@/analytics/components/WebhookAnalyticsTooltip';
-import { useAnalyticsGraphDataState } from '@/analytics/hooks/useAnalyticsGraphDataState';
+import { useGraphData } from '@/analytics/hooks/useGraphData';
+import { analyticsGraphDataComponentState } from '@/analytics/states/analyticsGraphDataComponentState';
+import { AnalyticsComponentProps as AnalyticsActivityGraphProps } from '@/analytics/types/AnalyticsComponentProps';
+import { computeAnalyticsGraphDataFunction } from '@/analytics/utils/computeAnalyticsGraphDataFunction';
 import { Select } from '@/ui/input/components/Select';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ResponsiveLine } from '@nivo/line';
 import { Section } from '@react-email/components';
-import { useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useId, useState } from 'react';
 import { H2Title } from 'twenty-ui';
-import { AnalyticsTinybirdJwtMap } from '~/generated-metadata/graphql';
 
 const StyledGraphContainer = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -27,21 +27,13 @@ const StyledTitleContainer = styled.div`
   justify-content: space-between;
 `;
 
-type AnalyticsActivityGraphProps = {
-  recordId: string;
-  recordType: string;
-  endpointName: keyof AnalyticsTinybirdJwtMap;
-};
-
 export const AnalyticsActivityGraph = ({
   recordId,
-  recordType,
   endpointName,
 }: AnalyticsActivityGraphProps) => {
-  const { analyticsState, transformDataFunction } =
-    useAnalyticsGraphDataState(endpointName);
-  const analytics = useRecoilValue(analyticsState);
-  const setAnalyticsGraphData = useSetRecoilState(analyticsState);
+  const [analyticsGraphData, setAnalyticsGraphData] = useRecoilComponentStateV2(
+    analyticsGraphDataComponentState,
+  );
   const theme = useTheme();
 
   const [windowLengthGraphOption, setWindowLengthGraphOption] = useState<
@@ -50,21 +42,24 @@ export const AnalyticsActivityGraph = ({
 
   const { fetchGraphData } = useGraphData({
     recordId,
-    recordType,
     endpointName,
   });
 
+  const transformDataFunction = computeAnalyticsGraphDataFunction(endpointName);
+
+  const dropdownId = useId();
+
   return (
     <>
-      {analytics.length ? (
+      {analyticsGraphData.length ? (
         <Section>
           <StyledTitleContainer>
             <H2Title
               title="Activity"
-              description={`See your ${recordType} activity over time`}
+              description={`See your REPLACE_ME activity over time`}
             />
             <Select
-              dropdownId={`test-id-${endpointName}-graph`}
+              dropdownId={dropdownId}
               value={windowLengthGraphOption}
               options={[
                 { value: '7D', label: 'This week' },
@@ -83,10 +78,12 @@ export const AnalyticsActivityGraph = ({
 
           <StyledGraphContainer>
             <ResponsiveLine
-              data={analytics}
+              data={analyticsGraphData}
               curve={'monotoneX'}
               enableArea={true}
-              colors={(d) => d.color}
+              colors={{ scheme: 'set1' }}
+              //it "addapts" to the color scheme of the graph without hardcoding them
+              //is there a color scheme for graph Data in twenty? Do we always want the gradient?
               theme={{
                 text: {
                   fill: theme.font.color.light,
@@ -153,7 +150,7 @@ export const AnalyticsActivityGraph = ({
                 type: 'linear',
               }}
               axisBottom={{
-                format: '%b %d, %I:%M %p',
+                format: '%b %d, %I:%M %p', //TDO: add the user prefered time format for the graph
                 tickValues: 2,
                 tickPadding: 5,
                 tickSize: 6,

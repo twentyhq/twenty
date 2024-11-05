@@ -1,23 +1,29 @@
 import { NivoLineInput } from '@/analytics/types/NivoLineInput';
-
-export const mapWebhookAnalyticsResultToNivoLineInput = (
-  webhookAnalyticsResult: {
+//DOING: Adding the servelessFunctionDurationGraph to twenty
+export const mapServerlessFunctionDurationToNivoLineInput = (
+  serverlessFunctionDurationResult: {
     start: string;
-    failure_count: number;
-    success_count: number;
+    minimum: number;
+    maximum: number;
+    average: number;
   }[],
 ): NivoLineInput[] => {
-  return webhookAnalyticsResult
+  return serverlessFunctionDurationResult
     .flatMap((dataRow) => [
       {
         x: new Date(dataRow.start),
-        y: dataRow.failure_count,
-        id: 'Failed',
+        y: dataRow.maximum,
+        id: 'Maximum',
       },
       {
         x: new Date(dataRow.start),
-        y: dataRow.success_count,
-        id: 'Succeeded',
+        y: dataRow.minimum,
+        id: 'Minimum',
+      },
+      {
+        x: new Date(dataRow.start),
+        y: dataRow.average,
+        id: 'Average',
       },
     ])
     .reduce(

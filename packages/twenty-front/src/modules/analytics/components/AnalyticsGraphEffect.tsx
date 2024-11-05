@@ -1,48 +1,34 @@
-import { useAnalyticsGraphDataState } from '@/analytics/hooks/useAnalyticsGraphDataState';
 import { useGraphData } from '@/analytics/hooks/useGraphData';
-
+import { analyticsGraphDataComponentState } from '@/analytics/states/analyticsGraphDataComponentState';
+import { AnalyticsComponentProps as AnalyticsGraphEffectProps } from '@/analytics/types/AnalyticsComponentProps';
+import { computeAnalyticsGraphDataFunction } from '@/analytics/utils/computeAnalyticsGraphDataFunction';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useEffect, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
-import { AnalyticsTinybirdJwtMap } from '~/generated-metadata/graphql';
-
-type AnalyticsGraphEffectProps = {
-  recordId: string;
-  recordType: string;
-  endpointName: keyof AnalyticsTinybirdJwtMap;
-};
 
 export const AnalyticsGraphEffect = ({
   recordId,
-  recordType,
   endpointName,
 }: AnalyticsGraphEffectProps) => {
-  const { analyticsState, transformDataFunction } =
-    useAnalyticsGraphDataState(endpointName);
-  const setGraphData = useSetRecoilState(analyticsState);
+  const setAnalyticsGraphData = useSetRecoilComponentStateV2(
+    analyticsGraphDataComponentState,
+  );
+
+  const transformDataFunction = computeAnalyticsGraphDataFunction(endpointName);
   const [isLoaded, setIsLoaded] = useState(false);
 
   const { fetchGraphData } = useGraphData({
     recordId,
-    recordType,
     endpointName,
   });
 
   useEffect(() => {
     if (!isLoaded) {
       fetchGraphData('7D').then((graphInput) => {
-        setGraphData(transformDataFunction(graphInput));
+        setAnalyticsGraphData(transformDataFunction(graphInput));
       });
       setIsLoaded(true);
     }
-  }, [
-    fetchGraphData,
-    isLoaded,
-    setGraphData,
-    recordId,
-    recordType,
-    endpointName,
-    transformDataFunction,
-  ]);
+  }, [fetchGraphData, isLoaded, setAnalyticsGraphData, transformDataFunction]);
 
   return <></>;
 };

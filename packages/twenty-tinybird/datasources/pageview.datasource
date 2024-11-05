@@ -9,7 +9,7 @@ SCHEMA >
     `userAgent` String `json:$.userAgent`,
     `userId` String `json:$.userId` DEFAULT '',
     `version` String `json:$.version`,
-    `workspaceId` String `json:$.workspaceId`
+    `workspaceId` String `json:$.workspaceId` DEFAULT ''
 
 ENGINE MergeTree
 ENGINE_PARTITION_KEY toYear(timestamp)

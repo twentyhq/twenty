@@ -17,6 +17,7 @@ import {
 
 import { AnalyticsActivityGraph } from '@/analytics/components/AnalyticsActivityGraph';
 import { AnalyticsGraphEffect } from '@/analytics/components/AnalyticsGraphEffect';
+import { AnalyticsGraphDataInstanceContext } from '@/analytics/states/contexts/AnalyticsGraphDataInstanceContext';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -281,18 +282,18 @@ export const SettingsDevelopersWebhooksDetail = () => {
           ))}
         </Section>
         {isAnalyticsEnabled && isAnalyticsV2Enabled && (
-          <>
+          <AnalyticsGraphDataInstanceContext.Provider
+            value={{ instanceId: `webhook-${webhookId}` }}
+          >
             <AnalyticsGraphEffect
               recordId={webhookId}
-              recordType="webhook"
               endpointName="getWebhookAnalytics"
             />
             <AnalyticsActivityGraph
               recordId={webhookId}
-              recordType="webhook"
               endpointName="getWebhookAnalytics"
             />
-          </>
+          </AnalyticsGraphDataInstanceContext.Provider>
         )}
         <Section>
           <H2Title title="Danger zone" description="Delete this integration" />

@@ -1,26 +1,24 @@
+import { ANALYTICS_ENDPOINT_TYPE_MAP } from '@/analytics/constants/AnalyticsEndpointTypeMap';
 import { ANALYTICS_GRAPH_OPTION_MAP } from '@/analytics/constants/AnalyticsGraphOptionMap';
+import { AnalyticsComponentProps } from '@/analytics/types/AnalyticsComponentProps';
 import { computeStartEndDate } from '@/analytics/utils/computeStartEndDate';
-type fetchGraphDataOrThrowProps = {
-  recordId: string;
-  recordType: string;
+
+type fetchGraphDataOrThrowProps = AnalyticsComponentProps & {
   windowLength: '7D' | '1D' | '12H' | '4H';
   tinybirdJwt: string;
-  endpointName: string;
 };
 
 export const fetchGraphDataOrThrow = async ({
   recordId,
-  recordType,
   windowLength,
   tinybirdJwt,
   endpointName,
 }: fetchGraphDataOrThrowProps) => {
+  const recordType = ANALYTICS_ENDPOINT_TYPE_MAP[endpointName];
   const queryString = new URLSearchParams({
     ...ANALYTICS_GRAPH_OPTION_MAP[windowLength],
     ...computeStartEndDate(windowLength),
-    ...(recordType === 'webhook'
-      ? { webhookId: recordId }
-      : { functionId: recordId }), //later create a switch case
+    ...{ [`${recordType}Id`]: recordId },
   }).toString();
 
   const response = await fetch(
