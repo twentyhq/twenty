@@ -56,7 +56,9 @@ export const useCommandMenu = () => {
 
           const workflowRunCommands = actionMenuEntries
             .getValue()
-            ?.filter((actionMenuEntry) => actionMenuEntry.type === 'workflow-run')
+            ?.filter(
+              (actionMenuEntry) => actionMenuEntry.type === 'workflow-run',
+            )
             ?.map((actionMenuEntry) => ({
               id: actionMenuEntry.key,
               label: actionMenuEntry.label,

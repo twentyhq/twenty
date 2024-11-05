@@ -9,7 +9,7 @@ export const useActiveWorkflowVersionsWithTriggerRecordType = ({
 }: {
   objectNameSingular: string;
 }) => {
-  const {objectMetadataItem} = useObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 

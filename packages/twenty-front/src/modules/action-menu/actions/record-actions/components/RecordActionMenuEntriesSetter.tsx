@@ -7,18 +7,14 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-const globalRecordActionEffects = [
-  ExportRecordsActionEffect,
-];
+const globalRecordActionEffects = [ExportRecordsActionEffect];
 
 const singleRecordActionEffects = [
   ManageFavoritesActionEffect,
   DeleteRecordsActionEffect,
 ];
 
-const multipleRecordActionEffects = [
-  DeleteRecordsActionEffect,
-];
+const multipleRecordActionEffects = [DeleteRecordsActionEffect];
 
 export const RecordActionMenuEntriesSetter = () => {
   const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(

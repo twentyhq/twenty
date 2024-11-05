@@ -423,36 +423,38 @@ export const CommandMenu = () => {
                       <CommandGroup heading="Standard Actions">
                         {matchingStandardActionCommands?.map(
                           (standardActionCommand) => (
-                        <SelectableItem
-                          itemId={standardActionCommand.id}
-                          key={standardActionCommand.id}
-                        >
-                          <CommandMenuItem
-                            id={standardActionCommand.id}
-                            label={standardActionCommand.label}
-                            Icon={standardActionCommand.Icon}
-                            onClick={standardActionCommand.onCommandClick}
-                          />
-                        </SelectableItem>
-                        ))}
+                            <SelectableItem
+                              itemId={standardActionCommand.id}
+                              key={standardActionCommand.id}
+                            >
+                              <CommandMenuItem
+                                id={standardActionCommand.id}
+                                label={standardActionCommand.label}
+                                Icon={standardActionCommand.Icon}
+                                onClick={standardActionCommand.onCommandClick}
+                              />
+                            </SelectableItem>
+                          ),
+                        )}
                       </CommandGroup>
 
                       <CommandGroup heading="Workflows">
                         {matchingWorkflowRunCommands?.map(
                           (workflowRunCommand) => (
-                        <SelectableItem
-                          itemId={workflowRunCommand.id}
-                          key={workflowRunCommand.id}
-                        >
-                          <CommandMenuItem
-                            id={workflowRunCommand.id}
-                            label={workflowRunCommand.label}
-                            Icon={workflowRunCommand.Icon}
-                            onClick={workflowRunCommand.onCommandClick}
-                          />
-                        </SelectableItem>
-                      ))}
-                    </CommandGroup>
+                            <SelectableItem
+                              itemId={workflowRunCommand.id}
+                              key={workflowRunCommand.id}
+                            >
+                              <CommandMenuItem
+                                id={workflowRunCommand.id}
+                                label={workflowRunCommand.label}
+                                Icon={workflowRunCommand.Icon}
+                                onClick={workflowRunCommand.onCommandClick}
+                              />
+                            </SelectableItem>
+                          ),
+                        )}
+                      </CommandGroup>
                     </>
                   )}
                   <CommandGroup heading="Navigate">

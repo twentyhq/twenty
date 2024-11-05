@@ -96,12 +96,10 @@ describe('displayedExportProgress', () => {
     'displays the export progress',
     (exportedRecordCount, totalRecordCount, displayType, expected) => {
       expect(
-        displayedExportProgress(
-          'all',
-          {
-            exportedRecordCount,
-            totalRecordCount,
-            displayType: displayType as 'percentage' | 'number',
+        displayedExportProgress('all', {
+          exportedRecordCount,
+          totalRecordCount,
+          displayType: displayType as 'percentage' | 'number',
         }),
       ).toEqual(expected);
     },

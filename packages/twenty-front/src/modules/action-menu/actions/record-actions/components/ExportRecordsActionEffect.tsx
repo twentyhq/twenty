@@ -6,7 +6,7 @@ import {
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { IconDatabaseExport } from '@tabler/icons-react';
+import { IconDatabaseExport } from 'twenty-ui';
 
 import { useEffect } from 'react';
 
@@ -46,6 +46,14 @@ export const ExportRecordsActionEffect = ({
     return () => {
       removeActionMenuEntry('export');
     };
-  }, [download, progress, addActionMenuEntry, removeActionMenuEntry, position]);
+  }, [
+    contextStoreNumberOfSelectedRecords,
+    download,
+    progress,
+    addActionMenuEntry,
+    removeActionMenuEntry,
+    position,
+  ]);
+
   return null;
 };

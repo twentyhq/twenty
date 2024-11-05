@@ -188,8 +188,7 @@ export const RecordIndexOptionsDropdownContent = ({
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const mode =
-    contextStoreNumberOfSelectedRecords > 0 ? 'selection' : 'all';
+  const mode = contextStoreNumberOfSelectedRecords > 0 ? 'selection' : 'all';
 
   useEffect(() => {
     if (currentMenu === 'hiddenViewGroups' && hiddenRecordGroups.length === 0) {

@@ -66,16 +66,16 @@ export const WorkflowRunRecordActionEffect = ({
 
           await runWorkflowVersion(activeWorkflowVersion.id, selectedRecord);
 
-          enqueueSnackBar(
-            '',
-            {
-              variant: SnackBarVariant.Success,
-              title: `${capitalize(activeWorkflowVersion.workflow.name)} starting...`,
-              icon: (
-                <IconSettingsAutomation size={16} color={theme.snackBar.success.color} />
-              ),
-            },
-          );
+          enqueueSnackBar('', {
+            variant: SnackBarVariant.Success,
+            title: `${capitalize(activeWorkflowVersion.workflow.name)} starting...`,
+            icon: (
+              <IconSettingsAutomation
+                size={16}
+                color={theme.snackBar.success.color}
+              />
+            ),
+          });
         },
       });
     }
@@ -90,8 +90,12 @@ export const WorkflowRunRecordActionEffect = ({
   }, [
     activeWorkflowVersions,
     addActionMenuEntry,
+    enqueueSnackBar,
     objectMetadataItem,
     removeActionMenuEntry,
+    runWorkflowVersion,
+    selectedRecord,
+    theme.snackBar.success.color,
   ]);
 
   return null;
