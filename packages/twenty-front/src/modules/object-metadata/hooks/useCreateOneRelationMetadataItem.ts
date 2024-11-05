@@ -1,4 +1,4 @@
-import { ApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
 import {
@@ -22,7 +22,7 @@ export const useCreateOneRelationMetadataItem = () => {
     CreateOneRelationMetadataMutation,
     CreateOneRelationMetadataMutationVariables
   >(CREATE_ONE_RELATION_METADATA_ITEM, {
-    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient,
   });
 
   const createOneRelationMetadataItem = async (

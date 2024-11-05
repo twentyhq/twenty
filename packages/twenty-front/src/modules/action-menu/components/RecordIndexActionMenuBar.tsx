@@ -33,7 +33,7 @@ export const RecordIndexActionMenuBar = () => {
 
   const pinnedEntries = actionMenuEntries.filter((entry) => entry.isPinned);
 
-  if (pinnedEntries.length === 0) {
+  if (contextStoreNumberOfSelectedRecords === 0) {
     return null;
   }
 
