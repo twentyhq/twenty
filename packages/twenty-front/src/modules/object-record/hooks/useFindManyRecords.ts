@@ -61,7 +61,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     onCompleted,
   });
 
-  const { data, loading, error, fetchMore, refetch } =
+  const { data, loading, error, fetchMore } =
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
       skip: skip || !objectMetadataItem,
       variables: {
@@ -101,6 +101,5 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     queryStateIdentifier: queryIdentifier,
     hasNextPage,
     pageInfo,
-    refetch,
   };
 };
