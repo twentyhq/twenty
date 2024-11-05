@@ -16,7 +16,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -73,6 +73,17 @@ export const SignInUpForm = () => {
     submitCredentials,
     submitSSOEmail,
   } = useSignInUp(form);
+
+  useEffect(() => {
+    if (
+      signInUpStep === SignInUpStep.Init &&
+      !authProviders.google &&
+      !authProviders.microsoft &&
+      !authProviders.sso
+    ) {
+      continueWithEmail();
+    }
+  }, [signInUpStep, authProviders, continueWithEmail]);
 
   const toggleSSOMode = () => {
     if (signInUpStep === SignInUpStep.SSOEmail) {
@@ -323,7 +334,7 @@ export const SignInUpForm = () => {
                   form.formState.isSubmitting ? (
                     <Loader />
                   ) : (
-                    <IconMail size={theme.icon.size.lg} />
+                    signInUpStep === SignInUpStep.Init ? <IconMail size={theme.icon.size.lg} /> : null
                   )
                 }
                 disabled={isSubmitButtonDisabled}
