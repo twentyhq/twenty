@@ -62,6 +62,7 @@ export type WorkflowDatabaseEventTrigger = BaseTrigger & {
     eventName: string;
     input?: object;
     outputSchema: object;
+    objectType?: string;
   };
 };
 
