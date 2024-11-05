@@ -3,6 +3,7 @@ import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/o
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { SyncObjectLabelAndNameToggle } from '@/settings/data-model/objects/forms/components/SyncObjectLabelAndNameToggle';
 import { useExpandedHeightAnimation } from '@/settings/hooks/useExpandedHeightAnimation';
+import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
@@ -163,44 +164,10 @@ export const SettingsDataModelObjectAboutForm = ({
             control={control}
             defaultValue={objectMetadataItem?.icon ?? 'IconListNumbers'}
             render={({ field: { onChange, value } }) => (
-              <TextInput
-                label={'Label Singular'}
-                placeholder={'Listing'}
-                value={value}
-                onChange={(value) => {
-                  onChange(value);
-                  fillLabelPlural(value);
-                  if (isLabelSyncedWithName === true) {
-                    fillNameSingularFromLabelSingular(value);
-                  }
-                }}
-                onBlur={onBlur}
-                disabled={disabled || disableNameEdit}
-                fullWidth
-                maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
-              />
-            )}
-          />
-          <Controller
-            key={`object-labelPlural-text-input`}
-            name={'labelPlural'}
-            control={control}
-            defaultValue={objectMetadataItem?.labelPlural}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                label={'Label Plural'}
-                placeholder={'Listings'}
-                value={value}
-                onChange={(value) => {
-                  onChange(value);
-                  if (isLabelSyncedWithName === true) {
-                    fillNamePluralFromLabelPlural(value);
-                  }
-                }}
-                onBlur={onBlur}
-                disabled={disabled || disableNameEdit}
-                fullWidth
-                maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
+              <IconPicker
+                disabled={disabled}
+                selectedIconKey={value}
+                onChange={({ iconKey }) => onChange(iconKey)}
               />
             )}
           />
@@ -211,15 +178,21 @@ export const SettingsDataModelObjectAboutForm = ({
           control={control}
           defaultValue={objectMetadataItem?.labelSingular}
           render={({ field: { onChange, value } }) => (
-            <TextArea
-              placeholder="Write a description"
-              minRows={4}
-              value={value ?? undefined}
-              onChange={(nextValue) => {
-                onChange(nextValue ?? null);
+            <TextInput
+              label={'Label Singular'}
+              placeholder={'Listing'}
+              value={value}
+              onChange={(value) => {
+                onChange(value);
+                fillLabelPlural(value);
+                if (isLabelSyncedWithName === true) {
+                  fillNameSingularFromLabelSingular(value);
+                }
               }}
-              disabled={disabled}
               onBlur={onBlur}
+              disabled={disabled || disableNameEdit}
+              fullWidth
+              maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
           )}
         />
