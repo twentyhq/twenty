@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
-import { ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import { ReactNode, useContext, useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
@@ -9,8 +9,10 @@ import { RecordTableContext } from '@/object-record/record-table/contexts/Record
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { tableCellWidthsComponentState } from '@/object-record/record-table/states/tableCellWidthsComponentState';
 import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 
 export const RecordTableRowWrapper = ({
   recordId,
@@ -46,17 +48,23 @@ export const RecordTableRowWrapper = ({
     rootMargin: '1000px',
   });
 
-  const [cellWidths, setCellWidths] = useState<number[]>([]);
+  const [tableCellWidths, setTableCellWidths] = useRecoilComponentStateV2(
+    tableCellWidthsComponentState,
+  );
 
   useEffect(() => {
-    const tdArray = Array.from(trRef.current?.getElementsByTagName('td') ?? []);
+    if (rowIndex === 0) {
+      const tdArray = Array.from(
+        trRef.current?.getElementsByTagName('td') ?? [],
+      );
 
-    const tdWidths = tdArray.map((td) => {
-      return td.getBoundingClientRect().width;
-    });
+      const tdWidths = tdArray.map((td) => {
+        return td.getBoundingClientRect().width;
+      });
 
-    setCellWidths(tdWidths);
-  }, [trRef]);
+      setTableCellWidths(tdWidths);
+    }
+  }, [trRef, rowIndex, setTableCellWidths]);
 
   // TODO: find a better way to emit this event
   useEffect(() => {
@@ -105,7 +113,6 @@ export const RecordTableRowWrapper = ({
               isDragging: draggableSnapshot.isDragging,
               dragHandleProps: draggableProvided.dragHandleProps,
               inView,
-              cellWidths,
             }}
           >
             {children}

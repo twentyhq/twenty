@@ -10,7 +10,6 @@ import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useC
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
-import { resizedFieldKeyComponentState } from '@/object-record/record-table/states/resizedFieldKeyComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -123,9 +122,7 @@ export const RecordTableHeaderCell = ({
   const [initialPointerPositionX, setInitialPointerPositionX] = useState<
     number | null
   >(null);
-  const [resizedFieldKey, setResizedFieldKey] = useRecoilComponentStateV2(
-    resizedFieldKeyComponentState,
-  );
+  const [resizedFieldKey, setResizedFieldKey] = useState<string | null>(null);
 
   const { handleColumnsChange } = useTableColumns();
 

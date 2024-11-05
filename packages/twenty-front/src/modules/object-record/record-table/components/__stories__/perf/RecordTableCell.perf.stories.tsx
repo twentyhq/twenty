@@ -99,7 +99,6 @@ const meta: Meta = {
                   dragHandleProps: null,
                   inView: true,
                   isPendingRow: false,
-                  cellWidths: [1, 2, 3, 4],
                 }}
               >
                 <RecordTableCellContext.Provider

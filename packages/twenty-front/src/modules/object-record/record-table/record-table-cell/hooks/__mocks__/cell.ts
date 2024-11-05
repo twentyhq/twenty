@@ -13,7 +13,6 @@ export const recordTableRow: RecordTableRowContextProps = {
   isDragging: false,
   inView: true,
   isPendingRow: false,
-  cellWidths: [1, 2, 3, 4],
 };
 
 export const recordTableCell: RecordTableCellContextProps = {

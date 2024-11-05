@@ -12,7 +12,6 @@ export type RecordTableRowContextProps = {
   isDragging: boolean;
   dragHandleProps: DraggableProvidedDragHandleProps | null;
   inView?: boolean;
-  cellWidths: number[];
 };
 
 export const RecordTableRowContext = createContext<RecordTableRowContextProps>(
