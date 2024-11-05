@@ -4,23 +4,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 
-const StyledButton = styled.button`
-  align-items: center;
-  align-self: baseline;
-  background-color: ${({ theme }) => theme.background.primary};
-  border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(1)};
-
-  &:hover {
-    background-color: ${({ theme }) => theme.background.tertiary};
-  }
-`;
-
 const StyledCompanyPickerContainer = styled.div`
   align-items: center;
   align-self: baseline;

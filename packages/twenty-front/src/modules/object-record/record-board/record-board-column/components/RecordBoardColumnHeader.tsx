@@ -100,12 +100,9 @@ export const RecordBoardColumnHeader = () => {
 
   const boardColumnTotal = 0;
 
-  const {
-    newRecord,
-    handleNewButtonClick,
-    handleCreateSuccess,
-    handleEntitySelect,
-  } = useColumnNewCardActions(columnDefinition?.id ?? '');
+  const { handleNewButtonClick } = useColumnNewCardActions(
+    columnDefinition?.id ?? '',
+  );
 
   const { isOpportunitiesCompanyFieldDisabled } =
     useIsOpportunitiesCompanyFieldDisabled();
@@ -113,18 +110,6 @@ export const RecordBoardColumnHeader = () => {
   const isOpportunity =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Opportunity &&
     !isOpportunitiesCompanyFieldDisabled;
-
-  const StyledCompanyPickerContainer = styled.div`
-    align-items: center;
-    align-self: baseline;
-    background-color: ${({ theme }) => theme.background.primary};
-    border: none;
-    border-radius: ${({ theme }) => theme.border.radius.sm};
-    color: ${({ theme }) => theme.font.color.tertiary};
-    cursor: pointer;
-    display: flex;
-    gap: ${({ theme }) => theme.spacing(1)};
-  `;
 
   return (
     <StyledColumn>
