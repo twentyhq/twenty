@@ -70,7 +70,8 @@ export const RecordTableRowWrapper = ({
       {(draggableProvided, draggableSnapshot) => (
         <RecordTableTr
           ref={(node) => {
-            (trRef as any).current = node;
+            // @ts-expect-error - TS doesn't know that node.current is assignable
+            trRef.current = node;
             elementRef(node);
             draggableProvided.innerRef(node);
           }}
