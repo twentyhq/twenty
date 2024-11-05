@@ -2,7 +2,12 @@ import styled from '@emotion/styled';
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
-import { ComponentDecorator, MAIN_COLOR_NAMES, Tag } from 'twenty-ui';
+import {
+  ComponentDecorator,
+  isDefined,
+  MAIN_COLOR_NAMES,
+  Tag,
+} from 'twenty-ui';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
@@ -48,13 +53,20 @@ export const WithChipCount: Story = {
 
 export const WithExpandedList: Story = {
   ...WithChipCount,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const chipCount = await canvas.findByText('+3');
+  play: async () => {
+    const root = document.getElementsByTagName('body')[0];
+
+    if (!isDefined(root)) {
+      throw new Error('Root element not found');
+    }
+
+    const rootCanvas = within(root);
+
+    const chipCount = await rootCanvas.findByText('+3');
 
     await userEvent.click(chipCount);
 
-    expect(await canvas.findByText('Option 7')).toBeDefined();
+    expect(await rootCanvas.findByText('Option 7')).toBeDefined();
   },
 };
 

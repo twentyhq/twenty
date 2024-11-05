@@ -8,6 +8,7 @@ import {
   IconChevronUp,
   IconComponent,
   IconX,
+  LightIconButton,
   MOBILE_VIEWPORT,
   OverflowingTextWithTooltip,
 } from 'twenty-ui';
@@ -119,10 +120,10 @@ export const PageHeader = ({
           </StyledTopBarButtonContainer>
         )}
         {hasClosePageButton && (
-          <IconButton
+          <LightIconButton
             Icon={IconX}
             size="small"
-            variant="tertiary"
+            accent="tertiary"
             onClick={() => onClosePage?.()}
           />
         )}

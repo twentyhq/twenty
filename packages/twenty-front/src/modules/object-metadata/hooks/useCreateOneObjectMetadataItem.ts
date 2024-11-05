@@ -1,4 +1,4 @@
-import { ApolloClient, useApolloClient, useMutation } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -26,7 +26,7 @@ export const useCreateOneObjectMetadataItem = () => {
     CreateOneObjectMetadataItemMutation,
     CreateOneObjectMetadataItemMutationVariables
   >(CREATE_ONE_OBJECT_METADATA_ITEM, {
-    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient,
   });
 
   const createOneObjectMetadataItem = async (input: CreateObjectInput) => {

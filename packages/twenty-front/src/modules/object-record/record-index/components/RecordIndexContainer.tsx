@@ -51,6 +51,7 @@ const StyledContainer = styled.div`
 
 const StyledContainerWithPadding = styled.div`
   height: calc(100% - 40px);
+  margin-left: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 
