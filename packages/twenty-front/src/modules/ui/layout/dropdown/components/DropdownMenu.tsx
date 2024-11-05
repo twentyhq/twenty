@@ -4,7 +4,6 @@ const StyledDropdownMenu = styled.div<{
   disableBlur?: boolean;
   disableBorder?: boolean;
   width?: `${string}px` | `${number}%` | 'auto' | number;
-  isCustomSlashMenu?: boolean;
 }>`
   backdrop-filter: ${({ theme, disableBlur }) =>
     disableBlur ? 'none' : theme.blur.medium};
@@ -23,8 +22,7 @@ const StyledDropdownMenu = styled.div<{
 
   display: flex;
 
-  height: ${({ isCustomSlashMenu }) =>
-    isCustomSlashMenu ? 'fit-content' : '100%'};
+  height: fit-content;
 
   flex-direction: column;
   z-index: 30;
