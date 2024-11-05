@@ -91,8 +91,7 @@ export const Select = <Value extends string | number | null>({
   );
 
   const isDisabled =
-    disabledFromProps ||
-    (options.length < 1 && !isDefined(callToActionButton));
+    disabledFromProps || (options.length < 1 && !isDefined(callToActionButton));
 
   const { closeDropdown } = useDropdown(dropdownId);
 
