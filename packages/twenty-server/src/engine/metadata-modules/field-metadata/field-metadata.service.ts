@@ -314,7 +314,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           FieldMetadataEntity,
         );
 
-      const existingFieldMetadata = await fieldMetadataRepository.findOne({
+      const [existingFieldMetadata] = await fieldMetadataRepository.find({
         where: {
           id,
           workspaceId: fieldMetadataInput.workspaceId,
@@ -328,7 +328,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
-      const objectMetadata = await this.objectMetadataRepository.findOne({
+      const [objectMetadata] = await this.objectMetadataRepository.find({
         where: {
           id: existingFieldMetadata.objectMetadataId,
           workspaceId: fieldMetadataInput.workspaceId,
@@ -421,12 +421,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         );
       }
 
-      console.log('updatedFieldMetadata', updatedFieldMetadata);
       if (
         updatedFieldMetadata.isActive &&
         isSelectFieldMetadataType(updatedFieldMetadata.type)
       ) {
-        console.log('updateRelatedViewGroups');
         await this.fieldMetadataRelatedRecordsService.updateRelatedViewGroups(
           existingFieldMetadata,
           updatedFieldMetadata,

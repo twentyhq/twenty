@@ -35,7 +35,7 @@ export class FieldMetadataRelatedRecordsService {
       return;
     }
 
-    const view = await this.getFieldMetadataView(newFieldMetadata);
+    const views = await this.getFieldMetadataViews(newFieldMetadata);
 
     const { created, updated, deleted } = this.getOptionsDifferences(
       oldFieldMetadata.options,
@@ -48,57 +48,50 @@ export class FieldMetadataRelatedRecordsService {
         'viewGroup',
       );
 
-    const maxPosition = view.viewGroups.reduce(
-      (max, viewGroup) => Math.max(max, viewGroup.position),
-      0,
-    );
-
-    /**
-     * Create new view groups for the new options
-     */
-    const viewGroupsToCreate = created.map((option, index) =>
-      viewGroupRepository.create({
-        fieldMetadataId: newFieldMetadata.id,
-        fieldValue: option.value,
-        position: maxPosition + index,
-        isVisible: true,
-        viewId: view.id,
-      }),
-    );
-
-    await viewGroupRepository.insert(viewGroupsToCreate);
-
-    /**
-     * Update existing view groups for the updated options
-     */
-    for (const { old: oldOption, new: newOption } of updated) {
-      const viewGroup = view.viewGroups.find(
-        (viewGroup) => viewGroup.fieldValue === oldOption.value,
+    for (const view of views) {
+      const maxPosition = view.viewGroups.reduce(
+        (max, viewGroup) => Math.max(max, viewGroup.position),
+        0,
       );
 
-      if (!viewGroup) {
-        throw new Error('View group not found');
+      const viewGroupsToCreate = created.map((option, index) =>
+        viewGroupRepository.create({
+          fieldMetadataId: newFieldMetadata.id,
+          fieldValue: option.value,
+          position: maxPosition + index,
+          isVisible: true,
+          viewId: view.id,
+        }),
+      );
+
+      await viewGroupRepository.insert(viewGroupsToCreate);
+
+      for (const { old: oldOption, new: newOption } of updated) {
+        const viewGroup = view.viewGroups.find(
+          (viewGroup) => viewGroup.fieldValue === oldOption.value,
+        );
+
+        if (!viewGroup) {
+          throw new Error(`View group not found for option ${oldOption.value}`);
+        }
+
+        await viewGroupRepository.update(
+          {
+            id: viewGroup.id,
+          },
+          {
+            fieldValue: newOption.value,
+          },
+        );
       }
 
-      await viewGroupRepository.update(
-        {
-          id: viewGroup.id,
-        },
-        {
-          fieldValue: newOption.value,
-        },
-      );
+      const valuesToDelete = deleted.map((option) => option.value);
+
+      await viewGroupRepository.delete({
+        fieldMetadataId: newFieldMetadata.id,
+        fieldValue: In(valuesToDelete),
+      });
     }
-
-    /**
-     * Delete view groups for the deleted options
-     */
-    const valuesToDelete = deleted.map((option) => option.value);
-
-    await viewGroupRepository.delete({
-      fieldMetadataId: newFieldMetadata.id,
-      fieldValue: In(valuesToDelete),
-    });
   }
 
   private getOptionsDifferences(
@@ -139,16 +132,16 @@ export class FieldMetadataRelatedRecordsService {
     return differences;
   }
 
-  private async getFieldMetadataView(
+  private async getFieldMetadataViews(
     fieldMetadata: FieldMetadataEntity,
-  ): Promise<ViewWorkspaceEntity> {
+  ): Promise<ViewWorkspaceEntity[]> {
     const viewRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
         fieldMetadata.workspaceId,
         'view',
       );
 
-    return await viewRepository.findOneOrFail({
+    return await viewRepository.find({
       where: {
         kanbanFieldMetadataId: fieldMetadata.id,
       },

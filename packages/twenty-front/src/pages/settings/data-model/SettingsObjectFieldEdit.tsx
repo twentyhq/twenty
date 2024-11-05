@@ -170,12 +170,12 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   const handleDeactivate = async () => {
-    await deactivateMetadataField(fieldMetadataId, objectMetadataId);
+    await deactivateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
     navigate(`/settings/objects/${objectSlug}`);
   };
 
   const handleActivate = async () => {
-    await activateMetadataField(fieldMetadataId, objectMetadataId);
+    await activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
     navigate(`/settings/objects/${objectSlug}`);
   };
 
