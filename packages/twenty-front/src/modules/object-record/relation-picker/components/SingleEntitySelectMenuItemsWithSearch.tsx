@@ -9,7 +9,9 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { Placement } from '@floating-ui/react';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-
+import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { IconPlus } from 'twenty-ui';
 export type SingleEntitySelectMenuItemsWithSearchProps = {
   excludedRelationRecordIds?: string[];
   onCreate?: ((searchInput?: string) => void) | (() => void);
@@ -49,7 +51,14 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
       excludedRelationRecordIds,
     });
 
-  const showCreateButton = isDefined(onCreate);
+   const createNewButton = isDefined(onCreate) && (
+     <CreateNewButton
+       onClick={() => onCreate?.(relationPickerSearchFilter)}
+       LeftIcon={IconPlus}
+       text="Add New"
+     />
+   );
+
 
   let onCreateWithInput = undefined;
 
@@ -83,7 +92,6 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
         emptyLabel,
         onCancel,
         onEntitySelected,
-        showCreateButton,
       }}
     />
   );
@@ -102,8 +110,10 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
         <>
           <DropdownMenuSeparator />
           {results}
+          <DropdownMenuSeparator />
         </>
       )}
+      <DropdownMenuItemsContainer>{createNewButton}</DropdownMenuItemsContainer>
     </>
   );
 };
