@@ -25,7 +25,7 @@ import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-bui
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
-export class WorkflowBuilderService {
+export class WorkflowBuilderWorkspaceService {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
     private readonly codeIntrospectionService: CodeIntrospectionService,
