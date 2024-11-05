@@ -13,8 +13,12 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import styled from '@emotion/styled';
+
+const StyledMainSection = styled(NavigationDrawerSection)`
+  min-height: fit-content;
+`;
 
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
@@ -35,28 +39,24 @@ export const MainNavigationDrawerItems = () => {
   return (
     <>
       {!isMobile && (
-        <NavigationDrawerSection>
-          <ScrollWrapper contextProviderName="navigationDrawer">
-            <NavigationDrawerItem
-              label="Search"
-              Icon={IconSearch}
-              onClick={toggleCommandMenu}
-              keyboard={['⌘', 'K']}
-            />
-            <NavigationDrawerItem
-              label="Settings"
-              to={'/settings/profile'}
-              onClick={() => {
-                setNavigationDrawerExpandedMemorized(
-                  isNavigationDrawerExpanded,
-                );
-                setIsNavigationDrawerExpanded(true);
-                setNavigationMemorizedUrl(location.pathname + location.search);
-              }}
-              Icon={IconSettings}
-            />
-          </ScrollWrapper>
-        </NavigationDrawerSection>
+        <StyledMainSection>
+          <NavigationDrawerItem
+            label="Search"
+            Icon={IconSearch}
+            onClick={toggleCommandMenu}
+            keyboard={['⌘', 'K']}
+          />
+          <NavigationDrawerItem
+            label="Settings"
+            to={'/settings/profile'}
+            onClick={() => {
+              setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
+              setIsNavigationDrawerExpanded(true);
+              setNavigationMemorizedUrl(location.pathname + location.search);
+            }}
+            Icon={IconSettings}
+          />
+        </StyledMainSection>
       )}
 
       {isWorkspaceFavoriteEnabled && <NavigationDrawerOpenedSection />}
