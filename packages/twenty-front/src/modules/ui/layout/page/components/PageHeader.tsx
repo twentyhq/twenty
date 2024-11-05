@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
+  IconButton,
   IconChevronDown,
   IconChevronUp,
   IconComponent,
@@ -11,7 +12,6 @@ import {
   OverflowingTextWithTooltip,
 } from 'twenty-ui';
 
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -80,7 +80,7 @@ const StyledTopBarButtonContainer = styled.div`
 `;
 
 type PageHeaderProps = {
-  title: ReactNode;
+  title?: ReactNode;
   hasClosePageButton?: boolean;
   onClosePage?: () => void;
   hasPaginationButtons?: boolean;
@@ -147,13 +147,15 @@ export const PageHeader = ({
             </>
           )}
           {Icon && <Icon size={theme.icon.size.md} />}
-          <StyledTitleContainer data-testid="top-bar-title">
-            {typeof title === 'string' ? (
-              <OverflowingTextWithTooltip text={title} />
-            ) : (
-              title
-            )}
-          </StyledTitleContainer>
+          {title && (
+            <StyledTitleContainer data-testid="top-bar-title">
+              {typeof title === 'string' ? (
+                <OverflowingTextWithTooltip text={title} />
+              ) : (
+                title
+              )}
+            </StyledTitleContainer>
+          )}
         </StyledTopBarIconStyledTitleContainer>
       </StyledLeftContainer>
       <StyledPageActionContainer>{children}</StyledPageActionContainer>

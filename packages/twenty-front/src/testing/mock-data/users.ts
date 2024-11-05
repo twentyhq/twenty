@@ -43,6 +43,7 @@ export const mockDefaultWorkspace: Workspace = {
   isPublicInviteLinkEnabled: true,
   allowImpersonation: true,
   activationStatus: WorkspaceActivationStatus.Active,
+  hasValidEntrepriseKey: false,
   featureFlags: [
     {
       id: '1492de61-5018-4368-8923-4f1eeaf988c4',

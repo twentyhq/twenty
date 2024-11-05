@@ -7,7 +7,7 @@ import { SignInUpForm } from '@/auth/sign-in-up/components/SignInUpForm';
 import { SignInUpMode, useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
+import { AnimatedEaseIn } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { IconLockCustom } from '@ui/display/icon/components/IconLock';

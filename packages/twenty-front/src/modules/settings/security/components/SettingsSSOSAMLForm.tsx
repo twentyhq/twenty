@@ -4,19 +4,19 @@ import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSepa
 import { parseSAMLMetadataFromXMLFile } from '@/settings/security/utils/parseSAMLMetadataFromXMLFile';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { Section } from '@/ui/layout/section/components/Section';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ChangeEvent, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import {
+  Button,
   H2Title,
   IconCheck,
   IconCopy,
   IconDownload,
   IconUpload,
+  Section,
 } from 'twenty-ui';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { isDefined } from '~/utils/isDefined';

@@ -1,17 +1,29 @@
-import { MultipleRecordsActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/MultipleRecordsActionMenuEntriesSetter';
-import { SingleRecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/SingleRecordActionMenuEntriesSetter';
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
+import { DeleteRecordsActionEffect } from '@/action-menu/actions/record-actions/components/DeleteRecordsActionEffect';
+import { ExportRecordsActionEffect } from '@/action-menu/actions/record-actions/components/ExportRecordsActionEffect';
+import { ManageFavoritesActionEffect } from '@/action-menu/actions/record-actions/components/ManageFavoritesActionEffect';
+import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { useRecoilValue } from 'recoil';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+
+const singleRecordActionEffects = [
+  ManageFavoritesActionEffect,
+  ExportRecordsActionEffect,
+  DeleteRecordsActionEffect,
+];
+
+const multipleRecordActionEffects = [
+  ExportRecordsActionEffect,
+  DeleteRecordsActionEffect,
+];
 
 export const RecordActionMenuEntriesSetter = () => {
-  const contextStoreNumberOfSelectedRecords = useRecoilValue(
-    contextStoreNumberOfSelectedRecordsState,
+  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const contextStoreCurrentObjectMetadataId = useRecoilValue(
-    contextStoreCurrentObjectMetadataIdState,
+  const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataIdComponentState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItemById({
@@ -28,17 +40,20 @@ export const RecordActionMenuEntriesSetter = () => {
     return null;
   }
 
-  if (contextStoreNumberOfSelectedRecords === 1) {
-    return (
-      <SingleRecordActionMenuEntriesSetter
-        objectMetadataItem={objectMetadataItem}
-      />
-    );
-  }
+  const actions =
+    contextStoreNumberOfSelectedRecords === 1
+      ? singleRecordActionEffects
+      : multipleRecordActionEffects;
 
   return (
-    <MultipleRecordsActionMenuEntriesSetter
-      objectMetadataItem={objectMetadataItem}
-    />
+    <>
+      {actions.map((ActionEffect, index) => (
+        <ActionEffect
+          key={index}
+          position={index}
+          objectMetadataItem={objectMetadataItem}
+        />
+      ))}
+    </>
   );
 };

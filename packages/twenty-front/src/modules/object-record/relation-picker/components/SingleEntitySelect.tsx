@@ -23,7 +23,6 @@ export const SingleEntitySelect = ({
   onEntitySelected,
   relationObjectNameSingular,
   relationPickerScopeId,
-  selectedEntity,
   selectedRelationRecordIds,
   width = 200,
 }: SingleEntitySelectProps) => {
@@ -61,7 +60,6 @@ export const SingleEntitySelect = ({
           onEntitySelected,
           relationObjectNameSingular,
           relationPickerScopeId,
-          selectedEntity,
           selectedRelationRecordIds,
         }}
       />

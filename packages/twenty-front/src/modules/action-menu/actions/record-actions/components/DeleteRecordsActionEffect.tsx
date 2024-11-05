@@ -1,6 +1,7 @@
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import { contextStoreNumberOfSelectedRecordsState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsState';
-import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -9,8 +10,9 @@ import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords
 import { useFetchAllRecordIds } from '@/object-record/hooks/useFetchAllRecordIds';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useCallback, useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { IconTrash, isDefined } from 'twenty-ui';
 
 export const DeleteRecordsActionEffect = ({
@@ -35,12 +37,12 @@ export const DeleteRecordsActionEffect = ({
 
   const { favorites, deleteFavorite } = useFavorites();
 
-  const contextStoreNumberOfSelectedRecords = useRecoilValue(
-    contextStoreNumberOfSelectedRecordsState,
+  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const contextStoreTargetedRecordsRule = useRecoilValue(
-    contextStoreTargetedRecordsRuleState,
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+    contextStoreTargetedRecordsRuleComponentState,
   );
 
   const graphqlFilter = computeContextStoreFilters(
@@ -52,6 +54,8 @@ export const DeleteRecordsActionEffect = ({
     objectNameSingular: objectMetadataItem.nameSingular,
     filter: graphqlFilter,
   });
+
+  const { closeRightDrawer } = useRightDrawer();
 
   const handleDeleteClick = useCallback(async () => {
     const recordIdsToDelete = await fetchAllRecordIds();
@@ -87,6 +91,9 @@ export const DeleteRecordsActionEffect = ({
     contextStoreNumberOfSelectedRecords < DELETE_MAX_COUNT &&
     contextStoreNumberOfSelectedRecords > 0;
 
+  const { isInRightDrawer, onActionExecutedCallback } =
+    useContext(ActionMenuContext);
+
   useEffect(() => {
     if (canDelete) {
       addActionMenuEntry({
@@ -95,6 +102,7 @@ export const DeleteRecordsActionEffect = ({
         position,
         Icon: IconTrash,
         accent: 'danger',
+        isPinned: true,
         onClick: () => {
           setIsDeleteRecordsModalOpen(true);
         },
@@ -112,7 +120,13 @@ export const DeleteRecordsActionEffect = ({
             }? ${
               contextStoreNumberOfSelectedRecords === 1 ? 'It' : 'They'
             } can be recovered from the Options menu.`}
-            onConfirmClick={() => handleDeleteClick()}
+            onConfirmClick={() => {
+              handleDeleteClick();
+              onActionExecutedCallback?.();
+              if (isInRightDrawer) {
+                closeRightDrawer();
+              }
+            }}
             deleteButtonText={`Delete ${
               contextStoreNumberOfSelectedRecords > 1 ? 'Records' : 'Record'
             }`}
@@ -129,9 +143,12 @@ export const DeleteRecordsActionEffect = ({
   }, [
     addActionMenuEntry,
     canDelete,
+    closeRightDrawer,
     contextStoreNumberOfSelectedRecords,
     handleDeleteClick,
     isDeleteRecordsModalOpen,
+    isInRightDrawer,
+    onActionExecutedCallback,
     position,
     removeActionMenuEntry,
   ]);

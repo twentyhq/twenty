@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { Card } from '@/ui/layout/card/components/Card';
+import { Card } from 'twenty-ui';
 
 type EventCardProps = {
   children: React.ReactNode;

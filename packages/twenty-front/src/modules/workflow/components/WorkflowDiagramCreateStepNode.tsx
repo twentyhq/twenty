@@ -1,7 +1,6 @@
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
-import { IconPlus } from 'twenty-ui';
+import { IconButton, IconPlus } from 'twenty-ui';
 
 export const StyledTargetHandle = styled(Handle)`
   visibility: hidden;

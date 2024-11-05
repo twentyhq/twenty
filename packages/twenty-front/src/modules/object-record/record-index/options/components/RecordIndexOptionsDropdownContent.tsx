@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import {
   IconBaselineDensitySmall,
@@ -9,6 +9,8 @@ import {
   IconRotate2,
   IconSettings,
   IconTag,
+  UndecoratedLink,
+  useIcons,
 } from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -20,6 +22,9 @@ import {
   useExportRecordData,
 } from '@/action-menu/hooks/useExportRecordData';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
+import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
+import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
@@ -30,19 +35,24 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemNavigate';
 import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
+import { ViewGroupsVisibilityDropdownSection } from '@/views/components/ViewGroupsVisibilityDropdownSection';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
-type RecordIndexOptionsMenu = 'fields' | 'hiddenFields';
+type RecordIndexOptionsMenu =
+  | 'viewGroups'
+  | 'hiddenViewGroups'
+  | 'fields'
+  | 'hiddenFields';
 
 type RecordIndexOptionsDropdownContentProps = {
   recordIndexId: string;
@@ -50,12 +60,15 @@ type RecordIndexOptionsDropdownContentProps = {
   viewType: ViewType;
 };
 
+// TODO: Break this component down
 export const RecordIndexOptionsDropdownContent = ({
   viewType,
   recordIndexId,
   objectMetadataItem,
 }: RecordIndexOptionsDropdownContentProps) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
+
+  const { getIcon } = useIcons();
 
   const { closeDropdown } = useDropdown(RECORD_INDEX_OPTIONS_DROPDOWN_ID);
 
@@ -111,6 +124,28 @@ export const RecordIndexOptionsDropdownContent = ({
     viewBarId: recordIndexId,
   });
 
+  const {
+    hiddenRecordGroups,
+    visibleRecordGroups,
+    viewGroupFieldMetadataItem,
+  } = useRecordGroups({
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
+  const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
+    useRecordGroupVisibility({
+      viewBarId: recordIndexId,
+    });
+  const { handleOrderChange: handleRecordGroupOrderChange } =
+    useRecordGroupReorder({
+      objectNameSingular: objectMetadataItem.nameSingular,
+      viewBarId: recordIndexId,
+    });
+
+  const viewGroupSettingsUrl = getSettingsPagePath(SettingsPath.ObjectDetail, {
+    id: viewGroupFieldMetadataItem?.name,
+    objectSlug: objectNamePlural,
+  });
+
   const visibleRecordFields =
     viewType === ViewType.Kanban ? visibleBoardFields : visibleTableColumns;
 
@@ -143,10 +178,28 @@ export const RecordIndexOptionsDropdownContent = ({
     navigationMemorizedUrlState,
   );
 
+  const isViewGroupMenuItemVisible =
+    viewGroupFieldMetadataItem &&
+    (visibleRecordGroups.length > 0 || hiddenRecordGroups.length > 0);
+
+  useEffect(() => {
+    if (currentMenu === 'hiddenViewGroups' && hiddenRecordGroups.length === 0) {
+      setCurrentMenu('viewGroups');
+    }
+  }, [hiddenRecordGroups, currentMenu]);
+
   return (
     <>
       {!currentMenu && (
         <DropdownMenuItemsContainer>
+          {isViewGroupMenuItemVisible && (
+            <MenuItem
+              onClick={() => handleSelectMenu('viewGroups')}
+              LeftIcon={getIcon(currentViewWithCombinedFiltersAndSorts?.icon)}
+              text={viewGroupFieldMetadataItem.label}
+              hasSubMenu
+            />
+          )}
           <MenuItem
             onClick={() => handleSelectMenu('fields')}
             LeftIcon={IconTag}
@@ -174,20 +227,50 @@ export const RecordIndexOptionsDropdownContent = ({
           />
         </DropdownMenuItemsContainer>
       )}
+      {currentMenu === 'viewGroups' && (
+        <>
+          <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
+            {viewGroupFieldMetadataItem?.label}
+          </DropdownMenuHeader>
+          <ViewGroupsVisibilityDropdownSection
+            title={viewGroupFieldMetadataItem?.label ?? ''}
+            viewGroups={visibleRecordGroups}
+            onDragEnd={handleRecordGroupOrderChange}
+            onVisibilityChange={handleRecordGroupVisibilityChange}
+            isDraggable
+            showSubheader={false}
+            showDragGrip={true}
+          />
+          {hiddenRecordGroups.length > 0 && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItemsContainer>
+                <MenuItemNavigate
+                  onClick={() => handleSelectMenu('hiddenViewGroups')}
+                  LeftIcon={IconEyeOff}
+                  text={`Hidden ${viewGroupFieldMetadataItem?.label ?? ''}`}
+                />
+              </DropdownMenuItemsContainer>
+            </>
+          )}
+        </>
+      )}
       {currentMenu === 'fields' && (
         <>
           <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
             Fields
           </DropdownMenuHeader>
-          <ViewFieldsVisibilityDropdownSection
-            title="Visible"
-            fields={visibleRecordFields}
-            isDraggable
-            onDragEnd={handleReorderFields}
-            onVisibilityChange={handleChangeFieldVisibility}
-            showSubheader={false}
-            showDragGrip={true}
-          />
+          <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
+            <ViewFieldsVisibilityDropdownSection
+              title="Visible"
+              fields={visibleRecordFields}
+              isDraggable
+              onDragEnd={handleReorderFields}
+              onVisibilityChange={handleChangeFieldVisibility}
+              showSubheader={false}
+              showDragGrip={true}
+            />
+          </ScrollWrapper>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
             <MenuItemNavigate
@@ -196,6 +279,36 @@ export const RecordIndexOptionsDropdownContent = ({
               text="Hidden Fields"
             />
           </DropdownMenuItemsContainer>
+        </>
+      )}
+      {currentMenu === 'hiddenViewGroups' && (
+        <>
+          <DropdownMenuHeader
+            StartIcon={IconChevronLeft}
+            onClick={() => setCurrentMenu('viewGroups')}
+          >
+            Hidden {viewGroupFieldMetadataItem?.label}
+          </DropdownMenuHeader>
+          <ViewGroupsVisibilityDropdownSection
+            title={`Hidden ${viewGroupFieldMetadataItem?.label}`}
+            viewGroups={hiddenRecordGroups}
+            onVisibilityChange={handleRecordGroupVisibilityChange}
+            isDraggable={false}
+            showSubheader={false}
+            showDragGrip={false}
+          />
+          <DropdownMenuSeparator />
+          <UndecoratedLink
+            to={viewGroupSettingsUrl}
+            onClick={() => {
+              setNavigationMemorizedUrl(location.pathname + location.search);
+              closeDropdown();
+            }}
+          >
+            <DropdownMenuItemsContainer>
+              <MenuItem LeftIcon={IconSettings} text="Edit field values" />
+            </DropdownMenuItemsContainer>
+          </UndecoratedLink>
         </>
       )}
       {currentMenu === 'hiddenFields' && (
@@ -207,7 +320,7 @@ export const RecordIndexOptionsDropdownContent = ({
             Hidden Fields
           </DropdownMenuHeader>
           {hiddenRecordFields.length > 0 && (
-            <>
+            <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
               <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
                 fields={hiddenRecordFields}
@@ -216,7 +329,7 @@ export const RecordIndexOptionsDropdownContent = ({
                 showSubheader={false}
                 showDragGrip={false}
               />
-            </>
+            </ScrollWrapper>
           )}
           <DropdownMenuSeparator />
 

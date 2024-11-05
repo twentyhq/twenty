@@ -6,7 +6,6 @@ import session from 'express-session';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
-import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces';
 
 export const getSessionStorageOptions = (
   environmentService: EnvironmentService,

@@ -6,20 +6,20 @@ import { useRecordTableStates } from '@/object-record/record-table/hooks/interna
 import { RecordTableCell } from '@/object-record/record-table/record-table-cell/components/RecordTableCell';
 import { RecordTableCellWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellWrapper';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 const COLUMN_MIN_WIDTH = 104;
 
 export const RecordTableCellsVisible = () => {
   const { isSelected, isDragging } = useContext(RecordTableRowContext);
-  const {
-    visibleTableColumnsSelector,
-    tableColumnsState,
-    resizedFieldKeyState,
-    resizeFieldOffsetState,
-  } = useRecordTableStates();
+  const { tableColumnsState, resizedFieldKeyState, resizeFieldOffsetState } =
+    useRecordTableStates();
 
-  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const visibleTableColumns = useRecoilComponentValueV2(
+    visibleTableColumnsComponentSelector,
+  );
   const resizeFieldOffset = useRecoilValue(resizeFieldOffsetState);
 
   const tableColumns = useRecoilValue(tableColumnsState);
