@@ -2,12 +2,18 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
+import {
+  Workflow,
+  WorkflowTriggerType,
+  WorkflowVersion,
+} from '@/workflow/types/Workflow';
 
-export const useActiveWorkflowVersionsWithTriggerRecordType = ({
+export const useAllActiveWorkflowVersions = ({
   objectNameSingular,
+  triggerType,
 }: {
   objectNameSingular: string;
+  triggerType: WorkflowTriggerType;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -26,7 +32,7 @@ export const useActiveWorkflowVersionsWithTriggerRecordType = ({
         },
         {
           trigger: {
-            like: '%"type": "MANUAL"%',
+            like: `%"type": "${triggerType}"%`,
           },
         },
         {

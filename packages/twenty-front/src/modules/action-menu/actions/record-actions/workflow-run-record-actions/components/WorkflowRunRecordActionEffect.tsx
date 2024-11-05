@@ -5,7 +5,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useActiveWorkflowVersionsWithTriggerRecordType } from '@/workflow/hooks/useActiveWorkflowVersionsWithTriggerRecordType';
+import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkflowVersions';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useTheme } from '@emotion/react';
 import { useEffect } from 'react';
@@ -33,10 +33,10 @@ export const WorkflowRunRecordActionEffect = ({
     recordStoreFamilyState(selectedRecordId ?? ''),
   );
 
-  const { records: activeWorkflowVersions } =
-    useActiveWorkflowVersionsWithTriggerRecordType({
-      objectNameSingular: objectMetadataItem.nameSingular,
-    });
+  const { records: activeWorkflowVersions } = useAllActiveWorkflowVersions({
+    objectNameSingular: objectMetadataItem.nameSingular,
+    triggerType: 'MANUAL',
+  });
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
