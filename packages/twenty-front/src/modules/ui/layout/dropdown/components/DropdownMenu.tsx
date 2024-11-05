@@ -4,6 +4,7 @@ const StyledDropdownMenu = styled.div<{
   disableBlur?: boolean;
   disableBorder?: boolean;
   width?: `${string}px` | `${number}%` | 'auto' | number;
+  isCustomSlashMenu?: boolean;
 }>`
   backdrop-filter: ${({ theme, disableBlur }) =>
     disableBlur ? 'none' : theme.blur.medium};
@@ -18,12 +19,12 @@ const StyledDropdownMenu = styled.div<{
   border: ${({ disableBorder, theme }) =>
     disableBorder ? 'none' : `1px solid ${theme.border.color.medium}`};
   border-radius: ${({ theme }) => theme.border.radius.md};
-
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
 
   display: flex;
 
-  height: 100%;
+  height: ${({ isCustomSlashMenu }) =>
+    isCustomSlashMenu ? 'fit-content' : '100%'};
 
   flex-direction: column;
   z-index: 30;

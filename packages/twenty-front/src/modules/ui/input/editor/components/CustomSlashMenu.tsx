@@ -24,7 +24,7 @@ const StyledSlashMenu = styled.div`
 export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
   return (
     <StyledSlashMenu>
-      <DropdownMenu style={{ zIndex: 2001 }}>
+      <DropdownMenu style={{ zIndex: 2001 }} isCustomSlashMenu={true}>
         <DropdownMenuItemsContainer>
           {props.items.map((item, index) => (
             <MenuItemSuggestion
