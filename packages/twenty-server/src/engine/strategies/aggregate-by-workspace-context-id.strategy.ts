@@ -8,7 +8,7 @@ import {
 import { Request } from 'express';
 import { jwtDecode } from 'jwt-decode';
 
-import { JwtPayload } from 'src/engine/core-modules/auth/strategies/interfaces';
+import { JwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 const workspaces = new Map<string, ContextId>();
 

@@ -10,8 +10,10 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { JwtPayload } from 'src/engine/core-modules/auth/strategies/interfaces';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  AuthContext,
+  JwtPayload,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -53,31 +55,11 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: JwtPayload): Promise<AuthContext> {
-    // We split in three different cases
-    // 1. API_KEY
-    // 2. API_KEY - backward compatibility with old api tokens based on
-    // no payload.workspaceId and no type
-    // 3. all other types of tokens (no backward compatibility)
-
-    let user: User | null = null;
+  private async validateAPIKey(payload: JwtPayload): Promise<AuthContext> {
     let apiKey: ApiKeyWorkspaceEntity | null = null;
 
-    let propertyName: 'workspaceId' | 'sub';
-
-    // case 2.
-    if (!payload.type && !payload.workspaceId) {
-      propertyName = 'sub';
-    } else if (payload.type === 'API_KEY') {
-      // case 1.
-      propertyName = 'sub';
-    } else {
-      // case 3.
-      propertyName = 'workspaceId';
-    }
-
     const workspace = await this.workspaceRepository.findOneBy({
-      id: payload[propertyName],
+      id: payload['sub'],
     });
 
     if (!workspace) {
@@ -87,48 +69,80 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    // the jti here let us know that this can be revoked. We need to check.
-    if (payload.jti) {
-      // TODO: Check why it's not working
-      // const apiKeyRepository =
-      //   await this.twentyORMGlobalManager.getRepositoryForWorkspace<ApiKeyWorkspaceEntity>(
-      //     workspace.id,
-      //     'apiKey',
-      //   );
-
-      const dataSourceMetadata =
-        await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-          workspace.id,
-        );
-
-      const workspaceDataSource =
-        await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-      const res = await workspaceDataSource?.query(
-        `SELECT * FROM ${dataSourceMetadata.schema}."apiKey" WHERE id = $1`,
-        [payload.jti],
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspace.id,
       );
 
-      apiKey = res?.[0];
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
-      if (!apiKey || apiKey.revokedAt) {
-        throw new AuthException(
-          'This API Key is revoked',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
+    const res = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."apiKey" WHERE id = $1`,
+      [payload.jti],
+    );
+
+    apiKey = res?.[0];
+
+    if (!apiKey || apiKey.revokedAt) {
+      throw new AuthException(
+        'This API Key is revoked',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
     }
 
-    if (payload.type !== 'API_KEY') {
-      user = await this.userRepository.findOne({
-        where: { id: payload.sub },
-      });
-      if (!user) {
-        throw new AuthException(
-          'User not found',
-          AuthExceptionCode.INVALID_INPUT,
-        );
-      }
+    return { apiKey, workspace };
+  }
+
+  private async validateAccessToken(payload: JwtPayload): Promise<AuthContext> {
+    let user: User | null = null;
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: payload['workspaceId'],
+    });
+
+    if (!workspace) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    user = await this.userRepository.findOne({
+      where: { id: payload.sub },
+    });
+    if (!user) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    return { user, workspace };
+  }
+
+  async validate(payload: JwtPayload): Promise<AuthContext> {
+    let user: User | null = null;
+    let workspace: Workspace | null;
+    let apiKey: ApiKeyWorkspaceEntity | null = null;
+
+    if (!payload.type && !payload.workspaceId) {
+      const { apiKey: _apiKey, workspace: _workspace } =
+        await this.validateAPIKey(payload);
+
+      workspace = _workspace;
+      apiKey = _apiKey || null;
+    } else if (payload.type === 'API_KEY') {
+      const { apiKey: _apiKey, workspace: _workspace } =
+        await this.validateAPIKey(payload);
+
+      workspace = _workspace;
+      apiKey = _apiKey || null;
+    } else {
+      const { user: _user, workspace: _workspace } =
+        await this.validateAccessToken(payload);
+
+      workspace = _workspace;
+      user = _user || null;
     }
 
     // We don't check if the user is a member of the workspace yet

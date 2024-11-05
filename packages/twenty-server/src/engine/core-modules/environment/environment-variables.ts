@@ -137,7 +137,6 @@ export class EnvironmentVariables {
   @IsString()
   APP_SECRET: string;
 
-  // legacy
   @IsOptional()
   @IsString()
   ACCESS_TOKEN_SECRET: string;

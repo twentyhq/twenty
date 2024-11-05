@@ -2,7 +2,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { JwtPayload } from 'src/engine/core-modules/auth/strategies/interfaces';
+import { JwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
@@ -14,7 +14,7 @@ describe('JwtAuthStrategy', () => {
   let userRepository: any;
   let dataSourceService: any;
   let typeORMService: any;
-  const jwt: JwtPayload = {
+  const jwt = {
     sub: 'sub-default',
     jti: 'jti-default',
   };
@@ -27,17 +27,9 @@ describe('JwtAuthStrategy', () => {
     findOne: jest.fn(async () => null),
   };
 
-  // dataSourceService = {
-  //   getLastDataSourceMetadataFromWorkspaceIdOrFail: jest.fn(async () => ({})),
-  // };
-
-  // typeORMService = {
-  //   connectToDataSource: jest.fn(async () => {}),
-  // };
-
   // first we test the API_KEY case
   it('should throw AuthException if type is API_KEY and workspace is not found', async () => {
-    const payload: JwtPayload = {
+    const payload = {
       ...jwt,
       type: 'API_KEY',
     };
@@ -55,10 +47,7 @@ describe('JwtAuthStrategy', () => {
       {} as any,
     );
 
-    const workspace = new Workspace();
-
-    workspace.id = jwt.workspaceId || '';
-    await expect(strategy.validate(payload)).rejects.toThrow(
+    await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
       new AuthException(
         'Workspace not found',
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
@@ -67,7 +56,7 @@ describe('JwtAuthStrategy', () => {
   });
 
   it('should throw AuthExceptionCode if type is API_KEY not found', async () => {
-    const payload: JwtPayload = {
+    const payload = {
       ...jwt,
       type: 'API_KEY',
     };
@@ -93,11 +82,7 @@ describe('JwtAuthStrategy', () => {
       {} as any,
     );
 
-    const workspace = new Workspace();
-
-    workspace.id = jwt.workspaceId || '';
-
-    await expect(strategy.validate(payload)).rejects.toThrow(
+    await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
       new AuthException(
         'This API Key is revoked',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
@@ -106,7 +91,7 @@ describe('JwtAuthStrategy', () => {
   });
 
   it('should be truthy if type is API_KEY and API_KEY is not revoked', async () => {
-    const payload: JwtPayload = {
+    const payload = {
       ...jwt,
       type: 'API_KEY',
     };
@@ -134,11 +119,7 @@ describe('JwtAuthStrategy', () => {
       {} as any,
     );
 
-    const workspace = new Workspace();
-
-    workspace.id = jwt.workspaceId || '';
-
-    const result = await strategy.validate(payload);
+    const result = await strategy.validate(payload as JwtPayload);
 
     expect(result).toBeTruthy();
     expect(result.apiKey?.id).toBe('api-key-id');
@@ -147,7 +128,7 @@ describe('JwtAuthStrategy', () => {
   // second we test the ACCESS cases
 
   it('should throw AuthExceptionCode if type is ACCESS, no jti, and user not found', async () => {
-    const payload: JwtPayload = {
+    const payload = {
       sub: 'sub-default',
       type: 'ACCESS',
     };
@@ -169,17 +150,13 @@ describe('JwtAuthStrategy', () => {
       userRepository,
     );
 
-    const workspace = new Workspace();
-
-    workspace.id = jwt.workspaceId || '';
-
-    await expect(strategy.validate(payload)).rejects.toThrow(
+    await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
       new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
     );
   });
 
   it('should be truthy if type is ACCESS, no jti, and user exist', async () => {
-    const payload: JwtPayload = {
+    const payload = {
       sub: 'sub-default',
       type: 'ACCESS',
     };
@@ -201,11 +178,7 @@ describe('JwtAuthStrategy', () => {
       userRepository,
     );
 
-    const workspace = new Workspace();
-
-    workspace.id = jwt.workspaceId || '';
-
-    const user = await strategy.validate(payload);
+    const user = await strategy.validate(payload as JwtPayload);
 
     expect(user.user?.lastName).toBe('lastNameDefault');
   });

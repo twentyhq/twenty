@@ -59,10 +59,7 @@ export class JwtWrapperService {
     }
 
     try {
-      // we check that ACCESS_TOKEN_SECRET is set
-      const appSecret = this.environmentService.get('ACCESS_TOKEN_SECRET');
-
-      if (!type && !payload.workspaceId && appSecret) {
+      if (!type && !payload.workspaceId) {
         return this.jwtService.verify(token, {
           ...options,
           secret: this.generateAppSecretLegacy(type, payload.workspaceId),
@@ -109,14 +106,16 @@ export class JwtWrapperService {
     type: WorkspaceTokenType,
     workspaceId?: string,
   ): string {
-    const appSecret = this.environmentService.get('ACCESS_TOKEN_SECRET');
+    const accessTokenSecret = this.environmentService.get(
+      'ACCESS_TOKEN_SECRET',
+    );
 
-    if (!appSecret) {
+    if (!accessTokenSecret) {
       throw new Error('ACCESS_TOKEN_SECRET is not set');
     }
 
     return createHash('sha256')
-      .update(`${appSecret}${workspaceId}${type}`)
+      .update(`${accessTokenSecret}${workspaceId}${type}`)
       .digest('hex');
   }
 }
