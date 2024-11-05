@@ -13,8 +13,8 @@ export interface WorkspaceQueryRunnerOptions {
   authContext: AuthContext;
   info: GraphQLResolveInfo;
   objectMetadataItem: ObjectMetadataInterface;
-  fieldMetadataCollection: FieldMetadataInterface[];
-  objectMetadataCollection: ObjectMetadataInterface[];
+  fieldMetadataCollection: FieldMetadataInterface[]; // Legacy
+  objectMetadataCollection: ObjectMetadataInterface[]; // Legacy
   objectMetadataMap: ObjectMetadataMap;
   objectMetadataMapItem: ObjectMetadataMapItem;
 }

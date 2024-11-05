@@ -85,6 +85,8 @@ export class WorkspaceSchemaFactory {
       authContext.workspace.id,
       currentCacheVersion,
     );
+
+    typeDefs = undefined;
     let usedScalarNames =
       await this.workspaceCacheStorageService.getGraphQLUsedScalarNames(
         authContext.workspace.id,

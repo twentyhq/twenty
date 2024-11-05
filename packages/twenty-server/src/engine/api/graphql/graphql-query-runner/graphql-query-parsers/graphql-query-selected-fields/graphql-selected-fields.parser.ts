@@ -33,12 +33,18 @@ export class GraphqlQuerySelectedFieldsParser {
       relations: {},
     };
 
+    const hasEdges = Object.keys(graphqlSelectedFields).includes('edges');
+
     for (const [fieldKey, fieldValue] of Object.entries(
       graphqlSelectedFields,
     )) {
+      if (hasEdges && fieldKey !== 'edges') {
+        continue;
+      }
       if (this.shouldNotParseField(fieldKey)) {
         continue;
       }
+
       if (this.isConnectionField(fieldKey, fieldValue)) {
         const subResult = this.parse(fieldValue, fieldMetadataMap);
 
@@ -83,9 +89,7 @@ export class GraphqlQuerySelectedFieldsParser {
   }
 
   private shouldNotParseField(fieldKey: string): boolean {
-    return ['__typename', 'totalCount', 'pageInfo', 'cursor'].includes(
-      fieldKey,
-    );
+    return ['__typename', 'cursor'].includes(fieldKey);
   }
 
   private parseCompositeField(

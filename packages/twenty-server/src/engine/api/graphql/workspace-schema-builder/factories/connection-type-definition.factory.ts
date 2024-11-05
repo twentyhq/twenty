@@ -5,13 +5,14 @@ import { GraphQLFieldConfigMap, GraphQLInt, GraphQLObjectType } from 'graphql';
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
+import { getAvailableAggregationsFromObjectFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { pascalCase } from 'src/utils/pascal-case';
 
+import { ConnectionTypeFactory } from './connection-type.factory';
 import {
   ObjectTypeDefinition,
   ObjectTypeDefinitionKind,
 } from './object-type-definition.factory';
-import { ConnectionTypeFactory } from './connection-type.factory';
 
 export enum ConnectionTypeDefinitionKind {
   Edge = 'Edge',
@@ -43,7 +44,25 @@ export class ConnectionTypeDefinitionFactory {
     objectMetadata: ObjectMetadataInterface,
     options: WorkspaceBuildSchemaOptions,
   ): GraphQLFieldConfigMap<any, any> {
-    const fields: GraphQLFieldConfigMap<any, any> = {};
+    const fields: GraphQLFieldConfigMap<any, any> = Object.assign(
+      {},
+      ...getAvailableAggregationsFromObjectFields(objectMetadata.fields).map(
+        (agg) => {
+          const [
+            [
+              key,
+              {
+                aggregationType: _aggregationType,
+                fromField: _fromField,
+                ...rest
+              },
+            ],
+          ] = Object.entries(agg);
+
+          return { [key]: rest };
+        },
+      ),
+    );
 
     fields.edges = {
       type: this.connectionTypeFactory.create(

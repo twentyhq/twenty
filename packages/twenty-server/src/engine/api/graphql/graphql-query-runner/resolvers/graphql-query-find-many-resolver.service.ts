@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
 import graphqlFields from 'graphql-fields';
 
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
@@ -27,8 +26,10 @@ import {
   getCursor,
   getPaginationInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { getAvailableAggregationsFromObjectFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class GraphqlQueryFindManyResolverService
@@ -85,8 +86,6 @@ export class GraphqlQueryFindManyResolverService
     );
     const isForwardPagination = !isDefined(args.before);
 
-    const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
-
     const withDeletedCountQueryBuilder =
       graphqlQueryParser.applyDeletedAtToBuilder(
         withFilterCountQueryBuilder,
@@ -95,7 +94,7 @@ export class GraphqlQueryFindManyResolverService
 
     const totalCount = isDefined(selectedFields.totalCount)
       ? await withDeletedCountQueryBuilder.getCount()
-      : 0;
+      : 0; // Blocked at 60 it seems
 
     const cursor = getCursor(args);
 
@@ -139,12 +138,57 @@ export class GraphqlQueryFindManyResolverService
       args.filter ?? ({} as Filter),
     );
 
+    const allAggregatedFields = getAvailableAggregationsFromObjectFields(
+      Object.values(objectMetadataMapItem.fields),
+    );
+
+    const selectedAggregatedFields = allAggregatedFields.reduce(
+      (acc, aggregatedField) => {
+        const key = Object.keys(aggregatedField)[0];
+
+        if (!Object.keys(selectedFields).includes(key)) return acc;
+        if (acc.some((field) => Object.keys(field)[0] === key)) return acc;
+
+        return [...acc, aggregatedField];
+      },
+      [] as typeof allAggregatedFields,
+    );
+
+    if (selectedAggregatedFields.length > 0) {
+      selectedAggregatedFields.forEach((aggregatedField) => {
+        const [[aggregatedFieldName, aggregatedFieldDetails]] =
+          Object.entries(aggregatedField);
+        const operation = aggregatedFieldDetails.aggregationType;
+        const fieldName = aggregatedFieldDetails.fromField;
+
+        withDeletedQueryBuilder.addSelect(
+          `${operation}("${fieldName}") OVER()`,
+          `${aggregatedFieldName}`,
+        );
+      });
+    }
+
+    const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
+
     const nonFormattedObjectRecords = await withDeletedQueryBuilder
       .take(limit + 1)
-      .getMany();
+      .getRawAndEntities();
+
+    const aggregatedFieldsResults = selectedAggregatedFields.reduce(
+      (acc, aggregatedField) => {
+        const aggregatedFieldName = Object.keys(aggregatedField)[0];
+
+        return {
+          ...acc,
+          [aggregatedFieldName]:
+            nonFormattedObjectRecords.raw[0][aggregatedFieldName],
+        };
+      },
+      {},
+    );
 
     const objectRecords = formatResult(
-      nonFormattedObjectRecords,
+      nonFormattedObjectRecords.entities,
       objectMetadataMapItem,
       objectMetadataMap,
     );
@@ -186,7 +230,7 @@ export class GraphqlQueryFindManyResolverService
       hasPreviousPage,
     });
 
-    return result;
+    return { ...result, ...aggregatedFieldsResults };
   }
 
   async validate<Filter extends RecordFilter>(

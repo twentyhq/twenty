@@ -62,6 +62,12 @@ export class GraphqlQueryParser {
     return queryBuilder;
   }
 
+  public addGetMinCreatedAtToBuilder(
+    queryBuilder: SelectQueryBuilder<any>,
+  ): SelectQueryBuilder<any> {
+    return queryBuilder.addSelect('MIN("createdAt") OVER()', 'minCreatedAt');
+  }
+
   private checkForDeletedAtFilter = (
     filter: FindOptionsWhere<ObjectLiteral> | FindOptionsWhere<ObjectLiteral>[],
   ): boolean => {
