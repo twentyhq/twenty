@@ -23,6 +23,7 @@ type Story = StoryObj<typeof Button>;
 
 export const Default: Story = {
   argTypes: {
+    shortcut: { control: false },
     Icon: { control: false },
   },
   args: {
@@ -54,6 +55,7 @@ export const Catalog: CatalogStory<Story, typeof Button> = {
     soon: { control: false },
     position: { control: false },
     className: { control: false },
+    shortcut: { control: false },
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
@@ -126,6 +128,7 @@ export const SoonCatalog: CatalogStory<Story, typeof Button> = {
     soon: { control: false },
     position: { control: false },
     className: { control: false },
+    shortcut: { control: false },
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
@@ -197,6 +200,84 @@ export const PositionCatalog: CatalogStory<Story, typeof Button> = {
     fullWidth: { control: false },
     soon: { control: false },
     position: { control: false },
+    shortcut: { control: false },
+  },
+  parameters: {
+    pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
+    catalog: {
+      dimensions: [
+        {
+          name: 'positions',
+          values: [
+            'standalone',
+            'left',
+            'middle',
+            'right',
+          ] satisfies ButtonPosition[],
+          props: (position: ButtonPosition) => ({ position }),
+        },
+        {
+          name: 'states',
+          values: [
+            'default',
+            'hover',
+            'pressed',
+            'disabled',
+            'focus',
+            'disabled+focus',
+          ],
+          props: (state: string) => {
+            switch (state) {
+              case 'default':
+                return {};
+              case 'hover':
+              case 'pressed':
+                return { className: state };
+              case 'focus':
+                return { focus: true };
+              case 'disabled':
+                return { disabled: true };
+              case 'active':
+                return { active: true };
+              case 'disabled+focus':
+                return { focus: true, disabled: true };
+              default:
+                return {};
+            }
+          },
+        },
+        {
+          name: 'sizes',
+          values: ['small', 'medium'] satisfies ButtonSize[],
+          props: (size: ButtonSize) => ({ size }),
+        },
+        {
+          name: 'variants',
+          values: [
+            'primary',
+            'secondary',
+            'tertiary',
+          ] satisfies ButtonVariant[],
+          props: (variant: ButtonVariant) => ({ variant }),
+        },
+      ],
+    },
+  },
+  decorators: [CatalogDecorator],
+};
+
+export const ShortcutCatalog: CatalogStory<Story, typeof Button> = {
+  args: { title: 'Actions', shortcut: '⌘O' },
+  argTypes: {
+    size: { control: false },
+    variant: { control: false },
+    accent: { control: false },
+    disabled: { control: false },
+    focus: { control: false },
+    fullWidth: { control: false },
+    soon: { control: false },
+    position: { control: false },
+    shortcut: { control: false },
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
