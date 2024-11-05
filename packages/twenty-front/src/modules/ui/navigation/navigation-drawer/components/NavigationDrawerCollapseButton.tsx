@@ -13,10 +13,8 @@ const StyledCollapseButton = styled.div`
   color: ${({ theme }) => theme.font.color.light};
   cursor: pointer;
   display: flex;
-  height: ${({ theme }) => theme.spacing(4)};
   justify-content: center;
   user-select: none;
-  width: ${({ theme }) => theme.spacing(4)};
 `;
 
 type NavigationDrawerCollapseButtonProps = {
