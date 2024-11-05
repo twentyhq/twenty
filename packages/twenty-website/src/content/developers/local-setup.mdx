@@ -5,7 +5,6 @@ image: /images/user-guide/fields/field.png
 info: Mostly for contributors or curious developers
 ---
 
-
 Follow this guide if you would like to setup the project locally to contribute.
 
 ## Prerequisites
@@ -115,6 +114,7 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
     ```
+    Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
 
     <b>Option 2:</b> If you have docker installed:
     ```bash
@@ -143,6 +143,7 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     ```bash
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
     ```
+    Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
 
     <b>Option 2:</b> If you have docker installed:  
     Running Docker on WSL adds an extra layer of complexity.
@@ -276,7 +277,7 @@ Make sure to run yarn in the root directory and then run `npx nx server:dev twen
 
 This should work out of the box with the eslint extension installed. If this doesn't work try adding this to your vscode setting (on the dev container scope):
 
-#### While running `npx nx start` or `npx nx start twenty-front`, Out of memory is thrown
+#### While running `npx nx start` or `npx nx start twenty-front`, Out of memory error is thrown
 
 In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` and `VITE_DISABLE_ESLINT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
 

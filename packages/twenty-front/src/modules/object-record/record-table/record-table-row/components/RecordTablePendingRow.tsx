@@ -1,11 +1,11 @@
-import { useRecoilValue } from 'recoil';
-
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
+import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTablePendingRow = () => {
-  const { pendingRecordIdState } = useRecordTableStates();
-  const pendingRecordId = useRecoilValue(pendingRecordIdState);
+  const pendingRecordId = useRecoilComponentValueV2(
+    recordTablePendingRecordIdComponentState,
+  );
 
   if (!pendingRecordId) return <></>;
 

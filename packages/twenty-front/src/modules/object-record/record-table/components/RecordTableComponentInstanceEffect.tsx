@@ -4,14 +4,14 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
-type RecordTableScopeInitEffectProps = {
+type RecordTableComponentInstanceEffectProps = {
   onColumnsChange: (columns: ColumnDefinition<FieldMetadata>[]) => void;
   onEntityCountChange?: (count: number) => void | Promise<void>;
 };
 
-export const RecordTableScopeInitEffect = ({
+export const RecordTableComponentInstanceEffect = ({
   onColumnsChange,
-}: RecordTableScopeInitEffectProps) => {
+}: RecordTableComponentInstanceEffectProps) => {
   const { setOnColumnsChange } = useRecordTable();
 
   useEffect(() => {

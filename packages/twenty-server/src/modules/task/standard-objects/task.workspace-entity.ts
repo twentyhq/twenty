@@ -101,7 +101,7 @@ export class TaskWorkspaceEntity extends BaseWorkspaceEntity {
     options: [
       { value: 'TODO', label: 'To do', position: 0, color: 'sky' },
       {
-        value: 'IN_PROGESS',
+        value: 'IN_PROGRESS',
         label: 'In progress',
         position: 1,
         color: 'purple',
