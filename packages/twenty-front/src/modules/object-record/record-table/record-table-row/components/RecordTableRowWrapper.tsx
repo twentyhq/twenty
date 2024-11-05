@@ -48,7 +48,7 @@ export const RecordTableRowWrapper = ({
     rootMargin: '1000px',
   });
 
-  const [tableCellWidths, setTableCellWidths] = useRecoilComponentStateV2(
+  const [, setTableCellWidths] = useRecoilComponentStateV2(
     tableCellWidthsComponentState,
   );
 
