@@ -1,11 +1,11 @@
 import { WorkflowRunActionEffect } from '@/action-menu/actions/global-actions/workflow-run-actions/components/WorkflowRunActionEffect';
 
-const globalRecordActionEffects = [WorkflowRunActionEffect];
+const globalActionEffects = [WorkflowRunActionEffect];
 
 export const GlobalActionMenuEntriesSetter = () => {
   return (
     <>
-      {globalRecordActionEffects.map((ActionEffect, index) => (
+      {globalActionEffects.map((ActionEffect, index) => (
         <ActionEffect key={index} />
       ))}
     </>
