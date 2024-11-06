@@ -1,4 +1,5 @@
 export type OutputSchema = object;
+export type InputSchema = object;
 
 type BaseWorkflowStepSettings = {
   input: object;
@@ -16,7 +17,9 @@ type BaseWorkflowStepSettings = {
 export type WorkflowCodeStepInput = {
   serverlessFunctionId: string;
   serverlessFunctionVersion: string;
-  payloadInput: object;
+  serverlessFunctionInput: {
+    [key: string]: any;
+  };
 };
 
 export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {

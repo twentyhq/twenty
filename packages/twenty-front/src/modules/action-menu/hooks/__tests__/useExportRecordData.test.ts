@@ -86,7 +86,7 @@ describe('csvDownloader', () => {
 
 describe('displayedExportProgress', () => {
   it.each([
-    [undefined, undefined, 'percentage', 'Export'],
+    [undefined, undefined, 'percentage', 'Export View as CSV'],
     [20, 50, 'percentage', 'Export (40%)'],
     [0, 100, 'number', 'Export (0)'],
     [10, 10, 'percentage', 'Export (100%)'],
@@ -96,7 +96,7 @@ describe('displayedExportProgress', () => {
     'displays the export progress',
     (exportedRecordCount, totalRecordCount, displayType, expected) => {
       expect(
-        displayedExportProgress({
+        displayedExportProgress('all', {
           exportedRecordCount,
           totalRecordCount,
           displayType: displayType as 'percentage' | 'number',

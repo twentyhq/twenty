@@ -6,9 +6,14 @@ export const RecordShowRightDrawerActionMenuBar = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
     actionMenuEntriesComponentSelector,
   );
+
+  const standardActionMenuEntries = actionMenuEntries.filter(
+    (actionMenuEntry) => actionMenuEntry.type === 'standard',
+  );
+
   return (
     <>
-      {actionMenuEntries.map((actionMenuEntry) => (
+      {standardActionMenuEntries.map((actionMenuEntry) => (
         <RecordShowActionMenuBarEntry entry={actionMenuEntry} />
       ))}
     </>

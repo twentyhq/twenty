@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { offset, useFloating } from '@floating-ui/react';
+import { FloatingPortal, offset, shift, useFloating } from '@floating-ui/react';
+import { ReactNode } from 'react';
 
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
@@ -40,9 +40,8 @@ export const ExpandedListDropdown = ({
   withBorder,
 }: ExpandedListDropdownProps) => {
   const { refs, floatingStyles } = useFloating({
-    // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
-    placement: 'start',
-    middleware: [offset({ mainAxis: -9, crossAxis: -7 })],
+    placement: 'bottom-start',
+    middleware: [offset({ mainAxis: -9, crossAxis: -7 }), shift()],
     elements: { reference: anchorElement },
   });
 
@@ -52,18 +51,20 @@ export const ExpandedListDropdown = ({
   });
 
   return (
-    <DropdownMenu
-      ref={refs.setFloating}
-      style={floatingStyles}
-      width={
-        anchorElement
-          ? Math.max(220, anchorElement.getBoundingClientRect().width)
-          : undefined
-      }
-    >
-      <StyledExpandedListContainer withBorder={withBorder}>
-        {children}
-      </StyledExpandedListContainer>
-    </DropdownMenu>
+    <FloatingPortal>
+      <DropdownMenu
+        ref={refs.setFloating}
+        style={floatingStyles}
+        width={
+          anchorElement
+            ? Math.max(220, anchorElement.getBoundingClientRect().width)
+            : undefined
+        }
+      >
+        <StyledExpandedListContainer withBorder={withBorder}>
+          {children}
+        </StyledExpandedListContainer>
+      </DropdownMenu>
+    </FloatingPortal>
   );
 };

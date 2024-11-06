@@ -47,6 +47,7 @@ describe('generateWorkflowDiagram', () => {
           input: {
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
             serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -64,6 +65,7 @@ describe('generateWorkflowDiagram', () => {
           input: {
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
             serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -110,6 +112,7 @@ describe('generateWorkflowDiagram', () => {
           input: {
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
             serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -127,6 +130,7 @@ describe('generateWorkflowDiagram', () => {
           input: {
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
             serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
           outputSchema: {},
         },
