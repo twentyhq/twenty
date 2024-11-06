@@ -10,6 +10,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { MenuItemMultiSelect } from '@/ui/navigation/menu-item/components/MenuItemMultiSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { useTheme } from '@emotion/react';
@@ -17,7 +18,7 @@ import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { Checkbox, IconPlus } from 'twenty-ui';
+import { IconPlus } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledDropdownContainer = styled.div`
@@ -47,10 +48,6 @@ const StyledFooter = styled.div`
   position: sticky;
 `;
 
-const StyledCheckbox = styled(Checkbox)`
-  padding-right: 0;
-`;
-
 type FavoriteFoldersMultiSelectProps = {
   onSubmit?: () => void;
   record?: ObjectRecord;
@@ -58,7 +55,8 @@ type FavoriteFoldersMultiSelectProps = {
 };
 
 const StyledIconPlus = styled(IconPlus)`
-  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledDropdownMenuSeparator = styled(DropdownMenuSeparator)`
@@ -170,17 +168,14 @@ export const FavoriteFoldersMultiSelect = ({
         <DropdownMenuItemsContainer>
           <StyledItemsContainer>
             {showNoFolderOption && (
-              <MenuItem
-                key={NO_FOLDER_ID}
-                onClick={() => toggleFolderSelection(NO_FOLDER_ID)}
-                LeftIcon={() => (
-                  <StyledCheckbox
-                    checked={favoriteFoldersMultiSelectChecked.includes(
-                      NO_FOLDER_ID,
-                    )}
-                  />
+              <MenuItemMultiSelect
+                key={`menu-${NO_FOLDER_ID}`}
+                onSelectChange={() => toggleFolderSelection(NO_FOLDER_ID)}
+                selected={favoriteFoldersMultiSelectChecked.includes(
+                  NO_FOLDER_ID,
                 )}
                 text="No folder"
+                className=""
               />
             )}
             {showNoFolderOption && filteredFolders.length > 0 && (
@@ -188,17 +183,14 @@ export const FavoriteFoldersMultiSelect = ({
             )}
             {filteredFolders.length > 0
               ? filteredFolders.map((folder) => (
-                  <MenuItem
-                    key={folder.id}
-                    onClick={() => toggleFolderSelection(folder.id)}
-                    LeftIcon={() => (
-                      <StyledCheckbox
-                        checked={favoriteFoldersMultiSelectChecked.includes(
-                          folder.id,
-                        )}
-                      />
+                  <MenuItemMultiSelect
+                    key={`menu-${folder.id}`}
+                    onSelectChange={() => toggleFolderSelection(folder.id)}
+                    selected={favoriteFoldersMultiSelectChecked.includes(
+                      folder.id,
                     )}
                     text={folder.name}
+                    className=""
                   />
                 ))
               : !showNoFolderOption && <MenuItem text="No folders found" />}
