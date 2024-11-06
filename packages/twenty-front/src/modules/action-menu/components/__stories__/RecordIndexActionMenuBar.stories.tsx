@@ -6,6 +6,7 @@ import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexAc
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
+import { getActionBarIdFromActionMenuId } from '@/action-menu/utils/getActionBarIdFromActionMenuId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -64,7 +65,7 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
 
             set(
               isBottomBarOpenedComponentState.atomFamily({
-                instanceId: 'action-bar-story-action-menu',
+                instanceId: getActionBarIdFromActionMenuId('story-action-menu'),
               }),
               true,
             );

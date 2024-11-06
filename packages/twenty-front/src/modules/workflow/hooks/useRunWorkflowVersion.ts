@@ -17,7 +17,7 @@ export const useRunWorkflowVersion = () => {
 
   const runWorkflowVersion = async (
     workflowVersionId: string,
-    payload: Record<string, any>,
+    payload?: Record<string, any>,
   ) => {
     await mutate({
       variables: { input: { workflowVersionId, payload } },
