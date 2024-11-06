@@ -21,7 +21,8 @@ const StyledMainSection = styled(NavigationDrawerSection)`
 `;
 
 const StyledContainer = styled.div`
-  overflow: scroll;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 export const MainNavigationDrawerItems = () => {
