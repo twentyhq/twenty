@@ -120,6 +120,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
         return {
           ...rootQueryConnection,
           edges: rootQueryNextEdges,
+          totalCount: rootQueryNextEdges.length,
         };
       },
     },
