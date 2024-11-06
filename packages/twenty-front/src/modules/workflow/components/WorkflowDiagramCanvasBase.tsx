@@ -23,6 +23,7 @@ import {
   NodeChange,
   NodeProps,
   ReactFlow,
+  useReactFlow,
   Viewport,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -59,8 +60,8 @@ const StyledStatusTagContainer = styled.div`
 `;
 
 const defaultFitViewOptions = {
-  minZoom: 1.3,
-  maxZoom: 1.3,
+  minZoom: 1,
+  maxZoom: 1,
 } satisfies FitViewOptions;
 
 export const WorkflowDiagramCanvasBase = ({
@@ -85,6 +86,7 @@ export const WorkflowDiagramCanvasBase = ({
   children?: React.ReactNode;
 }) => {
   const theme = useTheme();
+  const reactflow = useReactFlow();
 
   const { nodes, edges } = useMemo(
     () => getOrganizedDiagram(diagram),
@@ -174,9 +176,11 @@ export const WorkflowDiagramCanvasBase = ({
           return viewport;
         }
 
+        const rect = getNodesBounds(reactflow.getNodes());
+
         return {
           ...viewport,
-          x: containerRef.current.offsetWidth / 2 - 150 / 2,
+          x: containerRef.current.offsetWidth / 2 - rect.width / 2,
         };
       });
     });
@@ -186,7 +190,7 @@ export const WorkflowDiagramCanvasBase = ({
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [reactflow]);
 
   return (
     <StyledResetReactflowStyles
@@ -196,12 +200,12 @@ export const WorkflowDiagramCanvasBase = ({
       <ReactFlow
         viewport={viewport}
         onViewportChange={setViewport}
-        onInit={({ getNodes }) => {
+        onInit={() => {
           if (!isDefined(containerRef.current)) {
             throw new Error('Expect the container ref to be defined');
           }
 
-          const rect = getNodesBounds(getNodes());
+          const rect = getNodesBounds(reactflow.getNodes());
 
           setViewport({
             x: containerRef.current.offsetWidth / 2 - rect.width / 2,

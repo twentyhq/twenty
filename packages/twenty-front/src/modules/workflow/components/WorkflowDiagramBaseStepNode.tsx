@@ -21,7 +21,7 @@ const StyledStepNodeType = styled.div`
     ${({ theme }) => theme.border.radius.sm} 0 0;
 
   color: ${({ theme }) => theme.color.gray50};
-  font-size: ${({ theme }) => theme.font.size.xs};
+  font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 
   padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
@@ -62,9 +62,9 @@ const StyledStepNodeInnerContainer = styled.div<{ variant?: Variant }>`
 const StyledStepNodeLabel = styled.div<{ variant?: Variant }>`
   align-items: center;
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${({ theme }) => theme.font.size.lg};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  column-gap: ${({ theme }) => theme.spacing(2)};
+  column-gap: ${({ theme }) => theme.spacing(3)};
   color: ${({ variant, theme }) =>
     variant === 'placeholder'
       ? theme.font.color.extraLight
@@ -80,9 +80,13 @@ export const StyledTargetHandle = styled(Handle)`
 `;
 
 const StyledRightFloatingElementContainer = styled.div`
+  display: flex;
+  align-items: center;
   position: absolute;
+  right: ${({ theme }) => theme.spacing(-3)};
+  bottom: 0;
+  top: 0;
   transform: translateX(100%);
-  right: ${({ theme }) => theme.spacing(-2)};
 `;
 
 export const WorkflowDiagramBaseStepNode = ({
