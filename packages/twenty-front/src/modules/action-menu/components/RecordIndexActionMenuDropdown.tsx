@@ -51,10 +51,6 @@ export const RecordIndexActionMenuDropdown = () => {
     ),
   );
 
-  if (actionMenuEntries.length === 0) {
-    return null;
-  }
-
   //TODO: remove this
   const width = actionMenuEntries.some(
     (actionMenuEntry) => actionMenuEntry.label === 'Remove from favorites',

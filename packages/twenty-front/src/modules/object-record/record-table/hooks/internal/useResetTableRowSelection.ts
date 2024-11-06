@@ -1,5 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
+import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
@@ -25,6 +26,10 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
   return useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
+        if (!recordTableId) {
+          return;
+        }
+
         const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState);
 
         for (const rowId of tableRowIds) {
@@ -35,7 +40,7 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
 
         const isActionMenuDropdownOpenState = extractComponentState(
           isDropdownOpenComponentState,
-          `action-menu-dropdown-${recordTableId}`,
+          `action-menu-dropdown-${getActionMenuIdFromRecordIndexId(recordTableId)}`,
         );
 
         set(isActionMenuDropdownOpenState, false);
