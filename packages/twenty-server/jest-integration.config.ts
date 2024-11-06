@@ -14,6 +14,7 @@ const jestConfig: JestConfigWithTsJest = {
   globalSetup: '<rootDir>/test/integration/utils/setup-test.ts',
   globalTeardown: '<rootDir>/test/integration/utils/teardown-test.ts',
   testTimeout: 15000,
+  maxWorkers: 1,
   moduleNameMapper: {
     ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
       prefix: '<rootDir>/../..',
