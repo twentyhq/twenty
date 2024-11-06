@@ -59,10 +59,11 @@ export class JwtWrapperService {
     }
 
     try {
-      if (!type && !payload.workspaceId) {
+      // TODO: Deprecate this once old API KEY tokens are no longer in use
+      if (!payload.type && !payload.workspaceId && type === 'ACCESS') {
         return this.jwtService.verify(token, {
           ...options,
-          secret: this.generateAppSecretLegacy(type, payload.workspaceId),
+          secret: this.generateAppSecretLegacy(),
         });
       }
 
@@ -102,10 +103,7 @@ export class JwtWrapperService {
       .digest('hex');
   }
 
-  generateAppSecretLegacy(
-    type: WorkspaceTokenType,
-    workspaceId?: string,
-  ): string {
+  generateAppSecretLegacy(): string {
     const accessTokenSecret = this.environmentService.get(
       'ACCESS_TOKEN_SECRET',
     );
@@ -114,8 +112,6 @@ export class JwtWrapperService {
       throw new Error('ACCESS_TOKEN_SECRET is not set');
     }
 
-    return createHash('sha256')
-      .update(`${accessTokenSecret}${workspaceId}${type}`)
-      .digest('hex');
+    return accessTokenSecret;
   }
 }
