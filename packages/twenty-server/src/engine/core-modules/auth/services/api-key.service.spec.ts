@@ -68,7 +68,7 @@ describe('ApiKeyService', () => {
         },
         expect.objectContaining({
           secret: 'mocked-secret',
-          expiresIn: '1h',
+          expiresIn: '100y',
           jwtid: apiKeyId,
         }),
       );
