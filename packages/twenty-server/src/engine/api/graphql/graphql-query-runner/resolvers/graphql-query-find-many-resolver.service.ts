@@ -152,6 +152,7 @@ export class GraphqlQueryFindManyResolverService
           ),
         ),
       ),
+      selectedFields,
     });
 
     this.addSelectedAggregatedFieldsQueriesToQueryBuilder({
@@ -280,8 +281,10 @@ export class GraphqlQueryFindManyResolverService
 
   private getSelectedAggregatedFields = ({
     objectFields,
+    selectedFields,
   }: {
     objectFields: FieldMetadataInterface[];
+    selectedFields: any[];
   }) => {
     const allAggregatedFields =
       getAvailableAggregationsFromObjectFields(objectFields);
@@ -290,7 +293,7 @@ export class GraphqlQueryFindManyResolverService
       (acc, aggregatedField) => {
         const aggregatedFieldName = Object.keys(aggregatedField)[0];
 
-        if (acc.some((field) => Object.keys(field)[0] === aggregatedFieldName))
+        if (!Object.keys(selectedFields).includes(aggregatedFieldName))
           return acc;
 
         return [...acc, aggregatedField];
