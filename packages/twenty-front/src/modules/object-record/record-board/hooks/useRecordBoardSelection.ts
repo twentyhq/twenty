@@ -31,7 +31,7 @@ export const useRecordBoardSelection = (recordBoardId: string) => {
         }
       },
     [
-      recordBoardId,
+      isActionMenuDropdownOpenState,
       selectedRecordIdsSelector,
       isRecordBoardCardSelectedFamilyState,
     ],
