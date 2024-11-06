@@ -2,11 +2,12 @@ import { useRecoilCallback } from 'recoil';
 
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
-import { useTableRowIds } from '@/object-record/record-table/hooks/internal/useTableRowIds';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
+import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
@@ -17,6 +18,10 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
     recordTableId,
   );
 
+  const tableAllRowIdsState = useRecoilComponentCallbackStateV2(
+    tableAllRowIdsComponentState,
+    recordTableId,
+  );
   const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
     isRowSelectedComponentFamilyState,
     recordTableIdFromContext,
@@ -35,9 +40,9 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
   );
 
   return useRecoilCallback(
-    ({ set }) =>
+    ({ set, snapshot }) =>
       () => {
-        const tableRowIds = getTableRowIds();
+        const tableRowIds = getSnapshotValue(snapshot, tableAllRowIdsState);
 
         for (const rowId of tableRowIds) {
           set(isRowSelectedFamilyState(rowId), false);
@@ -48,7 +53,7 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
         set(isActionMenuDropdownOpenState, false);
       },
     [
-      getTableRowIds,
+      tableAllRowIdsState,
       hasUserSelectedAllRowsState,
       isActionMenuDropdownOpenState,
       isRowSelectedFamilyState,

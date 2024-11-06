@@ -1,6 +1,6 @@
 import { isNull } from '@sniptt/guards';
 
-import { useCurrentRecordGroup } from '@/object-record/record-group/hooks/useCurrentRecordGroup';
+import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
@@ -17,9 +17,7 @@ export const RecordTableEmptyHandler = ({
   recordTableId,
   children,
 }: RecordTableEmptyHandlerProps) => {
-  const recordGroup = useCurrentRecordGroup({
-    recordTableId,
-  });
+  const recordGroupId = useCurrentRecordGroupId();
 
   const isRecordTableInitialLoading = useRecoilComponentValueV2(
     isRecordTableInitialLoadingComponentState,
@@ -28,7 +26,7 @@ export const RecordTableEmptyHandler = ({
 
   const tableRowIds = useRecoilComponentFamilyValueV2(
     tableRowIdsByGroupComponentFamilyState,
-    recordGroup.id,
+    recordGroupId,
     recordTableId,
   );
 

@@ -1,22 +1,19 @@
-import { RecordGroupDefinitionId } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
-import { createComponentFamilySelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelectorV2';
+import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
+import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 
-export const selectedRowIdsComponentSelector = createComponentFamilySelectorV2<
-  string[],
-  RecordGroupDefinitionId
+export const selectedRowIdsComponentSelector = createComponentSelectorV2<
+  string[]
 >({
   key: 'selectedRowIdsComponentSelector',
   componentInstanceContext: RecordTableComponentInstanceContext,
   get:
-    ({ instanceId, familyKey }) =>
+    ({ instanceId }) =>
     ({ get }) => {
       const rowIds = get(
-        tableRowIdsByGroupComponentFamilyState.atomFamily({
+        tableAllRowIdsComponentState.atomFamily({
           instanceId,
-          familyKey,
         }),
       );
 

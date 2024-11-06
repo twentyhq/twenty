@@ -5,6 +5,7 @@ import { RecordGroupContextProvider } from '@/object-record/record-group/compone
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
+import { RecordTableEmptyHandler } from '@/object-record/record-table/empty-state/components/RecordTableEmptyHandler';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyEffect';
@@ -58,31 +59,31 @@ export const RecordTable = ({
         viewBarId={viewBarId}
       >
         <RecordGroupContextProvider objectNameSingular={objectNameSingular}>
-        <RecordTableBodyEffect />
-        <RecordTableBodyUnselectEffect
-          tableBodyRef={tableBodyRef}
-          recordTableId={recordTableId}
-        />
+          <RecordTableBodyEffect />
+          <RecordTableBodyUnselectEffect
+            tableBodyRef={tableBodyRef}
+            recordTableId={recordTableId}
+          />
           <RecordTableEmptyHandler recordTableId={recordTableId}>
-          <>
-            <StyledTable className="entity-table-cell" ref={tableBodyRef}>
-              <RecordTableHeader
-                objectMetadataNameSingular={objectNameSingular}
+            <>
+              <StyledTable className="entity-table-cell" ref={tableBodyRef}>
+                <RecordTableHeader
+                  objectMetadataNameSingular={objectNameSingular}
+                />
+                <RecordTableBody />
+              </StyledTable>
+              <DragSelect
+                dragSelectable={tableBodyRef}
+                onDragSelectionStart={() => {
+                  resetTableRowSelection();
+                  toggleClickOutsideListener(false);
+                }}
+                onDragSelectionChange={setRowSelected}
+                onDragSelectionEnd={() => {
+                  toggleClickOutsideListener(true);
+                }}
               />
-              <RecordTableBody />
-            </StyledTable>
-            <DragSelect
-              dragSelectable={tableBodyRef}
-              onDragSelectionStart={() => {
-                resetTableRowSelection();
-                toggleClickOutsideListener(false);
-              }}
-              onDragSelectionChange={setRowSelected}
-              onDragSelectionEnd={() => {
-                toggleClickOutsideListener(true);
-              }}
-            />
-          </>
+            </>
           </RecordTableEmptyHandler>
         </RecordGroupContextProvider>
       </RecordTableContextProvider>

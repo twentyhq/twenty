@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
-import { useCurrentRecordGroup } from '@/object-record/record-group/hooks/useCurrentRecordGroup';
+import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -23,7 +23,7 @@ export const RecordTableBodyEffect = () => {
 
   const [hasInitializedScroll, setHasInitiazedScroll] = useState(false);
 
-  const recordGroup = useCurrentRecordGroup();
+  const recordGroupId = useCurrentRecordGroupId();
 
   const {
     fetchMoreRecords,
@@ -123,9 +123,9 @@ export const RecordTableBodyEffect = () => {
 
   useEffect(() => {
     if (!loading) {
-      setRecordTableData(records, recordGroup.id, totalCount);
+      setRecordTableData(records, recordGroupId, totalCount);
     }
-  }, [records, totalCount, setRecordTableData, loading, recordGroup.id]);
+  }, [records, totalCount, setRecordTableData, loading, recordGroupId]);
 
   const fetchMoreDebouncedIfRequested = useDebouncedCallback(async () => {
     // We are debouncing here to give the user some room to scroll if they want to within this throttle window

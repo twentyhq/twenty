@@ -1,31 +1,30 @@
-import { RecordGroupDefinitionId } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
-import { createComponentFamilySelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelectorV2';
+import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
+import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 
-export const unselectedRowIdsComponentSelector =
-  createComponentFamilySelectorV2<string[], RecordGroupDefinitionId>({
-    key: 'unselectedRowIdsComponentSelector',
-    componentInstanceContext: RecordTableComponentInstanceContext,
-    get:
-      ({ instanceId, familyKey }) =>
-      ({ get }) => {
-        const rowIds = get(
-          tableRowIdsByGroupComponentFamilyState.atomFamily({
-            instanceId,
-            familyKey,
-          }),
-        );
+export const unselectedRowIdsComponentSelector = createComponentSelectorV2<
+  string[]
+>({
+  key: 'unselectedRowIdsComponentSelector',
+  componentInstanceContext: RecordTableComponentInstanceContext,
+  get:
+    ({ instanceId }) =>
+    ({ get }) => {
+      const rowIds = get(
+        tableAllRowIdsComponentState.atomFamily({
+          instanceId,
+        }),
+      );
 
-        return rowIds.filter(
-          (rowId) =>
-            get(
-              isRowSelectedComponentFamilyState.atomFamily({
-                instanceId,
-                familyKey: rowId,
-              }),
-            ) === false,
-        );
-      },
-  });
+      return rowIds.filter(
+        (rowId) =>
+          get(
+            isRowSelectedComponentFamilyState.atomFamily({
+              instanceId,
+              familyKey: rowId,
+            }),
+          ) === false,
+      );
+    },
+});

@@ -1,9 +1,8 @@
 import styled from '@emotion/styled';
 
-import { useCurrentRecordGroup } from '@/object-record/record-group/hooks/useCurrentRecordGroup';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { Checkbox } from 'twenty-ui';
 
 const StyledContainer = styled.div`
@@ -24,11 +23,8 @@ const StyledColumnHeaderCell = styled.th`
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {
-  const recordGroup = useCurrentRecordGroup();
-
-  const allRowsSelectedStatus = useRecoilComponentFamilyValueV2(
+  const allRowsSelectedStatus = useRecoilComponentValueV2(
     allRowsSelectedStatusComponentSelector,
-    recordGroup.id,
   );
   const { selectAllRows, resetTableRowSelection, setHasUserSelectedAllRows } =
     useRecordTable();

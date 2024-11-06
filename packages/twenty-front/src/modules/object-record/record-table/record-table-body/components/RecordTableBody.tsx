@@ -1,4 +1,4 @@
-import { useCurrentRecordGroup } from '@/object-record/record-group/hooks/useCurrentRecordGroup';
+import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { RecordTableRows } from '@/object-record/record-table/components/RecordTableRows';
 import { RecordTableBodyDragDropContext } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDragDropContext';
 import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
@@ -10,11 +10,11 @@ import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTableBody = () => {
-  const recordGroup = useCurrentRecordGroup();
+  const recordGroupId = useCurrentRecordGroupId();
 
   const tableRowIds = useRecoilComponentFamilyValueV2(
     tableRowIdsByGroupComponentFamilyState,
-    recordGroup.id,
+    recordGroupId,
   );
 
   const isRecordTableInitialLoading = useRecoilComponentValueV2(

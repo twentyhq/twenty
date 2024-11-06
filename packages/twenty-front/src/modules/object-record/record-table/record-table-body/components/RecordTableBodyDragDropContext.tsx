@@ -3,7 +3,7 @@ import { ReactNode, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { useCurrentRecordGroup } from '@/object-record/record-group/hooks/useCurrentRecordGroup';
+import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useComputeNewRowPosition } from '@/object-record/record-table/hooks/useComputeNewRowPosition';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
@@ -23,11 +23,11 @@ export const RecordTableBodyDragDropContext = ({
     objectNameSingular,
   });
 
-  const recordGroup = useCurrentRecordGroup();
+  const recordGroupId = useCurrentRecordGroupId();
 
   const tableRowIds = useRecoilComponentFamilyValueV2(
     tableRowIdsByGroupComponentFamilyState,
-    recordGroup.id,
+    recordGroupId,
   );
 
   const { currentViewWithCombinedFiltersAndSorts } =

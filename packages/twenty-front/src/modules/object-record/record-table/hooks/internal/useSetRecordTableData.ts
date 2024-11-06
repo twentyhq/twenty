@@ -4,6 +4,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { numberOfTableRowsComponentState } from '@/object-record/record-table/states/numberOfTableRowsComponentState';
+import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
 import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -19,8 +20,12 @@ export const useSetRecordTableData = ({
   recordTableId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const tableRowIdsState = useRecoilComponentCallbackStateV2(
+  const tableRowIdsByGroupFamilyState = useRecoilComponentCallbackStateV2(
     tableRowIdsByGroupComponentFamilyState,
+    recordTableId,
+  );
+  const tableAllRowIdsState = useRecoilComponentCallbackStateV2(
+    tableAllRowIdsComponentState,
     recordTableId,
   );
   const numberOfTableRowsState = useRecoilComponentCallbackStateV2(
@@ -56,7 +61,7 @@ export const useSetRecordTableData = ({
 
         const currentRowIds = getSnapshotValue(
           snapshot,
-          tableRowIdsState(recordGroupId),
+          tableRowIdsByGroupFamilyState(recordGroupId),
         );
 
         const hasUserSelectedAllRows = getSnapshotValue(
@@ -73,14 +78,20 @@ export const useSetRecordTableData = ({
             }
           }
 
-          set(tableRowIdsState(recordGroupId), recordIds);
+          set(tableRowIdsByGroupFamilyState(recordGroupId), recordIds);
+          set(tableAllRowIdsState, (currentRowIds) => {
+            const allRowIds = new Set([...currentRowIds, ...recordIds]);
+
+            return Array.from(allRowIds);
+          });
           set(numberOfTableRowsState, totalCount ?? 0);
           onEntityCountChange(totalCount);
         }
       },
     [
       numberOfTableRowsState,
-      tableRowIdsState,
+      tableRowIdsByGroupFamilyState,
+      tableAllRowIdsState,
       onEntityCountChange,
       isRowSelectedFamilyState,
       hasUserSelectedAllRowsState,
