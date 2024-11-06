@@ -12,7 +12,10 @@ import {
   PropertySignature,
 } from 'typescript';
 
-type SchemaPropertyType =
+import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
+import { isDefined } from 'src/utils/is-defined';
+
+type InputSchemaPropertyType =
   | 'string'
   | 'number'
   | 'boolean'
@@ -20,20 +23,38 @@ type SchemaPropertyType =
   | 'array'
   | 'unknown';
 
-interface SchemaProperty {
-  type: SchemaPropertyType;
+type InputSchemaProperty = {
+  type: InputSchemaPropertyType;
   enum?: string[] | undefined;
-  items?: SchemaProperty;
-  properties?: Schema;
-}
+  items?: InputSchemaProperty;
+  properties?: InputSchema;
+};
 
-interface Schema {
-  [name: string]: SchemaProperty;
-}
+export type InputSchema = {
+  [name: string]: InputSchemaProperty;
+};
 
 @Injectable()
 export class CodeIntrospectionService2 {
-  public getFunctionInputSchema(fileContent: string): Schema | null {
+  public generateInputData(inputSchema: InputSchema) {
+    return Object.entries(inputSchema).reduce((acc, [key, value]) => {
+      if (isDefined(value.enum)) {
+        acc[key] = value.enum?.[0];
+      } else if (['string', 'number', 'boolean'].includes(value.type)) {
+        acc[key] = generateFakeValue(value.type);
+      } else if (value.type === 'object') {
+        acc[key] = isDefined(value.properties)
+          ? this.generateInputData(value.properties)
+          : {};
+      } else if (value.type === 'array' && isDefined(value.items)) {
+        acc[key] = [generateFakeValue(value.items.type)];
+      }
+
+      return acc;
+    }, {});
+  }
+
+  public getFunctionInputSchema(fileContent: string): InputSchema {
     const sourceFile = createSourceFile(
       'temp.ts',
       fileContent,
@@ -41,7 +62,7 @@ export class CodeIntrospectionService2 {
       true,
     );
 
-    const schema: Schema = {};
+    const schema: InputSchema = {};
 
     sourceFile.forEachChild((node) => {
       if (node.kind === SyntaxKind.FunctionDeclaration) {
@@ -64,7 +85,7 @@ export class CodeIntrospectionService2 {
     return schema;
   }
 
-  private getTypeString(typeNode: TypeNode): SchemaProperty {
+  private getTypeString(typeNode: TypeNode): InputSchemaProperty {
     switch (typeNode.kind) {
       case SyntaxKind.NumberKeyword:
         return { type: 'number' };
@@ -80,7 +101,7 @@ export class CodeIntrospectionService2 {
       case SyntaxKind.ObjectKeyword:
         return { type: 'object' };
       case SyntaxKind.TypeLiteral: {
-        const properties: Schema = {};
+        const properties: InputSchema = {};
 
         (typeNode as any).members.forEach((member: PropertySignature) => {
           if (member.name && member.type) {

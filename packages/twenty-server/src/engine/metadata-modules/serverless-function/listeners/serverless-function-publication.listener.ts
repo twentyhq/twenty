@@ -11,13 +11,13 @@ import { SERVERLESS_FUNCTION_PUBLISHED } from 'src/engine/metadata-modules/serve
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
-import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
+import { CodeIntrospectionService2 } from 'src/modules/code-introspection/code-introspection-2.service';
 
 @Injectable()
 export class ServerlessFunctionPublicationListener {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    private readonly codeIntrospectionService: CodeIntrospectionService,
+    private readonly codeIntrospectionService: CodeIntrospectionService2,
     @InjectRepository(ServerlessFunctionEntity, 'metadata')
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
@@ -29,7 +29,7 @@ export class ServerlessFunctionPublicationListener {
       serverlessFunctionVersion: string;
     }>,
   ): Promise<void> {
-    payload.events.forEach(async (event) => {
+    for (const event of payload.events) {
       const sourceCode =
         await this.serverlessFunctionService.getServerlessFunctionSourceCode(
           payload.workspaceId,
@@ -48,12 +48,12 @@ export class ServerlessFunctionPublicationListener {
       }
 
       const latestVersionInputSchema =
-        await this.codeIntrospectionService.getFunctionInputSchema(indexCode);
+        this.codeIntrospectionService.getFunctionInputSchema(indexCode);
 
       await this.serverlessFunctionRepository.update(
         { id: event.serverlessFunctionId },
         { latestVersionInputSchema },
       );
-    });
+    }
   }
 }

@@ -18,13 +18,12 @@ describe('CodeIntrospectionService2', () => {
   });
 
   describe('getFunctionInputSchema', () => {
-    it('should analyze a function declaration correctly', () => {
+    it('should analyze a simple function correctly', () => {
       const fileContent = `
         function testFunction(param1: string, param2: number): void {
           return
         }
       `;
-
       const result = service.getFunctionInputSchema(fileContent);
 
       expect(result).toEqual({
@@ -33,7 +32,7 @@ describe('CodeIntrospectionService2', () => {
       });
     });
 
-    it('should analyze object parameters', () => {
+    it('should analyze a complex function correctly', () => {
       const fileContent = `
         function testFunction(
           params: {
@@ -49,7 +48,6 @@ describe('CodeIntrospectionService2', () => {
           return
         }
       `;
-
       const result = service.getFunctionInputSchema(fileContent);
 
       expect(result).toEqual({
@@ -69,6 +67,53 @@ describe('CodeIntrospectionService2', () => {
             param6: { type: 'string', enum: ['my', 'enum'] },
             param7: { type: 'array', items: { type: 'string' } },
           },
+        },
+      });
+    });
+  });
+
+  describe('generateInputData', () => {
+    it('should generate fake data for simple function', () => {
+      const fileContent = `
+        function testFunction(param1: string, param2: number): void {
+          return
+        }
+      `;
+      const inputSchema = service.getFunctionInputSchema(fileContent);
+      const result = service.generateInputData(inputSchema);
+
+      expect(result).toEqual({ param1: 'generated-string-value', param2: 1 });
+    });
+
+    it('should generate fake data for complex function', () => {
+      const fileContent = `
+        function testFunction(
+          params: {
+            param1: string;
+            param2: number;
+            param3: boolean;
+            param4: object;
+            param5: { subParam1: string };
+            param6: "my" | "enum",
+            param7: string[],
+          }
+        ): void {
+          return
+        }
+      `;
+
+      const inputSchema = service.getFunctionInputSchema(fileContent);
+      const result = service.generateInputData(inputSchema);
+
+      expect(result).toEqual({
+        params: {
+          param1: 'generated-string-value',
+          param2: 1,
+          param3: true,
+          param4: {},
+          param5: { subParam1: 'generated-string-value' },
+          param6: 'my',
+          param7: ['generated-string-value'],
         },
       });
     });
