@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
+import { SelectQueryBuilder } from 'typeorm';
 
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import {
@@ -12,6 +13,7 @@ import {
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import {
@@ -26,10 +28,14 @@ import {
   getCursor,
   getPaginationInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { getAvailableAggregationsFromObjectFields } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
+import {
+  AggregationField,
+  getAvailableAggregationsFromObjectFields,
+} from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { isDefined } from 'src/utils/is-defined';
+import { isUuid } from 'src/utils/is-uuid';
 
 @Injectable()
 export class GraphqlQueryFindManyResolverService
@@ -94,7 +100,7 @@ export class GraphqlQueryFindManyResolverService
 
     const totalCount = isDefined(selectedFields.totalCount)
       ? await withDeletedCountQueryBuilder.getCount()
-      : 0; // Blocked at 60 it seems
+      : 0;
 
     const cursor = getCursor(args);
 
@@ -138,54 +144,26 @@ export class GraphqlQueryFindManyResolverService
       args.filter ?? ({} as Filter),
     );
 
-    const allAggregatedFields = getAvailableAggregationsFromObjectFields(
-      Object.values(objectMetadataMapItem.fields),
-    );
+    const selectedAggregatedFields = this.getSelectedAggregatedFields({
+      objectFields: Object.values(
+        Object.fromEntries(
+          Object.entries(objectMetadataMapItem.fields).filter(
+            ([key, _value]) => !isUuid(key), // remove objectMetadataMapItem fields duplicates
+          ),
+        ),
+      ),
+    });
 
-    const selectedAggregatedFields = allAggregatedFields.reduce(
-      (acc, aggregatedField) => {
-        const key = Object.keys(aggregatedField)[0];
-
-        if (!Object.keys(selectedFields).includes(key)) return acc;
-        if (acc.some((field) => Object.keys(field)[0] === key)) return acc;
-
-        return [...acc, aggregatedField];
-      },
-      [] as typeof allAggregatedFields,
-    );
-
-    if (selectedAggregatedFields.length > 0) {
-      selectedAggregatedFields.forEach((aggregatedField) => {
-        const [[aggregatedFieldName, aggregatedFieldDetails]] =
-          Object.entries(aggregatedField);
-        const operation = aggregatedFieldDetails.aggregationType;
-        const fieldName = aggregatedFieldDetails.fromField;
-
-        withDeletedQueryBuilder.addSelect(
-          `${operation}("${fieldName}") OVER()`,
-          `${aggregatedFieldName}`,
-        );
-      });
-    }
+    this.addSelectedAggregatedFieldsQueriesToQueryBuilder({
+      selectedAggregatedFields,
+      queryBuilder: withDeletedQueryBuilder,
+    });
 
     const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
 
     const nonFormattedObjectRecords = await withDeletedQueryBuilder
       .take(limit + 1)
       .getRawAndEntities();
-
-    const aggregatedFieldsResults = selectedAggregatedFields.reduce(
-      (acc, aggregatedField) => {
-        const aggregatedFieldName = Object.keys(aggregatedField)[0];
-
-        return {
-          ...acc,
-          [aggregatedFieldName]:
-            nonFormattedObjectRecords.raw[0][aggregatedFieldName],
-        };
-      },
-      {},
-    );
 
     const objectRecords = formatResult(
       nonFormattedObjectRecords.entities,
@@ -228,6 +206,11 @@ export class GraphqlQueryFindManyResolverService
       order: orderByWithIdCondition,
       hasNextPage,
       hasPreviousPage,
+    });
+
+    const aggregatedFieldsResults = this.extractAggregatedFieldsResults({
+      selectedAggregatedFields,
+      rawObjectRecords: nonFormattedObjectRecords.raw,
     });
 
     return { ...result, ...aggregatedFieldsResults };
@@ -274,4 +257,62 @@ export class GraphqlQueryFindManyResolverService
       );
     }
   }
+
+  private addSelectedAggregatedFieldsQueriesToQueryBuilder = ({
+    selectedAggregatedFields,
+    queryBuilder,
+  }: {
+    selectedAggregatedFields: AggregationField[];
+    queryBuilder: SelectQueryBuilder<any>;
+  }) => {
+    selectedAggregatedFields.forEach((aggregatedField) => {
+      const [[aggregatedFieldName, aggregatedFieldDetails]] =
+        Object.entries(aggregatedField);
+      const operation = aggregatedFieldDetails.aggregationOperation;
+      const fieldName = aggregatedFieldDetails.fromField;
+
+      queryBuilder.addSelect(
+        `${operation}("${fieldName}") OVER()`,
+        `${aggregatedFieldName}`,
+      );
+    });
+  };
+
+  private getSelectedAggregatedFields = ({
+    objectFields,
+  }: {
+    objectFields: FieldMetadataInterface[];
+  }) => {
+    const allAggregatedFields =
+      getAvailableAggregationsFromObjectFields(objectFields);
+
+    return allAggregatedFields.reduce(
+      (acc, aggregatedField) => {
+        const aggregatedFieldName = Object.keys(aggregatedField)[0];
+
+        if (acc.some((field) => Object.keys(field)[0] === aggregatedFieldName))
+          return acc;
+
+        return [...acc, aggregatedField];
+      },
+      [] as typeof allAggregatedFields,
+    );
+  };
+
+  private extractAggregatedFieldsResults = ({
+    selectedAggregatedFields,
+    rawObjectRecords,
+  }: {
+    selectedAggregatedFields: AggregationField[];
+    rawObjectRecords: any[];
+  }) => {
+    return selectedAggregatedFields.reduce((acc, aggregatedField) => {
+      const aggregatedFieldName = Object.keys(aggregatedField)[0];
+
+      return {
+        ...acc,
+        [aggregatedFieldName]: rawObjectRecords[0][aggregatedFieldName],
+      };
+    }, {});
+  };
 }

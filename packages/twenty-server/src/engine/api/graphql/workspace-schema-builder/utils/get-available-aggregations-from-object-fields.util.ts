@@ -7,7 +7,7 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { capitalize } from 'src/utils/capitalize';
 
-enum AGGREGATIONS_TYPES {
+enum AGGREGATION_OPERATIONS {
   min = 'MIN',
   max = 'MAX',
   avg = 'Avg',
@@ -17,10 +17,10 @@ type AggregationValue = {
   type: typeof GraphQLString;
   description: string;
   fromField: string;
-  aggregationType: AGGREGATIONS_TYPES;
+  aggregationOperation: AGGREGATION_OPERATIONS;
 };
 
-type AggregationField = {
+export type AggregationField = {
   [key: string]: AggregationValue;
 };
 
@@ -36,7 +36,7 @@ export const getAvailableAggregationsFromObjectFields = (
             type: GraphQLISODateTime,
             description: `Oldest date contained in the field ${field.name}`,
             fromField: field.name,
-            aggregationType: AGGREGATIONS_TYPES.min,
+            aggregationOperation: AGGREGATION_OPERATIONS.min,
           },
         },
         {
@@ -44,7 +44,7 @@ export const getAvailableAggregationsFromObjectFields = (
             type: GraphQLISODateTime,
             description: `Most recent date contained in the field ${field.name}`,
             fromField: field.name,
-            aggregationType: AGGREGATIONS_TYPES.max,
+            aggregationOperation: AGGREGATION_OPERATIONS.max,
           },
         },
       ];

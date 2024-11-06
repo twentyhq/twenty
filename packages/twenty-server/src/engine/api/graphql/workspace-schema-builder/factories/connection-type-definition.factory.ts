@@ -52,7 +52,7 @@ export class ConnectionTypeDefinitionFactory {
             [
               key,
               {
-                aggregationType: _aggregationType,
+                aggregationOperation: _aggregationOperation,
                 fromField: _fromField,
                 ...rest
               },
