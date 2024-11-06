@@ -43,6 +43,8 @@ const StyledResetReactflowStyles = styled.div`
   .react-flow__node-group {
     padding: 0;
     width: auto;
+    text-align: start;
+    white-space: nowrap;
   }
 
   --xy-node-border-radius: none;
