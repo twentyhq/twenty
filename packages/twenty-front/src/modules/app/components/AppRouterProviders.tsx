@@ -1,5 +1,4 @@
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
-import { CommandMenuEffect } from '@/app/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffectsProvider } from '@/app/effect-components/GotoHotkeysEffectsProvider';
 import { PageChangeEffect } from '@/app/effect-components/PageChangeEffect';
 import { AuthProvider } from '@/auth/components/AuthProvider';
@@ -44,7 +43,6 @@ export const AppRouterProviders = () => {
                           <DialogManager>
                             <StrictMode>
                               <PromiseRejectionEffect />
-                              <CommandMenuEffect />
                               <GotoHotkeysEffectsProvider />
                               <PageTitle title={pageTitle} />
                               <Outlet />

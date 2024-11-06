@@ -5,6 +5,8 @@ import { RecoilRoot } from 'recoil';
 import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexActionMenuBar';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
+import { getActionBarIdFromActionMenuId } from '@/action-menu/utils/getActionBarIdFromActionMenuId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -34,33 +36,36 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
                 selectedRecordIds: ['1', '2', '3'],
               },
             );
+
             set(
               contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
                 instanceId: 'story-action-menu',
               }),
               3,
             );
+
+            const map = new Map<string, ActionMenuEntry>();
+
+            map.set('delete', {
+              isPinned: true,
+              type: 'standard',
+              key: 'delete',
+              label: 'Delete',
+              position: 0,
+              Icon: IconTrash,
+              onClick: deleteMock,
+            });
+
             set(
               actionMenuEntriesComponentState.atomFamily({
                 instanceId: 'story-action-menu',
               }),
-              new Map([
-                [
-                  'delete',
-                  {
-                    isPinned: true,
-                    key: 'delete',
-                    label: 'Delete',
-                    position: 0,
-                    Icon: IconTrash,
-                    onClick: deleteMock,
-                  },
-                ],
-              ]),
+              map,
             );
+
             set(
               isBottomBarOpenedComponentState.atomFamily({
-                instanceId: 'action-bar-story-action-menu',
+                instanceId: getActionBarIdFromActionMenuId('story-action-menu'),
               }),
               true,
             );

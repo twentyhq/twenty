@@ -137,6 +137,10 @@ export class EnvironmentVariables {
   @IsString()
   APP_SECRET: string;
 
+  @IsOptional()
+  @IsString()
+  ACCESS_TOKEN_SECRET: string;
+
   @IsDuration()
   @IsOptional()
   ACCESS_TOKEN_EXPIRES_IN = '30m';
@@ -393,8 +397,6 @@ export class EnvironmentVariables {
     allow_underscores: true,
   })
   REDIS_URL: string;
-
-  API_TOKEN_EXPIRES_IN = '100y';
 
   SHORT_TERM_TOKEN_EXPIRES_IN = '5m';
 
