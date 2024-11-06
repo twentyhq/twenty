@@ -124,13 +124,13 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     const workspaceMemberId = payload.workspaceMemberId;
 
     if (!payload.type && !payload.workspaceId) {
-      return await { ...this.validateAPIKey(payload), workspaceMemberId };
+      return { ...(await this.validateAPIKey(payload)), workspaceMemberId };
     }
 
     if (payload.type === 'API_KEY') {
-      return await { ...this.validateAPIKey(payload), workspaceMemberId };
+      return { ...(await this.validateAPIKey(payload)), workspaceMemberId };
     }
 
-    return await { ...this.validateAccessToken(payload), workspaceMemberId };
+    return { ...(await this.validateAccessToken(payload)), workspaceMemberId };
   }
 }
