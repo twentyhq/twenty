@@ -1,3 +1,6 @@
+import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
+import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { WorkflowVersionStatusTag } from '@/workflow/components/WorkflowVersionStatusTag';
 import { workflowDiagramState } from '@/workflow/states/workflowDiagramState';
 import { WorkflowVersionStatus } from '@/workflow/types/Workflow';
@@ -8,6 +11,7 @@ import {
   WorkflowDiagramNodeType,
 } from '@/workflow/types/WorkflowDiagram';
 import { getOrganizedDiagram } from '@/workflow/utils/getOrganizedDiagram';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   applyEdgeChanges,
@@ -15,13 +19,15 @@ import {
   Background,
   EdgeChange,
   FitViewOptions,
+  getNodesBounds,
   NodeChange,
   NodeProps,
   ReactFlow,
+  Viewport,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import React, { useMemo } from 'react';
-import { useSetRecoilState } from 'recoil';
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { GRAY_SCALE, isDefined } from 'twenty-ui';
 
 const StyledResetReactflowStyles = styled.div`
@@ -51,10 +57,10 @@ const StyledStatusTagContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-const defaultFitViewOptions: FitViewOptions = {
+const defaultFitViewOptions = {
   minZoom: 1.3,
   maxZoom: 1.3,
-};
+} satisfies FitViewOptions;
 
 export const WorkflowDiagramCanvasBase = ({
   diagram,
@@ -77,10 +83,40 @@ export const WorkflowDiagramCanvasBase = ({
   >;
   children?: React.ReactNode;
 }) => {
+  const theme = useTheme();
+
   const { nodes, edges } = useMemo(
     () => getOrganizedDiagram(diagram),
     [diagram],
   );
+
+  const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState);
+  const isRightDrawerMinimized = useRecoilValue(isRightDrawerMinimizedState);
+  const isMobile = useIsMobile();
+
+  const rightDrawerState = useMemo(() => {
+    return !isRightDrawerOpen
+      ? 'closed'
+      : isRightDrawerMinimized
+        ? 'minimized'
+        : isMobile
+          ? 'fullScreen'
+          : 'normal';
+  }, [isMobile, isRightDrawerMinimized, isRightDrawerOpen]);
+
+  const rightDrawerWidth = theme.rightDrawerWidth;
+
+  const containerWidth = useMemo(() => {
+    if (
+      rightDrawerState === 'closed' ||
+      rightDrawerState === 'fullScreen' ||
+      rightDrawerState === 'minimized'
+    ) {
+      return 'auto';
+    }
+
+    return `calc(100% - ${rightDrawerWidth})`;
+  }, [rightDrawerState, rightDrawerWidth]);
 
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
 
@@ -118,18 +154,68 @@ export const WorkflowDiagramCanvasBase = ({
     });
   };
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const [viewport, setViewport] = useState<Viewport>({
+    x: 0,
+    y: 0,
+    zoom: defaultFitViewOptions.maxZoom,
+  });
+
+  useLayoutEffect(() => {
+    if (!isDefined(containerRef.current)) {
+      return;
+    }
+
+    const observer = new ResizeObserver(() => {
+      setViewport((viewport) => {
+        if (!isDefined(containerRef.current)) {
+          return viewport;
+        }
+
+        return {
+          ...viewport,
+          x: containerRef.current.offsetWidth / 2 - 150 / 2,
+        };
+      });
+    });
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <StyledResetReactflowStyles>
+    <StyledResetReactflowStyles
+      ref={containerRef}
+      style={{ width: containerWidth }}
+    >
       <ReactFlow
-        onInit={({ fitView }) => {
-          fitView(defaultFitViewOptions);
+        viewport={viewport}
+        onViewportChange={setViewport}
+        onInit={({ getNodes }) => {
+          if (!isDefined(containerRef.current)) {
+            throw new Error('Expect the container ref to be defined');
+          }
+
+          const rect = getNodesBounds(getNodes());
+
+          setViewport({
+            x: containerRef.current.offsetWidth / 2 - rect.width / 2,
+            y: 150,
+            zoom: defaultFitViewOptions.maxZoom,
+          });
         }}
+        minZoom={defaultFitViewOptions.minZoom}
+        maxZoom={defaultFitViewOptions.maxZoom}
         nodeTypes={nodeTypes}
-        fitView
         nodes={nodes.map((node) => ({ ...node, draggable: false }))}
         edges={edges}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
+        proOptions={{ hideAttribution: true }}
       >
         <Background color={GRAY_SCALE.gray25} size={2} />
 
