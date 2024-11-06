@@ -5,7 +5,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useAllActiveWorkflowVersionsForObject } from '@/workflow/hooks/useAllActiveWorkflowVersionsForObject';
+import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkflowVersions';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 
 import { useTheme } from '@emotion/react';
@@ -34,11 +34,10 @@ export const WorkflowRunRecordActionEffect = ({
     recordStoreFamilyState(selectedRecordId ?? ''),
   );
 
-  const { records: activeWorkflowVersions } =
-    useAllActiveWorkflowVersionsForObject({
-      objectNameSingular: objectMetadataItem.nameSingular,
-      triggerType: 'MANUAL',
-    });
+  const { records: activeWorkflowVersions } = useAllActiveWorkflowVersions({
+    objectMetadataItem,
+    triggerType: 'MANUAL',
+  });
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
@@ -57,7 +56,7 @@ export const WorkflowRunRecordActionEffect = ({
     ] of activeWorkflowVersions.entries()) {
       addActionMenuEntry({
         type: 'workflow-run',
-        key: `workflow-run-${activeWorkflowVersion.workflow.name}`,
+        key: `workflow-run-${activeWorkflowVersion.id}`,
         label: capitalize(activeWorkflowVersion.workflow.name),
         position: index,
         Icon: IconSettingsAutomation,
@@ -84,9 +83,7 @@ export const WorkflowRunRecordActionEffect = ({
 
     return () => {
       for (const activeWorkflowVersion of activeWorkflowVersions) {
-        removeActionMenuEntry(
-          `workflow-run-${activeWorkflowVersion.workflow.name}`,
-        );
+        removeActionMenuEntry(`workflow-run-${activeWorkflowVersion.id}`);
       }
     };
   }, [
