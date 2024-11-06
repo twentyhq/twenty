@@ -6,6 +6,7 @@ import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-sto
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const globalRecordActionEffects = [ExportRecordsActionEffect];
 
@@ -28,6 +29,8 @@ export const RecordActionMenuEntriesSetter = () => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: contextStoreCurrentObjectMetadataId ?? '',
   });
+
+  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
   if (!objectMetadataItem) {
     throw new Error(
@@ -56,7 +59,7 @@ export const RecordActionMenuEntriesSetter = () => {
           objectMetadataItem={objectMetadataItem}
         />
       ))}
-      {contextStoreNumberOfSelectedRecords === 1 && (
+      {contextStoreNumberOfSelectedRecords === 1 && isWorkflowEnabled && (
         <WorkflowRunRecordActionEffect
           objectMetadataItem={objectMetadataItem}
         />
