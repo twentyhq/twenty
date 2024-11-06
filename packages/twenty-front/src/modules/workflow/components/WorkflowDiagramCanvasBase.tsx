@@ -41,6 +41,7 @@ const StyledResetReactflowStyles = styled.div`
   .react-flow__node-output,
   .react-flow__node-group {
     padding: 0;
+    width: auto;
   }
 
   --xy-node-border-radius: none;
