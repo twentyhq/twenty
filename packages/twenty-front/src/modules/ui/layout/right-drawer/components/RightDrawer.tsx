@@ -1,3 +1,11 @@
+import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
+import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompletedState';
+import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
+import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
+import { ClickOutsideMode } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -9,15 +17,6 @@ import {
   useSetRecoilState,
 } from 'recoil';
 import { Key } from 'ts-key-enum';
-import debounce from 'lodash.debounce';
-import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
-import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompletedState';
-import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
-import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { ClickOutsideMode } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 
 import { useRightDrawer } from '../hooks/useRightDrawer';
@@ -115,8 +114,6 @@ export const RightDrawer = () => {
     RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
   );
 
-  const debouncedCloseRightDrawer = debounce(closeRightDrawer, 400);
-
   useListenClickOutside({
     refs: [rightDrawerRef],
     callback: useRecoilCallback(
@@ -131,12 +128,12 @@ export const RightDrawer = () => {
 
           if (isRightDrawerOpen && !isRightDrawerMinimized) {
             set(rightDrawerCloseEventState, event);
-            debouncedCloseRightDrawer();
-
             emitRightDrawerCloseEvent();
+
+            closeRightDrawer();
           }
         },
-      [debouncedCloseRightDrawer],
+      [closeRightDrawer],
     ),
     mode: ClickOutsideMode.comparePixels,
   });
