@@ -11,6 +11,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 export const useTimelineActivities = (
   targetableObject: ActivityTargetableObject,
 ) => {
+
   const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
     nameSingular: targetableObject.targetObjectNameSingular,
   });
@@ -39,17 +40,36 @@ export const useTimelineActivities = (
     fetchPolicy: 'cache-and-network',
   });
 
-  const activityIds = timelineActivities
+  // NEW: Parse composite fields if they are returned as strings (e.g., JSON strings)
+  const parsedTimelineActivities = timelineActivities.map((activity) => {
+    if (
+      activity.compositeField &&
+      typeof activity.compositeField === 'string'
+    ) {
+      try {
+        activity.compositeField = JSON.parse(activity.compositeField);
+      } catch (error) {
+        console.error('Error parsing composite field', error);
+      }
+    }
+    return activity;
+  });
+
+
+  const activityIds = parsedTimelineActivities
     .filter((timelineActivity) => timelineActivity.name.match(/note|task/i))
     .map((timelineActivity) => timelineActivity.linkedRecordId);
+
 
   const { loading: loadingLinkedObjectsTitle } =
     useLinkedObjectsTitle(activityIds);
 
+
   const loading = loadingTimelineActivities || loadingLinkedObjectsTitle;
 
+
   return {
-    timelineActivities,
+    timelineActivities: parsedTimelineActivities,
     loading,
     fetchMoreRecords,
   };
