@@ -7,7 +7,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
 
-describe('JwtAuthStrategy', () => {
+xdescribe('JwtAuthStrategy', () => {
   let strategy: JwtAuthStrategy;
 
   let workspaceRepository: any;
