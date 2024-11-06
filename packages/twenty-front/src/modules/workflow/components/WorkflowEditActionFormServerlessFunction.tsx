@@ -4,10 +4,13 @@ import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditG
 import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
 import { WorkflowCodeStep } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { IconCode, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { capitalize } from '~/utils/string/capitalize';
+import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
+import { FunctionInput } from '@/workflow/types/FunctionInput';
+import { InputSchema } from '@/workflow/types/InputSchema';
 
 type WorkflowEditActionFormServerlessFunctionProps =
   | {
@@ -31,7 +34,8 @@ export const WorkflowEditActionFormServerlessFunction = (
     props.action.settings.input.serverlessFunctionInput;
 
   const [functionInput, setFunctionInput] =
-    useState<Record<string, any>>(defaultFunctionInput);
+    useState<FunctionInput>(defaultFunctionInput);
+  const [inputSchema, setInputSchema] = useState<InputSchema>({});
 
   const [serverlessFunctionId, setServerlessFunctionId] = useState<string>(
     props.action.settings.input.serverlessFunctionId,
@@ -63,10 +67,24 @@ export const WorkflowEditActionFormServerlessFunction = (
     1_000,
   );
 
-  const handleInputChange = (key: string, value: any) => {
-    const newFunctionInput = { ...functionInput, [key]: value };
+  const handleInputChange = (value: any, path: string[]) => {
+    const newFunctionInput = { ...functionInput };
+    setNestedValue(newFunctionInput, path, value);
     setFunctionInput(newFunctionInput);
     updateFunctionInput(newFunctionInput);
+  };
+
+  const getNestedValue = (obj: any, path: string[]) =>
+    path.reduce((o, key) => (o ? o[key] : undefined), obj);
+
+  // Utility to set nested value
+  const setNestedValue = (obj: any, path: string[], value: any) => {
+    path.reduce((o, key, index) => {
+      if (index === path.length - 1) {
+        o[key] = value;
+      }
+      return o[key] || {};
+    }, obj);
   };
 
   const availableFunctions: Array<SelectOption<string>> = [
@@ -91,12 +109,9 @@ export const WorkflowEditActionFormServerlessFunction = (
 
     const serverlessFunctionVersion =
       serverlessFunction?.latestVersion || 'latest';
-
-    const defaultFunctionInput = serverlessFunction?.latestVersionInputSchema
-      ? serverlessFunction.latestVersionInputSchema
-          .map((parameter) => parameter.name)
-          .reduce((acc, name) => ({ ...acc, [name]: null }), {})
-      : {};
+    const inputSchema = serverlessFunction?.latestVersionInputSchema;
+    const defaultFunctionInput =
+      getDefaultFunctionInputFromInputSchema(inputSchema);
 
     if (!props.readonly) {
       props.onActionUpdate({
@@ -111,8 +126,36 @@ export const WorkflowEditActionFormServerlessFunction = (
         },
       });
     }
-
+    setInputSchema(inputSchema);
     setFunctionInput(defaultFunctionInput);
+  };
+
+  const renderFields = (
+    inputSchema: InputSchema,
+    path: string[] = [],
+  ): React.ReactElement[] => {
+    return Object.entries(inputSchema).map(([inputKey, inputValue]) => {
+      const currentPath = [...path, inputKey];
+
+      if (inputValue.type === 'object' && isDefined(inputValue.properties)) {
+        return (
+          <>
+            <div>Toto</div>
+            {renderFields(inputValue.properties, currentPath)}
+          </>
+        );
+      } else {
+        return (
+          <VariableTagInput
+            inputId={`input-${inputKey}`}
+            label={capitalize(inputKey)}
+            placeholder="Enter value (use {{variable}} for dynamic content)"
+            value={getNestedValue(inputValue, currentPath)}
+            onChange={(value) => handleInputChange(value, currentPath)}
+          />
+        );
+      }
+    });
   };
 
   return (
@@ -130,16 +173,7 @@ export const WorkflowEditActionFormServerlessFunction = (
         disabled={props.readonly}
         onChange={handleFunctionChange}
       />
-      {functionInput &&
-        Object.entries(functionInput).map(([inputKey, inputValue]) => (
-          <VariableTagInput
-            inputId={`input-${inputKey}`}
-            label={capitalize(inputKey)}
-            placeholder="Enter value (use {{variable}} for dynamic content)"
-            value={inputValue ?? ''}
-            onChange={(value) => handleInputChange(inputKey, value)}
-          />
-        ))}
+      {inputSchema && renderFields(inputSchema)}
     </WorkflowEditGenericFormBase>
   );
 };
