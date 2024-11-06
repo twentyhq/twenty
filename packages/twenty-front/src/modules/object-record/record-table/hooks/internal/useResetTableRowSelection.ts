@@ -22,13 +22,22 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
     tableRowIdsComponentState,
     recordTableIdFromContext,
   );
+
   const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
     isRowSelectedComponentFamilyState,
     recordTableIdFromContext,
   );
+
   const hasUserSelectedAllRowsState = useRecoilComponentCallbackStateV2(
     hasUserSelectedAllRowsComponentState,
     recordTableIdFromContext,
+  );
+
+  const isActionMenuDropdownOpenState = extractComponentState(
+    isDropdownOpenComponentState,
+    getActionMenuDropdownIdFromActionMenuId(
+      getActionMenuIdFromRecordIndexId(recordTableIdFromContext),
+    ),
   );
 
   return useRecoilCallback(
@@ -42,19 +51,12 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
 
         set(hasUserSelectedAllRowsState, false);
 
-        const isActionMenuDropdownOpenState = extractComponentState(
-          isDropdownOpenComponentState,
-          getActionMenuDropdownIdFromActionMenuId(
-            getActionMenuIdFromRecordIndexId(recordTableIdFromContext),
-          ),
-        );
-
         set(isActionMenuDropdownOpenState, false);
       },
     [
       tableRowIdsState,
       hasUserSelectedAllRowsState,
-      recordTableId,
+      isActionMenuDropdownOpenState,
       isRowSelectedFamilyState,
     ],
   );
