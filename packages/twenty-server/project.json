@@ -29,10 +29,7 @@
           "NODE_ENV=test nx database:reset > reset-logs.log && NODE_ENV=test nx jest --config ./jest-integration.config.ts"
         ]
       },
-      "parallel": false,
-      "configurations": {
-        "noreset": {}
-      }
+      "parallel": false
     },
     "build:packageJson": {
       "executor": "@nx/js:tsc",
