@@ -18,11 +18,7 @@ export const SearchPickerInitialValueEffect = ({
   );
 
   useEffect(() => {
-    console.log(
-      'setRelationPickerSearchFilter from Effect',
-      initialValueForSearchFilter ?? '',
-    );
-    setRelationPickerSearchFilter(initialValueForSearchFilter);
+    setRelationPickerSearchFilter(initialValueForSearchFilter ?? '');
   }, [initialValueForSearchFilter, setRelationPickerSearchFilter]);
 
   return <></>;
