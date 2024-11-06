@@ -24,11 +24,10 @@ import {
   ActionLink,
   IconGoogle,
   IconKey,
-  IconMail,
   IconMicrosoft,
   Loader,
   MainButton,
-  StyledText,
+  StyledText
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
@@ -213,7 +212,7 @@ export const SignInUpForm = () => {
           </>
         )}
 
-        {signInUpStep !== SignInUpStep.Init && (authProviders.google ||
+        {(authProviders.google ||
           authProviders.microsoft ||
           authProviders.sso) &&(
           <HorizontalSeparator visible />
@@ -311,7 +310,9 @@ export const SignInUpForm = () => {
               <MainButton
                 title={buttonTitle}
                 type="submit"
-                variant="primary"
+                variant={
+                  signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
+                }
                 onClick={async () => {
                   if (signInUpStep === SignInUpStep.Init) {
                     continueWithEmail();
@@ -331,9 +332,7 @@ export const SignInUpForm = () => {
                 Icon={() =>
                   form.formState.isSubmitting ? (
                     <Loader />
-                  ) : (
-                    signInUpStep === SignInUpStep.Init ? <IconMail size={theme.icon.size.lg} /> : null
-                  )
+                  ) : null
                 }
                 disabled={isSubmitButtonDisabled}
                 fullWidth
