@@ -1,8 +1,10 @@
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
+import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -16,8 +18,6 @@ import {
   TablerIconsProps,
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 
 const DEFAULT_INDENTATION_LEVEL = 1;
 
@@ -43,10 +43,11 @@ type StyledItemProps = Pick<
   'active' | 'danger' | 'indentationLevel' | 'soon' | 'to'
 > & { isNavigationDrawerExpanded: boolean };
 
-const StyledItem = styled('div', {
+const StyledItem = styled('button', {
   shouldForwardProp: (prop) =>
     !['active', 'danger', 'soon'].includes(prop) && isPropValid(prop),
 })<StyledItemProps>`
+  box-sizing: content-box;
   align-items: center;
   background: ${(props) =>
     props.active ? props.theme.background.transparent.light : 'inherit'};
@@ -103,19 +104,20 @@ const StyledItem = styled('div', {
   }
 `;
 
-const StyledItemElementsContainer = styled.div`
+const StyledItemElementsContainer = styled.span`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
 `;
 
-const StyledItemLabel = styled.div`
+const StyledItemLabel = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
 
-const StyledItemCount = styled.div`
+const StyledItemCount = styled.span`
   align-items: center;
   background-color: ${({ theme }) => theme.color.blue};
   border-radius: ${({ theme }) => theme.border.radius.rounded};
@@ -129,7 +131,7 @@ const StyledItemCount = styled.div`
   width: 16px;
 `;
 
-const StyledKeyBoardShortcut = styled.div`
+const StyledKeyBoardShortcut = styled.span`
   align-items: center;
   border-radius: 4px;
   color: ${({ theme }) => theme.font.color.light};
@@ -140,10 +142,13 @@ const StyledKeyBoardShortcut = styled.div`
   visibility: hidden;
 `;
 
-const StyledNavigationDrawerItemContainer = styled.div`
+const StyledNavigationDrawerItemContainer = styled.span`
   display: flex;
-  flex-grow: 1;
   width: 100%;
+`;
+
+const StyledSpacer = styled.span`
+  flex-grow: 1;
 `;
 
 export const NavigationDrawerItem = ({
@@ -192,7 +197,7 @@ export const NavigationDrawerItem = ({
         aria-selected={active}
         danger={danger}
         soon={soon}
-        as={to ? Link : 'div'}
+        as={to ? Link : undefined}
         to={to ? to : undefined}
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
@@ -219,6 +224,8 @@ export const NavigationDrawerItem = ({
           <NavigationDrawerAnimatedCollapseWrapper>
             <StyledItemLabel>{label}</StyledItemLabel>
           </NavigationDrawerAnimatedCollapseWrapper>
+
+          <StyledSpacer />
 
           {soon && (
             <NavigationDrawerAnimatedCollapseWrapper>

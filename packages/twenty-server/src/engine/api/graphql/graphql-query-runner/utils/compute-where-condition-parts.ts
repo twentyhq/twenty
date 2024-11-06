@@ -61,24 +61,36 @@ export const computeWhereConditionParts = (
       };
     case 'like':
       return {
-        sql: `"${objectNameSingular}"."${key}" LIKE :${key}${uuid}`,
+        sql: `"${objectNameSingular}"."${key}"::text LIKE :${key}${uuid}`,
         params: { [`${key}${uuid}`]: `${value}` },
       };
     case 'ilike':
       return {
-        sql: `"${objectNameSingular}"."${key}" ILIKE :${key}${uuid}`,
+        sql: `"${objectNameSingular}"."${key}"::text ILIKE :${key}${uuid}`,
         params: { [`${key}${uuid}`]: `${value}` },
       };
     case 'startsWith':
       return {
-        sql: `"${objectNameSingular}"."${key}" LIKE :${key}${uuid}`,
+        sql: `"${objectNameSingular}"."${key}"::text LIKE :${key}${uuid}`,
         params: { [`${key}${uuid}`]: `${value}` },
       };
     case 'endsWith':
       return {
-        sql: `"${objectNameSingular}"."${key}" LIKE :${key}${uuid}`,
+        sql: `"${objectNameSingular}"."${key}"::text LIKE :${key}${uuid}`,
         params: { [`${key}${uuid}`]: `${value}` },
       };
+    case 'contains':
+      return {
+        sql: `"${objectNameSingular}"."${key}" @> ARRAY[:...${key}${uuid}]`,
+        params: { [`${key}${uuid}`]: value },
+      };
+
+    case 'not_contains':
+      return {
+        sql: `NOT ("${objectNameSingular}"."${key}" && ARRAY[:...${key}${uuid}])`,
+        params: { [`${key}${uuid}`]: value },
+      };
+
     default:
       throw new GraphqlQueryRunnerException(
         `Operator "${operator}" is not supported`,

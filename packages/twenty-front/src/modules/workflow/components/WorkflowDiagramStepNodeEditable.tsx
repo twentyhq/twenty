@@ -1,4 +1,3 @@
-import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
 import { WorkflowDiagramStepNodeBase } from '@/workflow/components/WorkflowDiagramStepNodeBase';
 import { useDeleteOneStep } from '@/workflow/hooks/useDeleteOneStep';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
@@ -6,7 +5,7 @@ import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowDiagramStepNodeData } from '@/workflow/types/WorkflowDiagram';
 import { assertWorkflowWithCurrentVersionIsDefined } from '@/workflow/utils/assertWorkflowWithCurrentVersionIsDefined';
 import { useRecoilValue } from 'recoil';
-import { IconTrash } from 'twenty-ui';
+import { FloatingIconButton, IconTrash } from 'twenty-ui';
 
 export const WorkflowDiagramStepNodeEditable = ({
   id,

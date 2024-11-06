@@ -2,7 +2,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { createRootPropsContext } from '~/utils/createRootPropsContext';
 
 export type RecordIndexRootPropsContextProps = {
-  onIndexIdentifierClick: (recordId: string) => void;
+  indexIdentifierUrl: (recordId: string) => string;
   onIndexRecordsLoaded: () => void;
   onCreateRecord: () => void;
   objectNamePlural: string;

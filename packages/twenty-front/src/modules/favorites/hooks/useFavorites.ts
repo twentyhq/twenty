@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Favorite } from '@/favorites/types/Favorite';
-import { sortFavorites } from '@/favorites/utils/sort-favorites.util';
+import { sortFavorites } from '@/favorites/utils/sortFavorites';
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -98,6 +98,7 @@ export const useFavorites = () => {
   ) => {
     createOneFavorite({
       [targetObjectNameSingular]: targetRecord,
+      [`${targetObjectNameSingular}Id`]: targetRecord.id,
       position: favorites.length + 1,
       workspaceMemberId: currentWorkspaceMember?.id,
     });

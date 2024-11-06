@@ -14,6 +14,7 @@ import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -26,6 +27,7 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { assert } from 'src/utils/assert';
+import { isDefined } from 'src/utils/is-defined';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 import { Workspace } from './workspace.entity';
@@ -38,6 +40,7 @@ export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
     private readonly fileService: FileService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -92,7 +95,7 @@ export class WorkspaceResolver {
     });
 
     const workspaceLogoToken = await this.fileService.encodeFileToken({
-      workspace_id: id,
+      workspaceId: id,
     });
 
     return `${paths[0]}?token=${workspaceLogoToken}`;
@@ -125,7 +128,7 @@ export class WorkspaceResolver {
     if (workspace.logo) {
       try {
         const workspaceLogoToken = await this.fileService.encodeFileToken({
-          workspace_id: workspace.id,
+          workspaceId: workspace.id,
         });
 
         return `${workspace.logo}?token=${workspaceLogoToken}`;
@@ -135,5 +138,10 @@ export class WorkspaceResolver {
     }
 
     return workspace.logo ?? '';
+  }
+
+  @ResolveField(() => Boolean)
+  hasValidEntrepriseKey(): boolean {
+    return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
   }
 }

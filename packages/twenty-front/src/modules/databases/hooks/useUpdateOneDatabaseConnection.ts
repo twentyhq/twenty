@@ -1,4 +1,4 @@
-import { ApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 
 import { UPDATE_ONE_DATABASE_CONNECTION } from '@/databases/graphql/mutations/updateOneDatabaseConnection';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
@@ -15,7 +15,7 @@ export const useUpdateOneDatabaseConnection = () => {
     UpdateServerMutation,
     UpdateServerMutationVariables
   >(UPDATE_ONE_DATABASE_CONNECTION, {
-    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient,
   });
 
   const updateOneDatabaseConnection = async (
