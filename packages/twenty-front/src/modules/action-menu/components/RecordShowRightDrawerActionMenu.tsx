@@ -13,20 +13,20 @@ export const RecordShowRightDrawerActionMenu = () => {
   );
 
   return (
-    <>
+    <ActionMenuContext.Provider
+      value={{
+        isInRightDrawer: true,
+        onActionExecutedCallback: () => {},
+      }}
+    >
+      <RecordShowRightDrawerActionMenuButton />
+      <ActionMenuConfirmationModals />
       {contextStoreCurrentObjectMetadataId && (
-        <ActionMenuContext.Provider
-          value={{
-            isInRightDrawer: true,
-            onActionExecutedCallback: () => {},
-          }}
-        >
-          <RecordShowRightDrawerActionMenuButton />
-          <ActionMenuConfirmationModals />
+        <>
           <RecordActionMenuEntriesSetter />
           <GlobalActionMenuEntriesSetter />
-        </ActionMenuContext.Provider>
+        </>
       )}
-    </>
+    </ActionMenuContext.Provider>
   );
 };

@@ -4,6 +4,7 @@ import { RecordShowRightDrawerActionMenuButtonHotkeyScope } from '@/action-menu/
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -21,30 +22,30 @@ export const RecordShowRightDrawerActionMenuButton = () => {
     ActionMenuComponentInstanceContext,
   );
 
-  const { closeDropdown, toggleDropdown } = useDropdownV2();
+  const { closeDropdown, openDropdown } = useDropdownV2();
 
   const theme = useTheme();
 
   useScopedHotkeys(
-    [Key.Escape],
+    [Key.Escape, 'ctrl+o,meta+o'],
     () => {
       closeDropdown(
         `record-show-right-drawer-action-menu-dropdown-${actionMenuId}`,
       );
     },
     RecordShowRightDrawerActionMenuButtonHotkeyScope.RecordShowRightDrawerActionMenuButton,
-    [],
+    [closeDropdown],
   );
 
   useScopedHotkeys(
     ['ctrl+o,meta+o'],
     () => {
-      toggleDropdown(
+      openDropdown(
         `record-show-right-drawer-action-menu-dropdown-${actionMenuId}`,
       );
     },
-    RecordShowRightDrawerActionMenuButtonHotkeyScope.RecordShowRightDrawerActionMenuButton,
-    [],
+    RightDrawerHotkeyScope.RightDrawer,
+    [openDropdown],
   );
 
   return (
