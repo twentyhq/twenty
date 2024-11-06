@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
@@ -9,7 +9,9 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { isDefined } from '~/utils/isDefined';
 
+import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { COMMAND_MENU_COMMANDS } from '@/command-menu/constants/CommandMenuCommands';
+import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ALL_ICONS } from '@ui/display/icon/providers/internal/AllIcons';
 import { sortByProperty } from '~/utils/array/sortByProperty';
@@ -27,10 +29,59 @@ export const useCommandMenu = () => {
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const openCommandMenu = useCallback(() => {
-    setIsCommandMenuOpened(true);
-    setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
-  }, [setHotkeyScopeAndMemorizePreviousScope, setIsCommandMenuOpened]);
+  const mainContextStoreComponentInstanceId = useRecoilValue(
+    mainContextStoreComponentInstanceIdState,
+  );
+
+  const openCommandMenu = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        if (isDefined(mainContextStoreComponentInstanceId)) {
+          const actionMenuEntries = snapshot.getLoadable(
+            actionMenuEntriesComponentSelector.selectorFamily({
+              instanceId: mainContextStoreComponentInstanceId,
+            }),
+          );
+
+          const commands = Object.values(COMMAND_MENU_COMMANDS);
+
+          const actionCommands = actionMenuEntries
+            .getValue()
+            ?.filter((actionMenuEntry) => actionMenuEntry.type === 'standard')
+            ?.map((actionMenuEntry) => ({
+              id: actionMenuEntry.key,
+              label: actionMenuEntry.label,
+              Icon: actionMenuEntry.Icon,
+              onCommandClick: actionMenuEntry.onClick,
+              type: CommandType.StandardAction,
+            }));
+
+          const workflowRunCommands = actionMenuEntries
+            .getValue()
+            ?.filter(
+              (actionMenuEntry) => actionMenuEntry.type === 'workflow-run',
+            )
+            ?.map((actionMenuEntry) => ({
+              id: actionMenuEntry.key,
+              label: actionMenuEntry.label,
+              Icon: actionMenuEntry.Icon,
+              onCommandClick: actionMenuEntry.onClick,
+              type: CommandType.WorkflowRun,
+            }));
+
+          setCommands([...commands, ...actionCommands, ...workflowRunCommands]);
+        }
+
+        setIsCommandMenuOpened(true);
+        setHotkeyScopeAndMemorizePreviousScope(AppHotkeyScope.CommandMenuOpen);
+      },
+    [
+      mainContextStoreComponentInstanceId,
+      setCommands,
+      setHotkeyScopeAndMemorizePreviousScope,
+      setIsCommandMenuOpened,
+    ],
+  );
 
   const closeCommandMenu = useRecoilCallback(
     ({ snapshot }) =>
@@ -41,11 +92,17 @@ export const useCommandMenu = () => {
 
         if (isCommandMenuOpened) {
           setIsCommandMenuOpened(false);
+          setCommands([]);
           resetSelectedItem();
           goBackToPreviousHotkeyScope();
         }
       },
-    [goBackToPreviousHotkeyScope, resetSelectedItem, setIsCommandMenuOpened],
+    [
+      goBackToPreviousHotkeyScope,
+      resetSelectedItem,
+      setCommands,
+      setIsCommandMenuOpened,
+    ],
   );
 
   const toggleCommandMenu = useRecoilCallback(
@@ -83,8 +140,8 @@ export const useCommandMenu = () => {
               to: `/objects/${item.namePlural}`,
               label: `Go to ${item.labelPlural}`,
               type: CommandType.Navigate,
-              firstHotKey: 'G',
-              secondHotKey: item.labelPlural[0],
+              firstHotKey: item.shortcut ? 'G' : undefined,
+              secondHotKey: item.shortcut,
               Icon: ALL_ICONS[
                 (item?.icon as keyof typeof ALL_ICONS) ?? 'IconArrowUpRight'
               ],

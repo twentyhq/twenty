@@ -1,7 +1,6 @@
-import { useContext } from 'react';
+import { ApolloMetadataClientContext } from '@/object-metadata/contexts/ApolloClientMetadataContext';
 import { useApolloClient } from '@apollo/client';
-
-import { ApolloMetadataClientContext } from '../context/ApolloClientMetadataContext';
+import { useContext } from 'react';
 
 export const useApolloMetadataClient = () => {
   const apolloMetadataClient = useContext(ApolloMetadataClientContext);
@@ -9,6 +8,10 @@ export const useApolloMetadataClient = () => {
 
   if (process.env.NODE_ENV === 'test') {
     return apolloClient;
+  }
+
+  if (!apolloMetadataClient) {
+    throw new Error('ApolloMetadataClient not found');
   }
 
   return apolloMetadataClient;

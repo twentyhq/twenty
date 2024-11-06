@@ -3,6 +3,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { RightDrawerTitleRecordInlineCell } from '@/object-record/record-right-drawer/components/RightDrawerTitleRecordInlineCell';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
@@ -18,6 +19,7 @@ type SummaryCardProps = {
   isInRightDrawer: boolean;
 };
 
+// TODO: refactor all this hierarchy of right drawer / show page record to avoid drill down
 export const SummaryCard = ({
   objectNameSingular,
   objectRecordId,
@@ -86,7 +88,11 @@ export const SummaryCard = ({
             isCentered: !isMobile,
           }}
         >
-          <RecordInlineCell readonly={isReadOnly} />
+          {isInRightDrawer ? (
+            <RightDrawerTitleRecordInlineCell />
+          ) : (
+            <RecordInlineCell readonly={isReadOnly} />
+          )}
         </FieldContext.Provider>
       }
       avatarType={recordIdentifier?.avatarType ?? 'rounded'}

@@ -45,5 +45,5 @@
   "search.exclude": {
     "**/.yarn": true,
   },
-  "eslint.debug": true
+  "eslint.debug": true,
 }

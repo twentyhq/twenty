@@ -9,7 +9,11 @@ html {
   font-size: 13px;
 }
 
+button {
+  font-size: 13px;
+}
+
 /* https://stackoverflow.com/questions/44543157/how-to-hide-the-google-invisible-recaptcha-badge */
-.grecaptcha-badge { 
+.grecaptcha-badge {
   visibility: hidden !important;
 }

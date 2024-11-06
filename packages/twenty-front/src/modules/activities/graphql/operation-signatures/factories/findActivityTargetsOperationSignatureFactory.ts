@@ -19,8 +19,6 @@ export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSig
       __typename: true,
       createdAt: true,
       updatedAt: true,
-      activity: true,
-      activityId: true,
       ...generateActivityTargetMorphFieldKeys(objectMetadataItems),
     },
   });

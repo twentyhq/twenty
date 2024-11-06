@@ -9,6 +9,7 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { VIEW_FIELD_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
@@ -18,7 +19,7 @@ import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.work
   labelSingular: 'View Field',
   labelPlural: 'View Fields',
   description: '(System) View Fields',
-  icon: 'IconTag',
+  icon: STANDARD_OBJECT_ICONS.viewField,
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()

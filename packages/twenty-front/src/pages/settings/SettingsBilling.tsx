@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
+  Button,
   H2Title,
   IconCalendarEvent,
   IconCircleX,
   IconCreditCard,
+  Info,
+  Section,
 } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -14,13 +17,10 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Info } from '@/ui/display/info/components/Info';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Button } from '@/ui/input/button/components/Button';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import {
   OnboardingStatus,

@@ -1,9 +1,7 @@
-import { IconX, OverflowingTextWithTooltip } from 'twenty-ui';
-
 import { BlocklistItem } from '@/accounts/types/BlocklistItem';
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { IconButton, IconX, OverflowingTextWithTooltip } from 'twenty-ui';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
 type SettingsAccountsBlocklistTableRowProps = {
