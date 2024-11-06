@@ -27,7 +27,7 @@ import {
   IconMicrosoft,
   Loader,
   MainButton,
-  StyledText
+  StyledText,
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
@@ -165,9 +165,7 @@ export const SignInUpForm = () => {
               title="Continue with Google"
               onClick={signInWithGoogle}
               variant={
-                signInUpStep === SignInUpStep.Init
-                  ? undefined
-                  : 'secondary'
+                signInUpStep === SignInUpStep.Init ? undefined : 'secondary'
               }
               fullWidth
             />
@@ -182,9 +180,7 @@ export const SignInUpForm = () => {
               title="Continue with Microsoft"
               onClick={signInWithMicrosoft}
               variant={
-                signInUpStep === SignInUpStep.Init
-                  ? undefined
-                  : 'secondary'
+                signInUpStep === SignInUpStep.Init ? undefined : 'secondary'
               }
               fullWidth
             />
@@ -196,9 +192,7 @@ export const SignInUpForm = () => {
             <MainButton
               Icon={() => <IconKey size={theme.icon.size.lg} />}
               variant={
-                signInUpStep === SignInUpStep.Init
-                  ? undefined
-                  : 'secondary'
+                signInUpStep === SignInUpStep.Init ? undefined : 'secondary'
               }
               title={
                 signInUpStep === SignInUpStep.SSOEmail
@@ -214,9 +208,7 @@ export const SignInUpForm = () => {
 
         {(authProviders.google ||
           authProviders.microsoft ||
-          authProviders.sso) &&(
-          <HorizontalSeparator visible />
-        )}
+          authProviders.sso) && <HorizontalSeparator visible />}
 
         {authProviders.password &&
           (signInUpStep === SignInUpStep.Password ||
@@ -329,11 +321,7 @@ export const SignInUpForm = () => {
                   setShowErrors(true);
                   form.handleSubmit(submitCredentials)();
                 }}
-                Icon={() =>
-                  form.formState.isSubmitting ? (
-                    <Loader />
-                  ) : null
-                }
+                Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
                 disabled={isSubmitButtonDisabled}
                 fullWidth
               />
