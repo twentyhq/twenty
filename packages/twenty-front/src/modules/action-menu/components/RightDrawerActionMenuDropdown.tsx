@@ -1,6 +1,7 @@
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { RecordShowRightDrawerActionMenuButtonHotkeyScope } from '@/action-menu/types/RecordShowRightDrawerActionMenuButtonHotkeyScope';
+import { RightDrawerActionMenuDropdownHotkeyScope } from '@/action-menu/types/RightDrawerActionMenuDropdownHotkeyScope';
+import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
@@ -13,7 +14,7 @@ import { useTheme } from '@emotion/react';
 import { Key } from 'ts-key-enum';
 import { Button } from 'twenty-ui';
 
-export const RecordShowRightDrawerActionMenuButton = () => {
+export const RightDrawerActionMenuDropdown = () => {
   const actionMenuEntries = useRecoilComponentValueV2(
     actionMenuEntriesComponentSelector,
   );
@@ -30,10 +31,10 @@ export const RecordShowRightDrawerActionMenuButton = () => {
     [Key.Escape, 'ctrl+o,meta+o'],
     () => {
       closeDropdown(
-        `record-show-right-drawer-action-menu-dropdown-${actionMenuId}`,
+        getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
       );
     },
-    RecordShowRightDrawerActionMenuButtonHotkeyScope.RecordShowRightDrawerActionMenuButton,
+    RightDrawerActionMenuDropdownHotkeyScope.RightDrawerActionMenuDropdown,
     [closeDropdown],
   );
 
@@ -41,7 +42,7 @@ export const RecordShowRightDrawerActionMenuButton = () => {
     ['ctrl+o,meta+o'],
     () => {
       openDropdown(
-        `record-show-right-drawer-action-menu-dropdown-${actionMenuId}`,
+        getRightDrawerActionMenuDropdownIdFromActionMenuId(actionMenuId),
       );
     },
     RightDrawerHotkeyScope.RightDrawer,
@@ -50,10 +51,12 @@ export const RecordShowRightDrawerActionMenuButton = () => {
 
   return (
     <Dropdown
-      dropdownId={`record-show-right-drawer-action-menu-dropdown-${actionMenuId}`}
+      dropdownId={getRightDrawerActionMenuDropdownIdFromActionMenuId(
+        actionMenuId,
+      )}
       dropdownHotkeyScope={{
         scope:
-          RecordShowRightDrawerActionMenuButtonHotkeyScope.RecordShowRightDrawerActionMenuButton,
+          RightDrawerActionMenuDropdownHotkeyScope.RightDrawerActionMenuDropdown,
       }}
       data-select-disable
       clickableComponent={<Button title="Actions" shortcut="⌘O" />}
@@ -69,7 +72,9 @@ export const RecordShowRightDrawerActionMenuButton = () => {
               LeftIcon={item.Icon}
               onClick={() => {
                 closeDropdown(
-                  `record-show-right-drawer-action-menu-dropdown-${actionMenuId}`,
+                  getRightDrawerActionMenuDropdownIdFromActionMenuId(
+                    actionMenuId,
+                  ),
                 );
                 item.onClick?.();
               }}
