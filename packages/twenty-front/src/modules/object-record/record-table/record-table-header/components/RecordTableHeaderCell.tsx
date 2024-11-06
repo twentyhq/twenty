@@ -175,6 +175,7 @@ export const RecordTableHeaderCell = ({
       resizedFieldKey,
       resizeFieldOffsetState,
       tableColumnsByKey,
+      setResizedFieldKey,
       tableColumns,
       handleColumnsChange,
     ],
