@@ -1,4 +1,4 @@
-import { ApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 
 import { CREATE_ONE_DATABASE_CONNECTION } from '@/databases/graphql/mutations/createOneDatabaseConnection';
 import { GET_MANY_DATABASE_CONNECTIONS } from '@/databases/graphql/queries/findManyDatabaseConnections';
@@ -17,7 +17,7 @@ export const useCreateOneDatabaseConnection = () => {
     CreateServerMutation,
     CreateServerMutationVariables
   >(CREATE_ONE_DATABASE_CONNECTION, {
-    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient,
   });
 
   const createOneDatabaseConnection = async (

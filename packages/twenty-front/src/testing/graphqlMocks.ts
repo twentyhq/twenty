@@ -113,6 +113,79 @@ export const graphqlMocks = {
         },
       });
     }),
+    graphql.query('FindManyViews', ({ variables }) => {
+      const objectMetadataId = variables.filter?.objectMetadataId?.eq;
+      const viewType = variables.filter?.type?.eq;
+
+      return HttpResponse.json({
+        data: {
+          views: {
+            edges: mockedViewsData
+              .filter(
+                (view) =>
+                  view?.objectMetadataId === objectMetadataId &&
+                  view?.type === viewType,
+              )
+              .map((view) => ({
+                node: view,
+                cursor: null,
+              })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+        },
+      });
+    }),
+    graphql.query('SearchWorkspaceMembers', () => {
+      return HttpResponse.json({
+        data: {
+          searchWorkspaceMembers: {
+            edges: mockWorkspaceMembers.map((member) => ({
+              node: {
+                ...member,
+                messageParticipants: {
+                  edges: [],
+                  __typename: 'MessageParticipantConnection',
+                },
+                authoredAttachments: {
+                  edges: [],
+                  __typename: 'AttachmentConnection',
+                },
+                authoredComments: {
+                  edges: [],
+                  __typename: 'CommentConnection',
+                },
+                accountOwnerForCompanies: {
+                  edges: [],
+                  __typename: 'CompanyConnection',
+                },
+                authoredActivities: {
+                  edges: [],
+                  __typename: 'ActivityConnection',
+                },
+                favorites: {
+                  edges: [],
+                  __typename: 'FavoriteConnection',
+                },
+                connectedAccounts: {
+                  edges: [],
+                  __typename: 'ConnectedAccountConnection',
+                },
+                assignedActivities: {
+                  edges: [],
+                  __typename: 'ActivityConnection',
+                },
+              },
+              cursor: null,
+            })),
+          },
+        },
+      });
+    }),
     graphql.query('FindManyViewFields', ({ variables }) => {
       const viewId = variables.filter.view.eq;
 
@@ -213,9 +286,13 @@ export const graphqlMocks = {
                   edges: [],
                   __typename: 'OpportunityConnection',
                 },
-                activityTargets: {
+                taskTargets: {
                   edges: [],
-                  __typename: 'ActivityTargetConnection',
+                  __typename: 'TaskTargetConnection',
+                },
+                noteTargets: {
+                  edges: [],
+                  __typename: 'NoteTargetConnection',
                 },
               },
               cursor: null,
@@ -255,9 +332,13 @@ export const graphqlMocks = {
                       edges: [],
                       __typename: 'OpportunityConnection',
                     },
-                    activityTargets: {
+                    taskTargets: {
                       edges: [],
-                      __typename: 'ActivityTargetConnection',
+                      __typename: 'TaskTargetConnection',
+                    },
+                    noteTargets: {
+                      edges: [],
+                      __typename: 'NoteTargetConnection',
                     },
                   },
                   cursor: null,

@@ -8,14 +8,14 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 export const objectRecordChangedValues = (
   oldRecord: Partial<IRecord>,
   newRecord: Partial<IRecord>,
-  updatedKeys: string[],
+  updatedKeys: string[] | undefined,
   objectMetadata: ObjectMetadataInterface,
 ) => {
   const fieldsByKey = new Map(
     objectMetadata.fields.map((field) => [field.name, field]),
   );
 
-  const changedValues = Object.keys(newRecord).reduce(
+  return Object.keys(newRecord).reduce(
     (acc, key) => {
       const field = fieldsByKey.get(key);
       const oldRecordValue = oldRecord[key];
@@ -23,7 +23,7 @@ export const objectRecordChangedValues = (
 
       if (
         key === 'updatedAt' ||
-        !updatedKeys.includes(key) ||
+        !updatedKeys?.includes(key) ||
         field?.type === FieldMetadataType.RELATION ||
         deepEqual(oldRecordValue, newRecordValue)
       ) {
@@ -36,6 +36,4 @@ export const objectRecordChangedValues = (
     },
     {} as Record<string, { before: any; after: any }>,
   );
-
-  return changedValues;
 };

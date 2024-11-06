@@ -1,3 +1,20 @@
+import { Heading } from '@/spreadsheet-import/components/Heading';
+import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
+import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
+import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import {
+  ColumnType,
+  Columns,
+} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
+import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
+import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
+import {
+  ImportValidationResult,
+  ImportedStructuredRow,
+} from '@/spreadsheet-import/types';
+import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
+import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
+import { Modal } from '@/ui/layout/modal/components/Modal';
 import styled from '@emotion/styled';
 import {
   Dispatch,
@@ -8,29 +25,8 @@ import {
 } from 'react';
 // @ts-expect-error Todo: remove usage of react-data-grid`
 import { RowsChangeData } from 'react-data-grid';
-import { IconTrash } from 'twenty-ui';
-
-import { Heading } from '@/spreadsheet-import/components/Heading';
-import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
-import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
-import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import {
-  Columns,
-  ColumnType,
-} from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
-import {
-  ImportedStructuredRow,
-  ImportValidationResult,
-} from '@/spreadsheet-import/types';
-import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
-import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
-import { Button } from '@/ui/input/button/components/Button';
-import { Toggle } from '@/ui/input/components/Toggle';
+import { Button, IconTrash, Toggle } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
-
-import { SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
-import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
-import { Modal } from '@/ui/layout/modal/components/Modal';
 import { generateColumns } from './components/columns';
 import { ImportedStructuredRowMetadata } from './types';
 

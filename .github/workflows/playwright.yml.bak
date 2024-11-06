@@ -13,11 +13,27 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
+
+    - name: Check for changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v11
+        with:
+          files: |
+            packages/**  # Adjust this to your relevant directories
+            playwright.config.ts  # Include any relevant config files 
+
+    - name: Skip if no relevant changes
+        if: steps.changed-files.outputs.any_changed != 'true'
+        run: echo "No relevant changes detected. Marking as valid."
+
     - name: Install dependencies
+      if: steps.changed-files.outputs.any_changed == 'true'
       run: npm install -g yarn && yarn
     - name: Install Playwright Browsers
+      if: steps.changed-files.outputs.any_changed == 'true'
       run: yarn playwright install --with-deps
     - name: Run Playwright tests
+      if: steps.changed-files.outputs.any_changed == 'true'
       run: yarn test:e2e companies
     - uses: actions/upload-artifact@v4
       if: always()

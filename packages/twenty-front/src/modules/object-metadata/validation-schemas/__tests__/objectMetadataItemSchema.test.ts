@@ -30,6 +30,7 @@ describe('objectMetadataItemSchema', () => {
       namePlural: 'notCamelCase',
       nameSingular: 'notCamelCase',
       updatedAt: 'invalid date',
+      isLabelSyncedWithName: 'not a boolean',
     };
 
     // When

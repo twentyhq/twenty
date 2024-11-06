@@ -8,6 +8,7 @@ describe('addCreateStepNodes', () => {
       type: 'DATABASE_EVENT',
       settings: {
         eventName: 'company.created',
+        outputSchema: {},
       },
     };
     const steps: WorkflowStep[] = [
@@ -23,7 +24,10 @@ describe('addCreateStepNodes', () => {
           },
           input: {
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
+          outputSchema: {},
         },
       },
       {
@@ -38,7 +42,10 @@ describe('addCreateStepNodes', () => {
           },
           input: {
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
+          outputSchema: {},
         },
       },
     ];

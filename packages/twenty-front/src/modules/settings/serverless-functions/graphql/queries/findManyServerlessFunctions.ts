@@ -4,12 +4,8 @@ import { SERVERLESS_FUNCTION_FRAGMENT } from '@/settings/serverless-functions/gr
 export const FIND_MANY_SERVERLESS_FUNCTIONS = gql`
   ${SERVERLESS_FUNCTION_FRAGMENT}
   query GetManyServerlessFunctions {
-    serverlessFunctions(paging: { first: 100 }) {
-      edges {
-        node {
-          ...ServerlessFunctionFields
-        }
-      }
+    findManyServerlessFunctions {
+      ...ServerlessFunctionFields
     }
   }
 `;

@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { H2Title } from 'twenty-ui';
+import { H2Title, Section } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -14,8 +14,7 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';

@@ -1,10 +1,9 @@
-import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { H2Title } from 'twenty-ui';
+import { Link } from 'react-router-dom';
+import { H2Title, Section } from 'twenty-ui';
 
 import { SettingsIntegrationComponent } from '@/settings/integrations/components/SettingsIntegrationComponent';
 import { SettingsIntegrationCategory } from '@/settings/integrations/types/SettingsIntegrationCategory';
-import { Section } from '@/ui/layout/section/components/Section';
 
 interface SettingsIntegrationGroupProps {
   integrationGroup: SettingsIntegrationCategory;
