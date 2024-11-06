@@ -15,6 +15,7 @@ import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dto
 import { FieldMetadataValidationService } from 'src/engine/metadata-modules/field-metadata/field-metadata-validation.service';
 import { FieldMetadataResolver } from 'src/engine/metadata-modules/field-metadata/field-metadata.resolver';
 import { FieldMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/field-metadata/interceptors/field-metadata-graphql-api-exception.interceptor';
+import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -48,6 +49,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
       services: [
         IsFieldMetadataDefaultValue,
         FieldMetadataService,
+        FieldMetadataRelatedRecordsService,
         FieldMetadataValidationService,
       ],
       resolvers: [

@@ -7,8 +7,3 @@ export class ObjectRecordBaseEvent {
   objectMetadata: ObjectMetadataInterface;
   properties: any;
 }
-
-export class ObjectRecordBaseEventWithNameAndWorkspaceId extends ObjectRecordBaseEvent {
-  name: string;
-  workspaceId: string;
-}

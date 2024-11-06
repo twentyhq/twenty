@@ -7,15 +7,15 @@ import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkey
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 
-type RecordTableInternalEffectProps = {
-  recordTableId: string;
+type RecordTableBodyUnselectEffectProps = {
   tableBodyRef: React.RefObject<HTMLDivElement>;
+  recordTableId: string;
 };
 
-export const RecordTableInternalEffect = ({
-  recordTableId,
+export const RecordTableBodyUnselectEffect = ({
   tableBodyRef,
-}: RecordTableInternalEffectProps) => {
+  recordTableId,
+}: RecordTableBodyUnselectEffectProps) => {
   const leaveTableFocus = useLeaveTableFocus(recordTableId);
 
   const { resetTableRowSelection, useMapKeyboardToSoftFocus } = useRecordTable({

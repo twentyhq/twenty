@@ -4,8 +4,7 @@ import { ReactNode } from 'react';
 
 import { mocks } from '@/auth/hooks/__mocks__/useAuth';
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
-import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
+import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const recordTableId = 'people';
@@ -24,12 +23,12 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
     <HookMockWrapper>
       <ObjectNamePluralSetter>
-        <RecordTableScope
-          recordTableScopeId={getScopeIdFromComponentId(recordTableId)}
+        <RecordTableComponentInstance
+          recordTableId={recordTableId}
           onColumnsChange={onColumnsChange}
         >
           {children}
-        </RecordTableScope>
+        </RecordTableComponentInstance>
       </ObjectNamePluralSetter>
     </HookMockWrapper>
   );

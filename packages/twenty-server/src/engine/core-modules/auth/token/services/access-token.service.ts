@@ -12,11 +12,11 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
+import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
 import {
-  JwtAuthStrategy,
+  AuthContext,
   JwtPayload,
-} from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
