@@ -15,7 +15,6 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -36,50 +35,6 @@ const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
     }
   }
 `;
-const UnorganizedFavorites = ({ 
-  favorites, 
-  currentPath, 
-  currentPathView, 
-  handleReorderFavorite, 
-  deleteFavorite, 
-  theme 
-}) => {
-  if (!favorites.length) return null;
-
-  return (
-    <DraggableList
-      onDragEnd={handleReorderFavorite}
-      draggableItems={favorites.map((favorite, index) => (
-        <DraggableItem
-          key={favorite.id}
-          draggableId={favorite.id}
-          index={index}
-          itemComponent={
-            <StyledNavigationDrawerItem
-              key={favorite.id}
-              className="navigation-drawer-item"
-              label={favorite.labelIdentifier}
-              Icon={() => <FavoriteIcon favorite={favorite} />}
-              active={
-                favorite.objectNameSingular === 'view'
-                  ? favorite.link === currentPathView
-                  : favorite.link === currentPath
-              }
-              to={favorite.link}
-              rightOptions={
-                <IconHeartOff
-                  size={theme.icon.size.sm}
-                  color={theme.color.gray50}
-                  onClick={() => deleteFavorite(favorite.id)}
-                />
-              }
-            />
-          }
-        />
-      ))}
-    />
-  );
-};
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
@@ -184,8 +139,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
               }
             />
           )}
-        <ScrollWrapper contextProviderName="navigationDrawer">
-        {favoritesByFolder.map((folder) => (
+          {favoritesByFolder.map((folder) => (
             <CurrentWorkspaceMemberFavorites
               key={folder.folderId}
               folder={folder}
@@ -198,18 +152,40 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
               }}
             />
           ))}
-  
-  {unorganisedFavorites.length > 0 && (
-              <UnorganizedFavorites
-                favorites={unorganisedFavorites}
-                currentPath={currentPath}
-                currentPathView={currentPathView}
-                handleReorderFavorite={handleReorderFavorite}
-                deleteFavorite={deleteFavorite}
-                theme={theme}
-              />
-            )}
-          </ScrollWrapper>
+
+          {unorganisedFavorites.length > 0 && (
+            <DraggableList
+              onDragEnd={handleReorderFavorite}
+              draggableItems={unorganisedFavorites.map((favorite, index) => (
+                <DraggableItem
+                  key={favorite.id}
+                  draggableId={favorite.id}
+                  index={index}
+                  itemComponent={
+                    <StyledNavigationDrawerItem
+                      key={favorite.id}
+                      className="navigation-drawer-item"
+                      label={favorite.labelIdentifier}
+                      Icon={() => <FavoriteIcon favorite={favorite} />}
+                      active={
+                        favorite.objectNameSingular === 'view'
+                          ? favorite.link === currentPathView
+                          : favorite.link === currentPath
+                      }
+                      to={favorite.link}
+                      rightOptions={
+                        <IconHeartOff
+                          size={theme.icon.size.sm}
+                          color={theme.color.gray50}
+                          onClick={() => deleteFavorite(favorite.id)}
+                        />
+                      }
+                    />
+                  }
+                />
+              ))}
+            />
+          )}
         </>
       )}
     </StyledContainer>

@@ -1,6 +1,12 @@
+import { currentUserState } from '@/auth/states/currentUserState';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
+import { NavigationDrawerSectionTitleSkeletonLoader } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitleSkeletonLoader';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 const StyledTitle = styled.div`
@@ -43,7 +49,7 @@ const StyledRightIcon = styled.div<StyledRightIconProps>`
     background: ${({ theme }) => theme.background.transparent.light};
   }
 
-  .title-container:hover & {
+  .section-title-container:hover & {
     opacity: 1;
   }
 
@@ -66,10 +72,13 @@ export const NavigationDrawerSectionTitle = ({
   rightIcon,
 }: NavigationDrawerSectionTitleProps) => {
   const isMobile = useIsMobile();
-
+  const isNavigationDrawerExpanded = useRecoilValue(isNavigationDrawerExpandedState);
+  const isSettingsPage = useIsSettingsPage();
+  const currentUser = useRecoilValue(currentUserState);
+  const loading = useIsPrefetchLoading();
   const handleTitleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
-    if (isDefined(onClick)) {
+    if (isDefined(onClick) && (isNavigationDrawerExpanded || isSettingsPage)) {
       onClick();
     }
   };
@@ -81,8 +90,12 @@ export const NavigationDrawerSectionTitle = ({
     }
   };
 
+  if (loading && isDefined(currentUser)) {
+    return <NavigationDrawerSectionTitleSkeletonLoader />;
+  }
+
   return (
-    <StyledTitle className="title-container" onClick={handleTitleClick}>
+    <StyledTitle className="section-title-container" onClick={handleTitleClick}>
       <StyledLabel>{label}</StyledLabel>
       {rightIcon && (
         <StyledRightIcon isMobile={isMobile} onClick={handleRightIconClick}>

@@ -57,22 +57,13 @@ export const useMultiFavoriteFolder = ({
           return;
         }
 
-        const handleNoFolderDeletion = async () => {
-          const favoritesToDelete = favorites.filter(
-            (favorite) =>
-              !favorite.favoriteFolderId && favorite.recordId === targetId,
-          );
-
-          for (const favorite of favoritesToDelete) {
-            await deleteFavorite(favorite.id);
-          }
-        };
-
-        const handleFolderDeletion = async (folderId: string) => {
+        const deleteFavoriteForRecord = async (isUnorganized: boolean) => {
           const favoriteToDelete = favorites.find(
-            (favorite) =>
-              favorite.favoriteFolderId === folderId &&
-              favorite.recordId === targetId,
+            (favorite) => 
+              favorite.recordId === targetId && 
+              (isUnorganized 
+                ? !favorite.favoriteFolderId 
+                : favorite.favoriteFolderId === folderId)
           );
 
           if (!isDefined(favoriteToDelete)) {
@@ -89,11 +80,7 @@ export const useMultiFavoriteFolder = ({
         const isAlreadyChecked = checkedIds.includes(folderId);
 
         if (isAlreadyChecked) {
-          if (folderId === 'no-folder') {
-            await handleNoFolderDeletion();
-          } else {
-            await handleFolderDeletion(folderId);
-          }
+          await deleteFavoriteForRecord(folderId === 'no-folder');
 
           set(
             favoriteFoldersMultiSelectCheckedState,
