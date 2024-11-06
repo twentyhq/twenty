@@ -72,7 +72,9 @@ export const NavigationDrawerSectionTitle = ({
   rightIcon,
 }: NavigationDrawerSectionTitleProps) => {
   const isMobile = useIsMobile();
-  const isNavigationDrawerExpanded = useRecoilValue(isNavigationDrawerExpandedState);
+  const isNavigationDrawerExpanded = useRecoilValue(
+    isNavigationDrawerExpandedState,
+  );
   const isSettingsPage = useIsSettingsPage();
   const currentUser = useRecoilValue(currentUserState);
   const loading = useIsPrefetchLoading();

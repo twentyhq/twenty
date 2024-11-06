@@ -24,8 +24,6 @@ const StyledContainer = styled.div`
   overflow: scroll;
 `;
 
-
-
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
   const { toggleCommandMenu } = useCommandMenu();
@@ -64,7 +62,7 @@ export const MainNavigationDrawerItems = () => {
           />
         </StyledMainSection>
       )}
-<StyledContainer>
+      <StyledContainer>
         {isWorkspaceFavoriteEnabled && <NavigationDrawerOpenedSection />}
 
         <CurrentWorkspaceMemberFavoritesFolders />
@@ -77,7 +75,7 @@ export const MainNavigationDrawerItems = () => {
           />
         )}
         <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
-        </StyledContainer>
+      </StyledContainer>
     </>
   );
 };

@@ -59,11 +59,11 @@ export const useMultiFavoriteFolder = ({
 
         const deleteFavoriteForRecord = async (isUnorganized: boolean) => {
           const favoriteToDelete = favorites.find(
-            (favorite) => 
-              favorite.recordId === targetId && 
-              (isUnorganized 
-                ? !favorite.favoriteFolderId 
-                : favorite.favoriteFolderId === folderId)
+            (favorite) =>
+              favorite.recordId === targetId &&
+              (isUnorganized
+                ? !favorite.favoriteFolderId
+                : favorite.favoriteFolderId === folderId),
           );
 
           if (!isDefined(favoriteToDelete)) {
