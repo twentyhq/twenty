@@ -40,20 +40,23 @@ export const useTimelineActivities = (
     fetchPolicy: 'cache-and-network',
   });
 
-  // NEW: Parse composite fields if they are returned as strings (e.g., JSON strings)
-  const parsedTimelineActivities = timelineActivities.map((activity) => {
-    if (
-      activity.compositeField &&
-      typeof activity.compositeField === 'string'
-    ) {
-      try {
-        activity.compositeField = JSON.parse(activity.compositeField);
-      } catch (error) {
-        console.error('Error parsing composite field', error);
-      }
+const parsedTimelineActivities = timelineActivities.map((activity) => {
+
+  const parsedActivity = { ...activity };
+
+  if (
+    parsedActivity.compositeField &&
+    typeof parsedActivity.compositeField === 'string'
+  ) {
+    try {
+      parsedActivity.compositeField = JSON.parse(parsedActivity.compositeField);
+    } catch (error) {
+      console.error('Error parsing composite field', error);
+      parsedActivity.compositeField = [];
     }
-    return activity;
-  });
+  }
+  return parsedActivity;
+});
 
 
   const activityIds = parsedTimelineActivities
