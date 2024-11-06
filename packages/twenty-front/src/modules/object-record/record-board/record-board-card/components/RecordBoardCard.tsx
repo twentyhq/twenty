@@ -1,5 +1,7 @@
 import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
+import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
+import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
@@ -183,14 +185,19 @@ export const RecordBoardCard = ({
     RecordBoardScopeInternalContext,
   );
 
+  const actionMenuId = getActionMenuIdFromRecordIndexId(recordBoardId);
+
+  const actionMenuDropdownId =
+    getActionMenuDropdownIdFromActionMenuId(actionMenuId);
+
   const setActionMenuDropdownPosition = useSetRecoilState(
     extractComponentState(
       recordIndexActionMenuDropdownPositionComponentState,
-      `action-menu-dropdown-${recordBoardId}`,
+      actionMenuDropdownId,
     ),
   );
 
-  const { openActionMenuDropdown } = useActionMenu(recordBoardId);
+  const { openActionMenuDropdown } = useActionMenu(actionMenuId);
 
   const handleActionMenuDropdown = (event: React.MouseEvent) => {
     event.preventDefault();
