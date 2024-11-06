@@ -11,13 +11,13 @@ import { SERVERLESS_FUNCTION_PUBLISHED } from 'src/engine/metadata-modules/serve
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
-import { CodeIntrospectionService2 } from 'src/modules/code-introspection/code-introspection-2.service';
+import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
 
 @Injectable()
 export class ServerlessFunctionPublicationListener {
   constructor(
     private readonly serverlessFunctionService: ServerlessFunctionService,
-    private readonly codeIntrospectionService: CodeIntrospectionService2,
+    private readonly codeIntrospectionService: CodeIntrospectionService,
     @InjectRepository(ServerlessFunctionEntity, 'metadata')
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}

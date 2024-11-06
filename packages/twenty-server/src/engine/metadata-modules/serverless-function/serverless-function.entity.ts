@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { InputSchema } from 'src/modules/code-introspection/code-introspection-2.service';
+import { InputSchema } from 'src/modules/code-introspection/code-introspection.service';
 
 export enum ServerlessFunctionSyncStatus {
   NOT_READY = 'NOT_READY',
