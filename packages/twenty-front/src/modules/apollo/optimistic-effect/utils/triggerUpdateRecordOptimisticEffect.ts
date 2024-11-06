@@ -117,10 +117,18 @@ export const triggerUpdateRecordOptimisticEffect = ({
           });
         }
 
+        const totalCount = readField<number | undefined>(
+          'totalCount',
+          rootQueryConnection,
+        );
+
         return {
           ...rootQueryConnection,
           edges: rootQueryNextEdges,
-          totalCount: rootQueryNextEdges.length,
+          totalCount: isDefined(totalCount)
+            ? totalCount -
+              (rootQueryCurrentEdges.length - rootQueryNextEdges.length)
+            : undefined,
         };
       },
     },
