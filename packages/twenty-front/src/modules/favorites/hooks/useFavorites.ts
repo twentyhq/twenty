@@ -132,6 +132,7 @@ export const useFavorites = () => {
       [`${targetObjectNameSingular}Id`]: targetRecord.id,
       position: maxPosition + 1,
       workspaceMemberId: currentWorkspaceMemberId,
+      favoriteFolderId,
     });
   };
 

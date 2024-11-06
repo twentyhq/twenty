@@ -36,6 +36,50 @@ const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
     }
   }
 `;
+const UnorganizedFavorites = ({ 
+  favorites, 
+  currentPath, 
+  currentPathView, 
+  handleReorderFavorite, 
+  deleteFavorite, 
+  theme 
+}) => {
+  if (!favorites.length) return null;
+
+  return (
+    <DraggableList
+      onDragEnd={handleReorderFavorite}
+      draggableItems={favorites.map((favorite, index) => (
+        <DraggableItem
+          key={favorite.id}
+          draggableId={favorite.id}
+          index={index}
+          itemComponent={
+            <StyledNavigationDrawerItem
+              key={favorite.id}
+              className="navigation-drawer-item"
+              label={favorite.labelIdentifier}
+              Icon={() => <FavoriteIcon favorite={favorite} />}
+              active={
+                favorite.objectNameSingular === 'view'
+                  ? favorite.link === currentPathView
+                  : favorite.link === currentPath
+              }
+              to={favorite.link}
+              rightOptions={
+                <IconHeartOff
+                  size={theme.icon.size.sm}
+                  color={theme.color.gray50}
+                  onClick={() => deleteFavorite(favorite.id)}
+                />
+              }
+            />
+          }
+        />
+      ))}
+    />
+  );
+};
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
@@ -154,40 +198,17 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
               }}
             />
           ))}
-
-          {unorganisedFavorites.length > 0 && (
-            <DraggableList
-              onDragEnd={handleReorderFavorite}
-              draggableItems={unorganisedFavorites.map((favorite, index) => (
-                <DraggableItem
-                  key={favorite.id}
-                  draggableId={favorite.id}
-                  index={index}
-                  itemComponent={
-                    <StyledNavigationDrawerItem
-                      key={favorite.id}
-                      className="navigation-drawer-item"
-                      label={favorite.labelIdentifier}
-                      Icon={() => <FavoriteIcon favorite={favorite} />}
-                      active={
-                        favorite.objectNameSingular === 'view'
-                          ? favorite.link === currentPathView
-                          : favorite.link === currentPath
-                      }
-                      to={favorite.link}
-                      rightOptions={
-                        <IconHeartOff
-                          size={theme.icon.size.sm}
-                          color={theme.color.gray50}
-                          onClick={() => deleteFavorite(favorite.id)}
-                        />
-                      }
-                    />
-                  }
-                />
-              ))}
-            />
-          )}
+  
+  {unorganisedFavorites.length > 0 && (
+              <UnorganizedFavorites
+                favorites={unorganisedFavorites}
+                currentPath={currentPath}
+                currentPathView={currentPathView}
+                handleReorderFavorite={handleReorderFavorite}
+                deleteFavorite={deleteFavorite}
+                theme={theme}
+              />
+            )}
           </ScrollWrapper>
         </>
       )}
