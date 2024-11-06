@@ -1,6 +1,7 @@
 import { useActionMenu } from '@/action-menu/hooks/useActionMenu';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { getActionBarIdFromActionMenuId } from '@/action-menu/utils/getActionBarIdFromActionMenuId';
+import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
@@ -34,7 +35,7 @@ export const RecordIndexActionMenuEffect = () => {
   const isDropdownOpen = useRecoilValue(
     extractComponentState(
       isDropdownOpenComponentState,
-      `action-menu-dropdown-${actionMenuId}`,
+      getActionMenuDropdownIdFromActionMenuId(actionMenuId),
     ),
   );
   const { isRightDrawerOpen } = useRightDrawer();
