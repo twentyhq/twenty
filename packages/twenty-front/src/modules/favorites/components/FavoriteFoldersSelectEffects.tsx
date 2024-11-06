@@ -72,7 +72,7 @@ export const FavoriteFoldersMultiSelectEffect = ({
       )
       .map((favorite) => favorite.favoriteFolderId || 'no-folder');
     setCheckedState(checkedFolderIds);
-  }, [favorites, setCheckedState, record]);
+  }, [favorites, setCheckedState, record?.id]);
 
   return null;
 };

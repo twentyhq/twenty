@@ -1,6 +1,7 @@
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { useMemo } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import { useFavoriteFoldersScopedStates } from './useFavoriteFoldersScopedStates';
@@ -82,10 +83,8 @@ export const useMultiFavoriteFolder = ({
         if (isAlreadyChecked) {
           await deleteFavoriteForRecord(folderId === 'no-folder');
 
-          set(
-            favoriteFoldersMultiSelectCheckedState,
-            checkedIds.filter((id) => id !== folderId),
-          );
+          const newCheckedIds = checkedIds.filter((id) => id !== folderId);
+          set(favoriteFoldersMultiSelectCheckedState, newCheckedIds);
           return;
         }
 
@@ -95,7 +94,8 @@ export const useMultiFavoriteFolder = ({
           await createFavorite(record, objectNameSingular, folderIdToUse);
         }
 
-        set(favoriteFoldersMultiSelectCheckedState, [...checkedIds, folderId]);
+        const newCheckedIds = [...checkedIds, folderId];
+        set(favoriteFoldersMultiSelectCheckedState, newCheckedIds);
       },
     [
       favoriteFoldersMultiSelectCheckedState,
@@ -107,8 +107,11 @@ export const useMultiFavoriteFolder = ({
     ],
   );
 
-  return {
-    getFoldersByIds,
-    toggleFolderSelection,
-  };
+  return useMemo(
+    () => ({
+      getFoldersByIds,
+      toggleFolderSelection,
+    }),
+    [getFoldersByIds, toggleFolderSelection],
+  );
 };
