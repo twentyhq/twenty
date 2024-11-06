@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
@@ -17,6 +16,8 @@ import {
   CalendarEventParticipantUnmatchParticipantJobData,
 } from 'src/modules/calendar/calendar-event-participant-manager/jobs/calendar-event-participant-unmatch-participant.job';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class CalendarEventParticipantWorkspaceMemberListener {
@@ -25,7 +26,7 @@ export class CalendarEventParticipantWorkspaceMemberListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('workspaceMember.created')
+  @OnDatabaseEvent('workspaceMember', DatabaseEventAction.CREATED)
   async handleCreatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>
@@ -47,7 +48,7 @@ export class CalendarEventParticipantWorkspaceMemberListener {
     }
   }
 
-  @OnEvent('workspaceMember.updated')
+  @OnDatabaseEvent('workspaceMember', DatabaseEventAction.UPDATED)
   async handleUpdatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>

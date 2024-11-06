@@ -5,6 +5,7 @@
  * For readability keys can be edited but the values should not be changed.
  */
 
+// TODO: check if this can be deleted
 export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
   activity: '20202020-ca58-478c-a4f5-ae825671c30e',
   person: '20202020-4afd-4ae7-99c2-de57d795a93f',
@@ -13,6 +14,7 @@ export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
   custom: '20202020-7f21-442f-94be-32462281b1ca',
 };
 
+// TODO: check if this can be deleted
 export const ACTIVITY_STANDARD_FIELD_IDS = {
   title: '20202020-24a1-4d94-a071-617f3eeed7b0',
   body: '20202020-209b-440a-b2a8-043fa36a7d37',
@@ -109,6 +111,7 @@ export const CALENDAR_EVENT_STANDARD_FIELD_IDS = {
   calendarEventParticipants: '20202020-e07e-4ccb-88f5-6f3d00458eec',
 };
 
+// TODO: check if this can be deleted
 export const COMMENT_STANDARD_FIELD_IDS = {
   body: '20202020-d5eb-49d2-b3e0-1ed04145ebb7',
   author: '20202020-2ab1-427e-a981-cf089de3a9bd',
@@ -129,6 +132,7 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   createdBy: '20202020-fabc-451d-ab7d-412170916baa',
   people: '20202020-3213-4ddf-9494-6422bcff8d7c',
   accountOwner: '20202020-95b8-4e10-9881-edb5d4765f9d',
+  // TODO: check if activityTargets field can be deleted
   activityTargets: '20202020-c2a5-4c9b-9d9a-582bcd57fbc8',
   taskTargets: '20202020-cb17-4a61-8f8f-3be6730480de',
   noteTargets: '20202020-bae0-4556-a74a-a9c686f77a88',
@@ -282,6 +286,7 @@ export const NOTE_STANDARD_FIELD_IDS = {
   attachments: '20202020-4986-4c92-bf19-39934b149b16',
   timelineActivities: '20202020-7030-42f8-929c-1a57b25d6bce',
   favorites: '20202020-4d1d-41ac-b13b-621631298d67',
+  searchVector: '20202020-7ea8-44d4-9d4c-51dd2a757950',
 };
 
 export const NOTE_TARGET_STANDARD_FIELD_IDS = {
@@ -303,6 +308,7 @@ export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   pointOfContact: '20202020-8dfb-42fc-92b6-01afb759ed16',
   company: '20202020-cbac-457e-b565-adece5fc815f',
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
+  // TODO: check if activityTargets field can be deleted
   activityTargets: '20202020-220a-42d6-8261-b2102d6eab35',
   taskTargets: '20202020-59c0-4179-a208-4a255f04a5be',
   noteTargets: '20202020-dd3f-42d5-a382-db58aabf43d3',
@@ -326,6 +332,7 @@ export const PERSON_STANDARD_FIELD_IDS = {
   createdBy: '20202020-f6ab-4d98-af24-a3d5b664148a',
   company: '20202020-e2f3-448e-b34c-2d625f0025fd',
   pointOfContactForOpportunities: '20202020-911b-4a7d-b67b-918aa9a5b33a',
+  // TODO: check if activityTargets field can be deleted
   activityTargets: '20202020-dee7-4b7f-b50a-1f50bd3be452',
   taskTargets: '20202020-584b-4d3e-88b6-53ab1fa03c3a',
   noteTargets: '20202020-c8fc-4258-8250-15905d3fcfec',
@@ -349,6 +356,7 @@ export const TASK_STANDARD_FIELD_IDS = {
   assignee: '20202020-065a-4f42-a906-e20422c1753f',
   timelineActivities: '20202020-c778-4278-99ee-23a2837aee64',
   favorites: '20202020-4d1d-41ac-b13b-621631298d65',
+  searchVector: '20202020-4746-4e2f-870c-52b02c67c90d',
 };
 
 export const TASK_TARGET_STANDARD_FIELD_IDS = {
@@ -367,12 +375,29 @@ export const VIEW_FIELD_STANDARD_FIELD_IDS = {
   view: '20202020-e8da-4521-afab-d6d231f9fa18',
 };
 
+export const VIEW_GROUP_STANDARD_FIELD_IDS = {
+  fieldMetadataId: '20202020-8f26-46ae-afed-fdacd7778682',
+  fieldValue: '20202020-175e-4596-b7a4-1cd9d14e5a30',
+  isVisible: '20202020-0fed-4b44-88fd-a064c4fcfce4',
+  position: '20202020-748e-4645-8f32-84aae7726c04',
+  view: '20202020-5bc7-4110-b23f-fb851fb133b4',
+};
+
 export const VIEW_FILTER_STANDARD_FIELD_IDS = {
   fieldMetadataId: '20202020-c9aa-4c94-8d0e-9592f5008fb0',
   operand: '20202020-bd23-48c4-9fab-29d1ffb80310',
   value: '20202020-1e55-4a1e-a1d2-fefb86a5fce5',
   displayValue: '20202020-1270-4ebf-9018-c0ec10d5038e',
   view: '20202020-4f5b-487e-829c-3d881c163611',
+  viewFilterGroupId: '20202020-2580-420a-8328-cab1635c0296',
+  positionInViewFilterGroup: '20202020-3bb0-4f66-a537-a46fe0dc468f',
+};
+
+export const VIEW_FILTER_GROUP_STANDARD_FIELD_IDS = {
+  view: '20202020-ff7a-4b54-8be5-aa0249047b74',
+  parentViewFilterGroupId: '20202020-edbf-4929-8ede-64f48d6bf2a7',
+  logicalOperator: '20202020-64d9-4bc5-85ba-c250796ce9aa',
+  positionInViewFilterGroup: '20202020-90d6-4299-ad87-d05ddd3a0a3f',
 };
 
 export const VIEW_SORT_STANDARD_FIELD_IDS = {
@@ -391,7 +416,9 @@ export const VIEW_STANDARD_FIELD_IDS = {
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',
+  viewGroups: '20202020-e1a1-419f-ac81-1986a5ea59a8',
   viewFilters: '20202020-ff23-4154-b63c-21fb36cd0967',
+  viewFilterGroups: '20202020-0318-474a-84a1-bac895ceaa5a',
   viewSorts: '20202020-891b-45c3-9fe1-80a75b4aa043',
   favorites: '20202020-c818-4a86-8284-9ec0ef0a59a5',
 };
@@ -399,6 +426,7 @@ export const VIEW_STANDARD_FIELD_IDS = {
 export const WEBHOOK_STANDARD_FIELD_IDS = {
   targetUrl: '20202020-1229-45a8-8cf4-85c9172aae12',
   operation: '20202020-15b7-458e-bf30-74770a54410c',
+  operations: '20202020-15b7-458e-bf30-74770a54411c',
   description: '20202020-15b7-458e-bf30-74770a54410d',
 };
 
@@ -469,12 +497,14 @@ export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   timeZone: '20202020-2d33-4c21-a86e-5943b050dd54',
   dateFormat: '20202020-af13-4e11-b1e7-b8cf5ea13dc0',
   timeFormat: '20202020-8acb-4cf8-a851-a6ed443c8d81',
+  searchVector: '20202020-46d0-4e7f-bc26-74c0edaeb619',
 };
 
 export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   name: '20202020-ba07-4ffd-ba63-009491f5749c',
   position: '20202020-c2bd-4e16-bb9a-c8b0411bf49d',
   createdBy: '20202020-be0e-4971-865b-32ca87cbb315',
+  // TODO: check if activityTargets field can be deleted
   activityTargets: '20202020-7f42-40ae-b96c-c8a61acc83bf',
   noteTargets: '20202020-01fd-4f37-99dc-9427a444018a',
   taskTargets: '20202020-0860-4566-b865-bff3c626c303',
@@ -482,4 +512,48 @@ export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   attachments: '20202020-8d59-46ca-b7b2-73d167712134',
   timelineActivities: '20202020-f1ef-4ba4-8f33-1a4577afa477',
   searchVector: '70e56537-18ef-4811-b1c7-0a444006b815',
+};
+
+export const STANDARD_OBJECT_FIELD_IDS = {
+  activityTarget: ACTIVITY_TARGET_STANDARD_FIELD_IDS,
+  activity: ACTIVITY_STANDARD_FIELD_IDS,
+  apiKey: API_KEY_STANDARD_FIELD_IDS,
+  attachment: ATTACHMENT_STANDARD_FIELD_IDS,
+  blocklist: BLOCKLIST_STANDARD_FIELD_IDS,
+  behavioralEvent: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS,
+  calendarChannelEventAssociation:
+    CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS,
+  calendarChannel: CALENDAR_CHANNEL_STANDARD_FIELD_IDS,
+  calendarEventParticipant: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS,
+  calendarEvent: CALENDAR_EVENT_STANDARD_FIELD_IDS,
+  comment: COMMENT_STANDARD_FIELD_IDS,
+  company: COMPANY_STANDARD_FIELD_IDS,
+  connectedAccount: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS,
+  favorite: FAVORITE_STANDARD_FIELD_IDS,
+  auditLog: AUDIT_LOGS_STANDARD_FIELD_IDS,
+  messageChannelMessageAssociation:
+    MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS,
+  messageChannel: MESSAGE_CHANNEL_STANDARD_FIELD_IDS,
+  messageParticipant: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS,
+  messageThread: MESSAGE_THREAD_STANDARD_FIELD_IDS,
+  messageThreadSubscriber: MESSAGE_THREAD_SUBSCRIBER_STANDARD_FIELD_IDS,
+  message: MESSAGE_STANDARD_FIELD_IDS,
+  note: NOTE_STANDARD_FIELD_IDS,
+  noteTarget: NOTE_TARGET_STANDARD_FIELD_IDS,
+  opportunity: OPPORTUNITY_STANDARD_FIELD_IDS,
+  person: PERSON_STANDARD_FIELD_IDS,
+  task: TASK_STANDARD_FIELD_IDS,
+  taskTarget: TASK_TARGET_STANDARD_FIELD_IDS,
+  timelineActivity: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
+  viewField: VIEW_FIELD_STANDARD_FIELD_IDS,
+  viewGroup: VIEW_GROUP_STANDARD_FIELD_IDS,
+  viewFilter: VIEW_FILTER_STANDARD_FIELD_IDS,
+  viewSort: VIEW_SORT_STANDARD_FIELD_IDS,
+  view: VIEW_STANDARD_FIELD_IDS,
+  webhook: WEBHOOK_STANDARD_FIELD_IDS,
+  workflow: WORKFLOW_STANDARD_FIELD_IDS,
+  workflowEventListener: WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS,
+  workflowRun: WORKFLOW_RUN_STANDARD_FIELD_IDS,
+  workflowVersion: WORKFLOW_VERSION_STANDARD_FIELD_IDS,
+  workspaceMember: WORKSPACE_MEMBER_STANDARD_FIELD_IDS,
 };

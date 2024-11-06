@@ -11,6 +11,7 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -29,7 +30,7 @@ export enum CalendarEventParticipantResponseStatus {
   labelSingular: 'Calendar event participant',
   labelPlural: 'Calendar event participants',
   description: 'Calendar event participants',
-  icon: 'IconCalendar',
+  icon: STANDARD_OBJECT_ICONS.calendarEventParticipant,
   labelIdentifierStandardId:
     CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.handle,
 })

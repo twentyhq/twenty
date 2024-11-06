@@ -4,9 +4,10 @@ import {
   FloatingPortal,
   offset,
   Placement,
+  size,
   useFloating,
 } from '@floating-ui/react';
-import { MouseEvent, useRef } from 'react';
+import { MouseEvent, ReactNode, useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -26,8 +27,8 @@ import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
 type DropdownProps = {
   className?: string;
-  clickableComponent?: JSX.Element | JSX.Element[];
-  dropdownComponents: JSX.Element | JSX.Element[];
+  clickableComponent?: ReactNode;
+  dropdownComponents: ReactNode;
   hotkey?: {
     key: Keys;
     scope: string;
@@ -79,7 +80,22 @@ export const Dropdown = ({
 
   const { refs, floatingStyles } = useFloating({
     placement: dropdownPlacement,
-    middleware: [flip(), ...offsetMiddlewares],
+    middleware: [
+      flip(),
+      size({
+        padding: 32,
+        apply: ({ availableHeight, elements }) => {
+          elements.floating.style.maxHeight =
+            availableHeight >= elements.floating.scrollHeight
+              ? ''
+              : `${availableHeight}px`;
+
+          elements.floating.style.height = 'auto';
+        },
+        boundary: document.querySelector('#root') ?? undefined,
+      }),
+      ...offsetMiddlewares,
+    ],
     whileElementsMounted: autoUpdate,
     strategy: dropdownStrategy,
   });

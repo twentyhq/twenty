@@ -3,15 +3,9 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'package.json'
-      - 'packages/twenty-server/**'
-      - 'packages/twenty-emails/**'
+
   pull_request:
-    paths:
-      - 'package.json'
-      - 'packages/twenty-server/**'
-      - 'packages/twenty-emails/**'
+   
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -38,22 +32,38 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Check for changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v11
+        with:
+          files: |
+            package.json
+            packages/twenty-server/**
+            packages/twenty-emails/**
+
       - name: Install dependencies
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
       - name: Server / Restore Task Cache
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/task-cache
         with:
           tag: scope:backend
       - name: Server / Run lint & typecheck
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
           tasks: lint,typecheck
       - name: Server / Build
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx build twenty-server
       - name: Server / Write .env
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-server
       - name: Worker / Run
+        if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx run twenty-server:worker:ci
 
   server-test:
@@ -66,13 +76,26 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Check for changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v11
+        with:
+          files: |
+            package.json
+            packages/twenty-server/**
+            packages/twenty-emails/**
+
       - name: Install dependencies
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
       - name: Server / Restore Task Cache
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/task-cache
         with:
           tag: scope:backend
       - name:  Server / Run Tests
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
@@ -100,13 +123,26 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Check for changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v11
+        with:
+          files: |
+            package.json
+            packages/twenty-server/**
+            packages/twenty-emails/**
+
       - name: Install dependencies
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
       - name: Server / Restore Task Cache
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/task-cache
         with:
           tag: scope:backend
       - name: Server / Run Integration Tests
+        if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend

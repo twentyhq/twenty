@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OpenApiService } from 'src/engine/core-modules/open-api/open-api.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -13,7 +13,7 @@ describe('OpenApiService', () => {
       providers: [
         OpenApiService,
         {
-          provide: TokenService,
+          provide: AccessTokenService,
           useValue: {},
         },
         {

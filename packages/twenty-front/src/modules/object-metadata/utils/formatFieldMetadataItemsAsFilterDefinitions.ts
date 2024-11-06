@@ -8,10 +8,12 @@ import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const formatFieldMetadataItemsAsFilterDefinitions = ({
   fields,
+  isArrayAndJsonFilterEnabled,
 }: {
   fields: Array<ObjectMetadataItem['fields'][0]>;
-}): FilterDefinition[] =>
-  fields.reduce((acc, field) => {
+  isArrayAndJsonFilterEnabled: boolean;
+}): FilterDefinition[] => {
+  return fields.reduce((acc, field) => {
     if (
       field.type === FieldMetadataType.Relation &&
       field.relationDefinition?.direction !==
@@ -37,6 +39,9 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Rating,
         FieldMetadataType.Actor,
         FieldMetadataType.Phones,
+        ...(isArrayAndJsonFilterEnabled
+          ? [FieldMetadataType.Array, FieldMetadataType.RawJson]
+          : []),
       ].includes(field.type)
     ) {
       return acc;
@@ -44,6 +49,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
 
     return [...acc, formatFieldMetadataItemAsFilterDefinition({ field })];
   }, [] as FilterDefinition[]);
+};
 
 export const formatFieldMetadataItemAsFilterDefinition = ({
   field,
@@ -92,6 +98,8 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
       return 'ACTOR';
     case FieldMetadataType.Array:
       return 'ARRAY';
+    case FieldMetadataType.RawJson:
+      return 'RAW_JSON';
     default:
       return 'TEXT';
   }

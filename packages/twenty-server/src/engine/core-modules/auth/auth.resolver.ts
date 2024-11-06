@@ -10,12 +10,24 @@ import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/em
 import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
 import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
 import { GenerateJwtInput } from 'src/engine/core-modules/auth/dto/generate-jwt.input';
+import {
+  GenerateJWTOutput,
+  GenerateJWTOutputWithAuthTokens,
+  GenerateJWTOutputWithSSOAUTH,
+} from 'src/engine/core-modules/auth/dto/generateJWT.output';
 import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import { TransientToken } from 'src/engine/core-modules/auth/dto/transient-token.entity';
 import { UpdatePasswordViaResetTokenInput } from 'src/engine/core-modules/auth/dto/update-password-via-reset-token.input';
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
 import { ValidatePasswordResetTokenInput } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.input';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
+import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
+import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
+import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/switch-workspace.service';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
+import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -37,15 +49,20 @@ import { VerifyInput } from './dto/verify.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
 import { AuthService } from './services/auth.service';
-import { TokenService } from './token/services/token.service';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
 export class AuthResolver {
   constructor(
     private authService: AuthService,
-    private tokenService: TokenService,
+    private renewTokenService: RenewTokenService,
     private userService: UserService,
+    private apiKeyService: ApiKeyService,
+    private resetPasswordService: ResetPasswordService,
+    private loginTokenService: LoginTokenService,
+    private switchWorkspaceService: SwitchWorkspaceService,
+    private transientTokenService: TransientTokenService,
+    private oauthService: OAuthService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -82,7 +99,9 @@ export class AuthResolver {
   @Mutation(() => LoginToken)
   async challenge(@Args() challengeInput: ChallengeInput): Promise<LoginToken> {
     const user = await this.authService.challenge(challengeInput);
-    const loginToken = await this.tokenService.generateLoginToken(user.email);
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+    );
 
     return { loginToken };
   }
@@ -95,7 +114,9 @@ export class AuthResolver {
       fromSSO: false,
     });
 
-    const loginToken = await this.tokenService.generateLoginToken(user.email);
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+    );
 
     return { loginToken };
   }
@@ -104,7 +125,7 @@ export class AuthResolver {
   async exchangeAuthorizationCode(
     @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
   ) {
-    const tokens = await this.tokenService.verifyAuthorizationCode(
+    const tokens = await this.oauthService.verifyAuthorizationCode(
       exchangeAuthCodeInput,
     );
 
@@ -125,18 +146,19 @@ export class AuthResolver {
     if (!workspaceMember) {
       return;
     }
-    const transientToken = await this.tokenService.generateTransientToken(
-      workspaceMember.id,
-      user.id,
-      user.defaultWorkspaceId,
-    );
+    const transientToken =
+      await this.transientTokenService.generateTransientToken(
+        workspaceMember.id,
+        user.id,
+        user.defaultWorkspaceId,
+      );
 
     return { transientToken };
   }
 
   @Mutation(() => Verify)
   async verify(@Args() verifyInput: VerifyInput): Promise<Verify> {
-    const email = await this.tokenService.verifyLoginToken(
+    const email = await this.loginTokenService.verifyLoginToken(
       verifyInput.loginToken,
     );
 
@@ -159,23 +181,47 @@ export class AuthResolver {
     return authorizedApp;
   }
 
-  @Mutation(() => AuthTokens)
+  @Mutation(() => GenerateJWTOutput)
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
   async generateJWT(
     @AuthUser() user: User,
     @Args() args: GenerateJwtInput,
-  ): Promise<AuthTokens> {
-    const token = await this.tokenService.generateSwitchWorkspaceToken(
+  ): Promise<GenerateJWTOutputWithAuthTokens | GenerateJWTOutputWithSSOAUTH> {
+    const result = await this.switchWorkspaceService.switchWorkspace(
       user,
       args.workspaceId,
     );
 
-    return token;
+    if (result.useSSOAuth) {
+      return {
+        success: true,
+        reason: 'WORKSPACE_USE_SSO_AUTH',
+        availableSSOIDPs: result.availableSSOIdentityProviders.map(
+          (identityProvider) => ({
+            ...identityProvider,
+            workspace: {
+              id: result.workspace.id,
+              displayName: result.workspace.displayName,
+            },
+          }),
+        ),
+      };
+    }
+
+    return {
+      success: true,
+      reason: 'WORKSPACE_AVAILABLE_FOR_SWITCH',
+      authTokens:
+        await this.switchWorkspaceService.generateSwitchWorkspaceToken(
+          user,
+          result.workspace,
+        ),
+    };
   }
 
   @Mutation(() => AuthTokens)
   async renewToken(@Args() args: AppTokenInput): Promise<AuthTokens> {
-    const tokens = await this.tokenService.generateTokensFromRefreshToken(
+    const tokens = await this.renewTokenService.generateTokensFromRefreshToken(
       args.appToken,
     );
 
@@ -197,7 +243,7 @@ export class AuthResolver {
     @Args() args: ApiKeyTokenInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ): Promise<ApiKeyToken | undefined> {
-    return await this.tokenService.generateApiKeyToken(
+    return await this.apiKeyService.generateApiKeyToken(
       workspaceId,
       args.apiKeyId,
       args.expiresAt,
@@ -208,11 +254,12 @@ export class AuthResolver {
   async emailPasswordResetLink(
     @Args() emailPasswordResetInput: EmailPasswordResetLinkInput,
   ): Promise<EmailPasswordResetLink> {
-    const resetToken = await this.tokenService.generatePasswordResetToken(
-      emailPasswordResetInput.email,
-    );
+    const resetToken =
+      await this.resetPasswordService.generatePasswordResetToken(
+        emailPasswordResetInput.email,
+      );
 
-    return await this.tokenService.sendEmailPasswordResetLink(
+    return await this.resetPasswordService.sendEmailPasswordResetLink(
       resetToken,
       emailPasswordResetInput.email,
     );
@@ -224,18 +271,20 @@ export class AuthResolver {
     { passwordResetToken, newPassword }: UpdatePasswordViaResetTokenInput,
   ): Promise<InvalidatePassword> {
     const { id } =
-      await this.tokenService.validatePasswordResetToken(passwordResetToken);
+      await this.resetPasswordService.validatePasswordResetToken(
+        passwordResetToken,
+      );
 
     await this.authService.updatePassword(id, newPassword);
 
-    return await this.tokenService.invalidatePasswordResetToken(id);
+    return await this.resetPasswordService.invalidatePasswordResetToken(id);
   }
 
   @Query(() => ValidatePasswordResetToken)
   async validatePasswordResetToken(
     @Args() args: ValidatePasswordResetTokenInput,
   ): Promise<ValidatePasswordResetToken> {
-    return this.tokenService.validatePasswordResetToken(
+    return this.resetPasswordService.validatePasswordResetToken(
       args.passwordResetToken,
     );
   }

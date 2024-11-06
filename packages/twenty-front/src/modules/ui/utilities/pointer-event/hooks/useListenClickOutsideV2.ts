@@ -10,6 +10,7 @@ export enum ClickOutsideMode {
 
 export type ClickOutsideListenerProps<T extends Element> = {
   refs: Array<React.RefObject<T>>;
+  excludeClassNames?: string[];
   callback: (event: MouseEvent | TouchEvent) => void;
   mode?: ClickOutsideMode;
   listenerId: string;
@@ -18,6 +19,7 @@ export type ClickOutsideListenerProps<T extends Element> = {
 
 export const useListenClickOutsideV2 = <T extends Element>({
   refs,
+  excludeClassNames,
   callback,
   mode = ClickOutsideMode.compareHTMLRef,
   listenerId,
@@ -26,6 +28,7 @@ export const useListenClickOutsideV2 = <T extends Element>({
   const {
     getClickOutsideListenerIsMouseDownInsideState,
     getClickOutsideListenerIsActivatedState,
+    getClickOutsideListenerMouseDownHappenedState,
   } = useClickOustideListenerStates(listenerId);
 
   const handleMouseDown = useRecoilCallback(
@@ -34,6 +37,8 @@ export const useListenClickOutsideV2 = <T extends Element>({
         const clickOutsideListenerIsActivated = snapshot
           .getLoadable(getClickOutsideListenerIsActivatedState)
           .getValue();
+
+        set(getClickOutsideListenerMouseDownHappenedState, true);
 
         const isListening = clickOutsideListenerIsActivated && enabled;
 
@@ -90,27 +95,63 @@ export const useListenClickOutsideV2 = <T extends Element>({
         }
       },
     [
+      getClickOutsideListenerIsActivatedState,
+      enabled,
       mode,
       refs,
       getClickOutsideListenerIsMouseDownInsideState,
-      enabled,
-      getClickOutsideListenerIsActivatedState,
+      getClickOutsideListenerMouseDownHappenedState,
     ],
   );
 
   const handleClickOutside = useRecoilCallback(
     ({ snapshot }) =>
       (event: MouseEvent | TouchEvent) => {
+        const clickOutsideListenerIsActivated = snapshot
+          .getLoadable(getClickOutsideListenerIsActivatedState)
+          .getValue();
+
+        const isListening = clickOutsideListenerIsActivated && enabled;
+
         const isMouseDownInside = snapshot
           .getLoadable(getClickOutsideListenerIsMouseDownInsideState)
           .getValue();
 
+        const hasMouseDownHappened = snapshot
+          .getLoadable(getClickOutsideListenerMouseDownHappenedState)
+          .getValue();
+
         if (mode === ClickOutsideMode.compareHTMLRef) {
+          const clickedElement = event.target as HTMLElement;
+          let isClickedOnExcluded = false;
+          let currentElement: HTMLElement | null = clickedElement;
+
+          while (currentElement) {
+            const currentClassList = currentElement.classList;
+
+            isClickedOnExcluded =
+              excludeClassNames?.some((className) =>
+                currentClassList.contains(className),
+              ) ?? false;
+
+            if (isClickedOnExcluded) {
+              break;
+            }
+
+            currentElement = currentElement.parentElement;
+          }
+
           const clickedOnAtLeastOneRef = refs
             .filter((ref) => !!ref.current)
             .some((ref) => ref.current?.contains(event.target as Node));
 
-          if (!clickedOnAtLeastOneRef && !isMouseDownInside) {
+          if (
+            isListening &&
+            hasMouseDownHappened &&
+            !clickedOnAtLeastOneRef &&
+            !isMouseDownInside &&
+            !isClickedOnExcluded
+          ) {
             callback(event);
           }
         }
@@ -146,12 +187,26 @@ export const useListenClickOutsideV2 = <T extends Element>({
               return true;
             });
 
-          if (!clickedOnAtLeastOneRef && !isMouseDownInside) {
+          if (
+            !clickedOnAtLeastOneRef &&
+            !isMouseDownInside &&
+            isListening &&
+            hasMouseDownHappened
+          ) {
             callback(event);
           }
         }
       },
-    [mode, refs, callback, getClickOutsideListenerIsMouseDownInsideState],
+    [
+      getClickOutsideListenerIsActivatedState,
+      enabled,
+      getClickOutsideListenerIsMouseDownInsideState,
+      getClickOutsideListenerMouseDownHappenedState,
+      mode,
+      refs,
+      excludeClassNames,
+      callback,
+    ],
   );
 
   useEffect(() => {

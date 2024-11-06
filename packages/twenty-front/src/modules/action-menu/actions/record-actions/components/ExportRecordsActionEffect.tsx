@@ -1,46 +1,44 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import {
   displayedExportProgress,
-  useExportTableData,
-} from '@/object-record/record-index/options/hooks/useExportTableData';
+  useExportRecordData,
+} from '@/action-menu/hooks/useExportRecordData';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { IconDatabaseExport } from 'twenty-ui';
+
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
-import { IconFileExport } from 'twenty-ui';
 
 export const ExportRecordsActionEffect = ({
   position,
+  objectMetadataItem,
 }: {
   position: number;
+  objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
-
-  const contextStoreCurrentObjectMetadataId = useRecoilValue(
-    contextStoreCurrentObjectMetadataIdState,
+  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: contextStoreCurrentObjectMetadataId,
-  });
-
-  const baseTableDataParams = {
+  const { progress, download } = useExportRecordData({
     delayMs: 100,
-    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
-    recordIndexId: objectMetadataItem?.namePlural ?? '',
-  };
-
-  const { progress, download } = useExportTableData({
-    ...baseTableDataParams,
-    filename: `${objectMetadataItem?.nameSingular}.csv`,
+    objectMetadataItem,
+    recordIndexId: objectMetadataItem.namePlural,
+    filename: `${objectMetadataItem.nameSingular}.csv`,
   });
 
   useEffect(() => {
     addActionMenuEntry({
+      type: 'standard',
       key: 'export',
       position,
-      label: displayedExportProgress(progress),
-      Icon: IconFileExport,
+      label: displayedExportProgress(
+        contextStoreNumberOfSelectedRecords > 0 ? 'selection' : 'all',
+        progress,
+      ),
+      Icon: IconDatabaseExport,
       accent: 'default',
       onClick: () => download(),
     });
@@ -48,6 +46,14 @@ export const ExportRecordsActionEffect = ({
     return () => {
       removeActionMenuEntry('export');
     };
-  }, [download, progress, addActionMenuEntry, removeActionMenuEntry, position]);
+  }, [
+    contextStoreNumberOfSelectedRecords,
+    download,
+    progress,
+    addActionMenuEntry,
+    removeActionMenuEntry,
+    position,
+  ]);
+
   return null;
 };
