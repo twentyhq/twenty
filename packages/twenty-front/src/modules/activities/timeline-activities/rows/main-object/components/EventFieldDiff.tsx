@@ -20,7 +20,11 @@ const StyledEventFieldDiffContainer = styled.div`
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
   height: 24px;
-  width: 380px;
+  width: auto;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledEmptyValue = styled.div`
