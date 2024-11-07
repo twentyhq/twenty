@@ -1,20 +1,16 @@
 /* eslint-disable react/jsx-props-no-spreading */
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { zodResolver } from '@hookform/resolvers/zod';
-import pick from 'lodash.pick';
-import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, H2Title, IconArchive, Section } from 'twenty-ui';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 
 import { useLastVisitedObjectMetadataItem } from '@/navigation/hooks/useLastVisitedObjectMetadataItem';
 import { useLastVisitedView } from '@/navigation/hooks/useLastVisitedView';
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   IS_LABEL_SYNCED_WITH_NAME_LABEL,
   SettingsDataModelObjectAboutForm,
@@ -24,13 +20,15 @@ import { settingsDataModelObjectIdentifiersFormSchema } from '@/settings/data-mo
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsUpdateObjectInputSchema';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import styled from '@emotion/styled';
+import isEmpty from 'lodash.isempty';
+import pick from 'lodash.pick';
 import { useSetRecoilState } from 'recoil';
+import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
 import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 const objectEditFormSchema = z
@@ -42,20 +40,29 @@ type SettingsDataModelObjectEditFormValues = z.infer<
   typeof objectEditFormSchema
 >;
 
-export const SettingsObjectEdit = () => {
+type ObjectSettingsProps = {
+  objectMetadataItem: ObjectMetadataItem;
+};
+
+const StyledContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(8)};
+`;
+
+const StyledFormSection = styled(Section)`
+  padding-left: 0 !important;
+`;
+
+export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
+  const setUpdatedObjectSlugState = useSetRecoilState(updatedObjectSlugState);
 
-  const { objectSlug = '' } = useParams();
-  const { findActiveObjectMetadataItemBySlug } =
-    useFilteredObjectMetadataItems();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { lastVisitedObjectMetadataItemId } =
     useLastVisitedObjectMetadataItem();
   const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
-
-  const activeObjectMetadataItem =
-    findActiveObjectMetadataItemBySlug(objectSlug);
 
   const settingsObjectsPagePath = getSettingsPagePath(SettingsPath.Objects);
 
@@ -68,15 +75,6 @@ export const SettingsObjectEdit = () => {
     navigationMemorizedUrlState,
   );
 
-  useEffect(() => {
-    if (!activeObjectMetadataItem) navigate(AppPath.NotFound);
-  }, [activeObjectMetadataItem, navigate]);
-
-  if (!activeObjectMetadataItem) return null;
-
-  const { isDirty, isValid, isSubmitting } = formConfig.formState;
-  const canSave = isDirty && isValid && !isSubmitting;
-
   const getUpdatePayload = (
     formValues: SettingsDataModelObjectEditFormValues,
   ) => {
@@ -88,19 +86,19 @@ export const SettingsObjectEdit = () => {
       IS_LABEL_SYNCED_WITH_NAME_LABEL,
     )
       ? (formValues.isLabelSyncedWithName as boolean)
-      : activeObjectMetadataItem.isLabelSyncedWithName;
+      : objectMetadataItem.isLabelSyncedWithName;
 
     if (shouldComputeNamesFromLabels) {
       values = {
         ...values,
-        ...(values.labelSingular
+        ...(values.labelSingular && dirtyFieldKeys.includes('labelSingular')
           ? {
               nameSingular: computeMetadataNameFromLabelOrThrow(
                 formValues.labelSingular,
               ),
             }
           : {}),
-        ...(values.labelPlural
+        ...(values.labelPlural && dirtyFieldKeys.includes('labelPlural')
           ? {
               namePlural: computeMetadataNameFromLabelOrThrow(
                 formValues.labelPlural,
@@ -113,8 +111,14 @@ export const SettingsObjectEdit = () => {
     return settingsUpdateObjectInputSchema.parse(
       pick(values, [
         ...dirtyFieldKeys,
-        ...(values.namePlural ? ['namePlural'] : []),
-        ...(values.nameSingular ? ['nameSingular'] : []),
+        ...(shouldComputeNamesFromLabels &&
+        dirtyFieldKeys.includes('labelPlural')
+          ? ['namePlural']
+          : []),
+        ...(shouldComputeNamesFromLabels &&
+        dirtyFieldKeys.includes('labelSingular')
+          ? ['nameSingular']
+          : []),
       ]),
     );
   };
@@ -122,41 +126,53 @@ export const SettingsObjectEdit = () => {
   const handleSave = async (
     formValues: SettingsDataModelObjectEditFormValues,
   ) => {
+    if (isEmpty(formConfig.formState.dirtyFields) === true) {
+      return;
+    }
     try {
       const updatePayload = getUpdatePayload(formValues);
+      const objectNamePluralForRedirection =
+        updatePayload.namePlural ?? objectMetadataItem.namePlural;
+      const objectSlug = getObjectSlug({
+        ...updatePayload,
+        namePlural: objectNamePluralForRedirection,
+      });
+
+      setUpdatedObjectSlugState(objectSlug);
+
       await updateOneObjectMetadataItem({
-        idToUpdate: activeObjectMetadataItem.id,
+        idToUpdate: objectMetadataItem.id,
         updatePayload,
       });
 
-      const objectNamePluralForRedirection =
-        updatePayload.namePlural ?? activeObjectMetadataItem.namePlural;
+      formConfig.reset(undefined, { keepValues: true });
 
-      if (lastVisitedObjectMetadataItemId === activeObjectMetadataItem.id) {
+      if (lastVisitedObjectMetadataItemId === objectMetadataItem.id) {
         const lastVisitedView = getLastVisitedViewIdFromObjectMetadataItemId(
-          activeObjectMetadataItem.id,
+          objectMetadataItem.id,
         );
         setNavigationMemorizedUrl(
           `/objects/${objectNamePluralForRedirection}?view=${lastVisitedView}`,
         );
       }
 
-      navigate(
-        `${settingsObjectsPagePath}/${getObjectSlug({
-          ...updatePayload,
-          namePlural: objectNamePluralForRedirection,
-        })}`,
-      );
+      navigate(`${settingsObjectsPagePath}/${objectSlug}`);
     } catch (error) {
-      enqueueSnackBar((error as Error).message, {
-        variant: SnackBarVariant.Error,
-      });
+      if (error instanceof ZodError) {
+        enqueueSnackBar(error.issues[0].message, {
+          variant: SnackBarVariant.Error,
+        });
+      } else {
+        enqueueSnackBar((error as Error).message, {
+          variant: SnackBarVariant.Error,
+        });
+      }
     }
   };
 
   const handleDisable = async () => {
     await updateOneObjectMetadataItem({
-      idToUpdate: activeObjectMetadataItem.id,
+      idToUpdate: objectMetadataItem.id,
       updatePayload: { isActive: false },
     });
     navigate(settingsObjectsPagePath);
@@ -165,57 +181,33 @@ export const SettingsObjectEdit = () => {
   return (
     <RecordFieldValueSelectorContextProvider>
       <FormProvider {...formConfig}>
-        <SubMenuTopBarContainer
-          title="Edit"
-          links={[
-            {
-              children: 'Workspace',
-              href: getSettingsPagePath(SettingsPath.Workspace),
-            },
-            {
-              children: 'Objects',
-              href: settingsObjectsPagePath,
-            },
-            {
-              children: activeObjectMetadataItem.labelPlural,
-              href: `${settingsObjectsPagePath}/${objectSlug}`,
-            },
-            { children: 'Edit Object' },
-          ]}
-          actionButton={
-            activeObjectMetadataItem.isCustom && (
-              <SaveAndCancelButtons
-                isSaveDisabled={!canSave}
-                isCancelDisabled={isSubmitting}
-                onCancel={() =>
-                  navigate(`${settingsObjectsPagePath}/${objectSlug}`)
-                }
-                onSave={formConfig.handleSubmit(handleSave)}
-              />
-            )
-          }
-        >
-          <SettingsPageContainer>
+        <StyledContentContainer>
+          <StyledFormSection>
+            <H2Title
+              title="About"
+              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+            />
+            <SettingsDataModelObjectAboutForm
+              disabled={!objectMetadataItem.isCustom}
+              disableNameEdit={!objectMetadataItem.isCustom}
+              objectMetadataItem={objectMetadataItem}
+              onBlur={() => {
+                formConfig.handleSubmit(handleSave)();
+              }}
+            />
+          </StyledFormSection>
+          <StyledFormSection>
             <Section>
               <H2Title
-                title="About"
-                description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
-              />
-              <SettingsDataModelObjectAboutForm
-                disabled={!activeObjectMetadataItem.isCustom}
-                disableNameEdit={!activeObjectMetadataItem.isCustom}
-                objectMetadataItem={activeObjectMetadataItem}
-              />
-            </Section>
-            <Section>
-              <H2Title
-                title="Settings"
+                title="Options"
                 description="Choose the fields that will identify your records"
               />
               <SettingsDataModelObjectSettingsFormCard
-                objectMetadataItem={activeObjectMetadataItem}
+                objectMetadataItem={objectMetadataItem}
               />
             </Section>
+          </StyledFormSection>
+          <StyledFormSection>
             <Section>
               <H2Title title="Danger zone" description="Deactivate object" />
               <Button
@@ -225,8 +217,8 @@ export const SettingsObjectEdit = () => {
                 onClick={handleDisable}
               />
             </Section>
-          </SettingsPageContainer>
-        </SubMenuTopBarContainer>
+          </StyledFormSection>
+        </StyledContentContainer>
       </FormProvider>
     </RecordFieldValueSelectorContextProvider>
   );
