@@ -69,12 +69,13 @@ const StyledAdvancedSettingsSectionInputWrapper = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(4)};
   width: 100%;
+  flex: 1;
 `;
 
 const StyledAdvancedSettingsContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
-  padding-top: ${({ theme }) => theme.spacing(4)};
+  margin-top: ${({ theme }) => theme.spacing(4)};
   position: relative;
   width: 100%;
 `;
