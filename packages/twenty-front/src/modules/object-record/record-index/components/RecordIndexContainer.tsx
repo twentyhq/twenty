@@ -51,6 +51,7 @@ const StyledContainer = styled.div`
 
 const StyledContainerWithPadding = styled.div`
   height: calc(100% - 40px);
+  margin-left: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 
@@ -206,6 +207,7 @@ export const RecordIndexContainer = () => {
             viewBarId={recordIndexId}
           />
         </SpreadsheetImportProvider>
+
         {recordIndexViewType === ViewType.Table && (
           <>
             <RecordIndexTableContainer
@@ -232,7 +234,7 @@ export const RecordIndexContainer = () => {
             />
           </StyledContainerWithPadding>
         )}
-        <RecordIndexActionMenu actionMenuId={recordIndexId} />
+        <RecordIndexActionMenu />
       </RecordFieldValueSelectorContextProvider>
     </StyledContainer>
   );

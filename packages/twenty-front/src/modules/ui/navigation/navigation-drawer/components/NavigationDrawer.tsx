@@ -22,9 +22,9 @@ export type NavigationDrawerProps = {
   title?: string;
 };
 
-const StyledAnimatedContainer = styled(motion.div)`
+const StyledAnimatedContainer = styled(motion.div)<{ isSettings?: boolean }>`
   max-height: 100vh;
-  overflow: hidden;
+  overflow: ${({ isSettings }) => (isSettings ? 'visible' : 'hidden')};
 `;
 
 const StyledContainer = styled.div<{
@@ -105,6 +105,7 @@ export const NavigationDrawer = ({
       transition={{
         duration: theme.animation.duration.normal,
       }}
+      isSettings={isSettingsDrawer}
     >
       <StyledContainer
         isSettings={isSettingsDrawer}

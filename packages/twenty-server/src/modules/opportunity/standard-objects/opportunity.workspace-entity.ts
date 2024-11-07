@@ -29,7 +29,6 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
@@ -176,19 +175,6 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
   favorites: Relation<FavoriteWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.activityTargets,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Activities',
-    description: 'Activities tied to the opportunity',
-    icon: 'IconCheckbox',
-    inverseSideTarget: () => ActivityTargetWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  activityTargets: Relation<ActivityTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.taskTargets,

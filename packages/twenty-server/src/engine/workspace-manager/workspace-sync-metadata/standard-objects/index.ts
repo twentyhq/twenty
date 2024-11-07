@@ -1,6 +1,3 @@
-import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
-import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
-import { CommentWorkspaceEntity } from 'src/modules/activity/standard-objects/comment.workspace-entity';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
@@ -41,8 +38,6 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 // TODO: Maybe we should automate this with the DiscoverService of Nest.JS
 export const standardObjectMetadataDefinitions = [
-  ActivityTargetWorkspaceEntity,
-  ActivityWorkspaceEntity,
   ApiKeyWorkspaceEntity,
   AuditLogWorkspaceEntity,
   AttachmentWorkspaceEntity,
@@ -52,7 +47,6 @@ export const standardObjectMetadataDefinitions = [
   CalendarChannelWorkspaceEntity,
   CalendarChannelEventAssociationWorkspaceEntity,
   CalendarEventParticipantWorkspaceEntity,
-  CommentWorkspaceEntity,
   CompanyWorkspaceEntity,
   ConnectedAccountWorkspaceEntity,
   FavoriteWorkspaceEntity,

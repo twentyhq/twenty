@@ -7,7 +7,7 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import { MouseEvent, useEffect, useRef } from 'react';
+import { MouseEvent, ReactNode, useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -15,20 +15,20 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { isDefined } from '~/utils/isDefined';
 
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
 type DropdownProps = {
   className?: string;
-  clickableComponent?: JSX.Element | JSX.Element[];
-  dropdownComponents: JSX.Element | JSX.Element[];
+  clickableComponent?: ReactNode;
+  dropdownComponents: ReactNode;
   hotkey?: {
     key: Keys;
     scope: string;
@@ -65,14 +65,8 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const {
-    isDropdownOpen,
-    toggleDropdown,
-    closeDropdown,
-    dropdownWidth,
-    setDropdownPlacement,
-    resetDropdown,
-  } = useDropdown(dropdownId);
+  const { isDropdownOpen, toggleDropdown, closeDropdown, dropdownWidth } =
+    useDropdown(dropdownId);
 
   const offsetMiddlewares = [];
 
@@ -84,28 +78,27 @@ export const Dropdown = ({
     offsetMiddlewares.push(offset({ mainAxis: dropdownOffset.y }));
   }
 
-  const { refs, floatingStyles, placement } = useFloating({
+  const { refs, floatingStyles } = useFloating({
     placement: dropdownPlacement,
     middleware: [
       flip(),
       size({
-        padding: 12 + 20, // 12px for padding bottom, 20px for dropdown bottom margin target
+        padding: 32,
         apply: ({ availableHeight, elements }) => {
           elements.floating.style.maxHeight =
             availableHeight >= elements.floating.scrollHeight
               ? ''
               : `${availableHeight}px`;
+
+          elements.floating.style.height = 'auto';
         },
+        boundary: document.querySelector('#root') ?? undefined,
       }),
       ...offsetMiddlewares,
     ],
     whileElementsMounted: autoUpdate,
     strategy: dropdownStrategy,
   });
-
-  useEffect(() => {
-    setDropdownPlacement(placement);
-  }, [placement, setDropdownPlacement]);
 
   const handleHotkeyTriggered = () => {
     toggleDropdown();
@@ -119,8 +112,9 @@ export const Dropdown = ({
     onClickOutside?.();
   };
 
-  useListenClickOutside({
+  useListenClickOutsideV2({
     refs: [refs.floating],
+    listenerId: dropdownId,
     callback: () => {
       onClickOutside?.();
 
@@ -143,12 +137,6 @@ export const Dropdown = ({
     dropdownHotkeyScope.scope,
     [closeDropdown],
   );
-
-  useEffect(() => {
-    return () => {
-      resetDropdown();
-    };
-  }, [resetDropdown]);
 
   return (
     <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>

@@ -20,6 +20,7 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { FunctionParameter } from 'src/engine/metadata-modules/serverless-function/dtos/function-parameter.dto';
 import { ServerlessFunctionSyncStatus } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 
 registerEnumType(ServerlessFunctionSyncStatus, {
@@ -63,6 +64,10 @@ export class ServerlessFunctionDTO {
   @IsArray()
   @Field(() => [String], { nullable: false })
   publishedVersions: string[];
+
+  @IsArray()
+  @Field(() => [FunctionParameter], { nullable: true })
+  latestVersionInputSchema: FunctionParameter[] | null;
 
   @IsEnum(ServerlessFunctionSyncStatus)
   @IsNotEmpty()

@@ -4,7 +4,7 @@ import { crudRecordKey } from '../../creates/crud_record';
 import App from '../../index';
 import getBundle from '../../utils/getBundle';
 import requestDb from '../../utils/requestDb';
-import { Operation } from '../../utils/triggers/triggers.utils';
+import { DatabaseEventAction } from '../../utils/triggers/triggers.utils';
 const appTester = createAppTester(App);
 tools.env.inject();
 
@@ -12,7 +12,7 @@ describe('creates.create_company', () => {
   test('should run to create a Company Record', async () => {
     const bundle = getBundle({
       nameSingular: 'Company',
-      crudZapierOperation: Operation.create,
+      crudZapierOperation: DatabaseEventAction.CREATED,
       name: 'Company Name',
       address: { addressCity: 'Paris' },
       linkedinLink: {
@@ -56,7 +56,7 @@ describe('creates.create_company', () => {
   test('should run to create a Person Record', async () => {
     const bundle = getBundle({
       nameSingular: 'Person',
-      crudZapierOperation: Operation.create,
+      crudZapierOperation: DatabaseEventAction.CREATED,
       name: { firstName: 'John', lastName: 'Doe' },
       phones: {
         primaryPhoneNumber: '610203040',
@@ -90,7 +90,7 @@ describe('creates.update_company', () => {
   test('should run to update a Company record', async () => {
     const createBundle = getBundle({
       nameSingular: 'Company',
-      crudZapierOperation: Operation.create,
+      crudZapierOperation: DatabaseEventAction.CREATED,
       name: 'Company Name',
       employees: 25,
     });
@@ -104,7 +104,7 @@ describe('creates.update_company', () => {
 
     const updateBundle = getBundle({
       nameSingular: 'Company',
-      crudZapierOperation: Operation.update,
+      crudZapierOperation: DatabaseEventAction.UPDATED,
       id: companyId,
       name: 'Updated Company Name',
     });
@@ -133,7 +133,7 @@ describe('creates.delete_company', () => {
   test('should run to delete a Company record', async () => {
     const createBundle = getBundle({
       nameSingular: 'Company',
-      crudZapierOperation: Operation.create,
+      crudZapierOperation: DatabaseEventAction.CREATED,
       name: 'Delete Company Name',
       employees: 25,
     });
@@ -147,7 +147,7 @@ describe('creates.delete_company', () => {
 
     const deleteBundle = getBundle({
       nameSingular: 'Company',
-      crudZapierOperation: Operation.delete,
+      crudZapierOperation: DatabaseEventAction.DELETED,
       id: companyId,
     });
 

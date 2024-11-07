@@ -21,6 +21,7 @@ const baseFields = `
   settings
 `;
 
+
 export const queries = {
   deleteMetadataField: gql`
     mutation DeleteOneFieldMetadataItem($idToDelete: UUID!) {
@@ -29,6 +30,37 @@ export const queries = {
       }
     }
   `,
+  findManyViewsQuery: gql`
+    query FindManyViews($filter: ViewFilterInput, $orderBy: [ViewOrderByInput], $lastCursor: String, $limit: Int) {
+        views(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor) {
+          edges {
+            node {
+              __typename
+              id
+              viewGroups {
+                edges {
+                  node {
+                    __typename
+                    fieldMetadataId
+                    fieldValue
+                    id
+                    isVisible
+                    position
+                  }
+                }
+              }
+            }
+            cursor
+          }
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+          totalCount
+        }
+      }`,
   deleteMetadataFieldRelation: gql`
     mutation DeleteOneRelationMetadataItem($idToDelete: UUID!) {
       deleteOneRelation(input: { id: $idToDelete }) {

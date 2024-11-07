@@ -60,7 +60,7 @@ const StyledButton = styled('button', {
                 ? theme.background.secondary
                 : theme.background.primary};
               border-color: ${!inverted
-                ? focus
+                ? !disabled && focus
                   ? theme.color.blue
                   : theme.background.transparent.light
                 : theme.background.transparent.light};

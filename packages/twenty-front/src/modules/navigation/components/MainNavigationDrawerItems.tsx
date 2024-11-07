@@ -17,7 +17,12 @@ import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/n
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import styled from '@emotion/styled';
 import { useEffect } from 'react';
+
+const StyledMainSection = styled(NavigationDrawerSection)`
+  min-height: fit-content;
+`;
 
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
