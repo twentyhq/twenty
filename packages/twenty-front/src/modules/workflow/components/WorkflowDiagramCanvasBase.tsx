@@ -11,7 +11,6 @@ import {
   WorkflowDiagramNodeType,
 } from '@/workflow/types/WorkflowDiagram';
 import { getOrganizedDiagram } from '@/workflow/utils/getOrganizedDiagram';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
   applyEdgeChanges,
@@ -86,7 +85,6 @@ export const WorkflowDiagramCanvasBase = ({
   >;
   children?: React.ReactNode;
 }) => {
-  const theme = useTheme();
   const reactflow = useReactFlow();
 
   const { nodes, edges } = useMemo(
