@@ -20,8 +20,8 @@ import { toSpliced } from '~/utils/array/toSpliced';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 const StyledDropdownMenu = styled(DropdownMenu)`
-  left: -1px;
-  top: -1px;
+  margin-left: -1px;
+  margin-top: -1px;
 `;
 
 type MultiItemFieldInputProps<T> = {
@@ -64,9 +64,14 @@ export const MultiItemFieldInput = <T,>({
     onCancel?.();
   };
 
+  const handleDropdownCloseOutside = (event: MouseEvent | TouchEvent) => {
+    onCancel?.();
+    event.stopImmediatePropagation();
+  };
+
   useListenClickOutside({
     refs: [containerRef],
-    callback: handleDropdownClose,
+    callback: handleDropdownCloseOutside,
   });
 
   useScopedHotkeys(Key.Escape, handleDropdownClose, hotkeyScope);

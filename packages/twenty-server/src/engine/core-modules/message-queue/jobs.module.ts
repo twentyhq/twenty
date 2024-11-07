@@ -27,6 +27,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { WorkflowModule } from 'src/modules/workflow/workflow.module';
+import { WebhookJobModule } from 'src/modules/webhook/jobs/webhook-job.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     WorkspaceQueryRunnerJobModule,
     AutoCompaniesAndContactsCreationJobModule,
     TimelineJobModule,
+    WebhookJobModule,
     WorkflowModule,
   ],
   providers: [

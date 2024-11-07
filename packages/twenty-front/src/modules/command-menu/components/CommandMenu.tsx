@@ -288,12 +288,20 @@ export const CommandMenu = () => {
         : true) && cmd.type === CommandType.Create,
   );
 
-  const matchingActionCommands = commandMenuCommands.filter(
+  const matchingStandardActionCommands = commandMenuCommands.filter(
     (cmd) =>
       (deferredCommandMenuSearch.length > 0
         ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
           checkInLabels(cmd, deferredCommandMenuSearch)
-        : true) && cmd.type === CommandType.Action,
+        : true) && cmd.type === CommandType.StandardAction,
+  );
+
+  const matchingWorkflowRunCommands = commandMenuCommands.filter(
+    (cmd) =>
+      (deferredCommandMenuSearch.length > 0
+        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
+          checkInLabels(cmd, deferredCommandMenuSearch)
+        : true) && cmd.type === CommandType.WorkflowRun,
   );
 
   useListenClickOutside({
@@ -321,7 +329,7 @@ export const CommandMenu = () => {
 
   const selectableItemIds = copilotCommands
     .map((cmd) => cmd.id)
-    .concat(matchingActionCommands.map((cmd) => cmd.id))
+    .concat(matchingStandardActionCommands.map((cmd) => cmd.id))
     .concat(matchingCreateCommand.map((cmd) => cmd.id))
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people?.map((person) => person.id))
@@ -330,7 +338,8 @@ export const CommandMenu = () => {
     .concat(notes?.map((note) => note.id));
 
   const isNoResults =
-    !matchingActionCommands.length &&
+    !matchingStandardActionCommands.length &&
+    !matchingWorkflowRunCommands.length &&
     !matchingCreateCommand.length &&
     !matchingNavigateCommand.length &&
     !people?.length &&
@@ -410,38 +419,44 @@ export const CommandMenu = () => {
                     </CommandGroup>
                   )}
                   {mainContextStoreComponentInstanceId && (
-                    <CommandGroup heading="Actions">
-                      {matchingActionCommands?.map((actionCommand) => (
-                        <SelectableItem
-                          itemId={actionCommand.id}
-                          key={actionCommand.id}
-                        >
-                          <CommandMenuItem
-                            id={actionCommand.id}
-                            label={actionCommand.label}
-                            Icon={actionCommand.Icon}
-                            onClick={actionCommand.onCommandClick}
-                          />
-                        </SelectableItem>
-                      ))}
-                    </CommandGroup>
+                    <>
+                      <CommandGroup heading="Standard Actions">
+                        {matchingStandardActionCommands?.map(
+                          (standardActionCommand) => (
+                            <SelectableItem
+                              itemId={standardActionCommand.id}
+                              key={standardActionCommand.id}
+                            >
+                              <CommandMenuItem
+                                id={standardActionCommand.id}
+                                label={standardActionCommand.label}
+                                Icon={standardActionCommand.Icon}
+                                onClick={standardActionCommand.onCommandClick}
+                              />
+                            </SelectableItem>
+                          ),
+                        )}
+                      </CommandGroup>
+
+                      <CommandGroup heading="Workflows">
+                        {matchingWorkflowRunCommands?.map(
+                          (workflowRunCommand) => (
+                            <SelectableItem
+                              itemId={workflowRunCommand.id}
+                              key={workflowRunCommand.id}
+                            >
+                              <CommandMenuItem
+                                id={workflowRunCommand.id}
+                                label={workflowRunCommand.label}
+                                Icon={workflowRunCommand.Icon}
+                                onClick={workflowRunCommand.onCommandClick}
+                              />
+                            </SelectableItem>
+                          ),
+                        )}
+                      </CommandGroup>
+                    </>
                   )}
-                  <CommandGroup heading="Create">
-                    {matchingCreateCommand.map((cmd) => (
-                      <SelectableItem itemId={cmd.id} key={cmd.id}>
-                        <CommandMenuItem
-                          id={cmd.id}
-                          to={cmd.to}
-                          key={cmd.id}
-                          Icon={cmd.Icon}
-                          label={cmd.label}
-                          onClick={cmd.onCommandClick}
-                          firstHotKey={cmd.firstHotKey}
-                          secondHotKey={cmd.secondHotKey}
-                        />
-                      </SelectableItem>
-                    ))}
-                  </CommandGroup>
                   <CommandGroup heading="Navigate">
                     {matchingNavigateCommand.map((cmd) => (
                       <SelectableItem itemId={cmd.id} key={cmd.id}>
@@ -451,6 +466,22 @@ export const CommandMenu = () => {
                           key={cmd.id}
                           label={cmd.label}
                           Icon={cmd.Icon}
+                          onClick={cmd.onCommandClick}
+                          firstHotKey={cmd.firstHotKey}
+                          secondHotKey={cmd.secondHotKey}
+                        />
+                      </SelectableItem>
+                    ))}
+                  </CommandGroup>
+                  <CommandGroup heading="Other">
+                    {matchingCreateCommand.map((cmd) => (
+                      <SelectableItem itemId={cmd.id} key={cmd.id}>
+                        <CommandMenuItem
+                          id={cmd.id}
+                          to={cmd.to}
+                          key={cmd.id}
+                          Icon={cmd.Icon}
+                          label={cmd.label}
                           onClick={cmd.onCommandClick}
                           firstHotKey={cmd.firstHotKey}
                           secondHotKey={cmd.secondHotKey}

@@ -37,6 +37,7 @@ import {
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { capitalize } from 'src/utils/capitalize';
 import { getServerUrl } from 'src/utils/get-server-url';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class OpenApiService {
@@ -81,9 +82,18 @@ export class OpenApiService {
 
     schema.webhooks = objectMetadataItems.reduce(
       (paths, item) => {
-        paths[`Create ${item.nameSingular}`] = computeWebhooks('create', item);
-        paths[`Update ${item.nameSingular}`] = computeWebhooks('update', item);
-        paths[`Delete ${item.nameSingular}`] = computeWebhooks('delete', item);
+        paths[`Create ${item.nameSingular}`] = computeWebhooks(
+          DatabaseEventAction.CREATED,
+          item,
+        );
+        paths[`Update ${item.nameSingular}`] = computeWebhooks(
+          DatabaseEventAction.UPDATED,
+          item,
+        );
+        paths[`Delete ${item.nameSingular}`] = computeWebhooks(
+          DatabaseEventAction.DELETED,
+          item,
+        );
 
         return paths;
       },

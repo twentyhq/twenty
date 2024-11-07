@@ -108,9 +108,12 @@ const percentage = (part: number, whole: number): number => {
   return Math.round((part / whole) * 100);
 };
 
-export const displayedExportProgress = (progress?: ExportProgress): string => {
+export const displayedExportProgress = (
+  mode: 'all' | 'selection' = 'all',
+  progress?: ExportProgress,
+): string => {
   if (isUndefinedOrNull(progress?.exportedRecordCount)) {
-    return 'Export';
+    return mode === 'all' ? 'Export View as CSV' : 'Export Selection as CSV';
   }
 
   if (

@@ -49,6 +49,7 @@ type SettingsDataModelObjectAboutFormProps = {
   disabled?: boolean;
   disableNameEdit?: boolean;
   objectMetadataItem?: ObjectMetadataItem;
+  onBlur?: () => void;
 };
 
 const StyledInputsContainer = styled.div`
@@ -63,28 +64,29 @@ const StyledInputContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledSectionWrapper = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(4)};
-`;
-
 const StyledAdvancedSettingsSectionInputWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(4)};
   width: 100%;
+  flex: 1;
+`;
+
+const StyledAdvancedSettingsOuterContainer = styled.div`
+  padding-top: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledAdvancedSettingsContainer = styled.div`
   display: flex;
-  width: 100%;
   gap: ${({ theme }) => theme.spacing(2)};
   position: relative;
+  width: 100%;
 `;
 
 const StyledIconToolContainer = styled.div`
   border-right: 1px solid ${MAIN_COLORS.yellow};
   display: flex;
-  left: ${({ theme }) => theme.spacing(-5)};
+  left: ${({ theme }) => theme.spacing(-6)};
   position: absolute;
   height: 100%;
 `;
@@ -108,6 +110,7 @@ export const SettingsDataModelObjectAboutForm = ({
   disabled,
   disableNameEdit,
   objectMetadataItem,
+  onBlur,
 }: SettingsDataModelObjectAboutFormProps) => {
   const { control, watch, setValue } =
     useFormContext<SettingsDataModelObjectAboutFormValues>();
@@ -120,6 +123,9 @@ export const SettingsDataModelObjectAboutForm = ({
   const isLabelSyncedWithName = watch(IS_LABEL_SYNCED_WITH_NAME_LABEL);
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
+  watch('nameSingular');
+  watch('namePlural');
+  watch('description');
   const apiNameTooltipText = isLabelSyncedWithName
     ? 'Deactivate "Synchronize Objects Labels and API Names" to set a custom API name'
     : 'Input must be in camel case and cannot start with a number';
@@ -141,97 +147,96 @@ export const SettingsDataModelObjectAboutForm = ({
       setValue(
         'nameSingular',
         computeMetadataNameFromLabelOrThrow(labelSingular),
-        { shouldDirty: false },
+        { shouldDirty: true },
       );
   };
 
   const fillNamePluralFromLabelPlural = (labelPlural: string) => {
     isDefined(labelPlural) &&
       setValue('namePlural', computeMetadataNameFromLabelOrThrow(labelPlural), {
-        shouldDirty: false,
+        shouldDirty: true,
       });
   };
 
   return (
     <>
-      <StyledSectionWrapper>
-        <StyledInputsContainer>
-          <StyledInputContainer>
-            <StyledLabel>Icon</StyledLabel>
-            <Controller
-              name="icon"
-              control={control}
-              defaultValue={objectMetadataItem?.icon ?? 'IconListNumbers'}
-              render={({ field: { onChange, value } }) => (
-                <IconPicker
-                  disabled={disabled}
-                  selectedIconKey={value}
-                  onChange={({ iconKey }) => onChange(iconKey)}
-                />
-              )}
-            />
-          </StyledInputContainer>
+      <StyledInputsContainer>
+        <StyledInputContainer>
+          <StyledLabel>Icon</StyledLabel>
           <Controller
-            key={`object-labelSingular-text-input`}
-            name={'labelSingular'}
+            name="icon"
             control={control}
-            defaultValue={objectMetadataItem?.labelSingular}
+            defaultValue={objectMetadataItem?.icon ?? 'IconListNumbers'}
             render={({ field: { onChange, value } }) => (
-              <TextInput
-                label={'Singular'}
-                placeholder={'Listing'}
-                value={value}
-                onChange={(value) => {
-                  onChange(value);
-                  fillLabelPlural(value);
-                  if (isLabelSyncedWithName === true) {
-                    fillNameSingularFromLabelSingular(value);
-                  }
-                }}
-                disabled={disabled || disableNameEdit}
-                fullWidth
-                maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
+              <IconPicker
+                disabled={disabled}
+                selectedIconKey={value}
+                onChange={({ iconKey }) => onChange(iconKey)}
               />
             )}
           />
-          <Controller
-            key={`object-labelPlural-text-input`}
-            name={'labelPlural'}
-            control={control}
-            defaultValue={objectMetadataItem?.labelPlural}
-            render={({ field: { onChange, value } }) => (
-              <TextInput
-                label={'Plural'}
-                placeholder={'Listings'}
-                value={value}
-                onChange={(value) => {
-                  onChange(value);
-                  if (isLabelSyncedWithName === true) {
-                    fillNamePluralFromLabelPlural(value);
-                  }
-                }}
-                disabled={disabled || disableNameEdit}
-                fullWidth
-                maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
-              />
-            )}
-          />
-        </StyledInputsContainer>
+        </StyledInputContainer>
         <Controller
-          name="description"
+          key={`object-labelSingular-text-input`}
+          name={'labelSingular'}
           control={control}
-          defaultValue={objectMetadataItem?.description ?? null}
+          defaultValue={objectMetadataItem?.labelSingular}
           render={({ field: { onChange, value } }) => (
-            <TextArea
-              placeholder="Write a description"
-              minRows={4}
-              value={value ?? undefined}
-              onChange={(nextValue) => onChange(nextValue ?? null)}
-              disabled={disabled}
+            <TextInput
+              label={'Singular'}
+              placeholder={'Listing'}
+              value={value}
+              onChange={(value) => {
+                onChange(value);
+                fillLabelPlural(value);
+                if (isLabelSyncedWithName === true) {
+                  fillNameSingularFromLabelSingular(value);
+                }
+              }}
+              onBlur={onBlur}
+              disabled={disabled || disableNameEdit}
+              fullWidth
+              maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
           )}
         />
-      </StyledSectionWrapper>
+        <Controller
+          key={`object-labelPlural-text-input`}
+          name={'labelPlural'}
+          control={control}
+          defaultValue={objectMetadataItem?.labelPlural}
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              label={'Plural'}
+              placeholder={'Listings'}
+              value={value}
+              onChange={(value) => {
+                onChange(value);
+                if (isLabelSyncedWithName === true) {
+                  fillNamePluralFromLabelPlural(value);
+                }
+              }}
+              disabled={disabled || disableNameEdit}
+              fullWidth
+              maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
+            />
+          )}
+        />
+      </StyledInputsContainer>
+      <Controller
+        name="description"
+        control={control}
+        defaultValue={objectMetadataItem?.description ?? null}
+        render={({ field: { onChange, value } }) => (
+          <TextArea
+            placeholder="Write a description"
+            minRows={4}
+            value={value ?? undefined}
+            onChange={(nextValue) => onChange(nextValue ?? null)}
+            disabled={disabled}
+          />
+        )}
+      />
       <AnimatePresence>
         {isAdvancedModeEnabled && (
           <motion.div
@@ -241,105 +246,110 @@ export const SettingsDataModelObjectAboutForm = ({
             exit="exit"
             variants={motionAnimationVariants}
           >
-            <StyledAdvancedSettingsContainer>
-              <StyledIconToolContainer>
-                <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
-              </StyledIconToolContainer>
-              <StyledAdvancedSettingsSectionInputWrapper>
-                {[
-                  {
-                    label: 'API Name (Singular)',
-                    fieldName: 'nameSingular' as const,
-                    placeholder: 'listing',
-                    defaultValue: objectMetadataItem?.nameSingular,
-                    disabled:
-                      disabled || disableNameEdit || isLabelSyncedWithName,
-                    tooltip: apiNameTooltipText,
-                  },
-                  {
-                    label: 'API Name (Plural)',
-                    fieldName: 'namePlural' as const,
-                    placeholder: 'listings',
-                    defaultValue: objectMetadataItem?.namePlural,
-                    disabled:
-                      disabled || disableNameEdit || isLabelSyncedWithName,
-                    tooltip: apiNameTooltipText,
-                  },
-                ].map(
-                  ({
-                    defaultValue,
-                    fieldName,
-                    label,
-                    placeholder,
-                    disabled,
-                    tooltip,
-                  }) => (
-                    <StyledInputContainer
-                      key={`object-${fieldName}-text-input`}
-                    >
-                      <Controller
-                        name={fieldName}
-                        control={control}
-                        defaultValue={defaultValue}
-                        render={({ field: { onChange, value } }) => (
-                          <>
-                            <TextInput
-                              label={label}
-                              placeholder={placeholder}
-                              value={value}
-                              onChange={onChange}
-                              disabled={disabled}
-                              fullWidth
-                              maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
-                              RightIcon={() =>
-                                tooltip && (
-                                  <>
-                                    <IconInfoCircle
-                                      id={infoCircleElementId + fieldName}
-                                      size={theme.icon.size.md}
-                                      color={theme.font.color.tertiary}
-                                    />
-
-                                    <AppTooltip
-                                      anchorSelect={`#${infoCircleElementId}${fieldName}`}
-                                      content={tooltip}
-                                      offset={5}
-                                      noArrow
-                                      place="bottom"
-                                      positionStrategy="absolute"
-                                      delay={TooltipDelay.shortDelay}
-                                    />
-                                  </>
-                                )
-                              }
-                            />
-                          </>
-                        )}
-                      />
-                    </StyledInputContainer>
-                  ),
-                )}
-                <Controller
-                  name={IS_LABEL_SYNCED_WITH_NAME_LABEL}
-                  control={control}
-                  defaultValue={
-                    objectMetadataItem?.isLabelSyncedWithName ?? true
-                  }
-                  render={({ field: { onChange, value } }) => (
-                    <SyncObjectLabelAndNameToggle
-                      value={value ?? true}
-                      onChange={(value) => {
-                        onChange(value);
-                        if (value === true) {
-                          fillNamePluralFromLabelPlural(labelPlural);
-                          fillNameSingularFromLabelSingular(labelSingular);
-                        }
-                      }}
-                    />
+            <StyledAdvancedSettingsOuterContainer>
+              <StyledAdvancedSettingsContainer>
+                <StyledIconToolContainer>
+                  <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
+                </StyledIconToolContainer>
+                <StyledAdvancedSettingsSectionInputWrapper>
+                  {[
+                    {
+                      label: 'API Name (Singular)',
+                      fieldName: 'nameSingular' as const,
+                      placeholder: 'listing',
+                      defaultValue: objectMetadataItem?.nameSingular,
+                      disabled:
+                        disabled || disableNameEdit || isLabelSyncedWithName,
+                      tooltip: apiNameTooltipText,
+                    },
+                    {
+                      label: 'API Name (Plural)',
+                      fieldName: 'namePlural' as const,
+                      placeholder: 'listings',
+                      defaultValue: objectMetadataItem?.namePlural,
+                      disabled:
+                        disabled || disableNameEdit || isLabelSyncedWithName,
+                      tooltip: apiNameTooltipText,
+                    },
+                  ].map(
+                    ({
+                      defaultValue,
+                      fieldName,
+                      label,
+                      placeholder,
+                      disabled,
+                      tooltip,
+                    }) => (
+                      <StyledInputContainer
+                        key={`object-${fieldName}-text-input`}
+                      >
+                        <Controller
+                          name={fieldName}
+                          control={control}
+                          defaultValue={defaultValue}
+                          render={({ field: { onChange, value } }) => (
+                            <>
+                              <TextInput
+                                label={label}
+                                placeholder={placeholder}
+                                value={value}
+                                onChange={onChange}
+                                disabled={disabled}
+                                fullWidth
+                                maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
+                                onBlur={onBlur}
+                                RightIcon={() =>
+                                  tooltip && (
+                                    <>
+                                      <IconInfoCircle
+                                        id={infoCircleElementId + fieldName}
+                                        size={theme.icon.size.md}
+                                        color={theme.font.color.tertiary}
+                                        style={{ outline: 'none' }}
+                                      />
+                                      <AppTooltip
+                                        anchorSelect={`#${infoCircleElementId}${fieldName}`}
+                                        content={tooltip}
+                                        offset={5}
+                                        noArrow
+                                        place="bottom"
+                                        positionStrategy="fixed"
+                                        delay={TooltipDelay.shortDelay}
+                                      />
+                                    </>
+                                  )
+                                }
+                              />
+                            </>
+                          )}
+                        />
+                      </StyledInputContainer>
+                    ),
                   )}
-                />
-              </StyledAdvancedSettingsSectionInputWrapper>
-            </StyledAdvancedSettingsContainer>
+                  <Controller
+                    name={IS_LABEL_SYNCED_WITH_NAME_LABEL}
+                    control={control}
+                    defaultValue={
+                      objectMetadataItem?.isLabelSyncedWithName ?? true
+                    }
+                    render={({ field: { onChange, value } }) => (
+                      <SyncObjectLabelAndNameToggle
+                        value={value ?? true}
+                        disabled={!objectMetadataItem?.isCustom}
+                        onChange={(value) => {
+                          onChange(value);
+                          if (value === true) {
+                            fillNamePluralFromLabelPlural(labelPlural);
+                            fillNameSingularFromLabelSingular(labelSingular);
+                          }
+                          onBlur?.();
+                        }}
+                      />
+                    )}
+                  />
+                </StyledAdvancedSettingsSectionInputWrapper>
+              </StyledAdvancedSettingsContainer>
+            </StyledAdvancedSettingsOuterContainer>
           </motion.div>
         )}
       </AnimatePresence>
