@@ -217,7 +217,7 @@ const StyledButton = styled.button<
         return '0';
     }
   }};
-  box-sizing: content-box;
+  box-sizing: border-box;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   flex-direction: row;

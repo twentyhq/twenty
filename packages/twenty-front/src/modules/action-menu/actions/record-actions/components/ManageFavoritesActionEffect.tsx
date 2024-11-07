@@ -44,6 +44,7 @@ export const ManageFavoritesActionEffect = ({
     }
 
     addActionMenuEntry({
+      type: 'standard',
       key: 'manage-favorites',
       label: isFavorite ? 'Remove from favorites' : 'Add to favorites',
       position,

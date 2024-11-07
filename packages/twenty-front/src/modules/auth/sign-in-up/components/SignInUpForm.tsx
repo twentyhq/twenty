@@ -73,6 +73,15 @@ export const SignInUpForm = () => {
     submitSSOEmail,
   } = useSignInUp(form);
 
+  if (
+    signInUpStep === SignInUpStep.Init &&
+    !authProviders.google &&
+    !authProviders.microsoft &&
+    !authProviders.sso
+  ) {
+    continueWithEmail();
+  }
+
   const toggleSSOMode = () => {
     if (signInUpStep === SignInUpStep.SSOEmail) {
       continueWithEmail();
@@ -155,6 +164,9 @@ export const SignInUpForm = () => {
               Icon={() => <IconGoogle size={theme.icon.size.lg} />}
               title="Continue with Google"
               onClick={signInWithGoogle}
+              variant={
+                signInUpStep === SignInUpStep.Init ? undefined : 'secondary'
+              }
               fullWidth
             />
             <HorizontalSeparator visible={false} />
@@ -167,6 +179,9 @@ export const SignInUpForm = () => {
               Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
               title="Continue with Microsoft"
               onClick={signInWithMicrosoft}
+              variant={
+                signInUpStep === SignInUpStep.Init ? undefined : 'secondary'
+              }
               fullWidth
             />
             <HorizontalSeparator visible={false} />
@@ -176,6 +191,9 @@ export const SignInUpForm = () => {
           <>
             <MainButton
               Icon={() => <IconKey size={theme.icon.size.lg} />}
+              variant={
+                signInUpStep === SignInUpStep.Init ? undefined : 'secondary'
+              }
               title={
                 signInUpStep === SignInUpStep.SSOEmail
                   ? 'Continue with email'
@@ -282,9 +300,11 @@ export const SignInUpForm = () => {
                 </StyledFullWidthMotionDiv>
               )}
               <MainButton
-                variant="secondary"
                 title={buttonTitle}
                 type="submit"
+                variant={
+                  signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
+                }
                 onClick={async () => {
                   if (signInUpStep === SignInUpStep.Init) {
                     continueWithEmail();
@@ -301,7 +321,7 @@ export const SignInUpForm = () => {
                   setShowErrors(true);
                   form.handleSubmit(submitCredentials)();
                 }}
-                Icon={() => form.formState.isSubmitting && <Loader />}
+                Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
                 disabled={isSubmitButtonDisabled}
                 fullWidth
               />

@@ -1,3 +1,4 @@
+import { GlobalActionMenuEntriesSetter } from '@/action-menu/actions/global-actions/components/GlobalActionMenuEntriesSetter';
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
@@ -47,6 +48,7 @@ export const RecordShowActionMenu = ({
           />
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />
+          <GlobalActionMenuEntriesSetter />
         </ActionMenuContext.Provider>
       )}
     </>
