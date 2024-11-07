@@ -1,4 +1,4 @@
 export type SelectedObjectRecordId = {
-    objectNameSingular: string;
-    id: string;
-  };
+  objectNameSingular: string;
+  id: string;
+};
