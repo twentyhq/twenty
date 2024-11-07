@@ -56,6 +56,7 @@ export class CanAccessMessageThreadService {
           accountOwnerId: currentWorkspaceMember.id,
         },
       ],
+      take: 1,
     });
 
     if (connectedAccounts.length === 0) {
