@@ -201,11 +201,11 @@ export const WorkflowDiagramCanvasBase = ({
         <Background color={GRAY_SCALE.gray25} size={2} />
 
         {children}
-
-        <StyledStatusTagContainer>
-          <WorkflowVersionStatusTag versionStatus={status} />
-        </StyledStatusTagContainer>
       </ReactFlow>
+
+      <StyledStatusTagContainer>
+        <WorkflowVersionStatusTag versionStatus={status} />
+      </StyledStatusTagContainer>
     </StyledResetReactflowStyles>
   );
 };
