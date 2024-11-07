@@ -18,19 +18,15 @@
   "references": [
     {
       "path": "./tsconfig.build.json",
-      "composite": true
     },
     {
       "path": "./tsconfig.dev.json",
-      "composite": true
     },
     {
       "path": "./tsconfig.spec.json", 
-      "composite": true
     },
     {
       "path": "./tsconfig.storybook.json",
-      "composite": true
     }
   ]
 }
