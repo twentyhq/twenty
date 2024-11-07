@@ -1,8 +1,7 @@
+import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
-import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
-import { MenuItemAccent } from 'twenty-ui';
+import { MOBILE_VIEWPORT, MenuItemAccent } from 'twenty-ui';
 
 type RecordShowActionMenuBarEntryProps = {
   entry: ActionMenuEntry;
