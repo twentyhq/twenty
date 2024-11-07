@@ -58,8 +58,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   const { enqueueSnackBar } = useSnackBar();
   const setUpdatedObjectSlugState = useSetRecoilState(updatedObjectSlugState);
 
-  const { updateOneObjectMetadataItem, loading } =
-    useUpdateOneObjectMetadataItem();
+  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { lastVisitedObjectMetadataItemId } =
     useLastVisitedObjectMetadataItem();
   const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
@@ -180,13 +179,17 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
       <FormProvider {...formConfig}>
         <StyledContentContainer>
           <StyledFormSection>
-            <H2Title title="About" description="Object settings" />
+            <H2Title
+              title="About"
+              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+            />
             <SettingsDataModelObjectAboutForm
-              disabled={!objectMetadataItem.isCustom || loading}
+              disabled={!objectMetadataItem.isCustom}
               disableNameEdit={!objectMetadataItem.isCustom}
               objectMetadataItem={objectMetadataItem}
               onBlur={() => {
-                formConfig.handleSubmit(handleSave)();
+                formConfig.formState.isDirty &&
+                  formConfig.handleSubmit(handleSave)();
               }}
             />
           </StyledFormSection>
