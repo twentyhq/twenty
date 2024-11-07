@@ -25,6 +25,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import styled from '@emotion/styled';
+import isEmpty from 'lodash.isempty';
 import pick from 'lodash.pick';
 import { useSetRecoilState } from 'recoil';
 import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
@@ -125,6 +126,9 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   const handleSave = async (
     formValues: SettingsDataModelObjectEditFormValues,
   ) => {
+    if (isEmpty(formConfig.formState.dirtyFields) === true) {
+      return;
+    }
     try {
       const updatePayload = getUpdatePayload(formValues);
       const objectNamePluralForRedirection =
@@ -188,8 +192,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
               disableNameEdit={!objectMetadataItem.isCustom}
               objectMetadataItem={objectMetadataItem}
               onBlur={() => {
-                formConfig.formState.isDirty &&
-                  formConfig.handleSubmit(handleSave)();
+                formConfig.handleSubmit(handleSave)();
               }}
             />
           </StyledFormSection>
