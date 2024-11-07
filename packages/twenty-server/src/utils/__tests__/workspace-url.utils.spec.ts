@@ -1,5 +1,5 @@
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { buildWorkspaceURL } from '../workspace-url.utils';
+import { buildWorkspaceURL } from 'src/utils/workspace-url.utils';
 
 describe('buildWorkspaceURL', () => {
   it('should build workspace URL with subdomain', () => {

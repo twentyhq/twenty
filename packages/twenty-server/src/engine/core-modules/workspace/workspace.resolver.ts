@@ -34,8 +34,8 @@ import {
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
-
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
+
 import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';

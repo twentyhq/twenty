@@ -25,7 +25,6 @@ import { SAMLAuthGuard } from 'src/engine/core-modules/auth/guards/saml-auth.gua
 import { SSOProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/sso-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import {
   IdentityProviderType,
