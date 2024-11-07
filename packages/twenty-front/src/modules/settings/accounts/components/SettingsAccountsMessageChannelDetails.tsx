@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Card, H2Title, Section, Toggle } from 'twenty-ui';
+import { Card, H2Title, Section } from 'twenty-ui';
 
 import {
   MessageChannel,
@@ -28,10 +28,6 @@ const StyledDetailsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledToggle = styled(Toggle)`
-  margin-left: auto;
 `;
 
 export const SettingsAccountsMessageChannelDetails = ({
