@@ -99,7 +99,7 @@ const StyledTrailingIconContainer = styled.div<
   align-items: center;
   display: flex;
   justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
   position: absolute;
   top: 0;
   bottom: 0;
