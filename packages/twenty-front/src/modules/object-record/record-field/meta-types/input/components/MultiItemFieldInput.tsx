@@ -64,9 +64,14 @@ export const MultiItemFieldInput = <T,>({
     onCancel?.();
   };
 
+  const handleDropdownCloseOutside = (event: MouseEvent | TouchEvent) => {
+    onCancel?.();
+    event.stopImmediatePropagation();
+  };
+
   useListenClickOutside({
     refs: [containerRef],
-    callback: handleDropdownClose,
+    callback: handleDropdownCloseOutside,
   });
 
   useScopedHotkeys(Key.Escape, handleDropdownClose, hotkeyScope);
