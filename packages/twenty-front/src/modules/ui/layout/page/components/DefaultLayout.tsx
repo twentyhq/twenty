@@ -21,7 +21,7 @@ import {
   isTwentyHosting,
 } from '~/utils/workspace-url.helper';
 import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useEffect } from 'react';
 
 const StyledLayout = styled.div`
@@ -73,7 +73,7 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
 
-  const [lastAuthenticateWorkspace] = useRecoilState(
+  const lastAuthenticateWorkspace = useRecoilValue(
     lastAuthenticateWorkspaceState,
   );
 

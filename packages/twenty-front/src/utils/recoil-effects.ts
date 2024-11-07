@@ -40,11 +40,11 @@ export const cookieStorageEffect =
 
     onSet((newValue, _, isReset) => {
       if (!newValue) {
-        cookieStorage.removeItem(key);
+        cookieStorage.removeItem(key, attributes);
         return;
       }
       isReset
-        ? cookieStorage.removeItem(key)
+        ? cookieStorage.removeItem(key, attributes)
         : cookieStorage.setItem(key, JSON.stringify(newValue), {
             expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
             ...attributes,

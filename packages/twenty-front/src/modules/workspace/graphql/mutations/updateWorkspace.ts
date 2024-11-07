@@ -9,6 +9,10 @@ export const UPDATE_WORKSPACE = gql`
       displayName
       logo
       allowImpersonation
+      isPublicInviteLinkEnabled
+      isGoogleAuthEnabled
+      isMicrosoftAuthEnabled
+      isPasswordAuthEnabled
     }
   }
 `;
