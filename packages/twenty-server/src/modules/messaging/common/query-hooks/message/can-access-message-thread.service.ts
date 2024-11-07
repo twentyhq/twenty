@@ -37,10 +37,6 @@ export class CanAccessMessageThreadService {
     const connectedAccounts = await connectedAccountRepository.find({
       select: {
         id: true,
-        messageChannels: {
-          id: true,
-          visibility: true,
-        },
       },
       where: [
         {
