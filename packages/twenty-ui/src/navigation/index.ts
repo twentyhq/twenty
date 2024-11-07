@@ -1,4 +1,3 @@
-export * from './breadcrumb/components/Breadcrumb';
 export * from './link/components/ActionLink';
 export * from './link/components/AdvancedSettingsToggle';
 export * from './link/components/ContactLink';

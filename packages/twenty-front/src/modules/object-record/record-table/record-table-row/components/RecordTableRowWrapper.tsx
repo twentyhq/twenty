@@ -1,16 +1,18 @@
 import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
-import { ReactNode, useContext, useEffect } from 'react';
+import { ReactNode, useContext, useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useRecoilValue } from 'recoil';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
+import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { tableCellWidthsComponentState } from '@/object-record/record-table/states/tableCellWidthsComponentState';
 import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 
 export const RecordTableRowWrapper = ({
   recordId,
@@ -23,13 +25,17 @@ export const RecordTableRowWrapper = ({
   isPendingRow?: boolean;
   children: ReactNode;
 }) => {
+  const trRef = useRef<HTMLTableRowElement>(null);
+
   const { objectMetadataItem } = useContext(RecordTableContext);
   const { onIndexRecordsLoaded } = useContext(RecordIndexRootPropsContext);
 
   const theme = useTheme();
 
-  const { isRowSelectedFamilyState } = useRecordTableStates();
-  const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
+  const currentRowSelected = useRecoilComponentFamilyValueV2(
+    isRowSelectedComponentFamilyState,
+    recordId,
+  );
 
   const scrollWrapperRef = useContext(
     RecordTableWithWrappersScrollWrapperContext,
@@ -41,6 +47,24 @@ export const RecordTableRowWrapper = ({
     ),
     rootMargin: '1000px',
   });
+
+  const [, setTableCellWidths] = useRecoilComponentStateV2(
+    tableCellWidthsComponentState,
+  );
+
+  useEffect(() => {
+    if (rowIndex === 0) {
+      const tdArray = Array.from(
+        trRef.current?.getElementsByTagName('td') ?? [],
+      );
+
+      const tdWidths = tdArray.map((td) => {
+        return td.getBoundingClientRect().width;
+      });
+
+      setTableCellWidths(tdWidths);
+    }
+  }, [trRef, rowIndex, setTableCellWidths]);
 
   // TODO: find a better way to emit this event
   useEffect(() => {
@@ -54,6 +78,8 @@ export const RecordTableRowWrapper = ({
       {(draggableProvided, draggableSnapshot) => (
         <RecordTableTr
           ref={(node) => {
+            // @ts-expect-error - TS doesn't know that node.current is assignable
+            trRef.current = node;
             elementRef(node);
             draggableProvided.innerRef(node);
           }}

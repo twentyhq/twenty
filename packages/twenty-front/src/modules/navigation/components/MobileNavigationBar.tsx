@@ -1,5 +1,6 @@
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useRecoilState } from 'recoil';
 import {
@@ -22,6 +23,8 @@ export const MobileNavigationBar = () => {
     useRecoilState(isNavigationDrawerExpandedState);
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
     useRecoilState(currentMobileNavigationDrawerState);
+
+  const { openSettingsMenu } = useOpenSettingsMenu();
 
   const activeItemName = isNavigationDrawerExpanded
     ? currentMobileNavigationDrawer
@@ -62,10 +65,7 @@ export const MobileNavigationBar = () => {
       Icon: IconSettings,
       onClick: () => {
         closeCommandMenu();
-        setIsNavigationDrawerExpanded(
-          (previousIsOpen) => activeItemName !== 'settings' || !previousIsOpen,
-        );
-        setCurrentMobileNavigationDrawer('settings');
+        openSettingsMenu();
       },
     },
   ];

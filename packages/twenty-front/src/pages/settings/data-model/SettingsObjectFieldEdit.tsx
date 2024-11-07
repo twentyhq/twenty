@@ -137,6 +137,7 @@ export const SettingsObjectFieldEdit = () => {
 
         if (isDefined(relationFieldMetadataItem)) {
           await updateOneFieldMetadataItem({
+            objectMetadataId: objectMetadataItem.id,
             fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
             updatePayload: formValues.relation.field,
           });
@@ -152,6 +153,7 @@ export const SettingsObjectFieldEdit = () => {
         );
 
         await updateOneFieldMetadataItem({
+          objectMetadataId: objectMetadataItem.id,
           fieldMetadataIdToUpdate: fieldMetadataItem.id,
           updatePayload: formattedInput,
         });
@@ -168,12 +170,12 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   const handleDeactivate = async () => {
-    await deactivateMetadataField(fieldMetadataItem);
+    await deactivateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
     navigate(`/settings/objects/${objectSlug}`);
   };
 
   const handleActivate = async () => {
-    await activateMetadataField(fieldMetadataItem);
+    await activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
     navigate(`/settings/objects/${objectSlug}`);
   };
 

@@ -5,6 +5,7 @@ import {
   IconLock,
   IconPencil,
   IconPlus,
+  LightIconButtonAccent,
   MenuItem,
   MenuItemDraggable,
   useIcons,
@@ -114,6 +115,7 @@ export const ViewPickerListContent = () => {
                         Icon: IconPencil,
                         onClick: (event: MouseEvent<HTMLButtonElement>) =>
                           handleEditViewButtonClick(event, view.id),
+                        accent: 'tertiary' as LightIconButtonAccent,
                       },
                     ].filter(isDefined)}
                     isIconDisplayedOnHoverOnly={true}

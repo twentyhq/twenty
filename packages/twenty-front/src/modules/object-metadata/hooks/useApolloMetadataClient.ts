@@ -10,5 +10,9 @@ export const useApolloMetadataClient = () => {
     return apolloClient;
   }
 
+  if (!apolloMetadataClient) {
+    throw new Error('ApolloMetadataClient not found');
+  }
+
   return apolloMetadataClient;
 };

@@ -6,6 +6,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { FunctionParameter } from 'src/engine/metadata-modules/serverless-function/dtos/function-parameter.dto';
+
 export enum ServerlessFunctionSyncStatus {
   NOT_READY = 'NOT_READY',
   READY = 'READY',
@@ -31,6 +33,9 @@ export class ServerlessFunctionEntity {
 
   @Column({ nullable: false, type: 'jsonb', default: [] })
   publishedVersions: string[];
+
+  @Column({ nullable: true, type: 'jsonb' })
+  latestVersionInputSchema: FunctionParameter[];
 
   @Column({ nullable: false, default: ServerlessFunctionRuntime.NODE18 })
   runtime: ServerlessFunctionRuntime;
