@@ -1,14 +1,13 @@
-import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 
-import { IconComponent, CardContent } from 'twenty-ui';
 import { ReactNode } from 'react';
+import { CardContent, IconComponent } from 'twenty-ui';
 
 type SettingsOptionCardContentProps = {
   Icon?: IconComponent;
-  title: string;
+  title: React.ReactNode;
   description: string;
-  onClick: () => void;
   children: ReactNode;
   divider?: boolean;
 };
@@ -18,6 +17,7 @@ const StyledCardContent = styled(CardContent)`
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
   cursor: pointer;
+  position: relative;
 
   &:hover {
     background: ${({ theme }) => theme.background.transparent.lighter};
@@ -51,14 +51,13 @@ export const SettingsOptionCardContent = ({
   Icon,
   title,
   description,
-  onClick,
   children,
   divider,
 }: SettingsOptionCardContentProps) => {
   const theme = useTheme();
 
   return (
-    <StyledCardContent onClick={onClick} divider={divider}>
+    <StyledCardContent divider={divider}>
       {Icon && (
         <StyledIcon>
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.md} />

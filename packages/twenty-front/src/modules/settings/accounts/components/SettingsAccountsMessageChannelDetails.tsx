@@ -9,7 +9,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
-import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
+import { SettingsOptionCardContentWithToggle } from '@/settings/components/SettingsOptionCardContentWithToggle';
 import { MessageChannelVisibility } from '~/generated-metadata/graphql';
 
 type SettingsAccountsMessageChannelDetailsProps = {
@@ -103,29 +103,27 @@ export const SettingsAccountsMessageChannelDetails = ({
       </Section>
       <Section>
         <Card>
-          <SettingsOptionCardContent
+          <SettingsOptionCardContentWithToggle
             title="Exclude non-professional emails"
             description="Don’t create contacts from/to Gmail, Outlook emails"
             divider
-            onClick={() =>
+            checked={messageChannel.excludeNonProfessionalEmails}
+            onChange={() => {
               handleIsNonProfessionalEmailExcludedToggle(
                 !messageChannel.excludeNonProfessionalEmails,
-              )
-            }
-          >
-            <StyledToggle value={messageChannel.excludeNonProfessionalEmails} />
-          </SettingsOptionCardContent>
-          <SettingsOptionCardContent
+              );
+            }}
+          />
+          <SettingsOptionCardContentWithToggle
             title="Exclude group emails"
             description="Don’t sync emails from team@ support@ noreply@..."
-            onClick={() =>
+            checked={messageChannel.excludeGroupEmails}
+            onChange={() =>
               handleIsGroupEmailExcludedToggle(
                 !messageChannel.excludeGroupEmails,
               )
             }
-          >
-            <StyledToggle value={messageChannel.excludeGroupEmails} />
-          </SettingsOptionCardContent>
+          />
         </Card>
       </Section>
     </StyledDetailsContainer>
