@@ -10,6 +10,9 @@ import {
   SyntaxKind,
   TypeNode,
   UnionTypeNode,
+  SourceFile,
+  VariableStatement,
+  ArrowFunction,
 } from 'typescript';
 
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
@@ -49,6 +52,10 @@ export class CodeIntrospectionService {
 
     const schema: InputSchema = {};
 
+    return this.handleArrowFunctions(schema, sourceFile);
+  }
+
+  private handleArrowFunctions(schema: InputSchema, sourceFile: SourceFile) {
     sourceFile.forEachChild((node) => {
       if (node.kind === SyntaxKind.FunctionDeclaration) {
         const funcNode = node as any;
@@ -62,6 +69,29 @@ export class CodeIntrospectionService {
             schema[paramName] = this.getTypeString(typeNode);
           } else {
             schema[paramName] = { type: 'unknown' };
+          }
+        });
+      } else if (node.kind === SyntaxKind.VariableStatement) {
+        const varStatement = node as VariableStatement;
+
+        varStatement.declarationList.declarations.forEach((declaration) => {
+          if (
+            declaration.initializer &&
+            declaration.initializer.kind === SyntaxKind.ArrowFunction
+          ) {
+            const arrowFunction = declaration.initializer as ArrowFunction;
+            const params = arrowFunction.parameters;
+
+            params.forEach((param: any) => {
+              const paramName = param.name.text;
+              const typeNode = param.type;
+
+              if (typeNode) {
+                schema[paramName] = this.getTypeString(typeNode);
+              } else {
+                schema[paramName] = { type: 'unknown' };
+              }
+            });
           }
         });
       }

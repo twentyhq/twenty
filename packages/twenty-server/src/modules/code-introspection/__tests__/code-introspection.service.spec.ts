@@ -32,6 +32,23 @@ describe('CodeIntrospectionService', () => {
       });
     });
 
+    it('should analyze a arrow function correctly', () => {
+      const fileContent = `
+        export const main = async (
+          param1: string;
+          param2: number;
+        ): Promise<object> => {
+          return params;
+        };
+      `;
+      const result = service.getFunctionInputSchema(fileContent);
+
+      expect(result).toEqual({
+        param1: { type: 'string' },
+        param2: { type: 'number' },
+      });
+    });
+
     it('should analyze a complex function correctly', () => {
       const fileContent = `
         function testFunction(

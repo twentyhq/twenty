@@ -1,16 +1,39 @@
+import styled from '@emotion/styled';
+
 import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
 import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
 import { WorkflowCodeStep } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
-import React, { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { IconCode, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { capitalize } from '~/utils/string/capitalize';
 import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
 import { InputSchema } from '@/workflow/types/InputSchema';
+
+const StyledContainer = styled.div`
+  display: inline-flex;
+  flex-direction: column;
+`;
+
+const StyledLabel = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-top: ${({ theme }) => theme.spacing(3)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledInputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  gap: ${({ theme }) => theme.spacing(4)};
+  padding-left: ${({ theme }) => theme.spacing(4)};
+`;
 
 type WorkflowEditActionFormServerlessFunctionProps =
   | {
@@ -133,20 +156,27 @@ export const WorkflowEditActionFormServerlessFunction = (
   const renderFields = (
     inputSchema: InputSchema,
     path: string[] = [],
-  ): React.ReactElement[] => {
+  ): ReactNode | undefined => {
+    if (!isDefined(inputSchema)) {
+      return;
+    }
     return Object.entries(inputSchema).map(([inputKey, inputValue]) => {
       const currentPath = [...path, inputKey];
+      const pathKey = currentPath.join('.');
 
       if (inputValue.type === 'object' && isDefined(inputValue.properties)) {
         return (
-          <>
-            <div>Toto</div>
-            {renderFields(inputValue.properties, currentPath)}
-          </>
+          <StyledContainer key={pathKey}>
+            <StyledLabel>{inputKey}</StyledLabel>
+            <StyledInputContainer>
+              {renderFields(inputValue.properties, currentPath)}
+            </StyledInputContainer>
+          </StyledContainer>
         );
       } else {
         return (
           <VariableTagInput
+            key={pathKey}
             inputId={`input-${inputKey}`}
             label={capitalize(inputKey)}
             placeholder="Enter value (use {{variable}} for dynamic content)"
