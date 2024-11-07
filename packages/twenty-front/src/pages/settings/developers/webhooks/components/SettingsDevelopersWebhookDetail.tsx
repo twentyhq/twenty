@@ -23,15 +23,23 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-const StyledFilterRow = styled.div`
-  display: flex;
-  flex-direction: row;
+const OBJECT_Mobile_WIDTH = 150;
+const ACTION_Mobile_WIDTH = 140;
+
+const StyledFilterRow = styled.div<{ isMobile: boolean }>`
+  display: grid;
+  grid-template-columns: ${({ isMobile }) =>
+    isMobile
+      ? `${OBJECT_Mobile_WIDTH}px ${ACTION_Mobile_WIDTH}px auto`
+      : `${OBJECT_DROPDOWN_WIDTH}px ${ACTION_DROPDOWN_WIDTH}px auto`};
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsDevelopersWebhooksDetail = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { webhookId = '' } = useParams();
 
@@ -150,9 +158,12 @@ export const SettingsDevelopersWebhooksDetail = () => {
             title="Filters"
             description="Select the event you wish to send to this endpoint"
           />
-          <StyledFilterRow>
+          <StyledFilterRow isMobile={isMobile}>
             <Select
               fullWidth
+              dropdownWidth={
+                isMobile ? OBJECT_Mobile_WIDTH : OBJECT_DROPDOWN_WIDTH
+              }
               dropdownId="object-webhook-type-select"
               value={operationObjectSingularName}
               onChange={(objectSingularName) => {
@@ -163,6 +174,9 @@ export const SettingsDevelopersWebhooksDetail = () => {
             />
             <Select
               fullWidth
+              dropdownWidth={
+                isMobile ? ACTION_Mobile_WIDTH : ACTION_DROPDOWN_WIDTH
+              }
               dropdownId="operation-webhook-type-select"
               value={operationAction}
               onChange={(operationAction) => {
