@@ -1,3 +1,5 @@
+import { WorkflowCreateRecordStepInput } from 'src/modules/workflow/workflow-executor/workflow-actions/create-record.workflow-action';
+
 export type OutputSchema = object;
 
 type BaseWorkflowStepSettings = {
@@ -32,14 +34,15 @@ export type WorkflowSendEmailStepInput = {
   body?: string;
 };
 
-export type WorkflowSendEmailStepOutputSchema = {
-  success: boolean;
-};
-
 export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
   input: WorkflowSendEmailStepInput;
 };
 
+export type WorkflowCreateRecordStepSettings = BaseWorkflowStepSettings & {
+  input: WorkflowCreateRecordStepInput;
+};
+
 export type WorkflowStepSettings =
   | WorkflowSendEmailStepSettings
-  | WorkflowCodeStepSettings;
+  | WorkflowCodeStepSettings
+  | WorkflowCreateRecordStepSettings;

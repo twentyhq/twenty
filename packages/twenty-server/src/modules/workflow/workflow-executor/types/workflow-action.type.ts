@@ -1,5 +1,6 @@
 import {
   WorkflowCodeStepSettings,
+  WorkflowCreateRecordStepSettings,
   WorkflowSendEmailStepSettings,
   WorkflowStepSettings,
 } from 'src/modules/workflow/workflow-executor/types/workflow-step-settings.type';
@@ -7,6 +8,7 @@ import {
 export enum WorkflowActionType {
   CODE = 'CODE',
   SEND_EMAIL = 'SEND_EMAIL',
+  CREATE_RECORD = 'CREATE_RECORD',
 }
 
 type BaseWorkflowStep = {
@@ -27,4 +29,12 @@ export type WorkflowSendEmailStep = BaseWorkflowStep & {
   settings: WorkflowSendEmailStepSettings;
 };
 
-export type WorkflowStep = WorkflowCodeStep | WorkflowSendEmailStep;
+export type WorkflowCreateRecordStep = BaseWorkflowStep & {
+  type: WorkflowActionType.CREATE_RECORD;
+  settings: WorkflowCreateRecordStepSettings;
+};
+
+export type WorkflowStep =
+  | WorkflowCodeStep
+  | WorkflowSendEmailStep
+  | WorkflowCreateRecordStep;

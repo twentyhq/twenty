@@ -7,6 +7,7 @@ import { MessagingGmailDriverModule } from 'src/modules/messaging/message-import
 import { CodeWorkflowAction } from 'src/modules/serverless/workflow-actions/code.workflow-action';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
+import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/create-record.workflow-action';
 import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 
 @Module({
@@ -21,6 +22,7 @@ import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-
     WorkflowActionFactory,
     CodeWorkflowAction,
     SendEmailWorkflowAction,
+    CreateRecordWorkflowAction,
   ],
   exports: [WorkflowExecutorWorkspaceService],
 })

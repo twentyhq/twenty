@@ -2,19 +2,21 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
+import { SendEmailWorkflowAction } from 'src/modules/mail-sender/workflow-actions/send-email.workflow-action';
+import { CodeWorkflowAction } from 'src/modules/serverless/workflow-actions/code.workflow-action';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { CodeWorkflowAction } from 'src/modules/serverless/workflow-actions/code.workflow-action';
-import { SendEmailWorkflowAction } from 'src/modules/mail-sender/workflow-actions/send-email.workflow-action';
+import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
+import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/create-record.workflow-action';
 
 @Injectable()
 export class WorkflowActionFactory {
   constructor(
     private readonly codeWorkflowAction: CodeWorkflowAction,
     private readonly sendEmailWorkflowAction: SendEmailWorkflowAction,
+    private readonly createRecordWorkflowAction: CreateRecordWorkflowAction,
   ) {}
 
   get(stepType: WorkflowActionType): WorkflowAction {
@@ -23,6 +25,8 @@ export class WorkflowActionFactory {
         return this.codeWorkflowAction;
       case WorkflowActionType.SEND_EMAIL:
         return this.sendEmailWorkflowAction;
+      case WorkflowActionType.CREATE_RECORD:
+        return this.createRecordWorkflowAction;
       default:
         throw new WorkflowStepExecutorException(
           `Workflow step executor not found for step type '${stepType}'`,
