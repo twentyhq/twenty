@@ -164,17 +164,12 @@ export const WorkflowDiagramCanvasBase = ({
       (containerRef.current.offsetWidth + visibleRightDrawerWidth) / 2 -
       flowBounds.width / 2;
 
-    let animationDuration = 0;
-    if (currentViewport.x !== viewportX) {
-      animationDuration = 300;
-    }
-
     reactflow.setViewport(
       {
         ...currentViewport,
         x: viewportX - visibleRightDrawerWidth,
       },
-      { duration: animationDuration },
+      { duration: 300 },
     );
   }, [reactflow, rightDrawerState, rightDrawerWidth]);
 
