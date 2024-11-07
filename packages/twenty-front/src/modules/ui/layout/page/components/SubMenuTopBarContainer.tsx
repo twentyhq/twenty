@@ -10,7 +10,7 @@ import { PageHeader } from './PageHeader';
 
 type SubMenuTopBarContainerProps = {
   children: JSX.Element | JSX.Element[];
-  title?: string;
+  title?: string | JSX.Element;
   actionButton?: ReactNode;
   className?: string;
   links: BreadcrumbProps['links'];

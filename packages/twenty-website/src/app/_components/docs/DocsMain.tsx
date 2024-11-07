@@ -30,9 +30,8 @@ const StyledWrapper = styled.div`
   width: 100%;
 
   @media (max-width: 450px) {
-    padding: ${Theme.spacing(10)} 30px ${Theme.spacing(20)};
+    padding: ${Theme.spacing(10)} 32px ${Theme.spacing(20)};
     align-items: flex-start;
-    width: 340px;
   }
 
   @media (min-width: 450px) and (max-width: 800px) {
