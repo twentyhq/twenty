@@ -301,6 +301,7 @@ export const SettingsDataModelObjectAboutForm = ({
                                       id={infoCircleElementId + fieldName}
                                       size={theme.icon.size.md}
                                       color={theme.font.color.tertiary}
+                                      style={{ outline: 'none' }}
                                     />
                                     <AppTooltip
                                       anchorSelect={`#${infoCircleElementId}${fieldName}`}
@@ -308,7 +309,7 @@ export const SettingsDataModelObjectAboutForm = ({
                                       offset={5}
                                       noArrow
                                       place="bottom"
-                                      positionStrategy="absolute"
+                                      positionStrategy="fixed"
                                       delay={TooltipDelay.shortDelay}
                                     />
                                   </>
