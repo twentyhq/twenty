@@ -373,14 +373,12 @@ export const SettingsRoutes = ({
         element={<SettingsObjectFieldEdit />}
       />
       <Route path={SettingsPath.Releases} element={<Releases />} />
+      <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
       {isSSOEnabled && (
-        <>
-          <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
-          <Route
-            path={SettingsPath.NewSSOIdentityProvider}
-            element={<SettingsSecuritySSOIdentifyProvider />}
-          />
-        </>
+        <Route
+          path={SettingsPath.NewSSOIdentityProvider}
+          element={<SettingsSecuritySSOIdentifyProvider />}
+        />
       )}
     </Routes>
   </Suspense>

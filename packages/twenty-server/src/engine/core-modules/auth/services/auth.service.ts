@@ -96,6 +96,13 @@ export class AuthService {
   }
 
   async challenge(challengeInput: ChallengeInput, targetWorkspace: Workspace) {
+    if (!targetWorkspace.isPasswordAuthEnabled) {
+      throw new AuthException(
+        'Email/Password auth is not enabled for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     const user = await this.userRepository.findOne({
       where: {
         email: challengeInput.email,

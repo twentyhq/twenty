@@ -80,7 +80,6 @@ export const SettingsNavigationDrawerItems = () => {
   );
   const isFreeAccessEnabled = useIsFeatureEnabled('IS_FREE_ACCESS_ENABLED');
   const isCRMMigrationEnabled = useIsFeatureEnabled('IS_CRM_MIGRATION_ENABLED');
-  const isSSOEnabled = useIsFeatureEnabled('IS_SSO_ENABLED');
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
 
@@ -188,13 +187,11 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconCode}
           />
         )}
-        {isSSOEnabled && (
-          <SettingsNavigationDrawerItem
-            label="Security"
-            path={SettingsPath.Security}
-            Icon={IconKey}
-          />
-        )}
+        <SettingsNavigationDrawerItem
+          label="Security"
+          path={SettingsPath.Security}
+          Icon={IconKey}
+        />
       </NavigationDrawerSection>
       <AnimatePresence>
         {isAdvancedModeEnabled && (

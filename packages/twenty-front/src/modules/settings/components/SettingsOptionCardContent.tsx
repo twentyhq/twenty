@@ -23,6 +23,15 @@ const StyledCardContent = styled(CardContent)`
   &:hover {
     background: ${({ theme }) => theme.background.transparent.lighter};
   }
+
+  &:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: ${({ theme }) => theme.spacing(4)};
+    right: ${({ theme }) => theme.spacing(4)};
+    border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  }
 `;
 
 const StyledTitle = styled.div`

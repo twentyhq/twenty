@@ -7,8 +7,11 @@ import { SettingsSecurityOptionsList } from '@/settings/security/components/Sett
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const SettingsSecurity = () => {
+  const isSSOEnabled = useIsFeatureEnabled('IS_SSO_ENABLED');
+
   return (
     <SubMenuTopBarContainer
       title="Security"
@@ -22,24 +25,26 @@ export const SettingsSecurity = () => {
       ]}
     >
       <SettingsPageContainer>
+        {isSSOEnabled && (
+          <Section>
+            <H2Title
+              title="SSO"
+              description="Configure an SSO connection"
+              addornment={
+                <Tag
+                  text={'Enterprise'}
+                  color={'transparent'}
+                  Icon={IconLock}
+                  variant={'border'}
+                />
+              }
+            />
+            <SettingsSSOIdentitiesProvidersListCard />
+          </Section>
+        )}
         <Section>
           <H2Title
-            title="SSO"
-            description="Configure an SSO connection"
-            addornment={
-              <Tag
-                text={'Enterprise'}
-                color={'transparent'}
-                Icon={IconLock}
-                variant={'border'}
-              />
-            }
-          />
-          <SettingsSSOIdentitiesProvidersListCard />
-        </Section>
-        <Section>
-          <H2Title
-            title="Other"
+            title="Authentication"
             description="Customize your workspace security"
           />
           <SettingsSecurityOptionsList />

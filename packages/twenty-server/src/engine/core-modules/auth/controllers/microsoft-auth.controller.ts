@@ -15,6 +15,10 @@ import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guar
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -55,6 +59,13 @@ export class MicrosoftAuthController {
       workspacePersonalInviteToken,
       fromSSO: true,
     });
+
+    if (!user.defaultWorkspace.isMicrosoftAuthEnabled) {
+      throw new AuthException(
+        'Microsoft auth is not enabled for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
