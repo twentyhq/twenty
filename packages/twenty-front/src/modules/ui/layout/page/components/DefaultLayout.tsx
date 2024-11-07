@@ -23,6 +23,7 @@ import {
 import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
 import { useRecoilValue } from 'recoil';
 import { useEffect } from 'react';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -79,9 +80,9 @@ export const DefaultLayout = () => {
 
   useEffect(() => {
     if (
-      isTwentyHosting === true &&
-      isTwentyHomePage === true &&
-      lastAuthenticateWorkspace
+      isTwentyHosting &&
+      isTwentyHomePage &&
+      isDefined(lastAuthenticateWorkspace)
     ) {
       window.location.href = buildWorkspaceUrl(
         lastAuthenticateWorkspace.subdomain,
