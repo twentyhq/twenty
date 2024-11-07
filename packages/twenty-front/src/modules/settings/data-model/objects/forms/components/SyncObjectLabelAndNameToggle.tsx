@@ -5,10 +5,11 @@ import { IconRefresh, MAIN_COLORS, Toggle } from 'twenty-ui';
 const StyledToggleContainer = styled.div`
   align-items: center;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacing(4)};
+  background: ${({ theme }) => theme.background.secondary};
 `;
 
 const StyledIconRefreshContainer = styled.div`
@@ -40,17 +41,19 @@ const StyledDescription = styled.h3`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin: 0;
-  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 type SyncObjectLabelAndNameToggleProps = {
   value: boolean;
   onChange: (value: boolean) => void;
+  disabled?: boolean;
 };
 
 export const SyncObjectLabelAndNameToggle = ({
   value,
   onChange,
+  disabled,
 }: SyncObjectLabelAndNameToggleProps) => {
   const theme = useTheme();
   return (
@@ -66,7 +69,12 @@ export const SyncObjectLabelAndNameToggle = ({
           </StyledDescription>
         </div>
       </StyledTitleContainer>
-      <Toggle onChange={onChange} color={MAIN_COLORS.yellow} value={value} />
+      <Toggle
+        onChange={onChange}
+        color={MAIN_COLORS.yellow}
+        value={value}
+        disabled={disabled}
+      />
     </StyledToggleContainer>
   );
 };
