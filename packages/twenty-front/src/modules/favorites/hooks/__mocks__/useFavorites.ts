@@ -435,321 +435,298 @@ export const mocks = [
        mutation UpdateOneFavorite($idToUpdate: ID!, $input: FavoriteUpdateInput!) {
   updateFavorite(id: $idToUpdate, data: $input) {
     __typename
-    company {
-      __typename
-      accountOwnerId
-      address {
-        addressStreet1
-        addressStreet2
-        addressCity
-        addressState
-        addressCountry
-        addressPostcode
-        addressLat
-        addressLng
-        __typename
-      }
-      annualRecurringRevenue {
-        amountMicros
-        currencyCode
-        __typename
-      }
-      createdAt
-      createdBy {
-        source
+        company {
+          __typename
+          accountOwnerId
+          address {
+            addressStreet1
+            addressStreet2
+            addressCity
+            addressState
+            addressCountry
+            addressPostcode
+            addressLat
+            addressLng
+          }
+          annualRecurringRevenue {
+            amountMicros
+            currencyCode
+          }
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          domainName {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
+          employees
+          id
+          idealCustomerProfile
+          introVideo {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
+          linkedinLink {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
+          name
+          position
+          tagline
+          updatedAt
+          visaSponsorship
+          workPolicy
+          xLink {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
+        }
+        companyId
+        createdAt
+        deletedAt
+        favoriteFolder {
+          __typename
+          createdAt
+          deletedAt
+          id
+          name
+          position
+          updatedAt
+        }
+        favoriteFolderId
+        id
+        note {
+          __typename
+          body
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          id
+          position
+          title
+          updatedAt
+        }
+        noteId
+        opportunity {
+          __typename
+          amount {
+            amountMicros
+            currencyCode
+          }
+          closeDate
+          companyId
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          id
+          name
+          pointOfContactId
+          position
+          stage
+          updatedAt
+        }
+        opportunityId
+        person {
+          __typename
+          avatarUrl
+          city
+          companyId
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          emails {
+            primaryEmail
+            additionalEmails
+          }
+          id
+          intro
+          jobTitle
+          linkedinLink {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
+          name {
+            firstName
+            lastName
+          }
+          performanceRating
+          phones {
+            primaryPhoneNumber
+            primaryPhoneCountryCode
+            additionalPhones
+          }
+          position
+          updatedAt
+          whatsapp {
+            primaryPhoneNumber
+            primaryPhoneCountryCode
+            additionalPhones
+          }
+          workPreference
+          xLink {
+            primaryLinkUrl
+            primaryLinkLabel
+            secondaryLinks
+          }
+        }
+        personId
+        position
+        rocket {
+          __typename
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          id
+          name
+          position
+          updatedAt
+        }
+        rocketId
+        task {
+          __typename
+          assigneeId
+          body
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          dueAt
+          id
+          position
+          status
+          title
+          updatedAt
+        }
+        taskId
+        updatedAt
+        view {
+          __typename
+          createdAt
+          deletedAt
+          icon
+          id
+          isCompact
+          kanbanFieldMetadataId
+          key
+          name
+          objectMetadataId
+          position
+          type
+          updatedAt
+        }
+        viewId
+        workflow {
+          __typename
+          createdAt
+          deletedAt
+          id
+          lastPublishedVersionId
+          name
+          position
+          statuses
+          updatedAt
+        }
+        workflowId
+        workflowRun {
+          __typename
+          createdAt
+          createdBy {
+            source
+            workspaceMemberId
+            name
+          }
+          deletedAt
+          endedAt
+          id
+          name
+          output
+          position
+          startedAt
+          status
+          updatedAt
+          workflowId
+          workflowVersionId
+        }
+        workflowRunId
+        workflowVersion {
+          __typename
+          createdAt
+          deletedAt
+          id
+          name
+          position
+          status
+          steps
+          trigger
+          updatedAt
+          workflowId
+        }
+        workflowVersionId
+        workspaceMember {
+          __typename
+          avatarUrl
+          colorScheme
+          createdAt
+          dateFormat
+          deletedAt
+          id
+          locale
+          name {
+            firstName
+            lastName
+          }
+          timeFormat
+          timeZone
+          updatedAt
+          userEmail
+          userId
+        }
         workspaceMemberId
-        name
-        __typename
-      }
-      deletedAt
-      domainName {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-        __typename
-      }
-      employees
-      id
-      idealCustomerProfile
-      introVideo {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-        __typename
-      }
-      linkedinLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-        __typename
-      }
-      name
-      position
-      tagline
-      updatedAt
-      visaSponsorship
-      workPolicy
-      xLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-        __typename
-      }
-    }
-    companyId
-    createdAt
-    deletedAt
-    favoriteFolder {
-      __typename
-      createdAt
-      deletedAt
-      id
-      name
-      position
-      updatedAt
-    }
-    favoriteFolderId
-    id
-    note {
-      __typename
-      body
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
-        name
-        __typename
-      }
-      deletedAt
-      id
-      position
-      title
-      updatedAt
-    }
-    noteId
-    opportunity {
-      __typename
-      amount {
-        amountMicros
-        currencyCode
-        __typename
-      }
-      closeDate
-      companyId
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
-        name
-        __typename
-      }
-      deletedAt
-      id
-      name
-      pointOfContactId
-      position
-      stage
-      updatedAt
-    }
-    opportunityId
-    person {
-      __typename
-      avatarUrl
-      city
-      companyId
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
-        name
-        __typename
-      }
-      deletedAt
-      emails {
-        primaryEmail
-        additionalEmails
-        __typename
-      }
-      id
-      intro
-      jobTitle
-      linkedinLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-        __typename
-      }
-      name {
-        firstName
-        lastName
-        __typename
-      }
-      performanceRating
-      phones {
-        primaryPhoneNumber
-        primaryPhoneCountryCode
-        additionalPhones
-        __typename
-      }
-      position
-      updatedAt
-      whatsapp {
-        primaryPhoneNumber
-        primaryPhoneCountryCode
-        additionalPhones
-        __typename
-      }
-      workPreference
-      xLink {
-        primaryLinkUrl
-        primaryLinkLabel
-        secondaryLinks
-        __typename
-      }
-    }
-    personId
-    position
-    rocket {
-      __typename
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
-        name
-        __typename
-      }
-      deletedAt
-      id
-      name
-      position
-      updatedAt
-    }
-    rocketId
-    task {
-      __typename
-      assigneeId
-      body
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
-        name
-        __typename
-      }
-      deletedAt
-      dueAt
-      id
-      position
-      status
-      title
-      updatedAt
-    }
-    taskId
-    updatedAt
-    view {
-      __typename
-      createdAt
-      deletedAt
-      icon
-      id
-      isCompact
-      kanbanFieldMetadataId
-      key
-      name
-      objectMetadataId
-      position
-      type
-      updatedAt
-    }
-    viewId
-    workflow {
-      __typename
-      createdAt
-      deletedAt
-      id
-      lastPublishedVersionId
-      name
-      position
-      statuses
-      updatedAt
-    }
-    workflowId
-    workflowRun {
-      __typename
-      createdAt
-      createdBy {
-        source
-        workspaceMemberId
-        name
-        __typename
-      }
-      deletedAt
-      endedAt
-      id
-      name
-      output
-      position
-      startedAt
-      status
-      updatedAt
-      workflowId
-      workflowVersionId
-    }
-    workflowRunId
-    workflowVersion {
-      __typename
-      createdAt
-      deletedAt
-      id
-      name
-      position
-      status
-      steps
-      trigger
-      updatedAt
-      workflowId
-    }
-    workflowVersionId
-    workspaceMember {
-      __typename
-      avatarUrl
-      colorScheme
-      createdAt
-      dateFormat
-      deletedAt
-      id
-      locale
-      name {
-        firstName
-        lastName
-        __typename
-      }
-      timeFormat
-      timeZone
-      updatedAt
-      userEmail
-      userId
-    }
-    workspaceMemberId
   }
 }
       `,
-      variables: {
-        idToUpdate: '1',
-        input: {
-          position: 2,
-        },
+     variables: {
+      idToUpdate: '1',
+      input: {
+        position: 2,
       },
     },
-    result: jest.fn(() => ({
-      data: {
-        updateFavorite: {
-          __typename: 'Favorite',
-          id: favoriteId,
-          position: 2,
-        },
+  },
+  result: jest.fn(() => ({
+    data: {
+      updateFavorite: {
+        id: favoriteId,
       },
-    })),
+    },
+  })),
   },
 ];
 
