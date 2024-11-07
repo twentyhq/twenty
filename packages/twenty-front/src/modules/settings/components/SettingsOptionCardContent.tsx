@@ -1,15 +1,16 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { ReactNode } from 'react';
-import { CardContent, IconComponent } from 'twenty-ui';
+import { useId } from 'react';
+import { CardContent, IconComponent, Toggle } from 'twenty-ui';
 
 type SettingsOptionCardContentProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
   description: string;
-  children: ReactNode;
   divider?: boolean;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
 };
 
 const StyledCardContent = styled(CardContent)`
@@ -47,14 +48,27 @@ const StyledIcon = styled.div`
   min-width: ${({ theme }) => theme.icon.size.md};
 `;
 
+const StyledToggle = styled(Toggle)`
+  margin-left: auto;
+`;
+
+const StyledCover = styled.span`
+  cursor: pointer;
+  inset: 0;
+  position: absolute;
+`;
+
 export const SettingsOptionCardContent = ({
   Icon,
   title,
   description,
-  children,
   divider,
+  checked,
+  onChange,
 }: SettingsOptionCardContentProps) => {
   const theme = useTheme();
+
+  const toggleId = useId();
 
   return (
     <StyledCardContent divider={divider}>
@@ -63,11 +77,19 @@ export const SettingsOptionCardContent = ({
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.md} />
         </StyledIcon>
       )}
+
       <div>
-        <StyledTitle>{title}</StyledTitle>
+        <StyledTitle>
+          <label htmlFor={toggleId}>
+            {title}
+
+            <StyledCover />
+          </label>
+        </StyledTitle>
         <StyledDescription>{description}</StyledDescription>
       </div>
-      {children}
+
+      <StyledToggle id={toggleId} value={checked} onChange={onChange} />
     </StyledCardContent>
   );
 };
