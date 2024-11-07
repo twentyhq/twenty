@@ -12,6 +12,7 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
@@ -21,6 +22,7 @@ import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-ob
   labelSingular: 'WorkflowEventListener',
   labelPlural: 'WorkflowEventListeners',
   description: 'A workflow event listener',
+  icon: STANDARD_OBJECT_ICONS.workflowEventListener,
   labelIdentifierStandardId:
     WORKFLOW_EVENT_LISTENER_STANDARD_FIELD_IDS.eventName,
 })

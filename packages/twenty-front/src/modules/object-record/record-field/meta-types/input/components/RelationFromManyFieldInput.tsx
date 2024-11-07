@@ -1,6 +1,5 @@
 import { useContext } from 'react';
 
-import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
@@ -11,6 +10,7 @@ import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldM
 import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 type RelationFromManyFieldInputProps = {
   onSubmit?: FieldInputEvent;
@@ -51,15 +51,17 @@ export const RelationFromManyFieldInput = ({
       recordId,
     });
 
+  const { dropdownPlacement } = useDropdown(relationPickerScopeId);
+
   return (
     <>
       <RelationPickerScope relationPickerScopeId={relationPickerScopeId}>
-        <ObjectMetadataItemsRelationPickerEffect />
         <RelationFromManyFieldInputMultiRecordsEffect />
         <MultiRecordSelect
           onSubmit={handleSubmit}
           onChange={updateRelation}
           onCreate={createNewRecordAndOpenRightDrawer}
+          dropdownPlacement={dropdownPlacement}
         />
       </RelationPickerScope>
     </>

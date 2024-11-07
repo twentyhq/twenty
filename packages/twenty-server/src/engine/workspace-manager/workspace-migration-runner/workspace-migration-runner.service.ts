@@ -402,7 +402,10 @@ export class WorkspaceMigrationRunnerService {
         enumName: enumName,
         isArray: migrationColumn.isArray,
         isNullable: migrationColumn.isNullable,
-        isUnique: migrationColumn.isUnique,
+        /* For now unique constraints are created at a higher level
+        as we need to handle soft-delete and a bug on empty strings
+        */
+        // isUnique: migrationColumn.isUnique,
         asExpression: migrationColumn.asExpression,
         generatedType: migrationColumn.generatedType,
       }),
@@ -469,6 +472,8 @@ export class WorkspaceMigrationRunnerService {
         ),
         isArray: migrationColumn.alteredColumnDefinition.isArray,
         isNullable: migrationColumn.alteredColumnDefinition.isNullable,
+        asExpression: migrationColumn.alteredColumnDefinition.asExpression,
+        generatedType: migrationColumn.alteredColumnDefinition.generatedType,
         isUnique: migrationColumn.alteredColumnDefinition.isUnique,
       }),
     );
@@ -517,6 +522,10 @@ export class WorkspaceMigrationRunnerService {
     );
 
     if (!foreignKeyName) {
+      // Todo: Remove this temporary hack tied to 0.32 upgrade
+      if (migrationColumn.columnName === 'activityId') {
+        return;
+      }
       throw new Error(
         `Foreign key not found for column ${migrationColumn.columnName}`,
       );

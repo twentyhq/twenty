@@ -95,7 +95,15 @@ export class EnvironmentVariables {
 
   @IsString()
   @ValidateIf((env) => env.ANALYTICS_ENABLED)
-  TINYBIRD_TOKEN: string;
+  TINYBIRD_INGEST_TOKEN: string;
+
+  @IsString()
+  @ValidateIf((env) => env.ANALYTICS_ENABLED)
+  TINYBIRD_WORKSPACE_UUID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.ANALYTICS_ENABLED)
+  TINYBIRD_GENERATE_JWT_TOKEN: string;
 
   @CastToPositiveNumber()
   @IsNumber()
@@ -108,6 +116,7 @@ export class EnvironmentVariables {
     protocols: ['postgres'],
     require_tld: false,
     allow_underscores: true,
+    require_host: false,
   })
   PG_DATABASE_URL: string;
 
@@ -125,7 +134,10 @@ export class EnvironmentVariables {
   @IsOptional()
   SERVER_URL: string;
 
-  // Json Web Token
+  @IsString()
+  APP_SECRET: string;
+
+  @IsOptional()
   @IsString()
   ACCESS_TOKEN_SECRET: string;
 
@@ -133,10 +145,6 @@ export class EnvironmentVariables {
   @IsOptional()
   ACCESS_TOKEN_EXPIRES_IN = '30m';
 
-  @IsString()
-  REFRESH_TOKEN_SECRET: string;
-
-  @IsDuration()
   @IsOptional()
   REFRESH_TOKEN_EXPIRES_IN = '60d';
 
@@ -144,16 +152,9 @@ export class EnvironmentVariables {
   @IsOptional()
   REFRESH_TOKEN_COOL_DOWN = '1m';
 
-  @IsString()
-  LOGIN_TOKEN_SECRET = '30m';
-
   @IsDuration()
   @IsOptional()
   LOGIN_TOKEN_EXPIRES_IN = '15m';
-
-  @IsString()
-  @IsOptional()
-  FILE_TOKEN_SECRET = 'random_string';
 
   @IsDuration()
   @IsOptional()
@@ -216,6 +217,15 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false })
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  AUTH_SSO_ENABLED = false;
+
+  @IsString()
+  @IsOptional()
+  ENTERPRISE_KEY: string;
 
   // Custom Code Engine
   @IsEnum(ServerlessDriverType)
@@ -375,16 +385,18 @@ export class EnvironmentVariables {
   @IsNumber()
   MUTATION_MAXIMUM_AFFECTED_RECORDS = 100;
 
-  REDIS_HOST = '127.0.0.1';
-
-  @CastToPositiveNumber()
-  REDIS_PORT = 6379;
-
-  REDIS_USERNAME: string;
-
-  REDIS_PASSWORD: string;
-
-  API_TOKEN_EXPIRES_IN = '100y';
+  @IsOptional()
+  @ValidateIf(
+    (env) =>
+      env.CACHE_STORAGE_TYPE === CacheStorageType.Redis ||
+      env.MESSAGE_QUEUE_TYPE === MessageQueueDriverType.BullMQ,
+  )
+  @IsUrl({
+    protocols: ['redis'],
+    require_tld: false,
+    allow_underscores: true,
+  })
+  REDIS_URL: string;
 
   SHORT_TERM_TOKEN_EXPIRES_IN = '5m';
 
@@ -430,6 +442,9 @@ export class EnvironmentVariables {
 
   @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
+
+  @ValidateIf((env) => env.ENTERPRISE_KEY)
+  SESSION_STORE_SECRET: string;
 
   @CastToBoolean()
   CALENDAR_PROVIDER_GOOGLE_ENABLED = false;

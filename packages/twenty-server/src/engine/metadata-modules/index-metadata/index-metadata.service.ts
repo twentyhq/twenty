@@ -28,7 +28,7 @@ export class IndexMetadataService {
     private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}
 
-  async createIndex(
+  async createIndexMetadata(
     workspaceId: string,
     objectMetadata: ObjectMetadataEntity,
     fieldMetadataToIndex: Partial<FieldMetadataEntity>[],
@@ -45,24 +45,35 @@ export class IndexMetadataService {
 
     const indexName = `IDX_${generateDeterministicIndexName([tableName, ...columnNames])}`;
 
-    let savedIndexMetadata: IndexMetadataEntity;
+    let result: IndexMetadataEntity;
+
+    const existingIndex = await this.indexMetadataRepository.findOne({
+      where: {
+        name: indexName,
+        workspaceId,
+        objectMetadataId: objectMetadata.id,
+      },
+    });
+
+    if (existingIndex) {
+      throw new Error(
+        `Index ${indexName} on object metadata ${objectMetadata.nameSingular} already exists`,
+      );
+    }
 
     try {
-      savedIndexMetadata = await this.indexMetadataRepository.save({
+      result = await this.indexMetadataRepository.save({
         name: indexName,
-        tableName,
         indexFieldMetadatas: fieldMetadataToIndex.map(
-          (fieldMetadata, index) => {
-            return {
-              fieldMetadataId: fieldMetadata.id,
-              order: index,
-            };
-          },
+          (fieldMetadata, index) => ({
+            fieldMetadataId: fieldMetadata.id,
+            order: index,
+          }),
         ),
         workspaceId,
         objectMetadataId: objectMetadata.id,
-        ...(isDefined(indexType) ? { indexType: indexType } : {}),
-        isCustom: isCustom,
+        ...(isDefined(indexType) ? { indexType } : {}),
+        isCustom,
       });
     } catch (error) {
       throw new Error(
@@ -70,11 +81,39 @@ export class IndexMetadataService {
       );
     }
 
-    if (!savedIndexMetadata) {
+    if (!result) {
       throw new Error(
         `Failed to return saved index ${indexName} on object metadata ${objectMetadata.nameSingular}`,
       );
     }
+
+    await this.createIndexCreationMigration(
+      workspaceId,
+      objectMetadata,
+      fieldMetadataToIndex,
+      isUnique,
+      isCustom,
+      indexType,
+      indexWhereClause,
+    );
+  }
+
+  async createIndexCreationMigration(
+    workspaceId: string,
+    objectMetadata: ObjectMetadataEntity,
+    fieldMetadataToIndex: Partial<FieldMetadataEntity>[],
+    isUnique: boolean,
+    isCustom: boolean,
+    indexType?: IndexType,
+    indexWhereClause?: string,
+  ) {
+    const tableName = computeObjectTargetTable(objectMetadata);
+
+    const columnNames: string[] = fieldMetadataToIndex.map(
+      (fieldMetadata) => fieldMetadata.name as string,
+    );
+
+    const indexName = `IDX_${generateDeterministicIndexName([tableName, ...columnNames])}`;
 
     const migration = {
       name: tableName,

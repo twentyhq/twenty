@@ -3,7 +3,6 @@ ARG IMAGE_TAG='15.5.0-debian-11-r15'
 FROM bitnami/postgresql:${IMAGE_TAG}
 
 ARG PG_MAIN_VERSION=15
-ARG PG_GRAPHQL_VERSION=1.5.6
 ARG WRAPPERS_VERSION=0.2.0
 ARG TARGETARCH
 
@@ -25,14 +24,6 @@ RUN set -eux; \
     esac;
 
 RUN apt update && apt install build-essential git curl default-libmysqlclient-dev -y
-
-# Install precompiled pg_graphql extensions
-COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${PG_MAIN_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql--${PG_GRAPHQL_VERSION}.sql \
-    /opt/bitnami/postgresql/share/extension/
-COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${PG_MAIN_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql.control \
-    /opt/bitnami/postgresql/share/extension/
-COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${PG_MAIN_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql.so \
-    /opt/bitnami/postgresql/lib/
 
 # Install precompiled supabase wrappers extensions
 RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_VERSION}/wrappers-v${WRAPPERS_VERSION}-pg${PG_MAIN_VERSION}-${TARGETARCH}-linux-gnu.deb" -o wrappers.deb

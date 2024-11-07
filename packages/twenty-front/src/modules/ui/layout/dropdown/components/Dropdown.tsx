@@ -4,9 +4,10 @@ import {
   FloatingPortal,
   offset,
   Placement,
+  size,
   useFloating,
 } from '@floating-ui/react';
-import { MouseEvent, useRef } from 'react';
+import { MouseEvent, ReactNode, useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -14,20 +15,20 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { isDefined } from '~/utils/isDefined';
 
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
 type DropdownProps = {
   className?: string;
-  clickableComponent?: JSX.Element | JSX.Element[];
-  dropdownComponents: JSX.Element | JSX.Element[];
+  clickableComponent?: ReactNode;
+  dropdownComponents: ReactNode;
   hotkey?: {
     key: Keys;
     scope: string;
@@ -79,7 +80,22 @@ export const Dropdown = ({
 
   const { refs, floatingStyles } = useFloating({
     placement: dropdownPlacement,
-    middleware: [flip(), ...offsetMiddlewares],
+    middleware: [
+      flip(),
+      size({
+        padding: 32,
+        apply: ({ availableHeight, elements }) => {
+          elements.floating.style.maxHeight =
+            availableHeight >= elements.floating.scrollHeight
+              ? ''
+              : `${availableHeight}px`;
+
+          elements.floating.style.height = 'auto';
+        },
+        boundary: document.querySelector('#root') ?? undefined,
+      }),
+      ...offsetMiddlewares,
+    ],
     whileElementsMounted: autoUpdate,
     strategy: dropdownStrategy,
   });
@@ -96,8 +112,9 @@ export const Dropdown = ({
     onClickOutside?.();
   };
 
-  useListenClickOutside({
+  useListenClickOutsideV2({
     refs: [refs.floating],
+    listenerId: dropdownId,
     callback: () => {
       onClickOutside?.();
 

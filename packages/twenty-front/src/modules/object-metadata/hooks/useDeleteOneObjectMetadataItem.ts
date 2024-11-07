@@ -1,4 +1,4 @@
-import { ApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
 import {
@@ -18,7 +18,7 @@ export const useDeleteOneObjectMetadataItem = () => {
     DeleteOneObjectMetadataItemMutation,
     DeleteOneObjectMetadataItemMutationVariables
   >(DELETE_ONE_OBJECT_METADATA_ITEM, {
-    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient,
   });
 
   const deleteOneObjectMetadataItem = async (

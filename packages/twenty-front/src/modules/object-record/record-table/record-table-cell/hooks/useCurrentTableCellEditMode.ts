@@ -1,10 +1,9 @@
 import { useCallback } from 'react';
-import { useRecoilValue } from 'recoil';
-
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 
 import { useMoveEditModeToTableCellPosition } from '../../hooks/internal/useMoveEditModeToCellPosition';
 
+import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useCurrentTableCellPosition } from './useCurrentCellPosition';
 
 export const useCurrentTableCellEditMode = () => {
@@ -12,10 +11,9 @@ export const useCurrentTableCellEditMode = () => {
 
   const currentTableCellPosition = useCurrentTableCellPosition();
 
-  const { isTableCellInEditModeFamilyState } = useRecordTableStates();
-
-  const isCurrentTableCellInEditMode = useRecoilValue(
-    isTableCellInEditModeFamilyState(currentTableCellPosition),
+  const isCurrentTableCellInEditMode = useRecoilComponentFamilyValueV2(
+    isTableCellInEditModeComponentFamilyState,
+    currentTableCellPosition,
   );
 
   const setCurrentTableCellInEditMode = useCallback(() => {

@@ -45,7 +45,7 @@ trap on_exit EXIT
 
 # Use environment variables VERSION and BRANCH, with defaults if not set
 version=${VERSION:-$(curl -s https://api.github.com/repos/twentyhq/twenty/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)}
-branch=${BRANCH:-main}
+branch=${BRANCH:-$version}
 
 echo "🚀 Using version $version and branch $branch"
 
@@ -72,7 +72,7 @@ done
 echo "📁 Creating directory '$dir_name'"
 mkdir -p "$dir_name" && cd "$dir_name" || { echo "❌ Failed to create/access directory '$dir_name'"; exit 1; }
 
-# Copy the twenty/packages/twenty-docker/docker-compose.yml file in it
+# Copy twenty/packages/twenty-docker/docker-compose.yml in it
 echo -e "\t• Copying docker-compose.yml"
 curl -sLo docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/docker-compose.yml
 
@@ -91,10 +91,7 @@ fi
 
 # Generate random strings for secrets
 echo "# === Randomly generated secrets ===" >>.env
-echo "ACCESS_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
-echo "LOGIN_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
-echo "REFRESH_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
-echo "FILE_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
+echo "APP_SECRET=$(openssl rand -base64 32)" >>.env
 echo "" >>.env
 echo "POSTGRES_ADMIN_PASSWORD=$(openssl rand -base64 32)" >>.env
 

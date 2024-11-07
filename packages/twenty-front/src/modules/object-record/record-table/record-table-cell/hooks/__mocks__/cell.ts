@@ -15,7 +15,7 @@ export const recordTableRow: RecordTableRowContextProps = {
   isPendingRow: false,
 };
 
-export const recordTableCell:RecordTableCellContextProps= {
+export const recordTableCell: RecordTableCellContextProps = {
   columnIndex: 3,
   columnDefinition: {
     size: 1,

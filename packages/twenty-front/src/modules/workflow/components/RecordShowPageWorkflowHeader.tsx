@@ -1,9 +1,9 @@
-import { Button } from '@/ui/input/button/components/Button';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useDeleteOneWorkflowVersion } from '@/workflow/hooks/useDeleteOneWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import {
+  Button,
   IconPlayerPlay,
   IconPlayerStop,
   IconPower,
