@@ -3,7 +3,7 @@ import { analyticsGraphDataComponentState } from '@/analytics/states/analyticsGr
 import { AnalyticsComponentProps as AnalyticsGraphEffectProps } from '@/analytics/types/AnalyticsComponentProps';
 import { computeAnalyticsGraphDataFunction } from '@/analytics/utils/computeAnalyticsGraphDataFunction';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export const AnalyticsGraphEffect = ({
   recordId,
@@ -21,14 +21,12 @@ export const AnalyticsGraphEffect = ({
     endpointName,
   });
 
-  useEffect(() => {
-    if (!isLoaded) {
-      fetchGraphData('7D').then((graphInput) => {
-        setAnalyticsGraphData(transformDataFunction(graphInput));
-      });
-      setIsLoaded(true);
-    }
-  }, [fetchGraphData, isLoaded, setAnalyticsGraphData, transformDataFunction]);
+  if (!isLoaded) {
+    fetchGraphData('7D').then((graphInput) => {
+      setAnalyticsGraphData(transformDataFunction(graphInput));
+    });
+    setIsLoaded(true);
+  }
 
   return <></>;
 };
