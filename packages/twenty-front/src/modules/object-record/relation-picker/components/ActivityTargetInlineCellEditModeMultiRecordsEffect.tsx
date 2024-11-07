@@ -7,17 +7,13 @@ import {
 } from 'recoil';
 
 import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
-import { ObjectRecordForSelect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
 import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
 import { objectRecordMultiSelectMatchesFilterRecordsIdsComponentState } from '@/object-record/record-field/states/objectRecordMultiSelectMatchesFilterRecordsIdsComponentState';
 import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
+import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
+import { SelectedObjectRecordId } from '@/object-record/types/SelectedObjectRecordId';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-
-export type SelectedObjectRecordId = {
-  objectNameSingular: string;
-  id: string;
-};
 
 export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
   selectedObjectRecordIds,

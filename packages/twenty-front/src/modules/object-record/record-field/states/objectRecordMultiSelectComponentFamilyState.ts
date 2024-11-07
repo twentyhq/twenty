@@ -1,4 +1,4 @@
-import { ObjectRecordForSelect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
+import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
 import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
 
 export type ObjectRecordAndSelected = ObjectRecordForSelect & {

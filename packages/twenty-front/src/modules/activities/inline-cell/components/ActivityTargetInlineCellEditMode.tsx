@@ -245,7 +245,6 @@ export const ActivityTargetInlineCellEditMode = ({
             (activityTarget) => activityTarget.id !== activityTargetToDeleteId,
           );
 
-
           if (isActivityInCreateMode) {
             upsertActivity({
               activity,
