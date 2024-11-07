@@ -1,7 +1,13 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
 import { MouseEvent, useCallback } from 'react';
-import { IconLock, IconPencil, IconPlus, useIcons } from 'twenty-ui';
+import {
+  IconLock,
+  IconPencil,
+  IconPlus,
+  LightIconButtonAccent,
+  useIcons,
+} from 'twenty-ui';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
@@ -109,6 +115,7 @@ export const ViewPickerListContent = () => {
                         Icon: IconPencil,
                         onClick: (event: MouseEvent<HTMLButtonElement>) =>
                           handleEditViewButtonClick(event, view.id),
+                        accent: 'tertiary' as LightIconButtonAccent,
                       },
                     ].filter(isDefined)}
                     isIconDisplayedOnHoverOnly={true}

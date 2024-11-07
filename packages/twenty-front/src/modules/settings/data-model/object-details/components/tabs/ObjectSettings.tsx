@@ -25,6 +25,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import styled from '@emotion/styled';
+import isEmpty from 'lodash.isempty';
 import pick from 'lodash.pick';
 import { useSetRecoilState } from 'recoil';
 import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
@@ -58,8 +59,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   const { enqueueSnackBar } = useSnackBar();
   const setUpdatedObjectSlugState = useSetRecoilState(updatedObjectSlugState);
 
-  const { updateOneObjectMetadataItem, loading } =
-    useUpdateOneObjectMetadataItem();
+  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { lastVisitedObjectMetadataItemId } =
     useLastVisitedObjectMetadataItem();
   const { getLastVisitedViewIdFromObjectMetadataItemId } = useLastVisitedView();
@@ -126,6 +126,9 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
   const handleSave = async (
     formValues: SettingsDataModelObjectEditFormValues,
   ) => {
+    if (isEmpty(formConfig.formState.dirtyFields) === true) {
+      return;
+    }
     try {
       const updatePayload = getUpdatePayload(formValues);
       const objectNamePluralForRedirection =
@@ -180,9 +183,18 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
       <FormProvider {...formConfig}>
         <StyledContentContainer>
           <StyledFormSection>
+<<<<<<< HEAD
             <H2Title title="About" description="Object settings" />
             <SettingsDataModelObjectAboutForm
               disabled={!objectMetadataItem.isCustom || loading}
+=======
+            <H2Title
+              title="About"
+              description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
+            />
+            <SettingsDataModelObjectAboutForm
+              disabled={!objectMetadataItem.isCustom}
+>>>>>>> 4f2b055ee0552faae0a32a9e212375d1540b5c57
               disableNameEdit={!objectMetadataItem.isCustom}
               objectMetadataItem={objectMetadataItem}
               onBlur={() => {

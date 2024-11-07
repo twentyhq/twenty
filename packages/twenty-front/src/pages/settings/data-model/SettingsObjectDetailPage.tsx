@@ -50,6 +50,7 @@ const StyledTabListContainer = styled.div`
 const StyledContentContainer = styled.div`
   flex: 1;
   overflow-y: auto;
+  width: 100%;
   padding-left: 0;
 `;
 
