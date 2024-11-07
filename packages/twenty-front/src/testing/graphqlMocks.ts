@@ -113,6 +113,33 @@ export const graphqlMocks = {
         },
       });
     }),
+    graphql.query('FindManyViews', ({ variables }) => {
+      const objectMetadataId = variables.filter?.objectMetadataId?.eq;
+      const viewType = variables.filter?.type?.eq;
+
+      return HttpResponse.json({
+        data: {
+          views: {
+            edges: mockedViewsData
+              .filter(
+                (view) =>
+                  view?.objectMetadataId === objectMetadataId &&
+                  view?.type === viewType,
+              )
+              .map((view) => ({
+                node: view,
+                cursor: null,
+              })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+        },
+      });
+    }),
     graphql.query('SearchWorkspaceMembers', () => {
       return HttpResponse.json({
         data: {

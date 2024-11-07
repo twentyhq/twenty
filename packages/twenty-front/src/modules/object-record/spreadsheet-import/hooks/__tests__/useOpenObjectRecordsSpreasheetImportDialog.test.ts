@@ -111,6 +111,8 @@ const companyMocks = [
                   updatedAt
                   viewId
                   workflowId
+                  workflowRunId
+                  workflowVersionId
                   workspaceMemberId
                 }
               }
@@ -260,6 +262,9 @@ const companyMocks = [
                   rocketId
                   taskId
                   updatedAt
+                  workflowId
+                  workflowRunId
+                  workflowVersionId
                   workspaceMemberId
                 }
               }

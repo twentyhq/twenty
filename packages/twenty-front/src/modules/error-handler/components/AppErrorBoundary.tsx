@@ -1,6 +1,6 @@
+import * as Sentry from '@sentry/react';
 import { ErrorInfo, ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import * as Sentry from '@sentry/react';
 
 import { GenericErrorFallback } from '@/error-handler/components/GenericErrorFallback';
 

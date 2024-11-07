@@ -30,17 +30,21 @@ export class CodeWorkflowAction implements WorkflowAction {
       );
     }
 
-    const result =
-      await this.serverlessFunctionService.executeOneServerlessFunction(
-        workflowStepInput.serverlessFunctionId,
-        workspaceId,
-        {}, // TODO: input will be dynamically calculated from function input
-      );
+    try {
+      const result =
+        await this.serverlessFunctionService.executeOneServerlessFunction(
+          workflowStepInput.serverlessFunctionId,
+          workspaceId,
+          workflowStepInput.serverlessFunctionInput,
+        );
 
-    if (result.error) {
-      return { error: result.error };
+      if (result.error) {
+        return { error: result.error };
+      }
+
+      return { result: result.data || {} };
+    } catch (error) {
+      return { error: error.message };
     }
-
-    return { result: result.data || {} };
   }
 }

@@ -8,9 +8,7 @@ const StyledOperandSelectContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  left: 10px;
-  position: absolute;
-  top: 10px;
+
   width: 100%;
   z-index: 1000;
 `;

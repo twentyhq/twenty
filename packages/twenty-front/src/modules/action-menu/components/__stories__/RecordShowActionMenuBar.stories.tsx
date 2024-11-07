@@ -5,6 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { RecordShowRightDrawerActionMenuBar } from '@/action-menu/components/RecordShowRightDrawerActionMenuBar';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
@@ -42,44 +43,43 @@ const meta: Meta<typeof RecordShowRightDrawerActionMenuBar> = {
             }),
             1,
           );
+
+          const map = new Map<string, ActionMenuEntry>();
+
           set(
             actionMenuEntriesComponentState.atomFamily({
               instanceId: 'story-action-menu',
             }),
-            new Map([
-              [
-                'addToFavorites',
-                {
-                  key: 'addToFavorites',
-                  label: 'Add to favorites',
-                  position: 0,
-                  Icon: IconHeart,
-                  onClick: addToFavoritesMock,
-                },
-              ],
-              [
-                'export',
-                {
-                  key: 'export',
-                  label: 'Export',
-                  position: 1,
-                  Icon: IconFileExport,
-                  onClick: exportMock,
-                },
-              ],
-              [
-                'delete',
-                {
-                  key: 'delete',
-                  label: 'Delete',
-                  position: 2,
-                  Icon: IconTrash,
-                  onClick: deleteMock,
-                  accent: 'danger' as MenuItemAccent,
-                },
-              ],
-            ]),
+            map,
           );
+
+          map.set('addToFavorites', {
+            type: 'standard',
+            key: 'addToFavorites',
+            label: 'Add to favorites',
+            position: 0,
+            Icon: IconHeart,
+            onClick: addToFavoritesMock,
+          });
+
+          map.set('export', {
+            type: 'standard',
+            key: 'export',
+            label: 'Export',
+            position: 1,
+            Icon: IconFileExport,
+            onClick: exportMock,
+          });
+
+          map.set('delete', {
+            type: 'standard',
+            key: 'delete',
+            label: 'Delete',
+            position: 2,
+            Icon: IconTrash,
+            onClick: deleteMock,
+            accent: 'danger' as MenuItemAccent,
+          });
         }}
       >
         <ActionMenuComponentInstanceContext.Provider

@@ -21,6 +21,7 @@ import {
   displayedExportProgress,
   useExportRecordData,
 } from '@/action-menu/hooks/useExportRecordData';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
 import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
@@ -40,6 +41,8 @@ import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemN
 import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { ViewGroupsVisibilityDropdownSection } from '@/views/components/ViewGroupsVisibilityDropdownSection';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -181,6 +184,12 @@ export const RecordIndexOptionsDropdownContent = ({
     viewGroupFieldMetadataItem &&
     (visibleRecordGroups.length > 0 || hiddenRecordGroups.length > 0);
 
+  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
+  );
+
+  const mode = contextStoreNumberOfSelectedRecords > 0 ? 'selection' : 'all';
+
   useEffect(() => {
     if (currentMenu === 'hiddenViewGroups' && hiddenRecordGroups.length === 0) {
       setCurrentMenu('viewGroups');
@@ -213,7 +222,7 @@ export const RecordIndexOptionsDropdownContent = ({
           <MenuItem
             onClick={download}
             LeftIcon={IconFileExport}
-            text={displayedExportProgress(progress)}
+            text={displayedExportProgress(mode, progress)}
           />
           <MenuItem
             onClick={() => {
@@ -259,15 +268,17 @@ export const RecordIndexOptionsDropdownContent = ({
           <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
             Fields
           </DropdownMenuHeader>
-          <ViewFieldsVisibilityDropdownSection
-            title="Visible"
-            fields={visibleRecordFields}
-            isDraggable
-            onDragEnd={handleReorderFields}
-            onVisibilityChange={handleChangeFieldVisibility}
-            showSubheader={false}
-            showDragGrip={true}
-          />
+          <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
+            <ViewFieldsVisibilityDropdownSection
+              title="Visible"
+              fields={visibleRecordFields}
+              isDraggable
+              onDragEnd={handleReorderFields}
+              onVisibilityChange={handleChangeFieldVisibility}
+              showSubheader={false}
+              showDragGrip={true}
+            />
+          </ScrollWrapper>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
             <MenuItemNavigate
@@ -317,7 +328,7 @@ export const RecordIndexOptionsDropdownContent = ({
             Hidden Fields
           </DropdownMenuHeader>
           {hiddenRecordFields.length > 0 && (
-            <>
+            <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
               <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
                 fields={hiddenRecordFields}
@@ -326,7 +337,7 @@ export const RecordIndexOptionsDropdownContent = ({
                 showSubheader={false}
                 showDragGrip={false}
               />
-            </>
+            </ScrollWrapper>
           )}
           <DropdownMenuSeparator />
 

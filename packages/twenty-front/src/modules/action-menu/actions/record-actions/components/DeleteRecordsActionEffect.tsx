@@ -97,11 +97,13 @@ export const DeleteRecordsActionEffect = ({
   useEffect(() => {
     if (canDelete) {
       addActionMenuEntry({
+        type: 'standard',
         key: 'delete',
         label: 'Delete',
         position,
         Icon: IconTrash,
         accent: 'danger',
+        isPinned: true,
         onClick: () => {
           setIsDeleteRecordsModalOpen(true);
         },

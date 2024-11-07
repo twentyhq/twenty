@@ -1,6 +1,5 @@
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
-import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
 import { useRecoilValue } from 'recoil';
 
 export const useColumnNewCardActions = (columnId: string) => {
@@ -12,15 +11,7 @@ export const useColumnNewCardActions = (columnId: string) => {
     (field) => field.isLabelIdentifier,
   );
 
-  const { handleAddNewCardClick, handleCreateSuccess, handleEntitySelect } =
-    useAddNewCard();
-
-  const newRecord = useRecoilValue(
-    recordBoardNewRecordByColumnIdSelector({
-      familyKey: columnId,
-      scopeId: columnId,
-    }),
-  );
+  const { handleAddNewCardClick } = useAddNewCard();
 
   const handleNewButtonClick = (
     position: 'first' | 'last',
@@ -36,9 +27,6 @@ export const useColumnNewCardActions = (columnId: string) => {
   };
 
   return {
-    newRecord,
     handleNewButtonClick,
-    handleCreateSuccess,
-    handleEntitySelect,
   };
 };

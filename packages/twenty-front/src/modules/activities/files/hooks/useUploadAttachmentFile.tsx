@@ -7,7 +7,9 @@ import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivi
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
+import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 
 // Note: This is probably not the right way to do this.
 export const computePathWithoutToken = (attachmentPath: string): string => {
@@ -36,8 +38,8 @@ export const useUploadAttachmentFile = () => {
 
     const attachmentPath = result?.data?.uploadFile;
 
-    if (!attachmentPath) {
-      return;
+    if (!isNonEmptyString(attachmentPath)) {
+      throw new Error("Couldn't upload the attachment.");
     }
 
     const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
@@ -55,6 +57,10 @@ export const useUploadAttachmentFile = () => {
     } as Partial<Attachment>;
 
     await createOneAttachment(attachmentToCreate);
+
+    const attachementAbsoluteURL = getFileAbsoluteURI(attachmentPath);
+
+    return { attachementAbsoluteURL };
   };
 
   return { uploadAttachmentFile };
