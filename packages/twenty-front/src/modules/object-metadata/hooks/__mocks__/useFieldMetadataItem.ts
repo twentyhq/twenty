@@ -2,7 +2,8 @@ import { gql } from '@apollo/client';
 import { FieldMetadataType } from '~/generated/graphql';
 
 export const FIELD_METADATA_ID = '2c43466a-fe9e-4005-8d08-c5836067aa6c';
-export const FIELD_RELATION_METADATA_ID = '4da0302d-358a-45cd-9973-9f92723ed3c1';
+export const FIELD_RELATION_METADATA_ID =
+  '4da0302d-358a-45cd-9973-9f92723ed3c1';
 export const RELATION_METADATA_ID = 'f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
 const baseFields = `
@@ -20,6 +21,7 @@ const baseFields = `
   settings
 `;
 
+
 export const queries = {
   deleteMetadataField: gql`
     mutation DeleteOneFieldMetadataItem($idToDelete: UUID!) {
@@ -28,13 +30,44 @@ export const queries = {
       }
     }
   `,
+  findManyViewsQuery: gql`
+    query FindManyViews($filter: ViewFilterInput, $orderBy: [ViewOrderByInput], $lastCursor: String, $limit: Int) {
+        views(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor) {
+          edges {
+            node {
+              __typename
+              id
+              viewGroups {
+                edges {
+                  node {
+                    __typename
+                    fieldMetadataId
+                    fieldValue
+                    id
+                    isVisible
+                    position
+                  }
+                }
+              }
+            }
+            cursor
+          }
+          pageInfo {
+            hasNextPage
+            hasPreviousPage
+            startCursor
+            endCursor
+          }
+          totalCount
+        }
+      }`,
   deleteMetadataFieldRelation: gql`
-  mutation DeleteOneRelationMetadataItem($idToDelete: UUID!) {
-    deleteOneRelation(input: { id: $idToDelete }) {
-      id
+    mutation DeleteOneRelationMetadataItem($idToDelete: UUID!) {
+      deleteOneRelation(input: { id: $idToDelete }) {
+        id
+      }
     }
-  }
-`,
+  `,
   activateMetadataField: gql`
     mutation UpdateOneFieldMetadataItem(
       $idToUpdate: UUID!
@@ -94,7 +127,7 @@ export const variables = {
   deactivateMetadataField: {
     idToUpdate: FIELD_METADATA_ID,
     updatePayload: { isActive: false, label: undefined },
-  }
+  },
 };
 
 const defaultResponseData = {
@@ -127,4 +160,3 @@ export const responseData = {
     options: [],
   },
 };
-

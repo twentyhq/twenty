@@ -2,8 +2,6 @@ import { useRecoilValue } from 'recoil';
 
 import { ObjectFilterDropdownDateInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownDateInput';
 import { ObjectFilterDropdownNumberInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownNumberInput';
-import { ObjectFilterDropdownOperandButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandButton';
-import { ObjectFilterDropdownOperandSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOperandSelect';
 import { ObjectFilterDropdownOptionSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownOptionSelect';
 import { ObjectFilterDropdownRatingInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { ObjectFilterDropdownRecordSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordSelect';
@@ -14,19 +12,11 @@ import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/
 import { isActorSourceCompositeFilter } from '@/object-record/object-filter-dropdown/utils/isActorSourceCompositeFilter';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import styled from '@emotion/styled';
 import { isDefined } from 'twenty-ui';
 
-const StyledOperandSelectContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  box-shadow: ${({ theme }) => theme.boxShadow.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  left: 10px;
-  position: absolute;
-  top: 10px;
-  width: 100%;
-  z-index: 1000;
-`;
+import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
+import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
+import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 
 type ObjectFilterDropdownFilterInputProps = {
   filterDropdownId?: string;
@@ -68,45 +58,29 @@ export const ObjectFilterDropdownFilterInput = ({
       ViewFilterOperand.IsRelative,
     ].includes(selectedOperandInDropdown);
 
-  if (!isDefined(filterDefinitionUsedInDropdown)) {
+  const shouldHide = isObjectFilterDropdownOperandSelectUnfolded;
+
+  if (shouldHide || !isDefined(filterDefinitionUsedInDropdown)) {
     return null;
   }
 
   return (
     <>
-      <ObjectFilterDropdownOperandButton />
-      {isObjectFilterDropdownOperandSelectUnfolded && (
-        <StyledOperandSelectContainer>
-          <ObjectFilterDropdownOperandSelect />
-        </StyledOperandSelectContainer>
-      )}
       {isConfigurable && selectedOperandInDropdown && (
         <>
-          {[
-            'TEXT',
-            'EMAIL',
-            'EMAILS',
-            'PHONE',
-            'FULL_NAME',
-            'LINK',
-            'LINKS',
-            'ADDRESS',
-            'ACTOR',
-            'ARRAY',
-            'PHONES',
-          ].includes(filterDefinitionUsedInDropdown.type) &&
+          {TEXT_FILTER_TYPES.includes(filterDefinitionUsedInDropdown.type) &&
             !isActorSourceCompositeFilter(filterDefinitionUsedInDropdown) && (
               <ObjectFilterDropdownTextSearchInput />
             )}
-          {['NUMBER', 'CURRENCY'].includes(
+          {NUMBER_FILTER_TYPES.includes(
             filterDefinitionUsedInDropdown.type,
           ) && <ObjectFilterDropdownNumberInput />}
           {filterDefinitionUsedInDropdown.type === 'RATING' && (
             <ObjectFilterDropdownRatingInput />
           )}
-          {['DATE_TIME', 'DATE'].includes(
-            filterDefinitionUsedInDropdown.type,
-          ) && <ObjectFilterDropdownDateInput />}
+          {DATE_FILTER_TYPES.includes(filterDefinitionUsedInDropdown.type) && (
+            <ObjectFilterDropdownDateInput />
+          )}
           {filterDefinitionUsedInDropdown.type === 'RELATION' && (
             <>
               <ObjectFilterDropdownSearchInput />

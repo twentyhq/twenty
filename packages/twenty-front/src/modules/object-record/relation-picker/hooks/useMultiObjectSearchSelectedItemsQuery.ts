@@ -9,8 +9,8 @@ import {
   MultiObjectRecordQueryResult,
   useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray,
 } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
-import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
+import { SelectedObjectRecordId } from '@/object-record/types/SelectedObjectRecordId';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 

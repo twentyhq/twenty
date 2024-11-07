@@ -1,23 +1,24 @@
-import { useEffect } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
+import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isClientConfigLoadedState } from '@/client-config/states/isClientConfigLoadedState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { isSignUpDisabledState } from '@/client-config/states/isSignUpDisabledState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
+import { useEffect } from 'react';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const ClientConfigProviderEffect = () => {
   const setAuthProviders = useSetRecoilState(authProvidersState);
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
+  const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
 
   const setIsSignInPrefilled = useSetRecoilState(isSignInPrefilledState);
   const setIsSignUpDisabled = useSetRecoilState(isSignUpDisabledState);
@@ -48,8 +49,10 @@ export const ClientConfigProviderEffect = () => {
         microsoft: data?.clientConfig.authProviders.microsoft,
         password: data?.clientConfig.authProviders.password,
         magicLink: false,
+        sso: data?.clientConfig.authProviders.sso,
       });
       setIsDebugMode(data?.clientConfig.debugMode);
+      setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
       setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
       setIsSignUpDisabled(data?.clientConfig.signUpDisabled);
 
@@ -84,6 +87,7 @@ export const ClientConfigProviderEffect = () => {
     setCaptchaProvider,
     setChromeExtensionId,
     setApiConfig,
+    setIsAnalyticsEnabled,
   ]);
 
   return <></>;

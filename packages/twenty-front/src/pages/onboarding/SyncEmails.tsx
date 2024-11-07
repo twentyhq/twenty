@@ -1,21 +1,20 @@
-import React, { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconGoogle } from 'twenty-ui';
+import { ActionLink, IconGoogle, MainButton } from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
-import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { MainButton } from '@/ui/input/button/components/MainButton';
-import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+
+import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { AppPath } from '@/types/AppPath';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
@@ -39,7 +38,7 @@ const StyledActionLinkContainer = styled.div`
 
 export const SyncEmails = () => {
   const theme = useTheme();
-  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
+  const { triggerApisOAuth } = useTriggerApisOAuth();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentUser = useRecoilValue(currentUserState);
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
@@ -54,7 +53,7 @@ export const SyncEmails = () => {
         ? CalendarChannelVisibility.ShareEverything
         : CalendarChannelVisibility.Metadata;
 
-    await triggerGoogleApisOAuth({
+    await triggerApisOAuth('google', {
       redirectLocation: AppPath.Index,
       messageVisibility: visibility,
       calendarVisibility: calendarChannelVisibility,

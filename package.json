@@ -23,6 +23,7 @@
     "@linaria/core": "^6.2.0",
     "@linaria/react": "^6.2.1",
     "@mdx-js/react": "^3.0.0",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
     "@nestjs/apollo": "^11.0.5",
     "@nestjs/axios": "^3.0.1",
     "@nestjs/cli": "^9.0.0",
@@ -49,6 +50,7 @@
     "@stoplight/elements": "^8.0.5",
     "@swc/jest": "^0.2.29",
     "@tabler/icons-react": "^2.44.0",
+    "@tiptap/extension-hard-break": "^2.9.1",
     "@types/dompurify": "^3.0.5",
     "@types/facepaint": "^1.2.5",
     "@types/lodash.camelcase": "^4.3.7",
@@ -176,6 +178,7 @@
     "scroll-into-view": "^1.16.2",
     "semver": "^7.5.4",
     "sharp": "^0.32.1",
+    "slash": "^5.1.0",
     "stripe": "^14.17.0",
     "ts-key-enum": "^2.0.12",
     "tslib": "^2.3.0",
@@ -199,6 +202,7 @@
     "@graphql-codegen/typescript": "^3.0.4",
     "@graphql-codegen/typescript-operations": "^3.0.4",
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",
+    "@microsoft/microsoft-graph-types": "^2.40.0",
     "@nestjs/cli": "^9.0.0",
     "@nestjs/schematics": "^9.0.0",
     "@nestjs/testing": "^9.0.0",
@@ -294,6 +298,7 @@
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
     "eslint-plugin-prettier": "^5.1.2",
+    "eslint-plugin-project-structure": "^3.9.1",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
@@ -347,7 +352,7 @@
   "version": "0.2.1",
   "nx": {},
   "scripts": {
-    "start": "npx nx run-many -t start -p twenty-server twenty-front"
+    "start": "npx concurrently --kill-others 'npx nx run-many -t start -p twenty-server twenty-front' 'npx wait-on tcp:3000 && npx nx run twenty-server:worker'"
   },
   "workspaces": {
     "packages": [

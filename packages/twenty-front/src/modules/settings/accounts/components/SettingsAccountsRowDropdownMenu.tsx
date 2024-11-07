@@ -5,18 +5,18 @@ import {
   IconMail,
   IconRefresh,
   IconTrash,
+  LightIconButton,
+  MenuItem,
 } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
-import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
@@ -35,8 +35,7 @@ export const SettingsAccountsRowDropdownMenu = ({
   const { destroyOneRecord } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
   });
-
-  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
+  const { triggerApisOAuth } = useTriggerApisOAuth();
 
   return (
     <Dropdown
@@ -71,7 +70,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                 LeftIcon={IconRefresh}
                 text="Reconnect"
                 onClick={() => {
-                  triggerGoogleApisOAuth();
+                  triggerApisOAuth(account.provider);
                   closeDropdown();
                 }}
               />

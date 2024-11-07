@@ -4,7 +4,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { ANIMATION, BACKGROUND_LIGHT, GRAY_SCALE } from 'twenty-ui';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
-import { DESKTOP_NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/DesktopNavDrawerWidths';
+import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { MainNavigationDrawerItemsSkeletonLoader } from '~/loading/components/MainNavigationDrawerItemsSkeletonLoader';
 
@@ -47,14 +47,14 @@ const StyledSkeletonTitleContainer = styled.div`
 
 export const LeftPanelSkeletonLoader = () => {
   const isMobile = useIsMobile();
-  const mobileWidth = isMobile ? 0 : '100%';
-  const desktopWidth = !mobileWidth ? 12 : DESKTOP_NAV_DRAWER_WIDTHS.menu;
 
   return (
     <StyledAnimatedContainer
       initial={false}
       animate={{
-        width: isMobile ? mobileWidth : desktopWidth,
+        width: isMobile
+          ? NAV_DRAWER_WIDTHS.menu.mobile.collapsed
+          : NAV_DRAWER_WIDTHS.menu.desktop.expanded,
         opacity: isMobile ? 0 : 1,
       }}
       transition={{

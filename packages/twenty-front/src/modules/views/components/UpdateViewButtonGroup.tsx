@@ -1,12 +1,15 @@
 import styled from '@emotion/styled';
-import { IconChevronDown, IconPlus } from 'twenty-ui';
+import {
+  Button,
+  ButtonGroup,
+  IconChevronDown,
+  IconPlus,
+  MenuItem,
+} from 'twenty-ui';
 
-import { Button } from '@/ui/input/button/components/Button';
-import { ButtonGroup } from '@/ui/input/button/components/ButtonGroup';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';

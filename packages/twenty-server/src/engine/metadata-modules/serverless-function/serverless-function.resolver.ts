@@ -11,7 +11,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
-import { DeleteServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/delete-serverless-function.input';
+import { ServerlessFunctionIdInput } from 'src/engine/metadata-modules/serverless-function/dtos/serverless-function-id.input';
 import { ExecuteServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/execute-serverless-function.input';
 import { GetServerlessFunctionSourceCodeInput } from 'src/engine/metadata-modules/serverless-function/dtos/get-serverless-function-source-code.input';
 import { PublishServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/publish-serverless-function.input';
@@ -50,6 +50,39 @@ export class ServerlessFunctionResolver {
     }
   }
 
+  @Query(() => ServerlessFunctionDTO)
+  async findOneServerlessFunction(
+    @Args('input') { id }: ServerlessFunctionIdInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    try {
+      await this.checkFeatureFlag(workspaceId);
+
+      return (
+        await this.serverlessFunctionService.findManyServerlessFunctions({
+          id,
+        })
+      )?.[0];
+    } catch (error) {
+      serverlessFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
+
+  @Query(() => [ServerlessFunctionDTO])
+  async findManyServerlessFunctions(
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    try {
+      await this.checkFeatureFlag(workspaceId);
+
+      return await this.serverlessFunctionService.findManyServerlessFunctions({
+        workspaceId,
+      });
+    } catch (error) {
+      serverlessFunctionGraphQLApiExceptionHandler(error);
+    }
+  }
+
   @Query(() => graphqlTypeJson)
   async getAvailablePackages(@AuthWorkspace() { id: workspaceId }: Workspace) {
     try {
@@ -81,7 +114,7 @@ export class ServerlessFunctionResolver {
 
   @Mutation(() => ServerlessFunctionDTO)
   async deleteOneServerlessFunction(
-    @Args('input') input: DeleteServerlessFunctionInput,
+    @Args('input') input: ServerlessFunctionIdInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     try {

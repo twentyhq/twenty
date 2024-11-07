@@ -42,7 +42,7 @@ describe('getWorkflowVersionDiagram', () => {
       name: '',
       steps: null,
       trigger: {
-        settings: { eventName: 'company.created' },
+        settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
       updatedAt: '',
@@ -55,6 +55,7 @@ describe('getWorkflowVersionDiagram', () => {
           data: {
             label: 'Company is Created',
             nodeType: 'trigger',
+            triggerType: 'DATABASE_EVENT',
           },
           id: 'trigger',
           position: { x: 0, y: 0 },
@@ -80,14 +81,19 @@ describe('getWorkflowVersionDiagram', () => {
               retryOnFailure: { value: true },
               continueOnFailure: { value: false },
             },
-            serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+            input: {
+              serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
+              serverlessFunctionVersion: '1',
+              serverlessFunctionInput: {},
+            },
+            outputSchema: {},
           },
           type: 'CODE',
           valid: true,
         },
       ],
       trigger: {
-        settings: { eventName: 'company.created' },
+        settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
       updatedAt: '',

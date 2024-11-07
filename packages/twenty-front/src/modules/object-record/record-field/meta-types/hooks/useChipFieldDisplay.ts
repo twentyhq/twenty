@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 
-import { PreComputedChipGeneratorsContext } from '@/object-metadata/context/PreComputedChipGeneratorsContext';
+import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';

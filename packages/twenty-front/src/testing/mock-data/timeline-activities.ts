@@ -1,11 +1,11 @@
-import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
+import { TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 
 export const mockedTimelineActivities: Array<TimelineActivity> = [
   {
     properties: null,
     updatedAt: '2023-04-26T10:12:42.33625+00:00',
     id: '79f84835-b2f9-4ab5-8ab9-17dbcc45dda3',
-    linkedObjectMetadataId: '1ad72a42-6ab4-4474-a62a-a57cae3c0298',
+    linkedObjectMetadataId: 'e7a5e974-affc-40d5-be9f-2ba2783c21be',
     linkedRecordCachedName: '',
     linkedRecordId: 'ce40eca0-8f4b-4bba-ba91-5cbd870c64d3',
     name: 'calendarEvent.linked',
@@ -30,7 +30,7 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
     properties: null,
     updatedAt: '2023-04-26T10:12:42.33625+00:00',
     id: '79f84835-b2f9-4ab5-8ab9-17dbcc45dda3',
-    linkedObjectMetadataId: '1ad72a42-6ab4-4474-a62a-a57cae3c0298',
+    linkedObjectMetadataId: '3385d352-10a0-428f-9863-e52e7164b26c',
     linkedRecordCachedName: '',
     linkedRecordId: 'ce40eca0-8f4b-4bba-ba91-5cbd870c64d5',
     name: 'message.linked',
@@ -55,7 +55,7 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
     properties: null,
     updatedAt: '2023-04-26T10:12:42.33625+00:00',
     id: '79f84835-b2f9-4ab5-8ab9-17dbcc45dda3',
-    linkedObjectMetadataId: '1ad72a42-6ab4-4474-a62a-a57cae3c0298',
+    linkedObjectMetadataId: '25e10253-f0e1-4a6d-90e3-ad62a4b20292',
     linkedRecordCachedName: 'New Task',
     linkedRecordId: 'ce40eca0-8f4b-4bba-ba91-5cbd870c64d2',
     name: 'linked-task.created',
