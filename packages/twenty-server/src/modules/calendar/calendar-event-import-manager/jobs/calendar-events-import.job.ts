@@ -4,14 +4,14 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
+import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import {
   CalendarChannelSyncStage,
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 
-export type CalendarEventListFetchJobData = {
+export type CalendarEventsImportJobData = {
   calendarChannelId: string;
   workspaceId: string;
 };
@@ -20,23 +20,22 @@ export type CalendarEventListFetchJobData = {
   queueName: MessageQueue.calendarQueue,
   scope: Scope.REQUEST,
 })
-export class CalendarEventListFetchJob {
+export class CalendarEventsImportJob {
   constructor(
+    private readonly calendarEventsImportService: CalendarEventsImportService,
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly calendarFetchEventsService: CalendarFetchEventsService,
   ) {}
 
-  @Process(CalendarEventListFetchJob.name)
-  async handle(data: CalendarEventListFetchJobData): Promise<void> {
-    console.time('CalendarEventListFetchJob time');
+  @Process(CalendarEventsImportJob.name)
+  async handle(data: CalendarEventsImportJobData): Promise<void> {
+    console.time('CalendarEventsImportJob time');
 
-    const { workspaceId, calendarChannelId } = data;
+    const { calendarChannelId, workspaceId } = data;
 
     const calendarChannelRepository =
       await this.twentyORMManager.getRepository<CalendarChannelWorkspaceEntity>(
         'calendarChannel',
       );
-
     const calendarChannel = await calendarChannelRepository.findOne({
       where: {
         id: calendarChannelId,
@@ -45,7 +44,7 @@ export class CalendarEventListFetchJob {
       relations: ['connectedAccount'],
     });
 
-    if (!calendarChannel) {
+    if (!calendarChannel?.isSyncEnabled) {
       return;
     }
 
@@ -58,31 +57,19 @@ export class CalendarEventListFetchJob {
       return;
     }
 
-    switch (calendarChannel.syncStage) {
-      case CalendarChannelSyncStage.FULL_CALENDAR_EVENT_LIST_FETCH_PENDING:
-        await calendarChannelRepository.update(calendarChannelId, {
-          syncCursor: '',
-          syncStageStartedAt: null,
-        });
-
-        await this.calendarFetchEventsService.fetchCalendarEvents(
-          calendarChannel,
-          calendarChannel.connectedAccount,
-          workspaceId,
-        );
-        break;
-
-      case CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING:
-        await this.calendarFetchEventsService.fetchCalendarEvents(
-          calendarChannel,
-          calendarChannel.connectedAccount,
-          workspaceId,
-        );
-        break;
-
-      default:
-        break;
+    if (
+      calendarChannel.syncStage !==
+      CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING
+    ) {
+      return;
     }
-    console.timeEnd('CalendarEventListFetchJob time');
+
+    await this.calendarEventsImportService.processCalendarEventsImport(
+      calendarChannel,
+      calendarChannel.connectedAccount,
+      workspaceId,
+    );
+
+    console.timeEnd('CalendarEventsImportJob time');
   }
 }
