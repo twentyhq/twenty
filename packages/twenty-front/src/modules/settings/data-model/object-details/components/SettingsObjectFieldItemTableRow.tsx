@@ -127,7 +127,10 @@ export const SettingsObjectFieldItemTableRow = ({
   const handleDisableField = async (
     activeFieldMetadatItem: FieldMetadataItem,
   ) => {
-    await deactivateMetadataField(activeFieldMetadatItem);
+    await deactivateMetadataField(
+      activeFieldMetadatItem.id,
+      objectMetadataItem.id,
+    );
 
     const deletedViewIds = allViews
       .map((view) => {
@@ -272,7 +275,9 @@ export const SettingsObjectFieldItemTableRow = ({
             isCustomField={fieldMetadataItem.isCustom === true}
             scopeKey={fieldMetadataItem.id}
             onEdit={() => navigate(linkToNavigate)}
-            onActivate={() => activateMetadataField(fieldMetadataItem)}
+            onActivate={() =>
+              activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id)
+            }
             onDelete={() => deleteMetadataField(fieldMetadataItem)}
           />
         ) : (

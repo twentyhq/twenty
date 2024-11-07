@@ -14,6 +14,11 @@ import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/n
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import styled from '@emotion/styled';
+
+const StyledMainSection = styled(NavigationDrawerSection)`
+  min-height: fit-content;
+`;
 
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
@@ -34,7 +39,7 @@ export const MainNavigationDrawerItems = () => {
   return (
     <>
       {!isMobile && (
-        <NavigationDrawerSection>
+        <StyledMainSection>
           <NavigationDrawerItem
             label="Search"
             Icon={IconSearch}
@@ -51,7 +56,7 @@ export const MainNavigationDrawerItems = () => {
             }}
             Icon={IconSettings}
           />
-        </NavigationDrawerSection>
+        </StyledMainSection>
       )}
 
       {isWorkspaceFavoriteEnabled && <NavigationDrawerOpenedSection />}

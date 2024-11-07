@@ -179,8 +179,8 @@ export const ObjectFilterDropdownOptionSelect = () => {
             />
           ))}
         </DropdownMenuItemsContainer>
-        {showNoResult && <MenuItem text="No result" />}
       </ScrollWrapper>
+      {showNoResult && <MenuItem text="No result" />}
     </SelectableList>
   );
 };

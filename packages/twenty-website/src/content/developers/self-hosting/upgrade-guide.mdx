@@ -64,7 +64,7 @@ yarn command:prod upgrade-0.24
 The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
 The `yarn command:prod upgrade-0.24` takes care of the data migration of all workspaces.
 
-# v0.24.0 to v0.30.0
+## v0.24.0 to v0.30.0
 
 Upgrade your Twenty instance to use v0.30.0 image
 
@@ -86,7 +86,7 @@ yarn command:prod upgrade-0.30
 The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
 The `yarn command:prod upgrade-0.30` takes care of the data migration of all workspaces.
 
-# v0.30.0 to v0.31.0
+## v0.30.0 to v0.31.0
 
 Upgrade your Twenty instance to use v0.31.0 image
 
@@ -99,7 +99,18 @@ yarn command:prod upgrade-0.31
 The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
 The `yarn command:prod upgrade-0.31` takes care of the data migration of all workspaces.
 
-# v0.31.0 to v0.32.0
+## v0.31.0 to v0.32.0
+
+Upgrade your Twenty instance to use v0.32.0 image
+
+**Schema and data migration**: 
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.32
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.32` takes care of the data migration of all workspaces.
 
 ### Environment Variables
 
@@ -110,11 +121,11 @@ We have updated the way we handle the Redis connection.
 
 Update your `.env` file to use the new `REDIS_URL` variable instead of the individual Redis connection parameters.
 
-<ArticleEditContent></ArticleEditContent>
-
 We have also simplifed the way we handle the JWT tokens.
 
 - Removed: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
 - Added: `APP_SECRET`
 
 Update your `.env` file to use the new `APP_SECRET` variable instead of the individual tokens secrets (you can use the same secret as before or generate a new random string)
+
+<ArticleEditContent></ArticleEditContent>
