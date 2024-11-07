@@ -19,17 +19,19 @@
           "NODE_ENV=test nx jest --config ./jest-integration.config.ts"
         ]
       },
-      "parallel": false
-    },
-    "test:integration:reset": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "packages/twenty-server",
-        "commands": [
-          "NODE_ENV=test nx database:reset > reset-logs.log && NODE_ENV=test nx jest --config ./jest-integration.config.ts"
-        ]
-      },
-      "parallel": false
+      "parallel": false,
+      "configurations": {
+        "with-db-reset": {
+          "executor": "nx:run-commands",
+          "options": {
+            "cwd": "packages/twenty-server",
+            "commands": [
+              "NODE_ENV=test nx database:reset > reset-logs.log && NODE_ENV=test nx jest --config ./jest-integration.config.ts"
+            ]
+          },
+          "parallel": false
+        }
+      }
     },
     "build:packageJson": {
       "executor": "@nx/js:tsc",
