@@ -12,7 +12,7 @@ const StyledLeftContentWithCheckboxContainer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(1)};
   width: 100%;
 `;
 
