@@ -1,5 +1,5 @@
 import { WebhookAnalyticsTooltip } from '@/analytics/components/WebhookAnalyticsTooltip';
-import { ANALYTICS_ENDPOINT_TYPE_MAP } from '@/analytics/constants/AnalyticsEndpointTypeMap';
+import { ANALYTICS_GRAPH_DESCRIPTION_MAP } from '@/analytics/constants/AnalyticsGraphDescriptionMap';
 import { ANALYTICS_GRAPH_TITLE_MAP } from '@/analytics/constants/AnalyticsGraphTitleMap';
 import { useGraphData } from '@/analytics/hooks/useGraphData';
 import { analyticsGraphDataComponentState } from '@/analytics/states/analyticsGraphDataComponentState';
@@ -50,7 +50,6 @@ export const AnalyticsActivityGraph = ({
   const transformDataFunction = computeAnalyticsGraphDataFunction(endpointName);
 
   const dropdownId = useId();
-  // perhaps here i need to separate the Section container and the graph itself? TODO: Add elements of distintion btwen graphs of the same record type
   return (
     <>
       {analyticsGraphData.length ? (
@@ -58,7 +57,7 @@ export const AnalyticsActivityGraph = ({
           <StyledTitleContainer>
             <H2Title
               title={`${ANALYTICS_GRAPH_TITLE_MAP[endpointName]}`}
-              description={`See your ${ANALYTICS_ENDPOINT_TYPE_MAP[endpointName]} activity over time`}
+              description={`${ANALYTICS_GRAPH_DESCRIPTION_MAP[endpointName]}`}
             />
             <Select
               dropdownId={dropdownId}
@@ -152,7 +151,7 @@ export const AnalyticsActivityGraph = ({
                 type: 'linear',
               }}
               axisBottom={{
-                format: '%b %d, %I:%M %p', //TDO: add the user prefered time format for the graph
+                format: '%b %d, %I:%M %p', //TODO: add the user prefered time format for the graph
                 tickValues: 2,
                 tickPadding: 5,
                 tickSize: 6,

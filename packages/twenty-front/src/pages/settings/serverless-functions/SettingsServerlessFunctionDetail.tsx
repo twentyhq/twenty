@@ -24,8 +24,8 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  IconBox,
   IconCode,
+  IconGauge,
   IconSettings,
   IconTestPipe,
   Section,
@@ -187,9 +187,7 @@ export const SettingsServerlessFunctionDetail = () => {
     { id: 'test', title: 'Test', Icon: IconTestPipe },
     { id: 'settings', title: 'Settings', Icon: IconSettings },
     ...(isAnalyticsEnabled && isAnalyticsV2Enabled
-      ? [
-          { id: 'monitoring', title: 'Monitoring', Icon: IconBox }, //IconGauge from figma is not in twenty ui:(
-        ]
+      ? [{ id: 'monitoring', title: 'Monitoring', Icon: IconGauge }]
       : []),
   ];
 
