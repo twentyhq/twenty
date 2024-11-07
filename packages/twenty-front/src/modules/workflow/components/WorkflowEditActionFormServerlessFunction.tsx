@@ -9,7 +9,6 @@ import { useTheme } from '@emotion/react';
 import { ReactNode, useState } from 'react';
 import { IconCode, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { capitalize } from '~/utils/string/capitalize';
 import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
 import { InputSchema } from '@/workflow/types/InputSchema';
@@ -178,7 +177,7 @@ export const WorkflowEditActionFormServerlessFunction = (
           <VariableTagInput
             key={pathKey}
             inputId={`input-${inputKey}`}
-            label={capitalize(inputKey)}
+            label={inputKey}
             placeholder="Enter value (use {{variable}} for dynamic content)"
             value={getNestedValue(inputValue, currentPath)}
             onChange={(value) => handleInputChange(value, currentPath)}
