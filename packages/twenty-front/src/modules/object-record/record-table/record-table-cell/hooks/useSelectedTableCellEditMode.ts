@@ -11,8 +11,8 @@ export const useSelectedTableCellEditMode = ({
     useMoveEditModeToTableCellPosition(scopeId);
 
   const setSelectedTableCellEditMode = useCallback(
-    (row: number, column: number) => {
-      moveEditModeToTableCellPosition({ column, row });
+    (recordId: string, column: number) => {
+      moveEditModeToTableCellPosition({ column, recordId });
     },
     [moveEditModeToTableCellPosition],
   );

@@ -5,6 +5,7 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 
 import { numberOfTableRowsComponentState } from '@/object-record/record-table/states/numberOfTableRowsComponentState';
 import { numberOfTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/numberOfTableColumnsComponentSelector';
+import { tableAllRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/tableAllRowIdsComponentSelector';
 import { softFocusPositionComponentState } from '@/object-record/record-table/states/softFocusPositionComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetSoftFocusPosition } from './internal/useSetSoftFocusPosition';
@@ -17,26 +18,41 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
     recordTableId,
   );
 
+  const tableAllRowIdsState = useRecoilComponentCallbackStateV2(
+    tableAllRowIdsComponentSelector,
+    recordTableId,
+  );
+
   const moveUp = useRecoilCallback(
     ({ snapshot }) =>
       () => {
+        const rowIds = getSnapshotValue(snapshot, tableAllRowIdsState);
         const softFocusPosition = getSnapshotValue(
           snapshot,
           softFocusPositionState,
         );
 
-        let newRowNumber = softFocusPosition.row - 1;
+        const currentRowIndex = rowIds.indexOf(softFocusPosition.recordId);
 
-        if (newRowNumber < 0) {
-          newRowNumber = 0;
+        let newRowIndex = currentRowIndex - 1;
+
+        if (newRowIndex < 0) {
+          newRowIndex = 0;
         }
+
+        console.log('moveUp: ', {
+          rowIds,
+          softFocusPosition,
+          currentRowIndex,
+          newRowIndex,
+        });
 
         setSoftFocusPosition({
           ...softFocusPosition,
-          row: newRowNumber,
+          recordId: rowIds[newRowIndex],
         });
       },
-    [softFocusPositionState, setSoftFocusPosition],
+    [tableAllRowIdsState, softFocusPositionState, setSoftFocusPosition],
   );
 
   const numberOfTableRowsState = useRecoilComponentCallbackStateV2(
@@ -47,6 +63,7 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
   const moveDown = useRecoilCallback(
     ({ snapshot }) =>
       () => {
+        const rowIds = getSnapshotValue(snapshot, tableAllRowIdsState);
         const softFocusPosition = getSnapshotValue(
           snapshot,
           softFocusPositionState,
@@ -57,18 +74,25 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
           numberOfTableRowsState,
         );
 
-        let newRowNumber = softFocusPosition.row + 1;
+        const currentRowIndex = rowIds.indexOf(softFocusPosition.recordId);
 
-        if (newRowNumber >= numberOfTableRows) {
-          newRowNumber = numberOfTableRows - 1;
+        let newRowIndex = currentRowIndex + 1;
+
+        if (newRowIndex >= numberOfTableRows) {
+          newRowIndex = numberOfTableRows - 1;
         }
 
         setSoftFocusPosition({
           ...softFocusPosition,
-          row: newRowNumber,
+          recordId: rowIds[newRowIndex],
         });
       },
-    [numberOfTableRowsState, setSoftFocusPosition, softFocusPositionState],
+    [
+      tableAllRowIdsState,
+      numberOfTableRowsState,
+      setSoftFocusPosition,
+      softFocusPositionState,
+    ],
   );
 
   const numberOfTableColumnsSelector = useRecoilComponentCallbackStateV2(
@@ -79,6 +103,7 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
   const moveRight = useRecoilCallback(
     ({ snapshot }) =>
       () => {
+        const rowIds = getSnapshotValue(snapshot, tableAllRowIdsState);
         const softFocusPosition = getSnapshotValue(
           snapshot,
           softFocusPositionState,
@@ -94,19 +119,18 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
           numberOfTableRowsState,
         );
 
-        const currentColumnNumber = softFocusPosition.column;
-        const currentRowNumber = softFocusPosition.row;
+        const currentColumnIndex = softFocusPosition.column;
+        const currentRowIndex = rowIds.indexOf(softFocusPosition.recordId);
 
         const isLastRowAndLastColumn =
-          currentColumnNumber === numberOfTableColumns - 1 &&
-          currentRowNumber === numberOfTableRows - 1;
+          currentColumnIndex === numberOfTableColumns - 1 &&
+          currentRowIndex === numberOfTableRows - 1;
 
         const isLastColumnButNotLastRow =
-          currentColumnNumber === numberOfTableColumns - 1 &&
-          currentRowNumber !== numberOfTableRows - 1;
+          currentColumnIndex === numberOfTableColumns - 1 &&
+          currentRowIndex !== numberOfTableRows - 1;
 
-        const isNotLastColumn =
-          currentColumnNumber !== numberOfTableColumns - 1;
+        const isNotLastColumn = currentColumnIndex !== numberOfTableColumns - 1;
 
         if (isLastRowAndLastColumn) {
           return;
@@ -114,17 +138,18 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
 
         if (isNotLastColumn) {
           setSoftFocusPosition({
-            row: currentRowNumber,
-            column: currentColumnNumber + 1,
+            recordId: rowIds[currentRowIndex],
+            column: currentColumnIndex + 1,
           });
         } else if (isLastColumnButNotLastRow) {
           setSoftFocusPosition({
-            row: currentRowNumber + 1,
+            recordId: rowIds[currentRowIndex + 1],
             column: 0,
           });
         }
       },
     [
+      tableAllRowIdsState,
       softFocusPositionState,
       numberOfTableColumnsSelector,
       numberOfTableRowsState,
@@ -135,6 +160,7 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
   const moveLeft = useRecoilCallback(
     ({ snapshot }) =>
       () => {
+        const rowIds = getSnapshotValue(snapshot, tableAllRowIdsState);
         const softFocusPosition = getSnapshotValue(
           snapshot,
           softFocusPositionState,
@@ -145,16 +171,16 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
           numberOfTableColumnsSelector,
         );
 
-        const currentColumnNumber = softFocusPosition.column;
-        const currentRowNumber = softFocusPosition.row;
+        const currentColumnIndex = softFocusPosition.column;
+        const currentRowIndex = rowIds.indexOf(softFocusPosition.recordId);
 
         const isFirstRowAndFirstColumn =
-          currentColumnNumber === 0 && currentRowNumber === 0;
+          currentColumnIndex === 0 && currentRowIndex === 0;
 
         const isFirstColumnButNotFirstRow =
-          currentColumnNumber === 0 && currentRowNumber > 0;
+          currentColumnIndex === 0 && currentRowIndex > 0;
 
-        const isNotFirstColumn = currentColumnNumber > 0;
+        const isNotFirstColumn = currentColumnIndex > 0;
 
         if (isFirstRowAndFirstColumn) {
           return;
@@ -162,17 +188,18 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
 
         if (isNotFirstColumn) {
           setSoftFocusPosition({
-            row: currentRowNumber,
-            column: currentColumnNumber - 1,
+            recordId: rowIds[currentRowIndex],
+            column: currentColumnIndex - 1,
           });
         } else if (isFirstColumnButNotFirstRow) {
           setSoftFocusPosition({
-            row: currentRowNumber - 1,
+            recordId: rowIds[currentRowIndex - 1],
             column: numberOfTableColumns - 1,
           });
         }
       },
     [
+      tableAllRowIdsState,
       numberOfTableColumnsSelector,
       softFocusPositionState,
       setSoftFocusPosition,

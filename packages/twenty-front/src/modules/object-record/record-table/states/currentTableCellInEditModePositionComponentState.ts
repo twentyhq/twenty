@@ -6,7 +6,7 @@ export const currentTableCellInEditModePositionComponentState =
   createComponentStateV2<TableCellPosition>({
     key: 'currentTableCellInEditModePositionComponentState',
     defaultValue: {
-      row: 0,
+      recordId: '',
       column: 1,
     },
     componentInstanceContext: RecordTableComponentInstanceContext,

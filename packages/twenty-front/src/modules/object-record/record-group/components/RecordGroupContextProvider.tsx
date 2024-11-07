@@ -2,15 +2,17 @@ import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGro
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 
 type RecordGroupContextProviderProps = {
-  objectNameSingular: string;
+  objectMetadataNameSingular: string;
   children: React.ReactNode;
 };
 
 export const RecordGroupContextProvider = ({
-  objectNameSingular,
+  objectMetadataNameSingular,
   children,
 }: RecordGroupContextProviderProps) => {
-  const { visibleRecordGroups } = useRecordGroups({ objectNameSingular });
+  const { visibleRecordGroups } = useRecordGroups({
+    objectMetadataNameSingular,
+  });
 
   if (visibleRecordGroups.length === 0) {
     return (

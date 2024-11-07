@@ -23,7 +23,7 @@ export const useCreateNewTableRecord = (recordTableIdFromProps?: string) => {
 
   const createNewTableRecord = () => {
     setPendingRecordId(v4());
-    setSelectedTableCellEditMode(-1, 0);
+    setSelectedTableCellEditMode('', 0);
     setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
   };
 

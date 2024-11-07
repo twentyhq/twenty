@@ -1,18 +1,22 @@
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 
 import { RecordGroupContextProvider } from '@/object-record/record-group/components/RecordGroupContextProvider';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
-import { RecordTableEmptyHandler } from '@/object-record/record-table/empty-state/components/RecordTableEmptyHandler';
+import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyEffect';
 import { RecordTableBodyUnselectEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyUnselectEffect';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
+import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
+import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
+import { tableAllRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/tableAllRowIdsComponentSelector';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRef } from 'react';
 
 const StyledTable = styled.table`
@@ -41,9 +45,30 @@ export const RecordTable = ({
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
   );
 
+  const isRecordTableInitialLoading = useRecoilComponentValueV2(
+    isRecordTableInitialLoadingComponentState,
+    recordTableId,
+  );
+
+  const tableRowIds = useRecoilComponentValueV2(
+    tableAllRowIdsComponentSelector,
+    recordTableId,
+  );
+
+  const pendingRecordId = useRecoilComponentValueV2(
+    recordTablePendingRecordIdComponentState,
+    recordTableId,
+  );
+
+  const recordTableIsEmpty =
+    !isRecordTableInitialLoading &&
+    tableRowIds.length === 0 &&
+    isNull(pendingRecordId);
+
   const { resetTableRowSelection, setRowSelected } = useRecordTable({
     recordTableId,
   });
+
   if (!isNonEmptyString(objectNameSingular)) {
     return <></>;
   }
@@ -58,34 +83,40 @@ export const RecordTable = ({
         recordTableId={recordTableId}
         viewBarId={viewBarId}
       >
-        <RecordGroupContextProvider objectNameSingular={objectNameSingular}>
+        <RecordGroupContextProvider
+          objectMetadataNameSingular={objectNameSingular}
+        >
           <RecordTableBodyEffect />
-          <RecordTableBodyUnselectEffect
-            tableBodyRef={tableBodyRef}
-            recordTableId={recordTableId}
-          />
-          <RecordTableEmptyHandler recordTableId={recordTableId}>
-            <>
-              <StyledTable className="entity-table-cell" ref={tableBodyRef}>
-                <RecordTableHeader
-                  objectMetadataNameSingular={objectNameSingular}
-                />
-                <RecordTableBody />
-              </StyledTable>
-              <DragSelect
-                dragSelectable={tableBodyRef}
-                onDragSelectionStart={() => {
-                  resetTableRowSelection();
-                  toggleClickOutsideListener(false);
-                }}
-                onDragSelectionChange={setRowSelected}
-                onDragSelectionEnd={() => {
-                  toggleClickOutsideListener(true);
-                }}
-              />
-            </>
-          </RecordTableEmptyHandler>
         </RecordGroupContextProvider>
+        <RecordTableBodyUnselectEffect
+          tableBodyRef={tableBodyRef}
+          recordTableId={recordTableId}
+        />
+        {recordTableIsEmpty ? (
+          <RecordTableEmptyState />
+        ) : (
+          <>
+            <StyledTable className="entity-table-cell" ref={tableBodyRef}>
+              <RecordTableHeader
+                objectMetadataNameSingular={objectNameSingular}
+              />
+              <RecordTableBody
+                objectMetadataNameSingular={objectNameSingular}
+              />
+            </StyledTable>
+            <DragSelect
+              dragSelectable={tableBodyRef}
+              onDragSelectionStart={() => {
+                resetTableRowSelection();
+                toggleClickOutsideListener(false);
+              }}
+              onDragSelectionChange={setRowSelected}
+              onDragSelectionEnd={() => {
+                toggleClickOutsideListener(true);
+              }}
+            />
+          </>
+        )}
       </RecordTableContextProvider>
     </RecordTableComponentInstance>
   );

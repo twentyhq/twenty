@@ -1,20 +1,22 @@
-import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
+import { RecordGroupContextProvider } from '@/object-record/record-group/components/RecordGroupContextProvider';
 import { RecordTableRows } from '@/object-record/record-table/components/RecordTableRows';
 import { RecordTableBodyDragDropContext } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDragDropContext';
 import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTablePendingRow } from '@/object-record/record-table/record-table-row/components/RecordTablePendingRow';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { tableAllRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/tableAllRowIdsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-export const RecordTableBody = () => {
-  const recordGroupId = useCurrentRecordGroupId();
+type RecordTableBodyProps = {
+  objectMetadataNameSingular: string;
+};
 
-  const tableRowIds = useRecoilComponentFamilyValueV2(
-    tableRowIdsByGroupComponentFamilyState,
-    recordGroupId,
+export const RecordTableBody = ({
+  objectMetadataNameSingular,
+}: RecordTableBodyProps) => {
+  const tableRowIds = useRecoilComponentValueV2(
+    tableAllRowIdsComponentSelector,
   );
 
   const isRecordTableInitialLoading = useRecoilComponentValueV2(
@@ -29,7 +31,11 @@ export const RecordTableBody = () => {
     <RecordTableBodyDragDropContext>
       <RecordTableBodyDroppable>
         <RecordTablePendingRow />
-        <RecordTableRows />
+        <RecordGroupContextProvider
+          objectMetadataNameSingular={objectMetadataNameSingular}
+        >
+          <RecordTableRows />
+        </RecordGroupContextProvider>
       </RecordTableBodyDroppable>
     </RecordTableBodyDragDropContext>
   );

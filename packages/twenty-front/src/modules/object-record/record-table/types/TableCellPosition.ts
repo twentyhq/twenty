@@ -1,4 +1,4 @@
 export type TableCellPosition = {
-  row: number;
+  recordId: string;
   column: number;
 };

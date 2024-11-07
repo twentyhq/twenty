@@ -5,18 +5,18 @@ import { recordGroupDefinitionsComponentState } from '@/object-record/record-gro
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 type UseRecordGroupsParams = {
-  objectNameSingular: string;
+  objectMetadataNameSingular: string;
 };
 
 export const useRecordGroups = ({
-  objectNameSingular,
+  objectMetadataNameSingular,
 }: UseRecordGroupsParams) => {
   const recordGroupDefinitions = useRecoilComponentValueV2(
     recordGroupDefinitionsComponentState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
+    objectNameSingular: objectMetadataNameSingular,
   });
 
   const viewGroupFieldMetadataItem = useMemo(() => {

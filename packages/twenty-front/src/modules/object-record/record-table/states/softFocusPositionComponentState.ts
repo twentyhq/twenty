@@ -6,7 +6,7 @@ export const softFocusPositionComponentState =
   createComponentStateV2<TableCellPosition>({
     key: 'softFocusPositionComponentState',
     defaultValue: {
-      row: 0,
+      recordId: '',
       column: 1,
     },
     componentInstanceContext: RecordTableComponentInstanceContext,

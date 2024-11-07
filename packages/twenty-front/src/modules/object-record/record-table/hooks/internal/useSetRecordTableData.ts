@@ -4,8 +4,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { numberOfTableRowsComponentState } from '@/object-record/record-table/states/numberOfTableRowsComponentState';
-import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
-import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
+import { tableRowIdsByGroupComponentState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -20,12 +19,8 @@ export const useSetRecordTableData = ({
   recordTableId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const tableRowIdsByGroupFamilyState = useRecoilComponentCallbackStateV2(
-    tableRowIdsByGroupComponentFamilyState,
-    recordTableId,
-  );
-  const tableAllRowIdsState = useRecoilComponentCallbackStateV2(
-    tableAllRowIdsComponentState,
+  const tableRowIdsByGroupState = useRecoilComponentCallbackStateV2(
+    tableRowIdsByGroupComponentState,
     recordTableId,
   );
   const numberOfTableRowsState = useRecoilComponentCallbackStateV2(
@@ -59,10 +54,11 @@ export const useSetRecordTableData = ({
           }
         }
 
-        const currentRowIds = getSnapshotValue(
+        const tableRowIdsByGroup = getSnapshotValue(
           snapshot,
-          tableRowIdsByGroupFamilyState(recordGroupId),
+          tableRowIdsByGroupState,
         );
+        const currentRowIds = tableRowIdsByGroup.get(recordGroupId) ?? [];
 
         const hasUserSelectedAllRows = getSnapshotValue(
           snapshot,
@@ -78,20 +74,16 @@ export const useSetRecordTableData = ({
             }
           }
 
-          set(tableRowIdsByGroupFamilyState(recordGroupId), recordIds);
-          set(tableAllRowIdsState, (currentRowIds) => {
-            const allRowIds = new Set([...currentRowIds, ...recordIds]);
-
-            return Array.from(allRowIds);
-          });
+          set(tableRowIdsByGroupState, (prev) =>
+            prev.set(recordGroupId, recordIds),
+          );
           set(numberOfTableRowsState, totalCount ?? 0);
           onEntityCountChange(totalCount);
         }
       },
     [
       numberOfTableRowsState,
-      tableRowIdsByGroupFamilyState,
-      tableAllRowIdsState,
+      tableRowIdsByGroupState,
       onEntityCountChange,
       isRowSelectedFamilyState,
       hasUserSelectedAllRowsState,
