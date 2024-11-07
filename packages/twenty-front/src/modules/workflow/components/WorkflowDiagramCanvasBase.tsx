@@ -24,10 +24,9 @@ import {
   NodeProps,
   ReactFlow,
   useReactFlow,
-  Viewport,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { GRAY_SCALE, isDefined } from 'twenty-ui';
 
@@ -109,19 +108,7 @@ export const WorkflowDiagramCanvasBase = ({
           : 'normal';
   }, [isMobile, isRightDrawerMinimized, isRightDrawerOpen]);
 
-  const rightDrawerWidth = theme.rightDrawerWidth;
-
-  const containerWidth = useMemo(() => {
-    if (
-      rightDrawerState === 'closed' ||
-      rightDrawerState === 'fullScreen' ||
-      rightDrawerState === 'minimized'
-    ) {
-      return 'auto';
-    }
-
-    return `calc(100% - ${rightDrawerWidth})`;
-  }, [rightDrawerState, rightDrawerWidth]);
+  const rightDrawerWidth = 500;
 
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
 
@@ -161,56 +148,50 @@ export const WorkflowDiagramCanvasBase = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const [viewport, setViewport] = useState<Viewport>({
-    x: 0,
-    y: 0,
-    zoom: defaultFitViewOptions.maxZoom,
-  });
-
-  useLayoutEffect(() => {
-    if (!isDefined(containerRef.current)) {
+  useEffect(() => {
+    if (!isDefined(containerRef.current) || !reactflow.viewportInitialized) {
       return;
     }
 
-    const observer = new ResizeObserver(() => {
-      setViewport((viewport) => {
-        if (!isDefined(containerRef.current)) {
-          return viewport;
-        }
+    const currentViewport = reactflow.getViewport();
 
-        const rect = getNodesBounds(reactflow.getNodes());
+    const flowBounds = getNodesBounds(reactflow.getNodes());
 
-        return {
-          ...viewport,
-          x: containerRef.current.offsetWidth / 2 - rect.width / 2,
-        };
-      });
-    });
+    let visibleRightDrawerWidth = 0;
+    if (rightDrawerState === 'normal') {
+      visibleRightDrawerWidth = rightDrawerWidth;
+    }
 
-    observer.observe(containerRef.current);
+    const viewportX =
+      (containerRef.current.offsetWidth + visibleRightDrawerWidth) / 2 -
+      flowBounds.width / 2;
 
-    return () => {
-      observer.disconnect();
-    };
-  }, [reactflow]);
+    let animationDuration = 0;
+    if (currentViewport.x !== viewportX) {
+      animationDuration = 300;
+    }
+
+    reactflow.setViewport(
+      {
+        ...currentViewport,
+        x: viewportX - visibleRightDrawerWidth,
+      },
+      { duration: animationDuration },
+    );
+  }, [reactflow, rightDrawerState, rightDrawerWidth]);
 
   return (
-    <StyledResetReactflowStyles
-      ref={containerRef}
-      style={{ width: containerWidth }}
-    >
+    <StyledResetReactflowStyles ref={containerRef}>
       <ReactFlow
-        viewport={viewport}
-        onViewportChange={setViewport}
         onInit={() => {
           if (!isDefined(containerRef.current)) {
             throw new Error('Expect the container ref to be defined');
           }
 
-          const rect = getNodesBounds(reactflow.getNodes());
+          const flowBounds = getNodesBounds(reactflow.getNodes());
 
-          setViewport({
-            x: containerRef.current.offsetWidth / 2 - rect.width / 2,
+          reactflow.setViewport({
+            x: containerRef.current.offsetWidth / 2 - flowBounds.width / 2,
             y: 150,
             zoom: defaultFitViewOptions.maxZoom,
           });
