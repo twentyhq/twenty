@@ -17,6 +17,7 @@ export type TextAreaProps = {
   placeholder?: string;
   value?: string;
   className?: string;
+  onBlur?: () => void;
 };
 
 const StyledContainer = styled.div`
@@ -70,6 +71,7 @@ export const TextArea = ({
   value = '',
   className,
   onChange,
+  onBlur,
 }: TextAreaProps) => {
   const computedMinRows = Math.min(minRows, MAX_ROWS);
 
@@ -86,6 +88,7 @@ export const TextArea = ({
 
   const handleBlur: FocusEventHandler<HTMLTextAreaElement> = () => {
     goBackToPreviousHotkeyScope();
+    onBlur?.();
   };
 
   return (
