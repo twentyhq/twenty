@@ -12,9 +12,10 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useFavorites } from '../hooks/useFavorites';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useFavorites } from '../hooks/useFavorites';
 
 const StyledContainer = styled(NavigationDrawerSection)`
   width: 100%;
@@ -115,9 +116,11 @@ export const CurrentWorkspaceMemberFavorites = () => {
       </NavigationDrawerAnimatedCollapseWrapper>
 
       {isNavigationSectionOpen && (
-        <NavigationDrawerItemsCollapsedContainer isGroup={isGroup}>
-          {draggableListContent}
-        </NavigationDrawerItemsCollapsedContainer>
+        <ScrollWrapper contextProviderName="navigationDrawer">
+          <NavigationDrawerItemsCollapsedContainer isGroup={isGroup}>
+            {draggableListContent}
+          </NavigationDrawerItemsCollapsedContainer>
+        </ScrollWrapper>
       )}
     </StyledContainer>
   );

@@ -15,7 +15,7 @@ export const objectRecordChangedValues = (
     objectMetadata.fields.map((field) => [field.name, field]),
   );
 
-  const changedValues = Object.keys(newRecord).reduce(
+  return Object.keys(newRecord).reduce(
     (acc, key) => {
       const field = fieldsByKey.get(key);
       const oldRecordValue = oldRecord[key];
@@ -36,6 +36,4 @@ export const objectRecordChangedValues = (
     },
     {} as Record<string, { before: any; after: any }>,
   );
-
-  return changedValues;
 };

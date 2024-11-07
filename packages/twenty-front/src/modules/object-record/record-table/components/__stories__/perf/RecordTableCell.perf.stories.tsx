@@ -12,10 +12,10 @@ import {
   useSetRecordValue,
 } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
@@ -78,8 +78,8 @@ const meta: Meta = {
               recordTableId: 'recordTableId',
             }}
           >
-            <RecordTableScope
-              recordTableScopeId="asd"
+            <RecordTableComponentInstance
+              recordTableId="asd"
               onColumnsChange={() => {}}
             >
               <RecordTableRowContext.Provider
@@ -132,7 +132,7 @@ const meta: Meta = {
                   </FieldContext.Provider>
                 </RecordTableCellContext.Provider>
               </RecordTableRowContext.Provider>
-            </RecordTableScope>
+            </RecordTableComponentInstance>
           </RecordTableContext.Provider>
         </RecordFieldValueSelectorContextProvider>
       );

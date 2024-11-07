@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
 
-import { SetMainContextStoreComponentInstanceIdEffect } from '@/context-store/components/SetMainContextStoreComponentInstanceIdEffect';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
+import { MainContextStoreComponentInstanceIdSetterEffect } from '@/context-store/components/MainContextStoreComponentInstanceIdSetterEffect';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
@@ -81,13 +83,19 @@ export const RecordIndexPage = () => {
             <StyledIndexContainer>
               <ContextStoreComponentInstanceContext.Provider
                 value={{
-                  instanceId: 'record-index',
+                  instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
                 }}
               >
-                <RecordIndexContainerContextStoreObjectMetadataEffect />
-                <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
-                <SetMainContextStoreComponentInstanceIdEffect />
-                <RecordIndexContainer />
+                <ActionMenuComponentInstanceContext.Provider
+                  value={{
+                    instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+                  }}
+                >
+                  <RecordIndexContainerContextStoreObjectMetadataEffect />
+                  <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
+                  <MainContextStoreComponentInstanceIdSetterEffect />
+                  <RecordIndexContainer />
+                </ActionMenuComponentInstanceContext.Provider>
               </ContextStoreComponentInstanceContext.Provider>
             </StyledIndexContainer>
           </PageBody>

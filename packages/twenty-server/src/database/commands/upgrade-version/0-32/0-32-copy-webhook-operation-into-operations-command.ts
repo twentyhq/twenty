@@ -1,14 +1,13 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { ObjectLiteral, Repository } from 'typeorm';
 import chalk from 'chalk';
+import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
+import { BaseCommandOptions } from 'src/database/commands/base.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { BaseCommandOptions } from 'src/database/commands/base.command';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 @Command({
   name: 'upgrade-0.32:copy-webhook-operation-into-operations',
@@ -44,17 +43,26 @@ export class CopyWebhookOperationIntoOperationsCommand extends ActiveWorkspacesC
 
       for (const webhook of webhooks) {
         if ('operation' in webhook) {
-          let newOperation = webhook.operation;
+          let newOpe = webhook.operation;
 
-          const [firstWebhookPart, lastWebhookPart] = newOperation.split('.');
+          newOpe = newOpe.replace(/\bcreate\b(?=\.|$)/g, 'created');
+          newOpe = newOpe.replace(/\bupdate\b(?=\.|$)/g, 'updated');
+          newOpe = newOpe.replace(/\bdelete\b(?=\.|$)/g, 'deleted');
+          newOpe = newOpe.replace(/\bdestroy\b(?=\.|$)/g, 'destroyed');
 
-          if (['created', 'updated', 'deleted'].includes(firstWebhookPart)) {
-            newOperation = `${lastWebhookPart}.${firstWebhookPart}`;
+          const [firstWebhookPart, lastWebhookPart] = newOpe.split('.');
+
+          if (
+            ['created', 'updated', 'deleted', 'destroyed'].includes(
+              firstWebhookPart,
+            )
+          ) {
+            newOpe = `${lastWebhookPart}.${firstWebhookPart}`;
           }
 
           await webhookRepository.update(webhook.id, {
-            operation: newOperation,
-            operations: [newOperation],
+            operation: newOpe,
+            operations: [newOpe],
           });
 
           this.logger.log(

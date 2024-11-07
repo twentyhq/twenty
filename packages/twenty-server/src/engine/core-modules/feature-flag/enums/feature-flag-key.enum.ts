@@ -14,4 +14,5 @@ export enum FeatureFlagKey {
   IsGmailSendEmailScopeEnabled = 'IS_GMAIL_SEND_EMAIL_SCOPE_ENABLED',
   IsAnalyticsV2Enabled = 'IS_ANALYTICS_V2_ENABLED',
   IsUniqueIndexesEnabled = 'IS_UNIQUE_INDEXES_ENABLED',
+  IsAdvancedFiltersEnabled = 'IS_ADVANCED_FILTERS_ENABLED',
 }
