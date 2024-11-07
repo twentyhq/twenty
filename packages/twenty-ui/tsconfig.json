@@ -17,16 +17,16 @@
   "include": [],
   "references": [
     {
-      "path": "./tsconfig.build.json",
+      "path": "./tsconfig.build.json"
     },
     {
-      "path": "./tsconfig.dev.json",
+      "path": "./tsconfig.dev.json"
     },
     {
-      "path": "./tsconfig.spec.json", 
+      "path": "./tsconfig.spec.json"
     },
     {
-      "path": "./tsconfig.storybook.json",
+      "path": "./tsconfig.storybook.json"
     }
   ]
 }
