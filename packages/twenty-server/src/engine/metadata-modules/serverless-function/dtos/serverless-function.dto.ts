@@ -18,11 +18,11 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
-import graphqlTypeJson from 'graphql-type-json';
+import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ServerlessFunctionSyncStatus } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
-import { InputSchema } from 'src/modules/code-introspection/code-introspection.service';
+import { InputSchema } from 'src/modules/code-introspection/types/input-schema.type';
 
 registerEnumType(ServerlessFunctionSyncStatus, {
   name: 'ServerlessFunctionSyncStatus',
@@ -67,7 +67,7 @@ export class ServerlessFunctionDTO {
   publishedVersions: string[];
 
   @IsArray()
-  @Field(() => graphqlTypeJson, { nullable: true })
+  @Field(() => GraphQLJSON, { nullable: true })
   latestVersionInputSchema: InputSchema;
 
   @IsEnum(ServerlessFunctionSyncStatus)

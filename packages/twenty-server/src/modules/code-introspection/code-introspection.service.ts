@@ -1,38 +1,23 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  ScriptTarget,
+  ArrayTypeNode,
   createSourceFile,
+  LiteralTypeNode,
+  PropertySignature,
+  ScriptTarget,
+  StringLiteral,
   SyntaxKind,
   TypeNode,
-  ArrayTypeNode,
   UnionTypeNode,
-  LiteralTypeNode,
-  StringLiteral,
-  PropertySignature,
 } from 'typescript';
 
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { isDefined } from 'src/utils/is-defined';
-
-type InputSchemaPropertyType =
-  | 'string'
-  | 'number'
-  | 'boolean'
-  | 'object'
-  | 'array'
-  | 'unknown';
-
-type InputSchemaProperty = {
-  type: InputSchemaPropertyType;
-  enum?: string[] | undefined;
-  items?: InputSchemaProperty;
-  properties?: InputSchema;
-};
-
-export type InputSchema = {
-  [name: string]: InputSchemaProperty;
-};
+import {
+  InputSchema,
+  InputSchemaProperty,
+} from 'src/modules/code-introspection/types/input-schema.type';
 
 @Injectable()
 export class CodeIntrospectionService {
