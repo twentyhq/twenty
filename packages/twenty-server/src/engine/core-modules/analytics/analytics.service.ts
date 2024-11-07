@@ -118,6 +118,9 @@ export class AnalyticsService {
       'getWebhookAnalytics',
       'getPageviewsAnalytics',
       'getUsersAnalytics',
+      'getServerlessFunctionDuration',
+      'getServerlessFunctionSuccessRate',
+      'getServerlessFunctionErrorCount',
     ];
 
     return analyticsProperties.reduce(

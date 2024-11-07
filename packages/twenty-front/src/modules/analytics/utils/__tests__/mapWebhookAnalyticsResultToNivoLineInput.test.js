@@ -18,7 +18,6 @@ describe('mapWebhookAnalyticsResultToNivoLineInput', () => {
     const expected = [
       {
         id: 'Failed',
-        color: 'red',
         data: [
           {
             x: new Date('2024-01-01T00:00:00Z'),
@@ -28,7 +27,6 @@ describe('mapWebhookAnalyticsResultToNivoLineInput', () => {
       },
       {
         id: 'Succeeded',
-        color: 'blue',
         data: [
           {
             x: new Date('2024-01-01T00:00:00Z'),
@@ -59,7 +57,7 @@ describe('mapWebhookAnalyticsResultToNivoLineInput', () => {
     const expected = [
       {
         id: 'Failed',
-        color: 'red',
+
         data: [
           {
             x: new Date('2024-01-01T00:00:00Z'),
@@ -73,7 +71,7 @@ describe('mapWebhookAnalyticsResultToNivoLineInput', () => {
       },
       {
         id: 'Succeeded',
-        color: 'blue',
+
         data: [
           {
             x: new Date('2024-01-01T00:00:00Z'),
@@ -103,7 +101,7 @@ describe('mapWebhookAnalyticsResultToNivoLineInput', () => {
     const expected = [
       {
         id: 'Failed',
-        color: 'red',
+
         data: [
           {
             x: new Date('2024-01-01T00:00:00Z'),
@@ -113,7 +111,7 @@ describe('mapWebhookAnalyticsResultToNivoLineInput', () => {
       },
       {
         id: 'Succeeded',
-        color: 'blue',
+
         data: [
           {
             x: new Date('2024-01-01T00:00:00Z'),

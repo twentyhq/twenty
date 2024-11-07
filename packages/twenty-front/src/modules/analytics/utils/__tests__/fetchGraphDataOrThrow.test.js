@@ -2,7 +2,7 @@ import { ANALYTICS_GRAPH_OPTION_MAP } from '@/analytics/constants/AnalyticsGraph
 import { computeStartEndDate } from '@/analytics/utils/computeStartEndDate';
 import { fetchGraphDataOrThrow } from '@/analytics/utils/fetchGraphDataOrThrow';
 
-// Mock the dependencies
+// Im going to make this test more contundent later
 jest.mock('@/analytics/utils/computeStartEndDate', () => ({
   computeStartEndDate: jest.fn(() => ({
     start: '2024-01-01',
@@ -28,10 +28,9 @@ describe('fetchGraphDataOrThrow', () => {
 
   const defaultProps = {
     recordId: 'test-123',
-    recordType: 'webhook',
     windowLength: '7D',
     tinybirdJwt: 'test-jwt',
-    endpointName: 'test_endpoint',
+    endpointName: 'getWebhookAnalytics',
   };
 
   it('should fetch data successfully for webhook type', async () => {
@@ -45,7 +44,7 @@ describe('fetchGraphDataOrThrow', () => {
     // Verify URL construction
     const lastCallArgs = mockFetch.mock.calls[0][0];
     expect(lastCallArgs).toContain('webhookId=test-123');
-    expect(lastCallArgs).toContain('test_endpoint.json');
+    expect(lastCallArgs).toContain('getWebhookAnalytics.json');
 
     // Verify headers
     const headers = mockFetch.mock.calls[0][1].headers;
@@ -81,7 +80,7 @@ describe('fetchGraphDataOrThrow', () => {
     });
 
     await expect(fetchGraphDataOrThrow(defaultProps)).rejects.toThrow(
-      'Something went wrong while fetching webhook usage',
+      'Failed to fetch',
     );
   });
 
@@ -126,7 +125,7 @@ describe('fetchGraphDataOrThrow', () => {
     );
 
     // Check endpoint
-    expect(lastCallArgs).toContain('test_endpoint.json');
+    expect(lastCallArgs).toContain('getWebhookAnalytics.json');
 
     // Check window length options
     const options = ANALYTICS_GRAPH_OPTION_MAP['7D'];

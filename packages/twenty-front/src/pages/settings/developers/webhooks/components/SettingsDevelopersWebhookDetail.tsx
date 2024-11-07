@@ -283,7 +283,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
         </Section>
         {isAnalyticsEnabled && isAnalyticsV2Enabled && (
           <AnalyticsGraphDataInstanceContext.Provider
-            value={{ instanceId: `webhook-${webhookId}` }}
+            value={{ instanceId: `webhook-${webhookId}-analytics` }}
           >
             <AnalyticsGraphEffect
               recordId={webhookId}

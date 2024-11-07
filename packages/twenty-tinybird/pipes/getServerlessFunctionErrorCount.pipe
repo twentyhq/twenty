@@ -1,21 +1,20 @@
 INCLUDE "../includes/timeSeries.incl"
-
-NODE timeSeriesServerlessFunctionDurationData
+-- I decided to separate the error count and the success rate because I think we should maintain the bijection
+-- between an endpoint and a graph in the front-end.
+NODE timeSeriesServerlessFunctionErrorCountData
 SQL >
     %
     SELECT
         {% if granularity == "hour" %} toStartOfHour(timestamp)
         {% else %} toDateTime64(toStartOfDay(timestamp), 3)
         {% end %} AS interval,
-        avg(CAST(durationInMs AS Float64)) as average,
-        min(durationInMs) as minimum,
-        max(durationInMs) as maximum
+        uniqIf(*, success = false) as error_count
     FROM serverlessFunctionEventMV
     WHERE
         true
         AND workspaceId
         ={{ String(workspaceId, '20202020-1c25-4d02-bf25-6aeccf7ea419', required=True) }}
-        AND functionId = {{ String(functionId, 'a9fd87c0-af86-4e17-be3a-a6d3d961678a', required=True) }}
+        AND functionId = {{ String(functionId, 'ad018fc5-eace-4f7e-942f-929560a16459', required=True) }}
         AND timestamp >= parseDateTime64BestEffort({{ String(start, '2024-11-01T00:00:00.000Z') }}, 3)
         AND timestamp < parseDateTime64BestEffort({{ String(end, '2024-11-02T00:00:00.000Z') }}, 3)
     GROUP BY interval
@@ -24,6 +23,6 @@ SQL >
 NODE endpoint
 SQL >
     %
-    SELECT formatDateTime(interval, '%FT%T.000%z') as start, minimum, maximum, average
+    SELECT formatDateTime(interval, '%FT%T.000%z') as start, error_count
     FROM selectIntervalByGranularity
-    LEFT JOIN timeSeriesServerlessFunctionDurationData USING interval
+    LEFT JOIN timeSeriesServerlessFunctionErrorCountData USING interval

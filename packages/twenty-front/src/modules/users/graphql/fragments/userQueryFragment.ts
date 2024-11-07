@@ -12,6 +12,9 @@ export const USER_QUERY_FRAGMENT = gql`
       getWebhookAnalytics
       getPageviewsAnalytics
       getUsersAnalytics
+      getServerlessFunctionDuration
+      getServerlessFunctionSuccessRate
+      getServerlessFunctionErrorCount
     }
     onboardingStatus
     workspaceMember {

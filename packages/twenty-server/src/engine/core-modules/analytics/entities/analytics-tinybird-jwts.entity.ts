@@ -10,4 +10,13 @@ export class AnalyticsTinybirdJwtMap {
 
   @Field(() => String)
   getUsersAnalytics: string;
+
+  @Field(() => String)
+  getServerlessFunctionDuration: string;
+
+  @Field(() => String)
+  getServerlessFunctionSuccessRate: string;
+
+  @Field(() => String)
+  getServerlessFunctionErrorCount: string;
 }

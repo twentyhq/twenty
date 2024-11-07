@@ -1,4 +1,6 @@
 import { WebhookAnalyticsTooltip } from '@/analytics/components/WebhookAnalyticsTooltip';
+import { ANALYTICS_ENDPOINT_TYPE_MAP } from '@/analytics/constants/AnalyticsEndpointTypeMap';
+import { ANALYTICS_GRAPH_TITLE_MAP } from '@/analytics/constants/AnalyticsGraphTitleMap';
 import { useGraphData } from '@/analytics/hooks/useGraphData';
 import { analyticsGraphDataComponentState } from '@/analytics/states/analyticsGraphDataComponentState';
 import { AnalyticsComponentProps as AnalyticsActivityGraphProps } from '@/analytics/types/AnalyticsComponentProps';
@@ -48,15 +50,15 @@ export const AnalyticsActivityGraph = ({
   const transformDataFunction = computeAnalyticsGraphDataFunction(endpointName);
 
   const dropdownId = useId();
-
+  // perhaps here i need to separate the Section container and the graph itself? TODO: Add elements of distintion btwen graphs of the same record type
   return (
     <>
       {analyticsGraphData.length ? (
         <Section>
           <StyledTitleContainer>
             <H2Title
-              title="Activity"
-              description={`See your REPLACE_ME activity over time`}
+              title={`${ANALYTICS_GRAPH_TITLE_MAP[endpointName]}`}
+              description={`See your ${ANALYTICS_ENDPOINT_TYPE_MAP[endpointName]} activity over time`}
             />
             <Select
               dropdownId={dropdownId}

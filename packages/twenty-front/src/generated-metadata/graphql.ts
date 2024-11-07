@@ -41,6 +41,9 @@ export type Analytics = {
 export type AnalyticsTinybirdJwtMap = {
   __typename?: 'AnalyticsTinybirdJwtMap';
   getPageviewsAnalytics: Scalars['String']['output'];
+  getServerlessFunctionDuration: Scalars['String']['output'];
+  getServerlessFunctionErrorCount: Scalars['String']['output'];
+  getServerlessFunctionSuccessRate: Scalars['String']['output'];
   getUsersAnalytics: Scalars['String']['output'];
   getWebhookAnalytics: Scalars['String']['output'];
 };
