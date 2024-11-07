@@ -53,6 +53,9 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   icon: string;
 
+  @Field({ nullable: true })
+  shortcut: string;
+
   @FilterableField()
   isCustom: boolean;
 
@@ -81,5 +84,5 @@ export class ObjectMetadataDTO {
   imageIdentifierFieldMetadataId?: string | null;
 
   @Field()
-  shouldSyncLabelAndName: boolean;
+  isLabelSyncedWithName: boolean;
 }

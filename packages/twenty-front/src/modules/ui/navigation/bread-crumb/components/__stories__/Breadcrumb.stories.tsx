@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator, Breadcrumb } from 'twenty-ui';
+import { ComponentDecorator } from 'twenty-ui';
+import { Breadcrumb } from '../Breadcrumb';
 
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 

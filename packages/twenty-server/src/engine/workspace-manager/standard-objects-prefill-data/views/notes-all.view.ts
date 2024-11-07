@@ -67,7 +67,7 @@ export const notesAllView = (
       TODO: Add later, since we don't have real-time it probably doesn't work well?
       {
         fieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.activity].fields[
+          objectMetadataMap[STANDARD_OBJECT_IDS.note].fields[
             BASE_OBJECT_STANDARD_FIELD_IDS.updatedAt
           ],
         position: 0,

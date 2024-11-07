@@ -12,6 +12,7 @@ type TopBarProps = {
 const StyledContainer = styled.div`
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   display: flex;
+  margin-left: ${({ theme }) => theme.spacing(2)};
 
   flex-direction: column;
 `;
@@ -27,7 +28,6 @@ const StyledTopBar = styled.div`
   height: 39px;
   justify-content: space-between;
   padding-right: ${({ theme }) => theme.spacing(2)};
-  padding-left: ${({ theme }) => theme.spacing(2)};
 
   z-index: 7;
 `;

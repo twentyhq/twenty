@@ -1,14 +1,14 @@
-import { useRecoilValue } from 'recoil';
-
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableCellCheckbox } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
 import { RecordTableCellGrip } from '@/object-record/record-table/record-table-cell/components/RecordTableCellGrip';
 import { RecordTableCellLoading } from '@/object-record/record-table/record-table-cell/components/RecordTableCellLoading';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTableBodyLoading = () => {
-  const { visibleTableColumnsSelector } = useRecordTableStates();
-  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const visibleTableColumns = useRecoilComponentValueV2(
+    visibleTableColumnsComponentSelector,
+  );
 
   return (
     <tbody>

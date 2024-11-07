@@ -2,6 +2,7 @@ import { AppPath } from '@/types/AppPath';
 import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+
 import { MainButton, UndecoratedLink } from 'twenty-ui';
 import { useAuthorizeAppMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';

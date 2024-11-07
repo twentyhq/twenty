@@ -18,7 +18,7 @@ describe('CodeIntrospectionService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('analyze', () => {
+  describe('getFunctionInputSchema', () => {
     it('should analyze a function declaration correctly', () => {
       const fileContent = `
         function testFunction(param1: string, param2: number): void {
@@ -26,7 +26,7 @@ describe('CodeIntrospectionService', () => {
         }
       `;
 
-      const result = service.analyze(fileContent);
+      const result = service.getFunctionInputSchema(fileContent);
 
       expect(result).toEqual([
         { name: 'param1', type: 'string' },
@@ -41,7 +41,7 @@ describe('CodeIntrospectionService', () => {
         };
       `;
 
-      const result = service.analyze(fileContent);
+      const result = service.getFunctionInputSchema(fileContent);
 
       expect(result).toEqual([
         { name: 'param1', type: 'string' },
@@ -55,7 +55,7 @@ describe('CodeIntrospectionService', () => {
         console.log(x);
       `;
 
-      const result = service.analyze(fileContent);
+      const result = service.getFunctionInputSchema(fileContent);
 
       expect(result).toEqual([]);
     });
@@ -66,10 +66,10 @@ describe('CodeIntrospectionService', () => {
         function func2(param2: number) {}
       `;
 
-      expect(() => service.analyze(fileContent)).toThrow(
+      expect(() => service.getFunctionInputSchema(fileContent)).toThrow(
         CodeIntrospectionException,
       );
-      expect(() => service.analyze(fileContent)).toThrow(
+      expect(() => service.getFunctionInputSchema(fileContent)).toThrow(
         'Only one function is allowed',
       );
     });
@@ -80,10 +80,10 @@ describe('CodeIntrospectionService', () => {
         const func2 = (param2: number) => {};
       `;
 
-      expect(() => service.analyze(fileContent)).toThrow(
+      expect(() => service.getFunctionInputSchema(fileContent)).toThrow(
         CodeIntrospectionException,
       );
-      expect(() => service.analyze(fileContent)).toThrow(
+      expect(() => service.getFunctionInputSchema(fileContent)).toThrow(
         'Only one arrow function is allowed',
       );
     });
@@ -95,12 +95,42 @@ describe('CodeIntrospectionService', () => {
         }
       `;
 
-      const result = service.analyze(fileContent);
+      const result = service.getFunctionInputSchema(fileContent);
 
       expect(result).toEqual([
         { name: 'param1', type: 'string[]' },
         { name: 'param2', type: '{ key: number; }' },
       ]);
+    });
+  });
+
+  describe('generateFakeDataForFunction', () => {
+    it('should generate fake data for function', () => {
+      const fileContent = `
+        const testArrowFunction = (param1: string, param2: number): void => {
+          console.log(param1, param2);
+        };
+      `;
+
+      const result = service.generateInputData(fileContent);
+
+      expect(typeof result['param1']).toEqual('string');
+      expect(typeof result['param2']).toEqual('number');
+    });
+
+    it('should generate fake data for complex function', () => {
+      const fileContent = `
+        const testArrowFunction = (param1: string[], param2: { key: number }): void => {
+          console.log(param1, param2);
+        };
+      `;
+
+      const result = service.generateInputData(fileContent);
+
+      expect(Array.isArray(result['param1'])).toBeTruthy();
+      expect(typeof result['param1'][0]).toEqual('string');
+      expect(typeof result['param2']).toEqual('object');
+      expect(typeof result['param2']['key']).toEqual('number');
     });
   });
 });

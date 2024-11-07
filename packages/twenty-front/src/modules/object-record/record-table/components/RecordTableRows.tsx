@@ -1,13 +1,10 @@
-import { useRecoilValue } from 'recoil';
-
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableBodyFetchMoreLoader } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFetchMoreLoader';
 import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
+import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTableRows = () => {
-  const { tableRowIdsState } = useRecordTableStates();
-
-  const tableRowIds = useRecoilValue(tableRowIdsState);
+  const tableRowIds = useRecoilComponentValueV2(tableRowIdsComponentState);
 
   return (
     <>

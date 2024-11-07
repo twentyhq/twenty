@@ -4,7 +4,6 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
@@ -27,8 +26,10 @@ import {
   IconCopy,
   LightButton,
   MainButton,
+  SeparatorLineText,
 } from 'twenty-ui';
 import { z } from 'zod';
+
 import { OnboardingStatus } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { useCreateWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useCreateWorkspaceInvitation';

@@ -1,8 +1,9 @@
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
-import { WorkflowStepMock } from '@/workflow/search-variables/types/WorkflowStepMock';
+import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
 
 type SearchVariablesDropdownStepItemProps = {
-  steps: WorkflowStepMock[];
+  steps: StepOutputSchema[];
   onSelect: (value: string) => void;
 };
 
@@ -10,7 +11,7 @@ export const SearchVariablesDropdownStepItem = ({
   steps,
   onSelect,
 }: SearchVariablesDropdownStepItemProps) => {
-  return (
+  return steps.length > 0 ? (
     <>
       {steps.map((item, _index) => (
         <MenuItemSelect
@@ -24,5 +25,13 @@ export const SearchVariablesDropdownStepItem = ({
         />
       ))}
     </>
+  ) : (
+    <MenuItem
+      key="no-steps"
+      onClick={() => {}}
+      text="No variables available"
+      LeftIcon={undefined}
+      hasSubMenu={false}
+    />
   );
 };

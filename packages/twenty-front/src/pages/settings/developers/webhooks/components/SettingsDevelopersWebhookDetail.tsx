@@ -11,6 +11,7 @@ import {
   IconRefresh,
   IconTrash,
   isDefined,
+  Section,
   useIcons,
 } from 'twenty-ui';
 
@@ -32,7 +33,6 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { WEBHOOK_EMPTY_OPERATION } from '~/pages/settings/developers/webhooks/constants/WebhookEmptyOperation';
@@ -121,9 +121,9 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
   const actionOptions: SelectOption<string>[] = [
     { value: '*', label: 'All Actions', Icon: IconNorthStar },
-    { value: 'create', label: 'Created', Icon: IconPlus },
-    { value: 'update', label: 'Updated', Icon: IconRefresh },
-    { value: 'delete', label: 'Deleted', Icon: IconTrash },
+    { value: 'created', label: 'Created', Icon: IconPlus },
+    { value: 'updated', label: 'Updated', Icon: IconRefresh },
+    { value: 'deleted', label: 'Deleted', Icon: IconTrash },
   ];
 
   const { updateOneRecord } = useUpdateOneRecord<Webhook>({

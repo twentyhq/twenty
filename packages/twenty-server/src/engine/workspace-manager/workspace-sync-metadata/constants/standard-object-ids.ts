@@ -6,6 +6,7 @@
  */
 
 export const STANDARD_OBJECT_IDS = {
+  // TODO: check if activity, activityTarget and comment can be deleted
   activityTarget: '20202020-2945-440e-8d1a-f84672d33d5e',
   activity: '20202020-39aa-4a89-843b-eb5f2a8b677f',
   apiKey: '20202020-4c00-401d-8cda-ec6a4c41cd7d',
@@ -35,7 +36,9 @@ export const STANDARD_OBJECT_IDS = {
   taskTarget: '20202020-5a9a-44e8-95df-771cd06d0fb1',
   timelineActivity: '20202020-6736-4337-b5c4-8b39fae325a5',
   viewField: '20202020-4d19-4655-95bf-b2a04cf206d4',
+  viewGroup: '20202020-725f-47a4-8008-4255f9519f70',
   viewFilter: '20202020-6fb6-4631-aded-b7d67e952ec8',
+  viewFilterGroup: '20202020-b920-4b11-92aa-9b07d878e542',
   viewSort: '20202020-e46a-47a8-939a-e5d911f83531',
   view: '20202020-722e-4739-8e2c-0c372d661f49',
   webhook: '20202020-be4d-4e08-811d-0fffcd13ffd4',

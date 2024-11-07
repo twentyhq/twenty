@@ -1,14 +1,14 @@
 import { Theme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 import { IconPlus, ThemeContext } from 'twenty-ui';
 
 import { HIDDEN_TABLE_COLUMN_DROPDOWN_ID } from '@/object-record/record-table/constants/HiddenTableColumnDropdownId';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableHeaderPlusButtonContent } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderPlusButtonContent';
+import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 const StyledPlusIconHeaderCell = styled.th<{
   theme: Theme;
@@ -58,9 +58,9 @@ export const RecordTableHeaderLastColumn = () => {
     (scrollWrapper.ref.current?.clientWidth ?? 0) <
     (scrollWrapper.ref.current?.scrollWidth ?? 0);
 
-  const { hiddenTableColumnsSelector } = useRecordTableStates();
-
-  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector());
+  const hiddenTableColumns = useRecoilComponentValueV2(
+    hiddenTableColumnsComponentSelector,
+  );
 
   return (
     <StyledPlusIconHeaderCell

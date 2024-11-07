@@ -3,7 +3,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { formatFieldMetadataItemsAsFilterDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { formatFieldMetadataItemsAsSortDefinitions } from '@/object-metadata/utils/formatFieldMetadataItemsAsSortDefinitions';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/turnFiltersIntoQueryFilter';
+import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { View } from '@/views/types/View';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
@@ -27,7 +27,7 @@ export const getQueryVariablesFromView = ({
     };
   }
 
-  const { viewFilters, viewSorts } = view;
+  const { viewFilterGroups, viewFilters, viewSorts } = view;
 
   const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
     fields: fieldMetadataItems,
@@ -38,9 +38,10 @@ export const getQueryVariablesFromView = ({
     fields: fieldMetadataItems,
   });
 
-  const filter = turnFiltersIntoQueryFilter(
+  const filter = computeViewRecordGqlOperationFilter(
     mapViewFiltersToFilters(viewFilters, filterDefinitions),
     objectMetadataItem?.fields ?? [],
+    viewFilterGroups ?? [],
   );
 
   const orderBy = turnSortsIntoOrderBy(

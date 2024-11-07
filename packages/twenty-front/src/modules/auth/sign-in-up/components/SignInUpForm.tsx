@@ -2,14 +2,16 @@ import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { SignInUpMode, useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
-import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import {
+  useSignInUpForm,
+  validationSchema,
+} from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
-import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -23,7 +25,9 @@ import {
   IconGoogle,
   IconKey,
   IconMicrosoft,
+  Loader,
   MainButton,
+  StyledText,
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
@@ -68,6 +72,15 @@ export const SignInUpForm = () => {
     submitCredentials,
     submitSSOEmail,
   } = useSignInUp(form);
+
+  if (
+    signInUpStep === SignInUpStep.Init &&
+    !authProviders.google &&
+    !authProviders.microsoft &&
+    !authProviders.sso
+  ) {
+    continueWithEmail();
+  }
 
   const toggleSSOMode = () => {
     if (signInUpStep === SignInUpStep.SSOEmail) {
@@ -127,7 +140,8 @@ export const SignInUpForm = () => {
 
   const isEmailStepSubmitButtonDisabledCondition =
     signInUpStep === SignInUpStep.Email &&
-    (form.watch('email')?.length === 0 || shouldWaitForCaptchaToken);
+    (!validationSchema.shape.email.safeParse(form.watch('email')).success ||
+      shouldWaitForCaptchaToken);
 
   // TODO: isValid is actually a proxy function. If it is not rendered the first time, react might not trigger re-renders
   // We make the isValid check synchronous and update a reactState to make sure this does not happen
@@ -150,6 +164,9 @@ export const SignInUpForm = () => {
               Icon={() => <IconGoogle size={theme.icon.size.lg} />}
               title="Continue with Google"
               onClick={signInWithGoogle}
+              variant={
+                signInUpStep === SignInUpStep.Init ? undefined : 'secondary'
+              }
               fullWidth
             />
             <HorizontalSeparator visible={false} />
@@ -162,6 +179,9 @@ export const SignInUpForm = () => {
               Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
               title="Continue with Microsoft"
               onClick={signInWithMicrosoft}
+              variant={
+                signInUpStep === SignInUpStep.Init ? undefined : 'secondary'
+              }
               fullWidth
             />
             <HorizontalSeparator visible={false} />
@@ -171,6 +191,9 @@ export const SignInUpForm = () => {
           <>
             <MainButton
               Icon={() => <IconKey size={theme.icon.size.lg} />}
+              variant={
+                signInUpStep === SignInUpStep.Init ? undefined : 'secondary'
+              }
               title={
                 signInUpStep === SignInUpStep.SSOEmail
                   ? 'Continue with email'
@@ -183,7 +206,9 @@ export const SignInUpForm = () => {
           </>
         )}
 
-        <HorizontalSeparator visible={true} />
+        {(authProviders.google ||
+          authProviders.microsoft ||
+          authProviders.sso) && <HorizontalSeparator visible />}
 
         {authProviders.password &&
           (signInUpStep === SignInUpStep.Password ||
@@ -263,15 +288,23 @@ export const SignInUpForm = () => {
                           disableHotkeys
                           onKeyDown={handleKeyDown}
                         />
+                        {signInUpMode === SignInUpMode.SignUp && (
+                          <StyledText
+                            text={'At least 8 characters long.'}
+                            color={theme.font.color.secondary}
+                          />
+                        )}
                       </StyledInputContainer>
                     )}
                   />
                 </StyledFullWidthMotionDiv>
               )}
               <MainButton
-                variant="secondary"
                 title={buttonTitle}
                 type="submit"
+                variant={
+                  signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
+                }
                 onClick={async () => {
                   if (signInUpStep === SignInUpStep.Init) {
                     continueWithEmail();
@@ -288,7 +321,7 @@ export const SignInUpForm = () => {
                   setShowErrors(true);
                   form.handleSubmit(submitCredentials)();
                 }}
-                Icon={() => form.formState.isSubmitting && <Loader />}
+                Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
                 disabled={isSubmitButtonDisabled}
                 fullWidth
               />

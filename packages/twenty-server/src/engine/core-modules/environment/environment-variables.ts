@@ -116,6 +116,7 @@ export class EnvironmentVariables {
     protocols: ['postgres'],
     require_tld: false,
     allow_underscores: true,
+    require_host: false,
   })
   PG_DATABASE_URL: string;
 
@@ -133,7 +134,10 @@ export class EnvironmentVariables {
   @IsOptional()
   SERVER_URL: string;
 
-  // Json Web Token
+  @IsString()
+  APP_SECRET: string;
+
+  @IsOptional()
   @IsString()
   ACCESS_TOKEN_SECRET: string;
 
@@ -141,10 +145,6 @@ export class EnvironmentVariables {
   @IsOptional()
   ACCESS_TOKEN_EXPIRES_IN = '30m';
 
-  @IsString()
-  REFRESH_TOKEN_SECRET: string;
-
-  @IsDuration()
   @IsOptional()
   REFRESH_TOKEN_EXPIRES_IN = '60d';
 
@@ -152,16 +152,9 @@ export class EnvironmentVariables {
   @IsOptional()
   REFRESH_TOKEN_COOL_DOWN = '1m';
 
-  @IsString()
-  LOGIN_TOKEN_SECRET = '30m';
-
   @IsDuration()
   @IsOptional()
   LOGIN_TOKEN_EXPIRES_IN = '15m';
-
-  @IsString()
-  @IsOptional()
-  FILE_TOKEN_SECRET = 'random_string';
 
   @IsDuration()
   @IsOptional()
@@ -404,8 +397,6 @@ export class EnvironmentVariables {
     allow_underscores: true,
   })
   REDIS_URL: string;
-
-  API_TOKEN_EXPIRES_IN = '100y';
 
   SHORT_TERM_TOKEN_EXPIRES_IN = '5m';
 
