@@ -11,7 +11,7 @@ const mockCallbackInterface = {
   set: jest.fn(),
   snapshot: {
     getLoadable: () => ({
-      getValue: () => ({ row: 0, column: 0 }),
+      getValue: () => ({ recordId: 'initialRecordId', column: 0 }),
     }),
   },
 } as unknown as CallbackInterface;
@@ -28,7 +28,7 @@ jest.mock('recoil', () => ({
 describe('useSelectedTableCellEditMode', () => {
   it('should have property setSelectedTableCellEditMode', async () => {
     const tableCellPosition: TableCellPosition = {
-      row: 1,
+      recordId: 'newRecordId',
       column: 5,
     };
 
@@ -41,21 +41,21 @@ describe('useSelectedTableCellEditMode', () => {
 
     act(() => {
       result.current.setSelectedTableCellEditMode(
-        tableCellPosition.row,
+        tableCellPosition.recordId,
         tableCellPosition.column,
       );
     });
 
     expect(mockCallbackInterface.set).toHaveBeenCalledWith(
       {
-        key: 'isTableCellInEditModeComponentFamilyState__{"familyKey":{"column":0,"row":0},"instanceId":"yourScopeId"}',
+        key: 'isTableCellInEditModeComponentFamilyState__{"familyKey":{"column":0,"recordId":"initialRecordId"},"instanceId":"yourScopeId"}',
       },
       false,
     );
 
     expect(mockCallbackInterface.set).toHaveBeenCalledWith(
       {
-        key: 'isTableCellInEditModeComponentFamilyState__{"familyKey":{"column":5,"row":1},"instanceId":"yourScopeId"}',
+        key: 'isTableCellInEditModeComponentFamilyState__{"familyKey":{"column":5,"recordId":"newRecordId"},"instanceId":"yourScopeId"}',
       },
       true,
     );

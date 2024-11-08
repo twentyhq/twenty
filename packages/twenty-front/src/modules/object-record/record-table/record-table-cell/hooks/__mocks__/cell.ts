@@ -30,7 +30,7 @@ export const recordTableCell: RecordTableCellContextProps = {
     },
   },
   cellPosition: {
-    row: 2,
+    recordId: 'recordId',
     column: 3,
   },
   hasSoftFocus: false,
