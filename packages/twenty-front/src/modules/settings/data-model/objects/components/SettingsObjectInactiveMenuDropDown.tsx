@@ -43,6 +43,7 @@ export const SettingsObjectInactiveMenuDropDown = ({
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }
+      dropdownMenuWidth={160}
       dropdownComponents={
         <DropdownMenuItemsContainer>
           <MenuItem
