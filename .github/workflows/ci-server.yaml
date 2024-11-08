@@ -1,5 +1,4 @@
 name: CI Server
-timeout-minutes: 30
 on:
   push:
     branches:
@@ -13,6 +12,7 @@ concurrency:
 
 jobs:
   server-setup:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
@@ -68,6 +68,7 @@ jobs:
         run: npx nx run twenty-server:worker:ci
 
   server-test:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     needs: server-setup
     env:
@@ -103,6 +104,7 @@ jobs:
           tasks: test
 
   server-integration-test:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     needs: server-setup
     services:

@@ -1,5 +1,4 @@
 name: 'Test Docker Compose'
-timeout-minutes: 10
 on:
   pull_request:
    
@@ -9,6 +8,7 @@ concurrency:
 
 jobs:
   test:
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
     - name: Checkout

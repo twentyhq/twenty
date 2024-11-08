@@ -1,5 +1,4 @@
 name: CI Front
-timeout-minutes: 30
 on:
   push:
     branches:
@@ -13,6 +12,7 @@ concurrency:
 
 jobs:
   front-sb-build:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
@@ -59,6 +59,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx storybook:build twenty-front
   front-sb-test:
+    timeout-minutes: 30
     runs-on: shipfox-8vcpu-ubuntu-2204
     needs: front-sb-build
     strategy:
@@ -101,6 +102,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }}
   front-sb-test-performance:
+    timeout-minutes: 30
     runs-on: shipfox-8vcpu-ubuntu-2204
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
@@ -134,6 +136,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx run twenty-front:storybook:serve-and-test:static:performance
   front-chromatic-deployment:
+    timeout-minutes: 30
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
     needs: front-sb-build
     runs-on: ubuntu-latest
@@ -176,6 +179,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx run twenty-front:chromatic:ci
   front-task:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     env:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0

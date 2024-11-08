@@ -1,5 +1,4 @@
 name: CI E2E Tests
-timeout-minutes: 30
 on:
   push:
     branches:
@@ -14,6 +13,7 @@ concurrency:
 
 jobs:
   test:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
