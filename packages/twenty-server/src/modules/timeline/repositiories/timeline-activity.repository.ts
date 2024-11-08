@@ -4,8 +4,8 @@ import { EntityManager } from 'typeorm';
 
 import { Record } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
 export class TimelineActivityRepository {
@@ -36,7 +36,20 @@ export class TimelineActivityRepository {
       linkedRecordId,
       workspaceId,
     );
-
+      
+    // Check if the event should be suppressed
+    if (this.shouldSuppressEvent(recentTimelineActivity, name, properties)) {
+      // If it's a creation/deletion of an empty record within 10 minutes
+      // Remove the previous timeline activity
+      if (recentTimelineActivity.length > 0) {
+        await this.removeTimelineActivity(
+          dataSourceSchema,
+          recentTimelineActivity[0].id,
+          workspaceId
+        );
+      }
+      return;
+    }
     // If the diff is empty, we don't need to insert or update an activity
     // this should be handled differently, events should not be triggered when we will use proper DB events.
     const isDiffEmpty =
@@ -76,7 +89,46 @@ export class TimelineActivityRepository {
       workspaceId,
     );
   }
+  
+  private shouldSuppressEvent(
+    recentActivity: any[],
+    name: string,
+    properties: Partial<Record>
+  ): boolean {
+    // If no recent activity, don't suppress
+    if (recentActivity.length === 0) return false;
 
+    // Check if both activities are creation or deletion
+    const suppressableEventTypes = [
+      'object.created', 
+      'object.deleted', 
+      'linked-object.created', 
+      'linked-object.deleted'
+    ];
+
+    const isCreationOrDeletion = 
+      suppressableEventTypes.includes(recentActivity[0].name) &&
+      suppressableEventTypes.includes(name);
+
+    // Ensure the activities are for the same object type
+    const isSameObjectType = 
+      recentActivity[0].name.split('-')[1] === name.split('-')[1];
+
+    return isCreationOrDeletion && isSameObjectType;
+} 
+  
+private async removeTimelineActivity(
+  dataSourceSchema: string,
+  id: string,
+  workspaceId: string
+) {
+  return this.workspaceDataSourceService.executeRawQuery(
+    `DELETE FROM ${dataSourceSchema}."timelineActivity"
+    WHERE "id" = $1`,
+    [id],
+    workspaceId,
+  );
+}
   private async findRecentTimelineActivity(
     dataSourceSchema: string,
     name: string,
