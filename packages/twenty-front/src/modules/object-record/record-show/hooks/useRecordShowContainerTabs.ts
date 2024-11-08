@@ -319,7 +319,9 @@ export const useRecordShowContainerTabs = (
     if (!isHidden) {
       switch (id) {
         case 'richText':
-          isHidden = !isNoteOrTask || !hasNoteTargets;
+          isHidden = !(targetObjectNameSingular === CoreObjectNameSingular.Note || 
+            targetObjectNameSingular === CoreObjectNameSingular.Task) 
+        
           break;
         case 'timeline':
           isHidden = isWorkflowRelated;
