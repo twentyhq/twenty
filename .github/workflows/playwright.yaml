@@ -2,9 +2,9 @@ name: Playwright Tests
 timeout-minutes: 30
 on:
   push:
-    branches: [ main, master ]
+    branches:
+    - main
   pull_request:
-    branches: [ main, master ]
 jobs:
   test:
     runs-on: ubuntu-latest
