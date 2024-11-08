@@ -1,7 +1,7 @@
 import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
-import { ApolloMetadataClientContext } from '../context/ApolloClientMetadataContext';
+import { ApolloMetadataClientContext } from '../contexts/ApolloClientMetadataContext';
 
 export const ApolloMetadataClientProvider = ({
   children,

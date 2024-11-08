@@ -1,0 +1,12 @@
+SCHEMA >
+    `timestamp` DateTime64(3),
+    `workspaceId` String,
+    `functionId` String,
+    `durationInMs` Int64,
+    `success` Bool,
+    `errorType` LowCardinality(String),
+    `version` LowCardinality(String)
+
+ENGINE MergeTree
+ENGINE_PARTITION_KEY toYYYYMM(timestamp)
+ENGINE_SORTING_KEY workspaceId, functionId, timestamp

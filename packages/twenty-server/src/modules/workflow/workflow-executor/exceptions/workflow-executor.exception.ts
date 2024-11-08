@@ -8,4 +8,5 @@ export class WorkflowExecutorException extends CustomException {
 
 export enum WorkflowExecutorExceptionCode {
   WORKFLOW_FAILED = 'WORKFLOW_FAILED',
+  VARIABLE_EVALUATION_FAILED = 'VARIABLE_EVALUATION_FAILED',
 }

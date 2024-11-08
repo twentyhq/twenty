@@ -1,17 +1,15 @@
-import { useCallback, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
+import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
-import { computeRecordBoardColumnDefinitionsFromObjectMetadata } from '@/object-record/utils/computeRecordBoardColumnDefinitionsFromObjectMetadata';
-import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -30,6 +28,10 @@ export const RecordIndexBoardDataLoaderEffect = ({
 
   const recordIndexFieldDefinitions = useRecoilValue(
     recordIndexFieldDefinitionsState,
+  );
+
+  const recordIndexGroupDefinitions = useRecoilComponentValueV2(
+    recordGroupDefinitionsComponentState,
   );
 
   const recordIndexKanbanFieldMetadataId = useRecoilValue(
@@ -60,43 +62,17 @@ export const RecordIndexBoardDataLoaderEffect = ({
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [recordIndexFieldDefinitions, setFieldDefinitions]);
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const setNavigationMemorizedUrl = useSetRecoilState(
-    navigationMemorizedUrlState,
-  );
-
-  const navigateToSelectSettings = useCallback(() => {
-    setNavigationMemorizedUrl(location.pathname + location.search);
-    navigate(`/settings/objects/${getObjectSlug(objectMetadataItem)}`);
-  }, [
-    navigate,
-    objectMetadataItem,
-    location.pathname,
-    location.search,
-    setNavigationMemorizedUrl,
-  ]);
-
   useEffect(() => {
     setObjectSingularName(objectNameSingular);
   }, [objectNameSingular, setObjectSingularName]);
 
   useEffect(() => {
-    setColumns(
-      computeRecordBoardColumnDefinitionsFromObjectMetadata(
-        objectMetadataItem,
-        recordIndexKanbanFieldMetadataId ?? '',
-        navigateToSelectSettings,
-      ),
-    );
-  }, [
-    navigateToSelectSettings,
-    objectMetadataItem,
-    objectNameSingular,
-    recordIndexKanbanFieldMetadataId,
-    setColumns,
-  ]);
+    setColumns(recordIndexGroupDefinitions);
+  }, [recordIndexGroupDefinitions, setColumns]);
 
+  // TODO: Remove this duplicate useEffect by ensuring it's not here because
+  // We want it to be triggered by a change of objectMetadataItem, which would be an anti-pattern
+  // As it is an unnecessary dependency
   useEffect(() => {
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [objectMetadataItem, setFieldDefinitions, recordIndexFieldDefinitions]);
@@ -121,32 +97,23 @@ export const RecordIndexBoardDataLoaderEffect = ({
 
   const selectedRecordIds = useRecoilValue(selectedRecordIdsSelector());
 
-  const setContextStoreTargetedRecordIds = useSetRecoilState(
-    contextStoreTargetedRecordIdsState,
-  );
-
-  const setContextStoreCurrentObjectMetadataItem = useSetRecoilState(
-    contextStoreCurrentObjectMetadataIdState,
+  const setContextStoreTargetedRecords = useSetRecoilComponentStateV2(
+    contextStoreTargetedRecordsRuleComponentState,
   );
 
   useEffect(() => {
-    setContextStoreTargetedRecordIds(selectedRecordIds);
-  }, [selectedRecordIds, setContextStoreTargetedRecordIds]);
-
-  useEffect(() => {
-    setContextStoreTargetedRecordIds(selectedRecordIds);
-    setContextStoreCurrentObjectMetadataItem(objectMetadataItem?.id);
+    setContextStoreTargetedRecords({
+      mode: 'selection',
+      selectedRecordIds: selectedRecordIds,
+    });
 
     return () => {
-      setContextStoreTargetedRecordIds([]);
-      setContextStoreCurrentObjectMetadataItem(null);
+      setContextStoreTargetedRecords({
+        mode: 'selection',
+        selectedRecordIds: [],
+      });
     };
-  }, [
-    objectMetadataItem?.id,
-    selectedRecordIds,
-    setContextStoreCurrentObjectMetadataItem,
-    setContextStoreTargetedRecordIds,
-  ]);
+  }, [selectedRecordIds, setContextStoreTargetedRecords]);
 
   return <></>;
 };

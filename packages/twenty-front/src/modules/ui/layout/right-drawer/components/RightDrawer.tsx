@@ -1,3 +1,11 @@
+import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
+import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompletedState';
+import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
+import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
+import { ClickOutsideMode } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -9,15 +17,6 @@ import {
   useSetRecoilState,
 } from 'recoil';
 import { Key } from 'ts-key-enum';
-
-import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
-import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompletedState';
-import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
-import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { ClickOutsideMode } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 
 import { useRightDrawer } from '../hooks/useRightDrawer';
@@ -47,6 +46,10 @@ const StyledContainer = styled(motion.div)<{ isRightDrawerMinimized: boolean }>`
   right: 0;
   top: 0;
   z-index: 100;
+
+  .modal-backdrop {
+    background: ${({ theme }) => theme.background.overlayTertiary};
+  }
 `;
 
 const StyledRightDrawer = styled.div`
@@ -125,9 +128,9 @@ export const RightDrawer = () => {
 
           if (isRightDrawerOpen && !isRightDrawerMinimized) {
             set(rightDrawerCloseEventState, event);
-            closeRightDrawer();
-
             emitRightDrawerCloseEvent();
+
+            closeRightDrawer();
           }
         },
       [closeRightDrawer],

@@ -72,6 +72,7 @@ export class GoogleCalendarGetEventsService {
     }
 
     return {
+      fullEvents: true,
       calendarEvents: formatGoogleCalendarEvents(events),
       nextSyncCursor: nextSyncToken || '',
     };

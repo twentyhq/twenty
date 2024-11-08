@@ -7,6 +7,7 @@ export type CurrentUser = Pick<
   | 'id'
   | 'email'
   | 'supportUserHash'
+  | 'analyticsTinybirdJwts'
   | 'canImpersonate'
   | 'onboardingStatus'
   | 'userVars'

@@ -1,8 +1,6 @@
 import styled from '@emotion/styled';
 
-import { Toggle } from '@/ui/input/components/Toggle';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { Card, CardContent, Toggle } from 'twenty-ui';
 
 type Parameter = {
   value: boolean;

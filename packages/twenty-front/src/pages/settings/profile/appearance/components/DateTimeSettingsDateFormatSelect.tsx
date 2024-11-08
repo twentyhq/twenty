@@ -20,7 +20,7 @@ export const DateTimeSettingsDateFormatSelect = ({
 
   const usedTimeZone = timeZone === 'system' ? systemTimeZone : timeZone;
 
-  const systemDateFormat = detectDateFormat();
+  const systemDateFormat = DateFormat[detectDateFormat()];
 
   return (
     <Select
@@ -28,6 +28,7 @@ export const DateTimeSettingsDateFormatSelect = ({
       dropdownWidth={218}
       label="Date format"
       fullWidth
+      dropdownWidthAuto
       value={value}
       options={[
         {

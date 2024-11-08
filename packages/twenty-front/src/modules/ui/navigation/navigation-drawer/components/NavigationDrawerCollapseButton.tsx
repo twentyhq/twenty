@@ -1,12 +1,11 @@
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
+  LightIconButton,
 } from 'twenty-ui';
-
-import { IconButton } from '@/ui/input/button/components/IconButton';
-import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 
 const StyledCollapseButton = styled.div`
   align-items: center;
@@ -14,14 +13,8 @@ const StyledCollapseButton = styled.div`
   color: ${({ theme }) => theme.font.color.light};
   cursor: pointer;
   display: flex;
-  height: ${({ theme }) => theme.spacing(5)};
   justify-content: center;
   user-select: none;
-  width: ${({ theme }) => theme.spacing(6)};
-
-  &:hover {
-    background: ${({ theme }) => theme.background.quaternary};
-  }
 `;
 
 type NavigationDrawerCollapseButtonProps = {
@@ -33,24 +26,26 @@ export const NavigationDrawerCollapseButton = ({
   className,
   direction = 'left',
 }: NavigationDrawerCollapseButtonProps) => {
-  const setIsNavigationDrawerOpen = useSetRecoilState(
-    isNavigationDrawerOpenState,
+  const setIsNavigationDrawerExpanded = useSetRecoilState(
+    isNavigationDrawerExpandedState,
   );
 
   return (
     <StyledCollapseButton
       className={className}
       onClick={() =>
-        setIsNavigationDrawerOpen((previousIsOpen) => !previousIsOpen)
+        setIsNavigationDrawerExpanded(
+          (previousIsExpanded) => !previousIsExpanded,
+        )
       }
     >
-      <IconButton
+      <LightIconButton
         Icon={
           direction === 'left'
             ? IconLayoutSidebarLeftCollapse
             : IconLayoutSidebarRightCollapse
         }
-        variant="tertiary"
+        accent="tertiary"
         size="small"
       />
     </StyledCollapseButton>

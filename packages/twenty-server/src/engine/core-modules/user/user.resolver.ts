@@ -19,6 +19,8 @@ import { Repository } from 'typeorm';
 import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/support.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
+import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
+import { AnalyticsTinybirdJwtMap } from 'src/engine/core-modules/analytics/entities/analytics-tinybird-jwts.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -55,6 +57,7 @@ export class UserResolver {
     private readonly onboardingService: OnboardingService,
     private readonly userVarService: UserVarsService,
     private readonly fileService: FileService,
+    private readonly analyticsService: AnalyticsService,
   ) {}
 
   @Query(() => User)
@@ -108,8 +111,8 @@ export class UserResolver {
 
     if (workspaceMember && workspaceMember.avatarUrl) {
       const avatarUrlToken = await this.fileService.encodeFileToken({
-        workspace_member_id: workspaceMember.id,
-        workspace_id: user.defaultWorkspaceId,
+        workspaceMemberId: workspaceMember.id,
+        workspaceId: user.defaultWorkspaceId,
       });
 
       workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
@@ -130,8 +133,8 @@ export class UserResolver {
     for (const workspaceMember of workspaceMembers) {
       if (workspaceMember.avatarUrl) {
         const avatarUrlToken = await this.fileService.encodeFileToken({
-          workspace_member_id: workspaceMember.id,
-          workspace_id: user.defaultWorkspaceId,
+          workspaceMemberId: workspaceMember.id,
+          workspaceId: user.defaultWorkspaceId,
         });
 
         workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
@@ -152,6 +155,11 @@ export class UserResolver {
     const key = this.environmentService.get('SUPPORT_FRONT_HMAC_KEY');
 
     return getHMACKey(parent.email, key);
+  }
+
+  @ResolveField(() => AnalyticsTinybirdJwtMap, { nullable: true })
+  analyticsTinybirdJwts(@AuthWorkspace() workspace: Workspace | undefined) {
+    return this.analyticsService.generateWorkspaceJwt(workspace?.id);
   }
 
   @Mutation(() => String)
@@ -178,7 +186,7 @@ export class UserResolver {
     });
 
     const fileToken = await this.fileService.encodeFileToken({
-      workspace_id: workspaceId,
+      workspaceId: workspaceId,
     });
 
     return `${paths[0]}?token=${fileToken}`;

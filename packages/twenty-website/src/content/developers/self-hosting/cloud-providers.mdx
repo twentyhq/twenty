@@ -5,13 +5,12 @@ image: /images/user-guide/notes/notes_header.png
 ---
 
 <ArticleWarning>
-This document is maintained by the community. It might contain issues.
+  This document is maintained by the community. It might contain issues.
 </ArticleWarning>
-
 
 ## Kubernetes via Terraform and Manifests
 
-Community-led documentation for Kubernetes deployment is available (here)[https://github.com/twentyhq/twenty/tree/main/packages/twenty-docker/k8s]
+Community-led documentation for Kubernetes deployment is available [here](https://github.com/twentyhq/twenty/tree/main/packages/twenty-docker/k8s)
 
 ## Render
 
@@ -19,13 +18,11 @@ Community-led, might not be up to date
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/twentyhq/twenty)
 
-
-## RepoCloud 
+## RepoCloud
 
 Community-led, might not be up to date
 
 [![Deploy on RepoCloud](https://d16t0pc4846x52.cloudfront.net/deploy.png)](https://repocloud.io/details/?app_id=259)
-
 
 ## Azure Container Apps
 
@@ -271,11 +268,8 @@ resource "azapi_update_resource" "cors" {
 ```hcl
 # backend.tf
 
-# Create three random UUIDs
-resource "random_uuid" "access_token_secret" {}
-resource "random_uuid" "login_token_secret" {}
-resource "random_uuid" "refresh_token_secret" {}
-resource "random_uuid" "file_token_secret" {}
+# Create a random UUID
+resource "random_uuid" "app_secret" {}
 
 resource "azurerm_container_app" "twenty_server" {
   name                         = local.server_name
@@ -343,20 +337,8 @@ resource "azurerm_container_app" "twenty_server" {
         value = "https://${local.front_app_name}"
       }
       env {
-        name  = "ACCESS_TOKEN_SECRET"
-        value = random_uuid.access_token_secret.result
-      }
-      env {
-        name  = "LOGIN_TOKEN_SECRET"
-        value = random_uuid.login_token_secret.result
-      }
-      env {
-        name  = "REFRESH_TOKEN_SECRET"
-        value = random_uuid.refresh_token_secret.result
-      }
-      env {
-        name  = "FILE_TOKEN_SECRET"
-        value = random_uuid.file_token_secret.result
+        name  = "APP_SECRET"
+        value = random_uuid.app_secret.result
       }
     }
   }

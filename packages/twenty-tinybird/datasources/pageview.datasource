@@ -1,0 +1,16 @@
+SCHEMA >
+    `href` String `json:$.href`,
+    `locale` LowCardinality(String) `json:$.locale`,
+    `pathname` String `json:$.pathname`,
+    `referrer` String `json:$.referrer`,
+    `sessionId` String `json:$.sessionId`,
+    `timeZone` LowCardinality(String) `json:$.timeZone`,
+    `timestamp` DateTime64(3) `json:$.timestamp`,
+    `userAgent` String `json:$.userAgent`,
+    `userId` String `json:$.userId` DEFAULT '',
+    `version` LowCardinality(String) `json:$.version`,
+    `workspaceId` String `json:$.workspaceId` DEFAULT ''
+
+ENGINE MergeTree
+ENGINE_PARTITION_KEY toYear(timestamp)
+ENGINE_SORTING_KEY workspaceId, userId, timestamp
