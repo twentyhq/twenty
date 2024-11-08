@@ -127,6 +127,10 @@ export const RecordIndexTableContainerEffect = () => {
 
   useEffect(() => {
     setContextStoreFilters(recordIndexFilters);
+
+    return () => {
+      setContextStoreFilters([]);
+    };
   }, [recordIndexFilters, setContextStoreFilters]);
 
   return <></>;
