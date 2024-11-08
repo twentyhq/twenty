@@ -21,18 +21,9 @@ export const SettingsObjectDetailsPageTabFromUrlEffect = () => {
   const hash = location.hash.replace('#', '');
   const activeTabId = useRecoilValue(activeTabIdState);
   useEffect(() => {
-    console.log(
-      'hash',
-      hash,
-      'activeTabId',
-      activeTabId,
-      'isvalid',
-      validHashes.includes(hash as TabId),
-    );
     if (hash === activeTabId) return;
 
     if (validHashes.includes(hash as TabId)) {
-      console.log('setting active tab id', hash);
       setActiveTabId(hash as TabId);
     }
   }, [hash, activeTabId, setActiveTabId]);

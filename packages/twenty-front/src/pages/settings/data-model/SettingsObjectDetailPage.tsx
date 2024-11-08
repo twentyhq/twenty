@@ -82,7 +82,6 @@ export const SettingsObjectDetailPage = () => {
 
   const { activeTabIdState } = useTabList(OBJECT_DETAIL_TABS.TAB_LIST_ID);
   const activeTabId = useRecoilValue(activeTabIdState);
-  console.log('activetabid', activeTabId);
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
