@@ -12,7 +12,7 @@ import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { isDefined } from '~/utils/isDefined';
 
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
-import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
+// import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -32,10 +32,10 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
   const isMatchingLocation = useIsMatchingLocation();
 
-  const { redirectToSSOLoginPage, findAvailableSSOProviderByEmail } = useSSO();
-  const setAvailableWorkspacesForSSOState = useSetRecoilState(
-    availableSSOIdentityProvidersState,
-  );
+  const { redirectToSSOLoginPage } = useSSO();
+  // const setAvailableWorkspacesForSSOState = useSetRecoilState(
+  //   availableSSOIdentityProvidersState,
+  // );
 
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const [searchParams] = useSearchParams();
@@ -107,41 +107,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     setSignInUpStep(SignInUpStep.SSOEmail);
   };
 
-  const submitSSOEmail = async (email: string) => {
-    const result = await findAvailableSSOProviderByEmail({
-      email,
-    });
-
-    if (isDefined(result.errors)) {
-      return enqueueSnackBar(result.errors[0].message, {
-        variant: SnackBarVariant.Error,
-      });
-    }
-
-    if (
-      !result.data?.findAvailableSSOIdentityProviders ||
-      result.data?.findAvailableSSOIdentityProviders.length === 0
-    ) {
-      enqueueSnackBar('No workspaces with SSO found', {
-        variant: SnackBarVariant.Error,
-      });
-      return;
-    }
-    // If only one workspace, redirect to SSO
-    if (result.data?.findAvailableSSOIdentityProviders.length === 1) {
-      return redirectToSSOLoginPage(
-        result.data.findAvailableSSOIdentityProviders[0].id,
-      );
-    }
-
-    if (result.data?.findAvailableSSOIdentityProviders.length > 1) {
-      setAvailableWorkspacesForSSOState(
-        result.data.findAvailableSSOIdentityProviders,
-      );
-      setSignInUpStep(SignInUpStep.SSOWorkspaceSelection);
-    }
-  };
-
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
       const token = await readCaptchaToken();
@@ -190,7 +155,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     continueWithCredentials,
     continueWithEmail,
     continueWithSSO,
-    submitSSOEmail,
     submitCredentials,
   };
 };

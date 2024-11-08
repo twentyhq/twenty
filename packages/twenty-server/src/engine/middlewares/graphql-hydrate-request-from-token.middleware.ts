@@ -58,6 +58,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
       'GetAuthorizationUrl',
       'FindAvailableSSOIdentityProviders',
       'GetPublicWorkspaceDataBySubdomain',
+      'FindAvailableWorkspacesByEmail',
     ];
 
     if (

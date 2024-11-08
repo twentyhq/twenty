@@ -41,6 +41,8 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { buildWorkspaceURL } from 'src/utils/workspace-url.utils';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Injectable()
 export class AuthService {
@@ -48,6 +50,7 @@ export class AuthService {
     private readonly accessTokenService: AccessTokenService,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly userService: UserService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
@@ -175,7 +178,16 @@ export class AuthService {
     });
   }
 
-  async verify(email: string): Promise<Verify> {
+  private async findOneWithWorkspacesByEmail(email: string) {
+    return this.userRepository.findOne({
+      where: {
+        email,
+      },
+      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
+    });
+  }
+
+  async verify(email: string, workspaceId: string): Promise<Verify> {
     if (!email) {
       throw new AuthException(
         'Email is required',
@@ -183,24 +195,17 @@ export class AuthService {
       );
     }
 
-    const user = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
-    });
+    let user = await this.findOneWithWorkspacesByEmail(email);
+
+    if (user && user.defaultWorkspaceId !== workspaceId) {
+      await this.userService.saveDefaultWorkspace(user, workspaceId);
+      user = await this.findOneWithWorkspacesByEmail(email);
+    }
 
     if (!user) {
       throw new AuthException(
         'User not found',
         AuthExceptionCode.USER_NOT_FOUND,
-      );
-    }
-
-    if (!user.defaultWorkspace) {
-      throw new AuthException(
-        'User has no default workspace',
-        AuthExceptionCode.INVALID_DATA,
       );
     }
 
@@ -465,5 +470,49 @@ export class AuthService {
     );
 
     return url.toString();
+  }
+
+  async findAvailableWorkspacesByEmail(email: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+      relations: [
+        'workspaces',
+        'workspaces.workspace',
+        'workspaces.workspace.workspaceSSOIdentityProviders',
+      ],
+    });
+
+    if (!user) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.USER_NOT_FOUND,
+      );
+    }
+
+    return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
+      id: userWorkspace.workspaceId,
+      displayName: userWorkspace.workspace.displayName,
+      subdomain: userWorkspace.workspace.subdomain,
+      logo: userWorkspace.workspace.logo,
+      sso: userWorkspace.workspace.workspaceSSOIdentityProviders.reduce(
+        (acc, identityProvider) =>
+          acc.concat(
+            identityProvider.status === 'Inactive'
+              ? []
+              : [
+                  {
+                    id: identityProvider.id,
+                    name: identityProvider.name ?? 'Unknown',
+                    issuer: identityProvider.issuer,
+                    type: identityProvider.type,
+                    status: identityProvider.status,
+                  },
+                ],
+          ),
+        [] as AvailableWorkspaceOutput['sso'],
+      ),
+    }));
   }
 }

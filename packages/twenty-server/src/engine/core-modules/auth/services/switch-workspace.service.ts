@@ -14,6 +14,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Injectable()
 export class SwitchWorkspaceService {
@@ -22,7 +23,7 @@ export class SwitchWorkspaceService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly ssoService: SSOService,
+    private readonly userService: UserService,
     private readonly workspaceService: WorkspaceService,
     private readonly accessTokenService: AccessTokenService,
     private readonly refreshTokenService: RefreshTokenService,
@@ -100,10 +101,7 @@ export class SwitchWorkspaceService {
     user: User,
     workspace: Workspace,
   ): Promise<AuthTokens> {
-    await this.userRepository.save({
-      id: user.id,
-      defaultWorkspace: workspace,
-    });
+    await this.userService.saveDefaultWorkspace(user, workspace.id);
 
     const token = await this.accessTokenService.generateAccessToken(
       user.id,

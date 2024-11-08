@@ -5,7 +5,7 @@ export enum SignInUpStep {
   Email = 'email',
   Password = 'password',
   SSOEmail = 'SSOEmail',
-  SSOWorkspaceSelection = 'SSOWorkspaceSelection',
+  WorkspaceSelection = 'WorkspaceSelection',
 }
 
 export const signInUpStepState = createState<SignInUpStep>({

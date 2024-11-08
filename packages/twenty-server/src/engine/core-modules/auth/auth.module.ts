@@ -11,7 +11,6 @@ import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/g
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
-import { VerifyAuthController } from 'src/engine/core-modules/auth/controllers/verify-auth.controller';
 import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
@@ -83,7 +82,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MicrosoftAuthController,
     GoogleAPIsAuthController,
     MicrosoftAPIsAuthController,
-    VerifyAuthController,
     SSOAuthController,
   ],
   providers: [

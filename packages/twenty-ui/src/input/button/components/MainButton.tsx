@@ -6,11 +6,12 @@ import React from 'react';
 export type MainButtonVariant = 'primary' | 'secondary';
 
 type Props = {
-  title: string;
+  title?: string;
   fullWidth?: boolean;
   width?: number;
   variant?: MainButtonVariant;
   soon?: boolean;
+  children?: React.ReactNode;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<
@@ -104,6 +105,7 @@ const StyledButton = styled.button<
 
 type MainButtonProps = Props & {
   Icon?: IconComponent;
+  children?: React.ReactNode;
 };
 
 export const MainButton = ({
@@ -116,6 +118,7 @@ export const MainButton = ({
   onClick,
   disabled,
   className,
+  children,
 }: MainButtonProps) => {
   const theme = useTheme();
   return (
@@ -125,6 +128,7 @@ export const MainButton = ({
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
+      {children}
     </StyledButton>
   );
 };

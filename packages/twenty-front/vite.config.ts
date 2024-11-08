@@ -18,7 +18,7 @@ export default defineConfig(({ command, mode }) => {
     VITE_BUILD_SOURCEMAP,
     VITE_DISABLE_TYPESCRIPT_CHECKER,
     VITE_DISABLE_ESLINT_CHECKER,
-    REACT_WEB_APP_BASE_URL,
+    REACT_APP_BASE_URL,
     REACT_APP_PORT,
   } = env;
 
@@ -64,7 +64,7 @@ export default defineConfig(({ command, mode }) => {
   }
 
   const { hostname, protocol } = new URL(
-    REACT_WEB_APP_BASE_URL ?? 'http://localhost',
+    REACT_APP_BASE_URL ?? 'http://localhost',
   );
 
   return {
@@ -132,7 +132,7 @@ export default defineConfig(({ command, mode }) => {
     define: {
       'process.env': {
         REACT_APP_SERVER_BASE_URL,
-        REACT_WEB_APP_BASE_URL,
+        REACT_APP_BASE_URL,
       },
     },
     css: {

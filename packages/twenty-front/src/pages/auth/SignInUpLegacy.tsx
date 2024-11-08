@@ -1,27 +1,20 @@
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { Logo } from '@/auth/components/Logo';
+import { Title } from '@/auth/components/Title';
+import { SignInUpForm } from '@/auth/sign-in-up/components/SignInUpForm';
 import { SignInUpMode, useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
+import { IconLockCustom } from '@ui/display/icon/components/IconLock';
+import { AnimatedEaseIn } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { useWorkspacePublicData } from '@/auth/sign-in-up/hooks/useWorkspacePublicData';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import {
-  isTwentyHomePage,
-  isTwentyWorkspaceSubdomain,
-} from '~/utils/workspace-url.helper';
-import { SignInUpWorkspaceSelection } from '@/auth/sign-in-up/components/SignInUpWorkspaceSelection';
-import { SignInUpGlobalScope } from '@/auth/sign-in-up/components/SignInUpGlobalScope';
-import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
-import { AnimatedEaseIn } from 'twenty-ui';
-import { Logo } from '@/auth/components/Logo';
-import { Title } from '@/auth/components/Title';
-import { SignInUpForm } from '@/auth/sign-in-up/components/SignInUpForm';
-import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 
-export const SignInUp = () => {
+export const SignInUpLegacy = () => {
   const { form } = useSignInUpForm();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
@@ -53,21 +46,22 @@ export const SignInUp = () => {
   return (
     <>
       <AnimatedEaseIn>
-        <Logo workspaceLogo={workspacePublicData?.logo} />
-      </AnimatedEaseIn>
-      <Title animate>
-        {`Welcome to ${workspacePublicData?.displayName ?? DEFAULT_WORKSPACE_NAME}`}
-      </Title>
-      {isTwentyHomePage ? (
-        isTwentyHomePage && signInUpStep === SignInUpStep.WorkspaceSelection ? (
-          <SignInUpWorkspaceSelection />
+        {signInUpStep === SignInUpStep.WorkspaceSelection ? (
+          <IconLockCustom size={40} />
         ) : (
-          <SignInUpGlobalScope />
-        )
-      ) : (
-        <SignInUpForm />
-      )}
-      <FooterNote />
+          <Logo workspaceLogo={workspacePublicData?.logo} />
+        )}
+      </AnimatedEaseIn>
+      {/*{!loading && (*/}
+      {/*  <>*/}
+      {/*    <Title animate>{title}</Title>*/}
+      {/*    {signInUpStep === SignInUpStep.WorkspaceSelection ? (*/}
+      {/*      <SignInUpWorkspaceSelection />*/}
+      {/*    ) : (*/}
+      {/*      <SignInUpForm />*/}
+      {/*    )}*/}
+      {/*  </>*/}
+      {/*)}*/}
     </>
   );
 };

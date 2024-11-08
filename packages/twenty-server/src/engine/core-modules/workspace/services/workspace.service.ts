@@ -24,6 +24,7 @@ import {
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { getWorkspaceSubdomainByOrigin } from 'src/engine/utils/get-workspace-subdomain-by-origin';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
@@ -37,6 +38,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly environmentService: EnvironmentService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private moduleRef: ModuleRef,
   ) {
@@ -186,8 +188,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   }
 
   async getAuthProvidersByWorkspaceId(workspaceId: string) {
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: workspaceId,
+    const workspace = await this.workspaceRepository.findOne({
+      where: {
+        id: workspaceId,
+      },
+      relations: ['workspaceSSOIdentityProviders'],
     });
 
     if (!workspace) {
@@ -202,13 +207,16 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       magicLink: false,
       password: workspace.isPasswordAuthEnabled,
       microsoft: workspace.isMicrosoftAuthEnabled,
-      sso: workspace.isSSOAuthEnabled,
+      sso: workspace.workspaceSSOIdentityProviders.length > 0,
     };
   }
 
   async getWorkspaceByOrigin(origin: string) {
     try {
-      const subdomain = getWorkspaceSubdomainByOrigin(origin);
+      const subdomain = getWorkspaceSubdomainByOrigin(
+        origin,
+        this.environmentService.get('FRONT_BASE_URL'),
+      );
 
       return this.workspaceRepository.findOneBy({ subdomain });
     } catch (e) {

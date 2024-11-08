@@ -39,6 +39,8 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { getWorkspaceSubdomainByOrigin } from 'src/engine/utils/get-workspace-subdomain-by-origin';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { ImpersonateInput } from './dto/impersonate.input';
@@ -67,6 +69,7 @@ export class AuthResolver {
     private switchWorkspaceService: SwitchWorkspaceService,
     private transientTokenService: TransientTokenService,
     private oauthService: OAuthService,
+    private environmentService: EnvironmentService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -129,7 +132,10 @@ export class AuthResolver {
   ): Promise<LoginToken> {
     const user = await this.authService.signInUp({
       ...signUpInput,
-      targetWorkspaceSubdomain: getWorkspaceSubdomainByOrigin(origin),
+      targetWorkspaceSubdomain: getWorkspaceSubdomainByOrigin(
+        origin,
+        this.environmentService.get('FRONT_BASE_URL'),
+      ),
       fromSSO: false,
     });
 
@@ -174,12 +180,24 @@ export class AuthResolver {
   }
 
   @Mutation(() => Verify)
-  async verify(@Args() verifyInput: VerifyInput): Promise<Verify> {
+  async verify(
+    @Args() verifyInput: VerifyInput,
+    @OriginHeader() origin: string,
+  ): Promise<Verify> {
+    const workspace = await this.workspaceService.getWorkspaceByOrigin(origin);
+
+    if (!workspace) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
     const email = await this.loginTokenService.verifyLoginToken(
       verifyInput.loginToken,
     );
 
-    return await this.authService.verify(email);
+    return await this.authService.verify(email, workspace.id);
   }
 
   @Mutation(() => AuthorizeApp)
@@ -274,5 +292,12 @@ export class AuthResolver {
     return this.resetPasswordService.validatePasswordResetToken(
       args.passwordResetToken,
     );
+  }
+
+  @Query(() => [AvailableWorkspaceOutput])
+  async findAvailableWorkspacesByEmail(
+    @Args('email') email: string,
+  ): Promise<AvailableWorkspaceOutput[]> {
+    return this.authService.findAvailableWorkspacesByEmail(email);
   }
 }

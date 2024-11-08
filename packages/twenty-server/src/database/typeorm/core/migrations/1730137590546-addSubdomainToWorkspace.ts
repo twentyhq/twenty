@@ -9,9 +9,7 @@ export class AddSubdomainToWorkspace1730137590546
     await queryRunner.query(
       `ALTER TABLE "core"."workspace" ADD "subdomain" varchar NULL`,
     );
-    await queryRunner.query(
-      `UPDATE "core"."workspace" SET "subdomain" = LOWER(REPLACE("id", '-', ''))`,
-    );
+    await queryRunner.query(`UPDATE "core"."workspace" SET "subdomain" = "id"`);
     await queryRunner.query(
       `ALTER TABLE "core"."workspace" ALTER COLUMN "subdomain" SET NOT NULL`,
     );

@@ -156,8 +156,4 @@ export class Workspace {
   @Field()
   @Column({ default: false })
   isMicrosoftAuthEnabled: boolean;
-
-  @Field()
-  @Column({ default: false })
-  isSSOAuthEnabled: boolean;
 }

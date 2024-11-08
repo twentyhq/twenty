@@ -1,5 +1,5 @@
-export const twentyHostname = process.env.REACT_WEB_APP_BASE_URL
-  ? new URL(process.env.REACT_WEB_APP_BASE_URL).hostname
+export const twentyHostname = process.env.REACT_APP_BASE_URL
+  ? new URL(process.env.REACT_APP_BASE_URL).hostname
   : 'twenty.com';
 
 export const isTwentyHosting =
