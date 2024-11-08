@@ -23,7 +23,7 @@ export const filterEventsAndReturnCancelledEvents = (
       },
       event,
     ) => {
-      if (event.status === 'cancelled') {
+      if (event.isCanceled) {
         acc.cancelledEvents.push(event);
       } else {
         acc.filteredEvents.push(event);

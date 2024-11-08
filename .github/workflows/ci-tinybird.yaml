@@ -1,4 +1,5 @@
 name: CI Tinybird
+timeout-minutes: 10
 on:
   push:
     branches:

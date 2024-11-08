@@ -27,6 +27,7 @@ import {
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ActivityTargetInlineCellEditModeMultiRecordsEffect } from '@/object-record/relation-picker/components/ActivityTargetInlineCellEditModeMultiRecordsEffect';
+import { ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect } from '@/object-record/relation-picker/components/ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect';
 import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
@@ -287,6 +288,7 @@ export const ActivityTargetInlineCellEditMode = ({
         <ActivityTargetInlineCellEditModeMultiRecordsEffect
           selectedObjectRecordIds={selectedTargetObjectIds}
         />
+        <ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect />
         <MultiRecordSelect onSubmit={handleSubmit} onChange={handleChange} />
       </RelationPickerScope>
     </StyledSelectContainer>

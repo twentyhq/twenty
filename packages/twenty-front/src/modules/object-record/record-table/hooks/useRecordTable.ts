@@ -16,6 +16,7 @@ import { ColumnDefinition } from '../types/ColumnDefinition';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
+import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { onColumnsChangeComponentState } from '@/object-record/record-table/states/onColumnsChangeComponentState';
 import { onEntityCountChangeComponentState } from '@/object-record/record-table/states/onEntityCountChangeComponentState';
@@ -27,6 +28,7 @@ import { tableFiltersComponentState } from '@/object-record/record-table/states/
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
 import { tableViewFilterGroupsComponentState } from '@/object-record/record-table/states/tableViewFilterGroupsComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useDisableSoftFocus } from './internal/useDisableSoftFocus';
@@ -42,7 +44,10 @@ type useRecordTableProps = {
 };
 
 export const useRecordTable = (props?: useRecordTableProps) => {
-  const recordTableId = props?.recordTableId;
+  const recordTableId = useAvailableComponentInstanceIdOrThrow(
+    RecordTableComponentInstanceContext,
+    props?.recordTableId,
+  );
 
   const availableTableColumnsState = useRecoilComponentCallbackStateV2(
     availableTableColumnsComponentState,

@@ -1,4 +1,5 @@
 name: "Release: create"
+timeout-minutes: 10
 on:
   workflow_dispatch:
     inputs:

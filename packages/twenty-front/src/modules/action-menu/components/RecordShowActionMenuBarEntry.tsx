@@ -1,8 +1,7 @@
+import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
-import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
+import { MOBILE_VIEWPORT, MenuItemAccent } from 'twenty-ui';
 
 type RecordShowActionMenuBarEntryProps = {
   entry: ActionMenuEntry;
@@ -26,7 +25,11 @@ const StyledButton = styled.div<{ accent: MenuItemAccent }>`
     background: ${({ theme, accent }) =>
       accent === 'danger'
         ? theme.background.danger
-        : theme.background.tertiary};
+        : theme.background.transparent.light};
+  }
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding: ${({ theme }) => theme.spacing(1)};
   }
 `;
 

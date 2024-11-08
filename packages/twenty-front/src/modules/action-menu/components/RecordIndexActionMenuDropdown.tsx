@@ -7,12 +7,13 @@ import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionM
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
 import { ActionMenuDropdownHotkeyScope } from '@/action-menu/types/ActionMenuDropdownHotKeyScope';
+import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { MenuItem } from 'twenty-ui';
 
 type StyledContainerProps = {
   position: PositionType;
@@ -47,13 +48,9 @@ export const RecordIndexActionMenuDropdown = () => {
   const actionMenuDropdownPosition = useRecoilValue(
     extractComponentState(
       recordIndexActionMenuDropdownPositionComponentState,
-      `action-menu-dropdown-${actionMenuId}`,
+      getActionMenuDropdownIdFromActionMenuId(actionMenuId),
     ),
   );
-
-  if (actionMenuEntries.length === 0) {
-    return null;
-  }
 
   //TODO: remove this
   const width = actionMenuEntries.some(
@@ -68,7 +65,7 @@ export const RecordIndexActionMenuDropdown = () => {
       className="action-menu-dropdown"
     >
       <Dropdown
-        dropdownId={`action-menu-dropdown-${actionMenuId}`}
+        dropdownId={getActionMenuDropdownIdFromActionMenuId(actionMenuId)}
         dropdownHotkeyScope={{
           scope: ActionMenuDropdownHotkeyScope.ActionMenuDropdown,
         }}

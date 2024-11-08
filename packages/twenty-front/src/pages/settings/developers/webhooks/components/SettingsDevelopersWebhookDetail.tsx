@@ -15,6 +15,9 @@ import {
   useIcons,
 } from 'twenty-ui';
 
+import { AnalyticsActivityGraph } from '@/analytics/components/AnalyticsActivityGraph';
+import { AnalyticsGraphEffect } from '@/analytics/components/AnalyticsGraphEffect';
+import { AnalyticsGraphDataInstanceContext } from '@/analytics/states/contexts/AnalyticsGraphDataInstanceContext';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -24,8 +27,6 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { Webhook } from '@/settings/developers/types/webhook/Webhook';
-import { SettingsDevelopersWebhookUsageGraph } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookUsageGraph';
-import { SettingsDevelopersWebhookUsageGraphEffect } from '@/settings/developers/webhook/components/SettingsDevelopersWebhookUsageGraphEffect';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Select, SelectOption } from '@/ui/input/components/Select';
@@ -281,10 +282,18 @@ export const SettingsDevelopersWebhooksDetail = () => {
           ))}
         </Section>
         {isAnalyticsEnabled && isAnalyticsV2Enabled && (
-          <>
-            <SettingsDevelopersWebhookUsageGraphEffect webhookId={webhookId} />
-            <SettingsDevelopersWebhookUsageGraph webhookId={webhookId} />
-          </>
+          <AnalyticsGraphDataInstanceContext.Provider
+            value={{ instanceId: `webhook-${webhookId}-analytics` }}
+          >
+            <AnalyticsGraphEffect
+              recordId={webhookId}
+              endpointName="getWebhookAnalytics"
+            />
+            <AnalyticsActivityGraph
+              recordId={webhookId}
+              endpointName="getWebhookAnalytics"
+            />
+          </AnalyticsGraphDataInstanceContext.Provider>
         )}
         <Section>
           <H2Title title="Danger zone" description="Delete this integration" />
