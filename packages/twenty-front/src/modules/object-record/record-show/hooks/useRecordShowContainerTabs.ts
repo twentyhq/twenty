@@ -45,7 +45,6 @@ export const useRecordShowContainerTabs = (
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
-  // conditions
   const isWorkflow =
     isWorkflowEnabled &&
     targetObjectNameSingular === CoreObjectNameSingular.Workflow;
@@ -118,8 +117,8 @@ export const useRecordShowContainerTabs = (
         inRightDrawer: false,
         ifFeatureFlagsEnabled: [],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: []
-      }
+        ifRelationsDontExist: [],
+      },
     },
     {
       id: 'fields',
@@ -131,8 +130,8 @@ export const useRecordShowContainerTabs = (
         inRightDrawer: false,
         ifFeatureFlagsEnabled: [],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: []
-      }
+        ifRelationsDontExist: [],
+      },
     },
     {
       id: 'timeline',
@@ -144,8 +143,8 @@ export const useRecordShowContainerTabs = (
         inRightDrawer: true,
         ifFeatureFlagsEnabled: [],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: []
-      }
+        ifRelationsDontExist: [],
+      },
     },
     {
       id: 'tasks',
@@ -157,8 +156,8 @@ export const useRecordShowContainerTabs = (
         inRightDrawer: false,
         ifFeatureFlagsEnabled: [],
         ifObjectsDontExist: ['Task'],
-        ifRelationsDontExist: ['taskTargets']
-      }
+        ifRelationsDontExist: ['taskTargets'],
+      },
     },
     {
       id: 'notes',
@@ -170,8 +169,8 @@ export const useRecordShowContainerTabs = (
         inRightDrawer: false,
         ifFeatureFlagsEnabled: [],
         ifObjectsDontExist: ['Note'],
-        ifRelationsDontExist: ['noteTargets']
-      }
+        ifRelationsDontExist: ['noteTargets'],
+      },
     },
     {
       id: 'files',
@@ -183,8 +182,8 @@ export const useRecordShowContainerTabs = (
         inRightDrawer: false,
         ifFeatureFlagsEnabled: [],
         ifObjectsDontExist: ['Attachment'],
-        ifRelationsDontExist: ['attachments']
-      }
+        ifRelationsDontExist: ['attachments'],
+      },
     },
     {
       id: 'emails',
@@ -196,8 +195,8 @@ export const useRecordShowContainerTabs = (
         inRightDrawer: false,
         ifFeatureFlagsEnabled: [],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: []
-      }
+        ifRelationsDontExist: [],
+      },
     },
     {
       id: 'calendar',
@@ -209,8 +208,8 @@ export const useRecordShowContainerTabs = (
         inRightDrawer: false,
         ifFeatureFlagsEnabled: [],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: []
-      }
+        ifRelationsDontExist: [],
+      },
     },
     {
       id: 'workflow',
@@ -222,8 +221,8 @@ export const useRecordShowContainerTabs = (
         inRightDrawer: false,
         ifFeatureFlagsEnabled: ['IS_WORKFLOW_ENABLED'],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: []
-      }
+        ifRelationsDontExist: [],
+      },
     },
     {
       id: 'workflowVersion',
@@ -235,8 +234,8 @@ export const useRecordShowContainerTabs = (
         inRightDrawer: false,
         ifFeatureFlagsEnabled: ['IS_WORKFLOW_ENABLED'],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: []
-      }
+        ifRelationsDontExist: [],
+      },
     },
     {
       id: 'workflowRunOutput',
@@ -248,8 +247,8 @@ export const useRecordShowContainerTabs = (
         inRightDrawer: false,
         ifFeatureFlagsEnabled: ['IS_WORKFLOW_ENABLED'],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: []
-      }
+        ifRelationsDontExist: [],
+      },
     },
     {
       id: 'workflowRunFlow',
@@ -261,9 +260,9 @@ export const useRecordShowContainerTabs = (
         inRightDrawer: false,
         ifFeatureFlagsEnabled: ['IS_WORKFLOW_ENABLED'],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: []
-      }
-    }
+        ifRelationsDontExist: [],
+      },
+    },
   ];
 
   // Process tabs and apply visibility logic
@@ -274,66 +273,71 @@ export const useRecordShowContainerTabs = (
         id,
         title,
         Icon,
-        hide: !(isMobile || isInRightDrawer)  // Show only on mobile or in right drawer
+        hide: !(isMobile || isInRightDrawer), // Show only on mobile or in right drawer
       };
     }
 
-    const baseHide = (
+    const baseHide =
       (hide.onMobile && isMobile) ||
       (hide.onDesktop && !isMobile) ||
       (hide.inRightDrawer && isInRightDrawer) ||
       (hide.ifFeatureFlagsEnabled.length > 0 &&
-        !hide.ifFeatureFlagsEnabled.every(flag => {
+        !hide.ifFeatureFlagsEnabled.every((flag) => {
           if (flag === 'IS_WORKFLOW_ENABLED') return isWorkflowEnabled;
           return false;
-        }))
-    );
+        }));
 
-    const objectsDontExist = hide.ifObjectsDontExist.length > 0 && !hide.ifObjectsDontExist.every(obj => {
-      switch (obj) {
-        case 'Note':
-          return isNotesObjectActive;
-        case 'Task':
-          return isTasksObjectActive;
-        case 'Attachment':
-          return isAttachmentsObjectActive;
-        default:
-          return objectMetadataItems.some(
-            item => item.nameSingular === obj && item.isActive
-          );
-      }
-    });
+    const objectsDontExist =
+      hide.ifObjectsDontExist.length > 0 &&
+      !hide.ifObjectsDontExist.every((obj) => {
+        switch (obj) {
+          case 'Note':
+            return isNotesObjectActive;
+          case 'Task':
+            return isTasksObjectActive;
+          case 'Attachment':
+            return isAttachmentsObjectActive;
+          default:
+            return objectMetadataItems.some(
+              (item) => item.nameSingular === obj && item.isActive,
+            );
+        }
+      });
 
-    const relationsDontExist = hide.ifRelationsDontExist.length > 0 && !hide.ifRelationsDontExist.every(rel =>
-      objectMetadataItem.fields.some(
-        field =>
-          field.type === FieldMetadataType.Relation &&
-          field.name === rel &&
-          field.isActive
-      )
-    );
+    const relationsDontExist =
+      hide.ifRelationsDontExist.length > 0 &&
+      !hide.ifRelationsDontExist.every((rel) =>
+        objectMetadataItem.fields.some(
+          (field) =>
+            field.type === FieldMetadataType.Relation &&
+            field.name === rel &&
+            field.isActive,
+        ),
+      );
 
-    let isHidden = loading || baseHide || objectsDontExist || relationsDontExist;
+    let isHidden =
+      loading || baseHide || objectsDontExist || relationsDontExist;
 
     // Special case handling from original code
     if (!isHidden) {
       switch (id) {
         case 'richText':
-         
-      isHidden = !(targetObjectNameSingular === CoreObjectNameSingular.Note || 
-                  targetObjectNameSingular === CoreObjectNameSingular.Task)
-      break;
+          isHidden = !(
+            targetObjectNameSingular === CoreObjectNameSingular.Note ||
+            targetObjectNameSingular === CoreObjectNameSingular.Task
+          );
+          break;
         case 'timeline':
           isHidden = isWorkflowRelated;
           break;
         case 'tasks':
-          isHidden = (isNoteOrTask || isWorkflowRelated || !hasTaskTargets);
+          isHidden = isNoteOrTask || isWorkflowRelated || !hasTaskTargets;
           break;
         case 'notes':
-          isHidden = (isNoteOrTask || isWorkflowRelated || !hasNoteTargets);
+          isHidden = isNoteOrTask || isWorkflowRelated || !hasNoteTargets;
           break;
         case 'files':
-          isHidden = (isWorkflowRelated || !hasAttachments);
+          isHidden = isWorkflowRelated || !hasAttachments;
           break;
         case 'emails':
           isHidden = !isCompanyOrPerson;
@@ -358,7 +362,7 @@ export const useRecordShowContainerTabs = (
       id,
       title,
       Icon,
-      hide: isHidden
+      hide: isHidden,
     };
   });
 };

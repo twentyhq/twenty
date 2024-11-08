@@ -1,5 +1,5 @@
-import { CardType } from "@/object-record/record-show/constants/CardType";
-import { IconComponent } from "twenty-ui";
+import { CardType } from '@/object-record/record-show/constants/CardType';
+import { IconComponent } from 'twenty-ui';
 
 export type TabDefinition = {
   id: string;

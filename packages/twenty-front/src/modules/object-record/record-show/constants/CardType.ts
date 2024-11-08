@@ -5,6 +5,5 @@ export enum CardType {
   NoteCard = 'NoteCard',
   EmailCard = 'EmailCard',
   CalendarCard = 'CalendarCard',
-  WorkflowCard = 'WorkflowCard'
+  WorkflowCard = 'WorkflowCard',
 }
-
