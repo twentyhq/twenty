@@ -1,4 +1,5 @@
 name: Playwright Tests
+timeout-minutes: 30
 on:
   push:
     branches: [ main, master ]
@@ -6,7 +7,6 @@ on:
     branches: [ main, master ]
 jobs:
   test:
-    timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

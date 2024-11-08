@@ -1,4 +1,5 @@
 name: CI Front
+timeout-minutes: 30
 on:
   push:
     branches:
@@ -59,7 +60,6 @@ jobs:
         run: npx nx storybook:build twenty-front
   front-sb-test:
     runs-on: shipfox-8vcpu-ubuntu-2204
-    timeout-minutes: 60
     needs: front-sb-build
     strategy:
       matrix:
@@ -102,7 +102,6 @@ jobs:
         run: npx nx storybook:serve-and-test:static twenty-front --configuration=${{ matrix.storybook_scope }}
   front-sb-test-performance:
     runs-on: shipfox-8vcpu-ubuntu-2204
-    timeout-minutes: 60
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
