@@ -2,27 +2,38 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import {
-  FIELDS_TAB_ID,
-  INDEXES_TAB_ID,
-  SETTINGS_TAB_ID,
-  TAB_LIST_COMPONENT_ID,
-} from '~/pages/settings/data-model/SettingsObjectDetailPage';
+import { OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 
-const validHashes = [FIELDS_TAB_ID, SETTINGS_TAB_ID, INDEXES_TAB_ID];
+type TabId =
+  (typeof OBJECT_DETAIL_TABS.TABS_IDS)[keyof typeof OBJECT_DETAIL_TABS.TABS_IDS];
+
+const validHashes = [
+  OBJECT_DETAIL_TABS.TABS_IDS.FIELDS,
+  OBJECT_DETAIL_TABS.TABS_IDS.SETTINGS,
+  OBJECT_DETAIL_TABS.TABS_IDS.INDEXES,
+];
 
 export const SettingsObjectDetailsPageTabFromUrlEffect = () => {
   const location = useLocation();
-  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
-  const { setActiveTabId } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabIdState } = useTabList(OBJECT_DETAIL_TABS.TAB_LIST_ID);
+  const { setActiveTabId } = useTabList(OBJECT_DETAIL_TABS.TAB_LIST_ID);
 
   const hash = location.hash.replace('#', '');
   const activeTabId = useRecoilValue(activeTabIdState);
   useEffect(() => {
+    console.log(
+      'hash',
+      hash,
+      'activeTabId',
+      activeTabId,
+      'isvalid',
+      validHashes.includes(hash as TabId),
+    );
     if (hash === activeTabId) return;
 
-    if (validHashes.includes(hash)) {
-      setActiveTabId(hash);
+    if (validHashes.includes(hash as TabId)) {
+      console.log('setting active tab id', hash);
+      setActiveTabId(hash as TabId);
     }
   }, [hash, activeTabId, setActiveTabId]);
 

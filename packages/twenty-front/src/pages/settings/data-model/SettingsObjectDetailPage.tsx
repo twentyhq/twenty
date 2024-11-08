@@ -30,6 +30,7 @@ import {
   MAIN_COLORS,
   UndecoratedLink,
 } from 'twenty-ui';
+import { OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { SettingsObjectDetailsPageTabFromUrlEffect } from '~/pages/settings/data-model/SettingsObjectDetailsPageTabFromUrlEffect';
 import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
 
@@ -65,11 +66,6 @@ const StyledTitleContainer = styled.div`
   display: flex;
 `;
 
-export const TAB_LIST_COMPONENT_ID = 'object-details-tab-list';
-export const FIELDS_TAB_ID = 'fields';
-export const SETTINGS_TAB_ID = 'settings';
-export const INDEXES_TAB_ID = 'indexes';
-
 export const SettingsObjectDetailPage = () => {
   const navigate = useNavigate();
 
@@ -84,8 +80,9 @@ export const SettingsObjectDetailPage = () => {
     findActiveObjectMetadataItemBySlug(objectSlug) ??
     findActiveObjectMetadataItemBySlug(updatedObjectSlug);
 
-  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabIdState } = useTabList(OBJECT_DETAIL_TABS.TAB_LIST_ID);
   const activeTabId = useRecoilValue(activeTabIdState);
+  console.log('activetabid', activeTabId);
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
@@ -107,19 +104,19 @@ export const SettingsObjectDetailPage = () => {
 
   const tabs = [
     {
-      id: FIELDS_TAB_ID,
+      id: OBJECT_DETAIL_TABS.TABS_IDS.FIELDS,
       title: 'Fields',
       Icon: IconListDetails,
       hide: false,
     },
     {
-      id: SETTINGS_TAB_ID,
+      id: OBJECT_DETAIL_TABS.TABS_IDS.SETTINGS,
       title: 'Settings',
       Icon: IconSettings,
       hide: false,
     },
     {
-      id: INDEXES_TAB_ID,
+      id: OBJECT_DETAIL_TABS.TABS_IDS.INDEXES,
       title: 'Indexes',
       Icon: IconCodeCircle,
       hide: !isAdvancedModeEnabled || !isUniqueIndexesEnabled,
@@ -128,12 +125,13 @@ export const SettingsObjectDetailPage = () => {
   ];
 
   const renderActiveTabContent = () => {
+    console.log('activeTabId:', activeTabId);
     switch (activeTabId) {
-      case FIELDS_TAB_ID:
+      case OBJECT_DETAIL_TABS.TABS_IDS.FIELDS:
         return <ObjectFields objectMetadataItem={objectMetadataItem} />;
-      case SETTINGS_TAB_ID:
+      case OBJECT_DETAIL_TABS.TABS_IDS.SETTINGS:
         return <ObjectSettings objectMetadataItem={objectMetadataItem} />;
-      case INDEXES_TAB_ID:
+      case OBJECT_DETAIL_TABS.TABS_IDS.INDEXES:
         return <ObjectIndexes objectMetadataItem={objectMetadataItem} />;
       default:
         return <></>;
@@ -157,7 +155,7 @@ export const SettingsObjectDetailPage = () => {
           },
         ]}
         actionButton={
-          activeTabId === FIELDS_TAB_ID && (
+          activeTabId === OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
             <UndecoratedLink to={'./new-field/select'}>
               <Button
                 title="New Field"
@@ -177,7 +175,7 @@ export const SettingsObjectDetailPage = () => {
           </StyledTitleContainer>
           <StyledTabListContainer>
             <TabList
-              tabListId={TAB_LIST_COMPONENT_ID}
+              tabListId={OBJECT_DETAIL_TABS.TAB_LIST_ID}
               tabs={tabs}
               className="tab-list"
             />
