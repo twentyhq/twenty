@@ -1,4 +1,5 @@
 name: CD deploy main
+timeout-minutes: 3
 on:
   push:
     branches:
