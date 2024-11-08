@@ -1,16 +1,16 @@
-import styled from '@emotion/styled';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 
-import { IconComponent, CardContent } from 'twenty-ui';
-import { ReactNode } from 'react';
+import { useId } from 'react';
+import { CardContent, IconComponent, Toggle } from 'twenty-ui';
 
 type SettingsOptionCardContentProps = {
   Icon?: IconComponent;
-  title: string;
+  title: React.ReactNode;
   description: string;
-  onClick: () => void;
-  children: ReactNode;
   divider?: boolean;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
 };
 
 const StyledCardContent = styled(CardContent)`
@@ -18,6 +18,7 @@ const StyledCardContent = styled(CardContent)`
   display: flex;
   gap: ${({ theme }) => theme.spacing(4)};
   cursor: pointer;
+  position: relative;
 
   &:hover {
     background: ${({ theme }) => theme.background.transparent.lighter};
@@ -47,28 +48,48 @@ const StyledIcon = styled.div`
   min-width: ${({ theme }) => theme.icon.size.md};
 `;
 
+const StyledToggle = styled(Toggle)`
+  margin-left: auto;
+`;
+
+const StyledCover = styled.span`
+  cursor: pointer;
+  inset: 0;
+  position: absolute;
+`;
+
 export const SettingsOptionCardContent = ({
   Icon,
   title,
   description,
-  onClick,
-  children,
   divider,
+  checked,
+  onChange,
 }: SettingsOptionCardContentProps) => {
   const theme = useTheme();
 
+  const toggleId = useId();
+
   return (
-    <StyledCardContent onClick={onClick} divider={divider}>
+    <StyledCardContent divider={divider}>
       {Icon && (
         <StyledIcon>
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.md} />
         </StyledIcon>
       )}
+
       <div>
-        <StyledTitle>{title}</StyledTitle>
+        <StyledTitle>
+          <label htmlFor={toggleId}>
+            {title}
+
+            <StyledCover />
+          </label>
+        </StyledTitle>
         <StyledDescription>{description}</StyledDescription>
       </div>
-      {children}
+
+      <StyledToggle id={toggleId} value={checked} onChange={onChange} />
     </StyledCardContent>
   );
 };

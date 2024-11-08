@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Card, H2Title, Section, Toggle } from 'twenty-ui';
+import { Card, H2Title, Section } from 'twenty-ui';
 
 import {
   MessageChannel,
@@ -28,10 +28,6 @@ const StyledDetailsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(6)};
-`;
-
-const StyledToggle = styled(Toggle)`
-  margin-left: auto;
 `;
 
 export const SettingsAccountsMessageChannelDetails = ({
@@ -107,25 +103,23 @@ export const SettingsAccountsMessageChannelDetails = ({
             title="Exclude non-professional emails"
             description="Don’t create contacts from/to Gmail, Outlook emails"
             divider
-            onClick={() =>
+            checked={messageChannel.excludeNonProfessionalEmails}
+            onChange={() => {
               handleIsNonProfessionalEmailExcludedToggle(
                 !messageChannel.excludeNonProfessionalEmails,
-              )
-            }
-          >
-            <StyledToggle value={messageChannel.excludeNonProfessionalEmails} />
-          </SettingsOptionCardContent>
+              );
+            }}
+          />
           <SettingsOptionCardContent
             title="Exclude group emails"
             description="Don’t sync emails from team@ support@ noreply@..."
-            onClick={() =>
+            checked={messageChannel.excludeGroupEmails}
+            onChange={() =>
               handleIsGroupEmailExcludedToggle(
                 !messageChannel.excludeGroupEmails,
               )
             }
-          >
-            <StyledToggle value={messageChannel.excludeGroupEmails} />
-          </SettingsOptionCardContent>
+          />
         </Card>
       </Section>
     </StyledDetailsContainer>

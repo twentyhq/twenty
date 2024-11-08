@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import path from 'path';
@@ -17,7 +18,10 @@ export default defineConfig(({ command, mode }) => {
     VITE_BUILD_SOURCEMAP,
     VITE_DISABLE_TYPESCRIPT_CHECKER,
     VITE_DISABLE_ESLINT_CHECKER,
+    REACT_APP_PORT
   } = env;
+
+  const port = isNonEmptyString(REACT_APP_PORT) ? parseInt(REACT_APP_PORT) : 3001;
 
   const isBuildCommand = command === 'build';
 
@@ -61,7 +65,7 @@ export default defineConfig(({ command, mode }) => {
     cacheDir: '../../node_modules/.vite/packages/twenty-front',
 
     server: {
-      port: 3001,
+      port,
       host: 'localhost',
       fs: {
         allow: [
