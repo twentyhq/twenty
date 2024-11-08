@@ -9,18 +9,19 @@ import {
 
 import { Response } from 'express';
 
+import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleOauthGuard } from 'src/engine/core-modules/auth/guards/google-oauth.guard';
 import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/google-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
 export class GoogleAuthController {
   constructor(
-    private readonly tokenService: TokenService,
+    private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
   ) {}
 
@@ -33,6 +34,7 @@ export class GoogleAuthController {
 
   @Get('redirect')
   @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard)
+  @UseFilters(AuthOAuthExceptionFilter)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
     const {
       firstName,
@@ -53,8 +55,10 @@ export class GoogleAuthController {
       fromSSO: true,
     });
 
-    const loginToken = await this.tokenService.generateLoginToken(user.email);
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+    );
 
-    return res.redirect(this.tokenService.computeRedirectURI(loginToken.token));
+    return res.redirect(this.authService.computeRedirectURI(loginToken.token));
   }
 }

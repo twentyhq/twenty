@@ -20,27 +20,18 @@ export const cacheStorageModuleFactory = (
       return cacheModuleOptions;
     }
     case CacheStorageType.Redis: {
-      const host = environmentService.get('REDIS_HOST');
-      const port = environmentService.get('REDIS_PORT');
+      const redisUrl = environmentService.get('REDIS_URL');
 
-      if (!(host && port)) {
+      if (!redisUrl) {
         throw new Error(
-          `${cacheStorageType} cache storage requires host: ${host} and port: ${port} to be defined, check your .env file`,
+          `${cacheStorageType} cache storage requires REDIS_URL to be defined, check your .env file`,
         );
       }
-
-      const username = environmentService.get('REDIS_USERNAME');
-      const password = environmentService.get('REDIS_PASSWORD');
 
       return {
         ...cacheModuleOptions,
         store: redisStore,
-        socket: {
-          host,
-          port,
-          username,
-          password,
-        },
+        url: redisUrl,
       };
     }
     default:

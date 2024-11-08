@@ -5,7 +5,13 @@ import pick from 'lodash.pick';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { H2Title, IconArchive, IconArchiveOff } from 'twenty-ui';
+import {
+  Button,
+  H2Title,
+  IconArchive,
+  IconArchiveOff,
+  Section,
+} from 'twenty-ui';
 import { z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -31,9 +37,7 @@ import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Button } from '@/ui/input/button/components/Button';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -133,6 +137,7 @@ export const SettingsObjectFieldEdit = () => {
 
         if (isDefined(relationFieldMetadataItem)) {
           await updateOneFieldMetadataItem({
+            objectMetadataId: objectMetadataItem.id,
             fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
             updatePayload: formValues.relation.field,
           });
@@ -148,6 +153,7 @@ export const SettingsObjectFieldEdit = () => {
         );
 
         await updateOneFieldMetadataItem({
+          objectMetadataId: objectMetadataItem.id,
           fieldMetadataIdToUpdate: fieldMetadataItem.id,
           updatePayload: formattedInput,
         });
@@ -164,12 +170,12 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   const handleDeactivate = async () => {
-    await deactivateMetadataField(fieldMetadataItem);
+    await deactivateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
     navigate(`/settings/objects/${objectSlug}`);
   };
 
   const handleActivate = async () => {
-    await activateMetadataField(fieldMetadataItem);
+    await activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
     navigate(`/settings/objects/${objectSlug}`);
   };
 

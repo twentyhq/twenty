@@ -5,9 +5,6 @@ import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata
 import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { View } from '@/views/types/View';
 
 export const NavigationDrawerOpenedSection = () => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
@@ -15,7 +12,6 @@ export const NavigationDrawerOpenedSection = () => {
     (item) => !item.isRemote,
   );
 
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const loading = useIsPrefetchLoading();
 
   const currentObjectNamePlural = useParams().objectNamePlural;
@@ -49,7 +45,6 @@ export const NavigationDrawerOpenedSection = () => {
       <NavigationDrawerSectionForObjectMetadataItems
         sectionTitle={'Opened'}
         objectMetadataItems={[objectMetadataItem]}
-        views={views}
         isRemote={false}
       />
     )

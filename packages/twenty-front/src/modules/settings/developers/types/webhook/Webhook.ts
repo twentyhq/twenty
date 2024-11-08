@@ -3,5 +3,6 @@ export type Webhook = {
   targetUrl: string;
   description?: string;
   operation: string;
+  operations: string[];
   __typename: 'Webhook';
 };

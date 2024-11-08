@@ -1,20 +1,22 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { IconChevronDown, useIcons } from 'twenty-ui';
+import { IconChevronDown, MenuItem, useIcons } from 'twenty-ui';
 
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useObjectSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useContext } from 'react';
 import { SORT_DIRECTIONS } from '../types/SortDirection';
 
@@ -42,17 +44,13 @@ export const StyledInput = styled.input`
   }
 `;
 
-const StyledContainer = styled.div`
-  position: relative;
-`;
-
 const StyledSelectedSortDirectionContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   box-shadow: ${({ theme }) => theme.boxShadow.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
-  left: 10px;
+
   position: absolute;
-  top: 10px;
+  top: 32px;
   width: 100%;
   z-index: 1000;
 `;
@@ -80,6 +78,8 @@ export const ObjectSortDropdownButton = ({
     resetSearchInput,
   } = useObjectSortDropdown();
 
+  const { recordIndexId } = useContext(RecordIndexRootPropsContext);
+
   const { isDropdownOpen } = useDropdown(OBJECT_SORT_DROPDOWN_ID);
 
   const handleButtonClick = () => {
@@ -97,15 +97,17 @@ export const ObjectSortDropdownButton = ({
 
   const { getIcon } = useIcons();
 
-  const { recordIndexId } = useContext(RecordIndexRootPropsContext);
-  const { hiddenTableColumnsSelector, visibleTableColumnsSelector } =
-    useRecordTableStates(recordIndexId);
-
-  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const visibleTableColumns = useRecoilComponentValueV2(
+    visibleTableColumnsComponentSelector,
+    recordIndexId,
+  );
   const visibleColumnsIds = visibleTableColumns.map(
     (column) => column.fieldMetadataId,
   );
-  const hiddenTableColumns = useRecoilValue(hiddenTableColumnsSelector());
+  const hiddenTableColumns = useRecoilComponentValueV2(
+    hiddenTableColumnsComponentSelector,
+    recordIndexId,
+  );
   const hiddenColumnIds = hiddenTableColumns.map(
     (column) => column.fieldMetadataId,
   );
@@ -166,21 +168,23 @@ export const ObjectSortDropdownButton = ({
                 </DropdownMenuItemsContainer>
               </StyledSelectedSortDirectionContainer>
             )}
-            <StyledContainer>
-              <DropdownMenuHeader
-                EndIcon={IconChevronDown}
-                onClick={() => setIsSortDirectionMenuUnfolded(true)}
-              >
-                {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
-              </DropdownMenuHeader>
-              <StyledInput
-                autoFocus
-                value={objectSortDropdownSearchInput}
-                placeholder="Search fields"
-                onChange={(event) =>
-                  setObjectSortDropdownSearchInput(event.target.value)
-                }
-              />
+            <DropdownMenuHeader
+              EndIcon={IconChevronDown}
+              onClick={() =>
+                setIsSortDirectionMenuUnfolded(!isSortDirectionMenuUnfolded)
+              }
+            >
+              {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
+            </DropdownMenuHeader>
+            <StyledInput
+              autoFocus
+              value={objectSortDropdownSearchInput}
+              placeholder="Search fields"
+              onChange={(event) =>
+                setObjectSortDropdownSearchInput(event.target.value)
+              }
+            />
+            <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
               <DropdownMenuItemsContainer>
                 {visibleColumnsSortDefinitions.map(
                   (visibleSortDefinition, index) => (
@@ -214,7 +218,7 @@ export const ObjectSortDropdownButton = ({
                   ),
                 )}
               </DropdownMenuItemsContainer>
-            </StyledContainer>
+            </ScrollWrapper>
           </>
         }
         onClose={handleDropdownButtonClose}

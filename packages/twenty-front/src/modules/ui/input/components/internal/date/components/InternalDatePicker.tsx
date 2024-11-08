@@ -2,12 +2,15 @@ import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 import ReactDatePicker from 'react-datepicker';
 import { Key } from 'ts-key-enum';
-import { IconCalendarX, OVERLAY_BACKGROUND } from 'twenty-ui';
+import {
+  IconCalendarX,
+  MenuItemLeftContent,
+  OVERLAY_BACKGROUND,
+  StyledHoverableMenuItemBase,
+} from 'twenty-ui';
 
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
-import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
 import { isDefined } from '~/utils/isDefined';
 
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
@@ -17,7 +20,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
-} from '@/views/utils/view-filter-value/resolveDateViewFilterValue';
+} from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
 import { useContext } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -126,7 +129,6 @@ const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
   }
   & .react-datepicker__month-dropdown {
     left: ${({ theme }) => theme.spacing(2)};
-    width: 160px;
     height: 260px;
   }
 

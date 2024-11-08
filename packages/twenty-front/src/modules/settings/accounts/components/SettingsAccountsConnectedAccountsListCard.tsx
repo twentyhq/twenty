@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { IconGoogle } from 'twenty-ui';
+import { IconComponent, IconGoogle, IconMicrosoft } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
@@ -8,6 +8,11 @@ import { SettingsPath } from '@/types/SettingsPath';
 
 import { SettingsAccountsConnectedAccountsRowRightContainer } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer';
 import { SettingsListCard } from '../../components/SettingsListCard';
+
+const ProviderIcons: { [k: string]: IconComponent } = {
+  google: IconGoogle,
+  microsoft: IconMicrosoft,
+};
 
 export const SettingsAccountsConnectedAccountsListCard = ({
   accounts,
@@ -27,7 +32,7 @@ export const SettingsAccountsConnectedAccountsListCard = ({
       items={accounts}
       getItemLabel={(account) => account.handle}
       isLoading={loading}
-      RowIcon={IconGoogle}
+      RowIconFn={(row) => ProviderIcons[row.provider]}
       RowRightComponent={({ item: account }) => (
         <SettingsAccountsConnectedAccountsRowRightContainer account={account} />
       )}

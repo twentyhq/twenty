@@ -183,7 +183,10 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
           enum: enumOptions,
           isNullable:
             alteredFieldMetadata.isNullable || !alteredProperty.isRequired,
-          isUnique: alteredFieldMetadata.isUnique ?? false,
+          isUnique:
+            (alteredFieldMetadata.isUnique &&
+              alteredProperty.isIncludedInUniqueConstraint) ??
+            false,
           defaultValue: serializedDefaultValue,
           isArray:
             alteredProperty.type === FieldMetadataType.MULTI_SELECT ||

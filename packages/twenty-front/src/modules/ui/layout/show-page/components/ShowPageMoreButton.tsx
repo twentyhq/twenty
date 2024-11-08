@@ -1,14 +1,18 @@
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconDotsVertical, IconRestore, IconTrash } from 'twenty-ui';
+import {
+  IconButton,
+  IconDotsVertical,
+  IconRestore,
+  IconTrash,
+  MenuItem,
+} from 'twenty-ui';
 
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';

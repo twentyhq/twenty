@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { IconCheckbox } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import {
@@ -21,6 +20,7 @@ import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { IconCheckbox } from 'twenty-ui';
 import { useCleanRecoilState } from '~/hooks/useCleanRecoilState';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
@@ -115,7 +115,7 @@ export const PageChangeEffect = () => {
         break;
       }
       case isMatchingLocation(AppPath.CreateWorkspace): {
-        setHotkeyScope(PageHotkeyScope.CreateWokspace);
+        setHotkeyScope(PageHotkeyScope.CreateWorkspace);
         break;
       }
       case isMatchingLocation(AppPath.SyncEmails): {
