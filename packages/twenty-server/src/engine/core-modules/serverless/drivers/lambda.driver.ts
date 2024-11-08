@@ -227,7 +227,7 @@ export class LambdaDriver implements ServerlessDriver {
           ZipFile: await fs.readFile(lambdaZipPath),
         },
         FunctionName: serverlessFunction.id,
-        Handler: 'src/index.handler',
+        Handler: 'src/index.main',
         Layers: [layerArn],
         Environment: {
           Variables: envVariables,
