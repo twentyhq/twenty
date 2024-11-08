@@ -10,7 +10,6 @@ import {
   SyntaxKind,
   TypeNode,
   UnionTypeNode,
-  SourceFile,
   VariableStatement,
   ArrowFunction,
 } from 'typescript';
@@ -52,10 +51,6 @@ export class CodeIntrospectionService {
 
     const schema: InputSchema = {};
 
-    return this.handleArrowFunctions(schema, sourceFile);
-  }
-
-  private handleArrowFunctions(schema: InputSchema, sourceFile: SourceFile) {
     sourceFile.forEachChild((node) => {
       if (node.kind === SyntaxKind.FunctionDeclaration) {
         const funcNode = node as any;

@@ -9,8 +9,8 @@ type InputSchemaPropertyType =
 export type InputSchemaProperty = {
   type: InputSchemaPropertyType;
   enum?: string[];
-  items?: InputSchemaProperty;
-  properties?: InputSchema;
+  items?: InputSchemaProperty; // used to describe array type elements
+  properties?: InputSchema; // used to describe object type elements
 };
 
 export type InputSchema = {

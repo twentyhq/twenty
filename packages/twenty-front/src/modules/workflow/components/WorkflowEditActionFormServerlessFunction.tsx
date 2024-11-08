@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
 import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
+import { setNestedValue } from '@/workflow/utils/setNestedValue';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
 import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
@@ -97,18 +98,7 @@ export const WorkflowEditActionFormServerlessFunction = (
   );
 
   const handleInputChange = (value: any, path: string[]) => {
-    const newFunctionInput = { ...functionInput };
-    setNestedValue(newFunctionInput, path, value);
-    updateFunctionInput(newFunctionInput);
-  };
-
-  const setNestedValue = (obj: any, path: string[], value: any) => {
-    path.reduce((o, key, index) => {
-      if (index === path.length - 1) {
-        o[key] = value;
-      }
-      return o[key] || {};
-    }, obj);
+    updateFunctionInput(setNestedValue(functionInput, path, value));
   };
 
   const availableFunctions: Array<SelectOption<string>> = [
