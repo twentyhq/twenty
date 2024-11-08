@@ -3,8 +3,10 @@ timeout-minutes: 30
 on:
   push:
     branches:
-    - main
+      - main
   pull_request:
+    branches:
+      - '**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
