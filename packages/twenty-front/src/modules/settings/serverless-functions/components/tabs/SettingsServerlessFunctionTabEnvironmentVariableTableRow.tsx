@@ -6,7 +6,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import {
@@ -16,6 +15,7 @@ import {
   IconTrash,
   IconX,
   LightIconButton,
+  MenuItem,
   OverflowingTextWithTooltip,
 } from 'twenty-ui';
 

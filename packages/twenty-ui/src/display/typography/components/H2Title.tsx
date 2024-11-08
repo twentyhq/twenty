@@ -31,7 +31,7 @@ const StyledDescription = styled.h3`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin: 0;
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const H2Title = ({

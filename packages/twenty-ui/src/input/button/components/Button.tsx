@@ -29,6 +29,7 @@ export type ButtonProps = {
   to?: string;
   target?: string;
   dataTestId?: string;
+  shortcut?: string;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled('button', {
@@ -358,6 +359,19 @@ const StyledSoonPill = styled(Pill)`
   margin-left: auto;
 `;
 
+const StyledShortcutLabel = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
+
+const StyledSeparator = styled.div<{ buttonSize: ButtonSize }>`
+  background: ${({ theme }) => theme.border.color.light};
+  height: ${({ theme, buttonSize }) =>
+    theme.spacing(buttonSize === 'small' ? 3 : 4)};
+  margin: 0 ${({ theme }) => theme.spacing(1)};
+  width: 1px;
+`;
+
 export const Button = ({
   className,
   Icon,
@@ -376,6 +390,7 @@ export const Button = ({
   to,
   target,
   dataTestId,
+  shortcut,
 }: ButtonProps) => {
   const theme = useTheme();
 
@@ -399,6 +414,12 @@ export const Button = ({
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
+      {shortcut && (
+        <>
+          <StyledSeparator buttonSize={size} />
+          <StyledShortcutLabel>{shortcut}</StyledShortcutLabel>
+        </>
+      )}
       {soon && <StyledSoonPill label="Soon" />}
     </StyledButton>
   );

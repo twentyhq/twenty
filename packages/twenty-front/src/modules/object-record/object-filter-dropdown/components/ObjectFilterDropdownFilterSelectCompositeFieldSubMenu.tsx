@@ -12,11 +12,16 @@ import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dr
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconApps, IconChevronLeft, isDefined, useIcons } from 'twenty-ui';
+import {
+  IconApps,
+  IconChevronLeft,
+  isDefined,
+  MenuItem,
+  useIcons,
+} from 'twenty-ui';
 
 export const ObjectFilterDropdownFilterSelectCompositeFieldSubMenu = () => {
   const [searchText] = useState('');

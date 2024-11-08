@@ -1,5 +1,6 @@
 import { useContext, useEffect } from 'react';
 
+import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -99,7 +100,6 @@ export const RecordIndexTableContainerEffect = () => {
       setContextStoreTargetedRecords({
         mode: 'exclusion',
         excludedRecordIds: unselectedRowIds,
-        filters: recordIndexFilters,
       });
     } else {
       setContextStoreTargetedRecords({
@@ -116,11 +116,22 @@ export const RecordIndexTableContainerEffect = () => {
     };
   }, [
     hasUserSelectedAllRows,
-    recordIndexFilters,
     selectedRowIds,
     setContextStoreTargetedRecords,
     unselectedRowIds,
   ]);
+
+  const setContextStoreFilters = useSetRecoilComponentStateV2(
+    contextStoreFiltersComponentState,
+  );
+
+  useEffect(() => {
+    setContextStoreFilters(recordIndexFilters);
+
+    return () => {
+      setContextStoreFilters([]);
+    };
+  }, [recordIndexFilters, setContextStoreFilters]);
 
   return <></>;
 };

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { IconChevronDown, useIcons } from 'twenty-ui';
+import { IconChevronDown, MenuItem, useIcons } from 'twenty-ui';
 
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useObjectSortDropdown';
@@ -14,7 +14,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
