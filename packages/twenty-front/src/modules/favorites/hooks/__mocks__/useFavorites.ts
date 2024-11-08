@@ -11,18 +11,6 @@ export const favoriteTargetObjectRecord = {
   __typename: 'Person',
 };
 
-export const mockFolders = [
-  {
-    id: 'folder-1',
-    name: 'Important',
-    position: 0,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    deletedAt: null,
-    __typename: 'FavoriteFolder'
-  }
-];
-
 export const initialFavorites = [
   {
     id: '1',
@@ -710,23 +698,25 @@ export const mocks = [
           userId
         }
         workspaceMemberId
+    }
   }
-}
-      `,
-     variables: {
-      idToUpdate: '1',
-      input: {
-        position: 2,
+  `,
+      variables: {
+        idToUpdate: '1',
+        input: {
+          position: 2,
+        },
       },
     },
-  },
-  result: jest.fn(() => ({
-    data: {
-      updateFavorite: {
-        id: favoriteId,
+    result: jest.fn(() => ({
+      data: {
+        updateFavorite: {
+          __typename: 'Favorite',
+          id: favoriteId,
+          position: 2,
+        },
       },
-    },
-  })),
+    })),
   },
 ];
 
