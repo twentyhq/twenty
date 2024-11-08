@@ -131,7 +131,7 @@ describe('useFavorites', () => {
         destination: { index: 2, droppableId: 'droppableId' },
         combine: null,
         mode: 'FLUID',
-        draggableId: 'draggableId',
+        draggableId: '1',
         type: 'type',
         reason: 'DROP',
       };

@@ -60,7 +60,7 @@ export const sortedFavorites = [
     objectNameSingular: 'person',
     workspaceMemberId: undefined,
     favoriteFolderId: undefined,
-    __typename: 'Favorite'
+    __typename: 'Favorite',
   },
   {
     id: '2',
@@ -73,7 +73,7 @@ export const sortedFavorites = [
     objectNameSingular: 'person',
     workspaceMemberId: undefined,
     favoriteFolderId: undefined,
-    __typename: 'Favorite'
+    __typename: 'Favorite',
   },
   {
     id: '3',
@@ -84,7 +84,9 @@ export const sortedFavorites = [
     link: 'example.com',
     recordId: '1',
     avatarType: 'squared',
-  }
+    favoriteFolderId: undefined,
+    __typename: 'Favorite',
+  },
 ];
 
 export const mocks = [

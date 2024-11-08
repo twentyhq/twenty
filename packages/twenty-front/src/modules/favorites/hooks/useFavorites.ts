@@ -148,29 +148,9 @@ export const useFavorites = () => {
 
     if (!draggedFavorite) return;
 
-    const relevantFavorites = draggedFavorite.favoriteFolderId
-      ? sortFavorites(
-          favorites.filter(
-            (favorite) =>
-              favorite.favoriteFolderId === draggedFavorite.favoriteFolderId,
-          ),
-          favoriteRelationFieldMetadataItems,
-          getObjectRecordIdentifierByNameSingular,
-          true,
-          views,
-          objectMetadataItems,
-        )
-      : sortFavorites(
-          favorites.filter(
-            (favorite) =>
-              !favorite.favoriteFolderId && favorite.workspaceMemberId,
-          ),
-          favoriteRelationFieldMetadataItems,
-          getObjectRecordIdentifierByNameSingular,
-          true,
-          views,
-          objectMetadataItems,
-        );
+    const relevantFavorites = favoritesSorted.filter(
+      (fav) => fav.favoriteFolderId === draggedFavorite.favoriteFolderId,
+    );
     if (!relevantFavorites.length) return;
 
     const newPosition = calculateNewPosition({
