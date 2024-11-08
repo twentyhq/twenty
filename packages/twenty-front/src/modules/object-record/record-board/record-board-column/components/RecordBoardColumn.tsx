@@ -12,12 +12,10 @@ const StyledColumn = styled.div`
   flex-direction: column;
   max-width: 200px;
   min-width: 200px;
-
   padding: ${({ theme }) => theme.spacing(2)};
-
   padding-top: 0px;
-
   position: relative;
+  height: 100%;
 `;
 
 type RecordBoardColumnProps = {
