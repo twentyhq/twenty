@@ -51,6 +51,18 @@ This should work out of the box with the eslint extension installed. If this doe
 
 In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` and `VITE_DISABLE_ESLINT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
 
+#### While running `npx nx start` there are weird [0] and [1] in logs
+
+That's expected as command `npx nx start` is running more commands under the hood
+
+#### While running `yarn` warnings appear in console
+
+Warnings are informing about pulling additional dependencies which aren't explicitly stated in `package.json`, so as long as no breaking error appears, everything should work as expected.
+
+#### When user accesses login page, error about unauthorized user trying to access workspace appears in logs
+
+That's expected as user is unauthorized when logged out since its identity is not verified.
+
 ### 1-click Docker compose
 
 #### Unable to Log In
