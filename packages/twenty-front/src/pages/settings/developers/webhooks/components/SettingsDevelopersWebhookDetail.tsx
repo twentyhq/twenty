@@ -40,14 +40,14 @@ import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;
-const OBJECT_Mobile_WIDTH = 150;
-const ACTION_Mobile_WIDTH = 140;
+const OBJECT_MOBILE_WIDTH = 150;
+const ACTION_MOBILE_WIDTH = 140;
 
 const StyledFilterRow = styled.div<{ isMobile: boolean }>`
   display: grid;
   grid-template-columns: ${({ isMobile }) =>
     isMobile
-      ? `${OBJECT_Mobile_WIDTH}px ${ACTION_Mobile_WIDTH}px auto`
+      ? `${OBJECT_MOBILE_WIDTH}px ${ACTION_MOBILE_WIDTH}px auto`
       : `${OBJECT_DROPDOWN_WIDTH}px ${ACTION_DROPDOWN_WIDTH}px auto`};
   gap: ${({ theme }) => theme.spacing(2)};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
@@ -253,7 +253,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
               <Select
                 withSearchInput
                 dropdownWidth={
-                  isMobile ? OBJECT_Mobile_WIDTH : OBJECT_DROPDOWN_WIDTH
+                  isMobile ? OBJECT_MOBILE_WIDTH : OBJECT_DROPDOWN_WIDTH
                 }
                 dropdownId={`object-webhook-type-select-${index}`}
                 value={operation.object}
@@ -268,7 +268,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
 
               <Select
                 dropdownWidth={
-                  isMobile ? ACTION_Mobile_WIDTH : ACTION_DROPDOWN_WIDTH
+                  isMobile ? ACTION_MOBILE_WIDTH : ACTION_DROPDOWN_WIDTH
                 }
                 dropdownId={`operation-webhook-type-select-${index}`}
                 value={operation.action}
