@@ -364,9 +364,10 @@ const StyledShortcutLabel = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const StyledSeparator = styled.div<{ size: 'sm' | 'md' }>`
+const StyledSeparator = styled.div<{ buttonSize: ButtonSize }>`
   background: ${({ theme }) => theme.border.color.light};
-  height: ${({ theme, size }) => theme.spacing(size === 'sm' ? 4 : 8)};
+  height: ${({ theme, buttonSize }) =>
+    theme.spacing(buttonSize === 'small' ? 3 : 4)};
   margin: 0 ${({ theme }) => theme.spacing(1)};
   width: 1px;
 `;
@@ -415,7 +416,7 @@ export const Button = ({
       {title}
       {shortcut && (
         <>
-          <StyledSeparator size="sm" />
+          <StyledSeparator buttonSize={size} />
           <StyledShortcutLabel>{shortcut}</StyledShortcutLabel>
         </>
       )}

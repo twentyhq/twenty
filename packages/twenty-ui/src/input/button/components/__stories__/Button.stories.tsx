@@ -284,58 +284,9 @@ export const ShortcutCatalog: CatalogStory<Story, typeof Button> = {
     catalog: {
       dimensions: [
         {
-          name: 'positions',
-          values: [
-            'standalone',
-            'left',
-            'middle',
-            'right',
-          ] satisfies ButtonPosition[],
-          props: (position: ButtonPosition) => ({ position }),
-        },
-        {
-          name: 'states',
-          values: [
-            'default',
-            'hover',
-            'pressed',
-            'disabled',
-            'focus',
-            'disabled+focus',
-          ],
-          props: (state: string) => {
-            switch (state) {
-              case 'default':
-                return {};
-              case 'hover':
-              case 'pressed':
-                return { className: state };
-              case 'focus':
-                return { focus: true };
-              case 'disabled':
-                return { disabled: true };
-              case 'active':
-                return { active: true };
-              case 'disabled+focus':
-                return { focus: true, disabled: true };
-              default:
-                return {};
-            }
-          },
-        },
-        {
           name: 'sizes',
           values: ['small', 'medium'] satisfies ButtonSize[],
           props: (size: ButtonSize) => ({ size }),
-        },
-        {
-          name: 'variants',
-          values: [
-            'primary',
-            'secondary',
-            'tertiary',
-          ] satisfies ButtonVariant[],
-          props: (variant: ButtonVariant) => ({ variant }),
         },
       ],
     },
