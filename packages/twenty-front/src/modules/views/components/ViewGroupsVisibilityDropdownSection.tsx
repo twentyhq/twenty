@@ -4,7 +4,7 @@ import {
   ResponderProvided,
 } from '@hello-pangea/dnd';
 import { useRef } from 'react';
-import { IconEye, IconEyeOff, Tag } from 'twenty-ui';
+import { IconEye, IconEyeOff, MenuItemDraggable, Tag } from 'twenty-ui';
 
 import {
   RecordGroupDefinition,
@@ -14,7 +14,6 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
-import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
 import { isDefined } from '~/utils/isDefined';
 
 type ViewGroupsVisibilityDropdownSectionProps = {

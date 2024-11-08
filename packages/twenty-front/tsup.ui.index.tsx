@@ -10,16 +10,6 @@ export * from './src/modules/ui/input/components/Select';
 export * from './src/modules/ui/input/components/TextArea';
 export * from './src/modules/ui/input/components/TextInput';
 export * from './src/modules/ui/input/editor/components/BlockEditor';
-export * from './src/modules/ui/navigation/menu-item/components/MenuItem';
-export * from './src/modules/ui/navigation/menu-item/components/MenuItemCommand';
-export * from './src/modules/ui/navigation/menu-item/components/MenuItemDraggable';
-export * from './src/modules/ui/navigation/menu-item/components/MenuItemMultiSelect';
-export * from './src/modules/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
-export * from './src/modules/ui/navigation/menu-item/components/MenuItemNavigate';
-export * from './src/modules/ui/navigation/menu-item/components/MenuItemSelect';
-export * from './src/modules/ui/navigation/menu-item/components/MenuItemSelectAvatar';
-export * from './src/modules/ui/navigation/menu-item/components/MenuItemSelectColor';
-export * from './src/modules/ui/navigation/menu-item/components/MenuItemToggle';
 export * from './src/modules/ui/navigation/step-bar/components/StepBar';
 
 declare module '@emotion/react' {

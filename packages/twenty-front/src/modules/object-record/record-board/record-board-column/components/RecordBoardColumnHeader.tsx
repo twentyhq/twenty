@@ -33,7 +33,7 @@ const StyledNumChildren = styled.div`
   height: 24px;
   justify-content: center;
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
-  width: 16px;
+  width: 22px;
 `;
 
 const StyledHeaderActions = styled.div`

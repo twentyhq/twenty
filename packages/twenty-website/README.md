@@ -8,6 +8,13 @@ This is not related in anyway to the main app, which you can find in twenty-fron
 
 We're using Next.JS
 
+Copy the .env.example file to .env and fill in the values.
+
+Run the migrations:
+```bash
+npx nx run twenty-website:database:migrate
+```
+
 From the root directory:
 ```bash
 npx nx run twenty-website:dev
