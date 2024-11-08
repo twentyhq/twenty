@@ -9,7 +9,6 @@ import {
 } from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -57,29 +56,28 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }
+      dropdownMenuWidth={160}
       dropdownComponents={
-        <DropdownMenu width="160px">
-          <DropdownMenuItemsContainer>
+        <DropdownMenuItemsContainer>
+          <MenuItem
+            text={isCustomField ? 'Edit' : 'View'}
+            LeftIcon={isCustomField ? IconPencil : IconEye}
+            onClick={handleEdit}
+          />
+          <MenuItem
+            text="Activate"
+            LeftIcon={IconArchiveOff}
+            onClick={handleActivate}
+          />
+          {isDeletable && (
             <MenuItem
-              text={isCustomField ? 'Edit' : 'View'}
-              LeftIcon={isCustomField ? IconPencil : IconEye}
-              onClick={handleEdit}
+              text="Delete"
+              accent="danger"
+              LeftIcon={IconTrash}
+              onClick={handleDelete}
             />
-            <MenuItem
-              text="Activate"
-              LeftIcon={IconArchiveOff}
-              onClick={handleActivate}
-            />
-            {isDeletable && (
-              <MenuItem
-                text="Delete"
-                accent="danger"
-                LeftIcon={IconTrash}
-                onClick={handleDelete}
-              />
-            )}
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
+          )}
+        </DropdownMenuItemsContainer>
       }
       dropdownHotkeyScope={{
         scope: dropdownId,
