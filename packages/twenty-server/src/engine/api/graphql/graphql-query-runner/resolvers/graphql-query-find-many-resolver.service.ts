@@ -35,7 +35,6 @@ import {
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { isDefined } from 'src/utils/is-defined';
-import { isUuid } from 'src/utils/is-uuid';
 
 @Injectable()
 export class GraphqlQueryFindManyResolverService
@@ -145,13 +144,7 @@ export class GraphqlQueryFindManyResolverService
     );
 
     const selectedAggregatedFields = this.getSelectedAggregatedFields({
-      objectFields: Object.values(
-        Object.fromEntries(
-          Object.entries(objectMetadataMapItem.fields).filter(
-            ([key, _value]) => !isUuid(key), // remove objectMetadataMapItem fields duplicates
-          ),
-        ),
-      ),
+      objectFields: Object.values(objectMetadataMapItem.fields),
       selectedFields,
     });
 
@@ -295,6 +288,15 @@ export class GraphqlQueryFindManyResolverService
 
         if (!Object.keys(selectedFields).includes(aggregatedFieldName))
           return acc;
+
+        const isDuplicate = acc.some(
+          (existingField) =>
+            Object.keys(existingField)[0] === aggregatedFieldName,
+        );
+
+        if (isDuplicate) {
+          return acc;
+        }
 
         return [...acc, aggregatedField];
       },
