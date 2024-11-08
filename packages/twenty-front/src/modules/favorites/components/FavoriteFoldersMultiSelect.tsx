@@ -9,8 +9,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemMultiSelect } from '@/ui/navigation/menu-item/components/MenuItemMultiSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { useTheme } from '@emotion/react';
@@ -18,7 +16,7 @@ import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconPlus } from 'twenty-ui';
+import { IconPlus, MenuItem, MenuItemMultiSelect } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
 const StyledDropdownContainer = styled.div`
@@ -175,7 +173,7 @@ export const FavoriteFoldersMultiSelect = ({
                   NO_FOLDER_ID,
                 )}
                 text="No folder"
-                className=""
+                className="no-folder-menu-item-multi-select"
               />
             )}
             {showNoFolderOption && filteredFolders.length > 0 && (
@@ -190,7 +188,7 @@ export const FavoriteFoldersMultiSelect = ({
                       folder.id,
                     )}
                     text={folder.name}
-                    className=""
+                    className="folder-menu-item-multi-select"
                   />
                 ))
               : !showNoFolderOption && <MenuItem text="No folders found" />}
