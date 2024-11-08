@@ -41,6 +41,13 @@ export default defineConfig({
       testMatch: /login\.setup\.ts/, // finds all tests matching this regex, in this case only 1 test should be found
     },
     {
+      name: 'Demo check',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+      testMatch: /demo_basic\.spec\.ts/,
+    },
+    {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
