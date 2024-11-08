@@ -117,8 +117,8 @@ export const useRecordShowContainerTabs = (
         onDesktop: false,
         inRightDrawer: false,
         ifFeatureFlagsEnabled: [],
-        ifObjectsDontExist: ['Note'],
-        ifRelationsDontExist: ['noteTargets']
+        ifObjectsDontExist: [],
+        ifRelationsDontExist: []
       }
     },
     {
@@ -319,10 +319,10 @@ export const useRecordShowContainerTabs = (
     if (!isHidden) {
       switch (id) {
         case 'richText':
-          isHidden = !(targetObjectNameSingular === CoreObjectNameSingular.Note || 
-            targetObjectNameSingular === CoreObjectNameSingular.Task) 
-        
-          break;
+         
+      isHidden = !(targetObjectNameSingular === CoreObjectNameSingular.Note || 
+                  targetObjectNameSingular === CoreObjectNameSingular.Task)
+      break;
         case 'timeline':
           isHidden = isWorkflowRelated;
           break;
