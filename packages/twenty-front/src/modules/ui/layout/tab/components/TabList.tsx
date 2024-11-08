@@ -68,6 +68,7 @@ export const TabList = ({
                 }}
                 disabled={tab.disabled ?? loading}
                 pill={tab.pill}
+                to={`#${tab.id}`}
               />
             ))}
         </StyledContainer>

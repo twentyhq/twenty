@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -30,6 +30,7 @@ import {
   MAIN_COLORS,
   UndecoratedLink,
 } from 'twenty-ui';
+import { SettingsObjectDetailsPageTabFromUrlEffect } from '~/pages/settings/data-model/SettingsObjectDetailsPageTabFromUrlEffect';
 import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
 
 const StyledTabListContainer = styled.div`
@@ -64,16 +65,13 @@ const StyledTitleContainer = styled.div`
   display: flex;
 `;
 
-const TAB_LIST_COMPONENT_ID = 'object-details-tab-list';
-const FIELDS_TAB_ID = 'fields';
-const SETTINGS_TAB_ID = 'settings';
-const INDEXES_TAB_ID = 'indexes';
-
-const validHashes = [FIELDS_TAB_ID, SETTINGS_TAB_ID, INDEXES_TAB_ID];
+export const TAB_LIST_COMPONENT_ID = 'object-details-tab-list';
+export const FIELDS_TAB_ID = 'fields';
+export const SETTINGS_TAB_ID = 'settings';
+export const INDEXES_TAB_ID = 'indexes';
 
 export const SettingsObjectDetailPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const { objectSlug = '' } = useParams();
   const { findActiveObjectMetadataItemBySlug } =
@@ -87,32 +85,12 @@ export const SettingsObjectDetailPage = () => {
     findActiveObjectMetadataItemBySlug(updatedObjectSlug);
 
   const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
-  const { setActiveTabId } = useTabList(TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(activeTabIdState);
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
     'IS_UNIQUE_INDEXES_ENABLED',
   );
-
-  const hash = location.hash.replace('#', '');
-
-  useEffect(() => {
-    if (!hash) {
-      const initialTabId = activeTabId ?? FIELDS_TAB_ID;
-      navigate(`${location.pathname}#${initialTabId}`, { replace: true });
-    }
-  }, [activeTabId, hash, location.pathname, navigate]);
-
-  useEffect(() => {
-    if (hash === activeTabId) return;
-
-    if (isDefined(activeTabId)) {
-      navigate(`${location.pathname}#${activeTabId}`, { replace: true });
-    } else if (validHashes.includes(hash)) {
-      setActiveTabId(hash);
-    }
-  }, [hash, activeTabId, navigate, location.pathname, setActiveTabId]);
 
   useEffect(() => {
     if (objectSlug === updatedObjectSlug) setUpdatedObjectSlug('');
@@ -165,47 +143,50 @@ export const SettingsObjectDetailPage = () => {
   const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
 
   return (
-    <SubMenuTopBarContainer
-      links={[
-        {
-          children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
-        },
-        { children: 'Objects', href: '/settings/objects' },
-        {
-          children: objectMetadataItem.labelPlural,
-        },
-      ]}
-      actionButton={
-        activeTabId === FIELDS_TAB_ID && (
-          <UndecoratedLink to={'./new-field/select'}>
-            <Button
-              title="New Field"
-              variant="primary"
-              size="small"
-              accent="blue"
-              Icon={IconPlus}
+    <>
+      <SettingsObjectDetailsPageTabFromUrlEffect />
+      <SubMenuTopBarContainer
+        links={[
+          {
+            children: 'Workspace',
+            href: getSettingsPagePath(SettingsPath.Workspace),
+          },
+          { children: 'Objects', href: '/settings/objects' },
+          {
+            children: objectMetadataItem.labelPlural,
+          },
+        ]}
+        actionButton={
+          activeTabId === FIELDS_TAB_ID && (
+            <UndecoratedLink to={'./new-field/select'}>
+              <Button
+                title="New Field"
+                variant="primary"
+                size="small"
+                accent="blue"
+                Icon={IconPlus}
+              />
+            </UndecoratedLink>
+          )
+        }
+      >
+        <SettingsPageContainer>
+          <StyledTitleContainer>
+            <H3Title title={objectMetadataItem.labelPlural} />
+            <StyledObjectTypeTag objectTypeLabel={objectTypeLabel} />
+          </StyledTitleContainer>
+          <StyledTabListContainer>
+            <TabList
+              tabListId={TAB_LIST_COMPONENT_ID}
+              tabs={tabs}
+              className="tab-list"
             />
-          </UndecoratedLink>
-        )
-      }
-    >
-      <SettingsPageContainer>
-        <StyledTitleContainer>
-          <H3Title title={objectMetadataItem.labelPlural} />
-          <StyledObjectTypeTag objectTypeLabel={objectTypeLabel} />
-        </StyledTitleContainer>
-        <StyledTabListContainer>
-          <TabList
-            tabListId={TAB_LIST_COMPONENT_ID}
-            tabs={tabs}
-            className="tab-list"
-          />
-        </StyledTabListContainer>
-        <StyledContentContainer>
-          {renderActiveTabContent()}
-        </StyledContentContainer>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+          </StyledTabListContainer>
+          <StyledContentContainer>
+            {renderActiveTabContent()}
+          </StyledContentContainer>
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </>
   );
 };

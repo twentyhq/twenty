@@ -183,7 +183,7 @@ export const SettingsDataModelObjectAboutForm = ({
           defaultValue={objectMetadataItem?.labelSingular}
           render={({ field: { onChange, value } }) => (
             <TextInput
-              label={'Label Singular'}
+              label={'Singular'}
               placeholder={'Listing'}
               value={value}
               onChange={(value) => {
