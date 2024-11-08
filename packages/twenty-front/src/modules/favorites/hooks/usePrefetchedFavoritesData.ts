@@ -19,21 +19,11 @@ type PrefetchedFavoritesData = {
 export const usePrefetchedFavoritesData = (): PrefetchedFavoritesData => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const currentWorkspaceMemberId = currentWorkspaceMember?.id;
-
   const { records: _favorites } = usePrefetchedData<Favorite>(
     PrefetchKey.AllFavorites,
     {
       workspaceMemberId: {
-        eq: currentWorkspaceMemberId ?? '',
-      },
-    },
-  );
-
-  const { records: _workspaceFavorites } = usePrefetchedData<Favorite>(
-    PrefetchKey.AllFavorites,
-    {
-      workspaceMemberId: {
-        eq: undefined,
+        eq: currentWorkspaceMemberId,
       },
     },
   );
@@ -42,16 +32,16 @@ export const usePrefetchedFavoritesData = (): PrefetchedFavoritesData => {
     PrefetchKey.AllFavoritesFolders,
     {
       workspaceMemberId: {
-        eq: currentWorkspaceMemberId ?? '',
+        eq: currentWorkspaceMemberId,
       },
     },
   );
 
-  // Memoize ALL returned values
-  const favorites = useMemo(() => _favorites, [_favorites]);
+  
+  const favorites = useMemo(() => _favorites.filter((favorite)=> favorite.workspaceMemberId === currentWorkspaceMemberId), [_favorites]);
   const workspaceFavorites = useMemo(
-    () => _workspaceFavorites,
-    [_workspaceFavorites],
+    () => _favorites.filter((favorite) => favorite.workspaceMemberId === null),
+    [_favorites],
   );
   const folders = useMemo(() => _folders, [_folders]);
 
@@ -65,22 +55,23 @@ export const usePrefetchedFavoritesData = (): PrefetchedFavoritesData => {
       prefetchKey: PrefetchKey.AllFavoritesFolders,
     });
 
-  return useMemo(
-    () => ({
-      favorites,
-      workspaceFavorites,
-      folders,
-      upsertFavorites,
-      upsertFolders,
-      currentWorkspaceMemberId,
-    }),
-    [
-      favorites,
-      workspaceFavorites,
-      folders,
-      upsertFavorites,
-      upsertFolders,
-      currentWorkspaceMemberId,
-    ],
-  );
+
+    return useMemo(
+      () => ({
+        favorites,
+        workspaceFavorites,
+        folders,
+        upsertFavorites,
+        upsertFolders,
+        currentWorkspaceMemberId,
+      }),
+      [
+        favorites,
+        workspaceFavorites,
+        folders,
+        upsertFavorites,
+        upsertFolders,
+        currentWorkspaceMemberId,
+      ],
+    );
 };

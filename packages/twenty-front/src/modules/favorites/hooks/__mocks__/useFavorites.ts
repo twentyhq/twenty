@@ -13,6 +13,7 @@ export const favoriteTargetObjectRecord = {
 
 export const initialFavorites = [
   {
+    __typename: 'Favorite',
     id: '1',
     position: 0,
     key: mockId,
@@ -23,8 +24,11 @@ export const initialFavorites = [
     recordId: '1',
     person: { id: '1', name: 'John Doe' },
     company: { id: '2', name: 'ABC Corp' },
+    workspaceMemberId: '1',
+    favoriteFolderId: undefined,
   },
   {
+    __typename: 'Favorite',
     id: '2',
     position: 1,
     key: mockId,
@@ -35,8 +39,12 @@ export const initialFavorites = [
     recordId: '1',
     person: { id: '3', name: 'Jane Doe' },
     company: { id: '4', name: 'Company Test' },
+    workspaceMemberId: '1',
+    favoriteFolderId: undefined,
+
   },
   {
+    __typename: 'Favorite',
     id: '3',
     position: 2,
     key: mockId,
@@ -45,6 +53,8 @@ export const initialFavorites = [
     avatarType: 'squared' as AvatarType,
     link: 'example.com',
     recordId: '1',
+    workspaceMemberId: '1',
+    favoriteFolderId: undefined,
   },
 ];
 
@@ -58,7 +68,7 @@ export const sortedFavorites = [
     labelIdentifier: ' ',
     link: '/object/person/1',
     objectNameSingular: 'person',
-    workspaceMemberId: undefined,
+    workspaceMemberId: '1',
     favoriteFolderId: undefined,
     __typename: 'Favorite',
   },
@@ -71,7 +81,7 @@ export const sortedFavorites = [
     labelIdentifier: ' ',
     link: '/object/person/3',
     objectNameSingular: 'person',
-    workspaceMemberId: undefined,
+    workspaceMemberId: '1',
     favoriteFolderId: undefined,
     __typename: 'Favorite',
   },
@@ -85,6 +95,7 @@ export const sortedFavorites = [
     recordId: '1',
     avatarType: 'squared',
     favoriteFolderId: undefined,
+    workspaceMemberId: '1',
     __typename: 'Favorite',
   },
 ];
@@ -377,7 +388,7 @@ export const mocks = [
       variables: {
         input: {
           personId: favoriteTargetObjectId,
-          position: 1,
+          position: 3,
           workspaceMemberId: '1',
           favoriteFolderId: undefined,
           id: mockId,
