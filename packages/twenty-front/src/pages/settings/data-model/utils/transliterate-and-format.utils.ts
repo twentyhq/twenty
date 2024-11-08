@@ -1,5 +1,4 @@
-import toCamelCase from 'lodash.camelcase';
-import { slugify, transliterate } from 'transliteration';
+import { slugify } from 'transliteration';
 
 import { isDefined } from '~/utils/isDefined';
 
@@ -7,15 +6,14 @@ export const transliterateAndFormatOrThrow = (
   string: string,
   validStringPattern: RegExp,
 ): string => {
-  let formattedString = string;
-
-  if (isDefined(formattedString.match(validStringPattern))) {
-    return toCamelCase(formattedString);
+  if (isDefined(string.match(validStringPattern))) {
+    return string;
   }
 
-  formattedString = toCamelCase(
-    slugify(transliterate(formattedString, { trim: true })),
-  );
+  const formattedString = slugify(string, {
+    trim: true,
+    separator: '_',
+  });
 
   if (!formattedString.match(validStringPattern)) {
     throw new Error(`"${string}" is not a valid name`);

@@ -1,5 +1,3 @@
-import snakeCase from 'lodash.snakecase';
-
 import { computeOptionValueFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 
 export const getOptionValueFromLabel = (label: string) => {
@@ -7,8 +5,9 @@ export const getOptionValueFromLabel = (label: string) => {
   try {
     transliteratedLabel = computeOptionValueFromLabelOrThrow(label);
   } catch (error) {
-    return "";
+    console.error(error);
+    return '';
   }
 
-  return snakeCase(transliteratedLabel).toUpperCase();
+  return transliteratedLabel;
 };
