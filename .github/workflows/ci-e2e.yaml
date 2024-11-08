@@ -1,4 +1,4 @@
-name: Playwright Tests
+name: End-to-end Tests
 timeout-minutes: 30
 on:
   push:
@@ -19,6 +19,7 @@ jobs:
         uses: tj-actions/changed-files@v11
         with:
           files: |
+            .github/workflows/ci-e2e.yaml
             packages/**  # Adjust this to your relevant directories
             playwright.config.ts  # Include any relevant config files 
 
