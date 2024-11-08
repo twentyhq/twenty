@@ -36,9 +36,21 @@ export class TimelineActivityRepository {
       linkedRecordId,
       workspaceId,
     );
-      
+
+    private getObjectType(eventName: string): string {
+    const eventTypeMap: Record<string, string> = {
+      'object.created': 'object',
+      'object.deleted': 'object',
+      'linked-object.created': 'linked-object',
+      'linked-object.deleted': 'linked-object',
+    };
+
+    return eventTypeMap[eventName] || '';
+  }
+
     // Check if the event should be suppressed
-    if (this.shouldSuppressEvent(recentTimelineActivity, name, properties)) {
+    try{
+    if (this.shouldSuppressEvent(recentTimelineActivity, name)) {
       // If it's a creation/deletion of an empty record within 10 minutes
       // Remove the previous timeline activity
       if (recentTimelineActivity.length > 0) {
@@ -50,6 +62,10 @@ export class TimelineActivityRepository {
       }
       return;
     }
+  } catch (error) {
+    console.error('Error during event suppression:', error);
+  }
+   
     // If the diff is empty, we don't need to insert or update an activity
     // this should be handled differently, events should not be triggered when we will use proper DB events.
     const isDiffEmpty =
@@ -93,7 +109,6 @@ export class TimelineActivityRepository {
   private shouldSuppressEvent(
     recentActivity: any[],
     name: string,
-    properties: Partial<Record>
   ): boolean {
     // If no recent activity, don't suppress
     if (recentActivity.length === 0) return false;
@@ -112,7 +127,7 @@ export class TimelineActivityRepository {
 
     // Ensure the activities are for the same object type
     const isSameObjectType = 
-      recentActivity[0].name.split('-')[1] === name.split('-')[1];
+      this.getObjectType(recentActivity[0].name) === this.getObjectType(name);
 
     return isCreationOrDeletion && isSameObjectType;
 } 
