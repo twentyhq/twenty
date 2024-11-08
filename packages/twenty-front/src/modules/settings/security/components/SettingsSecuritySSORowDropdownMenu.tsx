@@ -5,6 +5,7 @@ import {
   IconDotsVertical,
   IconTrash,
   LightIconButton,
+  MenuItem,
 } from 'twenty-ui';
 
 import { useDeleteSSOIdentityProvider } from '@/settings/security/hooks/useDeleteSSOIdentityProvider';
@@ -16,7 +17,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { UnwrapRecoilValue } from 'recoil';
 import { SsoIdentityProviderStatus } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';

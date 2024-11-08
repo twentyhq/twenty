@@ -13,10 +13,10 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemMultiSelect } from '@/ui/navigation/menu-item/components/MenuItemMultiSelect';
+
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { MenuItem, MenuItemMultiSelect } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
 export const EMPTY_FILTER_VALUE = '';
@@ -179,8 +179,8 @@ export const ObjectFilterDropdownOptionSelect = () => {
             />
           ))}
         </DropdownMenuItemsContainer>
-        {showNoResult && <MenuItem text="No result" />}
       </ScrollWrapper>
+      {showNoResult && <MenuItem text="No result" />}
     </SelectableList>
   );
 };

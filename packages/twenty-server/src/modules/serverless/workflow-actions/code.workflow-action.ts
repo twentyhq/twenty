@@ -21,26 +21,30 @@ export class CodeWorkflowAction implements WorkflowAction {
   async execute(
     workflowStepInput: WorkflowCodeStepInput,
   ): Promise<WorkflowActionResult> {
-    const { workspaceId } = this.scopedWorkspaceContextFactory.create();
+    try {
+      const { workspaceId } = this.scopedWorkspaceContextFactory.create();
 
-    if (!workspaceId) {
-      throw new WorkflowStepExecutorException(
-        'Scoped workspace not found',
-        WorkflowStepExecutorExceptionCode.SCOPED_WORKSPACE_NOT_FOUND,
-      );
+      if (!workspaceId) {
+        throw new WorkflowStepExecutorException(
+          'Scoped workspace not found',
+          WorkflowStepExecutorExceptionCode.SCOPED_WORKSPACE_NOT_FOUND,
+        );
+      }
+
+      const result =
+        await this.serverlessFunctionService.executeOneServerlessFunction(
+          workflowStepInput.serverlessFunctionId,
+          workspaceId,
+          workflowStepInput.serverlessFunctionInput,
+        );
+
+      if (result.error) {
+        return { error: result.error };
+      }
+
+      return { result: result.data || {} };
+    } catch (error) {
+      return { error: error.message };
     }
-
-    const result =
-      await this.serverlessFunctionService.executeOneServerlessFunction(
-        workflowStepInput.serverlessFunctionId,
-        workspaceId,
-        {}, // TODO: input will be dynamically calculated from function input
-      );
-
-    if (result.error) {
-      return { error: result.error };
-    }
-
-    return { result: result.data || {} };
   }
 }

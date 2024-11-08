@@ -6,13 +6,13 @@ import {
   IconDotsVertical,
   IconRestore,
   IconTrash,
+  MenuItem,
 } from 'twenty-ui';
 
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';

@@ -1,15 +1,21 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
 import { MouseEvent, useCallback } from 'react';
-import { IconLock, IconPencil, IconPlus, useIcons } from 'twenty-ui';
+import {
+  IconLock,
+  IconPencil,
+  IconPlus,
+  LightIconButtonAccent,
+  MenuItem,
+  MenuItemDraggable,
+  useIcons,
+} from 'twenty-ui';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -109,6 +115,7 @@ export const ViewPickerListContent = () => {
                         Icon: IconPencil,
                         onClick: (event: MouseEvent<HTMLButtonElement>) =>
                           handleEditViewButtonClick(event, view.id),
+                        accent: 'tertiary' as LightIconButtonAccent,
                       },
                     ].filter(isDefined)}
                     isIconDisplayedOnHoverOnly={true}
