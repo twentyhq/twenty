@@ -21,7 +21,7 @@ describe('CodeIntrospectionService', () => {
     it('should analyze a simple function correctly', () => {
       const fileContent = `
         function testFunction(param1: string, param2: number): void {
-          return
+          return;
         }
       `;
       const result = service.getFunctionInputSchema(fileContent);
@@ -35,8 +35,8 @@ describe('CodeIntrospectionService', () => {
     it('should analyze a arrow function correctly', () => {
       const fileContent = `
         export const main = async (
-          param1: string;
-          param2: number;
+          param1: string,
+          param2: number,
         ): Promise<object> => {
           return params;
         };
@@ -58,8 +58,8 @@ describe('CodeIntrospectionService', () => {
             param3: boolean;
             param4: object;
             param5: { subParam1: string };
-            param6: "my" | "enum",
-            param7: string[],
+            param6: "my" | "enum";
+            param7: string[];
           }
         ): void {
           return
@@ -93,7 +93,7 @@ describe('CodeIntrospectionService', () => {
     it('should generate fake data for simple function', () => {
       const fileContent = `
         function testFunction(param1: string, param2: number): void {
-          return
+          return;
         }
       `;
       const inputSchema = service.getFunctionInputSchema(fileContent);
@@ -111,8 +111,8 @@ describe('CodeIntrospectionService', () => {
             param3: boolean;
             param4: object;
             param5: { subParam1: string };
-            param6: "my" | "enum",
-            param7: string[],
+            param6: "my" | "enum";
+            param7: string[];
           }
         ): void {
           return

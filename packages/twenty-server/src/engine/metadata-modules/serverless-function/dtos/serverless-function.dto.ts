@@ -66,7 +66,6 @@ export class ServerlessFunctionDTO {
   @Field(() => [String], { nullable: false })
   publishedVersions: string[];
 
-  @IsArray()
   @Field(() => GraphQLJSON, { nullable: true })
   latestVersionInputSchema: InputSchema;
 

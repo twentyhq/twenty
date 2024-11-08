@@ -8,7 +8,7 @@ type InputSchemaPropertyType =
 
 export type InputSchemaProperty = {
   type: InputSchemaPropertyType;
-  enum?: string[] | undefined;
+  enum?: string[];
   items?: InputSchemaProperty;
   properties?: InputSchema;
 };
