@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
 import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
@@ -6,7 +7,6 @@ import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditG
 import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
 import { WorkflowCodeStep } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
-import { ReactNode, useState } from 'react';
 import { IconCode, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
@@ -49,17 +49,30 @@ export const WorkflowEditActionFormServerlessFunction = (
   props: WorkflowEditActionFormServerlessFunctionProps,
 ) => {
   const theme = useTheme();
-
   const { serverlessFunctions } = useGetManyServerlessFunctions();
 
-  const defaultFunctionInput =
-    props.action.settings.input.serverlessFunctionInput;
+  const getFunctionInput = (serverlessFunctionId: string) => {
+    if (!serverlessFunctionId) {
+      return {};
+    }
 
-  const [functionInput, setFunctionInput] =
-    useState<FunctionInput>(defaultFunctionInput);
-  const [inputSchema, setInputSchema] = useState<InputSchema>({});
+    const serverlessFunction = serverlessFunctions.find(
+      (f) => f.id === serverlessFunctionId,
+    );
+    const inputSchema = serverlessFunction?.latestVersionInputSchema;
+    const defaultFunctionInput =
+      getDefaultFunctionInputFromInputSchema(inputSchema);
 
-  const [serverlessFunctionId, setServerlessFunctionId] = useState<string>(
+    const existingFunctionInput =
+      props.action.settings.input.serverlessFunctionInput;
+
+    return mergeDefaultFunctionInputAndFunctionInput({
+      defaultFunctionInput,
+      functionInput: existingFunctionInput,
+    });
+  };
+
+  const functionInput = getFunctionInput(
     props.action.settings.input.serverlessFunctionId,
   );
 
@@ -74,14 +87,8 @@ export const WorkflowEditActionFormServerlessFunction = (
         settings: {
           ...props.action.settings,
           input: {
-            serverlessFunctionId:
-              props.action.settings.input.serverlessFunctionId,
-            serverlessFunctionVersion:
-              props.action.settings.input.serverlessFunctionVersion,
-            serverlessFunctionInput: {
-              ...props.action.settings.input.serverlessFunctionInput,
-              ...newFunctionInput,
-            },
+            ...props.action.settings.input,
+            serverlessFunctionInput: newFunctionInput,
           },
         },
       });
@@ -92,14 +99,9 @@ export const WorkflowEditActionFormServerlessFunction = (
   const handleInputChange = (value: any, path: string[]) => {
     const newFunctionInput = { ...functionInput };
     setNestedValue(newFunctionInput, path, value);
-    setFunctionInput(newFunctionInput);
     updateFunctionInput(newFunctionInput);
   };
 
-  const getNestedValue = (obj: any, path: string[]) =>
-    path.reduce((o, key) => (o ? o[key] : undefined), obj);
-
-  // Utility to set nested value
   const setNestedValue = (obj: any, path: string[], value: any) => {
     path.reduce((o, key, index) => {
       if (index === path.length - 1) {
@@ -122,52 +124,42 @@ export const WorkflowEditActionFormServerlessFunction = (
   ];
 
   const handleFunctionChange = (newServerlessFunctionId: string) => {
-    setServerlessFunctionId(newServerlessFunctionId);
-
     const serverlessFunction = serverlessFunctions.find(
       (f) => f.id === newServerlessFunctionId,
     );
 
-    const serverlessFunctionVersion =
-      serverlessFunction?.latestVersion || 'latest';
-    const inputSchema = serverlessFunction?.latestVersionInputSchema;
-    const defaultFunctionInput =
-      getDefaultFunctionInputFromInputSchema(inputSchema);
+    const newProps = {
+      ...props.action,
+      settings: {
+        ...props.action.settings,
+        input: {
+          serverlessFunctionId: newServerlessFunctionId,
+          serverlessFunctionVersion:
+            serverlessFunction?.latestVersion || 'latest',
+          serverlessFunctionInput: getFunctionInput(newServerlessFunctionId),
+        },
+      },
+    };
 
     if (!props.readonly) {
-      props.onActionUpdate({
-        ...props.action,
-        settings: {
-          ...props.action.settings,
-          input: {
-            serverlessFunctionId: newServerlessFunctionId,
-            serverlessFunctionVersion,
-            serverlessFunctionInput: defaultFunctionInput,
-          },
-        },
-      });
+      props.onActionUpdate(newProps);
     }
-    setInputSchema(inputSchema);
-    setFunctionInput(defaultFunctionInput);
   };
 
   const renderFields = (
-    inputSchema: InputSchema,
+    functionInput: FunctionInput,
     path: string[] = [],
   ): ReactNode | undefined => {
-    if (!isDefined(inputSchema)) {
-      return;
-    }
-    return Object.entries(inputSchema).map(([inputKey, inputValue]) => {
+    return Object.entries(functionInput).map(([inputKey, inputValue]) => {
       const currentPath = [...path, inputKey];
       const pathKey = currentPath.join('.');
 
-      if (inputValue.type === 'object' && isDefined(inputValue.properties)) {
+      if (inputValue !== null && typeof inputValue === 'object') {
         return (
           <StyledContainer key={pathKey}>
             <StyledLabel>{inputKey}</StyledLabel>
             <StyledInputContainer>
-              {renderFields(inputValue.properties, currentPath)}
+              {renderFields(inputValue, currentPath)}
             </StyledInputContainer>
           </StyledContainer>
         );
@@ -178,7 +170,7 @@ export const WorkflowEditActionFormServerlessFunction = (
             inputId={`input-${inputKey}`}
             label={inputKey}
             placeholder="Enter value (use {{variable}} for dynamic content)"
-            value={getNestedValue(inputValue, currentPath)}
+            value={`${inputValue || ''}`}
             onChange={(value) => handleInputChange(value, currentPath)}
           />
         );
@@ -196,13 +188,13 @@ export const WorkflowEditActionFormServerlessFunction = (
         dropdownId="select-serverless-function-id"
         label="Function"
         fullWidth
-        value={serverlessFunctionId}
+        value={props.action.settings.input.serverlessFunctionId}
         options={availableFunctions}
         emptyOption={{ label: 'None', value: '' }}
         disabled={props.readonly}
         onChange={handleFunctionChange}
       />
-      {inputSchema && renderFields(inputSchema)}
+      {functionInput && renderFields(functionInput)}
     </WorkflowEditGenericFormBase>
   );
 };
