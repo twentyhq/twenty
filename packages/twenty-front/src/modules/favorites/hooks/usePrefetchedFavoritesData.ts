@@ -37,8 +37,13 @@ export const usePrefetchedFavoritesData = (): PrefetchedFavoritesData => {
     },
   );
 
-  
-  const favorites = useMemo(() => _favorites.filter((favorite)=> favorite.workspaceMemberId === currentWorkspaceMemberId), [_favorites]);
+  const favorites = useMemo(
+    () =>
+      _favorites.filter(
+        (favorite) => favorite.workspaceMemberId === currentWorkspaceMemberId,
+      ),
+    [_favorites, currentWorkspaceMemberId],
+  );
   const workspaceFavorites = useMemo(
     () => _favorites.filter((favorite) => favorite.workspaceMemberId === null),
     [_favorites],
@@ -55,23 +60,22 @@ export const usePrefetchedFavoritesData = (): PrefetchedFavoritesData => {
       prefetchKey: PrefetchKey.AllFavoritesFolders,
     });
 
-
-    return useMemo(
-      () => ({
-        favorites,
-        workspaceFavorites,
-        folders,
-        upsertFavorites,
-        upsertFolders,
-        currentWorkspaceMemberId,
-      }),
-      [
-        favorites,
-        workspaceFavorites,
-        folders,
-        upsertFavorites,
-        upsertFolders,
-        currentWorkspaceMemberId,
-      ],
-    );
+  return useMemo(
+    () => ({
+      favorites,
+      workspaceFavorites,
+      folders,
+      upsertFavorites,
+      upsertFolders,
+      currentWorkspaceMemberId,
+    }),
+    [
+      favorites,
+      workspaceFavorites,
+      folders,
+      upsertFavorites,
+      upsertFolders,
+      currentWorkspaceMemberId,
+    ],
+  );
 };
