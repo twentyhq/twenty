@@ -106,7 +106,11 @@ export class SeedWorkflowViewsCommand extends ActiveWorkspacesCommandRunner {
       await this.objectMetadataRepository.find({
         where: { workspaceId, nameSingular },
       })
-    )[0];
+    )?.[0];
+
+    if (!objectMetadata) {
+      throw new Error(`Object metadata not found: ${nameSingular}`);
+    }
 
     const fieldMetadataName = (
       await this.fieldMetadataRepository.find({
@@ -116,7 +120,13 @@ export class SeedWorkflowViewsCommand extends ActiveWorkspacesCommandRunner {
           name: 'name',
         },
       })
-    )[0];
+    )?.[0];
+
+    if (!fieldMetadataName) {
+      throw new Error(
+        `Field metadata not found for ${objectMetadata.id}: name`,
+      );
+    }
 
     const viewRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
