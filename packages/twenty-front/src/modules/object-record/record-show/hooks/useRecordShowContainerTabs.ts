@@ -45,7 +45,7 @@ export const useRecordShowContainerTabs = (
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
-  // Computing conditions
+  // conditions
   const isWorkflow =
     isWorkflowEnabled &&
     targetObjectNameSingular === CoreObjectNameSingular.Workflow;
