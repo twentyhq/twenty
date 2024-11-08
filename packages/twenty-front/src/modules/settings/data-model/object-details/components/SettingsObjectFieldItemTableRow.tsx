@@ -21,7 +21,7 @@ import { View } from '@/views/types/View';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
   IconMinus,
@@ -45,10 +45,13 @@ export const StyledObjectFieldTableRow = styled(TableRow)`
   grid-template-columns: 180px 148px 148px 36px;
 `;
 
-const StyledNameTableCell = styled(TableCell)`
+const StyledNameTableCell = styled(TableCell)<{ to?: string }>`
   color: ${({ theme }) => theme.font.color.primary};
   gap: ${({ theme }) => theme.spacing(2)};
+  text-decoration: none;
 `;
+
+const StyledDataTypeTableCell = styled(TableCell)<{ to?: string }>``;
 
 const StyledNameLabel = styled.div`
   white-space: nowrap;
@@ -206,10 +209,8 @@ export const SettingsObjectFieldItemTableRow = ({
   if (!isFieldTypeSupported) return null;
 
   return (
-    <StyledObjectFieldTableRow
-      to={mode === 'view' ? linkToNavigate : undefined}
-    >
-      <StyledNameTableCell>
+    <StyledObjectFieldTableRow forceInteractive>
+      <StyledNameTableCell as={Link} to={linkToNavigate}>
         {!!Icon && (
           <Icon
             style={{ minWidth: theme.icon.size.md }}
@@ -222,7 +223,20 @@ export const SettingsObjectFieldItemTableRow = ({
         </StyledNameLabel>
       </StyledNameTableCell>
       <TableCell>{typeLabel}</TableCell>
-      <TableCell>
+      <StyledDataTypeTableCell
+        as={
+          relationObjectMetadataItem?.namePlural &&
+          !relationObjectMetadataItem.isSystem
+            ? Link
+            : undefined
+        }
+        to={
+          relationObjectMetadataItem?.namePlural &&
+          !relationObjectMetadataItem.isSystem
+            ? `/settings/objects/${getObjectSlug(relationObjectMetadataItem)}`
+            : undefined
+        }
+      >
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
           label={
@@ -231,15 +245,9 @@ export const SettingsObjectFieldItemTableRow = ({
               ? relationObjectMetadataItem?.labelSingular
               : relationObjectMetadataItem?.labelPlural
           }
-          to={
-            relationObjectMetadataItem?.namePlural &&
-            !relationObjectMetadataItem.isSystem
-              ? `/settings/objects/${getObjectSlug(relationObjectMetadataItem)}`
-              : undefined
-          }
           value={fieldType}
         />
-      </TableCell>
+      </StyledDataTypeTableCell>
       <StyledIconTableCell>
         {status === 'active' ? (
           mode === 'view' ? (

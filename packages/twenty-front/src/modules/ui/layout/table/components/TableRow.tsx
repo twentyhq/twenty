@@ -1,13 +1,14 @@
 import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
+import { isDefined, MOBILE_VIEWPORT } from 'twenty-ui';
 
 const StyledTableRow = styled('div', {
   shouldForwardProp: (prop) =>
     !['isSelected'].includes(prop) && isPropValid(prop),
 })<{
   isSelected?: boolean;
+  interactive: boolean;
   onClick?: () => void;
   to?: string;
   gridAutoColumns?: string;
@@ -31,13 +32,14 @@ const StyledTableRow = styled('div', {
   text-decoration: none;
 
   &:hover {
-    background-color: ${({ onClick, to, theme }) =>
-      onClick || to ? theme.background.transparent.light : 'transparent'};
-    cursor: ${({ onClick, to }) => (onClick || to ? 'pointer' : 'default')};
+    background-color: ${({ interactive, theme }) =>
+      interactive ? theme.background.transparent.light : 'transparent'};
+    cursor: ${({ interactive }) => (interactive ? 'pointer' : 'default')};
   }
 `;
 
 type TableRowProps = {
+  forceInteractive?: true;
   isSelected?: boolean;
   onClick?: () => void;
   to?: string;
@@ -50,6 +52,7 @@ export const TableRow = ({
   isSelected,
   onClick,
   to,
+  forceInteractive,
   className,
   children,
   gridAutoColumns,
@@ -61,6 +64,9 @@ export const TableRow = ({
     gridAutoColumns={gridAutoColumns}
     className={className}
     mobileGridAutoColumns={mobileGridAutoColumns}
+    interactive={
+      isDefined(onClick) || isDefined(to) || forceInteractive === true
+    }
     to={to}
     as={to ? Link : 'div'}
   >

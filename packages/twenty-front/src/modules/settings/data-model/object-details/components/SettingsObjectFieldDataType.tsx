@@ -4,12 +4,9 @@ import { IconComponent, IconTwentyStar } from 'twenty-ui';
 
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsObjectFieldDataTypeProps = {
-  to?: string;
   Icon?: IconComponent;
   label?: string;
   value: SettingsFieldType;
@@ -29,13 +26,6 @@ const StyledDataType = styled.div<{
   overflow: hidden;
   text-decoration: none;
 
-  ${({ to }) =>
-    to
-      ? css`
-          cursor: pointer;
-        `
-      : ''}
-
   ${({ value, theme }) =>
     value === FieldMetadataType.Relation
       ? css`
@@ -52,13 +42,11 @@ const StyledLabelContainer = styled.div`
 `;
 
 export const SettingsObjectFieldDataType = ({
-  to,
   value,
   Icon: IconFromProps,
   label: labelFromProps,
 }: SettingsObjectFieldDataTypeProps) => {
   const theme = useTheme();
-  const navigate = useNavigate();
 
   const fieldTypeConfig = getSettingsFieldTypeConfig(value);
   const Icon: IconComponent =
@@ -69,23 +57,8 @@ export const SettingsObjectFieldDataType = ({
     flex: 1 0 auto;
   `;
 
-  const onClickDataType = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      if (to !== undefined) {
-        event.preventDefault(); // prevents the default navigation behavior of the table row
-        event.stopPropagation(); // stops the click from bubbling up to the table row
-        navigate(to);
-      }
-    },
-    [navigate, to],
-  );
-
   return (
-    <StyledDataType
-      to={to}
-      value={value}
-      onClick={to ? onClickDataType : undefined}
-    >
+    <StyledDataType value={value}>
       <StyledIcon size={theme.icon.size.sm} />
       <StyledLabelContainer>{label}</StyledLabelContainer>
     </StyledDataType>
