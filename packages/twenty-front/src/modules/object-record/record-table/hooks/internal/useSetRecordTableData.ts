@@ -1,10 +1,11 @@
 import { useRecoilCallback } from 'recoil';
 
+import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { numberOfTableRowsComponentState } from '@/object-record/record-table/states/numberOfTableRowsComponentState';
-import { tableRowIdsByGroupComponentState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentState';
+import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
+import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -19,12 +20,12 @@ export const useSetRecordTableData = ({
   recordTableId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const tableRowIdsByGroupState = useRecoilComponentCallbackStateV2(
-    tableRowIdsByGroupComponentState,
+  const tableRowIdsByGroupFamilyState = useRecoilComponentCallbackStateV2(
+    tableRowIdsByGroupComponentFamilyState,
     recordTableId,
   );
-  const numberOfTableRowsState = useRecoilComponentCallbackStateV2(
-    numberOfTableRowsComponentState,
+  const tableAllRowIdsState = useRecoilComponentCallbackStateV2(
+    tableAllRowIdsComponentState,
     recordTableId,
   );
   const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
@@ -33,6 +34,10 @@ export const useSetRecordTableData = ({
   );
   const hasUserSelectedAllRowsState = useRecoilComponentCallbackStateV2(
     hasUserSelectedAllRowsComponentState,
+    recordTableId,
+  );
+  const recordGroupDefinitionsState = useRecoilComponentCallbackStateV2(
+    recordGroupDefinitionsComponentState,
     recordTableId,
   );
 
@@ -54,16 +59,24 @@ export const useSetRecordTableData = ({
           }
         }
 
-        const tableRowIdsByGroup = getSnapshotValue(
+        const currentRowIds = getSnapshotValue(
           snapshot,
-          tableRowIdsByGroupState,
+          tableRowIdsByGroupFamilyState(recordGroupId),
         );
-        const currentRowIds = tableRowIdsByGroup.get(recordGroupId) ?? [];
 
         const hasUserSelectedAllRows = getSnapshotValue(
           snapshot,
           hasUserSelectedAllRowsState,
         );
+
+        const recordGroupDefinitions = getSnapshotValue(
+          snapshot,
+          recordGroupDefinitionsState,
+        );
+
+        const visibleRecordGroupDefinitions = recordGroupDefinitions
+          .filter((recordGroupDefinition) => recordGroupDefinition.isVisible)
+          .sort((a, b) => a.position - b.position);
 
         const recordIds = newRecords.map((record) => record.id);
 
@@ -74,16 +87,36 @@ export const useSetRecordTableData = ({
             }
           }
 
-          set(tableRowIdsByGroupState, (prev) =>
-            prev.set(recordGroupId, recordIds),
-          );
-          set(numberOfTableRowsState, totalCount ?? 0);
+          set(tableRowIdsByGroupFamilyState(recordGroupId), recordIds);
+
+          if (visibleRecordGroupDefinitions.length !== 0) {
+            // TODO: Hack to store all ids in the same order as the record group definitions
+            // Should be replaced by something more efficient
+            const allRowIds: string[] = [];
+
+            for (const recordGroupDefinition of visibleRecordGroupDefinitions) {
+              const tableRowIdsByGroup =
+                recordGroupDefinition.id !== recordGroupId
+                  ? getSnapshotValue(
+                      snapshot,
+                      tableRowIdsByGroupFamilyState(recordGroupDefinition.id),
+                    )
+                  : recordIds;
+
+              allRowIds.push(...tableRowIdsByGroup);
+            }
+            set(tableAllRowIdsState, allRowIds);
+          } else {
+            set(tableAllRowIdsState, recordIds);
+          }
+
           onEntityCountChange(totalCount);
         }
       },
     [
-      numberOfTableRowsState,
-      tableRowIdsByGroupState,
+      tableRowIdsByGroupFamilyState,
+      tableAllRowIdsState,
+      recordGroupDefinitionsState,
       onEntityCountChange,
       isRowSelectedFamilyState,
       hasUserSelectedAllRowsState,

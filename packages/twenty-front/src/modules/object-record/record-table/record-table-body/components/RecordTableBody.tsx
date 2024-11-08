@@ -5,7 +5,7 @@ import { RecordTableBodyDroppable } from '@/object-record/record-table/record-ta
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTablePendingRow } from '@/object-record/record-table/record-table-row/components/RecordTablePendingRow';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { tableAllRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/tableAllRowIdsComponentSelector';
+import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 type RecordTableBodyProps = {
@@ -15,15 +15,15 @@ type RecordTableBodyProps = {
 export const RecordTableBody = ({
   objectMetadataNameSingular,
 }: RecordTableBodyProps) => {
-  const tableRowIds = useRecoilComponentValueV2(
-    tableAllRowIdsComponentSelector,
+  const tableAllRowIds = useRecoilComponentValueV2(
+    tableAllRowIdsComponentState,
   );
 
   const isRecordTableInitialLoading = useRecoilComponentValueV2(
     isRecordTableInitialLoadingComponentState,
   );
 
-  if (isRecordTableInitialLoading && tableRowIds.length === 0) {
+  if (isRecordTableInitialLoading && tableAllRowIds.length === 0) {
     return <RecordTableBodyLoading />;
   }
 

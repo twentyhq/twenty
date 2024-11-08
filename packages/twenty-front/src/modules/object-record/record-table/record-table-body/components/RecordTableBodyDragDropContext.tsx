@@ -6,7 +6,7 @@ import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useComputeNewRowPosition } from '@/object-record/record-table/hooks/useComputeNewRowPosition';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
-import { tableAllRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/tableAllRowIdsComponentSelector';
+import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { isDefined } from '~/utils/isDefined';
@@ -22,8 +22,8 @@ export const RecordTableBodyDragDropContext = ({
     objectNameSingular,
   });
 
-  const tableRowIds = useRecoilComponentValueV2(
-    tableAllRowIdsComponentSelector,
+  const tableAllRowIds = useRecoilComponentValueV2(
+    tableAllRowIdsComponentState,
   );
 
   const { currentViewWithCombinedFiltersAndSorts } =
@@ -43,7 +43,7 @@ export const RecordTableBodyDragDropContext = ({
       return;
     }
 
-    const computeResult = computeNewRowPosition(result, tableRowIds);
+    const computeResult = computeNewRowPosition(result, tableAllRowIds);
 
     if (!isDefined(computeResult)) {
       return;
