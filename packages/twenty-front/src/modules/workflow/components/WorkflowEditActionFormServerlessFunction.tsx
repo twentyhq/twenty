@@ -110,7 +110,6 @@ export const WorkflowEditActionFormServerlessFunction = (
   };
 
   const availableFunctions: Array<SelectOption<string>> = [
-    { label: 'None', value: '' },
     ...serverlessFunctions
       .filter((serverlessFunction) =>
         isDefined(serverlessFunction.latestVersion),
@@ -199,6 +198,7 @@ export const WorkflowEditActionFormServerlessFunction = (
         fullWidth
         value={serverlessFunctionId}
         options={availableFunctions}
+        emptyOption={{ label: 'None', value: '' }}
         disabled={props.readonly}
         onChange={handleFunctionChange}
       />
