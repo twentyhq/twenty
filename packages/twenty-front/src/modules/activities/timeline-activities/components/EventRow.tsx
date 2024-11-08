@@ -11,6 +11,7 @@ import { TimelineActivity } from '@/activities/timeline-activities/types/Timelin
 import { getTimelineActivityAuthorFullName } from '@/activities/timeline-activities/utils/getTimelineActivityAuthorFullName';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -78,6 +79,9 @@ const StyledItemContainer = styled.div<{ isMarginBottom?: boolean }>`
 `;
 
 const StyledItemTitleDate = styled.div`
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: none;
+  }
   align-items: flex-start;
   padding-top: ${({ theme }) => theme.spacing(1)};
   color: ${({ theme }) => theme.font.color.tertiary};
