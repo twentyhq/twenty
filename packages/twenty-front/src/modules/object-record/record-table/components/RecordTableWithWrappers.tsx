@@ -11,6 +11,12 @@ import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
+import { useRecordTable } from '../hooks/useRecordTable';
+
+import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { Key } from 'ts-key-enum';
 
 const StyledTableWithHeader = styled.div`
   height: 100%;
@@ -40,6 +46,23 @@ export const RecordTableWithWrappers = ({
   recordTableId,
   viewBarId,
 }: RecordTableWithWrappersProps) => {
+  const { resetTableRowSelection, selectAllRows } = useRecordTable({
+    recordTableId,
+  });
+
+  useScopedHotkeys(
+    Key.Escape,
+    resetTableRowSelection,
+    ActionBarHotkeyScope.ActionBar,
+  );
+
+  useScopedHotkeys('ctrl+a,meta+a', selectAllRows, TableHotkeyScope.Table);
+  useScopedHotkeys(
+    'ctrl+a,meta+a',
+    selectAllRows,
+    TableHotkeyScope.TableSoftFocus,
+  );
+
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });

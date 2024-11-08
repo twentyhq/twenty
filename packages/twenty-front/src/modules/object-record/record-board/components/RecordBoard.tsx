@@ -61,6 +61,7 @@ export const RecordBoard = () => {
     columnIdsState,
     columnsFamilySelector,
     recordIdsByColumnIdFamilyState,
+    allRecordIdsSelector,
   } = useRecordBoardStates(recordBoardId);
 
   const columnIds = useRecoilValue(columnIdsState);
@@ -79,6 +80,20 @@ export const RecordBoard = () => {
     refs: [boardRef],
     callback: resetRecordSelection,
   });
+
+  const selectAll = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const allRecordIds = snapshot
+          .getLoadable(allRecordIdsSelector())
+          .getValue();
+
+        for (const recordId of allRecordIds) {
+          setRecordAsSelected(recordId, true);
+        }
+      },
+    [allRecordIdsSelector, setRecordAsSelected],
+  );
 
   useScopedHotkeys([Key.Escape], resetRecordSelection, TableHotkeyScope.Table);
 
