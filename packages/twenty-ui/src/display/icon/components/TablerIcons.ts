@@ -134,6 +134,7 @@ export {
   IconFolderPlus,
   IconForbid,
   IconFunction,
+  IconGauge,
   IconGitCommit,
   IconGripVertical,
   IconH1,
