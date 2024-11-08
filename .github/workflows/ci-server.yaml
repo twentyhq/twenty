@@ -146,7 +146,7 @@ jobs:
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
-          tasks: "test:integration"
+          tasks: "test:integration:with-db-reset"
       - name: Server / Upload reset-logs file
         if: always()
         uses: actions/upload-artifact@v4

@@ -1,5 +1,11 @@
 import styled from '@emotion/styled';
-import { IconButton, IconCheckbox, IconNotes, IconPlus } from 'twenty-ui';
+import {
+  IconButton,
+  IconCheckbox,
+  IconNotes,
+  IconPlus,
+  MenuItem,
+} from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -7,7 +13,6 @@ import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID } from '@/ui/layout/show-page/constants/ShowPageAddButtonDropdownId';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { Dropdown } from '../../dropdown/components/Dropdown';

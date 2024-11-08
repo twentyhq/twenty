@@ -10,6 +10,7 @@ import {
   IconTrash,
   IconUnlink,
   LightIconButton,
+  MenuItem,
 } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -38,7 +39,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 const StyledListItem = styled(RecordDetailRecordsListItem)<{

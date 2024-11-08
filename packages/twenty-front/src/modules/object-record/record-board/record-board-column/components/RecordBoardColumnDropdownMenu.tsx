@@ -4,8 +4,8 @@ import { useCallback, useRef } from 'react';
 import { useRecordGroupActions } from '@/object-record/record-group/hooks/useRecordGroupActions';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { MenuItem } from 'twenty-ui';
 
 const StyledMenuContainer = styled.div`
   position: absolute;
