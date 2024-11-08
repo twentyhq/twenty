@@ -26,8 +26,6 @@ const StyledContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
-  min-height: calc(100% - 1px);
-  height: 100%;
 `;
 
 const StyledColumnContainer = styled.div`
@@ -46,6 +44,7 @@ const StyledContainerContainer = styled.div`
 const StyledBoardContentContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: calc(100% - 48px);
 `;
 
 const RecordBoardScrollRestoreEffect = () => {
