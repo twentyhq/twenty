@@ -20,6 +20,7 @@ import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/su
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
+import { AnalyticsTinybirdJwtMap } from 'src/engine/core-modules/analytics/entities/analytics-tinybird-jwts.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
@@ -35,7 +36,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
-import { isDefined } from 'src/utils/is-defined';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -157,13 +157,9 @@ export class UserResolver {
     return getHMACKey(parent.email, key);
   }
 
-  @ResolveField(() => String, {
-    nullable: true,
-  })
-  async analyticsTinybirdJwt(
-    @AuthWorkspace() workspace: Workspace | undefined,
-  ): Promise<string> {
-    return await this.analyticsService.generateWorkspaceJwt(workspace?.id);
+  @ResolveField(() => AnalyticsTinybirdJwtMap, { nullable: true })
+  analyticsTinybirdJwts(@AuthWorkspace() workspace: Workspace | undefined) {
+    return this.analyticsService.generateWorkspaceJwt(workspace?.id);
   }
 
   @Mutation(() => String)

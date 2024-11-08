@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useParams } from 'react-router-dom';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { MainContextStoreComponentInstanceIdSetterEffect } from '@/context-store/components/MainContextStoreComponentInstanceIdSetterEffect';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -82,12 +83,12 @@ export const RecordIndexPage = () => {
             <StyledIndexContainer>
               <ContextStoreComponentInstanceContext.Provider
                 value={{
-                  instanceId: `record-index-${objectMetadataItem.id}`,
+                  instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
                 }}
               >
                 <ActionMenuComponentInstanceContext.Provider
                   value={{
-                    instanceId: `record-index-${objectMetadataItem.id}`,
+                    instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
                   }}
                 >
                   <RecordIndexContainerContextStoreObjectMetadataEffect />

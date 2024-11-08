@@ -16,7 +16,7 @@ export const RecordTableBodyUnselectEffect = ({
   tableBodyRef,
   recordTableId,
 }: RecordTableBodyUnselectEffectProps) => {
-  const leaveTableFocus = useLeaveTableFocus();
+  const leaveTableFocus = useLeaveTableFocus(recordTableId);
 
   const { resetTableRowSelection, useMapKeyboardToSoftFocus } = useRecordTable({
     recordTableId,

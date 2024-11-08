@@ -35,6 +35,7 @@ const insertMany = async (
   options?: {
     onConflictKey?: string;
     onConflictUpdateObject?: any;
+    onConflictDoNothing?: boolean;
   },
 ) => {
   const query = pgDb.insert(model).values(data);
@@ -48,6 +49,10 @@ const insertMany = async (
         })
         .execute();
     }
+  }
+
+  if (options?.onConflictDoNothing && !options?.onConflictKey) {
+    return query.onConflictDoNothing().execute();
   }
 
   if (options?.onConflictKey) {
