@@ -3,28 +3,22 @@ import { Injectable } from '@nestjs/common';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/types/workflow-action-result.type';
-
-type ObjectRecord = Record<string, any>;
-
-export type WorkflowCreateRecordStepInput = {
-  objectName: string;
-  objectRecord: ObjectRecord;
-};
+import { WorkflowCreateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/create-record/types/workflow-create-record-action-input.type';
+import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 
 @Injectable()
 export class CreateRecordWorkflowAction implements WorkflowAction {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   async execute(
-    workflowStepInput: WorkflowCreateRecordStepInput,
+    workflowActionInput: WorkflowCreateRecordActionInput,
   ): Promise<WorkflowActionResult> {
     const repository = await this.twentyORMManager.getRepository(
-      workflowStepInput.objectName,
+      workflowActionInput.objectName,
     );
 
     const objectRecord = await repository.create(
-      workflowStepInput.objectRecord,
+      workflowActionInput.objectRecord,
     );
 
     const createdObjectRecord = await repository.save(objectRecord);

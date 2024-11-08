@@ -5,8 +5,8 @@ import {
   WorkflowRunStatus,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
-import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
 import { resolveInput } from 'src/modules/workflow/workflow-executor/utils/variable-resolver.util';
+import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const MAX_RETRIES_ON_FAILURE = 3;
 
@@ -27,7 +27,7 @@ export class WorkflowExecutorWorkspaceService {
     attemptCount = 1,
   }: {
     currentStepIndex: number;
-    steps: WorkflowStep[];
+    steps: WorkflowAction[];
     output: WorkflowExecutorOutput;
     context: Record<string, unknown>;
     attemptCount?: number;

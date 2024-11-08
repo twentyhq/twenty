@@ -8,8 +8,8 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/types/workflow-action-result.type';
-import { WorkflowCodeStepInput } from 'src/modules/workflow/workflow-executor/types/workflow-step-settings.type';
+import { WorkflowCodeActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/code/types/workflow-code-action-input.type';
+import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 
 @Injectable()
 export class CodeWorkflowAction implements WorkflowAction {
@@ -19,7 +19,7 @@ export class CodeWorkflowAction implements WorkflowAction {
   ) {}
 
   async execute(
-    workflowStepInput: WorkflowCodeStepInput,
+    workflowActionInput: WorkflowCodeActionInput,
   ): Promise<WorkflowActionResult> {
     try {
       const { workspaceId } = this.scopedWorkspaceContextFactory.create();
@@ -33,9 +33,9 @@ export class CodeWorkflowAction implements WorkflowAction {
 
       const result =
         await this.serverlessFunctionService.executeOneServerlessFunction(
-          workflowStepInput.serverlessFunctionId,
+          workflowActionInput.serverlessFunctionId,
           workspaceId,
-          workflowStepInput.serverlessFunctionInput,
+          workflowActionInput.serverlessFunctionInput,
         );
 
       if (result.error) {

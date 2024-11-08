@@ -11,13 +11,13 @@ import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/cons
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
-import { WorkflowSendEmailStepOutputSchema } from 'src/modules/mail-sender/workflow-actions/send-email.workflow-action';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
+import { WorkflowSendEmailStepOutputSchema } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
 import {
+  WorkflowAction,
   WorkflowActionType,
-  WorkflowStep,
-} from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowTrigger,
   WorkflowTriggerType,
@@ -37,7 +37,7 @@ export class WorkflowBuilderWorkspaceService {
     step,
     workspaceId,
   }: {
-    step: WorkflowTrigger | WorkflowStep;
+    step: WorkflowTrigger | WorkflowAction;
     workspaceId: string;
   }): Promise<object> {
     const stepType = step.type;
