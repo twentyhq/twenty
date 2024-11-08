@@ -58,12 +58,12 @@ const StyledDataDefinition = styled.div`
 const StyledSpan = styled.span`
   color: ${({ theme }) => theme.font.color.primary};
 `;
-type SettingsDevelopersWebhookTooltipProps = {
+type WebhookAnalyticsTooltipProps = {
   point: Point;
 };
-export const SettingsDevelopersWebhookTooltip = ({
+export const WebhookAnalyticsTooltip = ({
   point,
-}: SettingsDevelopersWebhookTooltipProps): ReactElement => {
+}: WebhookAnalyticsTooltipProps): ReactElement => {
   const { timeFormat, timeZone } = useContext(UserContext);
   const windowInterval = new Date(point.data.x);
   const windowIntervalDate = formatDateISOStringToDateTimeSimplified(
