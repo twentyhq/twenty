@@ -35,7 +35,12 @@ export const MultiItemFieldMenuItem = <T,>({
   const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
 
   const handleMouseEnter = () => setIsHovered(true);
-  const handleMouseLeave = () => setIsHovered(false);
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (isDropdownOpen) {
+      closeDropdown();
+    }
+  };
 
   const handleDeleteClick = () => {
     closeDropdown();
