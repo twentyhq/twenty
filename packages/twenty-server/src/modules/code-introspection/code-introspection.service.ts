@@ -12,6 +12,7 @@ import {
   UnionTypeNode,
   VariableStatement,
   ArrowFunction,
+  FunctionDeclaration,
 } from 'typescript';
 
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
@@ -53,11 +54,11 @@ export class CodeIntrospectionService {
 
     sourceFile.forEachChild((node) => {
       if (node.kind === SyntaxKind.FunctionDeclaration) {
-        const funcNode = node as any;
+        const funcNode = node as FunctionDeclaration;
         const params = funcNode.parameters;
 
-        params.forEach((param: any) => {
-          const paramName = param.name.text;
+        params.forEach((param) => {
+          const paramName = param.name.getText();
           const typeNode = param.type;
 
           if (typeNode) {
