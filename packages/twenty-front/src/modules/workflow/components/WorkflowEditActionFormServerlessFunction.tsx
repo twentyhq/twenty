@@ -11,7 +11,7 @@ import { IconCode, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
-import { InputSchema } from '@/workflow/types/InputSchema';
+import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/utils/mergeDefaultFunctionInputAndFunctionInput';
 
 const StyledContainer = styled.div`
   display: inline-flex;
