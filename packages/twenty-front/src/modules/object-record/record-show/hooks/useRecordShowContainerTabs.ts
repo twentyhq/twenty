@@ -19,20 +19,21 @@ import {
 } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-type TabHideConfig = {
+type TabVisibilityConfig = {
   onMobile: boolean;
   onDesktop: boolean;
   inRightDrawer: boolean;
-  ifFeatureFlagsEnabled: string[];
-  ifObjectsDontExist: string[];
-  ifRelationsDontExist: string[];
+  requiresFeatures: string[];
+  ifObjectsDontExist: CoreObjectNameSingular[]; // For checking if objects are enabled/available
+  requiresRelations: string[];
+  visibleOnObjectTypes: CoreObjectNameSingular[]; // For controlling which pages show the tab
 };
 
 type TabDefinition = {
   id: string;
   title: string;
   Icon: IconComponent;
-  hide: TabHideConfig;
+  hide: TabVisibilityConfig;
 };
 
 export const useRecordShowContainerTabs = (
@@ -45,67 +46,6 @@ export const useRecordShowContainerTabs = (
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
-  const isWorkflow =
-    isWorkflowEnabled &&
-    targetObjectNameSingular === CoreObjectNameSingular.Workflow;
-
-  const isWorkflowVersion =
-    isWorkflowEnabled &&
-    targetObjectNameSingular === CoreObjectNameSingular.WorkflowVersion;
-
-  const isWorkflowRun =
-    isWorkflowEnabled &&
-    targetObjectNameSingular === CoreObjectNameSingular.WorkflowRun;
-
-  const isWorkflowRelated = isWorkflow || isWorkflowVersion || isWorkflowRun;
-
-  const isCompanyOrPerson = [
-    CoreObjectNameSingular.Company,
-    CoreObjectNameSingular.Person,
-  ].includes(targetObjectNameSingular);
-
-  const isNoteOrTask = [
-    CoreObjectNameSingular.Note,
-    CoreObjectNameSingular.Task,
-  ].includes(targetObjectNameSingular);
-
-  const isNotesObjectActive = objectMetadataItems.some(
-    (item) =>
-      item.nameSingular === CoreObjectNameSingular.Note && item.isActive,
-  );
-
-  const isTasksObjectActive = objectMetadataItems.some(
-    (item) =>
-      item.nameSingular === CoreObjectNameSingular.Task && item.isActive,
-  );
-
-  const isAttachmentsObjectActive = objectMetadataItems.some(
-    (item) =>
-      item.nameSingular === CoreObjectNameSingular.Attachment && item.isActive,
-  );
-
-  const hasNoteTargets = objectMetadataItem.fields.some(
-    (field) =>
-      field.type === FieldMetadataType.Relation &&
-      field.name === 'noteTargets' &&
-      field.isActive,
-  );
-
-  const hasTaskTargets = objectMetadataItem.fields.some(
-    (field) =>
-      field.type === FieldMetadataType.Relation &&
-      field.name === 'taskTargets' &&
-      field.isActive,
-  );
-
-  const hasAttachments = objectMetadataItem.fields.some(
-    (field) =>
-      field.type === FieldMetadataType.Relation &&
-      field.name === 'attachments' &&
-      field.isActive,
-  );
-
-  // Define all possible tabs
   const tabDefinitions: TabDefinition[] = [
     {
       id: 'richText',
@@ -115,9 +55,13 @@ export const useRecordShowContainerTabs = (
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
-        ifFeatureFlagsEnabled: [],
-        ifObjectsDontExist: [],
-        ifRelationsDontExist: [],
+        requiresFeatures: [],
+        ifObjectsDontExist: [CoreObjectNameSingular.Note],
+        requiresRelations: [],
+        visibleOnObjectTypes: [
+          CoreObjectNameSingular.Note,
+          CoreObjectNameSingular.Task,
+        ],
       },
     },
     {
@@ -126,11 +70,12 @@ export const useRecordShowContainerTabs = (
       Icon: IconList,
       hide: {
         onMobile: false,
-        onDesktop: false,
+        onDesktop: true,
         inRightDrawer: false,
-        ifFeatureFlagsEnabled: [],
+        requiresFeatures: [],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: [],
+        requiresRelations: [],
+        visibleOnObjectTypes: Object.values(CoreObjectNameSingular),
       },
     },
     {
@@ -141,9 +86,17 @@ export const useRecordShowContainerTabs = (
         onMobile: false,
         onDesktop: false,
         inRightDrawer: true,
-        ifFeatureFlagsEnabled: [],
+        requiresFeatures: [],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: [],
+        requiresRelations: [],
+        visibleOnObjectTypes: Object.values(CoreObjectNameSingular).filter(
+          (obj) =>
+            ![
+              CoreObjectNameSingular.Workflow,
+              CoreObjectNameSingular.WorkflowVersion,
+              CoreObjectNameSingular.WorkflowRun,
+            ].includes(obj),
+        ),
       },
     },
     {
@@ -154,9 +107,19 @@ export const useRecordShowContainerTabs = (
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
-        ifFeatureFlagsEnabled: [],
-        ifObjectsDontExist: ['Task'],
-        ifRelationsDontExist: ['taskTargets'],
+        requiresFeatures: [],
+        ifObjectsDontExist: [CoreObjectNameSingular.Task],
+        requiresRelations: ['taskTargets'],
+        visibleOnObjectTypes: Object.values(CoreObjectNameSingular).filter(
+          (obj) =>
+            ![
+              CoreObjectNameSingular.Note,
+              CoreObjectNameSingular.Task,
+              CoreObjectNameSingular.Workflow,
+              CoreObjectNameSingular.WorkflowVersion,
+              CoreObjectNameSingular.WorkflowRun,
+            ].includes(obj),
+        ),
       },
     },
     {
@@ -167,9 +130,19 @@ export const useRecordShowContainerTabs = (
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
-        ifFeatureFlagsEnabled: [],
-        ifObjectsDontExist: ['Note'],
-        ifRelationsDontExist: ['noteTargets'],
+        requiresFeatures: [],
+        ifObjectsDontExist: [CoreObjectNameSingular.Note],
+        requiresRelations: ['noteTargets'],
+        visibleOnObjectTypes: Object.values(CoreObjectNameSingular).filter(
+          (obj) =>
+            ![
+              CoreObjectNameSingular.Note,
+              CoreObjectNameSingular.Task,
+              CoreObjectNameSingular.Workflow,
+              CoreObjectNameSingular.WorkflowVersion,
+              CoreObjectNameSingular.WorkflowRun,
+            ].includes(obj),
+        ),
       },
     },
     {
@@ -180,9 +153,17 @@ export const useRecordShowContainerTabs = (
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
-        ifFeatureFlagsEnabled: [],
-        ifObjectsDontExist: ['Attachment'],
-        ifRelationsDontExist: ['attachments'],
+        requiresFeatures: [],
+        ifObjectsDontExist: [CoreObjectNameSingular.Attachment],
+        requiresRelations: ['attachments'],
+        visibleOnObjectTypes: Object.values(CoreObjectNameSingular).filter(
+          (obj) =>
+            ![
+              CoreObjectNameSingular.Workflow,
+              CoreObjectNameSingular.WorkflowVersion,
+              CoreObjectNameSingular.WorkflowRun,
+            ].includes(obj),
+        ),
       },
     },
     {
@@ -193,9 +174,13 @@ export const useRecordShowContainerTabs = (
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
-        ifFeatureFlagsEnabled: [],
+        requiresFeatures: [],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: [],
+        requiresRelations: [],
+        visibleOnObjectTypes: [
+          CoreObjectNameSingular.Company,
+          CoreObjectNameSingular.Person,
+        ],
       },
     },
     {
@@ -206,9 +191,13 @@ export const useRecordShowContainerTabs = (
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
-        ifFeatureFlagsEnabled: [],
+        requiresFeatures: [],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: [],
+        requiresRelations: [],
+        visibleOnObjectTypes: [
+          CoreObjectNameSingular.Company,
+          CoreObjectNameSingular.Person,
+        ],
       },
     },
     {
@@ -219,9 +208,10 @@ export const useRecordShowContainerTabs = (
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
-        ifFeatureFlagsEnabled: ['IS_WORKFLOW_ENABLED'],
+        requiresFeatures: ['IS_WORKFLOW_ENABLED'],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: [],
+        requiresRelations: [],
+        visibleOnObjectTypes: [CoreObjectNameSingular.Workflow],
       },
     },
     {
@@ -232,9 +222,10 @@ export const useRecordShowContainerTabs = (
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
-        ifFeatureFlagsEnabled: ['IS_WORKFLOW_ENABLED'],
+        requiresFeatures: ['IS_WORKFLOW_ENABLED'],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: [],
+        requiresRelations: [],
+        visibleOnObjectTypes: [CoreObjectNameSingular.WorkflowVersion],
       },
     },
     {
@@ -245,9 +236,10 @@ export const useRecordShowContainerTabs = (
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
-        ifFeatureFlagsEnabled: ['IS_WORKFLOW_ENABLED'],
+        requiresFeatures: ['IS_WORKFLOW_ENABLED'],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: [],
+        requiresRelations: [],
+        visibleOnObjectTypes: [CoreObjectNameSingular.WorkflowRun],
       },
     },
     {
@@ -258,14 +250,14 @@ export const useRecordShowContainerTabs = (
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
-        ifFeatureFlagsEnabled: ['IS_WORKFLOW_ENABLED'],
+        requiresFeatures: ['IS_WORKFLOW_ENABLED'],
         ifObjectsDontExist: [],
-        ifRelationsDontExist: [],
+        requiresRelations: [],
+        visibleOnObjectTypes: [CoreObjectNameSingular.WorkflowRun],
       },
     },
   ];
 
-  // Process tabs and apply visibility logic
   return tabDefinitions.map(({ id, title, Icon, hide }) => {
     // Special handling for fields tab
     if (id === 'fields') {
@@ -273,40 +265,33 @@ export const useRecordShowContainerTabs = (
         id,
         title,
         Icon,
-        hide: !(isMobile || isInRightDrawer), // Show only on mobile or in right drawer
+        hide: !(isMobile || isInRightDrawer),
       };
     }
 
     const baseHide =
       (hide.onMobile && isMobile) ||
       (hide.onDesktop && !isMobile) ||
-      (hide.inRightDrawer && isInRightDrawer) ||
-      (hide.ifFeatureFlagsEnabled.length > 0 &&
-        !hide.ifFeatureFlagsEnabled.every((flag) => {
-          if (flag === 'IS_WORKFLOW_ENABLED') return isWorkflowEnabled;
-          return false;
-        }));
+      (hide.inRightDrawer && isInRightDrawer);
+
+    const featureNotEnabled =
+      hide.requiresFeatures.length > 0 &&
+      !hide.requiresFeatures.every((flag) => {
+        if (flag === 'IS_WORKFLOW_ENABLED') return isWorkflowEnabled;
+        return false;
+      });
 
     const objectsDontExist =
       hide.ifObjectsDontExist.length > 0 &&
-      !hide.ifObjectsDontExist.every((obj) => {
-        switch (obj) {
-          case 'Note':
-            return isNotesObjectActive;
-          case 'Task':
-            return isTasksObjectActive;
-          case 'Attachment':
-            return isAttachmentsObjectActive;
-          default:
-            return objectMetadataItems.some(
-              (item) => item.nameSingular === obj && item.isActive,
-            );
-        }
-      });
+      !hide.ifObjectsDontExist.every((obj) =>
+        objectMetadataItems.some(
+          (item) => item.nameSingular === obj && item.isActive,
+        ),
+      );
 
     const relationsDontExist =
-      hide.ifRelationsDontExist.length > 0 &&
-      !hide.ifRelationsDontExist.every((rel) =>
+      hide.requiresRelations.length > 0 &&
+      !hide.requiresRelations.every((rel) =>
         objectMetadataItem.fields.some(
           (field) =>
             field.type === FieldMetadataType.Relation &&
@@ -315,54 +300,21 @@ export const useRecordShowContainerTabs = (
         ),
       );
 
-    let isHidden =
-      loading || baseHide || objectsDontExist || relationsDontExist;
-
-    // Special case handling from original code
-    if (!isHidden) {
-      switch (id) {
-        case 'richText':
-          isHidden = !(
-            targetObjectNameSingular === CoreObjectNameSingular.Note ||
-            targetObjectNameSingular === CoreObjectNameSingular.Task
-          );
-          break;
-        case 'timeline':
-          isHidden = isWorkflowRelated;
-          break;
-        case 'tasks':
-          isHidden = isNoteOrTask || isWorkflowRelated || !hasTaskTargets;
-          break;
-        case 'notes':
-          isHidden = isNoteOrTask || isWorkflowRelated || !hasNoteTargets;
-          break;
-        case 'files':
-          isHidden = isWorkflowRelated || !hasAttachments;
-          break;
-        case 'emails':
-          isHidden = !isCompanyOrPerson;
-          break;
-        case 'calendar':
-          isHidden = !isCompanyOrPerson;
-          break;
-        case 'workflow':
-          isHidden = !isWorkflow;
-          break;
-        case 'workflowVersion':
-          isHidden = !isWorkflowVersion;
-          break;
-        case 'workflowRunOutput':
-        case 'workflowRunFlow':
-          isHidden = !isWorkflowRun;
-          break;
-      }
-    }
+    const notVisibleForObjectType = !hide.visibleOnObjectTypes.includes(
+      targetObjectNameSingular,
+    );
 
     return {
       id,
       title,
       Icon,
-      hide: isHidden,
+      hide:
+        loading ||
+        baseHide ||
+        featureNotEnabled ||
+        objectsDontExist ||
+        relationsDontExist ||
+        notVisibleForObjectType,
     };
   });
 };
