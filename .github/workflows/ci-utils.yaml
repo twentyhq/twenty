@@ -1,5 +1,4 @@
 name: CI Utils
-timeout-minutes: 3
 on:
   # it's usually not recommended to use pull_request_target
   # but we consider it's safe here if we keep the same steps
@@ -20,6 +19,7 @@ concurrency:
 
 jobs:
   danger-js:
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     if: github.event.action != 'closed'
     steps:
@@ -32,6 +32,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ github.token }}
   
   congratulate:
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
     steps:

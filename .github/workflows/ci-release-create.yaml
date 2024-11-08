@@ -1,5 +1,4 @@
 name: "Release: create"
-timeout-minutes: 10
 on:
   workflow_dispatch:
     inputs:
@@ -16,6 +15,7 @@ on:
 
 jobs:
   create_pr:
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
