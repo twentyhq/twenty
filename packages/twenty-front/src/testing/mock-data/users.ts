@@ -47,7 +47,6 @@ export const mockDefaultWorkspace: Workspace = {
   activationStatus: WorkspaceActivationStatus.Active,
   hasValidEntrepriseKey: false,
   isGoogleAuthEnabled: true,
-  isSSOAuthEnabled: false,
   isPasswordAuthEnabled: true,
   isMicrosoftAuthEnabled: false,
   featureFlags: [

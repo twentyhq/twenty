@@ -135,35 +135,23 @@ export const SettingsSecurityOptionsList = () => {
           Icon={IconGoogle}
           title="Google"
           description="Allow logins through Google's single sign-on functionality."
-          onClick={() => toggleAuthMethod('google')}
-        >
-          <StyledToggle
-            value={currentWorkspace?.isGoogleAuthEnabled}
-            color={toggleColor}
-          />
-        </SettingsOptionCardContent>
+          checked={currentWorkspace?.isGoogleAuthEnabled}
+          onChange={() => toggleAuthMethod('google')}
+        />
         <SettingsOptionCardContent
           Icon={IconMicrosoft}
           title="Microsoft"
           description="Allow logins through Microsoft's single sign-on functionality."
-          onClick={() => toggleAuthMethod('microsoft')}
-        >
-          <StyledToggle
-            value={currentWorkspace?.isMicrosoftAuthEnabled}
-            color={toggleColor}
-          />
-        </SettingsOptionCardContent>
+          checked={currentWorkspace?.isMicrosoftAuthEnabled}
+          onChange={() => toggleAuthMethod('microsoft')}
+        />
         <SettingsOptionCardContent
           Icon={IconPassword}
           title="Password"
           description="Allow users to sign in with an email and password."
-          onClick={() => toggleAuthMethod('password')}
-        >
-          <StyledToggle
-            value={currentWorkspace?.isPasswordAuthEnabled}
-            color={toggleColor}
-          />
-        </SettingsOptionCardContent>
+          checked={currentWorkspace?.isPasswordAuthEnabled}
+          onChange={() => toggleAuthMethod('password')}
+        />
       </Card>
       <Card>
         <SettingsOptionCardContent

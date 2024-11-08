@@ -25,7 +25,6 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.module';
-import { UpgradeTo0_33CommandModule } from 'src/database/commands/upgrade-version/0-33/0-33-upgrade-version.module';
 
 @Module({
   imports: [
