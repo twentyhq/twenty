@@ -1,5 +1,4 @@
 export type OutputSchema = object;
-export type InputSchema = object;
 
 type BaseWorkflowStepSettings = {
   input: object;
