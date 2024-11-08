@@ -8,11 +8,13 @@ import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
+import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
 import { VerifyAuthController } from 'src/engine/core-modules/auth/controllers/verify-auth.controller';
 import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
+import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
 import { OAuthService } from 'src/engine/core-modules/auth/services/oauth.service';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -80,6 +82,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     GoogleAuthController,
     MicrosoftAuthController,
     GoogleAPIsAuthController,
+    MicrosoftAPIsAuthController,
     VerifyAuthController,
     SSOAuthController,
   ],
@@ -90,6 +93,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     SamlAuthStrategy,
     AuthResolver,
     GoogleAPIsService,
+    MicrosoftAPIsService,
     AppTokenService,
     AccessTokenService,
     LoginTokenService,

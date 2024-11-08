@@ -4,9 +4,8 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
 
+import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui';
 import { Currency } from './CurrencyPickerDropdownButton';
 
 export const CurrencyPickerDropdownSelect = ({
@@ -33,7 +32,7 @@ export const CurrencyPickerDropdownSelect = ({
   );
 
   return (
-    <DropdownMenu width="200px" disableBlur>
+    <DropdownMenu width="240px" disableBlur>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={(event) => setSearchFilter(event.target.value)}

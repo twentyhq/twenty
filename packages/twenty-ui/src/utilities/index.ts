@@ -8,6 +8,7 @@ export * from './color/utils/stringToHslColor';
 export * from './dimensions/components/ComputeNodeDimensions';
 export * from './image/getImageAbsoluteURI';
 export * from './isDefined';
+export * from './responsive/hooks/useIsMobile';
 export * from './screen-size/hooks/useScreenSize';
 export * from './state/utils/createState';
 export * from './types/Nullable';

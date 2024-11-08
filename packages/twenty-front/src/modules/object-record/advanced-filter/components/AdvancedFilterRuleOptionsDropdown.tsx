@@ -4,10 +4,9 @@ import { useCurrentViewViewFilterGroup } from '@/object-record/advanced-filter/h
 import { useDeleteCombinedViewFilterGroup } from '@/object-record/advanced-filter/hooks/useDeleteCombinedViewFilterGroup';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
-import { isDefined } from 'twenty-ui';
+import { isDefined, MenuItem } from 'twenty-ui';
 
 type AdvancedFilterRuleOptionsDropdownProps =
   | {
