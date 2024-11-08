@@ -4,7 +4,7 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
-import { IconLink, Toggle, Card } from 'twenty-ui';
+import { Card, IconLink, Toggle } from 'twenty-ui';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 
 const StyledToggle = styled(Toggle)`
