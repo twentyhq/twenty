@@ -1,4 +1,5 @@
 name: CI Chrome Extension
+timeout-minutes: 15
 on:
   push:
     branches:

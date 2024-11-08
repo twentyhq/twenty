@@ -1,4 +1,5 @@
 name: 'Test Docker Compose'
+timeout-minutes: 10
 on:
   pull_request:
    

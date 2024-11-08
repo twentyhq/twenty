@@ -1,34 +1,43 @@
-name: Playwright Tests
+name: CI E2E Tests
+timeout-minutes: 30
 on:
   push:
-    branches: [ main, master ]
+    branches:
+      - main
   pull_request:
-    branches: [ main, master ]
+    branches:
+      - '**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
-    timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
 
     - name: Check for changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v11
-        with:
-          files: |
-            packages/**  # Adjust this to your relevant directories
-            playwright.config.ts  # Include any relevant config files 
+      id: changed-files
+      uses: tj-actions/changed-files@v11
+      with:
+        files: |
+          packages/**
+          playwright.config.ts
 
     - name: Skip if no relevant changes
-        if: steps.changed-files.outputs.any_changed != 'true'
-        run: echo "No relevant changes detected. Marking as valid."
+      if: steps.changed-files.outputs.any_changed == 'false'
+      run: echo "No relevant changes detected. Marking as valid."
 
     - name: Install dependencies
       if: steps.changed-files.outputs.any_changed == 'true'
-      run: npm install -g yarn && yarn
+      uses: ./.github/workflows/actions/yarn-install
     - name: Install Playwright Browsers
       if: steps.changed-files.outputs.any_changed == 'true'
       run: yarn playwright install --with-deps

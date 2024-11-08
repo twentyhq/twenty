@@ -1,4 +1,5 @@
 name: CI Utils
+timeout-minutes: 3
 on:
   # it's usually not recommended to use pull_request_target
   # but we consider it's safe here if we keep the same steps

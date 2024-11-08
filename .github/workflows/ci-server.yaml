@@ -1,4 +1,5 @@
 name: CI Server
+timeout-minutes: 30
 on:
   push:
     branches:

@@ -1,4 +1,5 @@
 name: "Release: on merge"
+timeout-minutes: 10
 on:
   pull_request:
     types:
