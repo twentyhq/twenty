@@ -9,5 +9,5 @@
     "src/**/*.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx"
-, "../twenty-server/src/utils/is-uuid.ts", "../twenty-server/src/utils/is-uuid.utils.spec.ts"  ]
+  ]
 }

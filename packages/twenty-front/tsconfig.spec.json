@@ -15,5 +15,5 @@
     "tsup.config.ts",
     "tsup.ui.index.tsx",
     "vite.config.ts"
-, "../twenty-server/src/utils/is-uuid.utils.spec.ts"  ]
+  ]
 }
