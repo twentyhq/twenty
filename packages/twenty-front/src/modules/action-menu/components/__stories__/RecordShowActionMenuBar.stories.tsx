@@ -8,13 +8,13 @@ import { ActionMenuComponentInstanceContext } from '@/action-menu/states/context
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 import { userEvent, waitFor, within } from '@storybook/test';
 import {
   ComponentDecorator,
   IconFileExport,
   IconHeart,
   IconTrash,
+  MenuItemAccent,
 } from 'twenty-ui';
 
 const deleteMock = jest.fn();
