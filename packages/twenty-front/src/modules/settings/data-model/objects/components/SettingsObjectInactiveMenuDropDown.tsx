@@ -41,7 +41,11 @@ export const SettingsObjectInactiveMenuDropDown = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+        <LightIconButton
+          aria-label="Inactive Object Options"
+          Icon={IconDotsVertical}
+          accent="tertiary"
+        />
       }
       dropdownMenuWidth={160}
       dropdownComponents={
