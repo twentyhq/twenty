@@ -1,4 +1,4 @@
-import { test, expect } from '../lib/fixtures/screenshot';
+import { test, expect } from '../../lib/fixtures/screenshot';
 
 test('Fail if demo account is working properly @demo-only', async ({
   page,

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { sh } from '../drivers/shell_driver';
+import { sh } from '../../drivers/shell_driver';
 
 test.describe('', () => {
   test('Testing logging', async ({ page }) => {

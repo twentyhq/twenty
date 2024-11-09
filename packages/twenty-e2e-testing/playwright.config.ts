@@ -45,7 +45,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
       },
-      testMatch: /demo_basic\.spec\.ts/,
+      testMatch: /demo\/demo_basic\.spec\.ts/,
     },
     {
       name: 'chromium',
@@ -54,6 +54,7 @@ export default defineConfig({
         storageState: path.resolve(__dirname, '.auth', 'user.json'), // takes saved cookies from directory
       },
       dependencies: ['Login setup'], // forces to run login setup before running tests from this project - CASE SENSITIVE
+      testMatch: /all\/.+\.spec\.ts/,
     },
     {
       name: 'firefox',
@@ -62,6 +63,7 @@ export default defineConfig({
         storageState: path.resolve(__dirname, '.auth', 'user.json'),
       },
       dependencies: ['Login setup'],
+      testMatch: /all\/.+\.spec\.ts/,
     },
 
     //{
