@@ -9,7 +9,6 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 type EventListProps = {
   targetableObject: ActivityTargetableObject;
@@ -27,12 +26,6 @@ const StyledTimelineContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: flex-start;
-
-  width: calc(100% - ${({ theme }) => theme.spacing(8)});
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: calc(100% - ${({ theme }) => theme.spacing(2)});
-  }
 `;
 
 export const EventList = ({ events, targetableObject }: EventListProps) => {
