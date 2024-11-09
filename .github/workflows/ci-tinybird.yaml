@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   ci:
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
       - name: Check for changed files

@@ -5,7 +5,7 @@ import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts
 import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
-import { Card, H2Title, Toggle } from 'twenty-ui';
+import { Card, H2Title } from 'twenty-ui';
 import { CalendarChannelVisibility } from '~/generated-metadata/graphql';
 
 const StyledDetailsContainer = styled.div`
@@ -20,10 +20,6 @@ type SettingsAccountsCalendarChannelDetailsProps = {
     'id' | 'visibility' | 'isContactAutoCreationEnabled' | 'isSyncEnabled'
   >;
 };
-
-const StyledToggle = styled(Toggle)`
-  margin-left: auto;
-`;
 
 export const SettingsAccountsCalendarChannelDetails = ({
   calendarChannel,
@@ -71,16 +67,13 @@ export const SettingsAccountsCalendarChannelDetails = ({
           <SettingsOptionCardContent
             title="Auto-creation"
             description="Automatically create contacts for people."
-            onClick={() =>
+            checked={calendarChannel.isContactAutoCreationEnabled}
+            onChange={() => {
               handleContactAutoCreationToggle(
                 !calendarChannel.isContactAutoCreationEnabled,
-              )
-            }
-          >
-            <StyledToggle
-              value={calendarChannel.isContactAutoCreationEnabled}
-            />
-          </SettingsOptionCardContent>
+              );
+            }}
+          />
         </Card>
       </Section>
     </StyledDetailsContainer>
