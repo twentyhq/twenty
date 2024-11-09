@@ -1,5 +1,6 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
+import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
@@ -45,8 +46,13 @@ export const DeleteRecordsActionEffect = ({
     contextStoreTargetedRecordsRuleComponentState,
   );
 
+  const contextStoreFilters = useRecoilComponentValueV2(
+    contextStoreFiltersComponentState,
+  );
+
   const graphqlFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
+    contextStoreFilters,
     objectMetadataItem,
   );
 

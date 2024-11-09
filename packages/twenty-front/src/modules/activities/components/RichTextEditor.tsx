@@ -350,6 +350,10 @@ export const RichTextEditor = ({
       editor.focus();
     },
     RightDrawerHotkeyScope.RightDrawer,
+    [],
+    {
+      preventDefault: false,
+    },
   );
 
   const handleBlockEditorFocus = () => {

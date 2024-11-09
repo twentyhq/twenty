@@ -23,6 +23,12 @@ Copy the "admin your@email" token from from https://app.tinybird.co/tokens and p
 ** Auth successful!
 ** Configuration written to .tinyb file, consider adding it to .gitignore
 ```
+You can also log in using your twenty_analytics_token without passing into the interactive mode:
+```sh
+tb auth --token <your twenty_analytics_token >
+** Auth successful!
+** Configuration written to .tinyb file, consider adding it to .gitignore
+```
 To sync your changes to Tinybird use:
 ```sh
 tb push --force --push-deps
