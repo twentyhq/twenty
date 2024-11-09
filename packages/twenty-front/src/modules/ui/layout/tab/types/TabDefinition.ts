@@ -1,19 +1,11 @@
-import { CardType } from '@/object-record/record-show/constants/CardType';
+import { TabCard } from '@/ui/layout/tab/types/TabCard';
+import { TabVisibilityConfig } from '@/ui/layout/tab/types/TabVisibilityConfig';
 import { IconComponent } from 'twenty-ui';
 
 export type TabDefinition = {
   id: string;
   title: string;
   Icon: IconComponent;
-  hide: {
-    onMobile: boolean;
-    onDesktop: boolean;
-    inRightDrawer: boolean;
-    ifFeatureFlagsEnabled: string[];
-    ifObjectsDontExist: string[];
-    ifRelationsDontExist: string[];
-  };
-  cards: {
-    type: CardType;
-  }[];
+  hide: TabVisibilityConfig;
+  cards: TabCard[];
 };

@@ -1,14 +1,15 @@
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { CardType } from '@/object-record/record-show/constants/CardType';
 import { SingleTabProps } from '@/ui/layout/tab/components/TabList';
+import { TabDefinition } from '@/ui/layout/tab/types/TabDefinition';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import {
   IconCalendarEvent,
   IconCheckbox,
-  IconComponent,
   IconList,
   IconMail,
   IconNotes,
@@ -18,23 +19,6 @@ import {
   IconTimelineEvent,
 } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-
-type TabVisibilityConfig = {
-  onMobile: boolean;
-  onDesktop: boolean;
-  inRightDrawer: boolean;
-  requiresFeatures: string[];
-  ifObjectsDontExist: CoreObjectNameSingular[]; // For checking if objects are enabled/available
-  requiresRelations: string[];
-  visibleOnObjectTypes: CoreObjectNameSingular[]; // For controlling which pages show the tab
-};
-
-type TabDefinition = {
-  id: string;
-  title: string;
-  Icon: IconComponent;
-  hide: TabVisibilityConfig;
-};
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
@@ -51,14 +35,16 @@ export const useRecordShowContainerTabs = (
       id: 'richText',
       title: 'Note',
       Icon: IconNotes,
+      cards: [{ type: CardType.RichTextCard }],
+
       hide: {
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
         requiresFeatures: [],
-        ifObjectsDontExist: [CoreObjectNameSingular.Note],
+        requiredObjectsNotActive: [],
         requiresRelations: [],
-        visibleOnObjectTypes: [
+        ifCurrentObjectIsNotIn: [
           CoreObjectNameSingular.Note,
           CoreObjectNameSingular.Task,
         ],
@@ -68,28 +54,31 @@ export const useRecordShowContainerTabs = (
       id: 'fields',
       title: 'Fields',
       Icon: IconList,
+      cards: [{ type: CardType.FieldCard }],
+
       hide: {
         onMobile: false,
         onDesktop: true,
         inRightDrawer: false,
         requiresFeatures: [],
-        ifObjectsDontExist: [],
+        requiredObjectsNotActive: [],
         requiresRelations: [],
-        visibleOnObjectTypes: Object.values(CoreObjectNameSingular),
+        ifCurrentObjectIsNotIn: Object.values(CoreObjectNameSingular),
       },
     },
     {
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
+      cards: [{ type: CardType.TimelineCard }],
       hide: {
         onMobile: false,
         onDesktop: false,
         inRightDrawer: true,
         requiresFeatures: [],
-        ifObjectsDontExist: [],
+        requiredObjectsNotActive: [],
         requiresRelations: [],
-        visibleOnObjectTypes: Object.values(CoreObjectNameSingular).filter(
+        ifCurrentObjectIsNotIn: Object.values(CoreObjectNameSingular).filter(
           (obj) =>
             ![
               CoreObjectNameSingular.Workflow,
@@ -103,14 +92,15 @@ export const useRecordShowContainerTabs = (
       id: 'tasks',
       title: 'Tasks',
       Icon: IconCheckbox,
+      cards: [{ type: CardType.TaskCard }],
       hide: {
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
         requiresFeatures: [],
-        ifObjectsDontExist: [CoreObjectNameSingular.Task],
+        requiredObjectsNotActive: [CoreObjectNameSingular.Task],
         requiresRelations: ['taskTargets'],
-        visibleOnObjectTypes: Object.values(CoreObjectNameSingular).filter(
+        ifCurrentObjectIsNotIn: Object.values(CoreObjectNameSingular).filter(
           (obj) =>
             ![
               CoreObjectNameSingular.Note,
@@ -126,14 +116,15 @@ export const useRecordShowContainerTabs = (
       id: 'notes',
       title: 'Notes',
       Icon: IconNotes,
+      cards: [{ type: CardType.NoteCard }],
       hide: {
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
         requiresFeatures: [],
-        ifObjectsDontExist: [CoreObjectNameSingular.Note],
+        requiredObjectsNotActive: [CoreObjectNameSingular.Note],
         requiresRelations: ['noteTargets'],
-        visibleOnObjectTypes: Object.values(CoreObjectNameSingular).filter(
+        ifCurrentObjectIsNotIn: Object.values(CoreObjectNameSingular).filter(
           (obj) =>
             ![
               CoreObjectNameSingular.Note,
@@ -149,14 +140,15 @@ export const useRecordShowContainerTabs = (
       id: 'files',
       title: 'Files',
       Icon: IconPaperclip,
+      cards: [{ type: CardType.FileCard }],
       hide: {
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
         requiresFeatures: [],
-        ifObjectsDontExist: [CoreObjectNameSingular.Attachment],
+        requiredObjectsNotActive: [CoreObjectNameSingular.Attachment],
         requiresRelations: ['attachments'],
-        visibleOnObjectTypes: Object.values(CoreObjectNameSingular).filter(
+        ifCurrentObjectIsNotIn: Object.values(CoreObjectNameSingular).filter(
           (obj) =>
             ![
               CoreObjectNameSingular.Workflow,
@@ -170,14 +162,15 @@ export const useRecordShowContainerTabs = (
       id: 'emails',
       title: 'Emails',
       Icon: IconMail,
+      cards: [{ type: CardType.EmailCard }],
       hide: {
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
         requiresFeatures: [],
-        ifObjectsDontExist: [],
+        requiredObjectsNotActive: [],
         requiresRelations: [],
-        visibleOnObjectTypes: [
+        ifCurrentObjectIsNotIn: [
           CoreObjectNameSingular.Company,
           CoreObjectNameSingular.Person,
         ],
@@ -187,14 +180,15 @@ export const useRecordShowContainerTabs = (
       id: 'calendar',
       title: 'Calendar',
       Icon: IconCalendarEvent,
+      cards: [{ type: CardType.CalendarCard }],
       hide: {
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
         requiresFeatures: [],
-        ifObjectsDontExist: [],
+        requiredObjectsNotActive: [],
         requiresRelations: [],
-        visibleOnObjectTypes: [
+        ifCurrentObjectIsNotIn: [
           CoreObjectNameSingular.Company,
           CoreObjectNameSingular.Person,
         ],
@@ -204,67 +198,72 @@ export const useRecordShowContainerTabs = (
       id: 'workflow',
       title: 'Workflow',
       Icon: IconSettings,
+      cards: [{ type: CardType.WorkflowCard }],
       hide: {
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
         requiresFeatures: ['IS_WORKFLOW_ENABLED'],
-        ifObjectsDontExist: [],
+        requiredObjectsNotActive: [],
         requiresRelations: [],
-        visibleOnObjectTypes: [CoreObjectNameSingular.Workflow],
+        ifCurrentObjectIsNotIn: [CoreObjectNameSingular.Workflow],
       },
     },
     {
       id: 'workflowVersion',
       title: 'Flow',
       Icon: IconSettings,
+      cards: [{ type: CardType.WorkflowVersionCard }],
       hide: {
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
         requiresFeatures: ['IS_WORKFLOW_ENABLED'],
-        ifObjectsDontExist: [],
+        requiredObjectsNotActive: [],
         requiresRelations: [],
-        visibleOnObjectTypes: [CoreObjectNameSingular.WorkflowVersion],
+        ifCurrentObjectIsNotIn: [CoreObjectNameSingular.WorkflowVersion],
       },
     },
     {
       id: 'workflowRunOutput',
       title: 'Output',
       Icon: IconPrinter,
+      cards: [{ type: CardType.WorkflowRunOutputCard }],
       hide: {
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
         requiresFeatures: ['IS_WORKFLOW_ENABLED'],
-        ifObjectsDontExist: [],
+        requiredObjectsNotActive: [],
         requiresRelations: [],
-        visibleOnObjectTypes: [CoreObjectNameSingular.WorkflowRun],
+        ifCurrentObjectIsNotIn: [CoreObjectNameSingular.WorkflowRun],
       },
     },
     {
       id: 'workflowRunFlow',
       title: 'Flow',
       Icon: IconSettings,
+      cards: [{ type: CardType.WorkflowRunCard }],
       hide: {
         onMobile: false,
         onDesktop: false,
         inRightDrawer: false,
         requiresFeatures: ['IS_WORKFLOW_ENABLED'],
-        ifObjectsDontExist: [],
+        requiredObjectsNotActive: [],
         requiresRelations: [],
-        visibleOnObjectTypes: [CoreObjectNameSingular.WorkflowRun],
+        ifCurrentObjectIsNotIn: [CoreObjectNameSingular.WorkflowRun],
       },
     },
   ];
 
-  return tabDefinitions.map(({ id, title, Icon, hide }) => {
+  return tabDefinitions.map(({ id, title, Icon, hide, cards }) => {
     // Special handling for fields tab
     if (id === 'fields') {
       return {
         id,
         title,
         Icon,
+        cards,
         hide: !(isMobile || isInRightDrawer),
       };
     }
@@ -281,9 +280,9 @@ export const useRecordShowContainerTabs = (
         return false;
       });
 
-    const objectsDontExist =
-      hide.ifObjectsDontExist.length > 0 &&
-      !hide.ifObjectsDontExist.every((obj) =>
+    const requiredObjectsInactive =
+      hide.requiredObjectsNotActive.length > 0 &&
+      !hide.requiredObjectsNotActive.every((obj) =>
         objectMetadataItems.some(
           (item) => item.nameSingular === obj && item.isActive,
         ),
@@ -300,7 +299,7 @@ export const useRecordShowContainerTabs = (
         ),
       );
 
-    const notVisibleForObjectType = !hide.visibleOnObjectTypes.includes(
+    const currentObjectNotInAllowedList = !hide.ifCurrentObjectIsNotIn.includes(
       targetObjectNameSingular,
     );
 
@@ -308,13 +307,14 @@ export const useRecordShowContainerTabs = (
       id,
       title,
       Icon,
+      cards,
       hide:
         loading ||
         baseHide ||
         featureNotEnabled ||
-        objectsDontExist ||
+        requiredObjectsInactive ||
         relationsDontExist ||
-        notVisibleForObjectType,
+        currentObjectNotInAllowedList,
     };
   });
 };
