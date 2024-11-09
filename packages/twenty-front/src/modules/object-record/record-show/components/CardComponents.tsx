@@ -5,7 +5,6 @@ import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { TimelineActivities } from '@/activities/timeline-activities/components/TimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { CardType } from '@/object-record/record-show/constants/CardType';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
@@ -57,12 +56,9 @@ export const CardComponents: Record<CardType, CardComponentType> = {
     </StyledGreyBox>
   ),
 
-  [CardType.RichTextCard]: ({ targetableObject }) =>
-    targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Note ||
-    targetableObject.targetObjectNameSingular ===
-      CoreObjectNameSingular.Task ? (
-      <ShowPageActivityContainer targetableObject={targetableObject} />
-    ) : null,
+  [CardType.RichTextCard]: ({ targetableObject }) => (
+    <ShowPageActivityContainer targetableObject={targetableObject} />
+  ),
 
   [CardType.TaskCard]: ({ targetableObject }) => (
     <ObjectTasks targetableObject={targetableObject} />

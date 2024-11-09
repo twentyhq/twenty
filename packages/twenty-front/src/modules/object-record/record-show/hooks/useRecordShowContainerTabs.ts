@@ -30,54 +30,51 @@ export const useRecordShowContainerTabs = (
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
-  const tabDefinitions: TabDefinition[] = [
-    {
-      id: 'richText',
+  const tabDefinitions: Record<string, TabDefinition> = {
+    richText: {
       title: 'Note',
       Icon: IconNotes,
       cards: [{ type: CardType.RichTextCard }],
 
       hide: {
-        onMobile: false,
-        onDesktop: false,
-        inRightDrawer: false,
-        requiresFeatures: [],
-        requiredObjectsNotActive: [],
-        requiresRelations: [],
+        ifMobile: false,
+        ifDesktop: false,
+        ifInRightDrawer: false,
+        ifFeaturesDisabled: [],
+        ifRequiredObjectsInactive: [],
+        ifRelationsMissing: [],
         ifCurrentObjectIsNotIn: [
           CoreObjectNameSingular.Note,
           CoreObjectNameSingular.Task,
         ],
       },
     },
-    {
-      id: 'fields',
+    fields: {
       title: 'Fields',
       Icon: IconList,
       cards: [{ type: CardType.FieldCard }],
 
       hide: {
-        onMobile: false,
-        onDesktop: true,
-        inRightDrawer: false,
-        requiresFeatures: [],
-        requiredObjectsNotActive: [],
-        requiresRelations: [],
+        ifMobile: false,
+        ifDesktop: true,
+        ifInRightDrawer: false,
+        ifFeaturesDisabled: [],
+        ifRequiredObjectsInactive: [],
+        ifRelationsMissing: [],
         ifCurrentObjectIsNotIn: Object.values(CoreObjectNameSingular),
       },
     },
-    {
-      id: 'timeline',
+    timeline: {
       title: 'Timeline',
       Icon: IconTimelineEvent,
       cards: [{ type: CardType.TimelineCard }],
       hide: {
-        onMobile: false,
-        onDesktop: false,
-        inRightDrawer: true,
-        requiresFeatures: [],
-        requiredObjectsNotActive: [],
-        requiresRelations: [],
+        ifMobile: false,
+        ifDesktop: false,
+        ifInRightDrawer: true,
+        ifFeaturesDisabled: [],
+        ifRequiredObjectsInactive: [],
+        ifRelationsMissing: [],
         ifCurrentObjectIsNotIn: Object.values(CoreObjectNameSingular).filter(
           (obj) =>
             ![
@@ -88,18 +85,17 @@ export const useRecordShowContainerTabs = (
         ),
       },
     },
-    {
-      id: 'tasks',
+    tasks: {
       title: 'Tasks',
       Icon: IconCheckbox,
       cards: [{ type: CardType.TaskCard }],
       hide: {
-        onMobile: false,
-        onDesktop: false,
-        inRightDrawer: false,
-        requiresFeatures: [],
-        requiredObjectsNotActive: [CoreObjectNameSingular.Task],
-        requiresRelations: ['taskTargets'],
+        ifMobile: false,
+        ifDesktop: false,
+        ifInRightDrawer: false,
+        ifFeaturesDisabled: [],
+        ifRequiredObjectsInactive: [CoreObjectNameSingular.Task],
+        ifRelationsMissing: ['taskTargets'],
         ifCurrentObjectIsNotIn: Object.values(CoreObjectNameSingular).filter(
           (obj) =>
             ![
@@ -112,18 +108,17 @@ export const useRecordShowContainerTabs = (
         ),
       },
     },
-    {
-      id: 'notes',
+    notes: {
       title: 'Notes',
       Icon: IconNotes,
       cards: [{ type: CardType.NoteCard }],
       hide: {
-        onMobile: false,
-        onDesktop: false,
-        inRightDrawer: false,
-        requiresFeatures: [],
-        requiredObjectsNotActive: [CoreObjectNameSingular.Note],
-        requiresRelations: ['noteTargets'],
+        ifMobile: false,
+        ifDesktop: false,
+        ifInRightDrawer: false,
+        ifFeaturesDisabled: [],
+        ifRequiredObjectsInactive: [CoreObjectNameSingular.Note],
+        ifRelationsMissing: ['noteTargets'],
         ifCurrentObjectIsNotIn: Object.values(CoreObjectNameSingular).filter(
           (obj) =>
             ![
@@ -136,18 +131,17 @@ export const useRecordShowContainerTabs = (
         ),
       },
     },
-    {
-      id: 'files',
+    files: {
       title: 'Files',
       Icon: IconPaperclip,
       cards: [{ type: CardType.FileCard }],
       hide: {
-        onMobile: false,
-        onDesktop: false,
-        inRightDrawer: false,
-        requiresFeatures: [],
-        requiredObjectsNotActive: [CoreObjectNameSingular.Attachment],
-        requiresRelations: ['attachments'],
+        ifMobile: false,
+        ifDesktop: false,
+        ifInRightDrawer: false,
+        ifFeaturesDisabled: [],
+        ifRequiredObjectsInactive: [CoreObjectNameSingular.Attachment],
+        ifRelationsMissing: ['attachments'],
         ifCurrentObjectIsNotIn: Object.values(CoreObjectNameSingular).filter(
           (obj) =>
             ![
@@ -158,163 +152,158 @@ export const useRecordShowContainerTabs = (
         ),
       },
     },
-    {
-      id: 'emails',
+    emails: {
       title: 'Emails',
       Icon: IconMail,
       cards: [{ type: CardType.EmailCard }],
       hide: {
-        onMobile: false,
-        onDesktop: false,
-        inRightDrawer: false,
-        requiresFeatures: [],
-        requiredObjectsNotActive: [],
-        requiresRelations: [],
+        ifMobile: false,
+        ifDesktop: false,
+        ifInRightDrawer: false,
+        ifFeaturesDisabled: [],
+        ifRequiredObjectsInactive: [],
+        ifRelationsMissing: [],
         ifCurrentObjectIsNotIn: [
           CoreObjectNameSingular.Company,
           CoreObjectNameSingular.Person,
         ],
       },
     },
-    {
-      id: 'calendar',
+    calendar: {
       title: 'Calendar',
       Icon: IconCalendarEvent,
       cards: [{ type: CardType.CalendarCard }],
       hide: {
-        onMobile: false,
-        onDesktop: false,
-        inRightDrawer: false,
-        requiresFeatures: [],
-        requiredObjectsNotActive: [],
-        requiresRelations: [],
+        ifMobile: false,
+        ifDesktop: false,
+        ifInRightDrawer: false,
+        ifFeaturesDisabled: [],
+        ifRequiredObjectsInactive: [],
+        ifRelationsMissing: [],
         ifCurrentObjectIsNotIn: [
           CoreObjectNameSingular.Company,
           CoreObjectNameSingular.Person,
         ],
       },
     },
-    {
-      id: 'workflow',
+    workflow: {
       title: 'Workflow',
       Icon: IconSettings,
       cards: [{ type: CardType.WorkflowCard }],
       hide: {
-        onMobile: false,
-        onDesktop: false,
-        inRightDrawer: false,
-        requiresFeatures: ['IS_WORKFLOW_ENABLED'],
-        requiredObjectsNotActive: [],
-        requiresRelations: [],
+        ifMobile: false,
+        ifDesktop: false,
+        ifInRightDrawer: false,
+        ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+        ifRequiredObjectsInactive: [],
+        ifRelationsMissing: [],
         ifCurrentObjectIsNotIn: [CoreObjectNameSingular.Workflow],
       },
     },
-    {
-      id: 'workflowVersion',
+    workflowVersion: {
       title: 'Flow',
       Icon: IconSettings,
       cards: [{ type: CardType.WorkflowVersionCard }],
       hide: {
-        onMobile: false,
-        onDesktop: false,
-        inRightDrawer: false,
-        requiresFeatures: ['IS_WORKFLOW_ENABLED'],
-        requiredObjectsNotActive: [],
-        requiresRelations: [],
+        ifMobile: false,
+        ifDesktop: false,
+        ifInRightDrawer: false,
+        ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+        ifRequiredObjectsInactive: [],
+        ifRelationsMissing: [],
         ifCurrentObjectIsNotIn: [CoreObjectNameSingular.WorkflowVersion],
       },
     },
-    {
-      id: 'workflowRunOutput',
+    workflowRunOutput: {
       title: 'Output',
       Icon: IconPrinter,
       cards: [{ type: CardType.WorkflowRunOutputCard }],
       hide: {
-        onMobile: false,
-        onDesktop: false,
-        inRightDrawer: false,
-        requiresFeatures: ['IS_WORKFLOW_ENABLED'],
-        requiredObjectsNotActive: [],
-        requiresRelations: [],
+        ifMobile: false,
+        ifDesktop: false,
+        ifInRightDrawer: false,
+        ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+        ifRequiredObjectsInactive: [],
+        ifRelationsMissing: [],
         ifCurrentObjectIsNotIn: [CoreObjectNameSingular.WorkflowRun],
       },
     },
-    {
-      id: 'workflowRunFlow',
+    workflowRunFlow: {
       title: 'Flow',
       Icon: IconSettings,
       cards: [{ type: CardType.WorkflowRunCard }],
       hide: {
-        onMobile: false,
-        onDesktop: false,
-        inRightDrawer: false,
-        requiresFeatures: ['IS_WORKFLOW_ENABLED'],
-        requiredObjectsNotActive: [],
-        requiresRelations: [],
+        ifMobile: false,
+        ifDesktop: false,
+        ifInRightDrawer: false,
+        ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+        ifRequiredObjectsInactive: [],
+        ifRelationsMissing: [],
         ifCurrentObjectIsNotIn: [CoreObjectNameSingular.WorkflowRun],
       },
     },
-  ];
+  };
 
-  return tabDefinitions.map(({ id, title, Icon, hide, cards }) => {
-    // Special handling for fields tab
-    if (id === 'fields') {
+  return Object.entries(tabDefinitions).map(
+    ([key, { title, Icon, hide, cards }]) => {
+      // Special handling for fields tab
+      if (key === 'fields') {
+        return {
+          id: key,
+          title,
+          Icon,
+          cards,
+          hide: !(isMobile || isInRightDrawer),
+        };
+      }
+
+      const baseHide =
+        (hide.ifMobile && isMobile) ||
+        (hide.ifDesktop && !isMobile) ||
+        (hide.ifInRightDrawer && isInRightDrawer);
+
+      const featureNotEnabled =
+        hide.ifFeaturesDisabled.length > 0 &&
+        !hide.ifFeaturesDisabled.every((flag) => {
+          if (flag === 'IS_WORKFLOW_ENABLED') return isWorkflowEnabled;
+          return false;
+        });
+
+      const requiredObjectsInactive =
+        hide.ifRequiredObjectsInactive.length > 0 &&
+        !hide.ifRequiredObjectsInactive.every((obj) =>
+          objectMetadataItems.some(
+            (item) => item.nameSingular === obj && item.isActive,
+          ),
+        );
+
+      const relationsDontExist =
+        hide.ifRelationsMissing.length > 0 &&
+        !hide.ifRelationsMissing.every((rel) =>
+          objectMetadataItem.fields.some(
+            (field) =>
+              field.type === FieldMetadataType.Relation &&
+              field.name === rel &&
+              field.isActive,
+          ),
+        );
+
+      const currentObjectNotInAllowedList =
+        !hide.ifCurrentObjectIsNotIn.includes(targetObjectNameSingular);
+
       return {
-        id,
+        id: key,
         title,
         Icon,
         cards,
-        hide: !(isMobile || isInRightDrawer),
+        hide:
+          loading ||
+          baseHide ||
+          featureNotEnabled ||
+          requiredObjectsInactive ||
+          relationsDontExist ||
+          currentObjectNotInAllowedList,
       };
-    }
-
-    const baseHide =
-      (hide.onMobile && isMobile) ||
-      (hide.onDesktop && !isMobile) ||
-      (hide.inRightDrawer && isInRightDrawer);
-
-    const featureNotEnabled =
-      hide.requiresFeatures.length > 0 &&
-      !hide.requiresFeatures.every((flag) => {
-        if (flag === 'IS_WORKFLOW_ENABLED') return isWorkflowEnabled;
-        return false;
-      });
-
-    const requiredObjectsInactive =
-      hide.requiredObjectsNotActive.length > 0 &&
-      !hide.requiredObjectsNotActive.every((obj) =>
-        objectMetadataItems.some(
-          (item) => item.nameSingular === obj && item.isActive,
-        ),
-      );
-
-    const relationsDontExist =
-      hide.requiresRelations.length > 0 &&
-      !hide.requiresRelations.every((rel) =>
-        objectMetadataItem.fields.some(
-          (field) =>
-            field.type === FieldMetadataType.Relation &&
-            field.name === rel &&
-            field.isActive,
-        ),
-      );
-
-    const currentObjectNotInAllowedList = !hide.ifCurrentObjectIsNotIn.includes(
-      targetObjectNameSingular,
-    );
-
-    return {
-      id,
-      title,
-      Icon,
-      cards,
-      hide:
-        loading ||
-        baseHide ||
-        featureNotEnabled ||
-        requiredObjectsInactive ||
-        relationsDontExist ||
-        currentObjectNotInAllowedList,
-    };
-  });
+    },
+  );
 };

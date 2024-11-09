@@ -2,11 +2,11 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FeatureFlagKey } from '@/workspace/types/FeatureFlagKey';
 
 export type TabVisibilityConfig = {
-  onMobile: boolean;
-  onDesktop: boolean;
-  inRightDrawer: boolean;
-  requiresFeatures: FeatureFlagKey[];
-  requiredObjectsNotActive: CoreObjectNameSingular[];
-  requiresRelations: string[];
+  ifMobile: boolean;
+  ifDesktop: boolean;
+  ifInRightDrawer: boolean;
+  ifFeaturesDisabled: FeatureFlagKey[];
+  ifRequiredObjectsInactive: CoreObjectNameSingular[];
+  ifRelationsMissing: string[];
   ifCurrentObjectIsNotIn: CoreObjectNameSingular[];
 };
