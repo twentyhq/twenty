@@ -1,12 +1,12 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { BASE_RECORD_LAYOUT } from '@/object-record/record-show/constants/baseRecordLayout';
+import { BASE_RECORD_LAYOUT } from '@/object-record/record-show/constants/BaseRecordLayout';
 import { CardType } from '@/object-record/record-show/types/CardType';
 import { SingleTabProps } from '@/ui/layout/tab/components/TabList';
 import { TabDefinition } from '@/ui/layout/tab/types/TabDefinition';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import {
   IconCalendarEvent,
@@ -15,7 +15,7 @@ import {
   IconPrinter,
   IconSettings,
 } from 'twenty-ui';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FeatureFlag, FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
@@ -25,7 +25,8 @@ export const useRecordShowContainerTabs = (
 ): SingleTabProps[] => {
   const isMobile = useIsMobile();
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   // Object-specific layouts that override or extend the base layout
   const OBJECT_SPECIFIC_LAYOUTS: Partial<
@@ -214,9 +215,10 @@ export const useRecordShowContainerTabs = (
 
       const featureNotEnabled =
         hide.ifFeaturesDisabled.length > 0 &&
-        !hide.ifFeaturesDisabled.every((flag) => {
-          if (flag === 'IS_WORKFLOW_ENABLED') return isWorkflowEnabled;
-          return false;
+        !hide.ifFeaturesDisabled.every((flagKey) => {
+          return !!currentWorkspace?.featureFlags?.find(
+            (flag: FeatureFlag) => flag.key === flagKey && flag.value,
+          );
         });
 
       const requiredObjectsInactive =
