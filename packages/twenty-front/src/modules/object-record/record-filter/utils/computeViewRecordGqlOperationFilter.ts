@@ -601,6 +601,53 @@ const computeFilterRecordGqlOperationFilter = (
             `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
           );
       }
+    case 'MULTI_SELECT': {
+      if (isEmptyOperand) {
+        return getEmptyRecordGqlOperationFilter(
+          filter.operand,
+          correspondingField,
+          filter.definition,
+        );
+      }
+      const stringifiedSelectValues = filter.value;
+      let parsedOptionValues: string[] = [];
+
+      if (!isNonEmptyString(stringifiedSelectValues)) {
+        break;
+      }
+
+      try {
+        parsedOptionValues = JSON.parse(stringifiedSelectValues);
+      } catch (e) {
+        throw new Error(
+          `Cannot parse filter value for SELECT filter : "${stringifiedSelectValues}"`,
+        );
+      }
+
+      if (parsedOptionValues.length > 0) {
+        switch (filter.operand) {
+          case ViewFilterOperand.Is:
+            return {
+              [correspondingField.name]: {
+                containsAny: parsedOptionValues,
+              } as UUIDFilter,
+            };
+          case ViewFilterOperand.IsNot:
+            return {
+              not: {
+                [correspondingField.name]: {
+                  containsAny: parsedOptionValues,
+                } as UUIDFilter,
+              },
+            };
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            );
+        }
+      }
+      break;
+    }
     case 'SELECT': {
       if (isEmptyOperand) {
         return getEmptyRecordGqlOperationFilter(

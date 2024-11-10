@@ -35,6 +35,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Address,
         FieldMetadataType.Relation,
         FieldMetadataType.Select,
+        FieldMetadataType.MultiSelect,
         FieldMetadataType.Currency,
         FieldMetadataType.Rating,
         FieldMetadataType.Actor,

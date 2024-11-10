@@ -58,7 +58,7 @@ export const generateFields = <
       ? {
           nullable: fieldMetadata.isNullable,
           defaultValue: fieldMetadata.defaultValue,
-          isArray: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
+          isArray: false,
           settings: fieldMetadata.settings,
           isIdField: fieldMetadata.name === 'id',
         }

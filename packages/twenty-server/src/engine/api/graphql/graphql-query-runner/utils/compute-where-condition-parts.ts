@@ -84,10 +84,14 @@ export const computeWhereConditionParts = (
         sql: `"${objectNameSingular}"."${key}" @> ARRAY[:...${key}${uuid}]`,
         params: { [`${key}${uuid}`]: value },
       };
-
     case 'not_contains':
       return {
-        sql: `NOT ("${objectNameSingular}"."${key}" && ARRAY[:...${key}${uuid}])`,
+        sql: `NOT ("${objectNameSingular}"."${key}"::text[] && ARRAY[:...${key}${uuid}]::text[])`,
+        params: { [`${key}${uuid}`]: value },
+      };
+    case 'containsAny':
+      return {
+        sql: `"${objectNameSingular}"."${key}"::text[] && ARRAY[:...${key}${uuid}]::text[]`,
         params: { [`${key}${uuid}`]: value },
       };
 

@@ -16,6 +16,7 @@ import { isDefined } from 'twenty-ui';
 
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
+import { SELECT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/SelectFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
 
 type ObjectFilterDropdownFilterInputProps = {
@@ -93,7 +94,9 @@ export const ObjectFilterDropdownFilterInput = ({
               <ObjectFilterDropdownSourceSelect />
             </>
           )}
-          {filterDefinitionUsedInDropdown.type === 'SELECT' && (
+          {SELECT_FILTER_TYPES.includes(
+            filterDefinitionUsedInDropdown.type,
+          ) && (
             <>
               <ObjectFilterDropdownSearchInput />
               <ObjectFilterDropdownOptionSelect />

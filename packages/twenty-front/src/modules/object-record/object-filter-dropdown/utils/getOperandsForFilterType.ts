@@ -58,6 +58,7 @@ export const getOperandsForFilterDefinition = (
       ];
     case 'RELATION':
       return [...relationOperands, ...emptyOperands];
+    case 'MULTI_SELECT':
     case 'SELECT':
       return [...relationOperands];
     case 'ACTOR': {
