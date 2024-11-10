@@ -8,5 +8,4 @@ export type TabVisibilityConfig = {
   ifFeaturesDisabled: FeatureFlagKey[];
   ifRequiredObjectsInactive: CoreObjectNameSingular[];
   ifRelationsMissing: string[];
-  ifCurrentObjectIsNotIn: CoreObjectNameSingular[];
 };

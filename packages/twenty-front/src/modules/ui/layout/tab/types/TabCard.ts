@@ -1,4 +1,4 @@
-import { CardType } from '@/object-record/record-show/constants/CardType';
+import { CardType } from '@/object-record/record-show/types/CardType';
 
 export type TabCard = {
   type: CardType;

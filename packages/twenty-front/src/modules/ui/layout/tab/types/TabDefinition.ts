@@ -4,6 +4,7 @@ import { IconComponent } from 'twenty-ui';
 
 export type TabDefinition = {
   title: string;
+  position: number;
   Icon: IconComponent;
   hide: TabVisibilityConfig;
   cards: TabCard[];

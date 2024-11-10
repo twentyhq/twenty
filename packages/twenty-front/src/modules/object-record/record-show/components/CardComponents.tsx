@@ -6,7 +6,7 @@ import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { TimelineActivities } from '@/activities/timeline-activities/components/TimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
-import { CardType } from '@/object-record/record-show/constants/CardType';
+import { CardType } from '@/object-record/record-show/types/CardType';
 import { ShowPageActivityContainer } from '@/ui/layout/show-page/components/ShowPageActivityContainer';
 import { WorkflowRunOutputVisualizer } from '@/workflow/components/WorkflowRunOutputVisualizer';
 import { WorkflowRunVersionVisualizer } from '@/workflow/components/WorkflowRunVersionVisualizer';
