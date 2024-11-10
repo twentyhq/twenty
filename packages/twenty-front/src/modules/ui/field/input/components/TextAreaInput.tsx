@@ -44,7 +44,9 @@ const StyledTextAreaContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(0)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
 
-  @supports ((backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))) {
+  @supports (
+    (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))
+  ) {
     background: ${({ theme }) => theme.background.transparent.secondary};
     backdrop-filter: ${({ theme }) => theme.blur.medium};
     -webkit-backdrop-filter: ${({ theme }) => theme.blur.medium};
