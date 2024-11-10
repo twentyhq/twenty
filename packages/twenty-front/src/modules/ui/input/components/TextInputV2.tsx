@@ -30,8 +30,6 @@ const StyledLabel = styled.label`
 `;
 
 const StyledInputContainer = styled.div`
-  background: ${({ theme }) => theme.background.transparent.secondary};
-  backdrop-filter: ${({ theme }) => theme.blur.medium};
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -41,7 +39,7 @@ const StyledInputContainer = styled.div`
 const StyledInput = styled.input<
   Pick<TextInputV2ComponentProps, 'fullWidth' | 'LeftIcon' | 'error'>
 >`
-  background-color: transparent;
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid
     ${({ theme, error }) =>
       error ? theme.border.color.danger : theme.border.color.medium};
