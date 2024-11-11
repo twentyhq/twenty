@@ -1,5 +1,4 @@
-import toCamelCase from 'lodash.camelcase';
-import { slugify, transliterate } from 'transliteration';
+import { slugify } from 'transliteration';
 
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
@@ -63,30 +62,6 @@ export const validateObjectMetadataInputOrThrow = <
   validateNameIsNotTooLongThrow(objectMetadataInput.namePlural);
 };
 
-export const transliterateAndFormatOrThrow = (string?: string): string => {
-  if (!string) {
-    throw new ObjectMetadataException(
-      'Name is required',
-      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-    );
-  }
-  let formattedString = string;
-
-  if (formattedString.match(METADATA_NAME_VALID_PATTERN) !== null) {
-    return toCamelCase(formattedString);
-  }
-
-  formattedString = toCamelCase(
-    slugify(transliterate(formattedString, { trim: true })),
-  );
-
-  if (!formattedString.match(METADATA_NAME_VALID_PATTERN)) {
-    throw new Error(`"${string}" is not a valid name`);
-  }
-
-  return formattedString;
-};
-
 const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
   if (name) {
     if (reservedKeywords.includes(name)) {
@@ -134,9 +109,33 @@ const validateNameCharactersOrThrow = (name?: string) => {
 };
 
 export const computeMetadataNameFromLabelOrThrow = (label: string): string => {
-  const formattedString = transliterateAndFormatOrThrow(label);
+  if (!label) {
+    throw new ObjectMetadataException(
+      'Name is required',
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
 
-  return formattedString;
+  const prefixedLabel = /^\d/.test(label) ? `n${label}` : label;
+
+  if (prefixedLabel === '') {
+    return '';
+  }
+
+  const formattedString = slugify(prefixedLabel, {
+    trim: true,
+    separator: '_',
+    allowedChars: 'a-zA-Z0-9',
+  });
+
+  if (formattedString === '') {
+    throw new ObjectMetadataException(
+      `Invalid label: "${label}"`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
+
+  return camelCase(formattedString);
 };
 
 export const validateNameAndLabelAreSyncOrThrow = (
