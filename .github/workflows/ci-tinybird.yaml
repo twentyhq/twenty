@@ -11,7 +11,7 @@ on:
     paths:
       - 'package.json'
       - 'packages/twenty-tinybird/**'
-      - 'packages/twenty-front/**'
+      - 'packages/twenty-server/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
