@@ -100,6 +100,7 @@ export const SettingsAccountsMessageChannelDetails = ({
       <Section>
         <Card>
           <SettingsOptionCardContent
+            variant="toggle"
             title="Exclude non-professional emails"
             description="Don’t create contacts from/to Gmail, Outlook emails"
             divider
@@ -111,6 +112,7 @@ export const SettingsAccountsMessageChannelDetails = ({
             }}
           />
           <SettingsOptionCardContent
+            variant="toggle"
             title="Exclude group emails"
             description="Don’t sync emails from team@ support@ noreply@..."
             checked={messageChannel.excludeGroupEmails}

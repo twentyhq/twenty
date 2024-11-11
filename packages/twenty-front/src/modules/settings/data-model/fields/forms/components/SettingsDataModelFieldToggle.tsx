@@ -49,7 +49,7 @@ export const SettingsDataModelFieldToggle = ({
 }: SettingsDataModelFieldToggleProps) => {
   const theme = useTheme();
   const infoCircleElementId = `info-circle-id-${Math.random().toString(36).slice(2)}`;
-
+  console.log('label', label);
   return (
     <StyledContainer>
       <StyledGroup>

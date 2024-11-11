@@ -1,7 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
+import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
-import { SyncObjectLabelAndNameToggle } from '@/settings/data-model/objects/forms/components/SyncObjectLabelAndNameToggle';
 import { useExpandedHeightAnimation } from '@/settings/hooks/useExpandedHeightAnimation';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -15,7 +15,9 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import {
   AppTooltip,
+  Card,
   IconInfoCircle,
+  IconRefresh,
   IconTool,
   MAIN_COLORS,
   TooltipDelay,
@@ -333,18 +335,25 @@ export const SettingsDataModelObjectAboutForm = ({
                       objectMetadataItem?.isLabelSyncedWithName ?? true
                     }
                     render={({ field: { onChange, value } }) => (
-                      <SyncObjectLabelAndNameToggle
-                        value={value ?? true}
-                        disabled={!objectMetadataItem?.isCustom}
-                        onChange={(value) => {
-                          onChange(value);
-                          if (value === true) {
-                            fillNamePluralFromLabelPlural(labelPlural);
-                            fillNameSingularFromLabelSingular(labelSingular);
-                          }
-                          onBlur?.();
-                        }}
-                      />
+                      <Card>
+                        <SettingsOptionCardContent
+                          variant="toggle"
+                          Icon={IconRefresh}
+                          title="Synchronize Objects Labels and API Names"
+                          description="Should changing an object's label also change the API?"
+                          checked={value ?? true}
+                          disabled={!objectMetadataItem?.isCustom}
+                          advancedMode
+                          onChange={(value) => {
+                            onChange(value);
+                            if (value === true) {
+                              fillNamePluralFromLabelPlural(labelPlural);
+                              fillNameSingularFromLabelSingular(labelSingular);
+                            }
+                            onBlur?.();
+                          }}
+                        />
+                      </Card>
                     )}
                   />
                 </StyledAdvancedSettingsSectionInputWrapper>

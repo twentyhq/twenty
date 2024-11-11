@@ -3,8 +3,8 @@ import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { numberFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/numberFieldDefaultValueSchema';
-import { SettingsDataModelFieldNumberDecimalsInput } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberDecimalInput';
-import { CardContent } from 'twenty-ui';
+import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
+import { IconDecimal } from 'twenty-ui';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
@@ -30,26 +30,29 @@ export const SettingsDataModelFieldNumberForm = ({
   const { control } = useFormContext<SettingsDataModelFieldNumberFormValues>();
 
   return (
-    <CardContent>
-      <Controller
-        name="settings"
-        defaultValue={{
-          decimals:
-            fieldMetadataItem?.settings?.decimals ?? DEFAULT_DECIMAL_VALUE,
-        }}
-        control={control}
-        render={({ field: { onChange, value } }) => {
-          const count = value?.decimals ?? 0;
+    <Controller
+      name="settings"
+      defaultValue={{
+        decimals:
+          fieldMetadataItem?.settings?.decimals ?? DEFAULT_DECIMAL_VALUE,
+      }}
+      control={control}
+      render={({ field: { onChange, value } }) => {
+        const count = value?.decimals ?? 0;
 
-          return (
-            <SettingsDataModelFieldNumberDecimalsInput
-              value={count}
-              onChange={(value) => onChange({ decimals: value })}
-              disabled={disabled}
-            ></SettingsDataModelFieldNumberDecimalsInput>
-          );
-        }}
-      />
-    </CardContent>
+        return (
+          <SettingsOptionCardContent
+            variant="counter"
+            title="Number of decimals"
+            description="Set the number of decimal places"
+            value={count}
+            onChange={(value) => onChange({ decimals: value })}
+            disabled={disabled}
+            exampleValue={1000}
+            Icon={IconDecimal}
+          />
+        );
+      }}
+    />
   );
 };

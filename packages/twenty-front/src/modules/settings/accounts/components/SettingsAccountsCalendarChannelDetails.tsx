@@ -65,6 +65,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
         />
         <Card>
           <SettingsOptionCardContent
+            variant="toggle"
             title="Auto-creation"
             description="Automatically create contacts for people."
             checked={calendarChannel.isContactAutoCreationEnabled}

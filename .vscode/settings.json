@@ -46,4 +46,5 @@
     "**/.yarn": true,
   },
   "eslint.debug": true,
+  "workbench.editor.openSideBySideDirection": "down",
 }

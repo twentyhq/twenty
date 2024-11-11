@@ -46,10 +46,12 @@ export const SettingsSecurityOptionsList = () => {
   return (
     <Card>
       <SettingsOptionCardContent
+        variant="toggle"
         Icon={IconLink}
         title="Invite by Link"
         description="Allow the invitation of new users by sharing an invite link."
         checked={currentWorkspace.isPublicInviteLinkEnabled}
+        advancedMode
         onChange={() =>
           handleChange(!currentWorkspace.isPublicInviteLinkEnabled)
         }
