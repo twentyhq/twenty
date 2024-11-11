@@ -7,6 +7,7 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
+import { SELECT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/SelectFilterTypes';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
@@ -75,7 +76,10 @@ export const ViewBarFilterEffect = ({
         ? JSON.parse(viewFilterUsedInDropdown.value)
         : [];
       setObjectFilterDropdownSelectedRecordIds(viewFilterSelectedRecords);
-    } else if (filterDefinitionUsedInDropdown?.type === 'SELECT') {
+    } else if (
+      isDefined(filterDefinitionUsedInDropdown) &&
+      SELECT_FILTER_TYPES.includes(filterDefinitionUsedInDropdown.type)
+    ) {
       const viewFilterUsedInDropdown =
         currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
           (filter) =>
