@@ -5,66 +5,70 @@ export const isMatchingStringFilter = ({
   value,
 }: {
   stringFilter: StringFilter;
-  value: string;
+  value: string | null;
 }) => {
+  const defaultedValue = value ?? '';
+
   switch (true) {
     case stringFilter.eq !== undefined: {
-      return value === stringFilter.eq;
+      return defaultedValue === stringFilter.eq;
     }
     case stringFilter.neq !== undefined: {
-      return value !== stringFilter.neq;
+      return defaultedValue !== stringFilter.neq;
     }
     case stringFilter.like !== undefined: {
       const regexPattern = stringFilter.like.replace(/%/g, '.*');
       const regexCaseSensitive = new RegExp(`^${regexPattern}$`);
 
-      return regexCaseSensitive.test(value);
+      return regexCaseSensitive.test(defaultedValue);
     }
     case stringFilter.ilike !== undefined: {
       const regexPattern = stringFilter.ilike.replace(/%/g, '.*');
       const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'i');
 
-      return regexCaseInsensitive.test(value);
+      return regexCaseInsensitive.test(defaultedValue);
     }
     case stringFilter.in !== undefined: {
-      return stringFilter.in.includes(value);
+      return stringFilter.in.includes(defaultedValue);
     }
     case stringFilter.is !== undefined: {
       if (stringFilter.is === 'NULL') {
-        return value === null;
+        return defaultedValue === null;
       } else {
-        return value !== null;
+        return defaultedValue !== null;
       }
     }
     case stringFilter.regex !== undefined: {
       const regexPattern = stringFilter.regex;
       const regexCaseSensitive = new RegExp(regexPattern);
 
-      return regexCaseSensitive.test(value);
+      return regexCaseSensitive.test(defaultedValue);
     }
     case stringFilter.iregex !== undefined: {
       const regexPattern = stringFilter.iregex;
       const regexCaseInsensitive = new RegExp(regexPattern, 'i');
 
-      return regexCaseInsensitive.test(value);
+      return regexCaseInsensitive.test(defaultedValue);
     }
     case stringFilter.gt !== undefined: {
-      return value > stringFilter.gt;
+      return defaultedValue > stringFilter.gt;
     }
     case stringFilter.gte !== undefined: {
-      return value >= stringFilter.gte;
+      return defaultedValue >= stringFilter.gte;
     }
     case stringFilter.lt !== undefined: {
-      return value < stringFilter.lt;
+      return defaultedValue < stringFilter.lt;
     }
     case stringFilter.lte !== undefined: {
-      return value <= stringFilter.lte;
+      return defaultedValue <= stringFilter.lte;
     }
     case stringFilter.startsWith !== undefined: {
-      return value.startsWith(stringFilter.startsWith);
+      return defaultedValue.startsWith(stringFilter.startsWith);
     }
     case stringFilter.containsAny !== undefined: {
-      return stringFilter.containsAny.some((item) => value.includes(item));
+      return stringFilter.containsAny.some((item) =>
+        defaultedValue.includes(item),
+      );
     }
     default: {
       throw new Error(
