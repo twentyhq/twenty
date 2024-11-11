@@ -88,14 +88,14 @@ export class WorkspaceCacheStorageService {
     );
   }
 
-  setObjectMetadataMap(
+  setObjectMetadataMaps(
     workspaceId: string,
     metadataVersion: number,
-    objectMetadataMap: ObjectMetadataMaps,
+    objectMetadataMaps: ObjectMetadataMaps,
   ) {
     return this.cacheStorageService.set<ObjectMetadataMaps>(
       `${WorkspaceCacheKeys.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersion}`,
-      objectMetadataMap,
+      objectMetadataMaps,
     );
   }
 

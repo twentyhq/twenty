@@ -1,6 +1,6 @@
 import {
-  Record as IRecord,
-  RecordOrderBy,
+  ObjectRecord,
+  ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
@@ -15,19 +15,19 @@ import { getRelationObjectMetadata } from 'src/engine/api/graphql/graphql-query-
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { isPlainObject } from 'src/utils/is-plain-object';
 
 export class ObjectRecordsToGraphqlConnectionHelper {
-  private objectMetadataMap: ObjectMetadataMap;
+  private objectMetadataMaps: ObjectMetadataMaps;
 
-  constructor(objectMetadataMap: ObjectMetadataMap) {
-    this.objectMetadataMap = objectMetadataMap;
+  constructor(objectMetadataMaps: ObjectMetadataMaps) {
+    this.objectMetadataMaps = objectMetadataMaps;
   }
 
-  public createConnection<ObjectRecord extends IRecord = IRecord>({
+  public createConnection<T extends ObjectRecord = ObjectRecord>({
     objectRecords,
     objectName,
     take,
@@ -37,15 +37,15 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     hasPreviousPage,
     depth = 0,
   }: {
-    objectRecords: ObjectRecord[];
+    objectRecords: T[];
     objectName: string;
     take: number;
     totalCount: number;
-    order?: RecordOrderBy;
+    order?: ObjectRecordOrderBy;
     hasNextPage: boolean;
     hasPreviousPage: boolean;
     depth?: number;
-  }): IConnection<ObjectRecord> {
+  }): IConnection<T> {
     const edges = (objectRecords ?? []).map((objectRecord) => ({
       node: this.processRecord({
         objectRecord,
@@ -82,7 +82,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     objectName: string;
     take: number;
     totalCount: number;
-    order?: RecordOrderBy;
+    order?: ObjectRecordOrderBy;
     depth?: number;
   }): T {
     if (depth >= CONNECTION_MAX_DEPTH) {
@@ -92,7 +92,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       );
     }
 
-    const objectMetadata = this.objectMetadataMap[objectName];
+    const objectMetadata = this.objectMetadataMaps.byNameSingular[objectName];
 
     if (!objectMetadata) {
       throw new GraphqlQueryRunnerException(
@@ -117,7 +117,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
             objectRecords: value,
             objectName: getRelationObjectMetadata(
               fieldMetadata,
-              this.objectMetadataMap,
+              this.objectMetadataMaps,
             ).nameSingular,
             take,
             totalCount: value.length,
@@ -131,7 +131,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
             objectRecord: value,
             objectName: getRelationObjectMetadata(
               fieldMetadata,
-              this.objectMetadataMap,
+              this.objectMetadataMaps,
             ).nameSingular,
             take,
             totalCount,
