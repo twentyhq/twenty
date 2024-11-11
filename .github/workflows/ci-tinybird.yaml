@@ -11,7 +11,6 @@ on:
     paths:
       - 'package.json'
       - 'packages/twenty-tinybird/**'
-      - 'packages/twenty-server/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -25,5 +24,3 @@ jobs:
     secrets:
       tb_admin_token: ${{ secrets.TB_ADMIN_TOKEN }}
       tb_host: https://api.eu-central-1.aws.tinybird.co
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
