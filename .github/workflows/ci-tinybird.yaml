@@ -19,8 +19,6 @@ concurrency:
 
 jobs:
   ci:
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
     uses: tinybirdco/ci/.github/workflows/ci.yml@main
     with:
       data_project_dir: packages/twenty-tinybird
