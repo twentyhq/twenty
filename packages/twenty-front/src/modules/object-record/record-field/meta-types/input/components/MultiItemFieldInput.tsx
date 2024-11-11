@@ -65,11 +65,13 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleDropdownCloseOutside = (event: MouseEvent | TouchEvent) => {
+    event.stopImmediatePropagation();
+
     if (inputValue.trim().length > 0) {
       handleSubmitInput();
+    } else {
+      onCancel?.();
     }
-    onCancel?.();
-    event.stopImmediatePropagation();
   };
 
   useListenClickOutside({
