@@ -59,7 +59,7 @@ export class GraphqlQueryFindDuplicatesResolverService
     const graphqlQueryParser = new GraphqlQueryParser(
       objectMetadataMaps.byNameSingular[
         objectMetadataItemWithFieldMaps.nameSingular
-      ].fieldsById,
+      ].fieldsByName,
       objectMetadataMaps,
     );
 

@@ -45,7 +45,7 @@ export class GraphqlQueryCreateManyResolverService
     );
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps.fieldsById,
+      objectMetadataItemWithFieldMaps.fieldsByName,
       objectMetadataMaps,
     );
 

@@ -50,7 +50,7 @@ export class GraphqlQueryUpdateOneResolverService
     );
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps.fieldsById,
+      objectMetadataItemWithFieldMaps.fieldsByName,
       objectMetadataMaps,
     );
 

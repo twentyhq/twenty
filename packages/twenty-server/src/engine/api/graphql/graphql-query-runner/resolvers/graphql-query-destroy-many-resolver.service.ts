@@ -43,7 +43,7 @@ export class GraphqlQueryDestroyManyResolverService
     );
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps.fieldsById,
+      objectMetadataItemWithFieldMaps.fieldsByName,
       objectMetadataMaps,
     );
 

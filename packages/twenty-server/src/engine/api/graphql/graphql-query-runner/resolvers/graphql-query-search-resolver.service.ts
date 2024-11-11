@@ -71,7 +71,7 @@ export class GraphqlQuerySearchResolverService
       objectMetadataItemWithFieldMaps.nameSingular,
     );
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps.fieldsById,
+      objectMetadataItemWithFieldMaps.fieldsByName,
       objectMetadataMaps,
     );
 
