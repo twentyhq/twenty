@@ -21,6 +21,7 @@ import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
+import { FieldMetadataRelatedRecordsService } from 'src/engine/metadata-modules/field-metadata/services/field-metadata-related-records.service';
 import { assertDoesNotNullifyDefaultValueForNonNullableField } from 'src/engine/metadata-modules/field-metadata/utils/assert-does-not-nullify-default-value-for-non-nullable-field.util';
 import {
   computeColumnName,
@@ -28,6 +29,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { generateNullable } from 'src/engine/metadata-modules/field-metadata/utils/generate-nullable';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import {
@@ -83,6 +85,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
     private readonly fieldMetadataValidationService: FieldMetadataValidationService,
+    private readonly fieldMetadataRelatedRecordsService: FieldMetadataRelatedRecordsService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -415,6 +418,16 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         throw new FieldMetadataException(
           'Field does not exist',
           FieldMetadataExceptionCode.FIELD_METADATA_NOT_FOUND,
+        );
+      }
+
+      if (
+        updatedFieldMetadata.isActive &&
+        isSelectFieldMetadataType(updatedFieldMetadata.type)
+      ) {
+        await this.fieldMetadataRelatedRecordsService.updateRelatedViewGroups(
+          existingFieldMetadata,
+          updatedFieldMetadata,
         );
       }
 

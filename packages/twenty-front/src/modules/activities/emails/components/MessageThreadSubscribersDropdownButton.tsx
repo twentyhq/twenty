@@ -1,5 +1,5 @@
 import { offset } from '@floating-ui/react';
-import { IconMinus, IconPlus } from 'twenty-ui';
+import { IconMinus, IconPlus, MenuItem, MenuItemAvatar } from 'twenty-ui';
 
 import { MessageThreadSubscriberDropdownAddSubscriber } from '@/activities/emails/components/MessageThreadSubscriberDropdownAddSubscriber';
 import { MessageThreadSubscribersChip } from '@/activities/emails/components/MessageThreadSubscribersChip';
@@ -10,8 +10,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemAvatar } from '@/ui/navigation/menu-item/components/MenuItemAvatar';
 import { useState } from 'react';
 
 export const MESSAGE_THREAD_SUBSCRIBER_DROPDOWN_ID =

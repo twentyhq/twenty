@@ -16,6 +16,7 @@ const StyledTd = styled.td<{
   left?: number;
   hasRightBorder?: boolean;
   hasBottomBorder?: boolean;
+  width?: number;
 }>`
   border-bottom: 1px solid
     ${({ borderColor, hasBottomBorder }) =>
@@ -32,13 +33,12 @@ const StyledTd = styled.td<{
 
   background: ${({ backgroundColor }) => backgroundColor};
   z-index: ${({ zIndex }) => (isDefined(zIndex) ? zIndex : 'auto')};
-
   ${({ isDragging }) =>
     isDragging
       ? `
       background-color: transparent;
       border-color: transparent;
-  `
+    `
       : ''}
 
   ${({ freezeFirstColumns }) =>
@@ -60,6 +60,7 @@ export const RecordTableTd = ({
   left,
   hasRightBorder = true,
   hasBottomBorder = true,
+  width,
   ...dragHandleProps
 }: {
   className?: string;
@@ -72,6 +73,7 @@ export const RecordTableTd = ({
   hasRightBorder?: boolean;
   hasBottomBorder?: boolean;
   left?: number;
+  width?: number;
 } & (Partial<DraggableProvidedDragHandleProps> | null)) => {
   const { theme } = useContext(ThemeContext);
 
@@ -94,6 +96,7 @@ export const RecordTableTd = ({
       left={left}
       hasRightBorder={hasRightBorder}
       hasBottomBorder={hasBottomBorder}
+      width={width}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...dragHandleProps}
     >

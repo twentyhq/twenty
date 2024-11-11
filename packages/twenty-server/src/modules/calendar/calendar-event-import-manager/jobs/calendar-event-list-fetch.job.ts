@@ -4,14 +4,14 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
+import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
 import {
   CalendarChannelSyncStage,
   CalendarChannelWorkspaceEntity,
 } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
 import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
 
-export type CalendarEventsImportJobData = {
+export type CalendarEventListFetchJobData = {
   calendarChannelId: string;
   workspaceId: string;
 };
@@ -23,11 +23,11 @@ export type CalendarEventsImportJobData = {
 export class CalendarEventListFetchJob {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly calendarEventsImportService: CalendarEventsImportService,
+    private readonly calendarFetchEventsService: CalendarFetchEventsService,
   ) {}
 
   @Process(CalendarEventListFetchJob.name)
-  async handle(data: CalendarEventsImportJobData): Promise<void> {
+  async handle(data: CalendarEventListFetchJobData): Promise<void> {
     console.time('CalendarEventListFetchJob time');
 
     const { workspaceId, calendarChannelId } = data;
@@ -65,7 +65,7 @@ export class CalendarEventListFetchJob {
           syncStageStartedAt: null,
         });
 
-        await this.calendarEventsImportService.processCalendarEventsImport(
+        await this.calendarFetchEventsService.fetchCalendarEvents(
           calendarChannel,
           calendarChannel.connectedAccount,
           workspaceId,
@@ -73,7 +73,7 @@ export class CalendarEventListFetchJob {
         break;
 
       case CalendarChannelSyncStage.PARTIAL_CALENDAR_EVENT_LIST_FETCH_PENDING:
-        await this.calendarEventsImportService.processCalendarEventsImport(
+        await this.calendarFetchEventsService.fetchCalendarEvents(
           calendarChannel,
           calendarChannel.connectedAccount,
           workspaceId,

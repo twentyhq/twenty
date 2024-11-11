@@ -143,12 +143,6 @@ const SettingsDevelopers = lazy(() =>
   })),
 );
 
-const SettingsObjectEdit = lazy(() =>
-  import('~/pages/settings/data-model/SettingsObjectEdit').then((module) => ({
-    default: module.SettingsObjectEdit,
-  })),
-);
-
 const SettingsIntegrations = lazy(() =>
   import('~/pages/settings/integrations/SettingsIntegrations').then(
     (module) => ({
@@ -292,7 +286,6 @@ export const SettingsRoutes = ({
         path={SettingsPath.ObjectDetail}
         element={<SettingsObjectDetailPage />}
       />
-      <Route path={SettingsPath.ObjectEdit} element={<SettingsObjectEdit />} />
       <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
       <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
       {isCRMMigrationEnabled && (

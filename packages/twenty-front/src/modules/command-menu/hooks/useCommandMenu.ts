@@ -43,17 +43,33 @@ export const useCommandMenu = () => {
             }),
           );
 
+          const commands = Object.values(COMMAND_MENU_COMMANDS);
+
           const actionCommands = actionMenuEntries
             .getValue()
+            ?.filter((actionMenuEntry) => actionMenuEntry.type === 'standard')
             ?.map((actionMenuEntry) => ({
               id: actionMenuEntry.key,
               label: actionMenuEntry.label,
               Icon: actionMenuEntry.Icon,
               onCommandClick: actionMenuEntry.onClick,
-              type: CommandType.Action,
+              type: CommandType.StandardAction,
             }));
 
-          setCommands(actionCommands);
+          const workflowRunCommands = actionMenuEntries
+            .getValue()
+            ?.filter(
+              (actionMenuEntry) => actionMenuEntry.type === 'workflow-run',
+            )
+            ?.map((actionMenuEntry) => ({
+              id: actionMenuEntry.key,
+              label: actionMenuEntry.label,
+              Icon: actionMenuEntry.Icon,
+              onCommandClick: actionMenuEntry.onClick,
+              type: CommandType.WorkflowRun,
+            }));
+
+          setCommands([...commands, ...actionCommands, ...workflowRunCommands]);
         }
 
         setIsCommandMenuOpened(true);
@@ -76,11 +92,17 @@ export const useCommandMenu = () => {
 
         if (isCommandMenuOpened) {
           setIsCommandMenuOpened(false);
+          setCommands([]);
           resetSelectedItem();
           goBackToPreviousHotkeyScope();
         }
       },
-    [goBackToPreviousHotkeyScope, resetSelectedItem, setIsCommandMenuOpened],
+    [
+      goBackToPreviousHotkeyScope,
+      resetSelectedItem,
+      setCommands,
+      setIsCommandMenuOpened,
+    ],
   );
 
   const toggleCommandMenu = useRecoilCallback(

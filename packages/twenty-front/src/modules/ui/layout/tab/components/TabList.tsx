@@ -7,6 +7,7 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
+import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
 import { Tab } from './Tab';
 
 export type SingleTabProps = {
@@ -15,7 +16,8 @@ export type SingleTabProps = {
   id: string;
   hide?: boolean;
   disabled?: boolean;
-  pill?: string;
+  pill?: string | React.ReactElement;
+  cards?: LayoutCard[];
 };
 
 type TabListProps = {
