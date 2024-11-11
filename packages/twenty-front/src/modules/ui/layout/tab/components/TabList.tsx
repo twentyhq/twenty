@@ -26,6 +26,7 @@ type TabListProps = {
   tabs: SingleTabProps[];
   loading?: boolean;
   className?: string;
+  behaveAsLinks?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -42,6 +43,7 @@ export const TabList = ({
   tabListInstanceId,
   loading,
   className,
+  behaveAsLinks = true,
 }: TabListProps) => {
   const initialActiveTabId = tabs.find((tab) => !tab.hide)?.id || '';
 
@@ -72,7 +74,12 @@ export const TabList = ({
                 active={tab.id === activeTabId}
                 disabled={tab.disabled ?? loading}
                 pill={tab.pill}
-                to={`#${tab.id}`}
+                to={behaveAsLinks ? `#${tab.id}` : undefined}
+                onClick={() => {
+                  if (!behaveAsLinks) {
+                    setActiveTabId(tab.id);
+                  }
+                }}
               />
             ))}
         </StyledContainer>

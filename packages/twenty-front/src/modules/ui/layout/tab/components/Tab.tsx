@@ -13,10 +13,14 @@ type TabProps = {
   onClick?: () => void;
   disabled?: boolean;
   pill?: string | ReactElement;
-  to: string;
+  to?: string;
 };
 
-const StyledTab = styled(Link)<{ active?: boolean; disabled?: boolean }>`
+const StyledTab = styled.button<{
+  active?: boolean;
+  disabled?: boolean;
+  to?: string;
+}>`
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-color: ${({ theme, active }) =>
@@ -28,6 +32,10 @@ const StyledTab = styled(Link)<{ active?: boolean; disabled?: boolean }>`
         ? theme.font.color.light
         : theme.font.color.secondary};
   cursor: pointer;
+  background-color: transparent;
+  border-left: none;
+  border-right: none;
+  border-top: none;
 
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
@@ -74,6 +82,7 @@ export const Tab = ({
       className={className}
       disabled={disabled}
       data-testid={'tab-' + id}
+      as={to ? Link : 'button'}
       to={to}
     >
       <StyledHover>
