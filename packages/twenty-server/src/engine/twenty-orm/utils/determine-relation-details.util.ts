@@ -3,7 +3,7 @@ import { RelationType } from 'typeorm/metadata/types/RelationTypes';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
 
 interface RelationDetails {
@@ -16,22 +16,25 @@ interface RelationDetails {
 export async function determineRelationDetails(
   fieldMetadata: FieldMetadataInterface,
   relationMetadata: RelationMetadataEntity,
-  objectMetadataMap: ObjectMetadataMap,
+  objectMetadataMaps: ObjectMetadataMaps,
 ): Promise<RelationDetails> {
   const relationType = computeRelationType(fieldMetadata, relationMetadata);
-  const fromObjectMetadata = objectMetadataMap[fieldMetadata.objectMetadataId];
-  let toObjectMetadata = objectMetadataMap[relationMetadata.toObjectMetadataId];
+  const fromObjectMetadata =
+    objectMetadataMaps.byId[fieldMetadata.objectMetadataId];
+  let toObjectMetadata =
+    objectMetadataMaps.byId[relationMetadata.toObjectMetadataId];
 
   // RelationMetadata always store the relation from the perspective of the `from` object, MANY_TO_ONE relations are not stored yet
   if (relationType === 'many-to-one') {
-    toObjectMetadata = objectMetadataMap[relationMetadata.fromObjectMetadataId];
+    toObjectMetadata =
+      objectMetadataMaps.byId[relationMetadata.fromObjectMetadataId];
   }
 
   if (!fromObjectMetadata || !toObjectMetadata) {
     throw new Error('Object metadata not found');
   }
 
-  const toFieldMetadata = Object.values(toObjectMetadata.fields).find(
+  const toFieldMetadata = Object.values(toObjectMetadata.fieldsById).find(
     (field) =>
       relationType === 'many-to-one'
         ? field.id === relationMetadata.fromFieldMetadataId

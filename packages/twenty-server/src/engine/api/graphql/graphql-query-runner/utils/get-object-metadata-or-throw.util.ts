@@ -2,12 +2,12 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { ObjectMetadataMapItem } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 
 export const getObjectMetadataOrThrow = (
   objectMetadataMap: Record<string, any>,
   objectName: string,
-): ObjectMetadataMapItem => {
+): ObjectMetadataItemWithFieldMaps => {
   const objectMetadata = objectMetadataMap[objectName];
 
   if (!objectMetadata) {

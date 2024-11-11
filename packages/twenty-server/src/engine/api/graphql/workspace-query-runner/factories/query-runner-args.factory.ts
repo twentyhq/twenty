@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import {
+  ObjectRecord,
+  ObjectRecordFilter,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import {
   CreateManyResolverArgs,
@@ -10,13 +13,11 @@ import {
   ResolverArgs,
   ResolverArgsType,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
-import {
-  Record,
-  RecordFilter,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { hasPositionField } from 'src/engine/metadata-modules/object-metadata/utils/has-position-field.util';
+import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 import { RecordPositionFactory } from './record-position.factory';
 
@@ -34,16 +35,12 @@ export class QueryRunnerArgsFactory {
     options: WorkspaceQueryRunnerOptions,
     resolverArgsType: ResolverArgsType,
   ) {
-    const fieldMetadataCollection = options.fieldMetadataCollection;
+    const fieldMetadataMap =
+      options.objectMetadataItemWithFieldMaps.fieldsByName;
 
-    const fieldMetadataMap = new Map(
-      fieldMetadataCollection.map((fieldMetadata) => [
-        fieldMetadata.name,
-        fieldMetadata,
-      ]),
+    const shouldBackfillPosition = hasPositionField(
+      options.objectMetadataItemWithFieldMaps,
     );
-
-    const shouldBackfillPosition = hasPositionField(options.objectMetadataItem);
 
     switch (resolverArgsType) {
       case ResolverArgsType.CreateMany:
@@ -98,9 +95,9 @@ export class QueryRunnerArgsFactory {
   }
 
   private async overrideDataByFieldMetadata(
-    data: Partial<Record> | undefined,
+    data: Partial<ObjectRecord> | undefined,
     options: WorkspaceQueryRunnerOptions,
-    fieldMetadataMap: Map<string, FieldMetadataInterface>,
+    fieldMetadataMap: Record<string, FieldMetadataInterface>,
     argPositionBackfillInput: ArgPositionBackfillInput,
   ) {
     if (!data) {
@@ -111,7 +108,7 @@ export class QueryRunnerArgsFactory {
 
     const createArgPromiseByArgKey = Object.entries(data).map(
       async ([key, value]) => {
-        const fieldMetadata = fieldMetadataMap.get(key);
+        const fieldMetadata = fieldMetadataMap[key];
 
         if (!fieldMetadata) {
           return [key, await Promise.resolve(value)];
@@ -126,8 +123,9 @@ export class QueryRunnerArgsFactory {
               await this.recordPositionFactory.create(
                 value,
                 {
-                  isCustom: options.objectMetadataItem.isCustom,
-                  nameSingular: options.objectMetadataItem.nameSingular,
+                  isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
+                  nameSingular:
+                    options.objectMetadataItemWithFieldMaps.nameSingular,
                 },
                 options.authContext.workspace.id,
                 argPositionBackfillInput.argIndex,
@@ -154,8 +152,9 @@ export class QueryRunnerArgsFactory {
           await this.recordPositionFactory.create(
             'first',
             {
-              isCustom: options.objectMetadataItem.isCustom,
-              nameSingular: options.objectMetadataItem.nameSingular,
+              isCustom: options.objectMetadataItemWithFieldMaps.isCustom,
+              nameSingular:
+                options.objectMetadataItemWithFieldMaps.nameSingular,
             },
             options.authContext.workspace.id,
             argPositionBackfillInput.argIndex,
@@ -168,17 +167,17 @@ export class QueryRunnerArgsFactory {
   }
 
   private overrideFilterByFieldMetadata(
-    filter: RecordFilter | undefined,
-    fieldMetadataMap: Map<string, FieldMetadataInterface>,
+    filter: ObjectRecordFilter | undefined,
+    fieldMetadataMap: Record<string, FieldMetadataInterface>,
   ) {
     if (!filter) {
       return;
     }
 
-    const overrideFilter = (filterObject: RecordFilter) => {
+    const overrideFilter = (filterObject: ObjectRecordFilter) => {
       return Object.entries(filterObject).reduce((acc, [key, value]) => {
         if (key === 'and' || key === 'or') {
-          acc[key] = value.map((nestedFilter: RecordFilter) =>
+          acc[key] = value.map((nestedFilter: ObjectRecordFilter) =>
             overrideFilter(nestedFilter),
           );
         } else if (key === 'not') {
@@ -197,9 +196,9 @@ export class QueryRunnerArgsFactory {
   private transformValueByType(
     key: string,
     value: any,
-    fieldMetadataMap: Map<string, FieldMetadataInterface>,
+    fieldMetadataMap: FieldMetadataMap,
   ) {
-    const fieldMetadata = fieldMetadataMap.get(key);
+    const fieldMetadata = fieldMetadataMap[key];
 
     if (!fieldMetadata) {
       return value;
@@ -226,9 +225,9 @@ export class QueryRunnerArgsFactory {
   private async overrideValueByFieldMetadata(
     key: string,
     value: any,
-    fieldMetadataMap: Map<string, FieldMetadataInterface>,
+    fieldMetadataMap: FieldMetadataMap,
   ) {
-    const fieldMetadata = fieldMetadataMap.get(key);
+    const fieldMetadata = fieldMetadataMap[key];
 
     if (!fieldMetadata) {
       return value;

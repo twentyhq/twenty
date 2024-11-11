@@ -98,7 +98,7 @@ export class WorkspaceResolverFactory {
           fieldMetadataCollection: objectMetadata.fields,
           objectMetadataCollection,
           objectMetadataMap,
-          objectMetadataMapItem: objectMetadataMap[objectMetadata.nameSingular],
+          ObjectMetadataItemWithFieldMaps: objectMetadataMap[objectMetadata.nameSingular],
         });
       }
 
@@ -123,7 +123,7 @@ export class WorkspaceResolverFactory {
           fieldMetadataCollection: objectMetadata.fields,
           objectMetadataCollection,
           objectMetadataMap,
-          objectMetadataMapItem: objectMetadataMap[objectMetadata.nameSingular],
+          ObjectMetadataItemWithFieldMaps: objectMetadataMap[objectMetadata.nameSingular],
         });
       }
     }

@@ -1,36 +1,39 @@
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-export type FieldMetadataMap = Record<string, FieldMetadataInterface>;
+import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
-export type ObjectMetadataMapItem = Omit<ObjectMetadataInterface, 'fields'> & {
-  fields: FieldMetadataMap;
-};
-
-export type ObjectMetadataMap = Record<string, ObjectMetadataMapItem>;
-
-export const generateObjectMetadataMap = (
+export const generateObjectMetadataMaps = (
   objectMetadataCollection: ObjectMetadataInterface[],
-): ObjectMetadataMap => {
-  const objectMetadataMap: ObjectMetadataMap = {};
+): ObjectMetadataMaps => {
+  const objectMetadataMaps: ObjectMetadataMaps = {
+    byId: {},
+    byNameSingular: {},
+    byNamePlural: {},
+  };
 
   for (const objectMetadata of objectMetadataCollection) {
-    const fieldsMap: FieldMetadataMap = {};
+    const fieldsByIdMap: FieldMetadataMap = {};
+    const fieldsByNameMap: FieldMetadataMap = {};
 
     for (const fieldMetadata of objectMetadata.fields) {
-      fieldsMap[fieldMetadata.name] = fieldMetadata;
-      fieldsMap[fieldMetadata.id] = fieldMetadata;
+      fieldsByNameMap[fieldMetadata.name] = fieldMetadata;
+      fieldsByIdMap[fieldMetadata.id] = fieldMetadata;
     }
 
-    const processedObjectMetadata: ObjectMetadataMapItem = {
+    const processedObjectMetadata: ObjectMetadataItemWithFieldMaps = {
       ...objectMetadata,
-      fields: fieldsMap,
+      fieldsById: fieldsByIdMap,
+      fieldsByName: fieldsByNameMap,
     };
 
-    objectMetadataMap[objectMetadata.id] = processedObjectMetadata;
-    objectMetadataMap[objectMetadata.nameSingular] = processedObjectMetadata;
-    objectMetadataMap[objectMetadata.namePlural] = processedObjectMetadata;
+    objectMetadataMaps.byId[objectMetadata.id] = processedObjectMetadata;
+    objectMetadataMaps.byNameSingular[objectMetadata.nameSingular] =
+      processedObjectMetadata;
+    objectMetadataMaps.byNamePlural[objectMetadata.namePlural] =
+      processedObjectMetadata;
   }
 
-  return objectMetadataMap;
+  return objectMetadataMaps;
 };

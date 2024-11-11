@@ -2,13 +2,13 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 
 import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { getRelationObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
-import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 export class GraphqlQuerySelectedFieldsRelationParser {
-  private objectMetadataMap: ObjectMetadataMap;
+  private objectMetadataMaps: ObjectMetadataMaps;
 
-  constructor(objectMetadataMap: ObjectMetadataMap) {
-    this.objectMetadataMap = objectMetadataMap;
+  constructor(objectMetadataMaps: ObjectMetadataMaps) {
+    this.objectMetadataMaps = objectMetadataMaps;
   }
 
   parseRelationField(
@@ -25,12 +25,12 @@ export class GraphqlQuerySelectedFieldsRelationParser {
 
     const referencedObjectMetadata = getRelationObjectMetadata(
       fieldMetadata,
-      this.objectMetadataMap,
+      this.objectMetadataMaps,
     );
 
-    const relationFields = referencedObjectMetadata.fields;
+    const relationFields = referencedObjectMetadata.fieldsById;
     const fieldParser = new GraphqlQuerySelectedFieldsParser(
-      this.objectMetadataMap,
+      this.objectMetadataMaps,
     );
     const subResult = fieldParser.parse(fieldValue, relationFields);
 

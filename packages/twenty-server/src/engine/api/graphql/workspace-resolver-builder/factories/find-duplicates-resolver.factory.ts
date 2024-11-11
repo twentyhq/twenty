@@ -35,7 +35,7 @@ export class FindDuplicatesResolverFactory
           fieldMetadataCollection: internalContext.fieldMetadataCollection,
           objectMetadataCollection: internalContext.objectMetadataCollection,
           objectMetadataMap: internalContext.objectMetadataMap,
-          objectMetadataMapItem: internalContext.objectMetadataMapItem,
+          ObjectMetadataItemWithFieldMaps: internalContext.ObjectMetadataItemWithFieldMaps,
         };
 
         return await this.graphqlQueryRunnerService.findDuplicates(

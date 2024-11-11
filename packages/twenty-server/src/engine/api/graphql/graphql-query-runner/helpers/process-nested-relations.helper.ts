@@ -7,25 +7,23 @@ import {
   Repository,
 } from 'typeorm';
 
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {
   getRelationMetadata,
   getRelationObjectMetadata,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
-import {
-  ObjectMetadataMap,
-  ObjectMetadataMapItem,
-} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { deduceRelationDirection } from 'src/engine/utils/deduce-relation-direction.util';
 
 export class ProcessNestedRelationsHelper {
   constructor() {}
 
-  public async processNestedRelations<ObjectRecord extends IRecord = IRecord>(
-    objectMetadataMap: ObjectMetadataMap,
-    parentObjectMetadataItem: ObjectMetadataMapItem,
-    parentObjectRecords: ObjectRecord[],
+  public async processNestedRelations<T extends ObjectRecord = ObjectRecord>(
+    objectMetadataMaps: ObjectMetadataMaps,
+    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps,
+    parentObjectRecords: T[],
     relations: Record<string, FindOptionsRelations<ObjectLiteral>>,
     limit: number,
     authContext: any,
@@ -34,7 +32,7 @@ export class ProcessNestedRelationsHelper {
     const processRelationTasks = Object.entries(relations).map(
       ([relationName, nestedRelations]) =>
         this.processRelation(
-          objectMetadataMap,
+          objectMetadataMaps,
           parentObjectMetadataItem,
           parentObjectRecords,
           relationName,
@@ -48,17 +46,18 @@ export class ProcessNestedRelationsHelper {
     await Promise.all(processRelationTasks);
   }
 
-  private async processRelation<ObjectRecord extends IRecord = IRecord>(
-    objectMetadataMap: ObjectMetadataMap,
-    parentObjectMetadataItem: ObjectMetadataMapItem,
-    parentObjectRecords: ObjectRecord[],
+  private async processRelation<T extends ObjectRecord = ObjectRecord>(
+    objectMetadataMaps: ObjectMetadataMaps,
+    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps,
+    parentObjectRecords: T[],
     relationName: string,
     nestedRelations: any,
     limit: number,
     authContext: any,
     dataSource: DataSource,
   ): Promise<void> {
-    const relationFieldMetadata = parentObjectMetadataItem.fields[relationName];
+    const relationFieldMetadata =
+      parentObjectMetadataItem.fieldsByName[relationName];
     const relationMetadata = getRelationMetadata(relationFieldMetadata);
     const relationDirection = deduceRelationDirection(
       relationFieldMetadata,
@@ -72,7 +71,7 @@ export class ProcessNestedRelationsHelper {
 
     await processor.call(
       this,
-      objectMetadataMap,
+      objectMetadataMaps,
       parentObjectMetadataItem,
       parentObjectRecords,
       relationName,
@@ -83,10 +82,10 @@ export class ProcessNestedRelationsHelper {
     );
   }
 
-  private async processFromRelation<ObjectRecord extends IRecord = IRecord>(
-    objectMetadataMap: ObjectMetadataMap,
-    parentObjectMetadataItem: ObjectMetadataMapItem,
-    parentObjectRecords: ObjectRecord[],
+  private async processFromRelation<T extends ObjectRecord = ObjectRecord>(
+    objectMetadataMaps: ObjectMetadataMaps,
+    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps,
+    parentObjectRecords: T[],
     relationName: string,
     nestedRelations: any,
     limit: number,
@@ -95,7 +94,7 @@ export class ProcessNestedRelationsHelper {
   ): Promise<void> {
     const { inverseRelationName, referenceObjectMetadata } =
       this.getRelationMetadata(
-        objectMetadataMap,
+        objectMetadataMaps,
         parentObjectMetadataItem,
         relationName,
       );
@@ -120,8 +119,8 @@ export class ProcessNestedRelationsHelper {
 
     if (Object.keys(nestedRelations).length > 0) {
       await this.processNestedRelations(
-        objectMetadataMap,
-        objectMetadataMap[referenceObjectMetadata.nameSingular],
+        objectMetadataMaps,
+        objectMetadataMaps.byNameSingular[referenceObjectMetadata.nameSingular],
         relationResults as ObjectRecord[],
         nestedRelations as Record<string, FindOptionsRelations<ObjectLiteral>>,
         limit,
@@ -131,10 +130,10 @@ export class ProcessNestedRelationsHelper {
     }
   }
 
-  private async processToRelation<ObjectRecord extends IRecord = IRecord>(
-    objectMetadataMap: ObjectMetadataMap,
-    parentObjectMetadataItem: ObjectMetadataMapItem,
-    parentObjectRecords: ObjectRecord[],
+  private async processToRelation<T extends ObjectRecord = ObjectRecord>(
+    objectMetadataMaps: ObjectMetadataMaps,
+    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps,
+    parentObjectRecords: T[],
     relationName: string,
     nestedRelations: any,
     limit: number,
@@ -142,7 +141,7 @@ export class ProcessNestedRelationsHelper {
     dataSource: DataSource,
   ): Promise<void> {
     const { referenceObjectMetadata } = this.getRelationMetadata(
-      objectMetadataMap,
+      objectMetadataMaps,
       parentObjectMetadataItem,
       relationName,
     );
@@ -169,8 +168,8 @@ export class ProcessNestedRelationsHelper {
 
     if (Object.keys(nestedRelations).length > 0) {
       await this.processNestedRelations(
-        objectMetadataMap,
-        objectMetadataMap[referenceObjectMetadata.nameSingular],
+        objectMetadataMaps,
+        objectMetadataMaps.byNameSingular[referenceObjectMetadata.nameSingular],
         relationResults as ObjectRecord[],
         nestedRelations as Record<string, FindOptionsRelations<ObjectLiteral>>,
         limit,
@@ -181,25 +180,25 @@ export class ProcessNestedRelationsHelper {
   }
 
   private getRelationMetadata(
-    objectMetadataMap: ObjectMetadataMap,
-    parentObjectMetadataItem: ObjectMetadataMapItem,
+    objectMetadataMaps: ObjectMetadataMaps,
+    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps,
     relationName: string,
   ) {
-    const relationFieldMetadata = parentObjectMetadataItem.fields[relationName];
+    const relationFieldMetadata =
+      parentObjectMetadataItem.fieldsByName[relationName];
     const relationMetadata = getRelationMetadata(relationFieldMetadata);
     const referenceObjectMetadata = getRelationObjectMetadata(
       relationFieldMetadata,
-      objectMetadataMap,
+      objectMetadataMaps,
     );
     const inverseRelationName =
-      objectMetadataMap[relationMetadata.toObjectMetadataId]?.fields[
-        relationMetadata.toFieldMetadataId
-      ]?.name;
+      objectMetadataMaps.byNameSingular[relationMetadata.toObjectMetadataId]
+        ?.fieldsById[relationMetadata.toFieldMetadataId]?.name;
 
     return { inverseRelationName, referenceObjectMetadata };
   }
 
-  private getUniqueIds(records: IRecord[], idField: string): any[] {
+  private getUniqueIds(records: ObjectRecord[], idField: string): any[] {
     return [...new Set(records.map((item) => item[idField]))];
   }
 
@@ -221,7 +220,7 @@ export class ProcessNestedRelationsHelper {
   }
 
   private assignRelationResults(
-    parentRecords: IRecord[],
+    parentRecords: ObjectRecord[],
     relationResults: any[],
     relationName: string,
     joinField: string,
@@ -234,7 +233,7 @@ export class ProcessNestedRelationsHelper {
   }
 
   private assignToRelationResults(
-    parentRecords: IRecord[],
+    parentRecords: ObjectRecord[],
     relationResults: any[],
     relationName: string,
   ): void {

@@ -3,8 +3,8 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
+  ObjectMetadataItemWithFieldMaps,
   ObjectMetadataMap,
-  ObjectMetadataMapItem,
 } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 
 export interface WorkspaceSchemaBuilderContext {
@@ -13,5 +13,5 @@ export interface WorkspaceSchemaBuilderContext {
   objectMetadataCollection: ObjectMetadataInterface[];
   objectMetadataItem: ObjectMetadataInterface;
   objectMetadataMap: ObjectMetadataMap;
-  objectMetadataMapItem: ObjectMetadataMapItem;
+  ObjectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps;
 }

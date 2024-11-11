@@ -1,23 +1,19 @@
 import deepEqual from 'deep-equal';
 
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export const objectRecordChangedValues = (
   oldRecord: Partial<IRecord>,
   newRecord: Partial<IRecord>,
   updatedKeys: string[] | undefined,
-  objectMetadata: ObjectMetadataInterface,
+  ObjectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
 ) => {
-  const fieldsByKey = new Map(
-    objectMetadata.fields.map((field) => [field.name, field]),
-  );
-
   return Object.keys(newRecord).reduce(
     (acc, key) => {
-      const field = fieldsByKey.get(key);
+      const field = ObjectMetadataItemWithFieldMaps.fieldsByName[key];
       const oldRecordValue = oldRecord[key];
       const newRecordValue = newRecord[key];
 

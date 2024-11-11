@@ -1,4 +1,4 @@
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 export interface PGGraphQLResponse<Data = any> {
   resolve: {

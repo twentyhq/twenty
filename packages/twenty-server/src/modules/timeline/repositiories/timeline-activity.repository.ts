@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
-import { Record } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { Record } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
 export class TimelineActivityRepository {

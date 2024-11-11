@@ -1,4 +1,4 @@
-import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { isDefined } from 'src/utils/is-defined';
 

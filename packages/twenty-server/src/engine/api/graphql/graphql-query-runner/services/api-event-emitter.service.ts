@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class ApiEventEmitterService {
   constructor(private readonly workspaceEventEmitter: WorkspaceEventEmitter) {}
 
-  public emitCreateEvents<T extends IRecord>(
+  public emitCreateEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
@@ -32,12 +33,12 @@ export class ApiEventEmitterService {
     );
   }
 
-  public emitUpdateEvents<T extends IRecord>(
+  public emitUpdateEvents<T extends ObjectRecord>(
     existingRecords: T[],
     records: T[],
     updatedFields: string[],
     authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
+    ObjectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ): void {
     const mappedExistingRecords = existingRecords.reduce(
       (acc, { id, ...record }) => ({
@@ -48,7 +49,7 @@ export class ApiEventEmitterService {
     );
 
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.UPDATED}`,
+      `${ObjectMetadataItemWithFieldMaps.nameSingular}.${DatabaseEventAction.UPDATED}`,
       records.map((record) => {
         const before = this.removeGraphQLAndNestedProperties(
           mappedExistingRecords[record.id],
@@ -58,13 +59,13 @@ export class ApiEventEmitterService {
           before,
           after,
           updatedFields,
-          objectMetadataItem,
+          ObjectMetadataItemWithFieldMaps,
         );
 
         return {
           userId: authContext.user?.id,
           recordId: record.id,
-          objectMetadata: objectMetadataItem,
+          objectMetadata: ObjectMetadataItemWithFieldMaps,
           properties: {
             before,
             after,
@@ -77,18 +78,18 @@ export class ApiEventEmitterService {
     );
   }
 
-  public emitDeletedEvents<T extends IRecord>(
+  public emitDeletedEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
+    ObjectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ): void {
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.DELETED}`,
+      `${ObjectMetadataItemWithFieldMaps.nameSingular}.${DatabaseEventAction.DELETED}`,
       records.map((record) => {
         return {
           userId: authContext.user?.id,
           recordId: record.id,
-          objectMetadata: objectMetadataItem,
+          objectMetadata: ObjectMetadataItemWithFieldMaps,
           properties: {
             before: this.removeGraphQLAndNestedProperties(record),
             after: null,
@@ -99,18 +100,18 @@ export class ApiEventEmitterService {
     );
   }
 
-  public emitDestroyEvents<T extends IRecord>(
+  public emitDestroyEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
-    objectMetadataItem: ObjectMetadataInterface,
+    ObjectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   ): void {
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.DESTROYED}`,
+      `${ObjectMetadataItemWithFieldMaps.nameSingular}.${DatabaseEventAction.DESTROYED}`,
       records.map((record) => {
         return {
           userId: authContext.user?.id,
           recordId: record.id,
-          objectMetadata: objectMetadataItem,
+          objectMetadata: ObjectMetadataItemWithFieldMaps,
           properties: {
             before: this.removeGraphQLAndNestedProperties(record),
             after: null,
@@ -121,9 +122,7 @@ export class ApiEventEmitterService {
     );
   }
 
-  private removeGraphQLAndNestedProperties<ObjectRecord extends IRecord>(
-    record: ObjectRecord,
-  ) {
+  private removeGraphQLAndNestedProperties<T extends ObjectRecord>(record: T) {
     if (!record) {
       return {};
     }

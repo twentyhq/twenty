@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { EntitySchema } from 'typeorm';
 
 import {
+  ObjectMetadataItemWithFieldMaps,
   ObjectMetadataMap,
-  ObjectMetadataMapItem,
 } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
@@ -21,7 +21,7 @@ export class EntitySchemaFactory {
   async create(
     workspaceId: string,
     metadataVersion: number,
-    objectMetadata: ObjectMetadataMapItem,
+    objectMetadata: ObjectMetadataItemWithFieldMaps,
     objectMetadataMap: ObjectMetadataMap,
   ): Promise<EntitySchema> {
     const columns = this.entitySchemaColumnFactory.create(

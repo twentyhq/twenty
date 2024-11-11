@@ -1,6 +1,6 @@
 import deepEqual from 'deep-equal';
 
-import { Record } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { Record } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 

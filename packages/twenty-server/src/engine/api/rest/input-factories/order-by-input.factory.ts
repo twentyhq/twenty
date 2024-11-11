@@ -5,7 +5,7 @@ import { Request } from 'express';
 import {
   OrderByDirection,
   RecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { checkArrayFields } from 'src/engine/api/rest/core/query-builder/utils/check-order-by.utils';
 

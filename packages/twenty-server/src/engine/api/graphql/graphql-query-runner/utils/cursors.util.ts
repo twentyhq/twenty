@@ -1,7 +1,7 @@
 import {
   Record as IRecord,
   RecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {

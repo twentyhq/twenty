@@ -1,4 +1,4 @@
-import { RecordDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { RecordDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 /**
  * objectName: directly reference the name of the object from the metadata tables.

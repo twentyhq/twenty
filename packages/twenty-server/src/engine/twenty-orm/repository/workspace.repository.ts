@@ -22,7 +22,7 @@ import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { ObjectMetadataMapItem } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -666,7 +666,7 @@ export class WorkspaceRepository<
 
   async formatResult<T>(
     data: T,
-    objectMetadata?: ObjectMetadataMapItem,
+    objectMetadata?: ObjectMetadataItemWithFieldMaps,
   ): Promise<T> {
     objectMetadata ??= await this.getObjectMetadataFromTarget();
 

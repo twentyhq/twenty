@@ -1,9 +1,9 @@
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export class ObjectRecordBaseEvent {
   recordId: string;
   userId?: string;
   workspaceMemberId?: string;
-  objectMetadata: ObjectMetadataInterface;
+  objectMetadata: ObjectMetadataItemWithFieldMaps;
   properties: any;
 }

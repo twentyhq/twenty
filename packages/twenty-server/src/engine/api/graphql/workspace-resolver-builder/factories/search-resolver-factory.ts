@@ -33,7 +33,7 @@ export class SearchResolverFactory
           fieldMetadataCollection: internalContext.fieldMetadataCollection,
           objectMetadataCollection: internalContext.objectMetadataCollection,
           objectMetadataMap: internalContext.objectMetadataMap,
-          objectMetadataMapItem: internalContext.objectMetadataMapItem,
+          ObjectMetadataItemWithFieldMaps: internalContext.ObjectMetadataItemWithFieldMaps,
         };
 
         return await this.graphqlQueryRunnerService.search(args, options);

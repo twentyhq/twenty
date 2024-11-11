@@ -7,7 +7,7 @@ import {
 import { GraphqlQuerySelectedFieldsRelationParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-relation.parser';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { capitalize } from 'src/utils/capitalize';
@@ -16,9 +16,9 @@ import { isPlainObject } from 'src/utils/is-plain-object';
 export class GraphqlQuerySelectedFieldsParser {
   private graphqlQuerySelectedFieldsRelationParser: GraphqlQuerySelectedFieldsRelationParser;
 
-  constructor(objectMetadataMap: ObjectMetadataMap) {
+  constructor(objectMetadataMaps: ObjectMetadataMaps) {
     this.graphqlQuerySelectedFieldsRelationParser =
-      new GraphqlQuerySelectedFieldsRelationParser(objectMetadataMap);
+      new GraphqlQuerySelectedFieldsRelationParser(objectMetadataMaps);
   }
 
   parse(

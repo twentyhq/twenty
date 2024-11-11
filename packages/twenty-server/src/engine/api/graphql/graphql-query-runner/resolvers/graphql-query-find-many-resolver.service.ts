@@ -5,11 +5,11 @@ import { SelectQueryBuilder } from 'typeorm';
 
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import {
-  Record as IRecord,
+  ObjectRecord,
+  ObjectRecordFilter,
+  ObjectRecordOrderBy,
   OrderByDirection,
-  RecordFilter,
-  RecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -38,22 +38,26 @@ import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class GraphqlQueryFindManyResolverService
-  implements ResolverService<FindManyResolverArgs, IConnection<IRecord>>
+  implements ResolverService<FindManyResolverArgs, IConnection<ObjectRecord>>
 {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async resolve<
-    ObjectRecord extends IRecord = IRecord,
-    Filter extends RecordFilter = RecordFilter,
-    OrderBy extends RecordOrderBy = RecordOrderBy,
+    T extends ObjectRecord = ObjectRecord,
+    Filter extends ObjectRecordFilter = ObjectRecordFilter,
+    OrderBy extends ObjectRecordOrderBy = ObjectRecordOrderBy,
   >(
     args: FindManyResolverArgs<Filter, OrderBy>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<IConnection<ObjectRecord>> {
-    const { authContext, objectMetadataMapItem, info, objectMetadataMap } =
-      options;
+  ): Promise<IConnection<T>> {
+    const {
+      authContext,
+      objectMetadataItemWithFieldMaps,
+      info,
+      objectMetadataMaps,
+    } = options;
 
     const dataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(
@@ -61,32 +65,32 @@ export class GraphqlQueryFindManyResolverService
       );
 
     const repository = dataSource.getRepository(
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
 
     const queryBuilder = repository.createQueryBuilder(
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
 
     const countQueryBuilder = repository.createQueryBuilder(
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataMapItem.fields,
-      objectMetadataMap,
+      objectMetadataItemWithFieldMaps.fieldsByName,
+      objectMetadataMaps,
     );
 
     const withFilterCountQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       countQueryBuilder,
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
       args.filter ?? ({} as Filter),
     );
 
     const selectedFields = graphqlFields(info);
 
     const { relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataMapItem,
+      objectMetadataItemWithFieldMaps,
       selectedFields,
     );
     const isForwardPagination = !isDefined(args.before);
@@ -114,7 +118,7 @@ export class GraphqlQueryFindManyResolverService
       const cursorArgFilter = computeCursorArgFilter(
         cursor,
         orderByWithIdCondition,
-        objectMetadataMapItem.fields,
+        objectMetadataItemWithFieldMaps.fieldsByName,
         isForwardPagination,
       );
 
@@ -127,14 +131,14 @@ export class GraphqlQueryFindManyResolverService
 
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
       appliedFilters,
     );
 
     const withOrderByQueryBuilder = graphqlQueryParser.applyOrderToBuilder(
       withFilterQueryBuilder,
       orderByWithIdCondition,
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
       isForwardPagination,
     );
 
@@ -144,7 +148,7 @@ export class GraphqlQueryFindManyResolverService
     );
 
     const selectedAggregatedFields = this.getSelectedAggregatedFields({
-      objectFields: Object.values(objectMetadataMapItem.fields),
+      objectFields: Object.values(objectMetadataItemWithFieldMaps.fields),
       selectedFields,
     });
 
@@ -161,8 +165,8 @@ export class GraphqlQueryFindManyResolverService
 
     const objectRecords = formatResult(
       nonFormattedObjectRecords.entities,
-      objectMetadataMapItem,
-      objectMetadataMap,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     );
 
     const { hasNextPage, hasPreviousPage } = getPaginationInfo(
@@ -179,8 +183,8 @@ export class GraphqlQueryFindManyResolverService
 
     if (relations) {
       await processNestedRelationsHelper.processNestedRelations(
-        objectMetadataMap,
-        objectMetadataMapItem,
+        objectMetadataMaps,
+        objectMetadataItemWithFieldMaps,
         objectRecords,
         relations,
         limit,
@@ -190,11 +194,11 @@ export class GraphqlQueryFindManyResolverService
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     const result = typeORMObjectRecordsParser.createConnection({
       objectRecords,
-      objectName: objectMetadataMapItem.nameSingular,
+      objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: limit,
       totalCount,
       order: orderByWithIdCondition,
@@ -210,7 +214,7 @@ export class GraphqlQueryFindManyResolverService
     return { ...result, ...aggregatedFieldsResults };
   }
 
-  async validate<Filter extends RecordFilter>(
+  async validate<Filter extends ObjectRecordFilter>(
     args: FindManyResolverArgs<Filter>,
     _options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {

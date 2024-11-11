@@ -1,8 +1,8 @@
 import {
+  ObjectRecordFilter,
+  ObjectRecordOrderBy,
   OrderByDirection,
-  RecordFilter,
-  RecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -11,14 +11,14 @@ import {
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { FieldMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 export const computeCursorArgFilter = (
   cursor: Record<string, any>,
-  orderBy: RecordOrderBy,
+  orderBy: ObjectRecordOrderBy,
   fieldMetadataMap: FieldMetadataMap,
   isForwardPagination = true,
-): RecordFilter[] => {
+): ObjectRecordFilter[] => {
   const cursorKeys = Object.keys(cursor ?? {});
   const cursorValues = Object.values(cursor ?? {});
 
@@ -69,7 +69,7 @@ export const computeCursorArgFilter = (
     return {
       ...whereCondition,
       ...buildWhereCondition(key, value, fieldMetadataMap, operator),
-    } as RecordFilter;
+    } as ObjectRecordFilter;
   });
 };
 
