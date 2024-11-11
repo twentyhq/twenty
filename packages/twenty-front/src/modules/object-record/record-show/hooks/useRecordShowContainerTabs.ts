@@ -4,8 +4,9 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { BASE_RECORD_LAYOUT } from '@/object-record/record-show/constants/BaseRecordLayout';
 import { CardType } from '@/object-record/record-show/types/CardType';
+import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
 import { SingleTabProps } from '@/ui/layout/tab/components/TabList';
-import { TabDefinition } from '@/ui/layout/tab/types/TabDefinition';
+import { RecordLayoutTab } from '@/ui/layout/tab/types/RecordLayoutTab';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useRecoilValue } from 'recoil';
 import {
@@ -30,7 +31,7 @@ export const useRecordShowContainerTabs = (
 
   // Object-specific layouts that override or extend the base layout
   const OBJECT_SPECIFIC_LAYOUTS: Partial<
-    Record<CoreObjectNameSingular, Record<string, TabDefinition>>
+    Record<CoreObjectNameSingular, RecordLayout>
   > = {
     [CoreObjectNameSingular.Note]: {
       richText: {
@@ -47,6 +48,8 @@ export const useRecordShowContainerTabs = (
           ifRelationsMissing: [],
         },
       },
+      tasks: null,
+      notes: null,
     },
     [CoreObjectNameSingular.Task]: {
       richText: {
@@ -63,6 +66,8 @@ export const useRecordShowContainerTabs = (
           ifRelationsMissing: [],
         },
       },
+      tasks: null,
+      notes: null,
     },
     [CoreObjectNameSingular.Company]: {
       emails: {
@@ -189,12 +194,16 @@ export const useRecordShowContainerTabs = (
   };
 
   // Merge base layout with object-specific layout
-  const tabDefinitions = {
+  const tabDefinitions: RecordLayout = {
     ...BASE_RECORD_LAYOUT,
     ...(OBJECT_SPECIFIC_LAYOUTS[targetObjectNameSingular] || {}),
   };
 
   return Object.entries(tabDefinitions)
+    .filter(
+      (entry): entry is [string, NonNullable<RecordLayoutTab>] =>
+        entry[1] !== null && entry[1] !== undefined,
+    )
     .sort(([, a], [, b]) => a.position - b.position)
     .map(([key, { title, Icon, hide, cards }]) => {
       // Special handling for fields tab

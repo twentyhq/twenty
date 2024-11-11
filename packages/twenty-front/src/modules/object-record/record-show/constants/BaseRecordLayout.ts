@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { CardType } from '@/object-record/record-show/types/CardType';
-import { TabDefinition } from '@/ui/layout/tab/types/TabDefinition';
+import { RecordLayoutTab } from '@/ui/layout/tab/types/RecordLayoutTab';
 import {
   IconCheckbox,
   IconList,
@@ -9,7 +9,7 @@ import {
   IconTimelineEvent,
 } from 'twenty-ui';
 
-export const BASE_RECORD_LAYOUT: Record<string, TabDefinition> = {
+export const BASE_RECORD_LAYOUT: Record<string, RecordLayoutTab> = {
   fields: {
     title: 'Fields',
     Icon: IconList,

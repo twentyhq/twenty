@@ -1,5 +1,5 @@
 import { CardType } from '@/object-record/record-show/types/CardType';
 
-export type TabCard = {
+export type LayoutCard = {
   type: CardType;
 };
