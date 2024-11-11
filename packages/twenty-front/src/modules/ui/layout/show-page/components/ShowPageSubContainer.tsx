@@ -131,8 +131,9 @@ export const ShowPageSubContainer = ({
       <StyledShowPageRightContainer isMobile={isMobile}>
         <StyledTabListContainer>
           <TabList
+            behaveAsLinks={!isInRightDrawer}
             loading={loading || isNewViewableRecordLoading}
-            tabListId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`}
+            tabListInstanceId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`}
             tabs={tabs}
           />
         </StyledTabListContainer>

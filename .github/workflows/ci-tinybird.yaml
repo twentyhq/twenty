@@ -14,6 +14,7 @@ jobs:
   ci:
     timeout-minutes: 10
     runs-on: ubuntu-latest
+    uses: tinybirdco/ci/.github/workflows/ci.yml@main
     steps:
       - name: Check for changed files
         id: changed-files
@@ -28,7 +29,6 @@ jobs:
         run: echo "No relevant changes. Skipping CI."
 
       - name: Check twenty-tinybird package
-        uses: tinybirdco/ci/.github/workflows/ci.yml@main
         with:
           data_project_dir: packages/twenty-tinybird
           tb_admin_token: ${{ secrets.TB_ADMIN_TOKEN }}
