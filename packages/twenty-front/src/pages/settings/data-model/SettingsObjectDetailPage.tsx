@@ -124,7 +124,6 @@ export const SettingsObjectDetailPage = () => {
   ];
 
   const renderActiveTabContent = () => {
-    console.log('activeTabId:', activeTabId);
     switch (activeTabId) {
       case OBJECT_DETAIL_TABS.TABS_IDS.FIELDS:
         return <ObjectFields objectMetadataItem={objectMetadataItem} />;
