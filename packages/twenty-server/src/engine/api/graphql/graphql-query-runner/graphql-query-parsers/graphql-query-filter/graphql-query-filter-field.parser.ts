@@ -29,7 +29,7 @@ export class GraphqlQueryFilterFieldParser {
     filterValue: any,
     isFirst = false,
   ): void {
-    const fieldMetadataMapByName = this.fieldMetadataMapByName[`${key}`];
+    const fieldMetadata = this.fieldMetadataMapByName[`${key}`];
 
     if (!fieldMetadata) {
       throw new Error(`Field metadata not found for field: ${key}`);
