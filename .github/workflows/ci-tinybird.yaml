@@ -1,14 +1,16 @@
 name: CI Tinybird
 on:
   push:
-    paths:
-      - packages/twenty-tinybird/**
     branches:
       - main
+    paths:
+      - 'package.json'
+      - 'packages/twenty-tinybird/**'
 
   pull_request:
     paths:
-      - packages/twenty-tinybird/**
+      - 'package.json'
+      - 'packages/twenty-tinybird/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
