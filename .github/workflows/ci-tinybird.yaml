@@ -22,5 +22,6 @@ jobs:
     uses: tinybirdco/ci/.github/workflows/ci.yml@main
     with:
       data_project_dir: packages/twenty-tinybird
+    secrets:
       tb_admin_token: ${{ secrets.TB_ADMIN_TOKEN }}
       tb_host: https://api.eu-central-1.aws.tinybird.co
