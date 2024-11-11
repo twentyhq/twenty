@@ -39,7 +39,7 @@ const meta: Meta<typeof TabList> = {
   title: 'UI/Layout/Tab/TabList',
   component: TabList,
   args: {
-    tabListId: 'tab-list-id',
+    tabListInstanceId: 'tab-list-id',
     tabs: tabs,
   },
   decorators: [

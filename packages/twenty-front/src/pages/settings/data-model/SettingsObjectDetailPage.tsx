@@ -30,7 +30,6 @@ import {
   UndecoratedLink,
   isDefined,
 } from 'twenty-ui';
-import { SettingsObjectDetailsPageTabFromUrlEffect } from '~/pages/settings/data-model/SettingsObjectDetailsPageTabFromUrlEffect';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
 
@@ -141,7 +140,6 @@ export const SettingsObjectDetailPage = () => {
 
   return (
     <>
-      <SettingsObjectDetailsPageTabFromUrlEffect />
       <SubMenuTopBarContainer
         links={[
           {
@@ -174,7 +172,9 @@ export const SettingsObjectDetailPage = () => {
           </StyledTitleContainer>
           <StyledTabListContainer>
             <TabList
-              tabListId={SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID}
+              tabListInstanceId={
+                SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
+              }
               tabs={tabs}
               className="tab-list"
             />

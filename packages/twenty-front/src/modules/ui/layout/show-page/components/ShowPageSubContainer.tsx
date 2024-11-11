@@ -132,7 +132,7 @@ export const ShowPageSubContainer = ({
         <StyledTabListContainer>
           <TabList
             loading={loading || isNewViewableRecordLoading}
-            tabListId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`}
+            tabListInstanceId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`}
             tabs={tabs}
           />
         </StyledTabListContainer>
