@@ -1,11 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { ResolverArgsType } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RecordPositionFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/record-position.factory';
 
 describe('QueryRunnerArgsFactory', () => {
@@ -14,11 +12,6 @@ describe('QueryRunnerArgsFactory', () => {
   };
   const workspaceId = 'workspaceId';
   const options = {
-    fieldMetadataCollection: [
-      { name: 'position', type: FieldMetadataType.POSITION },
-      { name: 'testNumber', type: FieldMetadataType.NUMBER },
-    ] as FieldMetadataInterface[],
-    objectMetadataItem: { isCustom: true, nameSingular: 'test' },
     authContext: { workspace: { id: workspaceId } },
   } as WorkspaceQueryRunnerOptions;
 
@@ -144,11 +137,6 @@ describe('QueryRunnerArgsFactory', () => {
 
     it('findDuplicates type should override number in data and id', async () => {
       const optionsDuplicate = {
-        fieldMetadataCollection: [
-          { name: 'id', type: FieldMetadataType.NUMBER },
-          { name: 'testNumber', type: FieldMetadataType.NUMBER },
-        ] as FieldMetadataInterface[],
-        objectMetadataItem: { isCustom: true, nameSingular: 'test' },
         authContext: { workspace: { id: workspaceId } },
       } as WorkspaceQueryRunnerOptions;
 
