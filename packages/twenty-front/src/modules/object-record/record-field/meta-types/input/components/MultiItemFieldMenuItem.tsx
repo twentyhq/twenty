@@ -1,6 +1,5 @@
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
 import { useState } from 'react';
 import {
@@ -8,6 +7,7 @@ import {
   IconBookmarkPlus,
   IconPencil,
   IconTrash,
+  MenuItem,
 } from 'twenty-ui';
 
 type MultiItemFieldMenuItemProps<T> = {
@@ -35,7 +35,12 @@ export const MultiItemFieldMenuItem = <T,>({
   const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
 
   const handleMouseEnter = () => setIsHovered(true);
-  const handleMouseLeave = () => setIsHovered(false);
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (isDropdownOpen) {
+      closeDropdown();
+    }
+  };
 
   const handleDeleteClick = () => {
     closeDropdown();

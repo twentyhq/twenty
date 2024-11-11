@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { Card } from 'twenty-ui';
+import { Card, MOBILE_VIEWPORT } from 'twenty-ui';
 
 type EventCardProps = {
   children: React.ReactNode;
@@ -16,6 +16,10 @@ const StyledCardContainer = styled.div`
   width: 400px;
   padding: ${({ theme }) => theme.spacing(2)} 0px
     ${({ theme }) => theme.spacing(1)} 0px;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    width: 300px;
+  }
 `;
 
 const StyledCard = styled(Card)`

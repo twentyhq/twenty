@@ -6,6 +6,7 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
+import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -81,8 +82,13 @@ export const useRecordData = ({
     contextStoreTargetedRecordsRuleComponentState,
   );
 
+  const contextStoreFilters = useRecoilComponentValueV2(
+    contextStoreFiltersComponentState,
+  );
+
   const queryFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
+    contextStoreFilters,
     objectMetadataItem,
   );
 
