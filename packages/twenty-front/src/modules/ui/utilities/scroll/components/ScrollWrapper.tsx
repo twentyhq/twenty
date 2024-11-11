@@ -45,7 +45,6 @@ export const ScrollWrapper = ({
     useScrollStates(contextProviderName);
   const setScrollTop = useSetRecoilState(scrollTopComponentState);
   const setScrollLeft = useSetRecoilState(scrollLeftComponentState);
-
   const handleScroll = (overlayScroll: OverlayScrollbars) => {
     const target = overlayScroll.elements().scrollOffsetElement;
     setScrollTop(target.scrollTop);

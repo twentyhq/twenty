@@ -1,14 +1,12 @@
-import styled from '@emotion/styled';
-
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { isScrollEnabledForRecordTableState } from '@/object-record/record-table/states/isScrollEnabledForRecordTableState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-
-import { RecordTableColumnHeadDropdownMenu } from './RecordTableColumnHeadDropdownMenu';
-
-import { RecordTableScrollContext } from '@/object-record/record-table/contexts/RecordTableScrollContext';
-import { useCallback, useContext } from 'react';
+import styled from '@emotion/styled';
+import { useCallback } from 'react';
+import { useSetRecoilState } from 'recoil';
 import { RecordTableColumnHead } from './RecordTableColumnHead';
+import { RecordTableColumnHeadDropdownMenu } from './RecordTableColumnHeadDropdownMenu';
 
 type RecordTableColumnHeadWithDropdownProps = {
   column: ColumnDefinition<FieldMetadata>;
@@ -16,7 +14,6 @@ type RecordTableColumnHeadWithDropdownProps = {
 
 const StyledDropdown = styled(Dropdown)`
   display: flex;
-
   flex: 1;
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 `;
@@ -24,17 +21,21 @@ const StyledDropdown = styled(Dropdown)`
 export const RecordTableColumnHeadWithDropdown = ({
   column,
 }: RecordTableColumnHeadWithDropdownProps) => {
-  const { setEnableXScroll, setEnableYScroll } = useContext(
-    RecordTableScrollContext,
+  const isScrollEnabledForRecordTable = useSetRecoilState(
+    isScrollEnabledForRecordTableState,
   );
   const handleDropdownOpen = useCallback(() => {
-    setEnableXScroll(false);
-    setEnableYScroll(false);
-  }, [setEnableXScroll, setEnableYScroll]);
+    isScrollEnabledForRecordTable({
+      enableXScroll: false,
+      enableYScroll: false,
+    });
+  }, [isScrollEnabledForRecordTable]);
   const handleDropdownClose = useCallback(() => {
-    setEnableXScroll(true);
-    setEnableYScroll(true);
-  }, [setEnableXScroll, setEnableYScroll]);
+    isScrollEnabledForRecordTable({
+      enableXScroll: true,
+      enableYScroll: true,
+    });
+  }, [isScrollEnabledForRecordTable]);
   return (
     <StyledDropdown
       onOpen={handleDropdownOpen}

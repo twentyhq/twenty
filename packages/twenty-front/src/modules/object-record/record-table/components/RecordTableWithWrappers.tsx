@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { useRef, useState } from 'react';
-import { useRecoilCallback } from 'recoil';
+import { useRef } from 'react';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -15,7 +15,7 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 
-import { RecordTableScrollContext } from '@/object-record/record-table/contexts/RecordTableScrollContext';
+import { isScrollEnabledForRecordTableState } from '@/object-record/record-table/states/isScrollEnabledForRecordTableState';
 import { RecordTableInternalEffect } from './RecordTableInternalEffect';
 
 const StyledTableWithHeader = styled.div`
@@ -46,9 +46,10 @@ export const RecordTableWithWrappers = ({
   recordTableId,
   viewBarId,
 }: RecordTableWithWrappersProps) => {
-  const [enableXScroll, setEnableXScroll] = useState(true);
-  const [enableYScroll, setEnableYScroll] = useState(true);
   const tableBodyRef = useRef<HTMLDivElement>(null);
+  const isScrollEnabledForRecordTable = useRecoilValue(
+    isScrollEnabledForRecordTableState,
+  );
 
   const { resetTableRowSelection, setRowSelected } = useRecordTable({
     recordTableId,
@@ -71,46 +72,37 @@ export const RecordTableWithWrappers = ({
 
   return (
     <EntityDeleteContext.Provider value={deleteOneRecord}>
-      <RecordTableScrollContext.Provider
-        value={{
-          enableXScroll,
-          enableYScroll,
-          setEnableXScroll,
-          setEnableYScroll,
-        }}
+      <ScrollWrapper
+        enableXScroll={isScrollEnabledForRecordTable.enableXScroll}
+        enableYScroll={isScrollEnabledForRecordTable.enableYScroll}
+        contextProviderName="recordTableWithWrappers"
       >
-        <ScrollWrapper
-          enableXScroll={enableXScroll}
-          enableYScroll={enableYScroll}
-          contextProviderName="recordTableWithWrappers"
-        >
-          <RecordUpdateContext.Provider value={updateRecordMutation}>
-            <StyledTableWithHeader>
-              <StyledTableContainer>
-                <StyledTableInternalContainer ref={tableBodyRef}>
-                  <RecordTable
-                    viewBarId={viewBarId}
-                    recordTableId={recordTableId}
-                    objectNameSingular={objectNameSingular}
-                    onColumnsChange={handleColumnsChange}
-                  />
-                  <DragSelect
-                    dragSelectable={tableBodyRef}
-                    onDragSelectionStart={() => {
-                      resetTableRowSelection();
-                    }}
-                    onDragSelectionChange={setRowSelected}
-                  />
-                </StyledTableInternalContainer>
-                <RecordTableInternalEffect
-                  tableBodyRef={tableBodyRef}
+        <RecordUpdateContext.Provider value={updateRecordMutation}>
+          <StyledTableWithHeader>
+            <StyledTableContainer>
+              <StyledTableInternalContainer ref={tableBodyRef}>
+                <RecordTable
+                  viewBarId={viewBarId}
                   recordTableId={recordTableId}
+                  objectNameSingular={objectNameSingular}
+                  onColumnsChange={handleColumnsChange}
                 />
-              </StyledTableContainer>
-            </StyledTableWithHeader>
-          </RecordUpdateContext.Provider>
-        </ScrollWrapper>
-      </RecordTableScrollContext.Provider>
+                <DragSelect
+                  dragSelectable={tableBodyRef}
+                  onDragSelectionStart={() => {
+                    resetTableRowSelection();
+                  }}
+                  onDragSelectionChange={setRowSelected}
+                />
+              </StyledTableInternalContainer>
+              <RecordTableInternalEffect
+                tableBodyRef={tableBodyRef}
+                recordTableId={recordTableId}
+              />
+            </StyledTableContainer>
+          </StyledTableWithHeader>
+        </RecordUpdateContext.Provider>
+      </ScrollWrapper>
     </EntityDeleteContext.Provider>
   );
 };
