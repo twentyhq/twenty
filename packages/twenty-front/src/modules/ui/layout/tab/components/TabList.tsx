@@ -65,9 +65,6 @@ export const TabList = ({
                 title={tab.title}
                 Icon={tab.Icon}
                 active={tab.id === activeTabId}
-                onClick={() => {
-                  setActiveTabId(tab.id);
-                }}
                 disabled={tab.disabled ?? loading}
                 pill={tab.pill}
                 to={`#${tab.id}`}
