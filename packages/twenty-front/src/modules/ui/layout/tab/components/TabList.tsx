@@ -7,6 +7,7 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
+import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
 import { Tab } from './Tab';
 
@@ -21,10 +22,11 @@ export type SingleTabProps = {
 };
 
 type TabListProps = {
-  tabListId: string;
+  tabListInstanceId: string;
   tabs: SingleTabProps[];
   loading?: boolean;
   className?: string;
+  behaveAsLinks?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -38,13 +40,14 @@ const StyledContainer = styled.div`
 
 export const TabList = ({
   tabs,
-  tabListId,
+  tabListInstanceId,
   loading,
   className,
+  behaveAsLinks = true,
 }: TabListProps) => {
   const initialActiveTabId = tabs.find((tab) => !tab.hide)?.id || '';
 
-  const { activeTabIdState, setActiveTabId } = useTabList(tabListId);
+  const { activeTabIdState, setActiveTabId } = useTabList(tabListInstanceId);
 
   const activeTabId = useRecoilValue(activeTabIdState);
 
@@ -53,7 +56,11 @@ export const TabList = ({
   }, [initialActiveTabId, setActiveTabId]);
 
   return (
-    <TabListScope tabListScopeId={tabListId}>
+    <TabListScope tabListScopeId={tabListInstanceId}>
+      <TabListFromUrlOptionalEffect
+        componentInstanceId={tabListInstanceId}
+        tabListIds={tabs.map((tab) => tab.id)}
+      />
       <ScrollWrapper enableYScroll={false} contextProviderName="tabList">
         <StyledContainer className={className}>
           {tabs
@@ -65,11 +72,14 @@ export const TabList = ({
                 title={tab.title}
                 Icon={tab.Icon}
                 active={tab.id === activeTabId}
-                onClick={() => {
-                  setActiveTabId(tab.id);
-                }}
                 disabled={tab.disabled ?? loading}
                 pill={tab.pill}
+                to={behaveAsLinks ? `#${tab.id}` : undefined}
+                onClick={() => {
+                  if (!behaveAsLinks) {
+                    setActiveTabId(tab.id);
+                  }
+                }}
               />
             ))}
         </StyledContainer>
