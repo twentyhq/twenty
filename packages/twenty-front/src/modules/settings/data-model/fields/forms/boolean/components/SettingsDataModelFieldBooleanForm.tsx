@@ -45,6 +45,8 @@ export const SettingsDataModelFieldBooleanForm = ({
           value={value}
           onChange={onChange}
           selectClassName={className}
+          // TODO: temporary fix - disabling edition because after editing the defaultValue,
+          // newly created records are not taking into account the updated defaultValue properly.
           disabled={isEditMode}
           dropdownId="object-field-default-value-select-boolean"
           options={[
