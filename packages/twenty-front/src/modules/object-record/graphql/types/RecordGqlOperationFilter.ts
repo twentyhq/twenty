@@ -33,6 +33,7 @@ export type StringFilter = {
   regex?: string;
   iregex?: string;
   is?: IsFilter;
+  containsAny?: string[];
 };
 
 export type FloatFilter = {
@@ -105,7 +106,6 @@ export type PhonesFilter = {
 };
 
 export type ArrayFilter = {
-  containsAny?: string[];
   contains?: string[];
   not_contains?: string[];
   is?: IsFilter;
