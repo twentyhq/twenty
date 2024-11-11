@@ -4,14 +4,11 @@ import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 
-type TabId =
-  (typeof OBJECT_DETAIL_TABS.TABS_IDS)[keyof typeof OBJECT_DETAIL_TABS.TABS_IDS];
-
 const validHashes = [
   OBJECT_DETAIL_TABS.TABS_IDS.FIELDS,
   OBJECT_DETAIL_TABS.TABS_IDS.SETTINGS,
   OBJECT_DETAIL_TABS.TABS_IDS.INDEXES,
-];
+] as string[];
 
 export const SettingsObjectDetailsPageTabFromUrlEffect = () => {
   const location = useLocation();
@@ -20,11 +17,14 @@ export const SettingsObjectDetailsPageTabFromUrlEffect = () => {
 
   const hash = location.hash.replace('#', '');
   const activeTabId = useRecoilValue(activeTabIdState);
-  useEffect(() => {
-    if (hash === activeTabId) return;
 
-    if (validHashes.includes(hash as TabId)) {
-      setActiveTabId(hash as TabId);
+  useEffect(() => {
+    if (hash === activeTabId) {
+      return;
+    }
+
+    if (validHashes.includes(hash)) {
+      setActiveTabId(hash);
     }
   }, [hash, activeTabId, setActiveTabId]);
 
