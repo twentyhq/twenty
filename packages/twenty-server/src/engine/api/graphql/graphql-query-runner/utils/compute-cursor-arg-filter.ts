@@ -16,7 +16,7 @@ import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metada
 export const computeCursorArgFilter = (
   cursor: Record<string, any>,
   orderBy: ObjectRecordOrderBy,
-  fieldMetadataMap: FieldMetadataMap,
+  fieldMetadataMapByName: FieldMetadataMap,
   isForwardPagination = true,
 ): ObjectRecordFilter[] => {
   const cursorKeys = Object.keys(cursor ?? {});
@@ -39,7 +39,7 @@ export const computeCursorArgFilter = (
         ...buildWhereCondition(
           cursorKeys[subConditionIndex],
           cursorValues[subConditionIndex],
-          fieldMetadataMap,
+          fieldMetadataMapByName,
           'eq',
         ),
       };
@@ -68,7 +68,7 @@ export const computeCursorArgFilter = (
 
     return {
       ...whereCondition,
-      ...buildWhereCondition(key, value, fieldMetadataMap, operator),
+      ...buildWhereCondition(key, value, fieldMetadataMapByName, operator),
     } as ObjectRecordFilter;
   });
 };
@@ -76,10 +76,10 @@ export const computeCursorArgFilter = (
 const buildWhereCondition = (
   key: string,
   value: any,
-  fieldMetadataMap: FieldMetadataMap,
+  fieldMetadataMapByName: FieldMetadataMap,
   operator: string,
 ): Record<string, any> => {
-  const fieldMetadata = fieldMetadataMap[key];
+  const fieldMetadata = fieldMetadataMapByName[key];
 
   if (!fieldMetadata) {
     throw new GraphqlQueryRunnerException(
