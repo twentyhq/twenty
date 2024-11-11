@@ -173,18 +173,16 @@ export class WorkflowBuilderWorkspaceService {
       return {};
     }
 
+    const inputSchema =
+      codeIntrospectionService.getFunctionInputSchema(sourceCode);
     const fakeFunctionInput =
-      codeIntrospectionService.generateInputData(sourceCode);
-
-    // handle the case when event parameter is destructured:
-    // (event: {param1: string; param2: number}) VS ({param1, param2}: {param1: string; param2: number})
-    const formattedInput = Object.values(fakeFunctionInput)[0];
+      codeIntrospectionService.generateInputData(inputSchema);
 
     const resultFromFakeInput =
       await serverlessFunctionService.executeOneServerlessFunction(
         serverlessFunctionId,
         workspaceId,
-        formattedInput,
+        fakeFunctionInput,
         serverlessFunctionVersion,
       );
 

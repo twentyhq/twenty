@@ -1,5 +1,4 @@
 name: CI Website
-timeout-minutes: 10
 on:
   push:
     branches:
