@@ -19,7 +19,8 @@ import { toSpliced } from '~/utils/array/toSpliced';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 const StyledDropdownMenu = styled(DropdownMenu)`
-  margin-left: -1px;
+  margin-bottom: -1px;
+  margin-left: -2px;
   margin-top: -1px;
 `;
 
@@ -64,6 +65,9 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleDropdownCloseOutside = (event: MouseEvent | TouchEvent) => {
+    if (inputValue.trim().length > 0) {
+      handleSubmitInput();
+    }
     onCancel?.();
     event.stopImmediatePropagation();
   };
@@ -201,10 +205,12 @@ export const MultiItemFieldInput = <T,>({
           }
           onEnter={handleSubmitInput}
           rightComponent={
-            <LightIconButton
-              Icon={isAddingNewItem ? IconPlus : IconCheck}
-              onClick={handleSubmitInput}
-            />
+            items.length ? (
+              <LightIconButton
+                Icon={isAddingNewItem ? IconPlus : IconCheck}
+                onClick={handleSubmitInput}
+              />
+            ) : null
           }
         />
       ) : (

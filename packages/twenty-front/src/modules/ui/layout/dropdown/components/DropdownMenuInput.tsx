@@ -31,9 +31,12 @@ const StyledInput = styled.input<{
 
 const StyledInputContainer = styled.div`
   box-sizing: border-box;
-  padding: ${({ theme }) => theme.spacing(1)};
   position: relative;
   width: 100%;
+
+  &:not(:first-of-type) {
+    padding: ${({ theme }) => theme.spacing(1)};
+  }
 `;
 
 const StyledRightContainer = styled.div`
