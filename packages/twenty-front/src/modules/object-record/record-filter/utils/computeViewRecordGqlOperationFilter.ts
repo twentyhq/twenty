@@ -620,7 +620,7 @@ const computeFilterRecordGqlOperationFilter = (
         parsedOptionValues = JSON.parse(stringifiedSelectValues);
       } catch (e) {
         throw new Error(
-          `Cannot parse filter value for SELECT filter : "${stringifiedSelectValues}"`,
+          `Cannot parse filter value for MULTI_SELECT filter : "${stringifiedSelectValues}"`,
         );
       }
 
