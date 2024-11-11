@@ -9,7 +9,7 @@ import { capitalize } from 'src/utils/capitalize';
 
 export function formatData<T>(
   data: T,
-  ObjectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
 ): T {
   if (!data) {
     return data;
@@ -17,14 +17,14 @@ export function formatData<T>(
 
   if (Array.isArray(data)) {
     return data.map((item) =>
-      formatData(item, ObjectMetadataItemWithFieldMaps),
+      formatData(item, objectMetadataItemWithFieldMaps),
     ) as T;
   }
 
   const newData: Record<string, any> = {};
 
   for (const [key, value] of Object.entries(data)) {
-    const fieldMetadata = ObjectMetadataItemWithFieldMaps.fieldsByName[key];
+    const fieldMetadata = objectMetadataItemWithFieldMaps.fieldsByName[key];
 
     if (!fieldMetadata) {
       throw new Error(

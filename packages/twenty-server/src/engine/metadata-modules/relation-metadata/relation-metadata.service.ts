@@ -483,7 +483,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       const objectMetadata =
         objectMetadataMaps.byId[fieldMetadataItem.objectMetadataId];
 
-      const fieldMetadata = objectMetadata.fields[fieldMetadataItem.id];
+      const fieldMetadata = objectMetadata.fieldsById[fieldMetadataItem.id];
 
       const relationMetadata =
         fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
@@ -501,12 +501,12 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         objectMetadataMaps.byId[relationMetadata.toObjectMetadataId];
 
       const fromFieldMetadata =
-        objectMetadataMaps.byId[fromObjectMetadata.id].fields[
+        objectMetadataMaps.byId[fromObjectMetadata.id].fieldsById[
           relationMetadata.fromFieldMetadataId
         ];
 
       const toFieldMetadata =
-        objectMetadataMaps.byId[toObjectMetadata.id].fields[
+        objectMetadataMaps.byId[toObjectMetadata.id].fieldsById[
           relationMetadata.toFieldMetadataId
         ];
 

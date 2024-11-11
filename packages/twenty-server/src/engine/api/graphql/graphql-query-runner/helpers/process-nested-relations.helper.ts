@@ -192,8 +192,9 @@ export class ProcessNestedRelationsHelper {
       objectMetadataMaps,
     );
     const inverseRelationName =
-      objectMetadataMaps.byNameSingular[relationMetadata.toObjectMetadataId]
-        ?.fieldsById[relationMetadata.toFieldMetadataId]?.name;
+      objectMetadataMaps.byId[relationMetadata.toObjectMetadataId]?.fieldsById[
+        relationMetadata.toFieldMetadataId
+      ]?.name;
 
     return { inverseRelationName, referenceObjectMetadata };
   }
