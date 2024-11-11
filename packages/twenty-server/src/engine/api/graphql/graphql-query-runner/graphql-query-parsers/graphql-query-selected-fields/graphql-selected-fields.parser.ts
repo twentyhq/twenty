@@ -23,7 +23,7 @@ export class GraphqlQuerySelectedFieldsParser {
 
   parse(
     graphqlSelectedFields: Partial<Record<string, any>>,
-    fieldMetadataMap: Record<string, FieldMetadataInterface>,
+    fieldMetadataMapByName: Record<string, FieldMetadataInterface>,
   ): { select: Record<string, any>; relations: Record<string, any> } {
     const result: {
       select: Record<string, any>;
@@ -46,14 +46,14 @@ export class GraphqlQuerySelectedFieldsParser {
       }
 
       if (this.isConnectionField(fieldKey, fieldValue)) {
-        const subResult = this.parse(fieldValue, fieldMetadataMap);
+        const subResult = this.parse(fieldValue, fieldMetadataMapByName);
 
         Object.assign(result.select, subResult.select);
         Object.assign(result.relations, subResult.relations);
         continue;
       }
 
-      const fieldMetadata = fieldMetadataMap[fieldKey];
+      const fieldMetadata = fieldMetadataMapByName[fieldKey];
 
       if (!fieldMetadata) {
         throw new GraphqlQueryRunnerException(

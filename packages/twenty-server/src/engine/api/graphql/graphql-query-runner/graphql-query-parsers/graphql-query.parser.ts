@@ -107,7 +107,7 @@ export class GraphqlQueryParser {
   ): { select: Record<string, any>; relations: Record<string, any> } {
     const parentFields =
       this.objectMetadataMaps.byNameSingular[parentObjectMetadata.nameSingular]
-        ?.fieldsById;
+        ?.fieldsByName;
 
     if (!parentFields) {
       throw new Error(

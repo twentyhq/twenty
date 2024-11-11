@@ -28,7 +28,7 @@ export class GraphqlQuerySelectedFieldsRelationParser {
       this.objectMetadataMaps,
     );
 
-    const relationFields = referencedObjectMetadata.fieldsById;
+    const relationFields = referencedObjectMetadata.fieldsByName;
     const fieldParser = new GraphqlQuerySelectedFieldsParser(
       this.objectMetadataMaps,
     );
