@@ -27,7 +27,7 @@ import {
 import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { GRAY_SCALE, isDefined } from 'twenty-ui';
+import { GRAY_SCALE, isDefined, THEME_COMMON } from 'twenty-ui';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -96,17 +96,17 @@ export const WorkflowDiagramCanvasBase = ({
   const isRightDrawerMinimized = useRecoilValue(isRightDrawerMinimizedState);
   const isMobile = useIsMobile();
 
-  const rightDrawerState = useMemo(() => {
-    return !isRightDrawerOpen
-      ? 'closed'
-      : isRightDrawerMinimized
-        ? 'minimized'
-        : isMobile
-          ? 'fullScreen'
-          : 'normal';
-  }, [isMobile, isRightDrawerMinimized, isRightDrawerOpen]);
+  const rightDrawerState = !isRightDrawerOpen
+    ? 'closed'
+    : isRightDrawerMinimized
+      ? 'minimized'
+      : isMobile
+        ? 'fullScreen'
+        : 'normal';
 
-  const rightDrawerWidth = 500;
+  const rightDrawerWidth = Number(
+    THEME_COMMON.rightDrawerWidth.replace('px', ''),
+  );
 
   const setWorkflowDiagram = useSetRecoilState(workflowDiagramState);
 
