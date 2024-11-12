@@ -221,6 +221,15 @@ export const graphqlMocks = {
               endCursor: null,
             },
           },
+          favoriteFolders: {
+            edges: [],
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
           views: {
             edges: mockedViewsData.map((view) => ({
               node: {
