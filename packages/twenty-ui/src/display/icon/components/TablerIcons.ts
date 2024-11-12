@@ -153,6 +153,7 @@ export {
   IconLanguage,
   IconLayersLinked,
   IconLayoutKanban,
+  IconLayoutList,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
   IconLayoutSidebarRightExpand,
@@ -235,7 +236,7 @@ export {
   IconVideo,
   IconWand,
   IconWorld,
-  IconX,
+  IconX
 } from '@tabler/icons-react';
 
 export type { TablerIconsProps } from '@tabler/icons-react';

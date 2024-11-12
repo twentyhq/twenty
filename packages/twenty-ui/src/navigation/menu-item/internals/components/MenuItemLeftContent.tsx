@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import { isString } from '@sniptt/guards';
 import { ReactNode } from 'react';
 
+import styled from '@emotion/styled';
 import {
   IconComponent,
   IconGripVertical,
@@ -13,18 +14,37 @@ import {
   StyledMenuItemLeftContent,
 } from './StyledMenuItemBase';
 
+const StyledContextualText = styled.div`
+  color: ${({ theme }) => theme.color.gray35};
+  font-family: inherit;
+
+  font-size: inherit;
+  font-weight: inherit;
+  max-width: 100%;
+  overflow: hidden;
+
+  text-decoration: inherit;
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+  padding-left: ${({ theme }) => theme.spacing(1)};
+`;
+
 type MenuItemLeftContentProps = {
   className?: string;
   LeftIcon: IconComponent | null | undefined;
   showGrip?: boolean;
   isDisabled?: boolean;
   text: ReactNode;
+  contextualText?: ReactNode;
 };
 
 export const MenuItemLeftContent = ({
   className,
   LeftIcon,
   text,
+  contextualText,
   showGrip = false,
   isDisabled = false,
 }: MenuItemLeftContentProps) => {
@@ -63,6 +83,11 @@ export const MenuItemLeftContent = ({
       )}
       <StyledMenuItemLabel hasLeftIcon={!!LeftIcon}>
         {isString(text) ? <OverflowingTextWithTooltip text={text} /> : text}
+        {isString(contextualText) ? (
+          <StyledContextualText>{`· ${contextualText}`}</StyledContextualText>
+        ) : (
+          contextualText
+        )}
       </StyledMenuItemLabel>
     </StyledMenuItemLeftContent>
   );

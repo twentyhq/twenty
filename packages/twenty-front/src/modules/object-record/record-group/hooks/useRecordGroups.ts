@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type UseRecordGroupsParams = {
   objectNameSingular: string;
@@ -45,6 +46,14 @@ export const useRecordGroups = ({
     [recordGroupDefinitions],
   );
 
+  const selectableFieldMetadataItems = useMemo(
+    () =>
+      objectMetadataItem.fields.filter(
+        (field) => field.type === FieldMetadataType.Select,
+      ),
+    [objectMetadataItem.fields],
+  );
+
   const hiddenRecordGroups = useMemo(
     () => recordGroupDefinitions.filter((boardGroup) => !boardGroup.isVisible),
     [recordGroupDefinitions],
@@ -53,6 +62,7 @@ export const useRecordGroups = ({
   return {
     hiddenRecordGroups,
     visibleRecordGroups,
+    selectableFieldMetadataItems,
     viewGroupFieldMetadataItem,
   };
 };
