@@ -5,6 +5,7 @@ import { FilterIs } from 'src/engine/api/graphql/workspace-schema-builder/graphq
 export const ArrayFilterType = new GraphQLInputObjectType({
   name: 'ArrayFilter',
   fields: {
+    containsIlike: { type: new GraphQLList(GraphQLString) },
     contains: { type: new GraphQLList(GraphQLString) },
     not_contains: { type: new GraphQLList(GraphQLString) },
     is: { type: FilterIs },

@@ -695,6 +695,35 @@ const computeFilterRecordGqlOperationFilter = (
       }
       break;
     }
+    case 'ARRAY': {
+      switch (filter.operand) {
+        case ViewFilterOperand.Contains:
+          return {
+            [correspondingField.name]: {
+              containsIlike: filter.value, // Why doesn't `%${filter.value}%` here? %-signs only work when they are in compute-where-condition-parts.ts.
+            } as StringFilter,
+          };
+        case ViewFilterOperand.DoesNotContain:
+          return {
+            not: {
+              [correspondingField.name]: {
+                containsIlike: `%${filter.value}%`,
+              } as StringFilter,
+            },
+          };
+        case ViewFilterOperand.IsEmpty:
+        case ViewFilterOperand.IsNotEmpty:
+          return getEmptyRecordGqlOperationFilter(
+            filter.operand,
+            correspondingField,
+            filter.definition,
+          );
+        default:
+          throw new Error(
+            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+          );
+      }
+    }
     // TODO: fix this with a new composite field in ViewFilter entity
     case 'ACTOR': {
       switch (filter.operand) {

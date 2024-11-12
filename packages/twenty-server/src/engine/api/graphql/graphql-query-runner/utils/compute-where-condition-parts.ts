@@ -94,6 +94,11 @@ export const computeWhereConditionParts = (
         sql: `"${objectNameSingular}"."${key}"::text[] && ARRAY[:...${key}${uuid}]::text[]`,
         params: { [`${key}${uuid}`]: value },
       };
+    case 'containsIlike':
+      return {
+        sql: `EXISTS (SELECT 1 FROM unnest("${objectNameSingular}"."${key}") AS elem WHERE elem ILIKE :${key}${uuid})`,
+        params: { [`${key}${uuid}`]: `%${value}%` },
+      };
 
     default:
       throw new GraphqlQueryRunnerException(
