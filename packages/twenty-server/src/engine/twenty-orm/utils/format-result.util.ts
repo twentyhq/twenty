@@ -148,7 +148,9 @@ function formatFieldMetadataValue(
     (fieldMetadata.type === FieldMetadataType.MULTI_SELECT ||
       fieldMetadata.type === FieldMetadataType.ARRAY)
   ) {
-    return value.replace(/{|}/g, '').split(',');
+    const cleanedValue = value.replace(/{|}/g, '').trim();
+
+    return cleanedValue ? cleanedValue.split(',') : [];
   }
 
   return value;

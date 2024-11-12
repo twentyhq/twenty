@@ -35,7 +35,12 @@ export const MultiItemFieldMenuItem = <T,>({
   const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
 
   const handleMouseEnter = () => setIsHovered(true);
-  const handleMouseLeave = () => setIsHovered(false);
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (isDropdownOpen) {
+      closeDropdown();
+    }
+  };
 
   const handleDeleteClick = () => {
     closeDropdown();
@@ -59,7 +64,7 @@ export const MultiItemFieldMenuItem = <T,>({
       onMouseLeave={handleMouseLeave}
       text={<DisplayComponent value={value} />}
       isIconDisplayedOnHoverOnly={!isPrimary && !isDropdownOpen}
-      RightIcon={isHovered ? null : IconBookmark}
+      RightIcon={!isHovered && isPrimary ? IconBookmark : null}
       dropdownId={dropdownId}
       dropdownContent={
         <DropdownMenuItemsContainer>

@@ -2,7 +2,7 @@ import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
-import { RecordShowRightDrawerActionMenuBar } from '@/action-menu/components/RecordShowRightDrawerActionMenuBar';
+import { RightDrawerActionMenuDropdown } from '@/action-menu/components/RightDrawerActionMenuDropdown';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
@@ -21,9 +21,9 @@ const deleteMock = jest.fn();
 const addToFavoritesMock = jest.fn();
 const exportMock = jest.fn();
 
-const meta: Meta<typeof RecordShowRightDrawerActionMenuBar> = {
-  title: 'Modules/ActionMenu/RecordShowRightDrawerActionMenuBar',
-  component: RecordShowRightDrawerActionMenuBar,
+const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
+  title: 'Modules/ActionMenu/RightDrawerActionMenuDropdown',
+  component: RightDrawerActionMenuDropdown,
   decorators: [
     (Story) => (
       <RecoilRoot
@@ -98,7 +98,7 @@ const meta: Meta<typeof RecordShowRightDrawerActionMenuBar> = {
 
 export default meta;
 
-type Story = StoryObj<typeof RecordShowRightDrawerActionMenuBar>;
+type Story = StoryObj<typeof RightDrawerActionMenuDropdown>;
 
 export const Default: Story = {
   args: {
@@ -113,11 +113,20 @@ export const WithButtonClicks: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    let actionButton = await canvas.findByText('Actions');
+    await userEvent.click(actionButton);
+
     const deleteButton = await canvas.findByText('Delete');
     await userEvent.click(deleteButton);
 
+    actionButton = await canvas.findByText('Actions');
+    await userEvent.click(actionButton);
+
     const addToFavoritesButton = await canvas.findByText('Add to favorites');
     await userEvent.click(addToFavoritesButton);
+
+    actionButton = await canvas.findByText('Actions');
+    await userEvent.click(actionButton);
 
     const exportButton = await canvas.findByText('Export');
     await userEvent.click(exportButton);
