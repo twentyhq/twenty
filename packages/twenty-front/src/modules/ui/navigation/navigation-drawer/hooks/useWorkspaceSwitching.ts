@@ -4,7 +4,10 @@ import { AppPath } from '@/types/AppPath';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSwitchWorkspaceMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { redirectToWorkspace } from '~/utils/workspace-url.helper';
+import {
+  redirectToHome,
+  redirectToWorkspace,
+} from '~/utils/workspace-url.helper';
 
 export const useWorkspaceSwitching = () => {
   const [switchWorkspaceMutation] = useSwitchWorkspaceMutation();
@@ -20,7 +23,7 @@ export const useWorkspaceSwitching = () => {
     });
 
     if (isDefined(errors) || !isDefined(data?.switchWorkspace.subdomain)) {
-      return (window.location.href = AppPath.Index);
+      return redirectToHome();
     }
 
     redirectToWorkspace(data.switchWorkspace.subdomain);

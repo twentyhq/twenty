@@ -20,7 +20,7 @@ import { Title } from '@/auth/components/Title';
 import { useFindAvailableWorkspacesByEmail } from '@/auth/sign-in-up/hooks/useFindAvailableWorkspacedByEmail';
 import { FormEvent, useState } from 'react';
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 import { availableWorkspacesForAuthState } from '@/auth/states/availableWorkspacesForAuthState';
 import {
@@ -28,6 +28,7 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { redirectToWorkspace } from '~/utils/workspace-url.helper';
+import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -57,6 +58,7 @@ const validationSchema = z
 
 export const SignInUpGlobalScope = () => {
   const theme = useTheme();
+  const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
 
   const { signInWithGoogle } = useSignInWithGoogle();
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
@@ -72,7 +74,7 @@ export const SignInUpGlobalScope = () => {
   const form = useForm<z.infer<typeof validationSchema>>({
     mode: 'onChange',
     defaultValues: {
-      email: '',
+      email: isSignInPrefilled === true ? 'tim@apple.dev' : '',
     },
     resolver: zodResolver(validationSchema),
   });
@@ -81,7 +83,7 @@ export const SignInUpGlobalScope = () => {
     event.preventDefault();
     setShowErrors(true);
 
-    const { data, error } = await findAvailableWorkspacesByEmail(
+    const { data } = await findAvailableWorkspacesByEmail(
       form.getValues('email'),
     );
     if (isDefined(data) && data.findAvailableWorkspacesByEmail.length > 1) {

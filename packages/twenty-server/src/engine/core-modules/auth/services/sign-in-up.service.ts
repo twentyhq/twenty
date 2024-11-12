@@ -266,11 +266,15 @@ export class SignInUpService {
     lastName: string;
     picture: SignInUpServiceInput['picture'];
   }) {
-    if (this.environmentService.get('IS_SIGN_UP_DISABLED')) {
-      throw new AuthException(
-        'Sign up is disabled',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
+    if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      const numberOfWorkspaces = await this.workspaceRepository.count();
+
+      if (numberOfWorkspaces > 0) {
+        throw new AuthException(
+          'New workspace setup is disabled',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
     }
 
     const workspaceToCreate = this.workspaceRepository.create({
