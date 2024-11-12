@@ -16,7 +16,7 @@ import {
 import { v4 } from 'uuid';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { EXPANDED_WIDTH_ANIMATION_VARIANTS } from '@/settings/constants/ExpandedWidthAnimationVariants';
+import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
 import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/select/utils/getOptionValueFromLabel';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -25,7 +25,6 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
@@ -111,28 +110,19 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         stroke={theme.icon.stroke.sm}
         color={theme.font.color.extraLight}
       />
-      <AnimatePresence>
-        {isAdvancedModeEnabled && (
-          <motion.div
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            variants={EXPANDED_WIDTH_ANIMATION_VARIANTS}
-          >
-            <StyledOptionInput
-              value={option.value}
-              onChange={(input) =>
-                onChange({
-                  ...option,
-                  value: getOptionValueFromLabel(input),
-                })
-              }
-              RightIcon={isDefault ? IconCheck : undefined}
-              maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <AdvancedSettingsWrapper dimension="width" hideIcon={true}>
+        <StyledOptionInput
+          value={option.value}
+          onChange={(input) =>
+            onChange({
+              ...option,
+              value: getOptionValueFromLabel(input),
+            })
+          }
+          RightIcon={isDefault ? IconCheck : undefined}
+          maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
+        />
+      </AdvancedSettingsWrapper>
       <Dropdown
         dropdownId={dropdownIds.color}
         dropdownPlacement="bottom-start"
