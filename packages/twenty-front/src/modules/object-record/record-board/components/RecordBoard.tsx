@@ -7,6 +7,7 @@ import { Key } from 'ts-key-enum';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
+import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
@@ -95,7 +96,14 @@ export const RecordBoard = () => {
     [allRecordIdsSelector, setRecordAsSelected],
   );
 
-  useScopedHotkeys([Key.Escape], resetRecordSelection, TableHotkeyScope.Table);
+  useScopedHotkeys('ctrl+a,meta+a', selectAll, TableHotkeyScope.Table);
+
+  useScopedHotkeys(Key.Escape, resetRecordSelection, TableHotkeyScope.Table);
+  useScopedHotkeys(
+    Key.Escape,
+    resetRecordSelection,
+    ActionBarHotkeyScope.ActionBar,
+  );
 
   const handleDragEnd: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>
