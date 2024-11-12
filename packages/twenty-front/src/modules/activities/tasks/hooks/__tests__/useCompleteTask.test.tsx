@@ -84,8 +84,8 @@ const mocks: MockedResponse[] = [
                   companyId
                   createdAt
                   deletedAt
-                  id
                   favoriteFolderId
+                  id
                   noteId
                   opportunityId
                   personId
