@@ -3,14 +3,31 @@ import { Injectable } from '@nestjs/common';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkflowCreateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/create-record/types/workflow-create-record-action-input.type';
+import {
+  WorkflowCreateRecordActionInput,
+  WorkflowRecordOperationActionInput,
+  WorkflowRecordOperationType,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/record-operation/types/workflow-record-operation-action-input.type';
 import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 
 @Injectable()
-export class CreateRecordWorkflowAction implements WorkflowAction {
+export class RecordOperationWorkflowAction implements WorkflowAction {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   async execute(
+    workflowActionInput: WorkflowRecordOperationActionInput,
+  ): Promise<WorkflowActionResult> {
+    switch (workflowActionInput.type) {
+      case WorkflowRecordOperationType.CREATE:
+        return this.createRecord(workflowActionInput);
+      default:
+        throw new Error(
+          `Unknown record operation type: ${workflowActionInput.type}`,
+        );
+    }
+  }
+
+  private async createRecord(
     workflowActionInput: WorkflowCreateRecordActionInput,
   ): Promise<WorkflowActionResult> {
     const repository = await this.twentyORMManager.getRepository(

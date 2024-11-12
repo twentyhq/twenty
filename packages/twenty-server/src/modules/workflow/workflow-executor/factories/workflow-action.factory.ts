@@ -7,8 +7,8 @@ import {
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { CodeWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code.workflow-action';
-import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/create-record/create-record.workflow-action';
 import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
+import { RecordOperationWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-operation/record-operation.workflow-action';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class WorkflowActionFactory {
   constructor(
     private readonly codeWorkflowAction: CodeWorkflowAction,
     private readonly sendEmailWorkflowAction: SendEmailWorkflowAction,
-    private readonly createRecordWorkflowAction: CreateRecordWorkflowAction,
+    private readonly recordOperationWorkflowAction: RecordOperationWorkflowAction,
   ) {}
 
   get(stepType: WorkflowActionType): WorkflowAction {
@@ -25,8 +25,8 @@ export class WorkflowActionFactory {
         return this.codeWorkflowAction;
       case WorkflowActionType.SEND_EMAIL:
         return this.sendEmailWorkflowAction;
-      case WorkflowActionType.CREATE_RECORD:
-        return this.createRecordWorkflowAction;
+      case WorkflowActionType.RECORD_OPERATION:
+        return this.recordOperationWorkflowAction;
       default:
         throw new WorkflowStepExecutorException(
           `Workflow step executor not found for step type '${stepType}'`,
