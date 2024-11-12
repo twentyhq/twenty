@@ -15,15 +15,6 @@ import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
 import { useScreenSize } from 'twenty-ui';
-import {
-  buildWorkspaceUrl,
-  isTwentyHomePage,
-  isTwentyHosting,
-} from '~/utils/workspace-url.helper';
-import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
-import { useRecoilValue } from 'recoil';
-import { useEffect } from 'react';
-import { isDefined } from '~/utils/isDefined';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -73,22 +64,6 @@ export const DefaultLayout = () => {
   const theme = useTheme();
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
-
-  const lastAuthenticateWorkspace = useRecoilValue(
-    lastAuthenticateWorkspaceState,
-  );
-
-  useEffect(() => {
-    if (
-      isTwentyHosting &&
-      isTwentyHomePage &&
-      isDefined(lastAuthenticateWorkspace)
-    ) {
-      window.location.href = buildWorkspaceUrl(
-        lastAuthenticateWorkspace.subdomain,
-      );
-    }
-  }, [lastAuthenticateWorkspace]);
 
   return (
     <>

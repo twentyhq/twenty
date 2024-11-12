@@ -3,7 +3,6 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
-import { useWorkspacePublicData } from '@/auth/sign-in-up/hooks/useWorkspacePublicData';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import {
   isTwentyHomePage,
@@ -27,8 +26,6 @@ export const SignInUp = () => {
   );
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
-
-  useWorkspacePublicData();
 
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 

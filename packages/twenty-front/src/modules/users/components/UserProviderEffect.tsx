@@ -19,6 +19,10 @@ import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { WorkspaceMember } from '~/generated-metadata/graphql';
 import { useGetCurrentUserQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import {
+  getWorkspaceSubdomain,
+  redirectToWorkspace,
+} from '~/utils/workspace-url.helper';
 
 export const UserProviderEffect = () => {
   const [isLoading, setIsLoading] = useState(true);

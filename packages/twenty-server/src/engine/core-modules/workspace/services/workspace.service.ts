@@ -49,7 +49,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   }
 
   private async generateSubdomain(displayName: string) {
-    const displayNameWords = displayName.match(/(\w| |\d)+/);
+    const displayNameWords = displayName.match(/(\w| |\d)+/g);
     let subdomain = '';
 
     if (displayNameWords) {
@@ -107,13 +107,17 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
 
     const subdomain = await this.generateSubdomain(data.displayName);
 
+    console.log('>>>>>>>>>>>>>>', subdomain);
+
     await this.workspaceRepository.update(user.defaultWorkspaceId, {
       subdomain,
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
 
-    return existingWorkspace;
+    return await this.workspaceRepository.findOneBy({
+      id: user.defaultWorkspaceId,
+    });
   }
 
   async softDeleteWorkspace(id: string) {

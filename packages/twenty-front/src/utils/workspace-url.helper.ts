@@ -44,8 +44,10 @@ export const buildWorkspaceUrl = (
 
 export const redirectToHome = () => {
   const url = new URL(window.location.href);
-  url.hostname = twentyHomePage;
-  window.location.href = url.toString();
+  if (url.hostname !== twentyHomePage) {
+    url.hostname = twentyHomePage;
+    window.location.href = url.toString();
+  }
 };
 
 export const redirectToWorkspace = (
