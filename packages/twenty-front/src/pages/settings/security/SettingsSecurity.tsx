@@ -43,6 +43,17 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
+const StyledMainContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(10)};
+  min-height: 200px;
+`;
+
+const StyledSSOSection = styled(Section)`
+  flex-shrink: 0;
+`;
+
 export const SettingsSecurity = () => {
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const { contentRef, motionAnimationVariants } = useExpandedHeightAnimation(
@@ -62,47 +73,49 @@ export const SettingsSecurity = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
-            title="SSO"
-            description="Configure an SSO connection"
-            addornment={
-              <Tag
-                text={'Enterprise'}
-                color={'transparent'}
-                Icon={IconLock}
-                variant={'border'}
-              />
-            }
-          />
-          <SettingsSSOIdentitiesProvidersListCard />
-        </Section>
-        <Section>
-          <AnimatePresence>
-            {isAdvancedModeEnabled && (
-              <motion.div
-                ref={contentRef}
-                initial="initial"
-                animate="animate"
-                exit="exit"
-                variants={motionAnimationVariants}
-              >
-                <StyledAdvancedContainer>
-                  <StyledIconContainer>
-                    <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
-                  </StyledIconContainer>
-                  <StyledContainer>
-                    <H2Title
-                      title="Other"
-                      description="Customize your workspace security"
-                    />
-                    <SettingsSecurityOptionsList />
-                  </StyledContainer>
-                </StyledAdvancedContainer>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </Section>
+        <StyledMainContent>
+          <StyledSSOSection>
+            <H2Title
+              title="SSO"
+              description="Configure an SSO connection"
+              addornment={
+                <Tag
+                  text={'Enterprise'}
+                  color={'transparent'}
+                  Icon={IconLock}
+                  variant={'border'}
+                />
+              }
+            />
+            <SettingsSSOIdentitiesProvidersListCard />
+          </StyledSSOSection>
+          <Section>
+            <AnimatePresence>
+              {isAdvancedModeEnabled && (
+                <motion.div
+                  ref={contentRef}
+                  initial="initial"
+                  animate="animate"
+                  exit="exit"
+                  variants={motionAnimationVariants}
+                >
+                  <StyledAdvancedContainer>
+                    <StyledIconContainer>
+                      <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
+                    </StyledIconContainer>
+                    <StyledContainer>
+                      <H2Title
+                        title="Other"
+                        description="Customize your workspace security"
+                      />
+                      <SettingsSecurityOptionsList />
+                    </StyledContainer>
+                  </StyledAdvancedContainer>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </Section>
+        </StyledMainContent>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );
