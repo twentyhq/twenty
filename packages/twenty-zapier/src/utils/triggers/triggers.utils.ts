@@ -1,6 +1,5 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
 
-import { ObjectData } from '../../utils/data.types';
 import handleQueryParams from '../../utils/handleQueryParams';
 import requestDb, {
   requestDbViaRestApi,
@@ -81,7 +80,7 @@ const getNamePluralFromNameSingular = async (
 export const performList = async (
   z: ZObject,
   bundle: Bundle,
-): Promise<ObjectData[]> => {
+): Promise<{ record: Record<string, any>; updatedFields?: string[] }[]> => {
   const nameSingular = bundle.inputData.nameSingular;
   const namePlural = await getNamePluralFromNameSingular(
     z,
@@ -92,9 +91,9 @@ export const performList = async (
   return results.map((result) => ({
     record: result,
     ...(bundle.inputData.operation === DatabaseEventAction.UPDATED && {
-      updatedFields: Object.keys(result).filter((key) => key !== 'id')?.[0] || [
-        'updatedField',
-      ],
+      updatedFields: [
+        Object.keys(result).filter((key) => key !== 'id')?.[0],
+      ] || ['updatedField'],
     }),
   }));
 };
