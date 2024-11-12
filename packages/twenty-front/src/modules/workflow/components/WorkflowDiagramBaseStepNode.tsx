@@ -24,10 +24,9 @@ const StyledStepNodeType = styled.div`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 
+  margin-left: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
-  position: absolute;
-  top: 0;
-  transform: translateY(-100%);
+  align-self: flex-start;
 
   .selectable.selected &,
   .selectable:focus &,
@@ -108,9 +107,9 @@ export const WorkflowDiagramBaseStepNode = ({
         <StyledTargetHandle type="target" position={Position.Top} />
       ) : null}
 
-      <StyledStepNodeInnerContainer variant={variant}>
-        <StyledStepNodeType>{capitalize(nodeType)}</StyledStepNodeType>
+      <StyledStepNodeType>{capitalize(nodeType)}</StyledStepNodeType>
 
+      <StyledStepNodeInnerContainer variant={variant}>
         <StyledStepNodeLabel variant={variant}>
           {Icon}
 
