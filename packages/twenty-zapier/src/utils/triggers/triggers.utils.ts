@@ -10,7 +10,6 @@ export enum DatabaseEventAction {
   CREATED = 'created',
   UPDATED = 'updated',
   DELETED = 'deleted',
-  DESTROYED = 'destroyed',
 }
 
 export const performSubscribe = async (z: ZObject, bundle: Bundle) => {
