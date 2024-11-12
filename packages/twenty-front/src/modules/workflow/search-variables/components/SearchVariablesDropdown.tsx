@@ -1,5 +1,4 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -71,22 +70,20 @@ const SearchVariablesDropdown = ({
         </StyledDropdownVariableButtonContainer>
       }
       dropdownComponents={
-        <DropdownMenu>
-          <DropdownMenuItemsContainer>
-            {selectedStep ? (
-              <SearchVariablesDropdownStepSubItem
-                step={selectedStep}
-                onSelect={handleSubItemSelect}
-                onBack={handleBack}
-              />
-            ) : (
-              <SearchVariablesDropdownStepItem
-                steps={availableVariablesInWorkflowStep}
-                onSelect={handleStepSelect}
-              />
-            )}
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
+        <DropdownMenuItemsContainer>
+          {selectedStep ? (
+            <SearchVariablesDropdownStepSubItem
+              step={selectedStep}
+              onSelect={handleSubItemSelect}
+              onBack={handleBack}
+            />
+          ) : (
+            <SearchVariablesDropdownStepItem
+              steps={availableVariablesInWorkflowStep}
+              onSelect={handleStepSelect}
+            />
+          )}
+        </DropdownMenuItemsContainer>
       }
       dropdownPlacement="bottom-end"
       dropdownOffset={{ x: 0, y: 4 }}

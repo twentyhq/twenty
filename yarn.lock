@@ -6682,6 +6682,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@microsoft/microsoft-graph-client@npm:^3.0.7":
+  version: 3.0.7
+  resolution: "@microsoft/microsoft-graph-client@npm:3.0.7"
+  dependencies:
+    "@babel/runtime": "npm:^7.12.5"
+    tslib: "npm:^2.2.0"
+  peerDependenciesMeta:
+    "@azure/identity":
+      optional: true
+    "@azure/msal-browser":
+      optional: true
+    buffer:
+      optional: true
+    stream-browserify:
+      optional: true
+  checksum: 10c0/0e5b3dd469be0606ba34a82464d18a8c919f396adf65756612e9ec0bb47c99c4c3eaf5d65eec953e2c6f5b79e48e003efe914adbfc8b741d098e8e8f7084ea8b
+  languageName: node
+  linkType: hard
+
+"@microsoft/microsoft-graph-types@npm:^2.40.0":
+  version: 2.40.0
+  resolution: "@microsoft/microsoft-graph-types@npm:2.40.0"
+  checksum: 10c0/c6f69a0fe136579d735efafc1375e4540e01d34ea488d987a9b651f7206c40c76991fff56df31e8b2593f16846bd748d0ffcf249d1f2629bb0298e6214fe2fdc
+  languageName: node
+  linkType: hard
+
 "@microsoft/tsdoc-config@npm:~0.16.1":
   version: 0.16.2
   resolution: "@microsoft/tsdoc-config@npm:0.16.2"
@@ -44331,6 +44357,8 @@ __metadata:
     "@linaria/core": "npm:^6.2.0"
     "@linaria/react": "npm:^6.2.1"
     "@mdx-js/react": "npm:^3.0.0"
+    "@microsoft/microsoft-graph-client": "npm:^3.0.7"
+    "@microsoft/microsoft-graph-types": "npm:^2.40.0"
     "@nestjs/apollo": "npm:^11.0.5"
     "@nestjs/axios": "npm:^3.0.1"
     "@nestjs/cli": "npm:^9.0.0"

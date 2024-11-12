@@ -18,7 +18,6 @@ import { GraphQLView } from '@/views/types/GraphQLView';
 import { View } from '@/views/types/View';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType } from '@/views/types/ViewType';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-ui';
@@ -113,39 +112,35 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         await createViewFieldRecords(sourceView.viewFields, newView);
 
         if (type === ViewType.Kanban) {
-          if (!isNonEmptyArray(sourceView.viewGroups)) {
-            if (!isDefined(kanbanFieldMetadataId)) {
-              throw new Error('Kanban view must have a kanban field');
-            }
-
-            const viewGroupsToCreate =
-              objectMetadataItem?.fields
-                ?.find((field) => field.id === kanbanFieldMetadataId)
-                ?.options?.map(
-                  (option, index) =>
-                    ({
-                      id: v4(),
-                      __typename: 'ViewGroup',
-                      fieldMetadataId: kanbanFieldMetadataId,
-                      fieldValue: option.value,
-                      isVisible: true,
-                      position: index,
-                    }) satisfies ViewGroup,
-                ) ?? [];
-
-            viewGroupsToCreate.push({
-              __typename: 'ViewGroup',
-              id: v4(),
-              fieldValue: '',
-              position: viewGroupsToCreate.length,
-              isVisible: true,
-              fieldMetadataId: kanbanFieldMetadataId,
-            } satisfies ViewGroup);
-
-            await createViewGroupRecords(viewGroupsToCreate, newView);
-          } else {
-            await createViewGroupRecords(sourceView.viewGroups, newView);
+          if (!isDefined(kanbanFieldMetadataId)) {
+            throw new Error('Kanban view must have a kanban field');
           }
+
+          const viewGroupsToCreate =
+            objectMetadataItem?.fields
+              ?.find((field) => field.id === kanbanFieldMetadataId)
+              ?.options?.map(
+                (option, index) =>
+                  ({
+                    id: v4(),
+                    __typename: 'ViewGroup',
+                    fieldMetadataId: kanbanFieldMetadataId,
+                    fieldValue: option.value,
+                    isVisible: true,
+                    position: index,
+                  }) satisfies ViewGroup,
+              ) ?? [];
+
+          viewGroupsToCreate.push({
+            __typename: 'ViewGroup',
+            id: v4(),
+            fieldValue: '',
+            position: viewGroupsToCreate.length,
+            isVisible: true,
+            fieldMetadataId: kanbanFieldMetadataId,
+          } satisfies ViewGroup);
+
+          await createViewGroupRecords(viewGroupsToCreate, newView);
         }
 
         if (shouldCopyFiltersAndSorts === true) {

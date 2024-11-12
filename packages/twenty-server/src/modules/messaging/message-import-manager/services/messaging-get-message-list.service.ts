@@ -35,6 +35,12 @@ export class MessagingGetMessageListService {
         return this.gmailGetMessageListService.getFullMessageList(
           connectedAccount,
         );
+      case 'microsoft':
+        // TODO: Placeholder
+        return {
+          messageExternalIds: [],
+          nextSyncCursor: '',
+        };
       default:
         throw new MessageImportException(
           `Provider ${connectedAccount.provider} is not supported`,
@@ -56,6 +62,12 @@ export class MessagingGetMessageListService {
           connectedAccount,
           syncCursor,
         );
+      case 'microsoft':
+        return {
+          messageExternalIds: [],
+          messageExternalIdsToDelete: [],
+          nextSyncCursor: '',
+        };
       default:
         throw new MessageImportException(
           `Provider ${connectedAccount.provider} is not supported`,

@@ -13,6 +13,7 @@ concurrency:
 
 jobs:
   website-build:
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     services:
       postgres:
