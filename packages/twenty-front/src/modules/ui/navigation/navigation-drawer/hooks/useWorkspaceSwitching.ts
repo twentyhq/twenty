@@ -4,7 +4,7 @@ import { AppPath } from '@/types/AppPath';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSwitchWorkspaceMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { buildWorkspaceUrl } from '~/utils/workspace-url.helper';
+import { redirectToWorkspace } from '~/utils/workspace-url.helper';
 
 export const useWorkspaceSwitching = () => {
   const [switchWorkspaceMutation] = useSwitchWorkspaceMutation();
@@ -23,7 +23,7 @@ export const useWorkspaceSwitching = () => {
       return (window.location.href = AppPath.Index);
     }
 
-    window.location.href = buildWorkspaceUrl(data.switchWorkspace.subdomain);
+    redirectToWorkspace(data.switchWorkspace.subdomain);
   };
 
   return { switchWorkspace };

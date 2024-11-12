@@ -43,7 +43,10 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
-import { getWorkspaceSubdomain } from '~/utils/workspace-url.helper';
+import {
+  getWorkspaceSubdomain,
+  isTwentyWorkspaceSubdomain,
+} from '~/utils/workspace-url.helper';
 
 export const useAuth = () => {
   const [, setTokenPair] = useRecoilState(tokenPairState);
@@ -162,10 +165,12 @@ export const useAuth = () => {
       const workspace = user.defaultWorkspace ?? null;
 
       setCurrentWorkspace(workspace);
-      setLastAuthenticateWorkspaceState({
-        id: workspace?.id,
-        subdomain: workspace?.subdomain,
-      });
+      if (isDefined(workspace) && isTwentyWorkspaceSubdomain) {
+        setLastAuthenticateWorkspaceState({
+          id: workspace?.id,
+          subdomain: workspace?.subdomain,
+        });
+      }
 
       if (isDefined(verifyResult.data?.verify.user.workspaces)) {
         const validWorkspaces = verifyResult.data?.verify.user.workspaces
@@ -314,8 +319,7 @@ export const useAuth = () => {
       workspaceInviteHash?: string;
     },
   ) => {
-    const authServerUrl = REACT_APP_SERVER_BASE_URL;
-    const url = new URL(`${authServerUrl}${path}`);
+    const url = new URL(`${REACT_APP_SERVER_BASE_URL}${path}`);
     if (isDefined(params.workspaceInviteHash)) {
       url.searchParams.set('inviteHash', params.workspaceInviteHash);
     }

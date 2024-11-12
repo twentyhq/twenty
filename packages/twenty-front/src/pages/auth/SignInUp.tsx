@@ -1,16 +1,14 @@
-import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { SignInUpMode, useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
+import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
-import { isDefined } from '~/utils/isDefined';
 import { useWorkspacePublicData } from '@/auth/sign-in-up/hooks/useWorkspacePublicData';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import {
   isTwentyHomePage,
-  isTwentyWorkspaceSubdomain,
+  redirectToHome,
+  twentyHomePage,
 } from '~/utils/workspace-url.helper';
 import { SignInUpWorkspaceSelection } from '@/auth/sign-in-up/components/SignInUpWorkspaceSelection';
 import { SignInUpGlobalScope } from '@/auth/sign-in-up/components/SignInUpGlobalScope';
@@ -20,38 +18,34 @@ import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { SignInUpForm } from '@/auth/sign-in-up/components/SignInUpForm';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
+import { Link } from 'react-router-dom';
+import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
 
 export const SignInUp = () => {
+  const setLastAuthenticateWorkspaceState = useSetRecoilState(
+    lastAuthenticateWorkspaceState,
+  );
   const { form } = useSignInUpForm();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const { signInUpStep } = useSignInUp(form);
 
-  const { signInUpStep, signInUpMode } = useSignInUp(form);
-
-  const { loading } = useWorkspacePublicData();
+  useWorkspacePublicData();
 
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
-  const title = useMemo(() => {
-    if (
-      signInUpStep === SignInUpStep.Init ||
-      signInUpStep === SignInUpStep.Email
-    ) {
-      return `Welcome to ${workspacePublicData?.displayName ?? 'Twenty'}`;
-    }
-    if (signInUpStep === SignInUpStep.WorkspaceSelection) {
-      return 'Choose a workspace';
-    }
-    return signInUpMode === SignInUpMode.SignIn
-      ? `Sign in to ${workspacePublicData?.displayName ?? 'Twenty'}`
-      : `Sign up to ${workspacePublicData?.displayName ?? 'Twenty'}`;
-  }, [signInUpMode, signInUpStep, workspacePublicData]);
-
-  if (isDefined(currentWorkspace)) {
-    return <></>;
-  }
+  const moveToHome = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    setLastAuthenticateWorkspaceState(null);
+    redirectToHome();
+  };
 
   return (
     <>
+      {/* TODO AMOREAUX: Need design for this */}
+      {!isTwentyHomePage && (
+        <Link to={twentyHomePage} onClick={moveToHome}>
+          Back to home
+        </Link>
+      )}
       <AnimatedEaseIn>
         <Logo workspaceLogo={workspacePublicData?.logo} />
       </AnimatedEaseIn>

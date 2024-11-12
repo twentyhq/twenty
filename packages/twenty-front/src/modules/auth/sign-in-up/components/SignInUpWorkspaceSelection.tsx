@@ -1,11 +1,9 @@
-/* @license Enterprise */
-
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { H2Title, MainButton } from 'twenty-ui';
 import { availableWorkspacesForAuthState } from '@/auth/states/availableWorkspacesForAuthState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import { buildWorkspaceUrl } from '~/utils/workspace-url.helper';
+import { redirectToWorkspace } from '~/utils/workspace-url.helper';
 
 const StyledContentContainer = styled.div`
   display: flex;
@@ -39,12 +37,6 @@ export const SignInUpWorkspaceSelection = () => {
     availableWorkspacesForAuthState,
   );
 
-  const moveToWorkspace = (
-    workspace: NonNullable<typeof availableWorkspacesForAuth>[0],
-  ) => {
-    window.location.href = buildWorkspaceUrl(workspace.subdomain);
-  };
-
   return (
     <>
       <H2Title title={'Select a workspace'} />
@@ -52,7 +44,10 @@ export const SignInUpWorkspaceSelection = () => {
         {availableWorkspacesForAuth &&
           availableWorkspacesForAuth.length !== 0 &&
           availableWorkspacesForAuth.map((workspace) => (
-            <MainButton onClick={() => moveToWorkspace(workspace)} fullWidth>
+            <MainButton
+              onClick={() => redirectToWorkspace(workspace.subdomain)}
+              fullWidth
+            >
               <StyledMainButtonContent>
                 <StyledIcon src={workspace.logo ?? DEFAULT_WORKSPACE_LOGO} />
                 <StyledDisplayName>

@@ -1,4 +1,3 @@
-import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { SignInUpMode, useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';

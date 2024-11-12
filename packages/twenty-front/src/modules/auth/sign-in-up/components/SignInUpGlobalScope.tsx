@@ -27,6 +27,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { redirectToWorkspace } from '~/utils/workspace-url.helper';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -79,13 +80,22 @@ export const SignInUpGlobalScope = () => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setShowErrors(true);
+
     const { data, error } = await findAvailableWorkspacesByEmail(
       form.getValues('email'),
     );
     if (isDefined(data) && data.findAvailableWorkspacesByEmail.length > 1) {
       setAvailableWorkspacesForAuthState(data.findAvailableWorkspacesByEmail);
-      setSignInUpStep(SignInUpStep.WorkspaceSelection);
+      return setSignInUpStep(SignInUpStep.WorkspaceSelection);
     }
+
+    if (isDefined(data) && data.findAvailableWorkspacesByEmail.length === 1) {
+      return redirectToWorkspace(
+        data.findAvailableWorkspacesByEmail[0].subdomain,
+        { email: form.getValues('email') },
+      );
+    }
+
     // si 1 workspace sans sso redirige sur workspace avec email en query params pour prefill
     // si 1 workspace avec sso et 1 sso login avec le sso
     // si plusieurs workspaces redirige sur la liste des workspaces
@@ -152,7 +162,6 @@ export const SignInUpGlobalScope = () => {
           />
         </StyledForm>
       </StyledContentContainer>
-      <FooterNote />
     </>
   );
 };
