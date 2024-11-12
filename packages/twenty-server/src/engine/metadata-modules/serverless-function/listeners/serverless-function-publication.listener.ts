@@ -29,7 +29,7 @@ export class ServerlessFunctionPublicationListener {
       serverlessFunctionVersion: string;
     }>,
   ): Promise<void> {
-    payload.events.forEach(async (event) => {
+    for (const event of payload.events) {
       const sourceCode =
         await this.serverlessFunctionService.getServerlessFunctionSourceCode(
           payload.workspaceId,
@@ -48,12 +48,12 @@ export class ServerlessFunctionPublicationListener {
       }
 
       const latestVersionInputSchema =
-        await this.codeIntrospectionService.getFunctionInputSchema(indexCode);
+        this.codeIntrospectionService.getFunctionInputSchema(indexCode);
 
       await this.serverlessFunctionRepository.update(
         { id: event.serverlessFunctionId },
         { latestVersionInputSchema },
       );
-    });
+    }
   }
 }

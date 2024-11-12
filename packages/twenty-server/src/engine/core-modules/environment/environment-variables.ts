@@ -201,6 +201,10 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_CALLBACK_URL: string;
 
+  @IsUrl({ require_tld: false })
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
+
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
