@@ -24,7 +24,6 @@ export type SingleEntitySelectMenuItemsProps = {
   onCancel?: () => void;
   onEntitySelected: (entity?: EntityForSelect) => void;
   selectedEntity?: EntityForSelect;
-  showCreateButton?: boolean;
   SelectAllIcon?: IconComponent;
   selectAllLabel?: string;
   isAllEntitySelected?: boolean;
