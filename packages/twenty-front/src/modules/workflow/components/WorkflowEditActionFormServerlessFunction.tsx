@@ -143,7 +143,7 @@ export const WorkflowEditActionFormServerlessFunction = (
     functionInput: FunctionInput,
     path: string[] = [],
     isRoot = true,
-  ): ReactNode | undefined => {
+  ): ReactNode[] => {
     return Object.entries(functionInput).map(([inputKey, inputValue]) => {
       const currentPath = [...path, inputKey];
       const pathKey = currentPath.join('.');
@@ -191,7 +191,7 @@ export const WorkflowEditActionFormServerlessFunction = (
         disabled={props.readonly}
         onChange={handleFunctionChange}
       />
-      {functionInput && renderFields(functionInput)}
+      {renderFields(functionInput)}
     </WorkflowEditGenericFormBase>
   );
 };
