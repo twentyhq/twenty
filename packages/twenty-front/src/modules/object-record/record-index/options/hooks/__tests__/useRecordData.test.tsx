@@ -106,7 +106,7 @@ const mocks: MockedResponse[] = [
         }
       `,
       variables: {
-        filter: undefined,
+        filter: {},
         limit: 30,
         orderBy: [{ position: 'AscNullsFirst' }],
       },

@@ -1,6 +1,5 @@
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
+import { MenuItem, MenuItemSelect } from 'twenty-ui';
 
 type SearchVariablesDropdownStepItemProps = {
   steps: StepOutputSchema[];

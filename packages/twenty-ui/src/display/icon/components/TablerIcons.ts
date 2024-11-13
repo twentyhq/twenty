@@ -132,6 +132,7 @@ export {
   IconFocusCentered,
   IconForbid,
   IconFunction,
+  IconGauge,
   IconGitCommit,
   IconGripVertical,
   IconH1,
