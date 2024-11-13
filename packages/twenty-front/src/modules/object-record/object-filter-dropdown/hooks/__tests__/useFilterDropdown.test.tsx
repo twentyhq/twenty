@@ -8,11 +8,24 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { MockedProvider } from '@apollo/client/testing';
+import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 
 const filterDropdownId = 'filterDropdownId';
 const renderHookConfig = {
-  wrapper: RecoilRoot,
+  wrapper: ({ children }: any) => (
+    <RecoilRoot>
+      <MockedProvider mocks={[]} addTypename={false}>
+        <JestObjectMetadataItemSetter>
+          <ViewComponentInstanceContext.Provider value={{ instanceId: 'test' }}>
+            {children}
+          </ViewComponentInstanceContext.Provider>
+        </JestObjectMetadataItemSetter>
+      </MockedProvider>
+    </RecoilRoot>
+  ),
 };
 
 const filterDefinitions: FilterDefinition[] = [
@@ -306,9 +319,10 @@ describe('useFilterDropdown', () => {
 
   it('should reset filter', async () => {
     const { result } = renderHook(() => {
-      const { selectFilter, resetFilter } = useFilterDropdown({
+      const { resetFilter, selectFilter } = useFilterDropdown({
         filterDropdownId,
       });
+
       const { selectedFilterState } = useFilterDropdownStates(filterDropdownId);
 
       const [selectedFilter, setSelectedFilter] =

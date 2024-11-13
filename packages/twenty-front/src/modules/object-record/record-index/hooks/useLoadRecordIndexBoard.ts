@@ -5,13 +5,16 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
-import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
+import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
 import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
+import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 
 type UseLoadRecordIndexBoardProps = {
@@ -31,6 +34,7 @@ export const useLoadRecordIndexBoard = ({
   const {
     setRecordIds: setRecordIdsInBoard,
     setFieldDefinitions,
+    setColumns,
     isCompactModeActiveState,
   } = useRecordBoard(recordBoardId);
   const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -42,11 +46,24 @@ export const useLoadRecordIndexBoard = ({
     setFieldDefinitions(recordIndexFieldDefinitions);
   }, [recordIndexFieldDefinitions, setFieldDefinitions]);
 
+  const recordIndexViewFilterGroups = useRecoilValue(
+    recordIndexViewFilterGroupsState,
+  );
+
+  const recordIndexGroupDefinitions = useRecoilComponentValueV2(
+    recordGroupDefinitionsComponentState,
+  );
+
+  useEffect(() => {
+    setColumns(recordIndexGroupDefinitions);
+  }, [recordIndexGroupDefinitions, setColumns]);
+
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
   const recordIndexSorts = useRecoilValue(recordIndexSortsState);
-  const requestFilters = turnObjectDropdownFilterIntoQueryFilter(
+  const requestFilters = computeViewRecordGqlOperationFilter(
     recordIndexFilters,
     objectMetadataItem?.fields ?? [],
+    recordIndexViewFilterGroups,
   );
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, recordIndexSorts);
 

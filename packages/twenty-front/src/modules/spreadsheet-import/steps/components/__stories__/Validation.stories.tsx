@@ -1,13 +1,13 @@
 import { Meta } from '@storybook/react';
 
-import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
-import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
-import { ValidationStep } from '@/spreadsheet-import/steps/components/ValidationStep/ValidationStep';
 import {
   editableTableInitialData,
   importedColums,
   mockRsiValues,
-} from '@/spreadsheet-import/tests/mockRsiValues';
+} from '@/spreadsheet-import/__mocks__/mockRsiValues';
+import { ModalWrapper } from '@/spreadsheet-import/components/ModalWrapper';
+import { ReactSpreadsheetImportContextProvider } from '@/spreadsheet-import/components/ReactSpreadsheetImportContextProvider';
+import { ValidationStep } from '@/spreadsheet-import/steps/components/ValidationStep/ValidationStep';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 
 const meta: Meta<typeof ValidationStep> = {

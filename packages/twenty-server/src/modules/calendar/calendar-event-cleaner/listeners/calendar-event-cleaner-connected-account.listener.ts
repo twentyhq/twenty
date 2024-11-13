@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -11,6 +10,8 @@ import {
   DeleteConnectedAccountAssociatedCalendarDataJobData,
 } from 'src/modules/calendar/calendar-event-cleaner/jobs/delete-connected-account-associated-calendar-data.job';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class CalendarEventCleanerConnectedAccountListener {
@@ -19,7 +20,7 @@ export class CalendarEventCleanerConnectedAccountListener {
     private readonly calendarQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('connectedAccount.destroyed')
+  @OnDatabaseEvent('connectedAccount', DatabaseEventAction.DESTROYED)
   async handleDestroyedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<ConnectedAccountWorkspaceEntity>

@@ -1,14 +1,14 @@
 import {
-  HostComponentInfo,
   ContextId,
   ContextIdFactory,
   ContextIdStrategy,
+  HostComponentInfo,
 } from '@nestjs/core';
 
-import { jwtDecode } from 'jwt-decode';
 import { Request } from 'express';
+import { jwtDecode } from 'jwt-decode';
 
-import { JwtPayload } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
+import { JwtPayload } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 const workspaces = new Map<string, ContextId>();
 

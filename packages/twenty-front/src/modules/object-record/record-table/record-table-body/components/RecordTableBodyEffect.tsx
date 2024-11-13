@@ -6,14 +6,14 @@ import { lastShowPageRecordIdState } from '@/object-record/record-field/states/l
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
 import { isRecordTableScrolledLeftComponentState } from '@/object-record/record-table/states/isRecordTableScrolledLeftComponentState';
-import { isRecordTableScrolledTopComponentState } from '@/object-record/record-table/states/isRecordTableScrolledTopComponentState';
+import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useScrollLeftValue } from '@/ui/utilities/scroll/hooks/useScrollLeftValue';
 import { useScrollTopValue } from '@/ui/utilities/scroll/hooks/useScrollTopValue';
-import { useSetRecoilComponentState } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
 
@@ -36,21 +36,19 @@ export const RecordTableBodyEffect = () => {
     isFetchingMoreRecordsFamilyState(queryStateIdentifier),
   );
 
-  const { tableLastRowVisibleState } = useRecordTableStates();
-
-  const tableLastRowVisible = useRecoilValue(tableLastRowVisibleState);
-
-  const scrollTop = useScrollTopValue('recordTableWithWrappers');
-  const setIsRecordTableScrolledTop = useSetRecoilComponentState(
-    isRecordTableScrolledTopComponentState,
+  const tableLastRowVisible = useRecoilComponentValueV2(
+    tableLastRowVisibleComponentState,
   );
 
+  const scrollTop = useScrollTopValue('recordTableWithWrappers');
+
   const setHasRecordTableFetchedAllRecordsComponents =
-    useSetRecoilComponentState(hasRecordTableFetchedAllRecordsComponentStateV2);
+    useSetRecoilComponentStateV2(
+      hasRecordTableFetchedAllRecordsComponentStateV2,
+    );
 
   // TODO: move this outside because it might cause way too many re-renders for other hooks
   useEffect(() => {
-    setIsRecordTableScrolledTop(scrollTop === 0);
     if (scrollTop > 0) {
       document
         .getElementById('record-table-header')
@@ -60,11 +58,11 @@ export const RecordTableBodyEffect = () => {
         .getElementById('record-table-header')
         ?.classList.remove('header-sticky');
     }
-  }, [scrollTop, setIsRecordTableScrolledTop]);
+  }, [scrollTop]);
 
   const scrollLeft = useScrollLeftValue('recordTableWithWrappers');
 
-  const setIsRecordTableScrolledLeft = useSetRecoilComponentState(
+  const setIsRecordTableScrolledLeft = useSetRecoilComponentStateV2(
     isRecordTableScrolledLeftComponentState,
   );
 

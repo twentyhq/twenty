@@ -23,9 +23,12 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
@@ -36,13 +39,18 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 
 const NAME_FIELD_NAME = 'name';
 
+export const SEARCH_FIELDS_FOR_OPPORTUNITY: FieldTypeAndNameMetadata[] = [
+  { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
+];
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.opportunity,
   namePlural: 'opportunities',
   labelSingular: 'Opportunity',
   labelPlural: 'Opportunities',
   description: 'An opportunity',
-  icon: 'IconTargetArrow',
+  icon: STANDARD_OBJECT_ICONS.opportunity,
+  shortcut: 'O',
   labelIdentifierStandardId: OPPORTUNITY_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsNotAuditLogged()
@@ -169,19 +177,6 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.activityTargets,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Activities',
-    description: 'Activities tied to the opportunity',
-    icon: 'IconCheckbox',
-    inverseSideTarget: () => ActivityTargetWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  @WorkspaceIsSystem()
-  activityTargets: Relation<ActivityTargetWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.taskTargets,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Tasks',
@@ -245,9 +240,9 @@ export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
     description: SEARCH_VECTOR_FIELD.description,
     icon: 'IconUser',
     generatedType: 'STORED',
-    asExpression: getTsVectorColumnExpressionFromFields([
-      { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
-    ]),
+    asExpression: getTsVectorColumnExpressionFromFields(
+      SEARCH_FIELDS_FOR_OPPORTUNITY,
+    ),
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()

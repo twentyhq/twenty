@@ -21,6 +21,7 @@ type MockedUser = Pick<
   | 'supportUserHash'
   | 'onboardingStatus'
   | 'userVars'
+  | 'analyticsTinybirdJwts'
 > & {
   workspaceMember: WorkspaceMember | null;
   locale: string;
@@ -40,8 +41,10 @@ export const mockDefaultWorkspace: Workspace = {
   domainName: 'twenty.com',
   inviteHash: 'twenty.com-invite-hash',
   logo: workspaceLogoUrl,
+  isPublicInviteLinkEnabled: true,
   allowImpersonation: true,
   activationStatus: WorkspaceActivationStatus.Active,
+  hasValidEntrepriseKey: false,
   featureFlags: [
     {
       id: '1492de61-5018-4368-8923-4f1eeaf988c4',
@@ -111,6 +114,7 @@ export const mockedUserData: MockedUser = {
   workspaceMembers: [mockedWorkspaceMemberData],
   onboardingStatus: OnboardingStatus.Completed,
   userVars: {},
+  analyticsTinybirdJwts: null,
 };
 
 export const mockedOnboardingUserData = (

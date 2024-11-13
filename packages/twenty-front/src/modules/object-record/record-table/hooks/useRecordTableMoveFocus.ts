@@ -1,21 +1,21 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 
+import { numberOfTableRowsComponentState } from '@/object-record/record-table/states/numberOfTableRowsComponentState';
+import { numberOfTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/numberOfTableColumnsComponentSelector';
+import { softFocusPositionComponentState } from '@/object-record/record-table/states/softFocusPositionComponentState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetSoftFocusPosition } from './internal/useSetSoftFocusPosition';
 
 export const useRecordTableMoveFocus = (recordTableId?: string) => {
-  const {
-    scopeId,
-    softFocusPositionState,
-    numberOfTableRowsState,
-    numberOfTableColumnsSelector,
-    selectedRowIdsSelector,
-  } = useRecordTableStates(recordTableId);
-
   const setSoftFocusPosition = useSetSoftFocusPosition(recordTableId);
+
+  const softFocusPositionState = useRecoilComponentCallbackStateV2(
+    softFocusPositionComponentState,
+    recordTableId,
+  );
 
   const moveUp = useRecoilCallback(
     ({ snapshot }) =>
@@ -37,6 +37,11 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
         });
       },
     [softFocusPositionState, setSoftFocusPosition],
+  );
+
+  const numberOfTableRowsState = useRecoilComponentCallbackStateV2(
+    numberOfTableRowsComponentState,
+    recordTableId,
   );
 
   const moveDown = useRecoilCallback(
@@ -66,6 +71,11 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
     [numberOfTableRowsState, setSoftFocusPosition, softFocusPositionState],
   );
 
+  const numberOfTableColumnsSelector = useRecoilComponentCallbackStateV2(
+    numberOfTableColumnsComponentSelector,
+    recordTableId,
+  );
+
   const moveRight = useRecoilCallback(
     ({ snapshot }) =>
       () => {
@@ -76,7 +86,7 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
 
         const numberOfTableColumns = getSnapshotValue(
           snapshot,
-          numberOfTableColumnsSelector(),
+          numberOfTableColumnsSelector,
         );
 
         const numberOfTableRows = getSnapshotValue(
@@ -132,7 +142,7 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
 
         const numberOfTableColumns = getSnapshotValue(
           snapshot,
-          numberOfTableColumnsSelector(),
+          numberOfTableColumnsSelector,
         );
 
         const currentColumnNumber = softFocusPosition.column;
@@ -187,13 +197,11 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
   };
 
   return {
-    scopeId,
     moveDown,
     moveLeft,
     moveRight,
     moveUp,
     setSoftFocusPosition,
-    selectedRowIdsSelector,
     moveFocus,
   };
 };

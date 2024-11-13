@@ -12,6 +12,9 @@ import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
+import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useFavorites } from '../hooks/useFavorites';
 
 const StyledContainer = styled(NavigationDrawerSection)`
@@ -39,7 +42,6 @@ export const CurrentWorkspaceMemberFavorites = () => {
 
   const { favorites, handleReorderFavorite } = useFavorites();
   const loading = useIsPrefetchLoading();
-
   const { toggleNavigationSection, isNavigationSectionOpenState } =
     useNavigationSection('Favorites');
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
@@ -58,54 +60,67 @@ export const CurrentWorkspaceMemberFavorites = () => {
   )
     return <></>;
 
+  const isGroup = currentWorkspaceMemberFavorites.length > 1;
+
+  const draggableListContent = (
+    <DraggableList
+      onDragEnd={handleReorderFavorite}
+      draggableItems={
+        <>
+          {currentWorkspaceMemberFavorites.map((favorite, index) => {
+            const {
+              id,
+              labelIdentifier,
+              avatarUrl,
+              avatarType,
+              link,
+              recordId,
+            } = favorite;
+
+            return (
+              <DraggableItem
+                key={id}
+                draggableId={id}
+                index={index}
+                itemComponent={
+                  <StyledNavigationDrawerItem
+                    key={id}
+                    label={labelIdentifier}
+                    Icon={() => (
+                      <StyledAvatar
+                        placeholderColorSeed={recordId}
+                        avatarUrl={avatarUrl}
+                        type={avatarType}
+                        placeholder={labelIdentifier}
+                        className="fav-avatar"
+                      />
+                    )}
+                    to={link}
+                  />
+                }
+              />
+            );
+          })}
+        </>
+      }
+    />
+  );
+
   return (
     <StyledContainer>
-      <NavigationDrawerSectionTitle
-        label="Favorites"
-        onClick={() => toggleNavigationSection()}
-      />
-      {isNavigationSectionOpen && (
-        <DraggableList
-          onDragEnd={handleReorderFavorite}
-          draggableItems={
-            <>
-              {currentWorkspaceMemberFavorites.map((favorite, index) => {
-                const {
-                  id,
-                  labelIdentifier,
-                  avatarUrl,
-                  avatarType,
-                  link,
-                  recordId,
-                } = favorite;
-
-                return (
-                  <DraggableItem
-                    key={id}
-                    draggableId={id}
-                    index={index}
-                    itemComponent={
-                      <StyledNavigationDrawerItem
-                        key={id}
-                        label={labelIdentifier}
-                        Icon={() => (
-                          <StyledAvatar
-                            placeholderColorSeed={recordId}
-                            avatarUrl={avatarUrl}
-                            type={avatarType}
-                            placeholder={labelIdentifier}
-                            className="fav-avatar"
-                          />
-                        )}
-                        to={link}
-                      />
-                    }
-                  />
-                );
-              })}
-            </>
-          }
+      <NavigationDrawerAnimatedCollapseWrapper>
+        <NavigationDrawerSectionTitle
+          label="Favorites"
+          onClick={() => toggleNavigationSection()}
         />
+      </NavigationDrawerAnimatedCollapseWrapper>
+
+      {isNavigationSectionOpen && (
+        <ScrollWrapper contextProviderName="navigationDrawer">
+          <NavigationDrawerItemsCollapsedContainer isGroup={isGroup}>
+            {draggableListContent}
+          </NavigationDrawerItemsCollapsedContainer>
+        </ScrollWrapper>
       )}
     </StyledContainer>
   );

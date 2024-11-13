@@ -69,11 +69,13 @@ export const PhoneCountryPickerDropdownButton = ({
 
   const [selectedCountry, setSelectedCountry] = useState<Country>();
 
-  const { isDropdownOpen, closeDropdown } = useDropdown('country-picker');
+  const { isDropdownOpen, closeDropdown } = useDropdown(
+    'country-picker-dropdown-id',
+  );
 
   const handleChange = (countryCode: string) => {
-    onChange(countryCode);
     closeDropdown();
+    onChange(countryCode);
   };
 
   const countries = useCountries();
@@ -87,7 +89,6 @@ export const PhoneCountryPickerDropdownButton = ({
 
   return (
     <Dropdown
-      dropdownMenuWidth={'100%'}
       dropdownId="country-picker-dropdown-id"
       dropdownHotkeyScope={{ scope: CountryPickerHotkeyScope.CountryPicker }}
       clickableComponent={

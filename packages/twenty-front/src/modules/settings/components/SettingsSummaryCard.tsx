@@ -1,8 +1,7 @@
-import { ReactNode } from 'react';
 import styled from '@emotion/styled';
+import { ReactNode } from 'react';
 
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { Card, CardContent } from 'twenty-ui';
 
 type SettingsSummaryCardProps = {
   title: ReactNode;

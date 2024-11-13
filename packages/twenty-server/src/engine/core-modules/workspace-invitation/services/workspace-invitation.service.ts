@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import crypto from 'crypto';
+
 import { render } from '@react-email/render';
+import { addMilliseconds } from 'date-fns';
+import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
 import { IsNull, Repository } from 'typeorm';
 
@@ -9,7 +13,10 @@ import {
   AppToken,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -30,13 +37,12 @@ export class WorkspaceInvitationService {
     private readonly appTokenRepository: Repository<AppToken>,
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
-    private readonly tokenService: TokenService,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly onboardingService: OnboardingService,
   ) {}
 
-  private async getOneWorkspaceInvitation(workspaceId: string, email: string) {
+  async getOneWorkspaceInvitation(workspaceId: string, email: string) {
     return await this.appTokenRepository
       .createQueryBuilder('appToken')
       .where('"appToken"."workspaceId" = :workspaceId', {
@@ -103,7 +109,7 @@ export class WorkspaceInvitationService {
       );
     }
 
-    return this.tokenService.generateInvitationToken(workspace.id, email);
+    return this.generateInvitationToken(workspace.id, email);
   }
 
   async loadWorkspaceInvitations(workspace: Workspace) {
@@ -160,7 +166,7 @@ export class WorkspaceInvitationService {
       },
     });
 
-    if (!appToken || !appToken.context || !('email' in appToken.context)) {
+    if (!appToken || !appToken.context?.email) {
       throw new WorkspaceInvitationException(
         'Invalid appToken',
         WorkspaceInvitationExceptionCode.INVALID_INVITATION,
@@ -289,5 +295,32 @@ export class WorkspaceInvitationService {
       success: result.errors.length === 0,
       ...result,
     };
+  }
+
+  async generateInvitationToken(workspaceId: string, email: string) {
+    const expiresIn = this.environmentService.get(
+      'INVITATION_TOKEN_EXPIRES_IN',
+    );
+
+    if (!expiresIn) {
+      throw new AuthException(
+        'Expiration time for invitation token is not set',
+        AuthExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
+
+    const invitationToken = this.appTokenRepository.create({
+      workspaceId,
+      expiresAt,
+      type: AppTokenType.InvitationToken,
+      value: crypto.randomBytes(32).toString('hex'),
+      context: {
+        email,
+      },
+    });
+
+    return this.appTokenRepository.save(invitationToken);
   }
 }

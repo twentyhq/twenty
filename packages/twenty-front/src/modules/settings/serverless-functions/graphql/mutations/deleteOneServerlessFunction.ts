@@ -3,7 +3,7 @@ import { SERVERLESS_FUNCTION_FRAGMENT } from '@/settings/serverless-functions/gr
 
 export const DELETE_ONE_SERVERLESS_FUNCTION = gql`
   ${SERVERLESS_FUNCTION_FRAGMENT}
-  mutation DeleteOneServerlessFunction($input: DeleteServerlessFunctionInput!) {
+  mutation DeleteOneServerlessFunction($input: ServerlessFunctionIdInput!) {
     deleteOneServerlessFunction(input: $input) {
       ...ServerlessFunctionFields
     }

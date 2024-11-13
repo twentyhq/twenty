@@ -8,7 +8,10 @@ import {
   IconGripVertical,
   IconTrash,
   IconX,
+  LightIconButton,
   MAIN_COLOR_NAMES,
+  MenuItem,
+  MenuItemSelectColor,
 } from 'twenty-ui';
 import { v4 } from 'uuid';
 
@@ -16,14 +19,11 @@ import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataIt
 import { EXPANDED_WIDTH_ANIMATION_VARIANTS } from '@/settings/constants/ExpandedWidthAnimationVariants';
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
 import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/select/utils/getOptionValueFromLabel';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';

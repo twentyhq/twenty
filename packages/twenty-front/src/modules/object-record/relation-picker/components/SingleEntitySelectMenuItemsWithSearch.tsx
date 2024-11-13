@@ -1,4 +1,3 @@
-import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import {
   SingleEntitySelectMenuItems,
   SingleEntitySelectMenuItemsProps,
@@ -7,7 +6,9 @@ import { useEntitySelectSearch } from '@/object-record/relation-picker/hooks/use
 import { useRelationPickerEntitiesOptions } from '@/object-record/relation-picker/hooks/useRelationPickerEntitiesOptions';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { Placement } from '@floating-ui/react';
 import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export type SingleEntitySelectMenuItemsWithSearchProps = {
   excludedRelationRecordIds?: string[];
@@ -15,6 +16,7 @@ export type SingleEntitySelectMenuItemsWithSearchProps = {
   relationObjectNameSingular: string;
   relationPickerScopeId?: string;
   selectedRelationRecordIds: string[];
+  dropdownPlacement?: Placement | null;
 } & Pick<
   SingleEntitySelectMenuItemsProps,
   | 'EmptyIcon'
@@ -33,8 +35,8 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
   onEntitySelected,
   relationObjectNameSingular,
   relationPickerScopeId = 'relation-picker',
-  selectedEntity,
   selectedRelationRecordIds,
+  dropdownPlacement,
 }: SingleEntitySelectMenuItemsWithSearchProps) => {
   const { handleSearchFilterChange } = useEntitySelectSearch({
     relationPickerScopeId,
@@ -63,32 +65,45 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
     };
   }
 
+  const results = (
+    <SingleEntitySelectMenuItems
+      entitiesToSelect={entities.entitiesToSelect}
+      loading={entities.loading}
+      selectedEntity={
+        entities.selectedEntities.length === 1
+          ? entities.selectedEntities[0]
+          : undefined
+      }
+      shouldSelectEmptyOption={selectedRelationRecordIds?.length === 0}
+      hotkeyScope={relationPickerScopeId}
+      onCreate={onCreateWithInput}
+      isFiltered={!!relationPickerSearchFilter}
+      {...{
+        EmptyIcon,
+        emptyLabel,
+        onCancel,
+        onEntitySelected,
+        showCreateButton,
+      }}
+    />
+  );
+
   return (
     <>
-      <ObjectMetadataItemsRelationPickerEffect
-        relationPickerScopeId={relationPickerScopeId}
-      />
+      {dropdownPlacement?.includes('end') && (
+        <>
+          {results}
+          <DropdownMenuSeparator />
+        </>
+      )}
       <DropdownMenuSearchInput onChange={handleSearchFilterChange} autoFocus />
-      <DropdownMenuSeparator />
-      <SingleEntitySelectMenuItems
-        entitiesToSelect={entities.entitiesToSelect}
-        loading={entities.loading}
-        selectedEntity={
-          selectedEntity ??
-          (entities.selectedEntities.length === 1
-            ? entities.selectedEntities[0]
-            : undefined)
-        }
-        hotkeyScope={relationPickerScopeId}
-        onCreate={onCreateWithInput}
-        {...{
-          EmptyIcon,
-          emptyLabel,
-          onCancel,
-          onEntitySelected,
-          showCreateButton,
-        }}
-      />
+      {(dropdownPlacement?.includes('start') ||
+        isUndefinedOrNull(dropdownPlacement)) && (
+        <>
+          <DropdownMenuSeparator />
+          {results}
+        </>
+      )}
     </>
   );
 };

@@ -11,15 +11,18 @@ import {
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
 import {
+  IsArray,
   IsDateString,
   IsEnum,
   IsNotEmpty,
   IsString,
   IsUUID,
 } from 'class-validator';
+import GraphQLJSON from 'graphql-type-json';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ServerlessFunctionSyncStatus } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import { InputSchema } from 'src/modules/code-introspection/types/input-schema.type';
 
 registerEnumType(ServerlessFunctionSyncStatus, {
   name: 'ServerlessFunctionSyncStatus',
@@ -58,6 +61,13 @@ export class ServerlessFunctionDTO {
   @IsString()
   @Field({ nullable: true })
   latestVersion: string;
+
+  @IsArray()
+  @Field(() => [String], { nullable: false })
+  publishedVersions: string[];
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  latestVersionInputSchema: InputSchema;
 
   @IsEnum(ServerlessFunctionSyncStatus)
   @IsNotEmpty()

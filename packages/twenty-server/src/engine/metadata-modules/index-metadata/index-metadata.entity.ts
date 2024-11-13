@@ -7,6 +7,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -18,6 +19,11 @@ export enum IndexType {
   GIN = 'GIN',
 }
 
+@Unique('IndexOnNameAndWorkspaceIdAndObjectMetadataUnique', [
+  'name',
+  'workspaceId',
+  'objectMetadataId',
+])
 @Entity('indexMetadata')
 export class IndexMetadataEntity {
   @PrimaryGeneratedColumn('uuid')

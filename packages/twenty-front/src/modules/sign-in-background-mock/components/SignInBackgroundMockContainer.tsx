@@ -1,11 +1,13 @@
 import styled from '@emotion/styled';
 
-import { RecordIndexOptionsDropdown } from '@/object-record/record-index/options/components/RecordIndexOptionsDropdown';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { SignInBackgroundMockContainerEffect } from '@/sign-in-background-mock/components/SignInBackgroundMockContainerEffect';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { ViewType } from '@/views/types/ViewType';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -20,32 +22,54 @@ export const SignInBackgroundMockContainer = () => {
   const recordIndexId = 'sign-up-mock-record-table-id';
   const viewBarId = 'companies-mock';
 
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   return (
     <StyledContainer>
-      <ViewComponentInstanceContext.Provider value={{ instanceId: viewBarId }}>
-        <ViewBar
-          viewBarId={viewBarId}
-          onCurrentViewChange={async () => {}}
-          optionsDropdownButton={
-            <RecordIndexOptionsDropdown
-              recordIndexId={recordIndexId}
-              objectNameSingular={objectNameSingular}
-              viewType={ViewType.Table}
-            />
-          }
-        />
-        <SignInBackgroundMockContainerEffect
-          objectNamePlural={objectNamePlural}
-          recordTableId={recordIndexId}
-          viewId={viewBarId}
-        />
-        <RecordTableWithWrappers
-          objectNameSingular={objectNameSingular}
-          recordTableId={recordIndexId}
-          viewBarId={viewBarId}
-          updateRecordMutation={() => {}}
-        />
-      </ViewComponentInstanceContext.Provider>
+      <RecordIndexRootPropsContext.Provider
+        value={{
+          recordIndexId,
+          objectNamePlural,
+          objectNameSingular,
+          objectMetadataItem,
+          onIndexRecordsLoaded: () => {},
+          indexIdentifierUrl: () => '',
+          onCreateRecord: () => {},
+        }}
+      >
+        <ViewComponentInstanceContext.Provider
+          value={{ instanceId: recordIndexId }}
+        >
+          <ContextStoreComponentInstanceContext.Provider
+            value={{
+              instanceId: recordIndexId,
+            }}
+          >
+            <ActionMenuComponentInstanceContext.Provider
+              value={{ instanceId: recordIndexId }}
+            >
+              <ViewBar
+                viewBarId={viewBarId}
+                onCurrentViewChange={() => {}}
+                optionsDropdownButton={<></>}
+              />
+              <SignInBackgroundMockContainerEffect
+                objectNamePlural={objectNamePlural}
+                recordTableId={recordIndexId}
+                viewId={viewBarId}
+              />
+              <RecordTableWithWrappers
+                objectNameSingular={objectNameSingular}
+                recordTableId={recordIndexId}
+                viewBarId={viewBarId}
+                updateRecordMutation={() => {}}
+              />
+            </ActionMenuComponentInstanceContext.Provider>
+          </ContextStoreComponentInstanceContext.Provider>
+        </ViewComponentInstanceContext.Provider>
+      </RecordIndexRootPropsContext.Provider>
     </StyledContainer>
   );
 };

@@ -33,6 +33,7 @@ export class WorkflowRunWorkspaceService {
 
     return (
       await workflowRunRepository.save({
+        name: `Execution of ${workflowVersion.name}`,
         workflowVersionId,
         createdBy,
         workflowId: workflowVersion.workflowId,
