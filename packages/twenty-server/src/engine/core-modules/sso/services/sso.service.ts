@@ -28,6 +28,7 @@ import {
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import ServerUrl from 'src/engine/utils/serverUrl';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -189,7 +190,7 @@ export class SSOService {
   buildCallbackUrl(
     identityProvider: Pick<WorkspaceSSOIdentityProvider, 'type'>,
   ) {
-    const callbackURL = new URL(this.environmentService.get('SERVER_URL'));
+    const callbackURL = new URL(ServerUrl.get());
 
     callbackURL.pathname = `/auth/${identityProvider.type.toLowerCase()}/callback`;
 
@@ -199,7 +200,7 @@ export class SSOService {
   buildIssuerURL(
     identityProvider: Pick<WorkspaceSSOIdentityProvider, 'id' | 'type'>,
   ) {
-    return `${this.environmentService.get('SERVER_URL')}/auth/${identityProvider.type.toLowerCase()}/login/${identityProvider.id}`;
+    return `${ServerUrl.get()}/auth/${identityProvider.type.toLowerCase()}/login/${identityProvider.id}`;
   }
 
   private isOIDCIdentityProvider(

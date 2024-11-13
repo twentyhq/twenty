@@ -48,7 +48,7 @@ export class SSOAuthController {
 
   @Get('saml/metadata/:identityProviderId')
   @UseGuards(SSOProviderEnabledGuard)
-  async generateMetadata(@Req() req: any): Promise<string> {
+  async generateMetadata(@Req() req: any): Promise<string | void> {
     return generateServiceProviderMetadata({
       wantAssertionsSigned: false,
       issuer: this.ssoService.buildIssuerURL({

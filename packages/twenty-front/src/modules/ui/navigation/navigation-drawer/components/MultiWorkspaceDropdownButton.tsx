@@ -133,7 +133,7 @@ export const MultiWorkspaceDropdownButton = ({
                   />
                 }
                 selected={currentWorkspace?.id === workspace.id}
-                onClick={(event: React.MouseEvent) => {
+                onClick={(event) => {
                   event.preventDefault();
                   handleChange(workspace.id);
                 }}

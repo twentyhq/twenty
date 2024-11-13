@@ -17,6 +17,7 @@ import './instrument';
 
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
+import ServerUrl from 'src/engine/utils/serverUrl';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -69,6 +70,10 @@ const bootstrap = async () => {
   }
 
   await app.listen(process.env.PORT ?? 3000);
+
+  const url = new URL(await app.getUrl());
+  url.hostname = url.hostname === '[::1]' ? 'localhost' : url.hostname;
+  ServerUrl.set(url.toString());
 };
 
 bootstrap();
