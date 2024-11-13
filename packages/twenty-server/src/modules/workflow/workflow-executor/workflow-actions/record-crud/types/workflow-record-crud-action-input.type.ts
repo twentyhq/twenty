@@ -1,9 +1,12 @@
+import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+
 type ObjectRecord = Record<string, any>;
 
 export enum WorkflowRecordCRUDType {
   CREATE = 'create',
   UPDATE = 'update',
   DELETE = 'delete',
+  FIND = 'find',
 }
 
 export type WorkflowCreateRecordActionInput = {
@@ -25,7 +28,16 @@ export type WorkflowDeleteRecordActionInput = {
   objectRecordId: string;
 };
 
+export type WorkflowFindRecordActionInput = {
+  type: WorkflowRecordCRUDType.FIND;
+  objectName: string;
+  filter?: Partial<RecordFilter>;
+  orderBy?: string;
+  limit?: number;
+};
+
 export type WorkflowRecordCRUDActionInput =
   | WorkflowCreateRecordActionInput
   | WorkflowUpdateRecordActionInput
-  | WorkflowDeleteRecordActionInput;
+  | WorkflowDeleteRecordActionInput
+  | WorkflowFindRecordActionInput;
