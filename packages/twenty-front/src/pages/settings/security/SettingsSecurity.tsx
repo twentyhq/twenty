@@ -44,7 +44,7 @@ export const SettingsSecurity = () => {
             <H2Title
               title="SSO"
               description="Configure an SSO connection"
-              addornment={
+              adornment={
                 <Tag
                   text={'Enterprise'}
                   color={'transparent'}
