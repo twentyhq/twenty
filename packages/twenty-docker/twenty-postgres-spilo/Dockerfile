@@ -58,11 +58,6 @@ RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_
     dpkg --install wrappers.deb && \
     rm wrappers.deb
 
-# Install pgx package package manager for PostgreSQL
-RUN curl -sfL https://install.pgx.sh | sh -
-
-RUN pgxman install hydra_columnar=1.1.2
-
 COPY --from=build-libssl /usr/local/lib/libssl* /usr/local/lib/libcrypto*  /usr/lib/
 COPY --from=build-libssl /usr/local/lib/engines-1.1 /usr/lib/engines-1.1
 

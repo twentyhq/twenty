@@ -13,11 +13,6 @@ rawDataSource
     );
 
     await performQuery(
-      'CREATE EXTENSION IF NOT EXISTS "columnar"',
-      'create extension "columnar (hydra)"',
-    );
-
-    await performQuery(
       `ALTER DATABASE SET default_table_access_method = "heap"`,
       `alter database set default_table_access_method = "heap"`,
     );

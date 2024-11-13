@@ -22,7 +22,7 @@ services:
       - "3000:3000"
     environment:
       PORT: 3000
-      PG_DATABASE_URL: postgres://twenty:twenty@${PG_DATABASE_HOST}/default
+      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER}:${PGPASSWORD_SUPERUSER}@${PG_DATABASE_HOST}/default
       SERVER_URL: ${SERVER_URL}
       FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://localhost:6379}
@@ -79,8 +79,6 @@ services:
     environment:
       PGUSER_SUPERUSER: twenty
       PGPASSWORD_SUPERUSER: twenty
-      PGUSER_ADMIN: postgres
-      PGPASSWORD_ADMIN: postgres
       ALLOW_NOSSL: "true"
     healthcheck:
       test: pg_isready -U twenty -d default

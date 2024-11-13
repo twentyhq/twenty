@@ -1,10 +1,8 @@
 postgres-on-docker:
 	docker run \
 	--name twenty_pg \
-	-e PGUSER_SUPERUSER=postgres \
-	-e PGPASSWORD_SUPERUSER=postgres \
-	-e PGUSER_ADMIN=twenty \
-	-e PGPASSWORD_ADMIN=twenty \
+	-e PGUSER_SUPERUSER=twenty \
+	-e PGPASSWORD_SUPERUSER=twenty \
 	-e ALLOW_NOSSL=true \
 	-v twenty_db_data:/home/postgres/pgdata \
 	-p 5432:5432 \
