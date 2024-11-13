@@ -1,31 +1,31 @@
 type ObjectRecord = Record<string, any>;
 
-export enum WorkflowRecordOperationType {
-  CREATE = 'Create',
-  UPDATE = 'Update',
-  DELETE = 'Delete',
+export enum WorkflowRecordCRUDType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
 }
 
 export type WorkflowCreateRecordActionInput = {
-  type: WorkflowRecordOperationType.CREATE;
+  type: WorkflowRecordCRUDType.CREATE;
   objectName: string;
   objectRecord: ObjectRecord;
 };
 
 export type WorkflowUpdateRecordActionInput = {
-  type: WorkflowRecordOperationType.UPDATE;
+  type: WorkflowRecordCRUDType.UPDATE;
   objectName: string;
   objectRecord: ObjectRecord;
   objectRecordId: string;
 };
 
 export type WorkflowDeleteRecordActionInput = {
-  type: WorkflowRecordOperationType.DELETE;
+  type: WorkflowRecordCRUDType.DELETE;
   objectName: string;
   objectRecordId: string;
 };
 
-export type WorkflowRecordOperationActionInput =
+export type WorkflowRecordCRUDActionInput =
   | WorkflowCreateRecordActionInput
   | WorkflowUpdateRecordActionInput
   | WorkflowDeleteRecordActionInput;

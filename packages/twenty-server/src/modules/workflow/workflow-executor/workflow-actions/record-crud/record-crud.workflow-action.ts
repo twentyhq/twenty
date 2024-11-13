@@ -5,20 +5,20 @@ import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interface
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import {
   WorkflowCreateRecordActionInput,
-  WorkflowRecordOperationActionInput,
-  WorkflowRecordOperationType,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/record-operation/types/workflow-record-operation-action-input.type';
+  WorkflowRecordCRUDActionInput,
+  WorkflowRecordCRUDType,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 
 @Injectable()
-export class RecordOperationWorkflowAction implements WorkflowAction {
+export class RecordCRUDWorkflowAction implements WorkflowAction {
   constructor(private readonly twentyORMManager: TwentyORMManager) {}
 
   async execute(
-    workflowActionInput: WorkflowRecordOperationActionInput,
+    workflowActionInput: WorkflowRecordCRUDActionInput,
   ): Promise<WorkflowActionResult> {
     switch (workflowActionInput.type) {
-      case WorkflowRecordOperationType.CREATE:
+      case WorkflowRecordCRUDType.CREATE:
         return this.createRecord(workflowActionInput);
       default:
         throw new Error(
