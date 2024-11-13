@@ -5,6 +5,7 @@ import {
 import { useEntitySelectSearch } from '@/object-record/relation-picker/hooks/useEntitySelectSearch';
 import { useRelationPickerEntitiesOptions } from '@/object-record/relation-picker/hooks/useRelationPickerEntitiesOptions';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { Placement } from '@floating-ui/react';
@@ -52,11 +53,13 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
     });
 
   const createNewButton = isDefined(onCreate) && (
-    <CreateNewButton
-      onClick={() => onCreate?.(relationPickerSearchFilter)}
-      LeftIcon={IconPlus}
-      text="Add New"
-    />
+    <DropdownMenuItemsContainer>
+      <CreateNewButton
+        onClick={() => onCreate?.(relationPickerSearchFilter)}
+        LeftIcon={IconPlus}
+        text="Add New"
+      />
+    </DropdownMenuItemsContainer>
   );
 
   const results = (
