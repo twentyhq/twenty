@@ -24,8 +24,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { useRecoilValue } from 'recoil';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;
@@ -82,7 +80,6 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   option,
   isNewRow,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const theme = useTheme();
 
   const dropdownIds = useMemo(() => {
