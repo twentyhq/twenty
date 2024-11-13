@@ -108,7 +108,7 @@ export type PhonesFilter = {
 
 export type ArrayFilter = {
   contains?: string[];
-  not_contains?: string[];
+  notContains?: string[];
   is?: IsFilter;
   containsAny?: string[];
   containsIlike?: string;

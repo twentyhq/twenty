@@ -12,7 +12,7 @@ export const ArrayFilterType = new GraphQLInputObjectType({
   fields: {
     containsIlike: { type: new GraphQLList(GraphQLString) },
     contains: { type: new GraphQLList(GraphQLString) },
-    not_contains: { type: new GraphQLList(GraphQLString) },
+    notContains: { type: new GraphQLList(GraphQLString) },
     is: { type: FilterIs },
     isEmptyArray: { type: GraphQLBoolean },
   },

@@ -15,8 +15,8 @@ export const isMatchingArrayFilter = ({
     case arrayFilter.contains !== undefined: {
       return arrayFilter.contains.every((item) => value.includes(item));
     }
-    case arrayFilter.not_contains !== undefined: {
-      return !arrayFilter.not_contains.some((item) => value.includes(item));
+    case arrayFilter.notContains !== undefined: {
+      return !arrayFilter.notContains.some((item) => value.includes(item));
     }
     case arrayFilter.is !== undefined: {
       if (arrayFilter.is === 'NULL') {
