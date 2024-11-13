@@ -7,12 +7,11 @@ import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditG
 import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
 import { WorkflowCodeStep } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
-import { IconCode, isDefined } from 'twenty-ui';
+import { IconCode, isDefined, HorizontalSeparator } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/utils/mergeDefaultFunctionInputAndFunctionInput';
-import { HorizontalSeparator } from 'packages/twenty-front/src/modules/auth/sign-in-up/components/HorizontalSeparator';
 
 const StyledContainer = styled.div`
   display: inline-flex;
