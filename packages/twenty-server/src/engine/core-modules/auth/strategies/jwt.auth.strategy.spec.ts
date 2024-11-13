@@ -151,7 +151,7 @@ describe('JwtAuthStrategy', () => {
     );
 
     await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
   });
 
