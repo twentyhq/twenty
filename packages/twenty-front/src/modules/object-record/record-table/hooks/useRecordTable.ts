@@ -3,7 +3,6 @@ import { Key } from 'ts-key-enum';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useGetIsSomeCellInEditModeState } from '@/object-record/record-table/hooks/internal/useGetIsSomeCellInEditMode';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useSetHasUserSelectedAllRows } from '@/object-record/record-table/hooks/internal/useSetAllRowSelectedState';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
@@ -16,6 +15,10 @@ import { useUpsertRecordFromState } from '../../hooks/useUpsertRecordFromState';
 import { ColumnDefinition } from '../types/ColumnDefinition';
 import { TableHotkeyScope } from '../types/TableHotkeyScope';
 
+import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
+import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useDisableSoftFocus } from './internal/useDisableSoftFocus';
 import { useLeaveTableFocus } from './internal/useLeaveTableFocus';
 import { useResetTableRowSelection } from './internal/useResetTableRowSelection';
@@ -29,24 +32,32 @@ type useRecordTableProps = {
 };
 
 export const useRecordTable = (props?: useRecordTableProps) => {
-  const recordTableId = props?.recordTableId;
+  const recordTableId = useAvailableComponentInstanceIdOrThrow(
+    RecordTableComponentInstanceContext,
+    props?.recordTableId,
+  );
 
-  const {
-    scopeId,
-    availableTableColumnsState,
-    tableFiltersState,
-    tableSortsState,
-    tableColumnsState,
-    onEntityCountChangeState,
-    onColumnsChangeState,
-    isRecordTableInitialLoadingState,
-    tableLastRowVisibleState,
-    selectedRowIdsSelector,
-    onToggleColumnFilterState,
-    onToggleColumnSortState,
-    pendingRecordIdState,
-    hasUserSelectedAllRowsState,
-  } = useRecordTableStates(recordTableId);
+  const availableTableColumnsState = useRecoilComponentCallbackStateV2(
+    availableTableColumnsComponentState,
+    recordTableId,
+  );
+
+  const numColumnsState = useRecoilComponentCallbackStateV2(
+    tableColumnsComponentState,
+    recordTableId,
+  );
+
+  const setNumColumns = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const tableColumns = getSnapshotValue(
+          snapshot,
+          numColumnsState,
+        );
+        return tableColumns?.filter(column => column.isVisible).length || 0;
+      },
+    [numColumnsState],
+  )();
 
   const setAvailableTableColumns = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -227,6 +238,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setOnToggleColumnFilter,
     setOnToggleColumnSort,
     setPendingRecordId,
-    hasUserSelectedAllRowsState,
+    setNumColumns,
   };
 };
