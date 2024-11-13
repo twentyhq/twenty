@@ -27,6 +27,9 @@ export const useFindManyParams = (
     objectNameSingular,
   });
 
+  const currentRecordGroupDefinition =
+    useCurrentRecordGroupDefinition(recordTableId);
+
   const tableViewFilterGroups = useRecoilComponentValueV2(
     tableViewFilterGroupsComponentState,
     recordTableId,
@@ -40,33 +43,13 @@ export const useFindManyParams = (
     recordTableId,
   );
 
-  const filter = computeViewRecordGqlOperationFilter(
+  const stateFilter = computeViewRecordGqlOperationFilter(
     tableFilters,
     objectMetadataItem?.fields ?? [],
     tableViewFilterGroups,
   );
 
-  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, tableSorts);
-
-  return { objectNameSingular, filter, orderBy };
-};
-
-export const useLoadRecordIndexTable = (objectNameSingular: string) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-
-  const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();
-
-  const { setRecordTableData, setIsRecordTableInitialLoading } =
-    useRecordTable();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const params = useFindManyParams(objectNameSingular);
-
-  const recordGqlFields = useRecordTableRecordGqlFields({ objectMetadataItem });
-
-  const groupByFilter = useMemo(() => {
+  const recordGroupFilter = useMemo(() => {
     if (isDefined(currentRecordGroupDefinition)) {
       const fieldMetadataItem = objectMetadataItem?.fields.find(
         (fieldMetadataItem) =>
@@ -87,9 +70,32 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
     // TODO: Handle case when value is nullable
 
     return {};
-  }, [objectMetadataItem?.fields, currentRecordGroupDefinition]);
+  }, [objectMetadataItem.fields, currentRecordGroupDefinition]);
 
-  // TODO: Don't fetch records based on visibleRecordGroups here, this hook instead should be placed somewhere else with a dedicated filter for a given visible record group
+  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, tableSorts);
+
+  return {
+    objectNameSingular,
+    filter: {
+      ...stateFilter,
+      ...recordGroupFilter,
+    },
+    orderBy,
+  };
+};
+
+export const useLoadRecordIndexTable = (objectNameSingular: string) => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const { setRecordTableData, setIsRecordTableInitialLoading } =
+    useRecordTable();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const params = useFindManyParams(objectNameSingular);
+
+  const recordGqlFields = useRecordTableRecordGqlFields({ objectMetadataItem });
 
   const {
     records,
@@ -100,10 +106,6 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
     hasNextPage,
   } = useFindManyRecords({
     ...params,
-    filter: {
-      ...params.filter,
-      ...groupByFilter,
-    },
     recordGqlFields,
     onCompleted: () => {
       setIsRecordTableInitialLoading(false);

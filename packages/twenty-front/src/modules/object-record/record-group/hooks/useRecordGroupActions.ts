@@ -30,7 +30,7 @@ export const useRecordGroupActions = () => {
   });
 
   const { viewGroupFieldMetadataItem } = useRecordGroups({
-    objectMetadataNameSingular: objectNameSingular,
+    objectNameSingular,
   });
 
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =

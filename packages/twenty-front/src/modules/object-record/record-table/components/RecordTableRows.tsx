@@ -1,21 +1,14 @@
-import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
-import { recordGroupDefaultId } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordTableBodyFetchMoreLoader } from '@/object-record/record-table/record-table-body/components/RecordTableBodyFetchMoreLoader';
 import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
-import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
-import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTableRows = () => {
-  const recordGroupId = useCurrentRecordGroupId();
-
-  const tableRowIdsByGroup = useRecoilComponentFamilyValueV2(
-    tableRowIdsByGroupComponentFamilyState,
-    recordGroupId,
-  );
+  const rowIds = useRecoilComponentValueV2(tableAllRowIdsComponentState);
 
   return (
     <>
-      {tableRowIdsByGroup.map((recordId, rowIndex) => {
+      {rowIds.map((recordId, rowIndex) => {
         return (
           <RecordTableRow
             key={recordId}
@@ -24,9 +17,7 @@ export const RecordTableRows = () => {
           />
         );
       })}
-      {recordGroupId !== recordGroupDefaultId && (
-        <RecordTableBodyFetchMoreLoader />
-      )}
+      <RecordTableBodyFetchMoreLoader />
     </>
   );
 };

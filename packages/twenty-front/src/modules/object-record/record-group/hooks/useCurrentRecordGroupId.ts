@@ -6,12 +6,14 @@ export const useCurrentRecordGroupId = () => {
 
   if (!context) {
     throw new Error(
-      'useCurrentRecordGroup must be used within a RecordGroupContextProvider',
+      'useCurrentRecordGroupId must be used within a RecordGroupContextProvider.',
     );
   }
 
   if (!context.recordGroupId) {
-    throw new Error('RecordGroupContext is malformed');
+    throw new Error(
+      'RecordGroupContext is malformed. recordGroupId is missing.',
+    );
   }
 
   return context.recordGroupId;

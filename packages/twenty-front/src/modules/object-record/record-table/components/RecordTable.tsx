@@ -1,14 +1,17 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString, isNull } from '@sniptt/guards';
 
-import { RecordGroupContextProvider } from '@/object-record/record-group/components/RecordGroupContextProvider';
+import { hasRecordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/hasRecordGroupDefinitionsComponentSelector';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
+import { RecordTableStickyEffect } from '@/object-record/record-table/components/RecordTableStickyEffect';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
 import { RecordTableBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyEffect';
+import { RecordTableBodyRecordGroupEffects } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupEffects';
+import { RecordTableBodyRecordGroups } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroups';
 import { RecordTableBodyUnselectEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyUnselectEffect';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
@@ -60,6 +63,11 @@ export const RecordTable = ({
     recordTableId,
   );
 
+  const hasRecordGroups = useRecoilComponentValueV2(
+    hasRecordGroupDefinitionsComponentSelector,
+    recordTableId,
+  );
+
   const recordTableIsEmpty =
     !isRecordTableInitialLoading &&
     tableRowIds.length === 0 &&
@@ -83,11 +91,11 @@ export const RecordTable = ({
         recordTableId={recordTableId}
         viewBarId={viewBarId}
       >
-        <RecordGroupContextProvider
-          objectMetadataNameSingular={objectNameSingular}
-        >
+        {!hasRecordGroups ? (
           <RecordTableBodyEffect />
-        </RecordGroupContextProvider>
+        ) : (
+          <RecordTableBodyRecordGroupEffects />
+        )}
         <RecordTableBodyUnselectEffect
           tableBodyRef={tableBodyRef}
           recordTableId={recordTableId}
@@ -97,12 +105,15 @@ export const RecordTable = ({
         ) : (
           <>
             <StyledTable className="entity-table-cell" ref={tableBodyRef}>
-              <RecordTableHeader
-                objectMetadataNameSingular={objectNameSingular}
-              />
-              <RecordTableBody
-                objectMetadataNameSingular={objectNameSingular}
-              />
+              <RecordTableHeader objectNameSingular={objectNameSingular} />
+              {!hasRecordGroups ? (
+                <RecordTableBody />
+              ) : (
+                <RecordTableBodyRecordGroups
+                  objectNameSingular={objectNameSingular}
+                />
+              )}
+              <RecordTableStickyEffect />
             </StyledTable>
             <DragSelect
               dragSelectable={tableBodyRef}

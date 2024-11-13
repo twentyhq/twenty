@@ -10,6 +10,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isDefined } from '~/utils/isDefined';
 
 type useSetRecordTableDataProps = {
   recordTableId?: string;
@@ -43,12 +44,16 @@ export const useSetRecordTableData = ({
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends ObjectRecord>(
-        newRecords: T[],
-        recordGroupId: string,
-        totalCount?: number,
-      ) => {
-        for (const record of newRecords) {
+      <T extends ObjectRecord>({
+        records,
+        recordGroupId,
+        totalCount,
+      }: {
+        records: T[];
+        recordGroupId?: string;
+        totalCount?: number;
+      }) => {
+        for (const record of records) {
           // TODO: refactor with scoped state later
           const currentRecord = snapshot
             .getLoadable(recordStoreFamilyState(record.id))
@@ -61,7 +66,9 @@ export const useSetRecordTableData = ({
 
         const currentRowIds = getSnapshotValue(
           snapshot,
-          tableRowIdsByGroupFamilyState(recordGroupId),
+          recordGroupId
+            ? tableRowIdsByGroupFamilyState(recordGroupId)
+            : tableAllRowIdsState,
         );
 
         const hasUserSelectedAllRows = getSnapshotValue(
@@ -74,11 +81,7 @@ export const useSetRecordTableData = ({
           recordGroupDefinitionsState,
         );
 
-        const visibleRecordGroupDefinitions = recordGroupDefinitions
-          .filter((recordGroupDefinition) => recordGroupDefinition.isVisible)
-          .sort((a, b) => a.position - b.position);
-
-        const recordIds = newRecords.map((record) => record.id);
+        const recordIds = records.map((record) => record.id);
 
         if (!isDeeplyEqual(currentRowIds, recordIds)) {
           if (hasUserSelectedAllRows) {
@@ -87,14 +90,14 @@ export const useSetRecordTableData = ({
             }
           }
 
-          set(tableRowIdsByGroupFamilyState(recordGroupId), recordIds);
-
-          if (visibleRecordGroupDefinitions.length !== 0) {
+          if (isDefined(recordGroupId)) {
             // TODO: Hack to store all ids in the same order as the record group definitions
             // Should be replaced by something more efficient
             const allRowIds: string[] = [];
 
-            for (const recordGroupDefinition of visibleRecordGroupDefinitions) {
+            set(tableRowIdsByGroupFamilyState(recordGroupId), recordIds);
+
+            for (const recordGroupDefinition of recordGroupDefinitions) {
               const tableRowIdsByGroup =
                 recordGroupDefinition.id !== recordGroupId
                   ? getSnapshotValue(

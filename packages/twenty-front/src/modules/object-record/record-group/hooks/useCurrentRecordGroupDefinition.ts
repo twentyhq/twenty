@@ -1,11 +1,16 @@
-import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
+import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
+import { hasRecordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/hasRecordGroupDefinitionsComponentSelector';
 import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
-import { recordGroupDefaultId } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 
 export const useCurrentRecordGroupDefinition = (recordTableId?: string) => {
-  const currentRecordGroupId = useCurrentRecordGroupId();
+  const context = useContext(RecordGroupContext);
+
+  const hasRecordGroups = useRecoilComponentValueV2(
+    hasRecordGroupDefinitionsComponentSelector,
+    recordTableId,
+  );
 
   const recordGroupDefinitions = useRecoilComponentValueV2(
     recordGroupDefinitionsComponentState,
@@ -13,12 +18,20 @@ export const useCurrentRecordGroupDefinition = (recordTableId?: string) => {
   );
 
   const recordGroupDefinition = useMemo(() => {
-    if (currentRecordGroupId === recordGroupDefaultId) {
+    if (!hasRecordGroups) {
       return undefined;
     }
 
-    return recordGroupDefinitions.find(({ id }) => id === currentRecordGroupId);
-  }, [currentRecordGroupId, recordGroupDefinitions]);
+    if (!context) {
+      throw new Error(
+        'useCurrentRecordGroupDefinition must be used within a RecordGroupContextProvider.',
+      );
+    }
+
+    return recordGroupDefinitions.find(
+      ({ id }) => id === context.recordGroupId,
+    );
+  }, [context, hasRecordGroups, recordGroupDefinitions]);
 
   return recordGroupDefinition;
 };
