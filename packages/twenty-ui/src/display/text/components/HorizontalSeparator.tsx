@@ -4,20 +4,21 @@ import styled from '@emotion/styled';
 type HorizontalSeparatorProps = {
   visible?: boolean;
   text?: string;
+  noMargin?: boolean;
 };
 const StyledSeparator = styled.div<HorizontalSeparatorProps>`
   background-color: ${({ theme }) => theme.border.color.medium};
   height: ${({ visible }) => (visible ? '1px' : 0)};
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  margin-bottom: ${({ theme, noMargin }) => (noMargin ? 0 : theme.spacing(3))};
+  margin-top: ${({ theme, noMargin }) => (noMargin ? 0 : theme.spacing(3))};
   width: 100%;
 `;
 
-const StyledSeparatorContainer = styled.div`
+const StyledSeparatorContainer = styled.div<{ noMargin: boolean }>`
   align-items: center;
   display: flex;
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  margin-bottom: ${({ theme, noMargin }) => (noMargin ? 0 : theme.spacing(3))};
+  margin-top: ${({ theme, noMargin }) => (noMargin ? 0 : theme.spacing(3))};
   width: 100%;
 `;
 
@@ -36,16 +37,17 @@ const StyledText = styled.span`
 export const HorizontalSeparator = ({
   visible = true,
   text = '',
+  noMargin = false,
 }: HorizontalSeparatorProps): JSX.Element => (
   <>
     {text ? (
-      <StyledSeparatorContainer>
+      <StyledSeparatorContainer noMargin={noMargin}>
         <StyledLine visible={visible} />
         {text && <StyledText>{text}</StyledText>}
         <StyledLine visible={visible} />
       </StyledSeparatorContainer>
     ) : (
-      <StyledSeparator visible={visible} />
+      <StyledSeparator visible={visible} noMargin={noMargin} />
     )}
   </>
 );
