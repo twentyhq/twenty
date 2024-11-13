@@ -7,7 +7,7 @@ import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
 import { VariableTagInput } from '@/workflow/search-variables/components/VariableTagInput';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { WorkflowSendEmailStep } from '@/workflow/types/Workflow';
+import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -17,13 +17,13 @@ import { useDebouncedCallback } from 'use-debounce';
 
 type WorkflowEditActionFormSendEmailProps =
   | {
-      action: WorkflowSendEmailStep;
+      action: WorkflowSendEmailAction;
       readonly: true;
     }
   | {
-      action: WorkflowSendEmailStep;
+      action: WorkflowSendEmailAction;
       readonly?: false;
-      onActionUpdate: (action: WorkflowSendEmailStep) => void;
+      onActionUpdate: (action: WorkflowSendEmailAction) => void;
     };
 
 type SendEmailFormData = {

@@ -1,17 +1,17 @@
-import { ReactNode } from 'react';
-import styled from '@emotion/styled';
 import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
-import { setNestedValue } from '@/workflow/utils/setNestedValue';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
 import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
-import { WorkflowCodeStep } from '@/workflow/types/Workflow';
-import { useTheme } from '@emotion/react';
-import { IconCode, isDefined, HorizontalSeparator } from 'twenty-ui';
-import { useDebouncedCallback } from 'use-debounce';
-import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
+import { WorkflowCodeAction } from '@/workflow/types/Workflow';
+import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/utils/mergeDefaultFunctionInputAndFunctionInput';
+import { setNestedValue } from '@/workflow/utils/setNestedValue';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { ReactNode } from 'react';
+import { HorizontalSeparator, IconCode, isDefined } from 'twenty-ui';
+import { useDebouncedCallback } from 'use-debounce';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -39,13 +39,13 @@ const StyledInputContainer = styled.div`
 
 type WorkflowEditActionFormServerlessFunctionProps =
   | {
-      action: WorkflowCodeStep;
+      action: WorkflowCodeAction;
       readonly: true;
     }
   | {
-      action: WorkflowCodeStep;
+      action: WorkflowCodeAction;
       readonly?: false;
-      onActionUpdate: (action: WorkflowCodeStep) => void;
+      onActionUpdate: (action: WorkflowCodeAction) => void;
     };
 
 export const WorkflowEditActionFormServerlessFunction = (

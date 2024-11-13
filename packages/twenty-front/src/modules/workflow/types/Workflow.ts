@@ -1,4 +1,4 @@
-type BaseWorkflowStepSettings = {
+type BaseWorkflowActionSettings = {
   input: object;
   outputSchema: object;
   errorHandlingOptions: {
@@ -11,7 +11,7 @@ type BaseWorkflowStepSettings = {
   };
 };
 
-export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
+export type WorkflowCodeActionSettings = BaseWorkflowActionSettings & {
   input: {
     serverlessFunctionId: string;
     serverlessFunctionVersion: string;
@@ -21,7 +21,7 @@ export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
   };
 };
 
-export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
+export type WorkflowSendEmailActionSettings = BaseWorkflowActionSettings & {
   input: {
     connectedAccountId: string;
     email: string;
@@ -30,23 +30,23 @@ export type WorkflowSendEmailStepSettings = BaseWorkflowStepSettings & {
   };
 };
 
-type BaseWorkflowStep = {
+type BaseWorkflowAction = {
   id: string;
   name: string;
   valid: boolean;
 };
 
-export type WorkflowCodeStep = BaseWorkflowStep & {
+export type WorkflowCodeAction = BaseWorkflowAction & {
   type: 'CODE';
-  settings: WorkflowCodeStepSettings;
+  settings: WorkflowCodeActionSettings;
 };
 
-export type WorkflowSendEmailStep = BaseWorkflowStep & {
+export type WorkflowSendEmailAction = BaseWorkflowAction & {
   type: 'SEND_EMAIL';
-  settings: WorkflowSendEmailStepSettings;
+  settings: WorkflowSendEmailActionSettings;
 };
 
-export type WorkflowAction = WorkflowCodeStep | WorkflowSendEmailStep;
+export type WorkflowAction = WorkflowCodeAction | WorkflowSendEmailAction;
 
 export type WorkflowStep = WorkflowAction;
 
