@@ -11,6 +11,7 @@ import {
   castAsNumberOrNull,
 } from '~/utils/cast-as-number-or-null';
 
+import { isNull } from '@sniptt/guards';
 import { FieldContext } from '../../contexts/FieldContext';
 import { usePersistField } from '../../hooks/usePersistField';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
@@ -32,14 +33,27 @@ export const useNumberField = () => {
 
   const persistField = usePersistField();
 
-  const persistNumberField = (newValue: string) => {
-    if (!canBeCastAsNumberOrNull(newValue)) {
-      return;
+  const persistNumberField = (newValue: string, isPercentage: boolean) => {
+    if (isPercentage) {
+      newValue = newValue.replace('%', '');
+      if (!canBeCastAsNumberOrNull(newValue)) {
+        return;
+      }
+      const castedValue = castAsNumberOrNull(newValue);
+      if (!isNull(castedValue)) {
+        persistField(castedValue / 100);
+      } else {
+        persistField(null);
+      }
+    } else {
+      if (!canBeCastAsNumberOrNull(newValue)) {
+        return;
+      }
+
+      const castedValue = castAsNumberOrNull(newValue);
+
+      persistField(castedValue);
     }
-
-    const castedValue = castAsNumberOrNull(newValue);
-
-    persistField(castedValue);
   };
 
   const { setDraftValue, getDraftValueSelector } =
