@@ -108,8 +108,8 @@ jobs:
       postgres:
         image: twentycrm/twenty-postgres-spilo
         env:
-          PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: postgres
+          PGUSER_SUPERUSER: twenty
+          PGPASSWORD_SUPERUSER: twenty
         ports:
           - 5432:5432
       redis:

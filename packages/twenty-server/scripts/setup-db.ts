@@ -13,11 +13,6 @@ rawDataSource
     );
 
     await performQuery(
-      `ALTER DATABASE SET default_table_access_method = "heap"`,
-      `alter database set default_table_access_method = "heap"`,
-    );
-
-    await performQuery(
       'CREATE SCHEMA IF NOT EXISTS "public"',
       'create schema "public"',
     );
@@ -63,7 +58,7 @@ rawDataSource
     for (const wrapper of supabaseWrappers) {
       await performQuery(
         `
-          CREATE FOREIGN DATA WRAPPER "${wrapper.toLowerCase()}_fdw"
+          CREATE FOREIGN DATA WRAPPER IF NOT EXISTS "${wrapper.toLowerCase()}_fdw"
           HANDLER "${camelToSnakeCase(wrapper)}_fdw_handler"
           VALIDATOR "${camelToSnakeCase(wrapper)}_fdw_validator";
           `,
