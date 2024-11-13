@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { z } from 'zod';
+
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -31,18 +33,22 @@ export class FieldMetadataValidationService<
   }
 
   private validateNumberSettings(settings: FieldMetadataSettings<T>) {
-    if ('decimals' in settings) {
-      const { decimals } = settings;
+    const schema = z.object({
+      decimals: z.number().int().nonnegative().optional(),
+      type: z.enum(['percentage', 'number']).optional(),
+    });
 
-      if (
-        decimals !== undefined &&
-        (decimals < 0 || !Number.isInteger(decimals))
-      ) {
-        throw new FieldMetadataException(
-          `Decimals value "${decimals}" must be a positive integer`,
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
+    const result = schema.safeParse(settings);
+
+    if (!result.success) {
+      const errorMessages = result.error.errors
+        .map((err) => err.message)
+        .join(', ');
+
+      throw new FieldMetadataException(
+        `Value for settings is invalid: ${errorMessages}`,
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
     }
   }
 }
