@@ -16,7 +16,7 @@ export const RecordTableBodyRecordGroupEffect = () => {
 
   const recordGroupId = useCurrentRecordGroupId();
 
-  const [hasInitializedScroll, setHasInitiazedScroll] = useState(false);
+  const [hasInitializedScroll, setHasInitializedScroll] = useState(false);
 
   const { records, totalCount, setRecordTableData, loading, hasNextPage } =
     useLoadRecordIndexTable(objectNameSingular);
@@ -47,7 +47,7 @@ export const RecordTableBodyRecordGroupEffect = () => {
 
         scrollToPosition(positionInPx);
 
-        setHasInitiazedScroll(true);
+        setHasInitializedScroll(true);
       }
     }
   }, [

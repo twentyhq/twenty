@@ -17,7 +17,7 @@ import { useScrollToPosition } from '~/hooks/useScrollToPosition';
 export const RecordTableBodyEffect = () => {
   const { objectNameSingular } = useContext(RecordTableContext);
 
-  const [hasInitializedScroll, setHasInitiazedScroll] = useState(false);
+  const [hasInitializedScroll, setHasInitializedScroll] = useState(false);
 
   const {
     fetchMoreRecords,
@@ -63,7 +63,7 @@ export const RecordTableBodyEffect = () => {
 
         scrollToPosition(positionInPx);
 
-        setHasInitiazedScroll(true);
+        setHasInitializedScroll(true);
       }
     }
   }, [
