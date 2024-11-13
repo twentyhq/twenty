@@ -5,7 +5,6 @@ import { AuthProvider } from '@/auth/components/AuthProvider';
 import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
 import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarProvider';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
-import { isClientConfigLoadedState } from '@/client-config/states/isClientConfigLoadedState';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
@@ -19,17 +18,14 @@ import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const AppRouterProviders = () => {
   const { pathname } = useLocation();
   const pageTitle = getPageTitleFromPath(pathname);
-  const [isClientConfigLoaded] = useRecoilState(isClientConfigLoadedState);
 
   return (
     <ApolloProvider>
-      <ClientConfigProviderEffect />
       <ChromeExtensionSidecarEffect />
       <ChromeExtensionSidecarProvider>
         <UserProviderEffect />
@@ -40,6 +36,7 @@ export const AppRouterProviders = () => {
                 <PrefetchDataProvider>
                   <AppThemeProvider>
                     <SnackBarProvider>
+                      <ClientConfigProviderEffect />
                       <DialogManagerScope dialogManagerScopeId="dialog-manager">
                         <DialogManager>
                           <StrictMode>

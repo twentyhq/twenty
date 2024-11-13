@@ -48,6 +48,7 @@ export const ClientConfigProviderEffect = () => {
   useEffect(() => {
     if (!loading) {
       if (error !== undefined) {
+        setIsClientConfigLoaded(false);
         enqueueSnackBar('Unable to reach backend', {
           variant: SnackBarVariant.Error,
         });
@@ -100,9 +101,9 @@ export const ClientConfigProviderEffect = () => {
     setChromeExtensionId,
     setApiConfig,
     setIsAnalyticsEnabled,
+    error,
+    enqueueSnackBar,
   ]);
-
-  console.log('error: ', error, loading);
 
   return <></>;
 };
