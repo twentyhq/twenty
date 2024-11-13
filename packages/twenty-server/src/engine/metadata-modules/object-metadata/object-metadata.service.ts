@@ -428,11 +428,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.objectMetadataMigrationService.createRenameTableMigration(
         existingObjectMetadata,
         objectMetadataForUpdate,
+        objectMetadataForUpdate.workspaceId,
       );
 
       await this.objectMetadataMigrationService.createRelationsUpdatesMigrations(
         existingObjectMetadata,
         objectMetadataForUpdate,
+        objectMetadataForUpdate.workspaceId,
       );
     }
 

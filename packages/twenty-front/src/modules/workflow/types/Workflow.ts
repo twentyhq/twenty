@@ -15,6 +15,9 @@ export type WorkflowCodeStepSettings = BaseWorkflowStepSettings & {
   input: {
     serverlessFunctionId: string;
     serverlessFunctionVersion: string;
+    serverlessFunctionInput: {
+      [key: string]: any;
+    };
   };
 };
 
@@ -62,6 +65,7 @@ export type WorkflowDatabaseEventTrigger = BaseTrigger & {
     eventName: string;
     input?: object;
     outputSchema: object;
+    objectType?: string;
   };
 };
 

@@ -18,13 +18,13 @@ export class UpsertTimelineActivityFromInternalEvent {
 
   @Process(UpsertTimelineActivityFromInternalEvent.name)
   async handle(
-    data: WorkspaceEventBatch<ObjectRecordBaseEvent>,
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordBaseEvent>,
   ): Promise<void> {
-    for (const eventData of data.events) {
+    for (const eventData of workspaceEventBatch.events) {
       if (eventData.userId) {
         const workspaceMember = await this.workspaceMemberService.getByIdOrFail(
           eventData.userId,
-          data.workspaceId,
+          workspaceEventBatch.workspaceId,
         );
 
         eventData.workspaceMemberId = workspaceMember.id;
@@ -48,9 +48,9 @@ export class UpsertTimelineActivityFromInternalEvent {
       }
 
       await this.timelineActivityService.upsertEvent({
-        ...eventData,
-        workspaceId: data.workspaceId,
-        name: data.name,
+        event: eventData,
+        eventName: workspaceEventBatch.name,
+        workspaceId: workspaceEventBatch.workspaceId,
       });
     }
   }

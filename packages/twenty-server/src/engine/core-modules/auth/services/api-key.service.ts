@@ -21,6 +21,8 @@ export class ApiKeyService {
     }
     const jwtPayload = {
       sub: workspaceId,
+      type: 'API_KEY',
+      workspaceId,
     };
     const secret = this.jwtWrapperService.generateAppSecret(
       'ACCESS',
@@ -33,7 +35,7 @@ export class ApiKeyService {
         (new Date(expiresAt).getTime() - new Date().getTime()) / 1000,
       );
     } else {
-      expiresIn = this.environmentService.get('API_TOKEN_EXPIRES_IN');
+      expiresIn = '100y';
     }
     const token = this.jwtWrapperService.sign(jwtPayload, {
       secret,

@@ -1,5 +1,5 @@
-import * as Apollo from '@apollo/client';
 import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -29,6 +29,16 @@ export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
+};
+
+export type AnalyticsTinybirdJwtMap = {
+  __typename?: 'AnalyticsTinybirdJwtMap';
+  getPageviewsAnalytics: Scalars['String'];
+  getServerlessFunctionDuration: Scalars['String'];
+  getServerlessFunctionErrorCount: Scalars['String'];
+  getServerlessFunctionSuccessRate: Scalars['String'];
+  getUsersAnalytics: Scalars['String'];
+  getWebhookAnalytics: Scalars['String'];
 };
 
 export type ApiConfig = {
@@ -967,6 +977,7 @@ export type ServerlessFunction = {
   description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   latestVersion?: Maybe<Scalars['String']>;
+  latestVersionInputSchema?: Maybe<Scalars['JSON']>;
   name: Scalars['String'];
   publishedVersions: Array<Scalars['String']>;
   runtime: Scalars['String'];
@@ -1200,7 +1211,7 @@ export type UpdateWorkspaceInput = {
 
 export type User = {
   __typename?: 'User';
-  analyticsTinybirdJwt?: Maybe<Scalars['String']>;
+  analyticsTinybirdJwts?: Maybe<AnalyticsTinybirdJwtMap>;
   canImpersonate: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   defaultAvatarUrl?: Maybe<Scalars['String']>;
@@ -1689,7 +1700,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, analyticsTinybirdJwt?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, hasValidEntrepriseKey: boolean, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, hasValidEntrepriseKey: boolean, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
   appToken: Scalars['String'];
@@ -1722,7 +1733,7 @@ export type VerifyMutationVariables = Exact<{
 }>;
 
 
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, analyticsTinybirdJwt?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, hasValidEntrepriseKey: boolean, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, hasValidEntrepriseKey: boolean, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -1809,7 +1820,7 @@ export type ListSsoIdentityProvidersByWorkspaceIdQueryVariables = Exact<{ [key: 
 
 export type ListSsoIdentityProvidersByWorkspaceIdQuery = { __typename?: 'Query', listSSOIdentityProvidersByWorkspaceId: Array<{ __typename?: 'FindAvailableSSOIDPOutput', type: IdpType, id: string, name: string, issuer: string, status: SsoIdentityProviderStatus }> };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, analyticsTinybirdJwt?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, hasValidEntrepriseKey: boolean, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, hasValidEntrepriseKey: boolean, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> };
 
 export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1826,7 +1837,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, analyticsTinybirdJwt?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, hasValidEntrepriseKey: boolean, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, onboardingStatus?: OnboardingStatus | null, userVars: any, analyticsTinybirdJwts?: { __typename?: 'AnalyticsTinybirdJwtMap', getWebhookAnalytics: string, getPageviewsAnalytics: string, getUsersAnalytics: string, getServerlessFunctionDuration: string, getServerlessFunctionSuccessRate: string, getServerlessFunctionErrorCount: string } | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, workspaceMembers?: Array<{ __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale?: string | null, timeZone?: string | null, dateFormat?: WorkspaceMemberDateFormatEnum | null, timeFormat?: WorkspaceMemberTimeFormatEnum | null, name: { __typename?: 'FullName', firstName: string, lastName: string } }> | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, activationStatus: WorkspaceActivationStatus, isPublicInviteLinkEnabled: boolean, hasValidEntrepriseKey: boolean, metadataVersion: number, workspaceMembersCount?: number | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: SubscriptionStatus, interval?: SubscriptionInterval | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> } };
 
 export type ActivateWorkflowVersionMutationVariables = Exact<{
   workflowVersionId: Scalars['String'];
@@ -1848,6 +1859,13 @@ export type DeactivateWorkflowVersionMutationVariables = Exact<{
 
 
 export type DeactivateWorkflowVersionMutation = { __typename?: 'Mutation', deactivateWorkflowVersion: boolean };
+
+export type RunWorkflowVersionMutationVariables = Exact<{
+  input: RunWorkflowVersionInput;
+}>;
+
+
+export type RunWorkflowVersionMutation = { __typename?: 'Mutation', runWorkflowVersion: { __typename?: 'WorkflowRun', workflowRunId: any } };
 
 export type DeleteWorkspaceInvitationMutationVariables = Exact<{
   appTokenId: Scalars['String'];
@@ -2046,7 +2064,14 @@ export const UserQueryFragmentFragmentDoc = gql`
   email
   canImpersonate
   supportUserHash
-  analyticsTinybirdJwt
+  analyticsTinybirdJwts {
+    getWebhookAnalytics
+    getPageviewsAnalytics
+    getUsersAnalytics
+    getServerlessFunctionDuration
+    getServerlessFunctionSuccessRate
+    getServerlessFunctionErrorCount
+  }
   onboardingStatus
   workspaceMember {
     ...WorkspaceMemberQueryFragment
@@ -3525,6 +3550,39 @@ export function useDeactivateWorkflowVersionMutation(baseOptions?: Apollo.Mutati
 export type DeactivateWorkflowVersionMutationHookResult = ReturnType<typeof useDeactivateWorkflowVersionMutation>;
 export type DeactivateWorkflowVersionMutationResult = Apollo.MutationResult<DeactivateWorkflowVersionMutation>;
 export type DeactivateWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<DeactivateWorkflowVersionMutation, DeactivateWorkflowVersionMutationVariables>;
+export const RunWorkflowVersionDocument = gql`
+    mutation RunWorkflowVersion($input: RunWorkflowVersionInput!) {
+  runWorkflowVersion(input: $input) {
+    workflowRunId
+  }
+}
+    `;
+export type RunWorkflowVersionMutationFn = Apollo.MutationFunction<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>;
+
+/**
+ * __useRunWorkflowVersionMutation__
+ *
+ * To run a mutation, you first call `useRunWorkflowVersionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRunWorkflowVersionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [runWorkflowVersionMutation, { data, loading, error }] = useRunWorkflowVersionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRunWorkflowVersionMutation(baseOptions?: Apollo.MutationHookOptions<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>(RunWorkflowVersionDocument, options);
+      }
+export type RunWorkflowVersionMutationHookResult = ReturnType<typeof useRunWorkflowVersionMutation>;
+export type RunWorkflowVersionMutationResult = Apollo.MutationResult<RunWorkflowVersionMutation>;
+export type RunWorkflowVersionMutationOptions = Apollo.BaseMutationOptions<RunWorkflowVersionMutation, RunWorkflowVersionMutationVariables>;
 export const DeleteWorkspaceInvitationDocument = gql`
     mutation DeleteWorkspaceInvitation($appTokenId: String!) {
   deleteWorkspaceInvitation(appTokenId: $appTokenId)
