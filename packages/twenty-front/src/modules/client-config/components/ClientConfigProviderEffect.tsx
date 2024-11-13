@@ -10,6 +10,8 @@ import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilled
 import { isSignUpDisabledState } from '@/client-config/states/isSignUpDisabledState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useGetClientConfigQuery } from '~/generated/graphql';
@@ -37,41 +39,51 @@ export const ClientConfigProviderEffect = () => {
 
   const setApiConfig = useSetRecoilState(apiConfigState);
 
-  const { data, loading } = useGetClientConfigQuery({
+  const { enqueueSnackBar } = useSnackBar();
+
+  const { data, loading, error } = useGetClientConfigQuery({
     skip: isClientConfigLoaded,
   });
 
   useEffect(() => {
-    if (!loading && isDefined(data?.clientConfig)) {
-      setIsClientConfigLoaded(true);
-      setAuthProviders({
-        google: data?.clientConfig.authProviders.google,
-        microsoft: data?.clientConfig.authProviders.microsoft,
-        password: data?.clientConfig.authProviders.password,
-        magicLink: false,
-        sso: data?.clientConfig.authProviders.sso,
-      });
-      setIsDebugMode(data?.clientConfig.debugMode);
-      setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
-      setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
-      setIsSignUpDisabled(data?.clientConfig.signUpDisabled);
+    if (!loading) {
+      if (error !== undefined) {
+        enqueueSnackBar('Unable to reach backend', {
+          variant: SnackBarVariant.Error,
+        });
+        return;
+      }
+      if (isDefined(data?.clientConfig)) {
+        setIsClientConfigLoaded(true);
+        setAuthProviders({
+          google: data?.clientConfig.authProviders.google,
+          microsoft: data?.clientConfig.authProviders.microsoft,
+          password: data?.clientConfig.authProviders.password,
+          magicLink: false,
+          sso: data?.clientConfig.authProviders.sso,
+        });
+        setIsDebugMode(data?.clientConfig.debugMode);
+        setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
+        setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
+        setIsSignUpDisabled(data?.clientConfig.signUpDisabled);
 
-      setBilling(data?.clientConfig.billing);
-      setSupportChat(data?.clientConfig.support);
+        setBilling(data?.clientConfig.billing);
+        setSupportChat(data?.clientConfig.support);
 
-      setSentryConfig({
-        dsn: data?.clientConfig?.sentry?.dsn,
-        release: data?.clientConfig?.sentry?.release,
-        environment: data?.clientConfig?.sentry?.environment,
-      });
+        setSentryConfig({
+          dsn: data?.clientConfig?.sentry?.dsn,
+          release: data?.clientConfig?.sentry?.release,
+          environment: data?.clientConfig?.sentry?.environment,
+        });
 
-      setCaptchaProvider({
-        provider: data?.clientConfig?.captcha?.provider,
-        siteKey: data?.clientConfig?.captcha?.siteKey,
-      });
+        setCaptchaProvider({
+          provider: data?.clientConfig?.captcha?.provider,
+          siteKey: data?.clientConfig?.captcha?.siteKey,
+        });
 
-      setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
-      setApiConfig(data?.clientConfig?.api);
+        setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
+        setApiConfig(data?.clientConfig?.api);
+      }
     }
   }, [
     data,
@@ -89,6 +101,8 @@ export const ClientConfigProviderEffect = () => {
     setApiConfig,
     setIsAnalyticsEnabled,
   ]);
+
+  console.log('error: ', error, loading);
 
   return <></>;
 };
