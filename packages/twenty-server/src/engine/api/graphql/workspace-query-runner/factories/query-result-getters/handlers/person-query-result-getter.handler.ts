@@ -12,6 +12,8 @@ export class PersonQueryResultGetterHandler
     person: PersonWorkspaceEntity,
     workspaceId: string,
   ): Promise<PersonWorkspaceEntity> {
+    console.log('PersonQueryResultGetterHandler.handle');
+
     if (!person.id || !person?.avatarUrl) {
       return person;
     }

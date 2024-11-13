@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -6,7 +6,10 @@ import { Repository } from 'typeorm';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import {
+  generateObjectMetadataMap,
+  ObjectMetadataMap,
+} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import {
   WorkspaceMetadataCacheException,
   WorkspaceMetadataCacheExceptionCode,
@@ -100,6 +103,33 @@ export class WorkspaceMetadataCacheService {
       workspaceId,
       currentDatabaseVersion,
     );
+  }
+
+  async getWorkspaceObjectMetadataMap(
+    workspaceId: string,
+  ): Promise<ObjectMetadataMap> {
+    const metadataVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+
+    if (!metadataVersion) {
+      throw new NotFoundException(
+        `Metadata version not found for workspace ${workspaceId}`,
+      );
+    }
+
+    const objectMetadataMap =
+      await this.workspaceCacheStorageService.getObjectMetadataMap(
+        workspaceId,
+        metadataVersion,
+      );
+
+    if (!objectMetadataMap) {
+      throw new NotFoundException(
+        `Object metadata map not found for workspace ${workspaceId} and metadata version ${metadataVersion}`,
+      );
+    }
+
+    return objectMetadataMap;
   }
 
   private async getMetadataVersionFromDatabase(
