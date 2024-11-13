@@ -35,7 +35,7 @@ export const useNumberField = () => {
 
   const persistNumberField = (newValue: string, isPercentage: boolean) => {
     if (isPercentage) {
-      newValue = newValue.replace('%', '');
+      newValue = newValue.replaceAll('%', '');
       if (!canBeCastAsNumberOrNull(newValue)) {
         return;
       }

@@ -56,7 +56,7 @@ export const SettingsDataModelFieldNumberForm = ({
             <>
               <StyledFormCardTitle>Type</StyledFormCardTitle>
               <Select
-                dropdownId="string"
+                dropdownId="selectNumberTypes"
                 options={[
                   {
                     label: 'Number',
@@ -79,7 +79,7 @@ export const SettingsDataModelFieldNumberForm = ({
                 value={count}
                 onChange={(value) => onChange({ type: type, decimals: value })}
                 disabled={disabled}
-              ></SettingsDataModelFieldNumberDecimalsInput>
+              />
             </>
           );
         }}
