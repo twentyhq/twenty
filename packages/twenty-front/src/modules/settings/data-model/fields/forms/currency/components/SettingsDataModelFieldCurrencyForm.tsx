@@ -6,7 +6,7 @@ import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/va
 import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
-import { IconCurrencyDollar } from 'twenty-ui';
+import { IllustrationIconCurrencyDollar } from 'twenty-ui';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
@@ -55,7 +55,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
         render={({ field: { onChange, value } }) => (
           <SettingsOptionCardContent
             variant="select"
-            Icon={IconCurrencyDollar}
+            Icon={IllustrationIconCurrencyDollar}
             title="Default Value"
             description="Choose the default currency that will apply"
             value={value}

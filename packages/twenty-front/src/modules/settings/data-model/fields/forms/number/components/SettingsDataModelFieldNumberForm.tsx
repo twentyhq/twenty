@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { numberFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/numberFieldDefaultValueSchema';
 import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
-import { IconDecimal } from 'twenty-ui';
+import { IllustrationIconDecimal } from 'twenty-ui';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
@@ -43,13 +43,13 @@ export const SettingsDataModelFieldNumberForm = ({
         return (
           <SettingsOptionCardContent
             variant="counter"
+            Icon={IllustrationIconDecimal}
             title="Number of decimals"
             description="Set the number of decimal places"
             value={count}
             onChange={(value) => onChange({ decimals: value })}
             disabled={disabled}
             exampleValue={1000}
-            Icon={IconDecimal}
           />
         );
       }}

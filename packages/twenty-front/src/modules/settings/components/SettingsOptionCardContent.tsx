@@ -70,7 +70,7 @@ const StyledCardContent = styled(CardContent)<{
 const StyledTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-bottom: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledDescription = styled.div`
@@ -94,9 +94,9 @@ const StyledToggle = styled(Toggle)`
   margin-left: auto;
 `;
 
-const StyledSelect = styled(Select)<{ fullWidth?: boolean }>`
+const StyledSelect = styled(Select)`
   margin-left: auto;
-  width: ${({ fullWidth }) => (fullWidth ? 'auto' : '120px')};
+  width: 120px;
 `;
 
 const StyledCover = styled.span`
@@ -135,7 +135,6 @@ export const SettingsOptionCardContent = (
     if (props.variant === 'select') {
       return (
         <StyledSelect
-          fullWidth={props.fullWidth}
           className={props.selectClassName}
           dropdownWidth={props.fullWidth ? 'auto' : 120}
           disabled={disabled}
@@ -172,7 +171,7 @@ export const SettingsOptionCardContent = (
     >
       {Icon && (
         <StyledIcon>
-          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.md} />
+          <Icon size={theme.icon.size.xl} stroke={theme.icon.stroke.lg} />
         </StyledIcon>
       )}
 

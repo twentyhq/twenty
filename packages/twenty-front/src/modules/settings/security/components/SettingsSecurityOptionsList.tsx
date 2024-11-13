@@ -3,7 +3,7 @@ import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionC
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilState } from 'recoil';
-import { Card, IconLink, isDefined } from 'twenty-ui';
+import { Card, IllustrationIconLink2, isDefined } from 'twenty-ui';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 
 export const SettingsSecurityOptionsList = () => {
@@ -44,10 +44,10 @@ export const SettingsSecurityOptionsList = () => {
   };
 
   return (
-    <Card>
+    <Card rounded>
       <SettingsOptionCardContent
         variant="toggle"
-        Icon={IconLink}
+        Icon={IllustrationIconLink2}
         title="Invite by Link"
         description="Allow the invitation of new users by sharing an invite link."
         checked={currentWorkspace.isPublicInviteLinkEnabled}
