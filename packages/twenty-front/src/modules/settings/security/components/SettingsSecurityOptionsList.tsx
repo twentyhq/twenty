@@ -3,13 +3,10 @@ import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionC
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
-import { useTheme } from '@emotion/react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   IconLink,
-  Toggle,
   Card,
-  isDefined,
   IconGoogle,
   IconMicrosoft,
   IconPassword,
@@ -17,12 +14,8 @@ import {
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { AuthProviders } from '~/generated-metadata/graphql';
 import { capitalize } from '~/utils/string/capitalize';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
-
-const StyledToggle = styled(Toggle)`
-  margin-left: auto;
-`;
+import { isDefined } from '~/utils/isDefined';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
@@ -32,20 +25,11 @@ const StyledSettingsSecurityOptionsList = styled.div`
 
 export const SettingsSecurityOptionsList = () => {
   const { enqueueSnackBar } = useSnackBar();
-  const theme = useTheme();
-
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
-  const toggleColor = isAdvancedModeEnabled ? theme.color.yellow : undefined;
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
-  if (!isDefined(currentWorkspace)) {
-    throw new Error(
-      'The current workspace must be defined to edit its security options.',
-    );
-  }
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
@@ -70,6 +54,7 @@ export const SettingsSecurityOptionsList = () => {
     }
 
     if (
+      isDefined(SSOIdentitiesProviders) &&
       SSOIdentitiesProviders.length === 0 &&
       currentWorkspace[key] &&
       Object.entries(currentWorkspace).filter(
@@ -130,40 +115,44 @@ export const SettingsSecurityOptionsList = () => {
 
   return (
     <StyledSettingsSecurityOptionsList>
-      <Card>
-        <SettingsOptionCardContent
-          Icon={IconGoogle}
-          title="Google"
-          description="Allow logins through Google's single sign-on functionality."
-          checked={currentWorkspace?.isGoogleAuthEnabled}
-          onChange={() => toggleAuthMethod('google')}
-        />
-        <SettingsOptionCardContent
-          Icon={IconMicrosoft}
-          title="Microsoft"
-          description="Allow logins through Microsoft's single sign-on functionality."
-          checked={currentWorkspace?.isMicrosoftAuthEnabled}
-          onChange={() => toggleAuthMethod('microsoft')}
-        />
-        <SettingsOptionCardContent
-          Icon={IconPassword}
-          title="Password"
-          description="Allow users to sign in with an email and password."
-          checked={currentWorkspace?.isPasswordAuthEnabled}
-          onChange={() => toggleAuthMethod('password')}
-        />
-      </Card>
-      <Card>
-        <SettingsOptionCardContent
-          Icon={IconLink}
-          title="Invite by Link"
-          description="Allow the invitation of new users by sharing an invite link."
-          checked={currentWorkspace.isPublicInviteLinkEnabled}
-          onChange={() =>
-            handleChange(!currentWorkspace.isPublicInviteLinkEnabled)
-          }
-        />
-      </Card>
+      {currentWorkspace && (
+        <>
+          <Card>
+            <SettingsOptionCardContent
+              Icon={IconGoogle}
+              title="Google"
+              description="Allow logins through Google's single sign-on functionality."
+              checked={currentWorkspace?.isGoogleAuthEnabled}
+              onChange={() => toggleAuthMethod('google')}
+            />
+            <SettingsOptionCardContent
+              Icon={IconMicrosoft}
+              title="Microsoft"
+              description="Allow logins through Microsoft's single sign-on functionality."
+              checked={currentWorkspace?.isMicrosoftAuthEnabled}
+              onChange={() => toggleAuthMethod('microsoft')}
+            />
+            <SettingsOptionCardContent
+              Icon={IconPassword}
+              title="Password"
+              description="Allow users to sign in with an email and password."
+              checked={currentWorkspace?.isPasswordAuthEnabled}
+              onChange={() => toggleAuthMethod('password')}
+            />
+          </Card>
+          <Card>
+            <SettingsOptionCardContent
+              Icon={IconLink}
+              title="Invite by Link"
+              description="Allow the invitation of new users by sharing an invite link."
+              checked={currentWorkspace.isPublicInviteLinkEnabled}
+              onChange={() =>
+                handleChange(!currentWorkspace.isPublicInviteLinkEnabled)
+              }
+            />
+          </Card>
+        </>
+      )}
     </StyledSettingsSecurityOptionsList>
   );
 };

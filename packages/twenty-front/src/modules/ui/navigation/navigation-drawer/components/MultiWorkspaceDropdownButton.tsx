@@ -121,9 +121,11 @@ export const MultiWorkspaceDropdownButton = ({
       dropdownComponents={
         <DropdownMenuItemsContainer>
           {workspaces.map((workspace) => (
-            <StyledLink to={buildWorkspaceUrl(workspace.subdomain)}>
+            <StyledLink
+              key={workspace.id}
+              to={buildWorkspaceUrl(workspace.subdomain)}
+            >
               <MenuItemSelectAvatar
-                key={workspace.id}
                 text={workspace.displayName ?? ''}
                 avatar={
                   <StyledLogo

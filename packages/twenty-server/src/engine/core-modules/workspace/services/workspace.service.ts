@@ -211,7 +211,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       magicLink: false,
       password: workspace.isPasswordAuthEnabled,
       microsoft: workspace.isMicrosoftAuthEnabled,
-      sso: workspace.workspaceSSOIdentityProviders.length > 0,
+      sso: workspace.workspaceSSOIdentityProviders.map((identityProvider) => ({
+        id: identityProvider.id,
+        name: identityProvider.name,
+        type: identityProvider.type,
+        status: identityProvider.status,
+        issuer: identityProvider.issuer,
+      })),
     };
   }
 

@@ -7,12 +7,8 @@ import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { isDefined } from '~/utils/isDefined';
-
-import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
-// import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -31,11 +27,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
 
   const isMatchingLocation = useIsMatchingLocation();
-
-  const { redirectToSSOLoginPage } = useSSO();
-  // const setAvailableWorkspacesForSSOState = useSetRecoilState(
-  //   availableSSOIdentityProvidersState,
-  // );
 
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const [searchParams] = useSearchParams();
@@ -103,10 +94,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     setSignInUpStep,
   ]);
 
-  const continueWithSSO = () => {
-    setSignInUpStep(SignInUpStep.SSOEmail);
-  };
-
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
       const token = await readCaptchaToken();
@@ -154,7 +141,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     signInUpMode,
     continueWithCredentials,
     continueWithEmail,
-    continueWithSSO,
     submitCredentials,
   };
 };

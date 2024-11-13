@@ -6,7 +6,13 @@ export const SWITCH_WORKSPACE = gql`
       id
       subdomain
       authProviders {
-        sso
+        sso {
+          id
+          name
+          type
+          status
+          issuer
+        }
         google
         magicLink
         password

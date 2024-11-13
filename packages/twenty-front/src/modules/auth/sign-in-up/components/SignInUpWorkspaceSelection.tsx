@@ -39,7 +39,7 @@ export const SignInUpWorkspaceSelection = () => {
 
   return (
     <>
-      <H2Title title={'Select a workspace'} />
+      <H2Title title="Select a workspace" />
       <StyledContentContainer>
         {availableWorkspacesForAuth &&
           availableWorkspacesForAuth.length !== 0 &&

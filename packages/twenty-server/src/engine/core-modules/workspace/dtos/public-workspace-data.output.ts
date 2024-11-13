@@ -3,9 +3,27 @@ import { ObjectType, Field } from '@nestjs/graphql';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @ObjectType()
+export class SSOIdentityProvider {
+  @Field(() => String)
+  id: string;
+
+  @Field(() => String)
+  name: string;
+
+  @Field(() => String)
+  type: string;
+
+  @Field(() => String)
+  status: string;
+
+  @Field(() => String)
+  issuer: string;
+}
+
+@ObjectType()
 export class AuthProviders {
-  @Field(() => Boolean)
-  sso: boolean;
+  @Field(() => [SSOIdentityProvider])
+  sso: Array<SSOIdentityProvider>;
 
   @Field(() => Boolean)
   google: boolean;

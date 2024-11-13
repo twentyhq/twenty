@@ -6,10 +6,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Issuer } from 'openid-client';
 import { Repository } from 'typeorm';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FindAvailableSSOIDPOutput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.output';
@@ -40,9 +36,6 @@ export class SSOService {
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    private readonly environmentService: EnvironmentService,
-    @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
-    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   private async isSSOEnabled(workspaceId: string) {
@@ -200,7 +193,11 @@ export class SSOService {
   buildIssuerURL(
     identityProvider: Pick<WorkspaceSSOIdentityProvider, 'id' | 'type'>,
   ) {
-    return `${ServerUrl.get()}/auth/${identityProvider.type.toLowerCase()}/login/${identityProvider.id}`;
+    const authorizationUrl = new URL(ServerUrl.get());
+
+    authorizationUrl.pathname = `/auth/${identityProvider.type.toLowerCase()}/login/${identityProvider.id}`;
+
+    return authorizationUrl.toString();
   }
 
   private isOIDCIdentityProvider(

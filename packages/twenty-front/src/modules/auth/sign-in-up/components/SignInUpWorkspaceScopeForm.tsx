@@ -1,0 +1,65 @@
+import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
+import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
+import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
+import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { SignInUpStep } from '@/auth/states/signInUpStepState';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
+import styled from '@emotion/styled';
+import { useCallback } from 'react';
+import { useRecoilState } from 'recoil';
+import { ActionLink } from 'twenty-ui';
+import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/SignInUpWithGoogle';
+import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/SignInUpWithMicrosoft';
+import { SignInUpWithSSO } from '@/auth/sign-in-up/components/SignInUpWithSSO';
+import { SignInUpWithPassword } from '@/auth/sign-in-up/components/SignInUpWithPassword';
+
+const StyledContentContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(8)};
+  margin-top: ${({ theme }) => theme.spacing(4)};
+`;
+
+export const SignInUpWorkspaceScopeForm = () => {
+  const [authProviders] = useRecoilState(authProvidersState);
+
+  const { form } = useSignInUpForm();
+  const { handleResetPassword } = useHandleResetPassword();
+
+  const { signInUpStep, continueWithEmail } = useSignInUp(form);
+
+  useCallback(() => {
+    if (
+      signInUpStep === SignInUpStep.Init &&
+      !authProviders.google &&
+      !authProviders.microsoft &&
+      !authProviders.sso
+    ) {
+      continueWithEmail();
+    }
+  }, [authProviders, continueWithEmail, signInUpStep]);
+
+  return (
+    <>
+      <StyledContentContainer>
+        {authProviders.google && <SignInUpWithGoogle />}
+
+        {authProviders.microsoft && <SignInUpWithMicrosoft />}
+
+        {authProviders.sso && <SignInUpWithSSO />}
+
+        {(authProviders.google ||
+          authProviders.microsoft ||
+          authProviders.sso) &&
+        authProviders.password ? (
+          <HorizontalSeparator visible />
+        ) : null}
+
+        {authProviders.password && <SignInUpWithPassword />}
+      </StyledContentContainer>
+      {signInUpStep === SignInUpStep.Password && (
+        <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
+          Forgot your password?
+        </ActionLink>
+      )}
+    </>
+  );
+};

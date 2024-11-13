@@ -74,7 +74,7 @@ export type AuthProviders = {
   magicLink: Scalars['Boolean'];
   microsoft: Scalars['Boolean'];
   password: Scalars['Boolean'];
-  sso: Scalars['Boolean'];
+  sso: Array<SsoIdentityProvider>;
 };
 
 export type AuthToken = {
@@ -962,6 +962,15 @@ export type SsoConnection = {
   type: IdentityProviderType;
 };
 
+export type SsoIdentityProvider = {
+  __typename?: 'SSOIdentityProvider';
+  id: Scalars['String'];
+  issuer: Scalars['String'];
+  name: Scalars['String'];
+  status: Scalars['String'];
+  type: Scalars['String'];
+};
+
 export enum SsoIdentityProviderStatus {
   Active = 'Active',
   Error = 'Error',
@@ -1731,7 +1740,7 @@ export type SwitchWorkspaceMutationVariables = Exact<{
 }>;
 
 
-export type SwitchWorkspaceMutation = { __typename?: 'Mutation', switchWorkspace: { __typename?: 'PublicWorkspaceDataOutput', id: string, subdomain: string, authProviders: { __typename?: 'AuthProviders', sso: boolean, google: boolean, magicLink: boolean, password: boolean, microsoft: boolean } } };
+export type SwitchWorkspaceMutation = { __typename?: 'Mutation', switchWorkspace: { __typename?: 'PublicWorkspaceDataOutput', id: string, subdomain: string, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: string, status: string, issuer: string }> } } };
 
 export type UpdatePasswordViaResetTokenMutationVariables = Exact<{
   token: Scalars['String'];
@@ -1768,7 +1777,7 @@ export type GetPublicWorkspaceDataBySubdomainQueryVariables = Exact<{
 }>;
 
 
-export type GetPublicWorkspaceDataBySubdomainQuery = { __typename?: 'Query', getPublicWorkspaceDataBySubdomain: { __typename?: 'PublicWorkspaceDataOutput', id: string, logo?: string | null, displayName?: string | null, subdomain: string, authProviders: { __typename?: 'AuthProviders', sso: boolean, google: boolean, magicLink: boolean, password: boolean, microsoft: boolean } } };
+export type GetPublicWorkspaceDataBySubdomainQuery = { __typename?: 'Query', getPublicWorkspaceDataBySubdomain: { __typename?: 'PublicWorkspaceDataOutput', id: string, logo?: string | null, displayName?: string | null, subdomain: string, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: string, status: string, issuer: string }> } } };
 
 export type ValidatePasswordResetTokenQueryVariables = Exact<{
   token: Scalars['String'];
@@ -2745,7 +2754,13 @@ export const SwitchWorkspaceDocument = gql`
     id
     subdomain
     authProviders {
-      sso
+      sso {
+        id
+        name
+        type
+        status
+        issuer
+      }
       google
       magicLink
       password
@@ -2945,7 +2960,13 @@ export const GetPublicWorkspaceDataBySubdomainDocument = gql`
     displayName
     subdomain
     authProviders {
-      sso
+      sso {
+        id
+        name
+        type
+        status
+        issuer
+      }
       google
       magicLink
       password

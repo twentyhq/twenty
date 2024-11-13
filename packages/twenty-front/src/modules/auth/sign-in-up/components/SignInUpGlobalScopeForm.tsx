@@ -56,7 +56,7 @@ const validationSchema = z
   })
   .required();
 
-export const SignInUpGlobalScope = () => {
+export const SignInUpGlobalScopeForm = () => {
   const theme = useTheme();
   const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
 

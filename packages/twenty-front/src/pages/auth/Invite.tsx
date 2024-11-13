@@ -1,7 +1,7 @@
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
-import { SignInUpForm } from '@/auth/sign-in-up/components/SignInUpForm';
+import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -91,7 +91,7 @@ export const Invite = () => {
           <FooterNote />
         </>
       ) : (
-        <SignInUpForm />
+        <SignInUpWorkspaceScopeForm />
       )}
     </>
   );

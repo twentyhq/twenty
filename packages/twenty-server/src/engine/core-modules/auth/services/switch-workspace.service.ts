@@ -9,7 +9,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
@@ -66,25 +65,6 @@ export class SwitchWorkspaceService {
       id: user.id,
       defaultWorkspace: workspace,
     });
-
-    // if (workspace.workspaceSSOIdentityProviders.length > 0) {
-    //   return {
-    //     useSSOAuth: true,
-    //     workspace,
-    //     availableSSOIdentityProviders:
-    //       await this.sSSOService.listSSOIdentityProvidersByWorkspaceId(
-    //         workspaceId,
-    //       ),
-    //   } as {
-    //     useSSOAuth: true;
-    //     workspace: Workspace;
-    //     availableSSOIdentityProviders: Awaited<
-    //       ReturnType<
-    //         typeof this.sSSOService.listSSOIdentityProvidersByWorkspaceId
-    //       >
-    //     >;
-    //   };
-    // }
 
     return {
       id: workspace.id,

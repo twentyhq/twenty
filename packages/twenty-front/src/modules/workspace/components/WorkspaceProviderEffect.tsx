@@ -33,7 +33,8 @@ export const WorkspaceProviderEffect = () => {
       setAuthProviders(data.getPublicWorkspaceDataBySubdomain.authProviders);
       setWorkspacePublicDataState(data.getPublicWorkspaceDataBySubdomain);
     },
-    onError: () => {
+    onError: (error) => {
+      console.error(error);
       setLastAuthenticateWorkspaceState(null);
       redirectToHome();
     },
@@ -53,6 +54,21 @@ export const WorkspaceProviderEffect = () => {
       redirectToWorkspace(lastAuthenticateWorkspace.subdomain);
     }
   }, [lastAuthenticateWorkspace]);
+
+  useEffect(() => {
+    try {
+      if (isDefined(workspacePublicData?.logo)) {
+        const link: HTMLLinkElement =
+          document.querySelector("link[rel*='icon']") ||
+          document.createElement('link');
+        link.rel = 'icon';
+        link.href = workspacePublicData.logo;
+        document.getElementsByTagName('head')[0].appendChild(link);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [workspacePublicData]);
 
   return <></>;
 };

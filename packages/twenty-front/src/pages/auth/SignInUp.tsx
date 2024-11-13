@@ -6,19 +6,22 @@ import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import {
   isTwentyHomePage,
+  isTwentyWorkspaceSubdomain,
   redirectToHome,
   twentyHomePage,
 } from '~/utils/workspace-url.helper';
 import { SignInUpWorkspaceSelection } from '@/auth/sign-in-up/components/SignInUpWorkspaceSelection';
-import { SignInUpGlobalScope } from '@/auth/sign-in-up/components/SignInUpGlobalScope';
+import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { AnimatedEaseIn } from 'twenty-ui';
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
-import { SignInUpForm } from '@/auth/sign-in-up/components/SignInUpForm';
+import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { Link } from 'react-router-dom';
 import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
+import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/SignInUpSSOIdentityProviderSelection';
+import { useCallback } from 'react';
 
 export const SignInUp = () => {
   const setLastAuthenticateWorkspaceState = useSetRecoilState(
@@ -35,6 +38,27 @@ export const SignInUp = () => {
     redirectToHome();
   };
 
+  const CurrentFormComponent = useCallback(() => {
+    if (isTwentyHomePage && signInUpStep === SignInUpStep.WorkspaceSelection) {
+      return <SignInUpWorkspaceSelection />;
+    }
+
+    if (isTwentyHomePage) {
+      return <SignInUpGlobalScopeForm />;
+    }
+
+    if (
+      isTwentyWorkspaceSubdomain &&
+      signInUpStep === SignInUpStep.SSOIdentityProviderSelection
+    ) {
+      return <SignInUpSSOIdentityProviderSelection />;
+    }
+
+    if (isTwentyWorkspaceSubdomain) {
+      return <SignInUpWorkspaceScopeForm />;
+    }
+  }, [signInUpStep]);
+
   return (
     <>
       {/* TODO AMOREAUX: Need design for this */}
@@ -49,15 +73,7 @@ export const SignInUp = () => {
       <Title animate>
         {`Welcome to ${workspacePublicData?.displayName ?? DEFAULT_WORKSPACE_NAME}`}
       </Title>
-      {isTwentyHomePage ? (
-        isTwentyHomePage && signInUpStep === SignInUpStep.WorkspaceSelection ? (
-          <SignInUpWorkspaceSelection />
-        ) : (
-          <SignInUpGlobalScope />
-        )
-      ) : (
-        <SignInUpForm />
-      )}
+      <CurrentFormComponent />
       <FooterNote />
     </>
   );
