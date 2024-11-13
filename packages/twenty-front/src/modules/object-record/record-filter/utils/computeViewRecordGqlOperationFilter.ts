@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   ActorFilter,
   AddressFilter,
+  ArrayFilter,
   CurrencyFilter,
   DateFilter,
   EmailsFilter,
@@ -634,11 +635,25 @@ const computeFilterRecordGqlOperationFilter = (
             };
           case ViewFilterOperand.DoesNotContain:
             return {
-              not: {
-                [correspondingField.name]: {
-                  containsAny: parsedOptionValues,
-                } as UUIDFilter,
-              },
+              or: [
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      containsAny: parsedOptionValues,
+                    } as UUIDFilter,
+                  },
+                },
+                {
+                  [correspondingField.name]: {
+                    isEmptyArray: true,
+                  } as ArrayFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    is: 'NULL',
+                  } as ArrayFilter,
+                },
+              ],
             };
           default:
             throw new Error(
