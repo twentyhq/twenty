@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
-
 import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
 import { setNestedValue } from '@/workflow/utils/setNestedValue';
 import { Select, SelectOption } from '@/ui/input/components/Select';
@@ -13,6 +12,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/utils/mergeDefaultFunctionInputAndFunctionInput';
+import { HorizontalSeparator } from 'packages/twenty-front/src/modules/auth/sign-in-up/components/HorizontalSeparator';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -144,13 +144,32 @@ export const WorkflowEditActionFormServerlessFunction = (
     path: string[] = [],
     isRoot = true,
   ): ReactNode[] => {
+    const displaySeparator = (functionInput: FunctionInput) => {
+      const keys = Object.keys(functionInput);
+      if (keys.length > 1) {
+        return true;
+      }
+      if (keys.length === 1) {
+        const subKeys = Object.keys(functionInput[keys[0]]);
+        return subKeys.length > 0;
+      }
+      return false;
+    };
+
     return Object.entries(functionInput).map(([inputKey, inputValue]) => {
       const currentPath = [...path, inputKey];
       const pathKey = currentPath.join('.');
 
       if (inputValue !== null && typeof inputValue === 'object') {
         if (isRoot) {
-          return renderFields(inputValue, currentPath, false);
+          return (
+            <>
+              {displaySeparator(functionInput) && (
+                <HorizontalSeparator noMargin />
+              )}
+              {renderFields(inputValue, currentPath, false)}
+            </>
+          );
         }
         return (
           <StyledContainer key={pathKey}>
