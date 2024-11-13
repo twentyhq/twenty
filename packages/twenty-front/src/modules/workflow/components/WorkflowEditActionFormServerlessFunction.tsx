@@ -142,17 +142,21 @@ export const WorkflowEditActionFormServerlessFunction = (
   const renderFields = (
     functionInput: FunctionInput,
     path: string[] = [],
+    isRoot = true,
   ): ReactNode | undefined => {
     return Object.entries(functionInput).map(([inputKey, inputValue]) => {
       const currentPath = [...path, inputKey];
       const pathKey = currentPath.join('.');
 
       if (inputValue !== null && typeof inputValue === 'object') {
+        if (isRoot) {
+          return renderFields(inputValue, currentPath, false);
+        }
         return (
           <StyledContainer key={pathKey}>
             <StyledLabel>{inputKey}</StyledLabel>
             <StyledInputContainer>
-              {renderFields(inputValue, currentPath)}
+              {renderFields(inputValue, currentPath, false)}
             </StyledInputContainer>
           </StyledContainer>
         );
