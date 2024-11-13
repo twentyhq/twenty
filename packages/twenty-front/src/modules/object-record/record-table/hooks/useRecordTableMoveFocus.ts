@@ -33,6 +33,10 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
 
         const currentRowIndex = allRowIds.indexOf(softFocusPosition.recordId);
 
+        if (currentRowIndex === -1) {
+          return;
+        }
+
         let newRowIndex = currentRowIndex - 1;
 
         if (newRowIndex < 0) {
@@ -57,6 +61,10 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
         );
 
         const currentRowIndex = allRowIds.indexOf(softFocusPosition.recordId);
+
+        if (currentRowIndex === -1) {
+          return;
+        }
 
         let newRowIndex = currentRowIndex + 1;
 
@@ -93,6 +101,10 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
 
         const currentColumnIndex = softFocusPosition.column;
         const currentRowIndex = allRowIds.indexOf(softFocusPosition.recordId);
+
+        if (currentRowIndex === -1) {
+          return;
+        }
 
         const isLastRowAndLastColumn =
           currentColumnIndex === numberOfTableColumns - 1 &&
@@ -144,6 +156,10 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
 
         const currentColumnIndex = softFocusPosition.column;
         const currentRowIndex = rowIds.indexOf(softFocusPosition.recordId);
+
+        if (currentRowIndex === -1) {
+          return;
+        }
 
         const isFirstRowAndFirstColumn =
           currentColumnIndex === 0 && currentRowIndex === 0;
