@@ -25,7 +25,7 @@ export class WorkflowActionFactory {
         return this.codeWorkflowAction;
       case WorkflowActionType.SEND_EMAIL:
         return this.sendEmailWorkflowAction;
-      case WorkflowActionType.RECORD_OPERATION:
+      case WorkflowActionType.RECORD_CRUD:
         return this.recordCRUDWorkflowAction;
       default:
         throw new WorkflowStepExecutorException(

@@ -6,7 +6,7 @@ import { WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/w
 export enum WorkflowActionType {
   CODE = 'CODE',
   SEND_EMAIL = 'SEND_EMAIL',
-  RECORD_OPERATION = 'RECORD_OPERATION',
+  RECORD_CRUD = 'RECORD_CRUD',
 }
 
 type BaseWorkflowAction = {
@@ -28,7 +28,7 @@ export type WorkflowSendEmailAction = BaseWorkflowAction & {
 };
 
 export type WorkflowRecordCRUDAction = BaseWorkflowAction & {
-  type: WorkflowActionType.RECORD_OPERATION;
+  type: WorkflowActionType.RECORD_CRUD;
   settings: WorkflowRecordCRUDActionSettings;
 };
 

@@ -78,7 +78,7 @@ export class WorkflowBuilderWorkspaceService {
           codeIntrospectionService: this.codeIntrospectionService,
         });
       }
-      case WorkflowActionType.RECORD_OPERATION:
+      case WorkflowActionType.RECORD_CRUD:
         return await this.computeRecordOutputSchema({
           objectType: step.settings.input.objectName,
           workspaceId,
