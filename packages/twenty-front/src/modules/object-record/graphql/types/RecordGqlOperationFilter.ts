@@ -110,6 +110,8 @@ export type ArrayFilter = {
   contains?: string[];
   not_contains?: string[];
   is?: IsFilter;
+  containsAny?: string[];
+  containsIlike?: string;
 };
 
 export type RawJsonFilter = {

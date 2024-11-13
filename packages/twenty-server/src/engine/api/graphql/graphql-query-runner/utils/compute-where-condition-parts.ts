@@ -19,6 +19,11 @@ export const computeWhereConditionParts = (
   const uuid = Math.random().toString(36).slice(2, 7);
 
   switch (operator) {
+    case 'isEmptyArray':
+      return {
+        sql: `"${objectNameSingular}"."${key}" = '{}'`,
+        params: {},
+      };
     case 'eq':
       return {
         sql: `"${objectNameSingular}"."${key}" = :${key}${uuid}`,

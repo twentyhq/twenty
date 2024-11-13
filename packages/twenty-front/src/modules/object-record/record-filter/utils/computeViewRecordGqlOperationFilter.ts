@@ -626,13 +626,13 @@ const computeFilterRecordGqlOperationFilter = (
 
       if (parsedOptionValues.length > 0) {
         switch (filter.operand) {
-          case ViewFilterOperand.Is:
+          case ViewFilterOperand.Contains:
             return {
               [correspondingField.name]: {
                 containsAny: parsedOptionValues,
               } as UUIDFilter,
             };
-          case ViewFilterOperand.IsNot:
+          case ViewFilterOperand.DoesNotContain:
             return {
               not: {
                 [correspondingField.name]: {

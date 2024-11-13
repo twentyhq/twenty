@@ -160,15 +160,15 @@ export const isRecordMatchingFilter = ({
     }
 
     switch (objectMetadataField.type) {
-      case FieldMetadataType.Select:
       case FieldMetadataType.Rating:
-      case FieldMetadataType.MultiSelect:
       case FieldMetadataType.Text: {
         return isMatchingStringFilter({
           stringFilter: filterValue as StringFilter,
           value: record[filterKey],
         });
       }
+      case FieldMetadataType.Select:
+      case FieldMetadataType.MultiSelect:
       case FieldMetadataType.Array: {
         return isMatchingArrayFilter({
           arrayFilter: filterValue as ArrayFilter,

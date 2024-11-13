@@ -5,7 +5,7 @@ export const isMatchingArrayFilter = ({
   value,
 }: {
   arrayFilter: ArrayFilter;
-  value: string[];
+  value: string[] | null;
 }) => {
   if (value === null || !Array.isArray(value)) {
     return false;
@@ -24,6 +24,13 @@ export const isMatchingArrayFilter = ({
       } else {
         return value !== null;
       }
+    }
+    case arrayFilter.containsAny !== undefined: {
+      return arrayFilter.containsAny.some((item) => value.includes(item));
+    }
+    case arrayFilter.containsIlike !== undefined: {
+      const searchTerm = arrayFilter.containsIlike.toLowerCase();
+      return value.some((item) => item.toLowerCase().includes(searchTerm));
     }
     default: {
       throw new Error(

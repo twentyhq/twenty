@@ -269,6 +269,18 @@ export const getEmptyRecordGqlOperationFilter = (
         [correspondingField.name]: { is: 'NULL' } as UUIDFilter,
       };
       break;
+    case 'MULTI_SELECT':
+      emptyRecordFilter = {
+        or: [
+          {
+            [correspondingField.name]: { is: 'NULL' } as ArrayFilter,
+          },
+          {
+            [correspondingField.name]: { isEmptyArray: true } as ArrayFilter,
+          },
+        ],
+      };
+      break;
     case 'RELATION':
       emptyRecordFilter = {
         [correspondingField.name + 'Id']: { is: 'NULL' } as RelationFilter,
@@ -295,6 +307,9 @@ export const getEmptyRecordGqlOperationFilter = (
         or: [
           {
             [correspondingField.name]: { is: 'NULL' } as ArrayFilter,
+          },
+          {
+            [correspondingField.name]: { isEmptyArray: true } as ArrayFilter,
           },
         ],
       };

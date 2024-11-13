@@ -65,11 +65,6 @@ export const isMatchingStringFilter = ({
     case stringFilter.startsWith !== undefined: {
       return defaultedValue.startsWith(stringFilter.startsWith);
     }
-    case stringFilter.containsAny !== undefined: {
-      return stringFilter.containsAny.some((item) =>
-        defaultedValue.includes(item),
-      );
-    }
     default: {
       throw new Error(
         `Unexpected value for string filter : ${JSON.stringify(stringFilter)}`,
