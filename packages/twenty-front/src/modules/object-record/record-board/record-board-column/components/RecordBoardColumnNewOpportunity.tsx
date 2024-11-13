@@ -1,6 +1,3 @@
-import styled from '@emotion/styled';
-
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
@@ -8,10 +5,9 @@ import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-b
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
-import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
-import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
+import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import { isDefined } from '~/utils/isDefined';
@@ -41,20 +37,10 @@ export const RecordBoardColumnNewOpportunity = ({
       scopeId: columnId,
     }),
   );
-  const { setRelationPickerSearchFilter } = useRelationPicker({
-    relationPickerScopeId: 'relation-picker',
-  });
+
   const { handleCreateSuccess, handleEntitySelect } = useAddNewCard();
 
-  const { objectMetadataItem: companyMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Company,
-  });
-
-  const relationFieldMetadataItem = companyMetadataItem.fields.find(
-    (field) => field.name === 'opportunities',
-  );
-
-  const { createOneRecord } = useCreateOneRecord({
+  const { createOneRecord: createCompany } = useCreateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Company,
   });
   const { openRightDrawer } = useRightDrawer();
@@ -64,10 +50,12 @@ export const RecordBoardColumnNewOpportunity = ({
     viewableRecordNameSingularState,
   );
 
-  const handleCreateAndSelect = async (searchInput?: string) => {
+  const createCompanyOpportunityAndOpenRightDrawer = async (
+    searchInput?: string,
+  ) => {
     const newRecordId = v4();
 
-    const createdCompany = await createOneRecord({
+    const createdCompany = await createCompany({
       id: newRecordId,
       name: searchInput,
     });
@@ -76,18 +64,8 @@ export const RecordBoardColumnNewOpportunity = ({
     setViewableRecordNameSingular(CoreObjectNameSingular.Company);
     openRightDrawer(RightDrawerPages.ViewRecord);
 
-    setRelationPickerSearchFilter(searchInput || '');
-
     if (isDefined(createdCompany)) {
-      handleEntitySelect(
-        position,
-        {
-          id: createdCompany.id,
-          name: createdCompany.name,
-          record: createdCompany,
-        },
-        columnId,
-      );
+      handleEntitySelect(position, createdCompany);
     }
   };
 
@@ -95,18 +73,20 @@ export const RecordBoardColumnNewOpportunity = ({
     <>
       {newRecord.isCreating && newRecord.position === position && (
         <StyledCompanyPickerContainer>
-          <RelationPickerScope relationPickerScopeId="relation-picker">
-            <SingleEntitySelect
-              onCancel={() => handleCreateSuccess(position, columnId, false)}
-              onEntitySelected={(company) =>
-                company ? handleEntitySelect(position, company, columnId) : null
+          <SingleEntitySelect
+            onCancel={() => {
+              handleCreateSuccess(position, columnId, false);
+            }}
+            onEntitySelected={(company) => {
+              if (isDefined(company)) {
+                handleEntitySelect(position, company);
               }
-              relationObjectNameSingular={CoreObjectNameSingular.Company}
-              relationPickerScopeId="relation-picker"
-              selectedRelationRecordIds={[]}
-              onCreate={handleCreateAndSelect}
-            />
-          </RelationPickerScope>
+            }}
+            relationObjectNameSingular={CoreObjectNameSingular.Company}
+            relationPickerScopeId="relation-picker"
+            selectedRelationRecordIds={[]}
+            onCreate={createCompanyOpportunityAndOpenRightDrawer}
+          />
         </StyledCompanyPickerContainer>
       )}
     </>
