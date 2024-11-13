@@ -7,7 +7,6 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { workspacesState } from '@/auth/states/workspaces';
-import { isClientConfigLoadedState } from '@/client-config/states/isClientConfigLoadedState';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
@@ -40,10 +39,8 @@ export const UserProviderEffect = () => {
     currentWorkspaceMembersState,
   );
 
-  const [isClientConfigLoaded] = useRecoilState(isClientConfigLoadedState);
-
   const { loading: queryLoading, data: queryData } = useGetCurrentUserQuery({
-    skip: isCurrentUserLoaded || !isClientConfigLoaded,
+    skip: isCurrentUserLoaded,
   });
 
   useEffect(() => {
