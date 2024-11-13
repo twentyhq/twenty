@@ -20,8 +20,9 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
 
   const tableAllRowIdsState = useRecoilComponentCallbackStateV2(
     tableAllRowIdsComponentState,
-    recordTableId,
+    recordTableIdFromContext,
   );
+
   const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
     isRowSelectedComponentFamilyState,
     recordTableIdFromContext,
