@@ -90,7 +90,6 @@ export const SettingsObjectFieldItemTableRow = ({
       () => getRelationMetadata({ fieldMetadataItem }),
       [fieldMetadataItem, getRelationMetadata],
     ) ?? {};
-  console.log('fieldMetadataItem:', fieldMetadataItem);
   const fieldType = fieldMetadataItem.type;
   const isFieldTypeSupported = isFieldTypeSupportedInSettings(fieldType);
 
