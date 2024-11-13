@@ -16,8 +16,8 @@ export const IllustrationIconPhone = (props: IllustrationIconPhoneProps) => {
       <IllustrationIconPhoneRaw
         height={size}
         width={size}
-        fill={fill}
-        color={color}
+        fill={fill.blue}
+        color={color.blue}
       />
     </IllustrationIconWrapper>
   );

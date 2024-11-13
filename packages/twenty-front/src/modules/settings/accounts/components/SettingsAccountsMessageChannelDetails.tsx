@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Card, H2Title, Section } from 'twenty-ui';
+import { Card, H2Title, IconBriefcase, IconUsers, Section } from 'twenty-ui';
 
 import {
   MessageChannel,
@@ -101,6 +101,7 @@ export const SettingsAccountsMessageChannelDetails = ({
         <Card>
           <SettingsOptionCardContent
             variant="toggle"
+            Icon={IconBriefcase}
             title="Exclude non-professional emails"
             description="Don’t create contacts from/to Gmail, Outlook emails"
             divider
@@ -113,6 +114,7 @@ export const SettingsAccountsMessageChannelDetails = ({
           />
           <SettingsOptionCardContent
             variant="toggle"
+            Icon={IconUsers}
             title="Exclude group emails"
             description="Don’t sync emails from team@ support@ noreply@..."
             checked={messageChannel.excludeGroupEmails}
