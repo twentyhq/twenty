@@ -175,9 +175,11 @@ export {
   IconMouse2,
   IconNorthStar,
   IconNotes,
+  IconNumber9,
   IconNumbers,
   IconPaperclip,
   IconPencil,
+  IconPercentage,
   IconPhone,
   IconPhoto,
   IconPhotoUp,
@@ -234,7 +236,7 @@ export {
   IconVideo,
   IconWand,
   IconWorld,
-  IconX,
+  IconX
 } from '@tabler/icons-react';
 
 export type { TablerIconsProps } from '@tabler/icons-react';
