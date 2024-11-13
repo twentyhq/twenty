@@ -15,6 +15,7 @@ export type SingleEntitySelectProps = {
 
 export const SingleEntitySelect = ({
   disableBackgroundBlur = false,
+  dropdownPlacement,
   EmptyIcon,
   emptyLabel,
   excludedRelationRecordIds,
@@ -52,6 +53,7 @@ export const SingleEntitySelect = ({
     >
       <SingleEntitySelectMenuItemsWithSearch
         {...{
+          dropdownPlacement,
           EmptyIcon,
           emptyLabel,
           excludedRelationRecordIds,

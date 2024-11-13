@@ -80,3 +80,7 @@ export const WithSearchFilter: Story = {
     });
   },
 };
+
+export const WithEndPlacement: Story = {
+  args: { dropdownPlacement: 'bottom-end' },
+};
