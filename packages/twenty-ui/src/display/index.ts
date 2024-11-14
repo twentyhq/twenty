@@ -34,6 +34,7 @@ export * from './icon/components/IllustrationIconMail';
 export * from './icon/components/IllustrationIconManyToMany';
 export * from './icon/components/IllustrationIconMap';
 export * from './icon/components/IllustrationIconNumbers';
+export * from './icon/components/IllustrationIconNumberType';
 export * from './icon/components/IllustrationIconOneToMany';
 export * from './icon/components/IllustrationIconOneToOne';
 export * from './icon/components/IllustrationIconPhone';

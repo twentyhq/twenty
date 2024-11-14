@@ -4,12 +4,11 @@ import { z } from 'zod';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { numberFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/numberFieldDefaultValueSchema';
 import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
-import styled from '@emotion/styled';
-import { type } from 'os';
 import {
   IconNumber9,
   IconPercentage,
   IllustrationIconDecimal,
+  IllustrationIconNumberType,
 } from 'twenty-ui';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
 
@@ -20,13 +19,6 @@ export const settingsDataModelFieldNumberFormSchema = z.object({
 export type SettingsDataModelFieldNumberFormValues = z.infer<
   typeof settingsDataModelFieldNumberFormSchema
 >;
-
-const StyledFormCardTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-`;
 
 type SettingsDataModelFieldNumberFormProps = {
   disabled?: boolean;
@@ -53,25 +45,16 @@ export const SettingsDataModelFieldNumberForm = ({
       control={control}
       render={({ field: { onChange, value } }) => {
         const count = value?.decimals ?? 0;
+        const type = value?.type ?? 'number';
 
         return (
           <>
             <SettingsOptionCardContent
-              variant="counter"
-              Icon={IllustrationIconDecimal}
-              title="Number of decimals"
-              description="Set the number of decimal places"
-              value={count}
-              onChange={(value) => onChange({ type: type, decimals: value })}
-              disabled={disabled}
-              exampleValue={1000}
-            />
-            <SettingsOptionCardContent
               variant="select"
-              Icon={IllustrationIconDecimal}
+              Icon={IllustrationIconNumberType}
               dropdownId="number-type"
-              title="Number of decimals"
-              description="Set the number of decimal places"
+              title="Number type"
+              description="The number type you want to use, e.g. percentage"
               value={type}
               onChange={(value) => onChange({ type: value, decimals: count })}
               disabled={disabled}
@@ -87,6 +70,16 @@ export const SettingsDataModelFieldNumberForm = ({
                   Icon: IconPercentage,
                 },
               ]}
+            />
+            <SettingsOptionCardContent
+              variant="counter"
+              Icon={IllustrationIconDecimal}
+              title="Number of decimals"
+              description="Set the number of decimal places"
+              value={count}
+              onChange={(value) => onChange({ type: type, decimals: value })}
+              disabled={disabled}
+              exampleValue={1000}
             />
           </>
         );
