@@ -1,4 +1,4 @@
-import { SelectOption } from '@/ui/input/components/Select';
+import { SelectOption, SelectVariant } from '@/ui/input/components/Select';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -10,6 +10,7 @@ import {
 const StyledControlContainer = styled.div<{
   disabled?: boolean;
   hasIcon: boolean;
+  variant?: SelectVariant;
 }>`
   display: grid;
   grid-template-columns: ${({ hasIcon }) =>
@@ -17,7 +18,8 @@ const StyledControlContainer = styled.div<{
   align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
   box-sizing: border-box;
-  height: ${({ theme }) => theme.spacing(8)};
+  height: ${({ variant, theme }) =>
+    variant === 'small' ? theme.spacing(6) : theme.spacing(8)};
   max-width: 100%;
   padding: 0 ${({ theme }) => theme.spacing(2)};
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -39,11 +41,13 @@ const StyledIconChevronDown = styled(IconChevronDown)<{
 type SelectControlProps = {
   selectedOption: SelectOption<string | number | null>;
   isDisabled?: boolean;
+  variant?: SelectVariant;
 };
 
 export const SelectControl = ({
   selectedOption,
   isDisabled,
+  variant,
 }: SelectControlProps) => {
   const theme = useTheme();
 
@@ -51,6 +55,7 @@ export const SelectControl = ({
     <StyledControlContainer
       disabled={isDisabled}
       hasIcon={isDefined(selectedOption.Icon)}
+      variant={variant}
     >
       {isDefined(selectedOption.Icon) ? (
         <selectedOption.Icon

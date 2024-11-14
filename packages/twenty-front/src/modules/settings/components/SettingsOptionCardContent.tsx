@@ -142,6 +142,7 @@ export const SettingsOptionCardContent = (
           value={props.value}
           onChange={props.onChange}
           options={props.options}
+          variant="small"
         />
       );
     }

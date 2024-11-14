@@ -24,6 +24,8 @@ type CallToActionButton = {
   Icon?: IconComponent;
 };
 
+export type SelectVariant = 'small' | 'default';
+
 export type SelectProps<Value extends string | number | null> = {
   className?: string;
   disabled?: boolean;
@@ -40,6 +42,7 @@ export type SelectProps<Value extends string | number | null> = {
   value?: Value;
   withSearchInput?: boolean;
   callToActionButton?: CallToActionButton;
+  variant?: SelectVariant;
 };
 
 const StyledContainer = styled.div<{ fullWidth?: boolean }>`
@@ -70,6 +73,7 @@ export const Select = <Value extends string | number | null>({
   value,
   withSearchInput,
   callToActionButton,
+  variant = 'default',
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -115,6 +119,7 @@ export const Select = <Value extends string | number | null>({
         <SelectControl
           selectedOption={selectedOption}
           isDisabled={isDisabled}
+          variant={variant}
         />
       ) : (
         <Dropdown
@@ -125,6 +130,7 @@ export const Select = <Value extends string | number | null>({
             <SelectControl
               selectedOption={selectedOption}
               isDisabled={isDisabled}
+              variant={variant}
             />
           }
           disableBlur={disableBlur}
