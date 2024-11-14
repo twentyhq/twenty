@@ -15,8 +15,8 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useContext } from 'react';
 import { SORT_DIRECTIONS } from '../types/SortDirection';
 
@@ -200,9 +200,7 @@ export const ObjectSortDropdownButton = ({
                     />
                   ),
                 )}
-              </DropdownMenuItemsContainer>
-              {shoudShowSeparator && <DropdownMenuSeparator />}
-              <DropdownMenuItemsContainer>
+                {shoudShowSeparator && <DropdownMenuSeparator />}
                 {hiddenColumnsSortDefinitions.map(
                   (hiddenSortDefinition, index) => (
                     <MenuItem
