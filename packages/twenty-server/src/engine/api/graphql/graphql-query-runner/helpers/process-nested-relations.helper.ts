@@ -29,7 +29,7 @@ export class ProcessNestedRelationsHelper {
     objectMetadataMaps,
     parentObjectMetadataItem,
     parentObjectRecords,
-    parentObjectRecordsAggregatedFields = {},
+    parentObjectRecordsAggregatedValues = {},
     relations,
     aggregate = {},
     limit,
@@ -39,7 +39,7 @@ export class ProcessNestedRelationsHelper {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     parentObjectRecords: T[];
-    parentObjectRecordsAggregatedFields?: Record<string, any>;
+    parentObjectRecordsAggregatedValues?: Record<string, any>;
     relations: Record<string, FindOptionsRelations<ObjectLiteral>>;
     aggregate?: Record<string, AggregationField>;
     limit: number;
@@ -52,7 +52,7 @@ export class ProcessNestedRelationsHelper {
           objectMetadataMaps,
           parentObjectMetadataItem,
           parentObjectRecords,
-          parentObjectRecordsAggregatedFields,
+          parentObjectRecordsAggregatedValues,
           relationName,
           nestedRelations,
           aggregate,
@@ -69,7 +69,7 @@ export class ProcessNestedRelationsHelper {
     objectMetadataMaps,
     parentObjectMetadataItem,
     parentObjectRecords,
-    parentObjectRecordsAggregatedFields,
+    parentObjectRecordsAggregatedValues,
     relationName,
     nestedRelations,
     aggregate,
@@ -80,7 +80,7 @@ export class ProcessNestedRelationsHelper {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     parentObjectRecords: T[];
-    parentObjectRecordsAggregatedFields: Record<string, any>;
+    parentObjectRecordsAggregatedValues: Record<string, any>;
     relationName: string;
     nestedRelations: any;
     aggregate: Record<string, AggregationField>;
@@ -105,7 +105,7 @@ export class ProcessNestedRelationsHelper {
       objectMetadataMaps,
       parentObjectMetadataItem,
       parentObjectRecords,
-      parentObjectRecordsAggregatedFields,
+      parentObjectRecordsAggregatedValues,
       relationName,
       nestedRelations,
       aggregate,
@@ -119,7 +119,7 @@ export class ProcessNestedRelationsHelper {
     objectMetadataMaps,
     parentObjectMetadataItem,
     parentObjectRecords,
-    parentObjectRecordsAggregatedFields,
+    parentObjectRecordsAggregatedValues,
     relationName,
     nestedRelations,
     aggregate,
@@ -130,7 +130,7 @@ export class ProcessNestedRelationsHelper {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     parentObjectRecords: T[];
-    parentObjectRecordsAggregatedFields: Record<string, any>;
+    parentObjectRecordsAggregatedValues: Record<string, any>;
     relationName: string;
     nestedRelations: any;
     aggregate: Record<string, AggregationField>;
@@ -148,7 +148,7 @@ export class ProcessNestedRelationsHelper {
       referenceObjectMetadata.nameSingular,
     );
 
-    const queryBuilder = relationRepository.createQueryBuilder(
+    const referenceQueryBuilder = relationRepository.createQueryBuilder(
       referenceObjectMetadata.nameSingular,
     );
 
@@ -158,7 +158,7 @@ export class ProcessNestedRelationsHelper {
     });
     const { relationResults, relationAggregatedFieldsResult } =
       await this.findRelations({
-        queryBuilder,
+        referenceQueryBuilder,
         column: `"${inverseRelationName}Id"`,
         ids: relationIds,
         limit: limit * parentObjectRecords.length,
@@ -170,7 +170,7 @@ export class ProcessNestedRelationsHelper {
 
     this.assignFromRelationResults({
       parentRecords: parentObjectRecords,
-      parentObjectRecordsAggregatedFields,
+      parentObjectRecordsAggregatedValues,
       relationResults,
       relationAggregatedFieldsResult,
       relationName,
@@ -185,7 +185,7 @@ export class ProcessNestedRelationsHelper {
             referenceObjectMetadata.nameSingular
           ],
         parentObjectRecords: relationResults as ObjectRecord[],
-        parentObjectRecordsAggregatedFields: relationAggregatedFieldsResult,
+        parentObjectRecordsAggregatedValues: relationAggregatedFieldsResult,
         relations: nestedRelations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
@@ -202,7 +202,7 @@ export class ProcessNestedRelationsHelper {
     objectMetadataMaps,
     parentObjectMetadataItem,
     parentObjectRecords,
-    parentObjectRecordsAggregatedFields,
+    parentObjectRecordsAggregatedValues,
     relationName,
     nestedRelations,
     aggregate,
@@ -213,7 +213,7 @@ export class ProcessNestedRelationsHelper {
     objectMetadataMaps: ObjectMetadataMaps;
     parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
     parentObjectRecords: T[];
-    parentObjectRecordsAggregatedFields: Record<string, any>;
+    parentObjectRecordsAggregatedValues: Record<string, any>;
     relationName: string;
     nestedRelations: any;
     aggregate: Record<string, AggregationField>;
@@ -230,7 +230,7 @@ export class ProcessNestedRelationsHelper {
       referenceObjectMetadata.nameSingular,
     );
 
-    const queryBuilder = relationRepository.createQueryBuilder(
+    const referenceQueryBuilder = relationRepository.createQueryBuilder(
       referenceObjectMetadata.nameSingular,
     );
 
@@ -240,7 +240,7 @@ export class ProcessNestedRelationsHelper {
     });
     const { relationResults, relationAggregatedFieldsResult } =
       await this.findRelations({
-        queryBuilder,
+        referenceQueryBuilder,
         column: 'id',
         ids: relationIds,
         limit,
@@ -252,7 +252,7 @@ export class ProcessNestedRelationsHelper {
 
     this.assignToRelationResults({
       parentRecords: parentObjectRecords,
-      parentObjectRecordsAggregatedFields,
+      parentObjectRecordsAggregatedValues: parentObjectRecordsAggregatedValues,
       relationResults,
       relationAggregatedFieldsResult,
       relationName,
@@ -266,7 +266,7 @@ export class ProcessNestedRelationsHelper {
             referenceObjectMetadata.nameSingular
           ],
         parentObjectRecords: relationResults as ObjectRecord[],
-        parentObjectRecordsAggregatedFields: relationAggregatedFieldsResult,
+        parentObjectRecordsAggregatedValues: relationAggregatedFieldsResult,
         relations: nestedRelations as Record<
           string,
           FindOptionsRelations<ObjectLiteral>
@@ -314,7 +314,7 @@ export class ProcessNestedRelationsHelper {
   }
 
   private async findRelations({
-    queryBuilder,
+    referenceQueryBuilder,
     column,
     ids,
     limit,
@@ -323,7 +323,7 @@ export class ProcessNestedRelationsHelper {
     aggregate,
     relationName,
   }: {
-    queryBuilder: SelectQueryBuilder<any>;
+    referenceQueryBuilder: SelectQueryBuilder<any>;
     column: string;
     ids: any[];
     limit: number;
@@ -337,10 +337,10 @@ export class ProcessNestedRelationsHelper {
     }
 
     const aggregateForRelation = aggregate[relationName];
-    let relationAggregatedFieldsResult = {};
+    let relationAggregatedFieldsResult: Record<string, any> = {};
 
     if (aggregateForRelation) {
-      const aggregateQueryBuilder = queryBuilder.clone();
+      const aggregateQueryBuilder = referenceQueryBuilder.clone();
 
       this.processAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder(
         {
@@ -350,11 +350,29 @@ export class ProcessNestedRelationsHelper {
         },
       );
 
-      relationAggregatedFieldsResult =
-        (await aggregateQueryBuilder.getRawOne()) ?? {};
+      const aggregatedFieldsValues = await aggregateQueryBuilder
+        .addSelect(column)
+        .where(`${column} IN (:...ids)`, {
+          ids,
+        })
+        .groupBy(column)
+        .getRawMany();
+
+      relationAggregatedFieldsResult = aggregatedFieldsValues.reduce(
+        (acc, item) => {
+          const columnWithoutQuotes = column.replace(/["']/g, '');
+          const key = item[columnWithoutQuotes];
+          const { [column]: _, ...itemWithoutColumn } = item;
+
+          acc[key] = itemWithoutColumn;
+
+          return acc;
+        },
+        {},
+      );
     }
 
-    const result = await queryBuilder
+    const result = await referenceQueryBuilder
       .where(`${column} IN (:...ids)`, {
         ids,
       })
@@ -372,14 +390,14 @@ export class ProcessNestedRelationsHelper {
 
   private assignFromRelationResults({
     parentRecords,
-    parentObjectRecordsAggregatedFields,
+    parentObjectRecordsAggregatedValues,
     relationResults,
     relationAggregatedFieldsResult,
     relationName,
     joinField,
   }: {
     parentRecords: ObjectRecord[];
-    parentObjectRecordsAggregatedFields: Record<string, any>;
+    parentObjectRecordsAggregatedValues: Record<string, any>;
     relationResults: any[];
     relationAggregatedFieldsResult: Record<string, any>;
     relationName: string;
@@ -391,19 +409,19 @@ export class ProcessNestedRelationsHelper {
       );
     });
 
-    parentObjectRecordsAggregatedFields[relationName] =
+    parentObjectRecordsAggregatedValues[relationName] =
       relationAggregatedFieldsResult;
   }
 
   private assignToRelationResults({
     parentRecords,
-    parentObjectRecordsAggregatedFields,
+    parentObjectRecordsAggregatedValues,
     relationResults,
     relationAggregatedFieldsResult,
     relationName,
   }: {
     parentRecords: ObjectRecord[];
-    parentObjectRecordsAggregatedFields: Record<string, any>;
+    parentObjectRecordsAggregatedValues: Record<string, any>;
     relationResults: any[];
     relationAggregatedFieldsResult: Record<string, any>;
     relationName: string;
@@ -417,7 +435,7 @@ export class ProcessNestedRelationsHelper {
         null;
     });
 
-    parentObjectRecordsAggregatedFields[relationName] =
+    parentObjectRecordsAggregatedValues[relationName] =
       relationAggregatedFieldsResult;
   }
 }

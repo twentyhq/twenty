@@ -18,13 +18,13 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     fieldMetadata: FieldMetadataInterface,
     fieldKey: string,
     fieldValue: any,
-    result: GraphqlQuerySelectedFieldsResult,
+    accumulator: GraphqlQuerySelectedFieldsResult,
   ): void {
     if (!fieldValue || typeof fieldValue !== 'object') {
       return;
     }
 
-    result.relations[fieldKey] = true;
+    accumulator.relations[fieldKey] = true;
 
     const referencedObjectMetadata = getRelationObjectMetadata(
       fieldMetadata,
@@ -35,13 +35,13 @@ export class GraphqlQuerySelectedFieldsRelationParser {
     const fieldParser = new GraphqlQuerySelectedFieldsParser(
       this.objectMetadataMaps,
     );
-    const subResult = fieldParser.parse(fieldValue, relationFields);
+    const relationAccumulator = fieldParser.parse(fieldValue, relationFields);
 
-    result.select[fieldKey] = {
+    accumulator.select[fieldKey] = {
       id: true,
-      ...subResult.select,
+      ...relationAccumulator.select,
     };
-    result.relations[fieldKey] = subResult.relations;
-    result.aggregate[fieldKey] = subResult.aggregate;
+    accumulator.relations[fieldKey] = relationAccumulator.relations;
+    accumulator.aggregate[fieldKey] = relationAccumulator.aggregate;
   }
 }

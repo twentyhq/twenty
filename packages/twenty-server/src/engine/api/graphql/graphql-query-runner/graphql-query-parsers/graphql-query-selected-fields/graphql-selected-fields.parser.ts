@@ -29,7 +29,7 @@ export class GraphqlQuerySelectedFieldsParser {
     graphqlSelectedFields: Partial<Record<string, any>>,
     fieldMetadataMapByName: Record<string, FieldMetadataInterface>,
   ): GraphqlQuerySelectedFieldsResult {
-    const result: GraphqlQuerySelectedFieldsResult = {
+    const accumulator: GraphqlQuerySelectedFieldsResult = {
       select: {},
       relations: {},
       aggregate: {},
@@ -39,23 +39,25 @@ export class GraphqlQuerySelectedFieldsParser {
       this.parseConnectionField(
         graphqlSelectedFields,
         fieldMetadataMapByName,
-        result,
+        accumulator,
       );
+
+      return accumulator;
     }
 
     this.parseRecordField(
       graphqlSelectedFields,
       fieldMetadataMapByName,
-      result,
+      accumulator,
     );
 
-    return result;
+    return accumulator;
   }
 
   private parseRecordField(
     graphqlSelectedFields: Partial<Record<string, any>>,
     fieldMetadataMapByName: Record<string, FieldMetadataInterface>,
-    result: GraphqlQuerySelectedFieldsResult,
+    accumulator: GraphqlQuerySelectedFieldsResult,
   ): void {
     for (const [fieldKey, fieldValue] of Object.entries(
       graphqlSelectedFields,
@@ -71,7 +73,7 @@ export class GraphqlQuerySelectedFieldsParser {
           fieldMetadata,
           fieldKey,
           fieldValue,
-          result,
+          accumulator,
         );
       } else if (isCompositeFieldMetadataType(fieldMetadata.type)) {
         const compositeResult = this.parseCompositeField(
@@ -79,9 +81,9 @@ export class GraphqlQuerySelectedFieldsParser {
           fieldValue,
         );
 
-        Object.assign(result.select, compositeResult);
+        Object.assign(accumulator.select, compositeResult);
       } else {
-        result.select[fieldKey] = true;
+        accumulator.select[fieldKey] = true;
       }
     }
   }
@@ -89,17 +91,17 @@ export class GraphqlQuerySelectedFieldsParser {
   private parseConnectionField(
     graphqlSelectedFields: Partial<Record<string, any>>,
     fieldMetadataMapByName: Record<string, FieldMetadataInterface>,
-    result: GraphqlQuerySelectedFieldsResult,
+    accumulator: GraphqlQuerySelectedFieldsResult,
   ): void {
     this.aggregateParser.parse(
       graphqlSelectedFields,
       fieldMetadataMapByName,
-      result,
+      accumulator,
     );
 
     const node = graphqlSelectedFields.edges.node;
 
-    this.parseRecordField(node, fieldMetadataMapByName, result);
+    this.parseRecordField(node, fieldMetadataMapByName, accumulator);
   }
 
   private isRootConnection(

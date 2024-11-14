@@ -10,7 +10,7 @@ export class GraphqlQuerySelectedFieldsAggregateParser {
   parse(
     graphqlSelectedFields: Partial<Record<string, any>>,
     fieldMetadataMapByName: Record<string, FieldMetadataInterface>,
-    result: GraphqlQuerySelectedFieldsResult,
+    accumulator: GraphqlQuerySelectedFieldsResult,
   ): void {
     const availableAggregations: Record<string, AggregationField> =
       getAvailableAggregationsFromObjectFields(
@@ -24,7 +24,7 @@ export class GraphqlQuerySelectedFieldsAggregateParser {
         continue;
       }
 
-      result.aggregate[selectedField] = selectedAggregation;
+      accumulator.aggregate[selectedField] = selectedAggregation;
     }
   }
 }

@@ -186,7 +186,7 @@ export class GraphqlQueryFindManyResolverService
       objectRecords.pop();
     }
 
-    const objectRecordsAggregatedFields =
+    const parentObjectRecordsAggregatedValues =
       await withDeletedAggregateQueryBuilder.getRawOne();
 
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
@@ -196,7 +196,7 @@ export class GraphqlQueryFindManyResolverService
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: objectRecords,
-        parentObjectRecordsAggregatedFields: objectRecordsAggregatedFields,
+        parentObjectRecordsAggregatedValues,
         relations: graphqlQuerySelectedFieldsResult.relations,
         aggregate: graphqlQuerySelectedFieldsResult.aggregate,
         limit,
@@ -210,11 +210,11 @@ export class GraphqlQueryFindManyResolverService
 
     return typeORMObjectRecordsParser.createConnection({
       objectRecords,
-      objectRecordsAggregatedFields,
+      objectRecordsAggregatedValues: parentObjectRecordsAggregatedValues,
       selectedAggregatedFields: graphqlQuerySelectedFieldsResult.aggregate,
       objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: limit,
-      totalCount: objectRecordsAggregatedFields.totalCount,
+      totalCount: parentObjectRecordsAggregatedValues.totalCount,
       order: orderByWithIdCondition,
       hasNextPage,
       hasPreviousPage,
