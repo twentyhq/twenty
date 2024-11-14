@@ -310,30 +310,28 @@ const computeFilterRecordGqlOperationFilter = (
 
         const parsedRecordIds = JSON.parse(filter.value) as string[];
 
-        if (parsedRecordIds.length > 0) {
-          switch (filter.operand) {
-            case ViewFilterOperand.Is:
-              return {
+        if (parsedRecordIds.length === 0) return;
+        switch (filter.operand) {
+          case ViewFilterOperand.Is:
+            return {
+              [correspondingField.name + 'Id']: {
+                in: parsedRecordIds,
+              } as RelationFilter,
+            };
+          case ViewFilterOperand.IsNot: {
+            if (parsedRecordIds.length === 0) return;
+            return {
+              not: {
                 [correspondingField.name + 'Id']: {
                   in: parsedRecordIds,
                 } as RelationFilter,
-              };
-            case ViewFilterOperand.IsNot:
-              if (parsedRecordIds.length > 0) {
-                return {
-                  not: {
-                    [correspondingField.name + 'Id']: {
-                      in: parsedRecordIds,
-                    } as RelationFilter,
-                  },
-                };
-              }
-              break;
-            default:
-              throw new Error(
-                `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
-              );
+              },
+            };
           }
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            );
         }
       } else {
         switch (filter.operand) {
@@ -350,7 +348,6 @@ const computeFilterRecordGqlOperationFilter = (
             );
         }
       }
-      break;
     }
     case 'CURRENCY':
       switch (filter.operand) {
@@ -613,9 +610,7 @@ const computeFilterRecordGqlOperationFilter = (
       const stringifiedSelectValues = filter.value;
       let parsedOptionValues: string[] = [];
 
-      if (!isNonEmptyString(stringifiedSelectValues)) {
-        break;
-      }
+      if (!isNonEmptyString(stringifiedSelectValues)) return;
 
       try {
         parsedOptionValues = JSON.parse(stringifiedSelectValues);
@@ -625,43 +620,42 @@ const computeFilterRecordGqlOperationFilter = (
         );
       }
 
-      if (parsedOptionValues.length > 0) {
-        switch (filter.operand) {
-          case ViewFilterOperand.Contains:
-            return {
-              [correspondingField.name]: {
-                containsAny: parsedOptionValues,
-              } as UUIDFilter,
-            };
-          case ViewFilterOperand.DoesNotContain:
-            return {
-              or: [
-                {
-                  not: {
-                    [correspondingField.name]: {
-                      containsAny: parsedOptionValues,
-                    } as UUIDFilter,
-                  },
-                },
-                {
+      if (parsedOptionValues.length === 0) return;
+
+      switch (filter.operand) {
+        case ViewFilterOperand.Contains:
+          return {
+            [correspondingField.name]: {
+              containsAny: parsedOptionValues,
+            } as UUIDFilter,
+          };
+        case ViewFilterOperand.DoesNotContain:
+          return {
+            or: [
+              {
+                not: {
                   [correspondingField.name]: {
-                    isEmptyArray: true,
-                  } as ArrayFilter,
+                    containsAny: parsedOptionValues,
+                  } as UUIDFilter,
                 },
-                {
-                  [correspondingField.name]: {
-                    is: 'NULL',
-                  } as ArrayFilter,
-                },
-              ],
-            };
-          default:
-            throw new Error(
-              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
-            );
-        }
+              },
+              {
+                [correspondingField.name]: {
+                  isEmptyArray: true,
+                } as ArrayFilter,
+              },
+              {
+                [correspondingField.name]: {
+                  is: 'NULL',
+                } as ArrayFilter,
+              },
+            ],
+          };
+        default:
+          throw new Error(
+            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+          );
       }
-      break;
     }
     case 'SELECT': {
       if (isEmptyOperand) {
@@ -674,9 +668,7 @@ const computeFilterRecordGqlOperationFilter = (
       const stringifiedSelectValues = filter.value;
       let parsedOptionValues: string[] = [];
 
-      if (!isNonEmptyString(stringifiedSelectValues)) {
-        break;
-      }
+      if (!isNonEmptyString(stringifiedSelectValues)) return;
 
       try {
         parsedOptionValues = JSON.parse(stringifiedSelectValues);
@@ -686,29 +678,28 @@ const computeFilterRecordGqlOperationFilter = (
         );
       }
 
-      if (parsedOptionValues.length > 0) {
-        switch (filter.operand) {
-          case ViewFilterOperand.Is:
-            return {
+      if (parsedOptionValues.length === 0) return;
+
+      switch (filter.operand) {
+        case ViewFilterOperand.Is:
+          return {
+            [correspondingField.name]: {
+              in: parsedOptionValues,
+            } as UUIDFilter,
+          };
+        case ViewFilterOperand.IsNot:
+          return {
+            not: {
               [correspondingField.name]: {
                 in: parsedOptionValues,
               } as UUIDFilter,
-            };
-          case ViewFilterOperand.IsNot:
-            return {
-              not: {
-                [correspondingField.name]: {
-                  in: parsedOptionValues,
-                } as UUIDFilter,
-              },
-            };
-          default:
-            throw new Error(
-              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
-            );
-        }
+            },
+          };
+        default:
+          throw new Error(
+            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+          );
       }
-      break;
     }
     case 'ARRAY': {
       switch (filter.operand) {
@@ -756,18 +747,17 @@ const computeFilterRecordGqlOperationFilter = (
         case ViewFilterOperand.IsNot: {
           const parsedRecordIds = JSON.parse(filter.value) as string[];
 
-          if (parsedRecordIds.length > 0) {
-            return {
-              not: {
-                [correspondingField.name]: {
-                  source: {
-                    in: parsedRecordIds,
-                  } as RelationFilter,
-                },
+          if (parsedRecordIds.length === 0) return;
+
+          return {
+            not: {
+              [correspondingField.name]: {
+                source: {
+                  in: parsedRecordIds,
+                } as RelationFilter,
               },
-            };
-          }
-          break;
+            },
+          };
         }
         case ViewFilterOperand.Contains:
           return {
@@ -807,7 +797,6 @@ const computeFilterRecordGqlOperationFilter = (
             `Unknown operand ${filter.operand} for ${filter.definition.label} filter`,
           );
       }
-      break;
     }
     case 'EMAILS':
       switch (filter.operand) {
@@ -897,7 +886,7 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
   );
 
   if (!currentViewFilterGroup) {
-    return undefined;
+    return;
   }
 
   const groupFilters = filters.filter(
