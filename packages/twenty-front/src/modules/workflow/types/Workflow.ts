@@ -83,6 +83,18 @@ export type WorkflowRecordCRUDAction = BaseWorkflowAction & {
   settings: WorkflowRecordCRUDActionSettings;
 };
 
+export type WorkflowRecordCreateAction = WorkflowRecordCRUDAction & {
+  settings: { input: { type: 'CREATE' } };
+};
+
+export type WorkflowRecordUpdateAction = WorkflowRecordCRUDAction & {
+  settings: { input: { type: 'UPDATE' } };
+};
+
+export type WorkflowRecordDeleteAction = WorkflowRecordCRUDAction & {
+  settings: { input: { type: 'DELETE' } };
+};
+
 export type WorkflowAction =
   | WorkflowCodeAction
   | WorkflowSendEmailAction
