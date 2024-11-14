@@ -33,8 +33,6 @@ export type StringFilter = {
   regex?: string;
   iregex?: string;
   is?: IsFilter;
-  containsIlike?: string;
-  containsAny?: string[];
 };
 
 export type FloatFilter = {
