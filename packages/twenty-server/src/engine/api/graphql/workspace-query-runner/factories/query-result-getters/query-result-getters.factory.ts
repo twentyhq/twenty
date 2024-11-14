@@ -48,7 +48,7 @@ export class QueryResultGettersFactory {
     objectMetadataItemId: string,
     objectMetadataMap: ObjectMetadataMap,
     workspaceId: string,
-  ): Promise<any> {
+  ): Promise<IConnection<ObjectRecord>> {
     return {
       ...connection,
       edges: await Promise.all(
@@ -168,12 +168,12 @@ export class QueryResultGettersFactory {
       workspaceId,
     );
 
-    const newRecord = {
+    const processedRecord = {
       ...objectRecordProcessedWithoutRelationFields,
       ...relationFieldsProcessedMap,
     };
 
-    return newRecord;
+    return processedRecord;
   }
 
   private async processQueryResultField(
