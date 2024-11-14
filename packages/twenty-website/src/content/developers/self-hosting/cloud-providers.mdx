@@ -403,7 +403,7 @@ resource "azurerm_container_app" "twenty_db" {
 
       env {
         name  = "PGUSER_SUPERUSER"
-        value = "twenty"
+        value = "postgres"
       }
       env {
         name  = "PGPASSWORD_SUPERUSER"

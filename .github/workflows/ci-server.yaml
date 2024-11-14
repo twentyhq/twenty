@@ -20,7 +20,7 @@ jobs:
       postgres:
         image: twentycrm/twenty-postgres-spilo
         env:
-          PGUSER_SUPERUSER: twenty
+          PGUSER_SUPERUSER: postgres
           PGPASSWORD_SUPERUSER: twenty
           ALLOW_NOSSL: "true"
           SPILO_PROVIDER: "local"
@@ -121,9 +121,10 @@ jobs:
       postgres:
         image: twentycrm/twenty-postgres-spilo
         env:
-          PGUSER_SUPERUSER: twenty
+          PGUSER_SUPERUSER: postgres
           PGPASSWORD_SUPERUSER: twenty
           ALLOW_NOSSL: "true"
+          SPILO_PROVIDER: "local"
         ports:
           - 5432:5432
         options: >-

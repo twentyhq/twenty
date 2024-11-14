@@ -22,7 +22,7 @@ services:
       - "3000:3000"
     environment:
       PORT: 3000
-      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER}:${PGPASSWORD_SUPERUSER}@${PG_DATABASE_HOST:-db:5432}/default
+      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-twenty}@${PG_DATABASE_HOST:-db:5432}/default
       SERVER_URL: ${SERVER_URL}
       FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
@@ -52,7 +52,7 @@ services:
     image: twentycrm/twenty:${TAG}
     command: ["yarn", "worker:prod"]
     environment:
-      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER}:${PGPASSWORD_SUPERUSER}@${PG_DATABASE_HOST:-db:5432}/default
+      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-twenty}@${PG_DATABASE_HOST:-db:5432}/default
       SERVER_URL: ${SERVER_URL}
       FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
@@ -77,11 +77,11 @@ services:
     volumes:
       - db-data:/home/postgres/pgdata
     environment:
-      PGUSER_SUPERUSER: ${PGUSER_SUPERUSER:-twenty}
+      PGUSER_SUPERUSER: ${PGUSER_SUPERUSER:-postgres}
       PGPASSWORD_SUPERUSER: ${PGPASSWORD_SUPERUSER:-twenty}
       ALLOW_NOSSL: "true"
     healthcheck:
-      test: pg_isready -U ${PGUSER_SUPERUSER:-twenty} -h localhost -d postgres
+      test: pg_isready -U ${PGUSER_SUPERUSER:-postgres} -h localhost -d postgres
       interval: 5s
       timeout: 5s
       retries: 10
