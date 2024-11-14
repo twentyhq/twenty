@@ -106,6 +106,10 @@ export type PhonesFilter = {
   primaryPhoneCountryCode?: StringFilter;
 };
 
+export type SelectFilter = {
+  in?: string[];
+};
+
 export type ArrayFilter = {
   contains?: string[];
   notContains?: string[];

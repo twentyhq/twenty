@@ -11,8 +11,8 @@ import {
   RawJsonFilter,
   RecordGqlOperationFilter,
   RelationFilter,
+  SelectFilter,
   StringFilter,
-  UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
@@ -627,7 +627,7 @@ const computeFilterRecordGqlOperationFilter = (
           return {
             [correspondingField.name]: {
               containsAny: parsedOptionValues,
-            } as UUIDFilter,
+            } as ArrayFilter,
           };
         case ViewFilterOperand.DoesNotContain:
           return {
@@ -636,7 +636,7 @@ const computeFilterRecordGqlOperationFilter = (
                 not: {
                   [correspondingField.name]: {
                     containsAny: parsedOptionValues,
-                  } as UUIDFilter,
+                  } as ArrayFilter,
                 },
               },
               {
@@ -685,14 +685,14 @@ const computeFilterRecordGqlOperationFilter = (
           return {
             [correspondingField.name]: {
               in: parsedOptionValues,
-            } as UUIDFilter,
+            } as SelectFilter,
           };
         case ViewFilterOperand.IsNot:
           return {
             not: {
               [correspondingField.name]: {
                 in: parsedOptionValues,
-              } as UUIDFilter,
+              } as SelectFilter,
             },
           };
         default:
