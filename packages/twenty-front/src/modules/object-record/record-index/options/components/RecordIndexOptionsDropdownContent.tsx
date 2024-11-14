@@ -20,15 +20,15 @@ import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObje
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 
-import {
-  displayedExportProgress,
-  useExportRecordData,
-} from '@/action-menu/hooks/useExportRecordData';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
-import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
+import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
+import {
+  displayedExportProgress,
+  useExportRecords,
+} from '@/object-record/record-index/export/hooks/useExportRecords';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
@@ -167,7 +167,7 @@ export const RecordIndexOptionsDropdownContent = ({
   const { openObjectRecordsSpreasheetImportDialog } =
     useOpenObjectRecordsSpreasheetImportDialog(objectMetadataItem.nameSingular);
 
-  const { progress, download } = useExportRecordData({
+  const { progress, download } = useExportRecords({
     delayMs: 100,
     filename: `${objectMetadataItem.nameSingular}.csv`,
     objectMetadataItem,
