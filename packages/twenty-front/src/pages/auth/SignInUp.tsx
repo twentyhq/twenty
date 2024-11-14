@@ -8,7 +8,7 @@ import {
   isTwentyHomePage,
   isTwentyWorkspaceSubdomain,
   redirectToHome,
-  twentyHomePage,
+  twentyHomePageUrl,
 } from '~/utils/workspace-url.helper';
 import { SignInUpWorkspaceSelection } from '@/auth/sign-in-up/components/SignInUpWorkspaceSelection';
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
@@ -27,6 +27,7 @@ export const SignInUp = () => {
   const setLastAuthenticateWorkspaceState = useSetRecoilState(
     lastAuthenticateWorkspaceState,
   );
+
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
 
@@ -63,7 +64,7 @@ export const SignInUp = () => {
     <>
       {/* TODO AMOREAUX: Need design for this */}
       {!isTwentyHomePage && (
-        <Link to={twentyHomePage} onClick={moveToHome}>
+        <Link to={twentyHomePageUrl} onClick={moveToHome}>
           Back to home
         </Link>
       )}

@@ -459,7 +459,7 @@ export class AuthService {
     return workspace;
   }
 
-  async computeRedirectURI(loginToken: string, subdomain: string) {
+  async computeRedirectURI(loginToken: string, subdomain) {
     const url = buildWorkspaceURL(
       this.environmentService.get('FRONT_BASE_URL'),
       { subdomain },

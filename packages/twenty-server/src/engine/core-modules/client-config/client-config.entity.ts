@@ -3,12 +3,6 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 
 @ObjectType()
-class Telemetry {
-  @Field(() => Boolean)
-  enabled: boolean;
-}
-
-@ObjectType()
 class Billing {
   @Field(() => Boolean)
   isBillingEnabled: boolean;
@@ -65,7 +59,7 @@ export class ClientConfig {
   signInPrefilled: boolean;
 
   @Field(() => Boolean)
-  signUpDisabled: boolean;
+  isMultiworkspaceEnabled: boolean;
 
   @Field(() => Boolean)
   debugMode: boolean;

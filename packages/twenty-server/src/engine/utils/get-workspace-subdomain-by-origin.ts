@@ -2,15 +2,14 @@ export const getWorkspaceSubdomainByOrigin = (
   origin: string,
   frontBaseUrl: string,
 ) => {
-  const { hostname } = new URL(origin);
+  const { hostname: originHostname } = new URL(origin);
+  const { hostname: frontBaseHostname } = new URL(frontBaseUrl);
 
-  const hostParts = hostname.split('.');
+  if (
+    originHostname === frontBaseHostname ||
+    originHostname === `app.${frontBaseHostname}`
+  )
+    return;
 
-  if (hostParts.length <= 2) return;
-
-  const subdomain = hostParts[0];
-
-  if (hostname === new URL(frontBaseUrl).hostname) return;
-
-  return subdomain;
+  return originHostname.replace(`.${frontBaseHostname}`, '');
 };

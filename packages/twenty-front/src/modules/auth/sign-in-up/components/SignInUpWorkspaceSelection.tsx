@@ -4,6 +4,8 @@ import { H2Title, MainButton } from 'twenty-ui';
 import { availableWorkspacesForAuthState } from '@/auth/states/availableWorkspacesForAuthState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { redirectToWorkspace } from '~/utils/workspace-url.helper';
+import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 
 const StyledContentContainer = styled.div`
   display: flex;
@@ -36,26 +38,51 @@ export const SignInUpWorkspaceSelection = () => {
   const availableWorkspacesForAuth = useRecoilValue(
     availableWorkspacesForAuthState,
   );
+  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+
+  const createNewWorkspace = () => {
+    console.log('>>>>>>>>>>>>>> createNewWorkspace');
+  };
 
   return (
     <>
-      <H2Title title="Select a workspace" />
       <StyledContentContainer>
         {availableWorkspacesForAuth &&
-          availableWorkspacesForAuth.length !== 0 &&
-          availableWorkspacesForAuth.map((workspace) => (
-            <MainButton
-              onClick={() => redirectToWorkspace(workspace.subdomain)}
-              fullWidth
-            >
+          availableWorkspacesForAuth.length !== 0 && (
+            <>
+              <H2Title title="Choose a workspace" />
+              {availableWorkspacesForAuth.map((workspace) => (
+                <MainButton
+                  key={workspace.id}
+                  onClick={() => redirectToWorkspace(workspace.subdomain)}
+                  fullWidth
+                >
+                  <StyledMainButtonContent>
+                    <StyledIcon
+                      src={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
+                    />
+                    <StyledDisplayName>
+                      {workspace.displayName ?? workspace.id}
+                    </StyledDisplayName>
+                  </StyledMainButtonContent>
+                </MainButton>
+              ))}
+            </>
+          )}
+        {isMultiWorkspaceEnabled && (
+          <>
+            {availableWorkspacesForAuth &&
+              availableWorkspacesForAuth.length > 0 && (
+                <HorizontalSeparator text="Or" />
+              )}
+            <MainButton onClick={() => createNewWorkspace()} fullWidth>
               <StyledMainButtonContent>
-                <StyledIcon src={workspace.logo ?? DEFAULT_WORKSPACE_LOGO} />
-                <StyledDisplayName>
-                  {workspace.displayName ?? workspace.id}
-                </StyledDisplayName>
+                <StyledIcon src={DEFAULT_WORKSPACE_LOGO} />
+                <StyledDisplayName>Create workspace</StyledDisplayName>
               </StyledMainButtonContent>
             </MainButton>
-          ))}
+          </>
+        )}
       </StyledContentContainer>
     </>
   );

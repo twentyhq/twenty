@@ -18,8 +18,11 @@ export class ClientConfigResolver {
           'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
         ),
       },
+
       signInPrefilled: this.environmentService.get('SIGN_IN_PREFILLED'),
-      signUpDisabled: this.environmentService.get('IS_SIGN_UP_DISABLED'),
+      isMultiworkspaceEnabled: this.environmentService.get(
+        'IS_MULTIWORKSPACE_ENABLED',
+      ),
       debugMode: this.environmentService.get('DEBUG_MODE'),
       support: {
         supportDriver: this.environmentService.get('SUPPORT_DRIVER'),

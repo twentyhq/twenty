@@ -58,7 +58,7 @@ This uses the prebuilt images found on [docker hub](https://hub.docker.com/r/twe
 
 - Is set in respective tf-files
 - See docs [Setup Environment Variables](https://twenty.com/developers/section/self-hosting/self-hosting-var) for usage
-- After deployment you could can set `IS_SIGN_UP_DISABLED=true` (and run `terraform plan/apply` again) to disable new workspaces from being created
+- After deployment you could can set `IS_MULTIWORKSPACE_ENABLED=false` (and run `terraform plan/apply` again) to disable new workspaces from being created
 
 #### Security and networking
 
@@ -312,8 +312,8 @@ resource "azurerm_container_app" "twenty_server" {
 
       # Environment variables
       env {
-        name  = "IS_SIGN_UP_DISABLED"
-        value = false
+        name  = "IS_MULTIWORKSPACE_ENABLED"
+        value = true
       }
       env {
         name  = "SIGN_IN_PREFILLED"

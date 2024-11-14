@@ -5,12 +5,15 @@ export const twentyHostname = process.env.REACT_APP_BASE_URL
   ? new URL(process.env.REACT_APP_BASE_URL).hostname
   : 'twenty.com';
 
-export const twentyHomePage = `app.${twentyHostname}`;
+export const twentyHomePageHostname = `app.${twentyHostname}`;
+
+export const twentyHomePageUrl = `${window.location.protocol}//${twentyHomePageHostname}`;
 
 export const isTwentyHosting =
   window.location.hostname.endsWith(twentyHostname);
 
-export const isTwentyHomePage = window.location.hostname === twentyHomePage;
+export const isTwentyHomePage =
+  window.location.hostname === twentyHomePageHostname;
 
 export const isTwentyWorkspaceSubdomain = isTwentyHosting && !isTwentyHomePage;
 
@@ -44,8 +47,8 @@ export const buildWorkspaceUrl = (
 
 export const redirectToHome = () => {
   const url = new URL(window.location.href);
-  if (url.hostname !== twentyHomePage) {
-    url.hostname = twentyHomePage;
+  if (url.hostname !== twentyHomePageHostname) {
+    url.hostname = twentyHomePageHostname;
     window.location.href = url.toString();
   }
 };

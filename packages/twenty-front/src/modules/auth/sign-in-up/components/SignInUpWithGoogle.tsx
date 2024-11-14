@@ -16,7 +16,7 @@ export const SignInUpWithGoogle = () => {
   return (
     <>
       <MainButton
-        Icon={() => <IconGoogle size={theme.icon.size.lg} />}
+        Icon={() => <IconGoogle size={theme.icon.size.md} />}
         title="Continue with Google"
         onClick={signInWithGoogle}
         variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}

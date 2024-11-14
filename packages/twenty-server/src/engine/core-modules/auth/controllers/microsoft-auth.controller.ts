@@ -19,6 +19,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { computeRedirectErrorUrl } from 'src/engine/core-modules/auth/utils/compute-redirect-error-url';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -26,6 +28,7 @@ export class MicrosoftAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   @Get()
@@ -41,41 +44,52 @@ export class MicrosoftAuthController {
     @Req() req: MicrosoftRequest,
     @Res() res: Response,
   ) {
-    const {
-      firstName,
-      lastName,
-      email,
-      picture,
-      workspaceInviteHash,
-      workspacePersonalInviteToken,
-    } = req.user;
+    try {
+      const {
+        firstName,
+        lastName,
+        email,
+        picture,
+        workspaceInviteHash,
+        workspacePersonalInviteToken,
+        targetWorkspaceSubdomain,
+      } = req.user;
 
-    const user = await this.authService.signInUp({
-      email,
-      firstName,
-      lastName,
-      picture,
-      workspaceInviteHash,
-      workspacePersonalInviteToken,
-      fromSSO: true,
-    });
+      const user = await this.authService.signInUp({
+        email,
+        firstName,
+        lastName,
+        picture,
+        workspaceInviteHash,
+        workspacePersonalInviteToken,
+        targetWorkspaceSubdomain,
+        fromSSO: true,
+      });
 
-    if (!user.defaultWorkspace.isMicrosoftAuthEnabled) {
-      throw new AuthException(
-        'Microsoft auth is not enabled for this workspace',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      if (!user.defaultWorkspace.isMicrosoftAuthEnabled) {
+        throw new AuthException(
+          'Microsoft auth is not enabled for this workspace',
+          AuthExceptionCode.OAUTH_ACCESS_DENIED,
+        );
+      }
+
+      const loginToken = await this.loginTokenService.generateLoginToken(
+        user.email,
+      );
+
+      return res.redirect(
+        await this.authService.computeRedirectURI(
+          loginToken.token,
+          user.defaultWorkspace.subdomain,
+        ),
+      );
+    } catch (err) {
+      return res.redirect(
+        computeRedirectErrorUrl({
+          frontBaseUrl: this.environmentService.get('FRONT_BASE_URL'),
+          errorMessage: err.message,
+        }),
       );
     }
-
-    const loginToken = await this.loginTokenService.generateLoginToken(
-      user.email,
-    );
-
-    return res.redirect(
-      await this.authService.computeRedirectURI(
-        loginToken.token,
-        user.defaultWorkspace.subdomain,
-      ),
-    );
   }
 }

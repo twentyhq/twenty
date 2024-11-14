@@ -228,6 +228,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         this.environmentService.get('FRONT_BASE_URL'),
       );
 
+      if (!subdomain) return;
+
       return this.workspaceRepository.findOneBy({ subdomain });
     } catch (e) {
       throw new WorkspaceException(

@@ -50,7 +50,7 @@ export const WorkspaceProviderEffect = () => {
   }, [workspacePublicData]);
 
   useEffect(() => {
-    if (isDefined(lastAuthenticateWorkspace) && isTwentyHomePage) {
+    if (isDefined(lastAuthenticateWorkspace?.subdomain) && isTwentyHomePage) {
       redirectToWorkspace(lastAuthenticateWorkspace.subdomain);
     }
   }, [lastAuthenticateWorkspace]);

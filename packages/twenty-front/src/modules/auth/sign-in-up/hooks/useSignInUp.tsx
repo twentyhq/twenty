@@ -15,16 +15,16 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { AppPath } from '@/types/AppPath';
 import { useAuth } from '../../hooks/useAuth';
-
-export enum SignInUpMode {
-  SignIn = 'sign-in',
-  SignUp = 'sign-up',
-}
+import {
+  SignInUpMode,
+  signInUpModeState,
+} from '@/auth/states/signInUpModeState';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueSnackBar } = useSnackBar();
 
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
+  const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
 
   const isMatchingLocation = useIsMatchingLocation();
 
@@ -34,12 +34,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     searchParams.get('inviteToken') ?? undefined;
 
   const [isInviteMode] = useState(() => isMatchingLocation(AppPath.Invite));
-
-  const [signInUpMode, setSignInUpMode] = useState<SignInUpMode>(() => {
-    return isMatchingLocation(AppPath.SignInUp)
-      ? SignInUpMode.SignIn
-      : SignInUpMode.SignUp;
-  });
 
   const {
     signInWithCredentials,

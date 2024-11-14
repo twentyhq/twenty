@@ -29,6 +29,8 @@ export const useSignInUpForm = () => {
     mode: 'onChange',
     defaultValues: {
       exist: false,
+      email: '',
+      password: '',
     },
     resolver: zodResolver(validationSchema),
   });
@@ -38,7 +40,7 @@ export const useSignInUpForm = () => {
     if (isDefined(email)) {
       form.setValue('email', email);
     } else if (isSignInPrefilled === true) {
-      form.setValue('email', 'tim@apple.dev');
+      form.setValue('email', 'moreaux.antoine@gmail.com');
       form.setValue('password', 'Applecar2025');
     }
   }, [form, isSignInPrefilled]);

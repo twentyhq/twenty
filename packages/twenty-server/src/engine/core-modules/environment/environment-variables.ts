@@ -234,7 +234,7 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  IS_MULTIWORKSPACE_ENABLED = true;
+  IS_MULTIWORKSPACE_ENABLED = false;
 
   // Custom Code Engine
   @IsEnum(ServerlessDriverType)
@@ -371,11 +371,6 @@ export class EnvironmentVariables {
   @IsNumber()
   @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION > 0)
   WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 60;
-
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  IS_SIGN_UP_DISABLED = false;
 
   @IsEnum(CaptchaDriverType)
   @IsOptional()

@@ -11,7 +11,7 @@ import { ActionLink } from 'twenty-ui';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/SignInUpWithMicrosoft';
 import { SignInUpWithSSO } from '@/auth/sign-in-up/components/SignInUpWithSSO';
-import { SignInUpWithPassword } from '@/auth/sign-in-up/components/SignInUpWithPassword';
+import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/SignInUpWithCredentials';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -44,16 +44,16 @@ export const SignInUpWorkspaceScopeForm = () => {
 
         {authProviders.microsoft && <SignInUpWithMicrosoft />}
 
-        {authProviders.sso && <SignInUpWithSSO />}
+        {authProviders.sso.length > 0 && <SignInUpWithSSO />}
 
         {(authProviders.google ||
           authProviders.microsoft ||
-          authProviders.sso) &&
+          authProviders.sso.length > 0) &&
         authProviders.password ? (
           <HorizontalSeparator visible />
         ) : null}
 
-        {authProviders.password && <SignInUpWithPassword />}
+        {authProviders.password && <SignInUpWithCredentials />}
       </StyledContentContainer>
       {signInUpStep === SignInUpStep.Password && (
         <ActionLink onClick={handleResetPassword(form.getValues('email'))}>

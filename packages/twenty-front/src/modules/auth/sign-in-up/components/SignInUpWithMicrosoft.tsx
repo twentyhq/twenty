@@ -16,7 +16,7 @@ export const SignInUpWithMicrosoft = () => {
   return (
     <>
       <MainButton
-        Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
+        Icon={() => <IconMicrosoft size={theme.icon.size.md} />}
         title="Continue with Microsoft"
         onClick={signInWithMicrosoft}
         variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}

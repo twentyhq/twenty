@@ -1,26 +1,15 @@
 import styled from '@emotion/styled';
-import {
-  AnimatedEaseIn,
-  IconGoogle,
-  IconMicrosoft,
-  Loader,
-  MainButton,
-} from 'twenty-ui';
+import { IconGoogle, IconMicrosoft, Loader, MainButton } from 'twenty-ui';
 import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
 import { useTheme } from '@emotion/react';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
-import { TextInput } from '@/ui/input/components/TextInput';
-import { Controller, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { FormProvider } from 'react-hook-form';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
-import { Logo } from '@/auth/components/Logo';
-import { Title } from '@/auth/components/Title';
 import { useFindAvailableWorkspacesByEmail } from '@/auth/sign-in-up/hooks/useFindAvailableWorkspacedByEmail';
-import { FormEvent, useState } from 'react';
-import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useState } from 'react';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 import { availableWorkspacesForAuthState } from '@/auth/states/availableWorkspacesForAuthState';
 import {
@@ -28,7 +17,21 @@ import {
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { redirectToWorkspace } from '~/utils/workspace-url.helper';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
+import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
+import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailField';
+import { SignInUpPasswordField } from '@/auth/sign-in-up/components/SignInUpPasswordField';
+import { useAuth } from '@/auth/hooks/useAuth';
+import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import {
+  SignInUpMode,
+  signInUpModeState,
+} from '@/auth/states/signInUpModeState';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -42,50 +45,54 @@ const StyledForm = styled.form`
   width: 100%;
 `;
 
-const StyledFullWidthMotionDiv = styled(motion.div)`
-  width: 100%;
-`;
-
-const StyledInputContainer = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
-`;
-
-const validationSchema = z
+export const validationSchema = z
   .object({
+    exist: z.boolean(),
     email: z.string().trim().email('Email must be a valid email'),
+    password: z
+      .string()
+      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters')
+      .optional(),
+    captchaToken: z.string().default(''),
   })
   .required();
 
 export const SignInUpGlobalScopeForm = () => {
   const theme = useTheme();
-  const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
+  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const signInUpStep = useRecoilValue(signInUpStepState);
 
   const { signInWithGoogle } = useSignInWithGoogle();
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
+  const { checkUserExists } = useAuth();
+  const { readCaptchaToken } = useReadCaptchaToken();
+
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
+  const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
+
   const { findAvailableWorkspacesByEmail } =
     useFindAvailableWorkspacesByEmail();
   const setAvailableWorkspacesForAuthState = useSetRecoilState(
     availableWorkspacesForAuthState,
   );
+  const { enqueueSnackBar } = useSnackBar();
+  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
 
   const [showErrors, setShowErrors] = useState(false);
 
-  const form = useForm<z.infer<typeof validationSchema>>({
-    mode: 'onChange',
-    defaultValues: {
-      email: isSignInPrefilled === true ? 'tim@apple.dev' : '',
-    },
-    resolver: zodResolver(validationSchema),
-  });
+  const { form } = useSignInUpForm();
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setShowErrors(true);
+  const { submitCredentials } = useSignInUp(form);
 
+  const continueToWorkspaceSelection = async () => {
     const { data } = await findAvailableWorkspacesByEmail(
       form.getValues('email'),
     );
+
+    if (signInUpStep === SignInUpStep.Password) {
+      await form.handleSubmit(submitCredentials)();
+    }
+
     if (isDefined(data) && data.findAvailableWorkspacesByEmail.length > 1) {
       setAvailableWorkspacesForAuthState(data.findAvailableWorkspacesByEmail);
       return setSignInUpStep(SignInUpStep.WorkspaceSelection);
@@ -101,6 +108,42 @@ export const SignInUpGlobalScopeForm = () => {
     // si 1 workspace sans sso redirige sur workspace avec email en query params pour prefill
     // si 1 workspace avec sso et 1 sso login avec le sso
     // si plusieurs workspaces redirige sur la liste des workspaces
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (isDefined(form?.formState?.errors?.email)) {
+      setShowErrors(true);
+      return;
+    }
+
+    if (signInUpStep === SignInUpStep.Password) {
+      await form.handleSubmit(submitCredentials)();
+      return continueToWorkspaceSelection();
+    }
+
+    const token = await readCaptchaToken();
+    checkUserExists.checkUserExistsQuery({
+      variables: {
+        email: form.getValues('email'),
+        captchaToken: token,
+      },
+      onCompleted: (data) => {
+        requestFreshCaptchaToken();
+        if (data?.checkUserExists.exists) {
+          continueToWorkspaceSelection();
+        } else {
+          if (!isMultiWorkspaceEnabled) {
+            return enqueueSnackBar('User not found', {
+              variant: SnackBarVariant.Error,
+            });
+          }
+          setSignInUpMode(SignInUpMode.SignUp);
+          setSignInUpStep(SignInUpStep.Password);
+        }
+      },
+    });
   };
 
   return (
@@ -125,44 +168,26 @@ export const SignInUpGlobalScopeForm = () => {
           <HorizontalSeparator visible={false} />
         </>
         <HorizontalSeparator visible />
-        <StyledForm onSubmit={handleSubmit}>
-          <StyledFullWidthMotionDiv
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            transition={{
-              type: 'spring',
-              stiffness: 800,
-              damping: 35,
-            }}
-          >
-            <Controller
-              name="email"
-              control={form.control}
-              render={({
-                field: { value, onChange },
-                fieldState: { error },
-              }) => (
-                <StyledInputContainer>
-                  <TextInput
-                    autoFocus
-                    value={value}
-                    placeholder="Email"
-                    onChange={onChange}
-                    error={showErrors ? error?.message : undefined}
-                    fullWidth
-                  />
-                </StyledInputContainer>
-              )}
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+        <FormProvider {...form}>
+          <StyledForm onSubmit={handleSubmit}>
+            <SignInUpEmailField showErrors={showErrors} />
+            {signInUpStep === SignInUpStep.Password && (
+              <SignInUpPasswordField
+                showErrors={showErrors}
+                signInUpMode={signInUpMode}
+              />
+            )}
+
+            <MainButton
+              title="Continue"
+              type="submit"
+              variant="secondary"
+              Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
+              fullWidth
             />
-          </StyledFullWidthMotionDiv>
-          <MainButton
-            title="Continue"
-            type="submit"
-            variant="secondary"
-            Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
-            fullWidth
-          />
-        </StyledForm>
+          </StyledForm>
+        </FormProvider>
       </StyledContentContainer>
     </>
   );

@@ -1,4 +1,4 @@
-import { IconGoogle, IconLock, MainButton } from 'twenty-ui';
+import { IconLock, MainButton } from 'twenty-ui';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -29,7 +29,7 @@ export const SignInUpWithSSO = () => {
   return (
     <>
       <MainButton
-        Icon={() => <IconLock size={theme.icon.size.lg} />}
+        Icon={() => <IconLock size={theme.icon.size.md} />}
         title="Single sign-on (SSO)"
         onClick={signInWithSSO}
         variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
