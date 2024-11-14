@@ -5,6 +5,7 @@ import { WorkflowDiagramEmptyTrigger } from '@/workflow/components/WorkflowDiagr
 import { WorkflowDiagramStepNodeEditable } from '@/workflow/components/WorkflowDiagramStepNodeEditable';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { WorkflowDiagram } from '@/workflow/types/WorkflowDiagram';
+import { ReactFlowProvider } from '@xyflow/react';
 
 export const WorkflowDiagramCanvasEditable = ({
   diagram,
@@ -14,17 +15,19 @@ export const WorkflowDiagramCanvasEditable = ({
   workflowWithCurrentVersion: WorkflowWithCurrentVersion;
 }) => {
   return (
-    <WorkflowDiagramCanvasBase
-      key={workflowWithCurrentVersion.currentVersion.id}
-      diagram={diagram}
-      status={workflowWithCurrentVersion.currentVersion.status}
-      nodeTypes={{
-        default: WorkflowDiagramStepNodeEditable,
-        'create-step': WorkflowDiagramCreateStepNode,
-        'empty-trigger': WorkflowDiagramEmptyTrigger,
-      }}
-    >
-      <WorkflowDiagramCanvasEditableEffect />
-    </WorkflowDiagramCanvasBase>
+    <ReactFlowProvider>
+      <WorkflowDiagramCanvasBase
+        key={workflowWithCurrentVersion.currentVersion.id}
+        diagram={diagram}
+        status={workflowWithCurrentVersion.currentVersion.status}
+        nodeTypes={{
+          default: WorkflowDiagramStepNodeEditable,
+          'create-step': WorkflowDiagramCreateStepNode,
+          'empty-trigger': WorkflowDiagramEmptyTrigger,
+        }}
+      >
+        <WorkflowDiagramCanvasEditableEffect />
+      </WorkflowDiagramCanvasBase>
+    </ReactFlowProvider>
   );
 };

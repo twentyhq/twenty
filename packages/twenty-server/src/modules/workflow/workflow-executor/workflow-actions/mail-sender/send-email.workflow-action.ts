@@ -9,21 +9,22 @@ import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interface
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  MailSenderException,
-  MailSenderExceptionCode,
-} from 'src/modules/mail-sender/exceptions/mail-sender.exception';
 import { GmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/gmail-client.provider';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
-import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/types/workflow-action-result.type';
 import {
-  WorkflowSendEmailStepInput,
-  WorkflowSendEmailStepOutputSchema,
-} from 'src/modules/workflow/workflow-executor/types/workflow-step-settings.type';
+  SendEmailActionException,
+  SendEmailActionExceptionCode,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/exceptions/send-email-action.exception';
+import { WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
+import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 import { isDefined } from 'src/utils/is-defined';
+
+export type WorkflowSendEmailStepOutputSchema = {
+  success: boolean;
+};
 
 @Injectable()
 export class SendEmailWorkflowAction implements WorkflowAction {
@@ -54,9 +55,9 @@ export class SendEmailWorkflowAction implements WorkflowAction {
     });
 
     if (!isDefined(connectedAccount)) {
-      throw new MailSenderException(
+      throw new SendEmailActionException(
         `Connected Account '${connectedAccountId}' not found`,
-        MailSenderExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+        SendEmailActionExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
       );
     }
 
@@ -64,20 +65,20 @@ export class SendEmailWorkflowAction implements WorkflowAction {
       case 'google':
         return await this.gmailClientProvider.getGmailClient(connectedAccount);
       default:
-        throw new MailSenderException(
+        throw new SendEmailActionException(
           `Provider ${connectedAccount.provider} is not supported`,
-          MailSenderExceptionCode.PROVIDER_NOT_SUPPORTED,
+          SendEmailActionExceptionCode.PROVIDER_NOT_SUPPORTED,
         );
     }
   }
 
   async execute(
-    workflowStepInput: WorkflowSendEmailStepInput,
+    workflowActionInput: WorkflowSendEmailActionInput,
   ): Promise<WorkflowActionResult> {
     const emailProvider = await this.getEmailClient(
-      workflowStepInput.connectedAccountId,
+      workflowActionInput.connectedAccountId,
     );
-    const { email, body, subject } = workflowStepInput;
+    const { email, body, subject } = workflowActionInput;
 
     try {
       const emailSchema = z.string().trim().email('Invalid email');

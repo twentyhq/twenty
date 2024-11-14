@@ -113,7 +113,7 @@ export const Dropdown = ({
   };
 
   useListenClickOutsideV2({
-    refs: [refs.floating],
+    refs: [refs.floating, refs.domReference],
     listenerId: dropdownId,
     callback: () => {
       onClickOutside?.();
