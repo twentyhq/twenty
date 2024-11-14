@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { Record as ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
@@ -17,7 +17,7 @@ import { isQueryResultFieldValueARecordArray } from 'src/engine/api/graphql/work
 import { isQueryResultFieldValueARecord } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/utils/is-query-result-field-value-a-record.guard';
 import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -51,7 +51,7 @@ export class QueryResultGettersFactory {
   private async processConnection(
     connection: IConnection<ObjectRecord>,
     objectMetadataItemId: string,
-    objectMetadataMap: ObjectMetadataMap,
+    objectMetadataMaps: ObjectMetadataMaps,
     workspaceId: string,
   ): Promise<IConnection<ObjectRecord>> {
     return {
@@ -62,7 +62,7 @@ export class QueryResultGettersFactory {
           node: await this.processRecord(
             edge.node,
             objectMetadataItemId,
-            objectMetadataMap,
+            objectMetadataMaps,
             workspaceId,
           ),
         })),
@@ -73,7 +73,7 @@ export class QueryResultGettersFactory {
   private async processNestedRecordArray(
     result: { records: ObjectRecord[] },
     objectMetadataItemId: string,
-    objectMetadataMap: ObjectMetadataMap,
+    objectMetadataMaps: ObjectMetadataMaps,
     workspaceId: string,
   ) {
     return {
@@ -84,7 +84,7 @@ export class QueryResultGettersFactory {
             await this.processRecord(
               record,
               objectMetadataItemId,
-              objectMetadataMap,
+              objectMetadataMaps,
               workspaceId,
             ),
         ),
@@ -95,7 +95,7 @@ export class QueryResultGettersFactory {
   private async processRecordArray(
     recordArray: ObjectRecord[],
     objectMetadataItemId: string,
-    objectMetadataMap: ObjectMetadataMap,
+    objectMetadataMaps: ObjectMetadataMaps,
     workspaceId: string,
   ) {
     return await Promise.all(
@@ -104,7 +104,7 @@ export class QueryResultGettersFactory {
           await this.processRecord(
             record,
             objectMetadataItemId,
-            objectMetadataMap,
+            objectMetadataMaps,
             workspaceId,
           ),
       ),
@@ -114,15 +114,18 @@ export class QueryResultGettersFactory {
   private async processRecord(
     record: ObjectRecord,
     objectMetadataItemId: string,
-    objectMetadataMap: ObjectMetadataMap,
+    objectMetadataMaps: ObjectMetadataMaps,
     workspaceId: string,
   ): Promise<ObjectRecord> {
-    const objectMetadataMapItem = objectMetadataMap[objectMetadataItemId];
+    const objectMetadataMapItem = objectMetadataMaps.byId[objectMetadataItemId];
 
     const handler = this.getHandler(objectMetadataMapItem.nameSingular);
 
     const relationFields = Object.keys(record)
-      .map((recordFieldName) => objectMetadataMapItem.fields[recordFieldName])
+      .map(
+        (recordFieldName) =>
+          objectMetadataMapItem.fieldsByName[recordFieldName],
+      )
       .filter(isDefined)
       .filter((fieldMetadata) =>
         isRelationFieldMetadataType(fieldMetadata.type),
@@ -151,7 +154,7 @@ export class QueryResultGettersFactory {
           : relationMetadata.fromObjectMetadataId;
 
       const relationObjectMetadataItem =
-        objectMetadataMap[relationObjectMetadataItemId];
+        objectMetadataMaps.byId[relationObjectMetadataItemId];
 
       if (!isDefined(relationObjectMetadataItem)) {
         throw new Error(
@@ -163,7 +166,7 @@ export class QueryResultGettersFactory {
         await this.processQueryResultField(
           record[relationField.name],
           relationObjectMetadataItem.id,
-          objectMetadataMap,
+          objectMetadataMaps,
           workspaceId,
         );
     }
@@ -184,35 +187,35 @@ export class QueryResultGettersFactory {
   private async processQueryResultField(
     queryResultField: QueryResultFieldValue,
     objectMetadataItemId: string,
-    objectMetadataMap: ObjectMetadataMap,
+    objectMetadataMaps: ObjectMetadataMaps,
     workspaceId: string,
   ) {
     if (isQueryResultFieldValueAConnection(queryResultField)) {
       return await this.processConnection(
         queryResultField,
         objectMetadataItemId,
-        objectMetadataMap,
+        objectMetadataMaps,
         workspaceId,
       );
     } else if (isQueryResultFieldValueANestedRecordArray(queryResultField)) {
       return await this.processNestedRecordArray(
         queryResultField,
         objectMetadataItemId,
-        objectMetadataMap,
+        objectMetadataMaps,
         workspaceId,
       );
     } else if (isQueryResultFieldValueARecordArray(queryResultField)) {
       return await this.processRecordArray(
         queryResultField,
         objectMetadataItemId,
-        objectMetadataMap,
+        objectMetadataMaps,
         workspaceId,
       );
     } else if (isQueryResultFieldValueARecord(queryResultField)) {
       return await this.processRecord(
         queryResultField,
         objectMetadataItemId,
-        objectMetadataMap,
+        objectMetadataMaps,
         workspaceId,
       );
     } else {
@@ -229,12 +232,12 @@ export class QueryResultGettersFactory {
     result: QueryResultFieldValue,
     objectMetadataItem: ObjectMetadataInterface,
     workspaceId: string,
-    objectMetadataMap: ObjectMetadataMap,
+    objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<any> {
     return await this.processQueryResultField(
       result,
       objectMetadataItem.id,
-      objectMetadataMap,
+      objectMetadataMaps,
       workspaceId,
     );
   }
