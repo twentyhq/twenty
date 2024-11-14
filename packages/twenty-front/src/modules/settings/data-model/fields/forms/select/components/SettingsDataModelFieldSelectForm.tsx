@@ -266,7 +266,7 @@ export const SettingsDataModelFieldSelectForm = ({
                             color={MAIN_COLORS.yellow}
                           />
                         </StyledIconContainer>
-                        <StyledApiKey>API keys</StyledApiKey>
+                        <StyledApiKey>API values</StyledApiKey>
                       </StyledApiKeyContainer>
                     </motion.div>
                   )}

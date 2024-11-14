@@ -22,7 +22,7 @@ import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
-import { ObjectMetadataMapItem } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -631,13 +631,15 @@ export class WorkspaceRepository<
     }
 
     const objectMetadata =
-      this.internalContext.objectMetadataMap[objectMetadataName];
+      this.internalContext.objectMetadataMaps.byNameSingular[
+        objectMetadataName
+      ];
 
     if (!objectMetadata) {
       throw new Error(
         `Object metadata for object "${objectMetadataName}" is missing ` +
           `in workspace "${this.internalContext.workspaceId}" ` +
-          `with object metadata collection length: ${this.internalContext.objectMetadataMap.length}`,
+          `with object metadata collection length: ${this.internalContext.objectMetadataMaps.byNameSingular.length}`,
       );
     }
 
@@ -666,12 +668,12 @@ export class WorkspaceRepository<
 
   async formatResult<T>(
     data: T,
-    objectMetadata?: ObjectMetadataMapItem,
+    objectMetadata?: ObjectMetadataItemWithFieldMaps,
   ): Promise<T> {
     objectMetadata ??= await this.getObjectMetadataFromTarget();
 
-    const objectMetadataMap = this.internalContext.objectMetadataMap;
+    const objectMetadataMaps = this.internalContext.objectMetadataMaps;
 
-    return formatResult(data, objectMetadata, objectMetadataMap) as T;
+    return formatResult(data, objectMetadata, objectMetadataMaps) as T;
   }
 }

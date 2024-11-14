@@ -1,4 +1,4 @@
-export interface Record {
+export interface ObjectRecord {
   id: string;
   [key: string]: any;
   createdAt: string;
@@ -6,8 +6,8 @@ export interface Record {
   deletedAt: string | null;
 }
 
-export type RecordFilter = {
-  [Property in keyof Record]: any;
+export type ObjectRecordFilter = {
+  [Property in keyof ObjectRecord]: any;
 };
 
 export enum OrderByDirection {
@@ -17,11 +17,11 @@ export enum OrderByDirection {
   DescNullsLast = 'DescNullsLast',
 }
 
-export type RecordOrderBy = Array<{
-  [Property in keyof Record]?: OrderByDirection;
+export type ObjectRecordOrderBy = Array<{
+  [Property in keyof ObjectRecord]?: OrderByDirection;
 }>;
 
-export interface RecordDuplicateCriteria {
+export interface ObjectRecordDuplicateCriteria {
   objectName: string;
   columnNames: string[];
 }
