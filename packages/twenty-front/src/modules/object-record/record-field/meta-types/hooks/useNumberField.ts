@@ -42,18 +42,16 @@ export const useNumberField = () => {
       const castedValue = castAsNumberOrNull(newValue);
       if (!isNull(castedValue)) {
         persistField(castedValue / 100);
-      } else {
-        persistField(null);
-      }
-    } else {
-      if (!canBeCastAsNumberOrNull(newValue)) {
         return;
       }
-
-      const castedValue = castAsNumberOrNull(newValue);
-
-      persistField(castedValue);
+      persistField(null);
+      return;
     }
+    if (!canBeCastAsNumberOrNull(newValue)) {
+      return;
+    }
+    const castedValue = castAsNumberOrNull(newValue);
+    persistField(castedValue);
   };
 
   const { setDraftValue, getDraftValueSelector } =
