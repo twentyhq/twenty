@@ -1,9 +1,8 @@
-import { IconLock, MainButton } from 'twenty-ui';
+import { IconLock, MainButton, HorizontalSeparator } from 'twenty-ui';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
 import { useTheme } from '@emotion/react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';

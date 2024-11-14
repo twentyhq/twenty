@@ -13,7 +13,7 @@ import {
 import { useRecoilValue } from 'recoil';
 import styled from '@emotion/styled';
 import { SignInUpPasswordField } from '@/auth/sign-in-up/components/SignInUpPasswordField';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { FormProvider } from 'react-hook-form';

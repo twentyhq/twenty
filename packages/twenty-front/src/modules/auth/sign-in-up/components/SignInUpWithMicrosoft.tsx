@@ -1,10 +1,9 @@
-import { IconMicrosoft, MainButton } from 'twenty-ui';
+import { IconMicrosoft, MainButton, HorizontalSeparator } from 'twenty-ui';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { useTheme } from '@emotion/react';
-import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
 import { useRecoilValue } from 'recoil';
 

@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { H2Title, MainButton } from 'twenty-ui';
+import { H2Title, MainButton, HorizontalSeparator } from 'twenty-ui';
 import { availableWorkspacesForAuthState } from '@/auth/states/availableWorkspacesForAuthState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { redirectToWorkspace } from '~/utils/workspace-url.helper';
-import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 
 const StyledContentContainer = styled.div`

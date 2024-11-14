@@ -1,9 +1,8 @@
-import { IconGoogle, MainButton } from 'twenty-ui';
+import { IconGoogle, MainButton, HorizontalSeparator } from 'twenty-ui';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
 import { useTheme } from '@emotion/react';
 import { useRecoilValue } from 'recoil';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';

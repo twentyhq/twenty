@@ -1,6 +1,11 @@
 import styled from '@emotion/styled';
-import { IconGoogle, IconMicrosoft, Loader, MainButton } from 'twenty-ui';
-import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
+import {
+  IconGoogle,
+  IconMicrosoft,
+  Loader,
+  MainButton,
+  HorizontalSeparator,
+} from 'twenty-ui';
 import { useTheme } from '@emotion/react';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
@@ -180,7 +185,9 @@ export const SignInUpGlobalScopeForm = () => {
             )}
 
             <MainButton
-              title="Continue"
+              title={
+                signInUpStep === SignInUpStep.Password ? 'Sign Up' : 'Continue'
+              }
               type="submit"
               variant="secondary"
               Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}

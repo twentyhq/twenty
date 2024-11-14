@@ -1,11 +1,10 @@
 /* @license Enterprise */
 
-import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { MainButton } from 'twenty-ui';
+import { MainButton, HorizontalSeparator } from 'twenty-ui';
 
 import { isDefined } from '~/utils/isDefined';
 import { authProvidersState } from '@/client-config/states/authProvidersState';

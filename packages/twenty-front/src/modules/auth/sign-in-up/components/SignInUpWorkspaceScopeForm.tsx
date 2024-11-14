@@ -1,4 +1,3 @@
-import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
@@ -7,7 +6,7 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
 import { useRecoilState } from 'recoil';
-import { ActionLink } from 'twenty-ui';
+import { ActionLink, HorizontalSeparator } from 'twenty-ui';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/SignInUpWithMicrosoft';
 import { SignInUpWithSSO } from '@/auth/sign-in-up/components/SignInUpWithSSO';
