@@ -14,7 +14,7 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { isNonEmptyString } from '@sniptt/guards';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
 
-export const RecordTableBodyEffect = () => {
+export const RecordTableNoRecordGroupBodyEffect = () => {
   const { objectNameSingular } = useContext(RecordTableContext);
 
   const [hasInitializedScroll, setHasInitializedScroll] = useState(false);

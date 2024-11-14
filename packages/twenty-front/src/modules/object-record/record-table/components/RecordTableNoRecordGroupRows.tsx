@@ -3,7 +3,7 @@ import { RecordTableRow } from '@/object-record/record-table/record-table-row/co
 import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-export const RecordTableRows = () => {
+export const RecordTableNoRecordGroupRows = () => {
   const rowIds = useRecoilComponentValueV2(tableAllRowIdsComponentState);
 
   return (

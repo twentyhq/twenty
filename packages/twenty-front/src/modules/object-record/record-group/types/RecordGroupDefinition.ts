@@ -15,5 +15,3 @@ export type RecordGroupDefinition = {
   position: number;
   isVisible: boolean;
 };
-
-export type RecordGroupDefinitionId = RecordGroupDefinition['id'];

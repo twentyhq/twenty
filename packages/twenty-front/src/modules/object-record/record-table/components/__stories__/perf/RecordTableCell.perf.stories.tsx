@@ -105,7 +105,7 @@ const meta: Meta = {
                   value={{
                     columnDefinition: mockPerformance.fieldDefinition,
                     columnIndex: 0,
-                    cellPosition: { recordId: 'recordId', column: 0 },
+                    cellPosition: { row: 0, column: 0 },
                     hasSoftFocus: false,
                     isInEditMode: false,
                   }}

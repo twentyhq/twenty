@@ -19,14 +19,14 @@ export const RecordTableCellWrapper = ({
   columnIndex: number;
   children: React.ReactNode;
 }) => {
-  const { recordId } = useContext(RecordTableRowContext);
+  const { rowIndex } = useContext(RecordTableRowContext);
 
   const currentTableCellPosition: TableCellPosition = useMemo(
     () => ({
       column: columnIndex,
-      recordId,
+      row: rowIndex,
     }),
-    [columnIndex, recordId],
+    [columnIndex, rowIndex],
   );
 
   const isInEditMode = useRecoilComponentFamilyValueV2(

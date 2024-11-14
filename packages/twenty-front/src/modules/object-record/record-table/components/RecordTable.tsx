@@ -8,11 +8,11 @@ import { RecordTableStickyEffect } from '@/object-record/record-table/components
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
-import { RecordTableBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyEffect';
-import { RecordTableBodyRecordGroupEffects } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupEffects';
-import { RecordTableBodyRecordGroups } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroups';
 import { RecordTableBodyUnselectEffect } from '@/object-record/record-table/record-table-body/components/RecordTableBodyUnselectEffect';
+import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBody';
+import { RecordTableNoRecordGroupBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBodyEffect';
+import { RecordTableRecordGroupBodyEffects } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupBodyEffects';
+import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
@@ -92,9 +92,9 @@ export const RecordTable = ({
         viewBarId={viewBarId}
       >
         {!hasRecordGroups ? (
-          <RecordTableBodyEffect />
+          <RecordTableNoRecordGroupBodyEffect />
         ) : (
-          <RecordTableBodyRecordGroupEffects />
+          <RecordTableRecordGroupBodyEffects />
         )}
         <RecordTableBodyUnselectEffect
           tableBodyRef={tableBodyRef}
@@ -107,9 +107,9 @@ export const RecordTable = ({
             <StyledTable className="entity-table-cell" ref={tableBodyRef}>
               <RecordTableHeader objectNameSingular={objectNameSingular} />
               {!hasRecordGroups ? (
-                <RecordTableBody />
+                <RecordTableNoRecordGroupBody />
               ) : (
-                <RecordTableBodyRecordGroups
+                <RecordTableRecordGroupsBody
                   objectNameSingular={objectNameSingular}
                 />
               )}
