@@ -24,6 +24,11 @@ jobs:
           PGPASSWORD_SUPERUSER: twenty
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       redis:
         image: redis
         ports:
@@ -65,7 +70,7 @@ jobs:
         run: npx nx reset:env twenty-server
       - name: Server / Create DB
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: PGPASSWORD=twenty psql -h postgres -p 5432 -U twenty -d postgres -c "SELECT 'CREATE DATABASE test' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'test')"
+        run: PGPASSWORD=twenty psql -h localhost -p 5432 -U twenty -d postgres -c "SELECT 'CREATE DATABASE test' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'test')"
       - name: Worker / Run
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx run twenty-server:worker:ci
@@ -118,6 +123,11 @@ jobs:
           PGPASSWORD_SUPERUSER: twenty
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       redis:
         image: redis
         ports:
