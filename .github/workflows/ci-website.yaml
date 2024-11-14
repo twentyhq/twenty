@@ -46,7 +46,7 @@ jobs:
 
       - name: Server / Create DB
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres -c "SELECT 'CREATE DATABASE default' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'default')"
+        run: echo "SELECT 'CREATE DATABASE default' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'default')\gexec" | PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres
 
       - name: Website / Run migrations
         if: steps.changed-files.outputs.changed == 'true' 

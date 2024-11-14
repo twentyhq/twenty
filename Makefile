@@ -12,9 +12,9 @@ postgres-on-docker:
 		-c 'SELECT pg_is_in_recovery();' 2>/dev/null | grep -q 'f'; do \
 		sleep 1; \
 	done
-	PGPASSWORD=twenty psql -h localhost -p 5432 -U twenty -d postgres \
-		-c "SELECT 'CREATE DATABASE default' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'default')" \
-		-c "SELECT 'CREATE DATABASE test' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'test')"
+	PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres \
+		-c "SELECT 'CREATE DATABASE default' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'default')\gexec" \
+		-c "SELECT 'CREATE DATABASE test' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'test')\gexec"
 
 redis-on-docker:
 	docker run -d --name twenty_redis -p 6379:6379 redis/redis-stack-server:latest
