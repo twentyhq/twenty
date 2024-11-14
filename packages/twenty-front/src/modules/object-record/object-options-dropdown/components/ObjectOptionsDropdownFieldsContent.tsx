@@ -9,12 +9,12 @@ import {
 } from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
-import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { RecordIndexOptionsContentId } from '@/object-record/record-index/options/components/RecordIndexOptionsDropdownContent';
-import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
-import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
+import { RecordIndexOptionsContentId } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
+import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
+import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
+import { useObjectOptionsForTable } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForTable';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -32,21 +32,21 @@ import { ViewType } from '@/views/types/ViewType';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
-type RecordIndexOptionsDropdownFieldsContentProps = {
+type ObjectOptionsDropdownFieldsContentProps = {
   recordIndexId: string;
   objectMetadataItem: ObjectMetadataItem;
   viewType: ViewType;
 };
 
-export const RecordIndexOptionsDropdownFieldsContent = ({
+export const ObjectOptionsDropdownFieldsContent = ({
   viewType,
   recordIndexId,
   objectMetadataItem,
-}: RecordIndexOptionsDropdownFieldsContentProps) => {
+}: ObjectOptionsDropdownFieldsContentProps) => {
   const { onContentChange, resetContent } =
     useDropdownContent<RecordIndexOptionsContentId>();
 
-  const { closeDropdown } = useDropdown(RECORD_INDEX_OPTIONS_DROPDOWN_ID);
+  const { closeDropdown } = useDropdown(OBJECT_OPTIONS_DROPDOWN_ID);
 
   const { objectNamePlural } = useObjectNamePluralFromSingular({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -69,14 +69,14 @@ export const RecordIndexOptionsDropdownFieldsContent = ({
     handleReorderColumns,
     visibleTableColumns,
     hiddenTableColumns,
-  } = useRecordIndexOptionsForTable(recordIndexId);
+  } = useObjectOptionsForTable(recordIndexId);
 
   const {
     visibleBoardFields,
     hiddenBoardFields,
     handleReorderBoardFields,
     handleBoardFieldVisibilityChange,
-  } = useRecordIndexOptionsForBoard({
+  } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordBoardId: recordIndexId,
     viewBarId: recordIndexId,

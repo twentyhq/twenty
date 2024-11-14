@@ -2,24 +2,36 @@ import { useEffect } from 'react';
 import { Key } from 'ts-key-enum';
 import {
   IconChevronLeft,
+  IconCircleOff,
   IconEyeOff,
+  IconHandMove,
   IconLayoutList,
   IconSettings,
+  IconSortAZ,
+  IconSortDescending,
+  IconSortZA,
   MenuItem,
   MenuItemNavigate,
+  MenuItemToggle,
   UndecoratedLink,
   useIcons,
 } from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
-import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
+import { RecordIndexOptionsContentId } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
+import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
+import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useRecordGroupFieldsDropdown';
+import { objectOptionsDropdownRecordGroupHideComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownRecordGroupHideComponentState';
+import { objectOptionsDropdownRecordGroupSortComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownRecordGroupSortComponentState';
+import { objectOptionsDropdownRecordGroupIsDragableSortComponentSelector } from '@/object-record/object-options-dropdown/states/selectors/objectOptionsDropdownRecordGroupIsDragableSortComponentSelector';
 import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
 import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { useRecordGroupSelector } from '@/object-record/record-group/hooks/useRecordGroupSelector';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
-import { RecordIndexOptionsContentId } from '@/object-record/record-index/options/components/RecordIndexOptionsDropdownContent';
+import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -31,25 +43,28 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useDropdownContent } from '@/ui/layout/dropdown/hooks/useDropdownContent';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { ViewGroupsVisibilityDropdownSection } from '@/views/components/ViewGroupsVisibilityDropdownSection';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { RecordGroupsVisibilityDropdownSection } from '@/views/components/RecordGroupsVisibilityDropdownSection';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
-type RecordIndexOptionsDropdownRecordGroupContentProps = {
+type ObjectOptionsDropdownRecordGroupContentProps = {
   recordIndexId: string;
   objectMetadataItem: ObjectMetadataItem;
 };
 
-export const RecordIndexOptionsDropdownRecordGroupContent = ({
+export const ObjectOptionsDropdownRecordGroupContent = ({
   recordIndexId,
   objectMetadataItem,
-}: RecordIndexOptionsDropdownRecordGroupContentProps) => {
+}: ObjectOptionsDropdownRecordGroupContentProps) => {
   const { getIcon } = useIcons();
 
   const { currentContentId, onContentChange, resetContent } =
     useDropdownContent<RecordIndexOptionsContentId>();
 
-  const { closeDropdown } = useDropdown(RECORD_INDEX_OPTIONS_DROPDOWN_ID);
+  const { closeDropdown } = useDropdown(OBJECT_OPTIONS_DROPDOWN_ID);
 
   const { objectNamePlural } = useObjectNamePluralFromSingular({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -66,11 +81,29 @@ export const RecordIndexOptionsDropdownRecordGroupContent = ({
   const {
     hiddenRecordGroups,
     visibleRecordGroups,
-    selectableFieldMetadataItems,
     viewGroupFieldMetadataItem,
   } = useRecordGroups({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
+
+  const isDragableSortRecordGroup = useRecoilComponentValueV2(
+    objectOptionsDropdownRecordGroupIsDragableSortComponentSelector,
+  );
+
+  const setRecordGroupSort = useSetRecoilComponentStateV2(
+    objectOptionsDropdownRecordGroupSortComponentState,
+  );
+
+  const [hideEmptyRecordGroup, setHideEmptyRecordGroup] =
+    useRecoilComponentStateV2(
+      objectOptionsDropdownRecordGroupHideComponentState,
+    );
+
+  const {
+    recordGroupFieldSearchInput,
+    setRecordGroupFieldSearchInput,
+    filteredRecordGroupFieldMetadataItems,
+  } = useSearchRecordGroupField();
 
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
     useRecordGroupVisibility({
@@ -112,8 +145,16 @@ export const RecordIndexOptionsDropdownRecordGroupContent = ({
         <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
           Group by
         </DropdownMenuHeader>
+        <StyledInput
+          autoFocus
+          value={recordGroupFieldSearchInput}
+          placeholder="Search fields"
+          onChange={(event) =>
+            setRecordGroupFieldSearchInput(event.target.value)
+          }
+        />
         <MenuItem text="None" />
-        {selectableFieldMetadataItems.map((fieldMetadataItem) => (
+        {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
           <MenuItem
             key={fieldMetadataItem.id}
             onClick={() => {
@@ -151,14 +192,26 @@ export const RecordIndexOptionsDropdownRecordGroupContent = ({
           }
           hasSubMenu
         />
+        <MenuItem
+          onClick={() => onContentChange('recordGroupSort')}
+          LeftIcon={IconSortDescending}
+          text="Sort"
+          hasSubMenu
+        />
+        <MenuItemToggle
+          LeftIcon={IconCircleOff}
+          onToggleChange={() => setHideEmptyRecordGroup((prev) => !prev)}
+          toggled={hideEmptyRecordGroup}
+          text="Hide empty groups"
+          toggleSize="small"
+        />
         <DropdownMenuSeparator />
-        <ViewGroupsVisibilityDropdownSection
-          title={viewGroupFieldMetadataItem?.label ?? ''}
+        <RecordGroupsVisibilityDropdownSection
+          title="Visible groups"
           viewGroups={visibleRecordGroups}
           onDragEnd={handleRecordGroupOrderChange}
           onVisibilityChange={handleRecordGroupVisibilityChange}
-          isDraggable
-          showSubheader={false}
+          isDraggable={isDragableSortRecordGroup}
           showDragGrip={true}
         />
         {hiddenRecordGroups.length > 0 && (
@@ -182,7 +235,7 @@ export const RecordIndexOptionsDropdownRecordGroupContent = ({
         >
           Hidden {viewGroupFieldMetadataItem?.label}
         </DropdownMenuHeader>
-        <ViewGroupsVisibilityDropdownSection
+        <RecordGroupsVisibilityDropdownSection
           title={`Hidden ${viewGroupFieldMetadataItem?.label}`}
           viewGroups={hiddenRecordGroups}
           onVisibilityChange={handleRecordGroupVisibilityChange}
@@ -202,6 +255,39 @@ export const RecordIndexOptionsDropdownRecordGroupContent = ({
             <MenuItem LeftIcon={IconSettings} text="Edit field values" />
           </DropdownMenuItemsContainer>
         </UndecoratedLink>
+      </DropdownContentItem>
+
+      <DropdownContentItem id="recordGroupSort">
+        <DropdownMenuHeader
+          StartIcon={IconChevronLeft}
+          onClick={() => onContentChange('recordGroups')}
+        >
+          Sort
+        </DropdownMenuHeader>
+        <MenuItem
+          onClick={() => {
+            setRecordGroupSort(RecordGroupSort.MANUAL);
+            closeDropdown();
+          }}
+          LeftIcon={IconHandMove}
+          text={RecordGroupSort.MANUAL}
+        />
+        <MenuItem
+          onClick={() => {
+            setRecordGroupSort(RecordGroupSort.ALPHABETICAL);
+            closeDropdown();
+          }}
+          LeftIcon={IconSortAZ}
+          text={RecordGroupSort.ALPHABETICAL}
+        />
+        <MenuItem
+          onClick={() => {
+            setRecordGroupSort(RecordGroupSort.REVERSE_ALPHABETICAL);
+            closeDropdown();
+          }}
+          LeftIcon={IconSortZA}
+          text={RecordGroupSort.REVERSE_ALPHABETICAL}
+        />
       </DropdownContentItem>
     </>
   );

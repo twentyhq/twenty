@@ -52,32 +52,17 @@ export const MenuItemLeftContent = ({
 
   return (
     <StyledMenuItemLeftContent className={className}>
-      {showGrip &&
-        (isDisabled ? (
-          <StyledDraggableItem>
-            <IconGripVertical
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-              color={
-                isDisabled
-                  ? theme.font.color.extraLight
-                  : theme.font.color.light
-              }
-            />
-          </StyledDraggableItem>
-        ) : (
-          <StyledDraggableItem>
-            <IconGripVertical
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-              color={
-                isDisabled
-                  ? theme.font.color.extraLight
-                  : theme.font.color.light
-              }
-            />
-          </StyledDraggableItem>
-        ))}
+      {showGrip && (
+        <StyledDraggableItem>
+          <IconGripVertical
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+            color={
+              isDisabled ? theme.font.color.extraLight : theme.font.color.light
+            }
+          />
+        </StyledDraggableItem>
+      )}
       {LeftIcon && (
         <LeftIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
       )}

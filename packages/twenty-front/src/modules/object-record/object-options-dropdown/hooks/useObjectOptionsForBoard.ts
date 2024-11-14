@@ -16,17 +16,17 @@ import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-type useRecordIndexOptionsForBoardParams = {
+type useObjectOptionsForBoardParams = {
   objectNameSingular: string;
   recordBoardId: string;
   viewBarId: string;
 };
 
-export const useRecordIndexOptionsForBoard = ({
+export const useObjectOptionsForBoard = ({
   objectNameSingular,
   recordBoardId,
   viewBarId,
-}: useRecordIndexOptionsForBoardParams) => {
+}: useObjectOptionsForBoardParams) => {
   const [recordIndexFieldDefinitions, setRecordIndexFieldDefinitions] =
     useRecoilState(recordIndexFieldDefinitionsState);
 

@@ -1,14 +1,14 @@
 import { json2csv } from 'json-2-csv';
 import { useMemo } from 'react';
 
+import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
+import { useProcessRecordsForCSVExport } from '@/object-record/object-options-dropdown/hooks/useProcessRecordsForCSVExport';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-index/options/constants/ExportTableDataDefaultPageSize';
-import { useProcessRecordsForCSVExport } from '@/object-record/record-index/options/hooks/useProcessRecordsForCSVExport';
 
 import {
   UseRecordDataOptions,
   useRecordData,
-} from '@/object-record/record-index/options/hooks/useRecordData';
+} from '@/object-record/object-options-dropdown/hooks/useRecordData';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';

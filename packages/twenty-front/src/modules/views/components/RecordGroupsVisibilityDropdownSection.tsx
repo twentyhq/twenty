@@ -16,17 +16,17 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
 import { isDefined } from '~/utils/isDefined';
 
-type ViewGroupsVisibilityDropdownSectionProps = {
+type RecordGroupsVisibilityDropdownSectionProps = {
   viewGroups: RecordGroupDefinition[];
   isDraggable: boolean;
   onDragEnd?: OnDragEndResponder;
   onVisibilityChange: (viewGroup: RecordGroupDefinition) => void;
   title: string;
-  showSubheader: boolean;
+  showSubheader?: boolean;
   showDragGrip: boolean;
 };
 
-export const ViewGroupsVisibilityDropdownSection = ({
+export const RecordGroupsVisibilityDropdownSection = ({
   viewGroups,
   isDraggable,
   onDragEnd,
@@ -34,7 +34,7 @@ export const ViewGroupsVisibilityDropdownSection = ({
   title,
   showSubheader = true,
   showDragGrip,
-}: ViewGroupsVisibilityDropdownSectionProps) => {
+}: RecordGroupsVisibilityDropdownSectionProps) => {
   const handleOnDrag = (result: DropResult, provided: ResponderProvided) => {
     onDragEnd?.(result, provided);
   };

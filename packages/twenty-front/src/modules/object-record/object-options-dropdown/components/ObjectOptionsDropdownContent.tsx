@@ -12,17 +12,17 @@ import {
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
-import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 
 import {
   displayedExportProgress,
   useExportRecordData,
 } from '@/action-menu/hooks/useExportRecordData';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { ObjectOptionsDropdownFieldsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent';
+import { ObjectOptionsDropdownRecordGroupContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupContent';
+import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
+import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
-import { RecordIndexOptionsDropdownFieldsContent } from '@/object-record/record-index/options/components/RecordIndexOptionsDropdownFieldsContent';
-import { RecordIndexOptionsDropdownRecordGroupContent } from '@/object-record/record-index/options/components/RecordIndexOptionsDropdownRecordGroupContent';
-import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { useOpenObjectRecordsSpreasheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreasheetImportDialog';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -38,25 +38,26 @@ export type RecordIndexOptionsContentId =
   | 'hiddenFields'
   | 'recordGroups'
   | 'hiddenRecordGroups'
-  | 'recordGroupFields';
+  | 'recordGroupFields'
+  | 'recordGroupSort';
 
-type RecordIndexOptionsDropdownContentProps = {
+type ObjectOptionsDropdownContentProps = {
   recordIndexId: string;
   objectMetadataItem: ObjectMetadataItem;
   viewType: ViewType;
 };
 
-export const RecordIndexOptionsDropdownContent = ({
+export const ObjectOptionsDropdownContent = ({
   viewType,
   recordIndexId,
   objectMetadataItem,
-}: RecordIndexOptionsDropdownContentProps) => {
+}: ObjectOptionsDropdownContentProps) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const { currentContentId, onContentChange } =
     useDropdownContent<RecordIndexOptionsContentId>();
 
-  const { closeDropdown } = useDropdown(RECORD_INDEX_OPTIONS_DROPDOWN_ID);
+  const { closeDropdown } = useDropdown(OBJECT_OPTIONS_DROPDOWN_ID);
 
   const { objectNamePlural } = useObjectNamePluralFromSingular({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -80,7 +81,7 @@ export const RecordIndexOptionsDropdownContent = ({
     visibleBoardFields,
     isCompactModeActive,
     setAndPersistIsCompactModeActive,
-  } = useRecordIndexOptionsForBoard({
+  } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordBoardId: recordIndexId,
     viewBarId: recordIndexId,
@@ -147,13 +148,13 @@ export const RecordIndexOptionsDropdownContent = ({
         </DropdownMenuItemsContainer>
       )}
 
-      <RecordIndexOptionsDropdownFieldsContent
+      <ObjectOptionsDropdownFieldsContent
         viewType={viewType}
         recordIndexId={recordIndexId}
         objectMetadataItem={objectMetadataItem}
       />
 
-      <RecordIndexOptionsDropdownRecordGroupContent
+      <ObjectOptionsDropdownRecordGroupContent
         recordIndexId={recordIndexId}
         objectMetadataItem={objectMetadataItem}
       />
