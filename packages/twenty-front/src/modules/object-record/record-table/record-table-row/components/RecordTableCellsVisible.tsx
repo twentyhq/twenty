@@ -5,10 +5,16 @@ import { RecordTableCell } from '@/object-record/record-table/record-table-cell/
 import { RecordTableCellWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellWrapper';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { tableCellWidthsComponentState } from '@/object-record/record-table/states/tableCellWidthsComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTableCellsVisible = () => {
   const { isSelected, isDragging } = useContext(RecordTableRowContext);
+
+  const [tableCellWidths] = useRecoilComponentStateV2(
+    tableCellWidthsComponentState,
+  );
 
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
@@ -19,7 +25,11 @@ export const RecordTableCellsVisible = () => {
   return (
     <>
       <RecordTableCellWrapper column={visibleTableColumns[0]} columnIndex={0}>
-        <RecordTableTd isSelected={isSelected} isDragging={isDragging}>
+        <RecordTableTd
+          isSelected={isSelected}
+          isDragging={isDragging}
+          width={tableCellWidths[2]}
+        >
           <RecordTableCell />
         </RecordTableTd>
       </RecordTableCellWrapper>
@@ -29,7 +39,11 @@ export const RecordTableCellsVisible = () => {
           column={column}
           columnIndex={columnIndex + 1}
         >
-          <RecordTableTd isSelected={isSelected} isDragging={isDragging}>
+          <RecordTableTd
+            isSelected={isSelected}
+            isDragging={isDragging}
+            width={tableCellWidths[columnIndex + 3] - 1}
+          >
             <RecordTableCell />
           </RecordTableTd>
         </RecordTableCellWrapper>

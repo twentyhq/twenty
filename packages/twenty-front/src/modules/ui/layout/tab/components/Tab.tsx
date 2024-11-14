@@ -16,9 +16,7 @@ type TabProps = {
   to?: string;
 };
 
-const StyledTab = styled('button', {
-  shouldForwardProp: (prop) => !['active'].includes(prop),
-})<{
+const StyledTab = styled.button<{
   active?: boolean;
   disabled?: boolean;
   to?: string;
