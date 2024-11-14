@@ -13,6 +13,10 @@ import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import {
+  RecordCRUDActionException,
+  RecordCRUDActionExceptionCode,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
+import {
   WorkflowCreateRecordActionInput,
   WorkflowDeleteRecordActionInput,
   WorkflowFindRecordActionInput,
@@ -43,7 +47,10 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
       case WorkflowRecordCRUDType.FIND:
         return this.findRecord(workflowActionInput);
       default:
-        throw new Error(`Unknown record operation type`);
+        throw new RecordCRUDActionException(
+          `Unknown record operation type`,
+          RecordCRUDActionExceptionCode.INVALID_REQUEST,
+        );
     }
   }
 
@@ -60,31 +67,9 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
 
     const createdObjectRecord = await repository.save(objectRecord);
 
-    return { result: createdObjectRecord };
-  }
-
-  private async deleteRecord(
-    workflowActionInput: WorkflowDeleteRecordActionInput,
-  ): Promise<WorkflowActionResult> {
-    const repository = await this.twentyORMManager.getRepository(
-      workflowActionInput.objectName,
-    );
-
-    const objectRecord = await repository.findOne({
-      where: {
-        id: workflowActionInput.objectRecordId,
-      },
-    });
-
-    if (!objectRecord) {
-      throw new Error(
-        `Record ${workflowActionInput.objectName} with id ${workflowActionInput.objectRecordId} not found`,
-      );
-    }
-
-    const deletedObjectRecord = await repository.remove(objectRecord);
-
-    return { result: deletedObjectRecord };
+    return {
+      result: createdObjectRecord,
+    };
   }
 
   private async updateRecord(
@@ -101,8 +86,9 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
     });
 
     if (!objectRecord) {
-      throw new Error(
+      throw new RecordCRUDActionException(
         `Record ${workflowActionInput.objectName} with id ${workflowActionInput.objectRecordId} not found`,
+        RecordCRUDActionExceptionCode.RECORD_NOT_FOUND,
       );
     }
 
@@ -111,7 +97,36 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
       ...workflowActionInput.objectRecord,
     });
 
-    return { result: updatedObjectRecord };
+    return {
+      result: updatedObjectRecord,
+    };
+  }
+
+  private async deleteRecord(
+    workflowActionInput: WorkflowDeleteRecordActionInput,
+  ): Promise<WorkflowActionResult> {
+    const repository = await this.twentyORMManager.getRepository(
+      workflowActionInput.objectName,
+    );
+
+    const objectRecord = await repository.findOne({
+      where: {
+        id: workflowActionInput.objectRecordId,
+      },
+    });
+
+    if (!objectRecord) {
+      throw new RecordCRUDActionException(
+        `Record ${workflowActionInput.objectName} with id ${workflowActionInput.objectRecordId} not found`,
+        RecordCRUDActionExceptionCode.RECORD_NOT_FOUND,
+      );
+    }
+
+    const deletedObjectRecord = await repository.remove(objectRecord);
+
+    return {
+      result: deletedObjectRecord,
+    };
   }
 
   private async findRecord(
@@ -123,14 +138,20 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
     const workspaceId = this.scopedWorkspaceContextFactory.create().workspaceId;
 
     if (!workspaceId) {
-      throw new Error('Workspace ID is required');
+      throw new RecordCRUDActionException(
+        'Workspace ID is required',
+        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+      );
     }
 
     const currentCacheVersion =
       await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
 
     if (currentCacheVersion === undefined) {
-      throw new Error('Metadata cache version not found');
+      throw new RecordCRUDActionException(
+        'Metadata cache version not found',
+        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+      );
     }
 
     const objectMetadataMap =
@@ -140,7 +161,10 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
       );
 
     if (!objectMetadataMap) {
-      throw new Error('Object metadata collection not found');
+      throw new RecordCRUDActionException(
+        'Object metadata collection not found',
+        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+      );
     }
 
     const objectMetadataMapItem =

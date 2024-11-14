@@ -1,4 +1,7 @@
-import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import {
+  RecordFilter,
+  RecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
 type ObjectRecord = Record<string, any>;
 
@@ -32,7 +35,7 @@ export type WorkflowFindRecordActionInput = {
   type: WorkflowRecordCRUDType.FIND;
   objectName: string;
   filter?: Partial<RecordFilter>;
-  orderBy?: string;
+  orderBy?: Partial<RecordOrderBy>;
   limit?: number;
 };
 
