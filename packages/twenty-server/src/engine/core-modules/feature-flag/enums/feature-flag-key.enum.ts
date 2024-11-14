@@ -16,4 +16,5 @@ export enum FeatureFlagKey {
   IsUniqueIndexesEnabled = 'IS_UNIQUE_INDEXES_ENABLED',
   IsMicrosoftSyncEnabled = 'IS_MICROSOFT_SYNC_ENABLED',
   IsAdvancedFiltersEnabled = 'IS_ADVANCED_FILTERS_ENABLED',
+  IsFavoriteFolderEnabled = 'IS_FAVORITE_FOLDER_ENABLED',
 }

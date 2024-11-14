@@ -105,10 +105,16 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => FavoriteFolderWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
   })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsFavoriteFolderEnabled,
+  })
   @WorkspaceIsNullable()
   favoriteFolder: Relation<FavoriteFolderWorkspaceEntity> | null;
 
   @WorkspaceJoinColumn('favoriteFolder')
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsFavoriteFolderEnabled,
+  })
   favoriteFolderId: string;
 
   @WorkspaceRelation({

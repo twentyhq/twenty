@@ -4,6 +4,7 @@ import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { usePrefetchRunQuery } from '@/prefetch/hooks/internal/usePrefetchRunQuery';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
@@ -17,6 +18,10 @@ type PrefetchedFavoritesData = {
 };
 
 export const usePrefetchedFavoritesData = (): PrefetchedFavoritesData => {
+  const isFavoriteFolderEnabled = useIsFeatureEnabled(
+    'IS_FAVORITE_FOLDER_ENABLED',
+  );
+
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const currentWorkspaceMemberId = currentWorkspaceMember?.id;
   const { records: _favorites } = usePrefetchedData<Favorite>(
