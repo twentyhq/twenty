@@ -1,8 +1,8 @@
-import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { isDefined } from 'src/utils/is-defined';
 
-export const withSoftDeleted = <T extends RecordFilter>(
+export const withSoftDeleted = <T extends ObjectRecordFilter>(
   filter: T | undefined | null,
 ): boolean => {
   if (!isDefined(filter)) {

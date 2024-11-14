@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class ApiEventEmitterService {
   constructor(private readonly workspaceEventEmitter: WorkspaceEventEmitter) {}
 
-  public emitCreateEvents<T extends IRecord>(
+  public emitCreateEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
@@ -32,7 +32,7 @@ export class ApiEventEmitterService {
     );
   }
 
-  public emitUpdateEvents<T extends IRecord>(
+  public emitUpdateEvents<T extends ObjectRecord>(
     existingRecords: T[],
     records: T[],
     updatedFields: string[],
@@ -77,7 +77,7 @@ export class ApiEventEmitterService {
     );
   }
 
-  public emitDeletedEvents<T extends IRecord>(
+  public emitDeletedEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
@@ -99,7 +99,7 @@ export class ApiEventEmitterService {
     );
   }
 
-  public emitDestroyEvents<T extends IRecord>(
+  public emitDestroyEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
@@ -121,9 +121,7 @@ export class ApiEventEmitterService {
     );
   }
 
-  private removeGraphQLAndNestedProperties<ObjectRecord extends IRecord>(
-    record: ObjectRecord,
-  ) {
+  private removeGraphQLAndNestedProperties<T extends ObjectRecord>(record: T) {
     if (!record) {
       return {};
     }
