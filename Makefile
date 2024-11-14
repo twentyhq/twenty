@@ -13,8 +13,8 @@ postgres-on-docker:
 		sleep 1; \
 	done
 	PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres \
-		-c "SELECT 'CREATE DATABASE default' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'default')\gexec" \
-		-c "SELECT 'CREATE DATABASE test' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'test')\gexec"
+		-c "CREATE DATABASE \"default\" WITH OWNER postgres;" \
+		-c "CREATE DATABASE \"test\" WITH OWNER postgres;"
 
 redis-on-docker:
 	docker run -d --name twenty_redis -p 6379:6379 redis/redis-stack-server:latest

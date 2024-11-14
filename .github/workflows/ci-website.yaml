@@ -46,7 +46,7 @@ jobs:
 
       - name: Server / Create DB
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres -c "CREATE DATABASE default;"
+        run: PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
 
       - name: Website / Run migrations
         if: steps.changed-files.outputs.changed == 'true' 

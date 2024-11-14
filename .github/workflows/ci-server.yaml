@@ -73,8 +73,8 @@ jobs:
       - name: Server / Create DB
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres -c "CREATE DATABASE default;"
-          PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres -c "CREATE DATABASE test;"
+          PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+          PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
       - name: Worker / Run
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx run twenty-server:worker:ci
