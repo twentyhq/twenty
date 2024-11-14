@@ -85,7 +85,7 @@ export const LightIconButton = ({
   Icon,
   active = false,
   size = 'small',
-  accent = 'tertiary',
+  accent = 'secondary',
   disabled = false,
   focus = false,
   onClick,

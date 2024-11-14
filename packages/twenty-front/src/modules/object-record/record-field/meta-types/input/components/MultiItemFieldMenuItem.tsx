@@ -5,8 +5,10 @@ import { useState } from 'react';
 import {
   IconBookmark,
   IconBookmarkPlus,
+  IconDotsVertical,
   IconPencil,
   IconTrash,
+  LightButtonProps,
   MenuItem,
 } from 'twenty-ui';
 
@@ -19,6 +21,7 @@ type MultiItemFieldMenuItemProps<T> = {
   onDelete?: () => void;
   DisplayComponent: React.ComponentType<{ value: T }>;
   hasPrimaryButton?: boolean;
+  rightIconConfig?: Omit<LightButtonProps, 'Icon'>;
 };
 
 export const MultiItemFieldMenuItem = <T,>({
@@ -30,6 +33,7 @@ export const MultiItemFieldMenuItem = <T,>({
   onDelete,
   DisplayComponent,
   hasPrimaryButton = true,
+  rightIconConfig,
 }: MultiItemFieldMenuItemProps<T>) => {
   const [isHovered, setIsHovered] = useState(false);
   const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
@@ -64,7 +68,10 @@ export const MultiItemFieldMenuItem = <T,>({
       onMouseLeave={handleMouseLeave}
       text={<DisplayComponent value={value} />}
       isIconDisplayedOnHoverOnly={!isPrimary && !isDropdownOpen}
-      RightIcon={!isHovered && isPrimary ? IconBookmark : null}
+      rightIconConfig={{
+        Icon: !isHovered && isPrimary ? IconBookmark : IconDotsVertical,
+        ...rightIconConfig,
+      }}
       dropdownId={dropdownId}
       dropdownContent={
         <DropdownMenuItemsContainer>

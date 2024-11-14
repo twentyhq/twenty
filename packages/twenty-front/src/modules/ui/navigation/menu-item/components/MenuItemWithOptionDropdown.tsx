@@ -5,7 +5,6 @@ import { FunctionComponent, MouseEvent, ReactElement, ReactNode } from 'react';
 import {
   IconChevronRight,
   IconComponent,
-  IconDotsVertical,
   LightIconButton,
   LightIconButtonProps,
   MenuItemAccent,
@@ -29,7 +28,7 @@ export type MenuItemWithOptionDropdownProps = {
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
-  RightIcon?: IconComponent | null;
+  rightIconConfig?: LightIconButtonProps;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
   onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
@@ -46,7 +45,7 @@ export const MenuItemWithOptionDropdown = ({
   dropdownContent,
   dropdownId,
   LeftIcon,
-  RightIcon,
+  rightIconConfig,
   onClick,
   onMouseEnter,
   onMouseLeave,
@@ -79,12 +78,7 @@ export const MenuItemWithOptionDropdown = ({
       </StyledMenuItemLeftContent>
       <div className="hoverable-buttons">
         <Dropdown
-          clickableComponent={
-            <LightIconButton
-              Icon={RightIcon ?? IconDotsVertical}
-              size="small"
-            />
-          }
+          clickableComponent={<LightIconButton {...rightIconConfig} />}
           dropdownComponents={dropdownContent}
           dropdownId={dropdownId}
           dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}

@@ -27,6 +27,7 @@ export const PhonesFieldMenuItem = ({
       onSetAsPrimary={onSetAsPrimary}
       onDelete={onDelete}
       DisplayComponent={PhoneDisplay}
+      rightIconConfig={{ accent: 'tertiary' }}
     />
   );
 };
