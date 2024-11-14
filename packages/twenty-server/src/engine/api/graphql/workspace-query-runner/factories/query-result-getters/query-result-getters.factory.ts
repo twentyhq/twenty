@@ -1,4 +1,4 @@
-import { Injectable, LoggerService } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { Record as ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
@@ -15,6 +15,7 @@ import { isQueryResultFieldValueAConnection } from 'src/engine/api/graphql/works
 import { isQueryResultFieldValueANestedRecordArray } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/utils/is-query-result-field-value-a-nested-record-array.guard';
 import { isQueryResultFieldValueARecordArray } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/utils/is-query-result-field-value-a-record-array.guard';
 import { isQueryResultFieldValueARecord } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/utils/is-query-result-field-value-a-record.guard';
+import { CompositeInputTypeDefinitionFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/composite-input-type-definition.factory';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
@@ -25,12 +26,12 @@ import { isDefined } from 'src/utils/is-defined';
 // Right now the factory will override any change made on relations by the handlers
 @Injectable()
 export class QueryResultGettersFactory {
+  private readonly logger = new Logger(
+    CompositeInputTypeDefinitionFactory.name,
+  );
   private handlers: Map<string, QueryResultGetterHandlerInterface>;
 
-  constructor(
-    private readonly fileService: FileService,
-    private readonly loggerService: LoggerService,
-  ) {
+  constructor(private readonly fileService: FileService) {
     this.initializeHandlers();
   }
 
@@ -215,7 +216,7 @@ export class QueryResultGettersFactory {
         workspaceId,
       );
     } else {
-      this.loggerService.warn(
+      this.logger.warn(
         `Query result field is not a record, connection, nested record array or record array. 
         This is an undetected case in query result getter that should be implemented !!`,
       );
