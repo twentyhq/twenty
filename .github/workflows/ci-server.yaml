@@ -22,6 +22,8 @@ jobs:
         env:
           PGUSER_SUPERUSER: twenty
           PGPASSWORD_SUPERUSER: twenty
+          ALLOW_NOSSL: "true"
+          SPILO_PROVIDER: "local"
         ports:
           - 5432:5432
         options: >-
@@ -121,6 +123,7 @@ jobs:
         env:
           PGUSER_SUPERUSER: twenty
           PGPASSWORD_SUPERUSER: twenty
+          ALLOW_NOSSL: "true"
         ports:
           - 5432:5432
         options: >-
