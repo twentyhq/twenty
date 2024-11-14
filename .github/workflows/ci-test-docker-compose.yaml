@@ -45,8 +45,12 @@ jobs:
         echo "APP_SECRET=$(openssl rand -base64 32)" >>.env
         echo "PGPASSWORD_SUPERUSER=$(openssl rand -base64 32)" >>.env
 
-        echo "Starting server..."
-        docker compose up -d
+        echo "Docker compose up..."
+        docker compose up -d || {
+            echo "Docker compose failed to start"
+            docker compose logs
+            exit 1
+        }
         docker compose logs db server -f &
         pid=$!
 
