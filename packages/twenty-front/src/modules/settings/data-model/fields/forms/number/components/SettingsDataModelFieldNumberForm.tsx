@@ -56,6 +56,7 @@ export const SettingsDataModelFieldNumberForm = ({
             <>
               <StyledFormCardTitle>Type</StyledFormCardTitle>
               <Select
+                disabled={disabled}
                 dropdownId="selectNumberTypes"
                 options={[
                   {

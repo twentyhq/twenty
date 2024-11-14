@@ -304,9 +304,6 @@ describe('useRecordData', () => {
                 },
               },
               position: expect.any(Number),
-              settings: {
-                displayAsRelativeDate: true,
-              },
               showLabel: undefined,
               size: 100,
               type: 'DATE_TIME',
