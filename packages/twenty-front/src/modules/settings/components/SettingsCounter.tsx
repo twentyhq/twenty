@@ -14,8 +14,9 @@ type SettingsCounterProps = {
 const StyledCounterContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(1)};
   margin-left: auto;
+  width: ${({ theme }) => theme.spacing(30)};
 `;
 
 const StyledTextInput = styled(TextInput)`

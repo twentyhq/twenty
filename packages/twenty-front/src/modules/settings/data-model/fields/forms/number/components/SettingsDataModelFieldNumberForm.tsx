@@ -8,7 +8,7 @@ import {
   IconNumber9,
   IconPercentage,
   IllustrationIconDecimal,
-  IllustrationIconNumberType,
+  IllustrationIconEye,
 } from 'twenty-ui';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
 
@@ -51,7 +51,7 @@ export const SettingsDataModelFieldNumberForm = ({
           <>
             <SettingsOptionCardContent
               variant="select"
-              Icon={IllustrationIconNumberType}
+              Icon={IllustrationIconEye}
               dropdownId="number-type"
               title="Number type"
               description="The number type you want to use, e.g. percentage"
