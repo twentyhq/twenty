@@ -83,15 +83,15 @@ export class GraphqlQueryCreateManyResolverService
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
     if (relations) {
-      await processNestedRelationsHelper.processNestedRelations(
+      await processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
-        objectMetadataItemWithFieldMaps,
-        upsertedRecords,
+        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        parentObjectRecords: upsertedRecords,
         relations,
-        QUERY_MAX_RECORDS,
+        limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource,
-      );
+      });
     }
 
     const typeORMObjectRecordsParser =

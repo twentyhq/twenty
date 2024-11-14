@@ -12,7 +12,10 @@ import {
 
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
-import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import {
+  GraphqlQuerySelectedFieldsParser,
+  GraphqlQuerySelectedFieldsResult,
+} from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
@@ -104,7 +107,7 @@ export class GraphqlQueryParser {
   public parseSelectedFields(
     parentObjectMetadata: ObjectMetadataItemWithFieldMaps,
     graphqlSelectedFields: Partial<Record<string, any>>,
-  ): { select: Record<string, any>; relations: Record<string, any> } {
+  ): GraphqlQuerySelectedFieldsResult {
     const parentFields =
       this.objectMetadataMaps.byNameSingular[parentObjectMetadata.nameSingular]
         ?.fieldsByName;

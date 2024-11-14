@@ -94,6 +94,7 @@ export class GraphqlQueryFindDuplicatesResolverService
           return typeORMObjectRecordsParser.createConnection({
             objectRecords: [],
             objectName: objectMetadataItemWithFieldMaps.nameSingular,
+            objectRecordsAggregatedFields: {},
             take: 0,
             totalCount: 0,
             order: [{ id: OrderByDirection.AscNullsFirst }],
@@ -120,6 +121,7 @@ export class GraphqlQueryFindDuplicatesResolverService
         return typeORMObjectRecordsParser.createConnection({
           objectRecords: duplicates,
           objectName: objectMetadataItemWithFieldMaps.nameSingular,
+          objectRecordsAggregatedFields: {},
           take: duplicates.length,
           totalCount: duplicates.length,
           order: [{ id: OrderByDirection.AscNullsFirst }],

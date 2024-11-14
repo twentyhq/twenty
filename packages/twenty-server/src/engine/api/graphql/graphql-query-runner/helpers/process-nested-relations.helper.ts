@@ -1,61 +1,93 @@
 import {
   DataSource,
-  FindManyOptions,
   FindOptionsRelations,
-  In,
   ObjectLiteral,
-  Repository,
+  SelectQueryBuilder,
 } from 'typeorm';
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import {
   getRelationMetadata,
   getRelationObjectMetadata,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
+import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { deduceRelationDirection } from 'src/engine/utils/deduce-relation-direction.util';
 
 export class ProcessNestedRelationsHelper {
-  constructor() {}
+  private processAggregateHelper: ProcessAggregateHelper;
 
-  public async processNestedRelations<T extends ObjectRecord = ObjectRecord>(
-    objectMetadataMaps: ObjectMetadataMaps,
-    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps,
-    parentObjectRecords: T[],
-    relations: Record<string, FindOptionsRelations<ObjectLiteral>>,
-    limit: number,
-    authContext: any,
-    dataSource: DataSource,
-  ): Promise<void> {
+  constructor() {
+    this.processAggregateHelper = new ProcessAggregateHelper();
+  }
+
+  public async processNestedRelations<T extends ObjectRecord = ObjectRecord>({
+    objectMetadataMaps,
+    parentObjectMetadataItem,
+    parentObjectRecords,
+    parentObjectRecordsAggregatedFields = {},
+    relations,
+    aggregate = {},
+    limit,
+    authContext,
+    dataSource,
+  }: {
+    objectMetadataMaps: ObjectMetadataMaps;
+    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
+    parentObjectRecords: T[];
+    parentObjectRecordsAggregatedFields?: Record<string, any>;
+    relations: Record<string, FindOptionsRelations<ObjectLiteral>>;
+    aggregate?: Record<string, AggregationField>;
+    limit: number;
+    authContext: any;
+    dataSource: DataSource;
+  }): Promise<void> {
     const processRelationTasks = Object.entries(relations).map(
       ([relationName, nestedRelations]) =>
-        this.processRelation(
+        this.processRelation({
           objectMetadataMaps,
           parentObjectMetadataItem,
           parentObjectRecords,
+          parentObjectRecordsAggregatedFields,
           relationName,
           nestedRelations,
+          aggregate,
           limit,
           authContext,
           dataSource,
-        ),
+        }),
     );
 
     await Promise.all(processRelationTasks);
   }
 
-  private async processRelation<T extends ObjectRecord = ObjectRecord>(
-    objectMetadataMaps: ObjectMetadataMaps,
-    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps,
-    parentObjectRecords: T[],
-    relationName: string,
-    nestedRelations: any,
-    limit: number,
-    authContext: any,
-    dataSource: DataSource,
-  ): Promise<void> {
+  private async processRelation<T extends ObjectRecord = ObjectRecord>({
+    objectMetadataMaps,
+    parentObjectMetadataItem,
+    parentObjectRecords,
+    parentObjectRecordsAggregatedFields,
+    relationName,
+    nestedRelations,
+    aggregate,
+    limit,
+    authContext,
+    dataSource,
+  }: {
+    objectMetadataMaps: ObjectMetadataMaps;
+    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
+    parentObjectRecords: T[];
+    parentObjectRecordsAggregatedFields: Record<string, any>;
+    relationName: string;
+    nestedRelations: any;
+    aggregate: Record<string, AggregationField>;
+    limit: number;
+    authContext: any;
+    dataSource: DataSource;
+  }): Promise<void> {
     const relationFieldMetadata =
       parentObjectMetadataItem.fieldsByName[relationName];
     const relationMetadata = getRelationMetadata(relationFieldMetadata);
@@ -69,121 +101,193 @@ export class ProcessNestedRelationsHelper {
         ? this.processToRelation
         : this.processFromRelation;
 
-    await processor.call(
-      this,
+    await processor.call(this, {
       objectMetadataMaps,
       parentObjectMetadataItem,
       parentObjectRecords,
+      parentObjectRecordsAggregatedFields,
       relationName,
       nestedRelations,
+      aggregate,
       limit,
       authContext,
       dataSource,
-    );
+    });
   }
 
-  private async processFromRelation<T extends ObjectRecord = ObjectRecord>(
-    objectMetadataMaps: ObjectMetadataMaps,
-    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps,
-    parentObjectRecords: T[],
-    relationName: string,
-    nestedRelations: any,
-    limit: number,
-    authContext: any,
-    dataSource: DataSource,
-  ): Promise<void> {
+  private async processFromRelation<T extends ObjectRecord = ObjectRecord>({
+    objectMetadataMaps,
+    parentObjectMetadataItem,
+    parentObjectRecords,
+    parentObjectRecordsAggregatedFields,
+    relationName,
+    nestedRelations,
+    aggregate,
+    limit,
+    authContext,
+    dataSource,
+  }: {
+    objectMetadataMaps: ObjectMetadataMaps;
+    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
+    parentObjectRecords: T[];
+    parentObjectRecordsAggregatedFields: Record<string, any>;
+    relationName: string;
+    nestedRelations: any;
+    aggregate: Record<string, AggregationField>;
+    limit: number;
+    authContext: any;
+    dataSource: DataSource;
+  }): Promise<void> {
     const { inverseRelationName, referenceObjectMetadata } =
-      this.getRelationMetadata(
+      this.getRelationMetadata({
         objectMetadataMaps,
         parentObjectMetadataItem,
         relationName,
-      );
+      });
     const relationRepository = dataSource.getRepository(
       referenceObjectMetadata.nameSingular,
     );
 
-    const relationIds = this.getUniqueIds(parentObjectRecords, 'id');
-    const relationResults = await this.findRelations(
-      relationRepository,
-      inverseRelationName,
-      relationIds,
-      limit * parentObjectRecords.length,
+    const queryBuilder = relationRepository.createQueryBuilder(
+      referenceObjectMetadata.nameSingular,
     );
 
-    this.assignRelationResults(
-      parentObjectRecords,
+    const relationIds = this.getUniqueIds({
+      records: parentObjectRecords,
+      idField: 'id',
+    });
+    const { relationResults, relationAggregatedFieldsResult } =
+      await this.findRelations({
+        queryBuilder,
+        column: `"${inverseRelationName}Id"`,
+        ids: relationIds,
+        limit: limit * parentObjectRecords.length,
+        objectMetadataMaps,
+        referenceObjectMetadata,
+        aggregate,
+        relationName,
+      });
+
+    this.assignFromRelationResults({
+      parentRecords: parentObjectRecords,
+      parentObjectRecordsAggregatedFields,
       relationResults,
+      relationAggregatedFieldsResult,
       relationName,
-      `${inverseRelationName}Id`,
-    );
+      joinField: `${inverseRelationName}Id`,
+    });
 
     if (Object.keys(nestedRelations).length > 0) {
-      await this.processNestedRelations(
+      await this.processNestedRelations({
         objectMetadataMaps,
-        objectMetadataMaps.byNameSingular[referenceObjectMetadata.nameSingular],
-        relationResults as ObjectRecord[],
-        nestedRelations as Record<string, FindOptionsRelations<ObjectLiteral>>,
+        parentObjectMetadataItem:
+          objectMetadataMaps.byNameSingular[
+            referenceObjectMetadata.nameSingular
+          ],
+        parentObjectRecords: relationResults as ObjectRecord[],
+        parentObjectRecordsAggregatedFields: relationAggregatedFieldsResult,
+        relations: nestedRelations as Record<
+          string,
+          FindOptionsRelations<ObjectLiteral>
+        >,
+        aggregate,
         limit,
         authContext,
         dataSource,
-      );
+      });
     }
   }
 
-  private async processToRelation<T extends ObjectRecord = ObjectRecord>(
-    objectMetadataMaps: ObjectMetadataMaps,
-    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps,
-    parentObjectRecords: T[],
-    relationName: string,
-    nestedRelations: any,
-    limit: number,
-    authContext: any,
-    dataSource: DataSource,
-  ): Promise<void> {
-    const { referenceObjectMetadata } = this.getRelationMetadata(
+  private async processToRelation<T extends ObjectRecord = ObjectRecord>({
+    objectMetadataMaps,
+    parentObjectMetadataItem,
+    parentObjectRecords,
+    parentObjectRecordsAggregatedFields,
+    relationName,
+    nestedRelations,
+    aggregate,
+    limit,
+    authContext,
+    dataSource,
+  }: {
+    objectMetadataMaps: ObjectMetadataMaps;
+    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
+    parentObjectRecords: T[];
+    parentObjectRecordsAggregatedFields: Record<string, any>;
+    relationName: string;
+    nestedRelations: any;
+    aggregate: Record<string, AggregationField>;
+    limit: number;
+    authContext: any;
+    dataSource: DataSource;
+  }): Promise<void> {
+    const { referenceObjectMetadata } = this.getRelationMetadata({
       objectMetadataMaps,
       parentObjectMetadataItem,
       relationName,
-    );
+    });
     const relationRepository = dataSource.getRepository(
       referenceObjectMetadata.nameSingular,
     );
 
-    const relationIds = this.getUniqueIds(
-      parentObjectRecords,
-      `${relationName}Id`,
-    );
-    const relationResults = await this.findRelations(
-      relationRepository,
-      'id',
-      relationIds,
-      limit,
+    const queryBuilder = relationRepository.createQueryBuilder(
+      referenceObjectMetadata.nameSingular,
     );
 
-    this.assignToRelationResults(
-      parentObjectRecords,
+    const relationIds = this.getUniqueIds({
+      records: parentObjectRecords,
+      idField: `${relationName}Id`,
+    });
+    const { relationResults, relationAggregatedFieldsResult } =
+      await this.findRelations({
+        queryBuilder,
+        column: 'id',
+        ids: relationIds,
+        limit,
+        objectMetadataMaps,
+        referenceObjectMetadata,
+        aggregate,
+        relationName,
+      });
+
+    this.assignToRelationResults({
+      parentRecords: parentObjectRecords,
+      parentObjectRecordsAggregatedFields,
       relationResults,
+      relationAggregatedFieldsResult,
       relationName,
-    );
+    });
 
     if (Object.keys(nestedRelations).length > 0) {
-      await this.processNestedRelations(
+      await this.processNestedRelations({
         objectMetadataMaps,
-        objectMetadataMaps.byNameSingular[referenceObjectMetadata.nameSingular],
-        relationResults as ObjectRecord[],
-        nestedRelations as Record<string, FindOptionsRelations<ObjectLiteral>>,
+        parentObjectMetadataItem:
+          objectMetadataMaps.byNameSingular[
+            referenceObjectMetadata.nameSingular
+          ],
+        parentObjectRecords: relationResults as ObjectRecord[],
+        parentObjectRecordsAggregatedFields: relationAggregatedFieldsResult,
+        relations: nestedRelations as Record<
+          string,
+          FindOptionsRelations<ObjectLiteral>
+        >,
+        aggregate,
         limit,
         authContext,
         dataSource,
-      );
+      });
     }
   }
 
-  private getRelationMetadata(
-    objectMetadataMaps: ObjectMetadataMaps,
-    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps,
-    relationName: string,
-  ) {
+  private getRelationMetadata({
+    objectMetadataMaps,
+    parentObjectMetadataItem,
+    relationName,
+  }: {
+    objectMetadataMaps: ObjectMetadataMaps;
+    parentObjectMetadataItem: ObjectMetadataItemWithFieldMaps;
+    relationName: string;
+  }) {
     const relationFieldMetadata =
       parentObjectMetadataItem.fieldsByName[relationName];
     const relationMetadata = getRelationMetadata(relationFieldMetadata);
@@ -199,52 +303,121 @@ export class ProcessNestedRelationsHelper {
     return { inverseRelationName, referenceObjectMetadata };
   }
 
-  private getUniqueIds(records: ObjectRecord[], idField: string): any[] {
+  private getUniqueIds({
+    records,
+    idField,
+  }: {
+    records: ObjectRecord[];
+    idField: string;
+  }): any[] {
     return [...new Set(records.map((item) => item[idField]))];
   }
 
-  private async findRelations(
-    repository: Repository<any>,
-    field: string,
-    ids: any[],
-    limit: number,
-  ): Promise<any[]> {
+  private async findRelations({
+    queryBuilder,
+    column,
+    ids,
+    limit,
+    objectMetadataMaps,
+    referenceObjectMetadata,
+    aggregate,
+    relationName,
+  }: {
+    queryBuilder: SelectQueryBuilder<any>;
+    column: string;
+    ids: any[];
+    limit: number;
+    objectMetadataMaps: ObjectMetadataMaps;
+    referenceObjectMetadata: ObjectMetadataItemWithFieldMaps;
+    aggregate: Record<string, any>;
+    relationName: string;
+  }): Promise<{ relationResults: any[]; relationAggregatedFieldsResult: any }> {
     if (ids.length === 0) {
-      return [];
+      return { relationResults: [], relationAggregatedFieldsResult: {} };
     }
-    const findOptions: FindManyOptions = {
-      where: { [field]: In(ids) },
-      take: limit,
-    };
 
-    return repository.find(findOptions);
+    const aggregateForRelation = aggregate[relationName];
+    let relationAggregatedFieldsResult = {};
+
+    if (aggregateForRelation) {
+      const aggregateQueryBuilder = queryBuilder.clone();
+
+      this.processAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder(
+        {
+          fieldMetadataMapByName: referenceObjectMetadata.fieldsByName,
+          selectedAggregatedFields: aggregateForRelation,
+          queryBuilder: aggregateQueryBuilder,
+        },
+      );
+
+      relationAggregatedFieldsResult =
+        (await aggregateQueryBuilder.getRawOne()) ?? {};
+    }
+
+    const result = await queryBuilder
+      .where(`${column} IN (:...ids)`, {
+        ids,
+      })
+      .take(limit)
+      .getMany();
+
+    const relationResults = formatResult(
+      result,
+      referenceObjectMetadata,
+      objectMetadataMaps,
+    );
+
+    return { relationResults, relationAggregatedFieldsResult };
   }
 
-  private assignRelationResults(
-    parentRecords: ObjectRecord[],
-    relationResults: any[],
-    relationName: string,
-    joinField: string,
-  ): void {
+  private assignFromRelationResults({
+    parentRecords,
+    parentObjectRecordsAggregatedFields,
+    relationResults,
+    relationAggregatedFieldsResult,
+    relationName,
+    joinField,
+  }: {
+    parentRecords: ObjectRecord[];
+    parentObjectRecordsAggregatedFields: Record<string, any>;
+    relationResults: any[];
+    relationAggregatedFieldsResult: Record<string, any>;
+    relationName: string;
+    joinField: string;
+  }): void {
     parentRecords.forEach((item) => {
-      (item as any)[relationName] = relationResults.filter(
+      item[relationName] = relationResults.filter(
         (rel) => rel[joinField] === item.id,
       );
     });
+
+    parentObjectRecordsAggregatedFields[relationName] =
+      relationAggregatedFieldsResult;
   }
 
-  private assignToRelationResults(
-    parentRecords: ObjectRecord[],
-    relationResults: any[],
-    relationName: string,
-  ): void {
+  private assignToRelationResults({
+    parentRecords,
+    parentObjectRecordsAggregatedFields,
+    relationResults,
+    relationAggregatedFieldsResult,
+    relationName,
+  }: {
+    parentRecords: ObjectRecord[];
+    parentObjectRecordsAggregatedFields: Record<string, any>;
+    relationResults: any[];
+    relationAggregatedFieldsResult: Record<string, any>;
+    relationName: string;
+  }): void {
     parentRecords.forEach((item) => {
       if (relationResults.length === 0) {
-        (item as any)[`${relationName}Id`] = null;
+        item[`${relationName}Id`] = null;
       }
-      (item as any)[relationName] =
+      item[relationName] =
         relationResults.find((rel) => rel.id === item[`${relationName}Id`]) ??
         null;
     });
+
+    parentObjectRecordsAggregatedFields[relationName] =
+      relationAggregatedFieldsResult;
   }
 }

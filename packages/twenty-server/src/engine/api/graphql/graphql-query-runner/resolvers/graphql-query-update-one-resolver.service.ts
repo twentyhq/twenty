@@ -93,15 +93,15 @@ export class GraphqlQueryUpdateOneResolverService
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
     if (relations) {
-      await processNestedRelationsHelper.processNestedRelations(
+      await processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
-        objectMetadataItemWithFieldMaps,
-        [updatedRecord],
+        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        parentObjectRecords: [updatedRecord],
         relations,
-        QUERY_MAX_RECORDS,
+        limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource,
-      );
+      });
     }
 
     const typeORMObjectRecordsParser =

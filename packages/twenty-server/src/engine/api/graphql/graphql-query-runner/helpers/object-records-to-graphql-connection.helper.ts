@@ -12,6 +12,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { getRelationObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
+import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -29,6 +30,8 @@ export class ObjectRecordsToGraphqlConnectionHelper {
 
   public createConnection<T extends ObjectRecord = ObjectRecord>({
     objectRecords,
+    objectRecordsAggregatedFields = {},
+    selectedAggregatedFields = [],
     objectName,
     take,
     totalCount,
@@ -38,6 +41,8 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     depth = 0,
   }: {
     objectRecords: T[];
+    objectRecordsAggregatedFields?: Record<string, any>;
+    selectedAggregatedFields?: Record<string, any>;
     objectName: string;
     take: number;
     totalCount: number;
@@ -50,6 +55,8 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       node: this.processRecord({
         objectRecord,
         objectName,
+        objectRecordsAggregatedFields,
+        selectedAggregatedFields,
         take,
         totalCount,
         order,
@@ -59,6 +66,10 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     }));
 
     return {
+      ...this.extractAggregatedFieldsResults({
+        selectedAggregatedFields,
+        objectRecordsAggregatedFields,
+      }),
       edges,
       pageInfo: {
         hasNextPage,
@@ -70,9 +81,30 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     };
   }
 
+  private extractAggregatedFieldsResults = ({
+    selectedAggregatedFields,
+    objectRecordsAggregatedFields,
+  }: {
+    selectedAggregatedFields: Record<string, AggregationField[]>;
+    objectRecordsAggregatedFields: Record<string, any>;
+  }) => {
+    return Object.entries(selectedAggregatedFields).reduce(
+      (acc, [aggregatedFieldName]) => {
+        return {
+          ...acc,
+          [aggregatedFieldName]:
+            objectRecordsAggregatedFields[aggregatedFieldName],
+        };
+      },
+      {},
+    );
+  };
+
   public processRecord<T extends Record<string, any>>({
     objectRecord,
     objectName,
+    objectRecordsAggregatedFields = {},
+    selectedAggregatedFields = [],
     take,
     totalCount,
     order,
@@ -80,6 +112,8 @@ export class ObjectRecordsToGraphqlConnectionHelper {
   }: {
     objectRecord: T;
     objectName: string;
+    objectRecordsAggregatedFields?: Record<string, any>;
+    selectedAggregatedFields?: Record<string, any>;
     take: number;
     totalCount: number;
     order?: ObjectRecordOrderBy;
@@ -115,12 +149,18 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         if (Array.isArray(value)) {
           processedObjectRecord[key] = this.createConnection({
             objectRecords: value,
+            objectRecordsAggregatedFields:
+              objectRecordsAggregatedFields[fieldMetadata.name],
+            selectedAggregatedFields:
+              selectedAggregatedFields[fieldMetadata.name],
             objectName: getRelationObjectMetadata(
               fieldMetadata,
               this.objectMetadataMaps,
             ).nameSingular,
             take,
-            totalCount: value.length,
+            totalCount:
+              objectRecordsAggregatedFields[fieldMetadata.name]?.totalCount ??
+              value.length,
             order,
             hasNextPage: false,
             hasPreviousPage: false,
@@ -129,6 +169,10 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         } else if (isPlainObject(value)) {
           processedObjectRecord[key] = this.processRecord({
             objectRecord: value,
+            objectRecordsAggregatedFields:
+              objectRecordsAggregatedFields[fieldMetadata.name],
+            selectedAggregatedFields:
+              selectedAggregatedFields[fieldMetadata.name],
             objectName: getRelationObjectMetadata(
               fieldMetadata,
               this.objectMetadataMaps,
