@@ -10,6 +10,7 @@ import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
@@ -141,10 +142,11 @@ export class WorkflowBuilderWorkspaceService {
       objectMetadataRepository,
     });
 
-    if (operationType === WorkflowRecordCRUDType.FIND) {
+    if (operationType === WorkflowRecordCRUDType.READ) {
       return {
         first: recordOutputSchema,
         last: recordOutputSchema,
+        totalCount: generateFakeValue('number'),
       };
     }
 

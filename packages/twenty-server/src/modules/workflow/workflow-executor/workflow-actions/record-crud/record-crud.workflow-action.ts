@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { Entity } from '@microsoft/microsoft-graph-types';
+import { ObjectLiteral } from 'typeorm';
+
 import {
   OrderByDirection,
   RecordFilter,
@@ -7,8 +10,14 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
+import {
+  ObjectMetadataMap,
+  ObjectMetadataMapItem,
+} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
@@ -19,7 +28,7 @@ import {
 import {
   WorkflowCreateRecordActionInput,
   WorkflowDeleteRecordActionInput,
-  WorkflowFindRecordActionInput,
+  WorkflowReadRecordActionInput,
   WorkflowRecordCRUDActionInput,
   WorkflowRecordCRUDType,
   WorkflowUpdateRecordActionInput,
@@ -44,8 +53,8 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
         return this.deleteRecord(workflowActionInput);
       case WorkflowRecordCRUDType.UPDATE:
         return this.updateRecord(workflowActionInput);
-      case WorkflowRecordCRUDType.FIND:
-        return this.findRecord(workflowActionInput);
+      case WorkflowRecordCRUDType.READ:
+        return this.findRecords(workflowActionInput);
       default:
         throw new RecordCRUDActionException(
           `Unknown record operation type`,
@@ -65,10 +74,10 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
       workflowActionInput.objectRecord,
     );
 
-    const createdObjectRecord = await repository.save(objectRecord);
+    await repository.save(objectRecord);
 
     return {
-      result: createdObjectRecord,
+      result: objectRecord,
     };
   }
 
@@ -87,20 +96,20 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
 
     if (!objectRecord) {
       throw new RecordCRUDActionException(
-        `Record ${workflowActionInput.objectName} with id ${workflowActionInput.objectRecordId} not found`,
+        `Failed to update: Record ${workflowActionInput.objectName} with id ${workflowActionInput.objectRecordId} not found`,
         RecordCRUDActionExceptionCode.RECORD_NOT_FOUND,
       );
     }
 
-    const updatedObjectRecord = await repository.update(
-      workflowActionInput.objectRecordId,
-      {
-        ...workflowActionInput.objectRecord,
-      },
-    );
+    await repository.update(workflowActionInput.objectRecordId, {
+      ...workflowActionInput.objectRecord,
+    });
 
     return {
-      result: updatedObjectRecord,
+      result: {
+        ...objectRecord,
+        ...workflowActionInput.objectRecord,
+      },
     };
   }
 
@@ -119,20 +128,22 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
 
     if (!objectRecord) {
       throw new RecordCRUDActionException(
-        `Record ${workflowActionInput.objectName} with id ${workflowActionInput.objectRecordId} not found`,
+        `Failed to delete: Record ${workflowActionInput.objectName} with id ${workflowActionInput.objectRecordId} not found`,
         RecordCRUDActionExceptionCode.RECORD_NOT_FOUND,
       );
     }
 
-    const deletedObjectRecord = await repository.remove(objectRecord);
+    await repository.update(workflowActionInput.objectRecordId, {
+      deletedAt: new Date(),
+    });
 
     return {
-      result: deletedObjectRecord,
+      result: objectRecord,
     };
   }
 
-  private async findRecord(
-    workflowActionInput: WorkflowFindRecordActionInput,
+  private async findRecords(
+    workflowActionInput: WorkflowReadRecordActionInput,
   ): Promise<WorkflowActionResult> {
     const repository = await this.twentyORMManager.getRepository(
       workflowActionInput.objectName,
@@ -141,7 +152,7 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
 
     if (!workspaceId) {
       throw new RecordCRUDActionException(
-        'Workspace ID is required',
+        'Failed to read: Workspace ID is required',
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
       );
     }
@@ -151,7 +162,7 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
 
     if (currentCacheVersion === undefined) {
       throw new RecordCRUDActionException(
-        'Metadata cache version not found',
+        'Failed to read: Metadata cache version not found',
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
       );
     }
@@ -164,7 +175,7 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
 
     if (!objectMetadataMap) {
       throw new RecordCRUDActionException(
-        'Object metadata collection not found',
+        'Failed to read: Object metadata collection not found',
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
       );
     }
@@ -174,18 +185,48 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
 
     if (!objectMetadataMapItem) {
       throw new RecordCRUDActionException(
-        `Object ${workflowActionInput.objectName} not found`,
+        `Failed to read: Object ${workflowActionInput.objectName} not found`,
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
       );
     }
 
-    const queryBuilder = repository.createQueryBuilder(
-      workflowActionInput.objectName,
-    );
-
     const graphqlQueryParser = new GraphqlQueryParser(
       objectMetadataMapItem.fields,
       objectMetadataMap,
+    );
+
+    const objectRecords = await this.getObjectRecords(
+      workflowActionInput,
+      objectMetadataMapItem,
+      objectMetadataMap,
+      repository,
+      graphqlQueryParser,
+    );
+
+    const totalCount = await this.getTotalCount(
+      workflowActionInput,
+      repository,
+      graphqlQueryParser,
+    );
+
+    return {
+      result: {
+        first: objectRecords[0],
+        last: objectRecords[objectRecords.length - 1],
+        totalCount,
+      },
+    };
+  }
+
+  private async getObjectRecords<T extends ObjectLiteral>(
+    workflowActionInput: WorkflowReadRecordActionInput,
+    objectMetadataMapItem: ObjectMetadataMapItem,
+    objectMetadataMap: ObjectMetadataMap,
+    repository: WorkspaceRepository<T>,
+    graphqlQueryParser: GraphqlQueryParser,
+  ) {
+    const queryBuilder = repository.createQueryBuilder(
+      workflowActionInput.objectName,
     );
 
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
@@ -202,29 +243,44 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
     const withOrderByQueryBuilder = graphqlQueryParser.applyOrderToBuilder(
       withFilterQueryBuilder,
       orderByWithIdCondition,
-      objectMetadataMapItem.nameSingular,
+      workflowActionInput.objectName,
       false,
     );
 
     const nonFormattedObjectRecords = await withOrderByQueryBuilder
-      .take(
-        workflowActionInput.limit && workflowActionInput.limit > 0
-          ? workflowActionInput.limit
-          : 1,
-      )
+      .take(workflowActionInput.limit ?? QUERY_MAX_RECORDS)
       .getMany();
 
-    const objectRecords = formatResult(
+    return formatResult(
       nonFormattedObjectRecords,
       objectMetadataMapItem,
       objectMetadataMap,
     );
+  }
 
-    return {
-      result: {
-        first: objectRecords[0],
-        last: objectRecords[objectRecords.length - 1],
-      },
-    };
+  private async getTotalCount(
+    workflowActionInput: WorkflowReadRecordActionInput,
+    repository: WorkspaceRepository<Entity>,
+    graphqlQueryParser: GraphqlQueryParser,
+  ) {
+    const countQueryBuilder = repository.createQueryBuilder(
+      workflowActionInput.objectName,
+    );
+
+    const withFilterCountQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
+      countQueryBuilder,
+      workflowActionInput.objectName,
+      workflowActionInput.filter ?? ({} as RecordFilter),
+    );
+
+    const withDeletedCountQueryBuilder =
+      graphqlQueryParser.applyDeletedAtToBuilder(
+        withFilterCountQueryBuilder,
+        workflowActionInput.filter
+          ? (workflowActionInput.filter as RecordFilter)
+          : ({} as RecordFilter),
+      );
+
+    return withDeletedCountQueryBuilder.getCount();
   }
 }

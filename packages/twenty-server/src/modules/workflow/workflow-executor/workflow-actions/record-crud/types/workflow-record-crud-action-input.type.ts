@@ -9,7 +9,7 @@ export enum WorkflowRecordCRUDType {
   CREATE = 'create',
   UPDATE = 'update',
   DELETE = 'delete',
-  FIND = 'find',
+  READ = 'read',
 }
 
 export type WorkflowCreateRecordActionInput = {
@@ -31,8 +31,8 @@ export type WorkflowDeleteRecordActionInput = {
   objectRecordId: string;
 };
 
-export type WorkflowFindRecordActionInput = {
-  type: WorkflowRecordCRUDType.FIND;
+export type WorkflowReadRecordActionInput = {
+  type: WorkflowRecordCRUDType.READ;
   objectName: string;
   filter?: Partial<RecordFilter>;
   orderBy?: Partial<RecordOrderBy>;
@@ -43,4 +43,4 @@ export type WorkflowRecordCRUDActionInput =
   | WorkflowCreateRecordActionInput
   | WorkflowUpdateRecordActionInput
   | WorkflowDeleteRecordActionInput
-  | WorkflowFindRecordActionInput;
+  | WorkflowReadRecordActionInput;
