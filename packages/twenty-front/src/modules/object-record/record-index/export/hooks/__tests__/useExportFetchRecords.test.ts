@@ -1,6 +1,10 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
-import { percentage, sleep, useRecordData } from '../useRecordData';
+import {
+  percentage,
+  sleep,
+  useExportFetchRecords,
+} from '../useExportFetchRecords';
 
 import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
@@ -9,6 +13,7 @@ import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/opti
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { ViewType } from '@/views/types/ViewType';
 import { MockedResponse } from '@apollo/client/testing';
+import { expect } from '@storybook/test';
 import gql from 'graphql-tag';
 import { useRecoilValue } from 'recoil';
 import { getJestMetadataAndApolloMocksAndContextStoreWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
@@ -178,7 +183,7 @@ describe('useRecordData', () => {
 
       const { result } = renderHook(
         () =>
-          useRecordData({
+          useExportFetchRecords({
             recordIndexId,
             objectMetadataItem,
             pageSize: 30,
@@ -204,7 +209,7 @@ describe('useRecordData', () => {
       const callback = jest.fn();
       const { result } = renderHook(
         () =>
-          useRecordData({
+          useExportFetchRecords({
             recordIndexId,
             objectMetadataItem,
             callback,
@@ -232,7 +237,7 @@ describe('useRecordData', () => {
             recordIndexId,
           );
           return {
-            tableData: useRecordData({
+            tableData: useExportFetchRecords({
               recordIndexId,
               objectMetadataItem,
               callback,
@@ -322,7 +327,7 @@ describe('useRecordData', () => {
             recordIndexId,
           );
           return {
-            tableData: useRecordData({
+            tableData: useExportFetchRecords({
               recordIndexId,
               objectMetadataItem,
               callback,
