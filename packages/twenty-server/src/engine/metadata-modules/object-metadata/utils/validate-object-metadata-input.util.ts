@@ -108,10 +108,10 @@ const validateNameCharactersOrThrow = (name?: string) => {
   }
 };
 
-export const computeMetadataNameFromLabelOrThrow = (label: string): string => {
+export const computeMetadataNameFromLabel = (label: string): string => {
   if (!label) {
     throw new ObjectMetadataException(
-      'Name is required',
+      'Label is required',
       ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
     );
   }
@@ -142,7 +142,7 @@ export const validateNameAndLabelAreSyncOrThrow = (
   label: string,
   name: string,
 ) => {
-  const computedName = computeMetadataNameFromLabelOrThrow(label);
+  const computedName = computeMetadataNameFromLabel(label);
 
   if (name !== computedName) {
     throw new ObjectMetadataException(
