@@ -125,8 +125,8 @@ describe('computeSchemaComponents', () => {
             enum: ['OPTION_1', 'OPTION_2'],
           },
           fieldMultiSelect: {
-            type: 'string',
-            enum: ['OPTION_1', 'OPTION_2'],
+            type: 'array',
+            items: { type: 'string', enum: ['OPTION_1', 'OPTION_2'] },
           },
           fieldPosition: {
             type: 'number',
@@ -302,8 +302,8 @@ describe('computeSchemaComponents', () => {
             enum: ['OPTION_1', 'OPTION_2'],
           },
           fieldMultiSelect: {
-            type: 'string',
-            enum: ['OPTION_1', 'OPTION_2'],
+            type: 'array',
+            items: { type: 'string', enum: ['OPTION_1', 'OPTION_2'] },
           },
           fieldPosition: {
             type: 'number',
@@ -478,8 +478,8 @@ describe('computeSchemaComponents', () => {
             enum: ['OPTION_1', 'OPTION_2'],
           },
           fieldMultiSelect: {
-            type: 'string',
-            enum: ['OPTION_1', 'OPTION_2'],
+            type: 'array',
+            items: { type: 'string', enum: ['OPTION_1', 'OPTION_2'] },
           },
           fieldPosition: {
             type: 'number',
