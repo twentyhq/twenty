@@ -15,9 +15,10 @@ const StyledHeader = styled.li`
   border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(1)} 0;
 
   user-select: none;
+  width: inherit;
 
   &:hover {
     background: ${({ theme, onClick }) =>
