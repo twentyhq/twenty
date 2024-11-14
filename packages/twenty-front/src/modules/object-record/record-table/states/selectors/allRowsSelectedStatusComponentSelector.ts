@@ -1,7 +1,7 @@
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
-import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
 
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
+import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 import { AllRowsSelectedStatus } from '../../types/AllRowSelectedStatus';
 
@@ -13,11 +13,15 @@ export const allRowsSelectedStatusComponentSelector =
       ({ instanceId }) =>
       ({ get }) => {
         const tableRowIds = get(
-          tableRowIdsComponentState.atomFamily({ instanceId }),
+          tableAllRowIdsComponentState.atomFamily({
+            instanceId,
+          }),
         );
 
         const selectedRowIds = get(
-          selectedRowIdsComponentSelector.selectorFamily({ instanceId }),
+          selectedRowIdsComponentSelector.selectorFamily({
+            instanceId,
+          }),
         );
 
         const numberOfSelectedRows = selectedRowIds.length;
