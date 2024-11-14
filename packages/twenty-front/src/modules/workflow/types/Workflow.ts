@@ -30,6 +30,38 @@ export type WorkflowSendEmailActionSettings = BaseWorkflowActionSettings & {
   };
 };
 
+type ObjectRecord = Record<string, any>;
+
+export type WorkflowCreateRecordActionInput = {
+  type: 'CREATE';
+  objectName: string;
+  objectRecord: ObjectRecord;
+};
+
+export type WorkflowUpdateRecordActionInput = {
+  type: 'UPDATE';
+  objectName: string;
+  objectRecord: ObjectRecord;
+  objectRecordId: string;
+};
+
+export type WorkflowDeleteRecordActionInput = {
+  type: 'DELETE';
+  objectName: string;
+  objectRecordId: string;
+};
+
+export type WorkflowRecordCRUDActionInput =
+  | WorkflowCreateRecordActionInput
+  | WorkflowUpdateRecordActionInput
+  | WorkflowDeleteRecordActionInput;
+
+export type WorkflowRecordCRUDType = WorkflowRecordCRUDActionInput['type'];
+
+export type WorkflowRecordCRUDActionSettings = BaseWorkflowActionSettings & {
+  input: WorkflowRecordCRUDActionInput;
+};
+
 type BaseWorkflowAction = {
   id: string;
   name: string;
@@ -46,13 +78,23 @@ export type WorkflowSendEmailAction = BaseWorkflowAction & {
   settings: WorkflowSendEmailActionSettings;
 };
 
-export type WorkflowAction = WorkflowCodeAction | WorkflowSendEmailAction;
+export type WorkflowRecordCRUDAction = BaseWorkflowAction & {
+  type: 'RECORD_CRUD';
+  settings: WorkflowRecordCRUDActionSettings;
+};
+
+export type WorkflowAction =
+  | WorkflowCodeAction
+  | WorkflowSendEmailAction
+  | WorkflowRecordCRUDAction;
 
 export type WorkflowStep = WorkflowAction;
 
-export type WorkflowActionType = WorkflowAction['type'];
+export type WorkflowActionType =
+  | Exclude<WorkflowAction['type'], WorkflowRecordCRUDAction['type']>
+  | `${WorkflowRecordCRUDAction['type']}.${WorkflowRecordCRUDType}`;
 
-export type WorkflowStepType = WorkflowStep['type'];
+export type WorkflowStepType = WorkflowActionType;
 
 type BaseTrigger = {
   type: string;

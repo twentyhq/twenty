@@ -1,7 +1,9 @@
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
+import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
 import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/states/workflowCreateStepFromParentStepIdState';
 import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/states/workflowDiagramTriggerNodeSelectionState';
@@ -16,7 +18,6 @@ import { getStepDefaultDefinition } from '@/workflow/utils/getStepDefaultDefinit
 import { insertStep } from '@/workflow/utils/insertStep';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
-import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
 
 export const useCreateStep = ({
   workflow,
@@ -42,6 +43,8 @@ export const useCreateStep = ({
   const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
 
   const { computeStepOutputSchema } = useComputeStepOutputSchema();
+
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
   const insertNodeAndSave = async ({
     parentNodeId,
@@ -86,7 +89,10 @@ export const useCreateStep = ({
       throw new Error('Select a step to create a new step from first.');
     }
 
-    const newStep = getStepDefaultDefinition(newStepType);
+    const newStep = getStepDefaultDefinition({
+      type: newStepType,
+      activeObjectMetadataItems,
+    });
 
     const outputSchema = (
       await computeStepOutputSchema({

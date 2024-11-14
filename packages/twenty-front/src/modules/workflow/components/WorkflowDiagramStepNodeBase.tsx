@@ -70,6 +70,15 @@ export const WorkflowDiagramStepNodeBase = ({
               </StyledStepNodeLabelIconContainer>
             );
           }
+          case 'RECORD_CRUD.CREATE':
+          case 'RECORD_CRUD.DELETE':
+          case 'RECORD_CRUD.UPDATE': {
+            return (
+              <StyledStepNodeLabelIconContainer>
+                <IconMail size={theme.icon.size.lg} color={theme.color.blue} />
+              </StyledStepNodeLabelIconContainer>
+            );
+          }
         }
       }
     }

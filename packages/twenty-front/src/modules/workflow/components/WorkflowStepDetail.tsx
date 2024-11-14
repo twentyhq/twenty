@@ -94,6 +94,9 @@ export const WorkflowStepDetail = ({
             />
           );
         }
+        case 'RECORD_CRUD': {
+          return null;
+        }
       }
 
       return assertUnreachable(

@@ -16,4 +16,9 @@ export const ACTIONS: Array<{
     type: 'SEND_EMAIL',
     icon: IconSettingsAutomation,
   },
+  {
+    label: 'Create Record',
+    type: 'RECORD_CRUD.CREATE',
+    icon: IconSettingsAutomation,
+  },
 ];
