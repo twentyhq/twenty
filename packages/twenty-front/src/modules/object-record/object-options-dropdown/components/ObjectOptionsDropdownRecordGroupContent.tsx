@@ -43,19 +43,21 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useDropdownContent } from '@/ui/layout/dropdown/hooks/useDropdownContent';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { RecordGroupsVisibilityDropdownSection } from '@/views/components/RecordGroupsVisibilityDropdownSection';
+import { ViewType } from '@/views/types/ViewType';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 type ObjectOptionsDropdownRecordGroupContentProps = {
+  viewType: ViewType;
   recordIndexId: string;
   objectMetadataItem: ObjectMetadataItem;
 };
 
 export const ObjectOptionsDropdownRecordGroupContent = ({
+  viewType,
   recordIndexId,
   objectMetadataItem,
 }: ObjectOptionsDropdownRecordGroupContentProps) => {
@@ -94,10 +96,9 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
     objectOptionsDropdownRecordGroupSortComponentState,
   );
 
-  const [hideEmptyRecordGroup, setHideEmptyRecordGroup] =
-    useRecoilComponentStateV2(
-      objectOptionsDropdownRecordGroupHideComponentState,
-    );
+  const hideEmptyRecordGroup = useRecoilComponentValueV2(
+    objectOptionsDropdownRecordGroupHideComponentState,
+  );
 
   const {
     recordGroupFieldSearchInput,
@@ -105,10 +106,13 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
     filteredRecordGroupFieldMetadataItems,
   } = useSearchRecordGroupField();
 
-  const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
-    useRecordGroupVisibility({
-      viewBarId: recordIndexId,
-    });
+  const {
+    handleVisibilityChange: handleRecordGroupVisibilityChange,
+    handleHideEmptyRecordGroupChange,
+  } = useRecordGroupVisibility({
+    viewBarId: recordIndexId,
+    viewType,
+  });
 
   const { handleOrderChange: handleRecordGroupOrderChange } =
     useRecordGroupReorder({
@@ -200,20 +204,24 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
         />
         <MenuItemToggle
           LeftIcon={IconCircleOff}
-          onToggleChange={() => setHideEmptyRecordGroup((prev) => !prev)}
+          onToggleChange={handleHideEmptyRecordGroupChange}
           toggled={hideEmptyRecordGroup}
           text="Hide empty groups"
           toggleSize="small"
         />
-        <DropdownMenuSeparator />
-        <RecordGroupsVisibilityDropdownSection
-          title="Visible groups"
-          viewGroups={visibleRecordGroups}
-          onDragEnd={handleRecordGroupOrderChange}
-          onVisibilityChange={handleRecordGroupVisibilityChange}
-          isDraggable={isDragableSortRecordGroup}
-          showDragGrip={true}
-        />
+        {visibleRecordGroups.length > 0 && (
+          <>
+            <DropdownMenuSeparator />
+            <RecordGroupsVisibilityDropdownSection
+              title="Visible groups"
+              viewGroups={visibleRecordGroups}
+              onDragEnd={handleRecordGroupOrderChange}
+              onVisibilityChange={handleRecordGroupVisibilityChange}
+              isDraggable={isDragableSortRecordGroup}
+              showDragGrip={true}
+            />
+          </>
+        )}
         {hiddenRecordGroups.length > 0 && (
           <>
             <DropdownMenuSeparator />

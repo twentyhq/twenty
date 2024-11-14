@@ -155,6 +155,7 @@ export const ObjectOptionsDropdownContent = ({
       />
 
       <ObjectOptionsDropdownRecordGroupContent
+        viewType={viewType}
         recordIndexId={recordIndexId}
         objectMetadataItem={objectMetadataItem}
       />
