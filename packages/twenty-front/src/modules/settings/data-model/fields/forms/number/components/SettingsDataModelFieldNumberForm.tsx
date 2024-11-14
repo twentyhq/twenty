@@ -4,12 +4,7 @@ import { z } from 'zod';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { numberFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/numberFieldDefaultValueSchema';
 import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
-import {
-  IconNumber9,
-  IconPercentage,
-  IllustrationIconDecimal,
-  IllustrationIconEye,
-} from 'twenty-ui';
+import { IllustrationIconDecimal, IllustrationIconEye } from 'twenty-ui';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
@@ -62,12 +57,10 @@ export const SettingsDataModelFieldNumberForm = ({
                 {
                   label: 'Number',
                   value: 'number',
-                  Icon: IconNumber9,
                 },
                 {
                   label: 'Percentage',
                   value: 'percentage',
-                  Icon: IconPercentage,
                 },
               ]}
             />
