@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Record as ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
@@ -10,22 +11,13 @@ import { ActivityQueryResultGetterHandler } from 'src/engine/api/graphql/workspa
 import { AttachmentQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/attachment-query-result-getter.handler';
 import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/person-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
-import {
-  isPossibleFieldValueAConnection,
-  isPossibleFieldValueANestedRecordArray,
-  isPossibleFieldValueARecordArray,
-} from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/utils/isResultAConnection';
+import { isQueryResultFieldValueAConnection } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/utils/is-query-result-field-value-a-connection.guard';
+import { isQueryResultFieldValueANestedRecordArray } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/utils/is-query-result-field-value-a-nested-record-array.guard';
+import { isQueryResultFieldValueARecordArray } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/utils/is-query-result-field-value-a-record-array.guard';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
 import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { isDefined } from 'src/utils/is-defined';
-
-export type PossibleQueryResultFieldValue =
-  | IConnection<ObjectRecord>
-  | { records: ObjectRecord[] }
-  | ObjectRecord
-  | ObjectRecord[];
 
 // TODO: find a way to prevent conflict between handlers executing logic on object relations
 // And this factory that is also executing logic on object relations
@@ -51,7 +43,7 @@ export class QueryResultGettersFactory {
     ]);
   }
 
-  async processConnection(
+  private async processConnection(
     connection: IConnection<ObjectRecord>,
     objectMetadataItemId: string,
     objectMetadataMap: ObjectMetadataMap,
@@ -73,7 +65,7 @@ export class QueryResultGettersFactory {
     };
   }
 
-  async processNestedRecordArray(
+  private async processNestedRecordArray(
     result: { records: ObjectRecord[] },
     objectMetadataItemId: string,
     objectMetadataMap: ObjectMetadataMap,
@@ -95,7 +87,7 @@ export class QueryResultGettersFactory {
     };
   }
 
-  async processRecordArray(
+  private async processRecordArray(
     recordArray: ObjectRecord[],
     objectMetadataItemId: string,
     objectMetadataMap: ObjectMetadataMap,
@@ -114,7 +106,7 @@ export class QueryResultGettersFactory {
     );
   }
 
-  async processRecord(
+  private async processRecord(
     record: ObjectRecord,
     objectMetadataItemId: string,
     objectMetadataMap: ObjectMetadataMap,
@@ -133,7 +125,7 @@ export class QueryResultGettersFactory {
 
     const relationFieldsProcessedMap = {} as Record<
       string,
-      PossibleQueryResultFieldValue
+      QueryResultFieldValue
     >;
 
     for (const relationField of relationFields) {
@@ -184,27 +176,27 @@ export class QueryResultGettersFactory {
     return newRecord;
   }
 
-  async processQueryResultField(
-    queryResultField: PossibleQueryResultFieldValue,
+  private async processQueryResultField(
+    queryResultField: QueryResultFieldValue,
     objectMetadataItemId: string,
     objectMetadataMap: ObjectMetadataMap,
     workspaceId: string,
   ) {
-    if (isPossibleFieldValueAConnection(queryResultField)) {
+    if (isQueryResultFieldValueAConnection(queryResultField)) {
       return await this.processConnection(
         queryResultField,
         objectMetadataItemId,
         objectMetadataMap,
         workspaceId,
       );
-    } else if (isPossibleFieldValueANestedRecordArray(queryResultField)) {
+    } else if (isQueryResultFieldValueANestedRecordArray(queryResultField)) {
       return await this.processNestedRecordArray(
         queryResultField,
         objectMetadataItemId,
         objectMetadataMap,
         workspaceId,
       );
-    } else if (isPossibleFieldValueARecordArray(queryResultField)) {
+    } else if (isQueryResultFieldValueARecordArray(queryResultField)) {
       return await this.processRecordArray(
         queryResultField,
         objectMetadataItemId,
@@ -221,9 +213,8 @@ export class QueryResultGettersFactory {
     }
   }
 
-  @LogExecutionTime('QueryResultGettersFactory.create')
   async create(
-    result: PossibleQueryResultFieldValue,
+    result: QueryResultFieldValue,
     objectMetadataItem: ObjectMetadataInterface,
     workspaceId: string,
     objectMetadataMap: ObjectMetadataMap,

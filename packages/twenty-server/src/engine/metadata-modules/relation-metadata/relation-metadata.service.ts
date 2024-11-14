@@ -24,7 +24,6 @@ import {
 import { InvalidStringException } from 'src/engine/metadata-modules/utils/exceptions/invalid-string.exception';
 import { validateFieldNameAvailabilityOrThrow } from 'src/engine/metadata-modules/utils/validate-field-name-availability.utils';
 import { validateMetadataNameValidityOrThrow } from 'src/engine/metadata-modules/utils/validate-metadata-name-validity.utils';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -34,6 +33,7 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
@@ -55,8 +55,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
     private readonly indexMetadataService: IndexMetadataService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {
     super(relationMetadataRepository);
   }
@@ -458,10 +458,26 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     >,
     workspaceId: string,
   ): Promise<(RelationMetadataEntity | NotFoundException)[]> {
-    const objectMetadataMap =
-      await this.workspaceMetadataCacheService.getWorkspaceObjectMetadataMap(
-        workspaceId,
+    const metadataVersion =
+      await this.workspaceCacheStorageService.getMetadataVersion(workspaceId);
+
+    if (!metadataVersion) {
+      throw new NotFoundException(
+        `Metadata version not found for workspace ${workspaceId}`,
       );
+    }
+
+    const objectMetadataMap =
+      await this.workspaceCacheStorageService.getObjectMetadataMap(
+        workspaceId,
+        metadataVersion,
+      );
+
+    if (!objectMetadataMap) {
+      throw new NotFoundException(
+        `Object metadata map not found for workspace ${workspaceId} and metadata version ${metadataVersion}`,
+      );
+    }
 
     const mappedResult = fieldMetadataItems.map((fieldMetadataItem) => {
       const objectMetadata =

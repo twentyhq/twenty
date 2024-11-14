@@ -1,7 +1,6 @@
 import { QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 export class PersonQueryResultGetterHandler
@@ -9,13 +8,10 @@ export class PersonQueryResultGetterHandler
 {
   constructor(private readonly fileService: FileService) {}
 
-  @LogExecutionTime('PersonQueryResultGetterHandler.handle')
   async handle(
     person: PersonWorkspaceEntity,
     workspaceId: string,
   ): Promise<PersonWorkspaceEntity> {
-    console.log('PersonQueryResultGetterHandler.handle');
-
     if (!person.id || !person?.avatarUrl) {
       return person;
     }
