@@ -483,6 +483,12 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       const objectMetadata =
         objectMetadataMap[fieldMetadataItem.objectMetadataId];
 
+      if (!objectMetadata) {
+        return new NotFoundException(
+          `Object metadata not found for field ${fieldMetadataItem.id}`,
+        );
+      }
+
       const fieldMetadata = objectMetadata.fields[fieldMetadataItem.id];
 
       const relationMetadata =

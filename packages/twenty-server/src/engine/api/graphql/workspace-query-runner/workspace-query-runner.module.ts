@@ -11,6 +11,7 @@ import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
+import { LoggerModule } from 'src/engine/core-modules/logger/logger.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -30,6 +31,7 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     TelemetryModule,
     FileModule,
     FeatureFlagModule,
+    LoggerModule,
   ],
   providers: [
     ...workspaceQueryRunnerFactories,

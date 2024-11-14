@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, LoggerService } from '@nestjs/common';
 
 import { Record as ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
@@ -14,6 +14,7 @@ import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/
 import { isQueryResultFieldValueAConnection } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/utils/is-query-result-field-value-a-connection.guard';
 import { isQueryResultFieldValueANestedRecordArray } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/utils/is-query-result-field-value-a-nested-record-array.guard';
 import { isQueryResultFieldValueARecordArray } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/utils/is-query-result-field-value-a-record-array.guard';
+import { isQueryResultFieldValueARecord } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/utils/is-query-result-field-value-a-record.guard';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
@@ -26,7 +27,10 @@ import { isDefined } from 'src/utils/is-defined';
 export class QueryResultGettersFactory {
   private handlers: Map<string, QueryResultGetterHandlerInterface>;
 
-  constructor(private readonly fileService: FileService) {
+  constructor(
+    private readonly fileService: FileService,
+    private readonly loggerService: LoggerService,
+  ) {
     this.initializeHandlers();
   }
 
@@ -203,13 +207,20 @@ export class QueryResultGettersFactory {
         objectMetadataMap,
         workspaceId,
       );
-    } else {
+    } else if (isQueryResultFieldValueARecord(queryResultField)) {
       return await this.processRecord(
         queryResultField,
         objectMetadataItemId,
         objectMetadataMap,
         workspaceId,
       );
+    } else {
+      this.loggerService.warn(
+        `Query result field is not a record, connection, nested record array or record array. 
+        This is an undetected case in query result getter that should be implemented !!`,
+      );
+
+      return queryResultField;
     }
   }
 
