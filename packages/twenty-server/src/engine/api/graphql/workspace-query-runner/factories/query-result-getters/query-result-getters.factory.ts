@@ -12,18 +12,20 @@ import { PersonQueryResultGetterHandler } from 'src/engine/api/graphql/workspace
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
 import {
   isPossibleFieldValueAConnection,
+  isPossibleFieldValueANestedRecordArray,
   isPossibleFieldValueARecordArray,
 } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/utils/isResultAConnection';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
 import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
-import { WorkspaceMetadataCacheService } from 'src/engine/metadata-modules/workspace-metadata-cache/services/workspace-metadata-cache.service';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
+import { isDefined } from 'src/utils/is-defined';
 
-export type PossibleFieldValue =
+export type PossibleQueryResultFieldValue =
   | IConnection<ObjectRecord>
   | { records: ObjectRecord[] }
-  | ObjectRecord;
+  | ObjectRecord
+  | ObjectRecord[];
 
 // TODO: find a way to prevent conflict between handlers executing logic on object relations
 // And this factory that is also executing logic on object relations
@@ -32,10 +34,7 @@ export type PossibleFieldValue =
 export class QueryResultGettersFactory {
   private handlers: Map<string, QueryResultGetterHandlerInterface>;
 
-  constructor(
-    private readonly fileService: FileService,
-    private readonly workspaceMetadataCacheService: WorkspaceMetadataCacheService,
-  ) {
+  constructor(private readonly fileService: FileService) {
     this.initializeHandlers();
   }
 
@@ -74,7 +73,7 @@ export class QueryResultGettersFactory {
     };
   }
 
-  async processRecordArray(
+  async processNestedRecordArray(
     result: { records: ObjectRecord[] },
     objectMetadataItemId: string,
     objectMetadataMap: ObjectMetadataMap,
@@ -96,6 +95,25 @@ export class QueryResultGettersFactory {
     };
   }
 
+  async processRecordArray(
+    recordArray: ObjectRecord[],
+    objectMetadataItemId: string,
+    objectMetadataMap: ObjectMetadataMap,
+    workspaceId: string,
+  ) {
+    return await Promise.all(
+      recordArray.map(
+        async (record: ObjectRecord) =>
+          await this.processRecord(
+            record,
+            objectMetadataItemId,
+            objectMetadataMap,
+            workspaceId,
+          ),
+      ),
+    );
+  }
+
   async processRecord(
     record: ObjectRecord,
     objectMetadataItemId: string,
@@ -108,51 +126,50 @@ export class QueryResultGettersFactory {
 
     const relationFields = Object.keys(record)
       .map((recordFieldName) => objectMetadataMapItem.fields[recordFieldName])
+      .filter(isDefined)
       .filter((fieldMetadata) =>
         isRelationFieldMetadataType(fieldMetadata.type),
       );
 
-    // console.log({
-    //   relationFields,
-    // });
+    const relationFieldsProcessedMap = {} as Record<
+      string,
+      PossibleQueryResultFieldValue
+    >;
 
-    // const relationFieldsProcessedMap = relationFields.reduce<
-    //   Record<string, PossibleFieldValue>
-    // >((relationFieldMap, fieldMetadata) => {
-    //   const relationMetadata =
-    //     fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
+    for (const relationField of relationFields) {
+      const relationMetadata =
+        relationField.fromRelationMetadata ?? relationField.toRelationMetadata;
 
-    //   if (!isDefined(relationMetadata)) {
-    //     throw new Error('Relation metadata is not defined');
-    //   }
+      if (!isDefined(relationMetadata)) {
+        throw new Error('Relation metadata is not defined');
+      }
 
-    //   // TODO: computing this by taking the opposite of the current object metadata id
-    //   // is really less than ideal. This should be computed based on the relation metadata
-    //   // But right now it is too complex with the current structure and / or lack of utils
-    //   // around the possible combinations with relation metadata from / to + MANY_TO_ONE / ONE_TO_MANY
-    //   const relationObjectMetadataItemId =
-    //     relationMetadata.fromObjectMetadataId === objectMetadataItemId
-    //       ? relationMetadata.toObjectMetadataId
-    //       : relationMetadata.fromObjectMetadataId;
+      // TODO: computing this by taking the opposite of the current object metadata id
+      // is really less than ideal. This should be computed based on the relation metadata
+      // But right now it is too complex with the current structure and / or lack of utils
+      // around the possible combinations with relation metadata from / to + MANY_TO_ONE / ONE_TO_MANY
+      const relationObjectMetadataItemId =
+        relationMetadata.fromObjectMetadataId === objectMetadataItemId
+          ? relationMetadata.toObjectMetadataId
+          : relationMetadata.fromObjectMetadataId;
 
-    //   const relationObjectMetadataItem =
-    //     objectMetadataMap[relationObjectMetadataItemId];
+      const relationObjectMetadataItem =
+        objectMetadataMap[relationObjectMetadataItemId];
 
-    //   if (!isDefined(relationObjectMetadataItem)) {
-    //     throw new Error(
-    //       `Object metadata not found for id ${relationObjectMetadataItemId}`,
-    //     );
-    //   }
+      if (!isDefined(relationObjectMetadataItem)) {
+        throw new Error(
+          `Object metadata not found for id ${relationObjectMetadataItemId}`,
+        );
+      }
 
-    //   relationFieldMap[fieldMetadata.name] = this.processRecord(
-    //     record[fieldMetadata.name],
-    //     relationObjectMetadataItem.id,
-    //     objectMetadataMap,
-    //     workspaceId,
-    //   );
-
-    //   return relationFieldMap;
-    // }, {});
+      relationFieldsProcessedMap[relationField.name] =
+        await this.processQueryResultField(
+          record[relationField.name],
+          relationObjectMetadataItem.id,
+          objectMetadataMap,
+          workspaceId,
+        );
+    }
 
     const objectRecordProcessedWithoutRelationFields = await handler.handle(
       record,
@@ -161,51 +178,62 @@ export class QueryResultGettersFactory {
 
     const newRecord = {
       ...objectRecordProcessedWithoutRelationFields,
-      // ...relationFieldsProcessedMap,
+      ...relationFieldsProcessedMap,
     };
 
     return newRecord;
   }
 
-  @LogExecutionTime('QueryResultGettersFactory.create')
-  async create(
-    result: PossibleFieldValue,
-    objectMetadataItem: ObjectMetadataInterface,
+  async processQueryResultField(
+    queryResultField: PossibleQueryResultFieldValue,
+    objectMetadataItemId: string,
+    objectMetadataMap: ObjectMetadataMap,
     workspaceId: string,
-  ): Promise<any> {
-    const objectMetadataMap =
-      await this.workspaceMetadataCacheService.getWorkspaceObjectMetadataMap(
-        workspaceId,
-      );
-
-    // console.log(
-    //   'QueryResultGettersFactory.create',
-    //   objectMetadataItem.nameSingular,
-    //   result,
-    // );
-
-    if (isPossibleFieldValueAConnection(result)) {
+  ) {
+    if (isPossibleFieldValueAConnection(queryResultField)) {
       return await this.processConnection(
-        result,
-        objectMetadataItem.id,
+        queryResultField,
+        objectMetadataItemId,
         objectMetadataMap,
         workspaceId,
       );
-    } else if (isPossibleFieldValueARecordArray(result)) {
+    } else if (isPossibleFieldValueANestedRecordArray(queryResultField)) {
+      return await this.processNestedRecordArray(
+        queryResultField,
+        objectMetadataItemId,
+        objectMetadataMap,
+        workspaceId,
+      );
+    } else if (isPossibleFieldValueARecordArray(queryResultField)) {
       return await this.processRecordArray(
-        result,
-        objectMetadataItem.id,
+        queryResultField,
+        objectMetadataItemId,
         objectMetadataMap,
         workspaceId,
       );
     } else {
       return await this.processRecord(
-        result,
-        objectMetadataItem.id,
+        queryResultField,
+        objectMetadataItemId,
         objectMetadataMap,
         workspaceId,
       );
     }
+  }
+
+  @LogExecutionTime('QueryResultGettersFactory.create')
+  async create(
+    result: PossibleQueryResultFieldValue,
+    objectMetadataItem: ObjectMetadataInterface,
+    workspaceId: string,
+    objectMetadataMap: ObjectMetadataMap,
+  ): Promise<any> {
+    return await this.processQueryResultField(
+      result,
+      objectMetadataItem.id,
+      objectMetadataMap,
+      workspaceId,
+    );
   }
 
   private getHandler(objectType: string): QueryResultGetterHandlerInterface {
