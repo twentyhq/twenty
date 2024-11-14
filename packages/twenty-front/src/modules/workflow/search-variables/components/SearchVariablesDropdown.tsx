@@ -75,7 +75,7 @@ const SearchVariablesDropdown = ({
         </StyledDropdownVariableButtonContainer>
       }
       dropdownComponents={
-        <DropdownMenuItemsContainer>
+        <DropdownMenuItemsContainer hasMaxHeight>
           {selectedStep ? (
             <SearchVariablesDropdownStepSubItem
               step={selectedStep}
