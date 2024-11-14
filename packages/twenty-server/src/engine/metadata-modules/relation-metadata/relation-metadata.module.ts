@@ -13,7 +13,6 @@ import { IndexMetadataModule } from 'src/engine/metadata-modules/index-metadata/
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { RelationMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/relation-metadata/interceptors/relation-metadata-graphql-api-exception.interceptor';
 import { RelationMetadataResolver } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.resolver';
-import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -40,7 +39,6 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
         WorkspaceMigrationModule,
         WorkspaceCacheStorageModule,
         WorkspaceMetadataVersionModule,
-        WorkspaceMetadataCacheModule,
       ],
       services: [RelationMetadataService],
       resolvers: [
