@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import styled from '@emotion/styled';
-
 import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
 import { setNestedValue } from '@/workflow/utils/setNestedValue';
 import { Select, SelectOption } from '@/ui/input/components/Select';
@@ -8,7 +7,7 @@ import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditG
 import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
 import { WorkflowCodeStep } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
-import { IconCode, isDefined } from 'twenty-ui';
+import { IconCode, isDefined, HorizontalSeparator } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
@@ -23,16 +22,19 @@ const StyledLabel = styled.div`
   color: ${({ theme }) => theme.font.color.light};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  margin-top: ${({ theme }) => theme.spacing(2)};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledInputContainer = styled.div`
+  background: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   display: flex;
   flex-direction: column;
+  gap: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
   position: relative;
-  gap: ${({ theme }) => theme.spacing(4)};
-  padding-left: ${({ theme }) => theme.spacing(4)};
 `;
 
 type WorkflowEditActionFormServerlessFunctionProps =
@@ -139,17 +141,40 @@ export const WorkflowEditActionFormServerlessFunction = (
   const renderFields = (
     functionInput: FunctionInput,
     path: string[] = [],
-  ): ReactNode | undefined => {
+    isRoot = true,
+  ): ReactNode[] => {
+    const displaySeparator = (functionInput: FunctionInput) => {
+      const keys = Object.keys(functionInput);
+      if (keys.length > 1) {
+        return true;
+      }
+      if (keys.length === 1) {
+        const subKeys = Object.keys(functionInput[keys[0]]);
+        return subKeys.length > 0;
+      }
+      return false;
+    };
+
     return Object.entries(functionInput).map(([inputKey, inputValue]) => {
       const currentPath = [...path, inputKey];
       const pathKey = currentPath.join('.');
 
       if (inputValue !== null && typeof inputValue === 'object') {
+        if (isRoot) {
+          return (
+            <>
+              {displaySeparator(functionInput) && (
+                <HorizontalSeparator noMargin />
+              )}
+              {renderFields(inputValue, currentPath, false)}
+            </>
+          );
+        }
         return (
           <StyledContainer key={pathKey}>
             <StyledLabel>{inputKey}</StyledLabel>
             <StyledInputContainer>
-              {renderFields(inputValue, currentPath)}
+              {renderFields(inputValue, currentPath, false)}
             </StyledInputContainer>
           </StyledContainer>
         );
@@ -184,7 +209,7 @@ export const WorkflowEditActionFormServerlessFunction = (
         disabled={props.readonly}
         onChange={handleFunctionChange}
       />
-      {functionInput && renderFields(functionInput)}
+      {renderFields(functionInput)}
     </WorkflowEditGenericFormBase>
   );
 };

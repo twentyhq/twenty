@@ -21,7 +21,7 @@ const StyledContainer = styled.div`
 
 const StyledLabel = styled.div`
   color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
+  font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;

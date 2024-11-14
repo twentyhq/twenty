@@ -21,7 +21,7 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
+import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export enum WorkflowVersionStatus {
@@ -98,7 +98,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconSettingsAutomation',
   })
   @WorkspaceIsNullable()
-  steps: WorkflowStep[] | null;
+  steps: WorkflowAction[] | null;
 
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.status,
