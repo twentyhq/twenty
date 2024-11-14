@@ -92,10 +92,12 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
       );
     }
 
-    const updatedObjectRecord = await repository.save({
-      ...objectRecord,
-      ...workflowActionInput.objectRecord,
-    });
+    const updatedObjectRecord = await repository.update(
+      workflowActionInput.objectRecordId,
+      {
+        ...workflowActionInput.objectRecord,
+      },
+    );
 
     return {
       result: updatedObjectRecord,
@@ -170,6 +172,13 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
     const objectMetadataMapItem =
       objectMetadataMap[workflowActionInput.objectName];
 
+    if (!objectMetadataMapItem) {
+      throw new RecordCRUDActionException(
+        `Object ${workflowActionInput.objectName} not found`,
+        RecordCRUDActionExceptionCode.INVALID_REQUEST,
+      );
+    }
+
     const queryBuilder = repository.createQueryBuilder(
       workflowActionInput.objectName,
     );
@@ -198,7 +207,11 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
     );
 
     const nonFormattedObjectRecords = await withOrderByQueryBuilder
-      .take(workflowActionInput.limit ?? 1)
+      .take(
+        workflowActionInput.limit && workflowActionInput.limit > 0
+          ? workflowActionInput.limit
+          : 1,
+      )
       .getMany();
 
     const objectRecords = formatResult(
