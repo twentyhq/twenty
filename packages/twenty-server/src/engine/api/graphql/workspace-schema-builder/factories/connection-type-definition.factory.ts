@@ -1,17 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { GraphQLFieldConfigMap, GraphQLInt, GraphQLObjectType } from 'graphql';
+import { GraphQLFieldConfigMap, GraphQLObjectType } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
+import { AggregationTypeFactory } from 'src/engine/api/graphql/workspace-schema-builder/factories/aggregation-type.factory';
 import { pascalCase } from 'src/utils/pascal-case';
 
+import { ConnectionTypeFactory } from './connection-type.factory';
 import {
   ObjectTypeDefinition,
   ObjectTypeDefinitionKind,
 } from './object-type-definition.factory';
-import { ConnectionTypeFactory } from './connection-type.factory';
 
 export enum ConnectionTypeDefinitionKind {
   Edge = 'Edge',
@@ -20,7 +21,10 @@ export enum ConnectionTypeDefinitionKind {
 
 @Injectable()
 export class ConnectionTypeDefinitionFactory {
-  constructor(private readonly connectionTypeFactory: ConnectionTypeFactory) {}
+  constructor(
+    private readonly connectionTypeFactory: ConnectionTypeFactory,
+    private readonly aggregationTypeFactory: AggregationTypeFactory,
+  ) {}
 
   public create(
     objectMetadata: ObjectMetadataInterface,
@@ -45,6 +49,10 @@ export class ConnectionTypeDefinitionFactory {
   ): GraphQLFieldConfigMap<any, any> {
     const fields: GraphQLFieldConfigMap<any, any> = {};
 
+    const aggregatedFields = this.aggregationTypeFactory.create(objectMetadata);
+
+    Object.assign(fields, aggregatedFields);
+
     fields.edges = {
       type: this.connectionTypeFactory.create(
         objectMetadata,
@@ -67,11 +75,6 @@ export class ConnectionTypeDefinitionFactory {
           nullable: false,
         },
       ),
-    };
-
-    fields.totalCount = {
-      type: GraphQLInt,
-      description: 'Total number of records in the connection',
     };
 
     return fields;

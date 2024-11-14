@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { OrderByInputFactory } from 'src/engine/api/rest/input-factories/order-by-input.factory';
