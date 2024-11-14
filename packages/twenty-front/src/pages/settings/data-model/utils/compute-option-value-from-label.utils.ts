@@ -1,6 +1,6 @@
 import { slugify } from 'transliteration';
 
-export const computeOptionValueFromLabelOrThrow = (label: string): string => {
+export const computeOptionValueFromLabel = (label: string): string => {
   const prefixedLabel = /^\d/.test(label) ? `OPT${label}` : label;
 
   const formattedString = slugify(prefixedLabel, {
