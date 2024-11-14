@@ -33,8 +33,8 @@ export const useNumberField = () => {
 
   const persistField = usePersistField();
 
-  const persistNumberField = (newValue: string, isPercentage: boolean) => {
-    if (isPercentage) {
+  const persistNumberField = (newValue: string) => {
+    if (fieldDefinition?.metadata?.settings?.type === 'percentage') {
       newValue = newValue.replaceAll('%', '');
       if (!canBeCastAsNumberOrNull(newValue)) {
         return;

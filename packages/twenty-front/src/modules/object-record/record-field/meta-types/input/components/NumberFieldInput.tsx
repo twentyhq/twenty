@@ -28,30 +28,27 @@ export const NumberFieldInput = ({
     persistNumberField,
   } = useNumberField();
 
-  const isPercentage =
-    fieldDefinition?.metadata?.settings?.type === 'percentage';
-
   const handleEnter = (newText: string) => {
-    onEnter?.(() => persistNumberField(newText, isPercentage));
+    onEnter?.(() => persistNumberField(newText));
   };
 
   const handleEscape = (newText: string) => {
-    onEscape?.(() => persistNumberField(newText, isPercentage));
+    onEscape?.(() => persistNumberField(newText));
   };
 
   const handleClickOutside = (
     event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    onClickOutside?.(() => persistNumberField(newText, isPercentage));
+    onClickOutside?.(() => persistNumberField(newText));
   };
 
   const handleTab = (newText: string) => {
-    onTab?.(() => persistNumberField(newText, isPercentage));
+    onTab?.(() => persistNumberField(newText));
   };
 
   const handleShiftTab = (newText: string) => {
-    onShiftTab?.(() => persistNumberField(newText, isPercentage));
+    onShiftTab?.(() => persistNumberField(newText));
   };
 
   const handleChange = (newText: string) => {
