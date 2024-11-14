@@ -42,12 +42,18 @@ export const generateWorkflowDiagram = ({
       nodeActionType = step.type;
     }
 
+    let nodeLabel = step.name;
+    if (step.type === 'RECORD_CRUD') {
+      // FIXME: use activeObjectMetadataItems to get labelSingular
+      nodeLabel = `${capitalize(step.settings.input.type.toLowerCase())} ${capitalize(step.settings.input.objectName)}`;
+    }
+
     nodes.push({
       id: nodeId,
       data: {
         nodeType: 'action',
         actionType: nodeActionType,
-        label: step.name,
+        label: nodeLabel,
       },
       position: {
         x: xPos,

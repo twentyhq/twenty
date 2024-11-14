@@ -65,7 +65,7 @@ export const getStepDefaultDefinition = ({
     case 'RECORD_CRUD.CREATE': {
       return {
         id: newStepId,
-        name: 'Send Email',
+        name: 'Record Create',
         type: 'RECORD_CRUD',
         valid: false,
         settings: {
