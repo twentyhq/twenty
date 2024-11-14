@@ -1,1 +1,0 @@
-export const SELECT_FILTER_TYPES = ['SELECT', 'MULTI_SELECT'];

@@ -50,18 +50,6 @@ export const isMatchingStringFilter = ({
 
       return regexCaseInsensitive.test(defaultedValue);
     }
-    case stringFilter.gt !== undefined: {
-      return defaultedValue > stringFilter.gt;
-    }
-    case stringFilter.gte !== undefined: {
-      return defaultedValue >= stringFilter.gte;
-    }
-    case stringFilter.lt !== undefined: {
-      return defaultedValue < stringFilter.lt;
-    }
-    case stringFilter.lte !== undefined: {
-      return defaultedValue <= stringFilter.lte;
-    }
     case stringFilter.startsWith !== undefined: {
       return defaultedValue.startsWith(stringFilter.startsWith);
     }

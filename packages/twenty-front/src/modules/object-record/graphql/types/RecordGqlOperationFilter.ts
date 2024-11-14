@@ -21,17 +21,19 @@ export type BooleanFilter = {
 
 export type StringFilter = {
   eq?: string;
-  gt?: string;
-  gte?: string;
   in?: string[];
-  lt?: string;
-  lte?: string;
   neq?: string;
   startsWith?: string;
   like?: string;
   ilike?: string;
   regex?: string;
   iregex?: string;
+  is?: IsFilter;
+};
+
+export type RatingFilter = {
+  eq?: number;
+  in?: number[];
   is?: IsFilter;
 };
 

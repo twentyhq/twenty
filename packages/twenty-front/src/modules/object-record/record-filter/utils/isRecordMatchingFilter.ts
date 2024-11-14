@@ -17,6 +17,7 @@ import {
   NotObjectRecordFilter,
   OrObjectRecordFilter,
   PhonesFilter,
+  RatingFilter,
   RawJsonFilter,
   RecordGqlOperationFilter,
   StringFilter,
@@ -27,6 +28,7 @@ import { isMatchingBooleanFilter } from '@/object-record/record-filter/utils/isM
 import { isMatchingCurrencyFilter } from '@/object-record/record-filter/utils/isMatchingCurrencyFilter';
 import { isMatchingDateFilter } from '@/object-record/record-filter/utils/isMatchingDateFilter';
 import { isMatchingFloatFilter } from '@/object-record/record-filter/utils/isMatchingFloatFilter';
+import { isMatchingRatingFilter } from '@/object-record/record-filter/utils/isMatchingRatingFilter';
 import { isMatchingRawJsonFilter } from '@/object-record/record-filter/utils/isMatchingRawJsonFilter';
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
 import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
@@ -161,6 +163,10 @@ export const isRecordMatchingFilter = ({
 
     switch (objectMetadataField.type) {
       case FieldMetadataType.Rating:
+        return isMatchingRatingFilter({
+          ratingFilter: filterValue as RatingFilter,
+          value: record[filterKey],
+        });
       case FieldMetadataType.Text: {
         return isMatchingStringFilter({
           stringFilter: filterValue as StringFilter,
