@@ -2,10 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { EntitySchema } from 'typeorm';
 
-import {
-  ObjectMetadataMap,
-  ObjectMetadataMapItem,
-} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
@@ -20,17 +18,17 @@ export class EntitySchemaFactory {
 
   async create(
     workspaceId: string,
-    metadataVersion: number,
-    objectMetadata: ObjectMetadataMapItem,
-    objectMetadataMap: ObjectMetadataMap,
+    _metadataVersion: number,
+    objectMetadata: ObjectMetadataItemWithFieldMaps,
+    objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<EntitySchema> {
     const columns = this.entitySchemaColumnFactory.create(
-      objectMetadata.fields,
+      objectMetadata.fieldsByName,
     );
 
     const relations = await this.entitySchemaRelationFactory.create(
-      objectMetadata.fields,
-      objectMetadataMap,
+      objectMetadata.fieldsByName,
+      objectMetadataMaps,
     );
 
     const entitySchema = new EntitySchema({
