@@ -2,9 +2,9 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { isScrollEnabledForRecordTableState } from '@/object-record/record-table/states/isScrollEnabledForRecordTableState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
-import { useSetRecoilState } from 'recoil';
 import { RecordTableColumnHead } from './RecordTableColumnHead';
 import { RecordTableColumnHeadDropdownMenu } from './RecordTableColumnHeadDropdownMenu';
 
@@ -21,7 +21,7 @@ const StyledDropdown = styled(Dropdown)`
 export const RecordTableColumnHeadWithDropdown = ({
   column,
 }: RecordTableColumnHeadWithDropdownProps) => {
-  const isScrollEnabledForRecordTable = useSetRecoilState(
+  const isScrollEnabledForRecordTable = useSetRecoilComponentStateV2(
     isScrollEnabledForRecordTableState,
   );
 
