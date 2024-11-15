@@ -19,7 +19,6 @@ const StyledModalDiv = styled(motion.div)<{
 }>`
   display: flex;
   flex-direction: column;
-  box-shadow: ${({ theme }) => theme.boxShadow.superHeavy};
   box-shadow: ${({ theme, modalVariant }) =>
     modalVariant === 'primary'
       ? theme.boxShadow.superHeavy
