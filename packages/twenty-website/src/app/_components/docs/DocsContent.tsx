@@ -1,8 +1,8 @@
 'use client';
-import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 import { ArticleContent } from '@/app/_components/ui/layout/articles/ArticleContent';
 import { Breadcrumbs } from '@/app/_components/ui/layout/Breadcrumbs';
@@ -28,8 +28,8 @@ const StyledContainer = styled('div')`
 
 const StyledWrapper = styled.div`
   @media (max-width: 450px) {
-    padding: ${Theme.spacing(10)} 30px ${Theme.spacing(20)};
-    width: 340px;
+    width: 100%;
+    padding: ${Theme.spacing(10)} 32px ${Theme.spacing(20)};
   }
 
   @media (min-width: 451px) and (max-width: 800px) {

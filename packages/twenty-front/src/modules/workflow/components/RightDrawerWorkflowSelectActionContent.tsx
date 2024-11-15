@@ -1,8 +1,8 @@
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ACTIONS } from '@/workflow/constants/Actions';
 import { useCreateStep } from '@/workflow/hooks/useCreateStep';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import styled from '@emotion/styled';
+import { MenuItem } from 'twenty-ui';
 
 const StyledActionListContainer = styled.div`
   display: flex;
@@ -27,6 +27,7 @@ export const RightDrawerWorkflowSelectActionContent = ({
     <StyledActionListContainer>
       {ACTIONS.map((action) => (
         <MenuItem
+          key={action.type}
           LeftIcon={action.icon}
           text={action.label}
           onClick={() => {

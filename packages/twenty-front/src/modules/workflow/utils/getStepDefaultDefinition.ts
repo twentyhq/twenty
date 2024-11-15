@@ -18,6 +18,7 @@ export const getStepDefaultDefinition = (
           input: {
             serverlessFunctionId: '',
             serverlessFunctionVersion: '',
+            serverlessFunctionInput: {},
           },
           outputSchema: {},
           errorHandlingOptions: {

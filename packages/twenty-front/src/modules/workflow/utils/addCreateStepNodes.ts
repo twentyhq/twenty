@@ -36,6 +36,7 @@ export const addCreateStepNodes = ({ nodes, edges }: WorkflowDiagram) => {
       markerEnd: {
         type: MarkerType.ArrowClosed,
       },
+      deletable: false,
     });
   }
 

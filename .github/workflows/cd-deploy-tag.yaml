@@ -5,6 +5,7 @@ on:
       - 'v*'
 jobs:
   deploy-tag:
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:
       - name: Repository Dispatch

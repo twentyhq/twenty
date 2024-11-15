@@ -5,6 +5,7 @@ import { RecordIndexActionMenuBarEntry } from '@/action-menu/components/RecordIn
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
+import { getActionBarIdFromActionMenuId } from '@/action-menu/utils/getActionBarIdFromActionMenuId';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { BottomBar } from '@/ui/layout/bottom-bar/components/BottomBar';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -33,13 +34,13 @@ export const RecordIndexActionMenuBar = () => {
 
   const pinnedEntries = actionMenuEntries.filter((entry) => entry.isPinned);
 
-  if (pinnedEntries.length === 0) {
+  if (contextStoreNumberOfSelectedRecords === 0) {
     return null;
   }
 
   return (
     <BottomBar
-      bottomBarId={`action-bar-${actionMenuId}`}
+      bottomBarId={getActionBarIdFromActionMenuId(actionMenuId)}
       bottomBarHotkeyScopeFromParent={{
         scope: ActionBarHotkeyScope.ActionBar,
       }}

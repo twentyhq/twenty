@@ -30,12 +30,10 @@ export class DestroyOneResolverFactory
       try {
         const options: WorkspaceQueryRunnerOptions = {
           authContext: internalContext.authContext,
-          objectMetadataItem: internalContext.objectMetadataItem,
           info,
-          fieldMetadataCollection: internalContext.fieldMetadataCollection,
-          objectMetadataCollection: internalContext.objectMetadataCollection,
-          objectMetadataMap: internalContext.objectMetadataMap,
-          objectMetadataMapItem: internalContext.objectMetadataMapItem,
+          objectMetadataMaps: internalContext.objectMetadataMaps,
+          objectMetadataItemWithFieldMaps:
+            internalContext.objectMetadataItemWithFieldMaps,
         };
 
         return await this.graphQLQueryRunnerService.destroyOne(args, options);

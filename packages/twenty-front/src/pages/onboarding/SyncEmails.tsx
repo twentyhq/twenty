@@ -10,10 +10,10 @@ import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
-import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
+import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { AppPath } from '@/types/AppPath';
 import {
   CalendarChannelVisibility,
@@ -38,7 +38,7 @@ const StyledActionLinkContainer = styled.div`
 
 export const SyncEmails = () => {
   const theme = useTheme();
-  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
+  const { triggerApisOAuth } = useTriggerApisOAuth();
   const setNextOnboardingStatus = useSetNextOnboardingStatus();
   const currentUser = useRecoilValue(currentUserState);
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
@@ -53,7 +53,7 @@ export const SyncEmails = () => {
         ? CalendarChannelVisibility.ShareEverything
         : CalendarChannelVisibility.Metadata;
 
-    await triggerGoogleApisOAuth({
+    await triggerApisOAuth('google', {
       redirectLocation: AppPath.Index,
       messageVisibility: visibility,
       calendarVisibility: calendarChannelVisibility,

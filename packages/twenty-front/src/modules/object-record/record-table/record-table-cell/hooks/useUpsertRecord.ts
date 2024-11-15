@@ -7,27 +7,29 @@ import { recordFieldInputDraftValueComponentSelector } from '@/object-record/rec
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { extractComponentSelector } from '@/ui/utilities/state/component-state/utils/extractComponentSelector';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { isDefined } from '~/utils/isDefined';
 
 export const useUpsertRecord = ({
   objectNameSingular,
+  recordTableId,
 }: {
   objectNameSingular: string;
+  recordTableId: string;
 }) => {
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular,
   });
 
+  const recordTablePendingRecordIdState = useRecoilComponentCallbackStateV2(
+    recordTablePendingRecordIdComponentState,
+    recordTableId,
+  );
+
   const upsertRecord = useRecoilCallback(
     ({ snapshot }) =>
-      (
-        persistField: () => void,
-        recordId: string,
-        fieldName: string,
-        recordTableId: string,
-      ) => {
+      (persistField: () => void, recordId: string, fieldName: string) => {
         const objectMetadataItems = snapshot
           .getLoadable(objectMetadataItemsState)
           .getValue();
@@ -42,13 +44,6 @@ export const useUpsertRecord = ({
 
         const labelIdentifierFieldMetadataItem =
           getLabelIdentifierFieldMetadataItem(foundObjectMetadataItem);
-
-        const tableScopeId = getScopeIdFromComponentId(recordTableId);
-
-        const recordTablePendingRecordIdState = extractComponentState(
-          recordTablePendingRecordIdComponentState,
-          tableScopeId,
-        );
 
         const recordTablePendingRecordId = getSnapshotValue(
           snapshot,
@@ -75,7 +70,7 @@ export const useUpsertRecord = ({
           persistField();
         }
       },
-    [createOneRecord, objectNameSingular],
+    [createOneRecord, objectNameSingular, recordTablePendingRecordIdState],
   );
 
   return { upsertRecord };
