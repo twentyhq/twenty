@@ -1,15 +1,18 @@
 import { FAVORITE_FOLDERS_DROPDOWN_ID } from '@/favorites/constants/FavoriteFoldersDropdownId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { PageFavoriteButton } from '@/ui/layout/page/components/PageFavoriteButton';
 import { PageFavoriteFoldersDropdown } from '@/ui/layout/page/components/PageFavoriteFolderDropdown';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
 import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMoreButton';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 type RecordShowPageBaseHeaderProps = {
   isFavorite: boolean;
   record: ObjectRecord | undefined;
   objectMetadataItem: ObjectMetadataItem;
   objectNameSingular: string;
+  handleFavoriteButtonClick: () => void;
 };
 
 export const RecordShowPageBaseHeader = ({
@@ -17,16 +20,28 @@ export const RecordShowPageBaseHeader = ({
   record,
   objectMetadataItem,
   objectNameSingular,
+  handleFavoriteButtonClick,
 }: RecordShowPageBaseHeaderProps) => {
+  const isFavoriteFolderEnabled = useIsFeatureEnabled(
+    'IS_FAVORITE_FOLDER_ENABLED',
+  );
+
   return (
     <>
-      <PageFavoriteFoldersDropdown
-        key={FAVORITE_FOLDERS_DROPDOWN_ID}
-        dropdownId={FAVORITE_FOLDERS_DROPDOWN_ID}
-        isFavorite={isFavorite}
-        record={record}
-        objectNameSingular={objectNameSingular}
-      />
+      {isFavoriteFolderEnabled ? (
+        <PageFavoriteFoldersDropdown
+          key={FAVORITE_FOLDERS_DROPDOWN_ID}
+          dropdownId={FAVORITE_FOLDERS_DROPDOWN_ID}
+          isFavorite={isFavorite}
+          record={record}
+          objectNameSingular={objectNameSingular}
+        />
+      ) : (
+        <PageFavoriteButton
+          isFavorite={isFavorite}
+          onClick={handleFavoriteButtonClick}
+        />
+      )}
       <ShowPageAddButton
         key="add"
         activityTargetObject={{

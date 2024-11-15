@@ -1,5 +1,5 @@
 import { useRecoilValue } from 'recoil';
-import { useIcons } from 'twenty-ui';
+import { isDefined, useIcons } from 'twenty-ui';
 
 import { FAVORITE_FOLDERS_DROPDOWN_ID } from '@/favorites/constants/FavoriteFoldersDropdownId';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
@@ -11,6 +11,7 @@ import { recordIndexViewTypeState } from '@/object-record/record-index/states/re
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
+import { PageFavoriteButton } from '@/ui/layout/page/components/PageFavoriteButton';
 import { PageFavoriteFoldersDropdown } from '@/ui/layout/page/components/PageFavoriteFolderDropdown';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/components/PageHotkeysEffect';
@@ -18,12 +19,16 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { currentViewIdComponentState } from '@/views/states/currentViewIdComponentState';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const RecordIndexPageHeader = () => {
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
+  const isFavoriteFolderEnabled = useIsFeatureEnabled(
+    'IS_FAVORITE_FOLDER_ENABLED',
+  );
 
   const { objectNamePlural, onCreateRecord, recordIndexId } = useContext(
     RecordIndexRootPropsContext,
@@ -36,12 +41,27 @@ export const RecordIndexPageHeader = () => {
 
   const view = views.find((view) => view.id === currentViewId);
 
-  const { favorites } = useFavorites();
+  const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
   const isFavorite = favorites.some(
     (favorite) =>
       favorite.recordId === currentViewId && favorite.workspaceMemberId,
   );
+
+  const handleFavoriteButtonClick = async () => {
+    if (!view) return;
+
+    const correspondingFavorite = favorites.find(
+      (favorite) =>
+        favorite.recordId === currentViewId && favorite.workspaceMemberId,
+    );
+
+    if (isFavorite && isDefined(correspondingFavorite)) {
+      deleteFavorite(correspondingFavorite.id);
+    } else {
+      createFavorite(view, 'view');
+    }
+  };
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
@@ -68,12 +88,19 @@ export const RecordIndexPageHeader = () => {
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
       <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
-      <PageFavoriteFoldersDropdown
-        record={view}
-        dropdownId={FAVORITE_FOLDERS_DROPDOWN_ID}
-        objectNameSingular="view"
-        isFavorite={isFavorite}
-      />
+      {isFavoriteFolderEnabled ? (
+        <PageFavoriteFoldersDropdown
+          record={view}
+          dropdownId={FAVORITE_FOLDERS_DROPDOWN_ID}
+          objectNameSingular="view"
+          isFavorite={isFavorite}
+        />
+      ) : (
+        <PageFavoriteButton
+          isFavorite={isFavorite}
+          onClick={handleFavoriteButtonClick}
+        />
+      )}
       {shouldDisplayAddButton &&
         (isTable ? (
           <PageAddButton onClick={handleAddButtonClick} />

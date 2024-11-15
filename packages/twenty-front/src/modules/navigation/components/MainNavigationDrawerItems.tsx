@@ -35,6 +35,7 @@ export const MainNavigationDrawerItems = () => {
   const isWorkspaceFavoriteEnabled = useIsFeatureEnabled(
     'IS_WORKSPACE_FAVORITE_ENABLED',
   );
+
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
   const setNavigationDrawerExpandedMemorized = useSetRecoilState(

@@ -18,7 +18,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 
 export const useFavorites = () => {
-  const { favorites, workspaceFavorites, folders, currentWorkspaceMemberId } =
+  const { favorites, workspaceFavorites, currentWorkspaceMemberId } =
     usePrefetchedFavoritesData();
 
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
@@ -89,28 +89,6 @@ export const useFavorites = () => {
     objectMetadataItems,
   ]);
 
-  const favoritesByFolder = useMemo(() => {
-    return folders.map((folder) => ({
-      folderId: folder.id,
-      folderName: folder.name,
-      favorites: sortFavorites(
-        favorites.filter((favorite) => favorite.favoriteFolderId === folder.id),
-        favoriteRelationFieldMetadataItems,
-        getObjectRecordIdentifierByNameSingular,
-        true,
-        views,
-        objectMetadataItems,
-      ),
-    }));
-  }, [
-    folders,
-    favorites,
-    favoriteRelationFieldMetadataItems,
-    getObjectRecordIdentifierByNameSingular,
-    views,
-    objectMetadataItems,
-  ]);
-
   const createFavorite = (
     targetRecord: ObjectRecord,
     targetObjectNameSingular: string,
@@ -168,7 +146,6 @@ export const useFavorites = () => {
   return {
     favorites: favoritesSorted,
     workspaceFavorites: workspaceFavoritesSorted,
-    favoritesByFolder,
     createFavorite,
     handleReorderFavorite,
     deleteFavorite,

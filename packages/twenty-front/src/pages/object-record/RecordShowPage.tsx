@@ -32,6 +32,7 @@ export const RecordShowPage = () => {
     isFavorite,
     record,
     objectMetadataItem,
+    handleFavoriteButtonClick,
   } = useRecordShowPage(
     parameters.objectNameSingular ?? '',
     parameters.objectRecordId ?? '',
@@ -69,6 +70,7 @@ export const RecordShowPage = () => {
                       {...{
                         isFavorite,
                         record,
+                        handleFavoriteButtonClick,
                         objectMetadataItem,
                         objectNameSingular,
                       }}

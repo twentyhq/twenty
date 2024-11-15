@@ -44,7 +44,7 @@ export const CurrentWorkspaceMemberFavorites = ({
   onToggle,
 }: CurrentWorkspaceMemberFavoritesProps) => {
   const currentPath = useLocation().pathname;
-  const currentPathView = useLocation().pathname + useLocation().search;
+  const currentViewPath = useLocation().pathname + useLocation().search;
 
   const theme = useTheme();
   const [isRenaming, setIsRenaming] = useState(false);
@@ -57,7 +57,7 @@ export const CurrentWorkspaceMemberFavorites = ({
   );
   const selectedFavoriteIndex = folder.favorites.findIndex((favorite) =>
     favorite.objectNameSingular === 'view'
-      ? favorite.link === currentPathView
+      ? favorite.link === currentViewPath
       : favorite.link === currentPath,
   );
   const { deleteFavorite, handleReorderFavorite } = useFavorites();
@@ -189,7 +189,7 @@ export const CurrentWorkspaceMemberFavorites = ({
                         to={favorite.link}
                         active={
                           favorite.objectNameSingular === 'view'
-                            ? favorite.link === currentPathView
+                            ? favorite.link === currentViewPath
                             : favorite.link === currentPath
                         }
                         subItemState={getNavigationSubItemState({
