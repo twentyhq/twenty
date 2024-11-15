@@ -1,4 +1,4 @@
-import { usePrefetchedFavoritesFoldersData } from '@/favorites/hooks/usePrefetchedfavoritesFoldersData';
+import { usePrefetchedFavoritesFoldersData } from '@/favorites/hooks/usePrefetchedFavoritesFoldersData';
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { sortFavorites } from '@/favorites/utils/sortFavorites';
 import { useGetObjectRecordIdentifierByNameSingular } from '@/object-metadata/hooks/useGetObjectRecordIdentifierByNameSingular';

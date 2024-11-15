@@ -19,11 +19,6 @@ const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;
 `;
 
-const StyledContainer = styled.div`
-  overflow-x: hidden;
-  overflow-y: auto;
-`;
-
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
   const { toggleCommandMenu } = useCommandMenu();
