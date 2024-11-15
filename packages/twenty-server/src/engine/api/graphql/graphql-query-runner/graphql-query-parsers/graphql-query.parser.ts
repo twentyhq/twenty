@@ -6,43 +6,44 @@ import {
 } from 'typeorm';
 
 import {
-  RecordFilter,
-  RecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+  ObjectRecordFilter,
+  ObjectRecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderFieldParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order.parser';
-import { GraphqlQuerySelectedFieldsParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import {
-  FieldMetadataMap,
-  ObjectMetadataMap,
-  ObjectMetadataMapItem,
-} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+  GraphqlQuerySelectedFieldsParser,
+  GraphqlQuerySelectedFieldsResult,
+} from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
+import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 
 export class GraphqlQueryParser {
-  private fieldMetadataMap: FieldMetadataMap;
-  private objectMetadataMap: ObjectMetadataMap;
+  private fieldMetadataMapByName: FieldMetadataMap;
+  private objectMetadataMaps: ObjectMetadataMaps;
   private filterConditionParser: GraphqlQueryFilterConditionParser;
   private orderFieldParser: GraphqlQueryOrderFieldParser;
 
   constructor(
-    fieldMetadataMap: FieldMetadataMap,
-    objectMetadataMap: ObjectMetadataMap,
+    fieldMetadataMapByName: FieldMetadataMap,
+    objectMetadataMaps: ObjectMetadataMaps,
   ) {
-    this.objectMetadataMap = objectMetadataMap;
-    this.fieldMetadataMap = fieldMetadataMap;
+    this.objectMetadataMaps = objectMetadataMaps;
+    this.fieldMetadataMapByName = fieldMetadataMapByName;
     this.filterConditionParser = new GraphqlQueryFilterConditionParser(
-      this.fieldMetadataMap,
+      this.fieldMetadataMapByName,
     );
     this.orderFieldParser = new GraphqlQueryOrderFieldParser(
-      this.fieldMetadataMap,
+      this.fieldMetadataMapByName,
     );
   }
 
   public applyFilterToBuilder(
     queryBuilder: SelectQueryBuilder<any>,
     objectNameSingular: string,
-    recordFilter: Partial<RecordFilter>,
+    recordFilter: Partial<ObjectRecordFilter>,
   ): SelectQueryBuilder<any> {
     return this.filterConditionParser.parse(
       queryBuilder,
@@ -53,7 +54,7 @@ export class GraphqlQueryParser {
 
   public applyDeletedAtToBuilder(
     queryBuilder: SelectQueryBuilder<any>,
-    recordFilter: RecordFilter,
+    recordFilter: Partial<ObjectRecordFilter>,
   ): SelectQueryBuilder<any> {
     if (this.checkForDeletedAtFilter(recordFilter)) {
       queryBuilder.withDeleted();
@@ -90,7 +91,7 @@ export class GraphqlQueryParser {
 
   public applyOrderToBuilder(
     queryBuilder: SelectQueryBuilder<any>,
-    orderBy: RecordOrderBy,
+    orderBy: ObjectRecordOrderBy,
     objectNameSingular: string,
     isForwardPagination = true,
   ): SelectQueryBuilder<any> {
@@ -104,11 +105,12 @@ export class GraphqlQueryParser {
   }
 
   public parseSelectedFields(
-    parentObjectMetadata: ObjectMetadataMapItem,
+    parentObjectMetadata: ObjectMetadataItemWithFieldMaps,
     graphqlSelectedFields: Partial<Record<string, any>>,
-  ): { select: Record<string, any>; relations: Record<string, any> } {
+  ): GraphqlQuerySelectedFieldsResult {
     const parentFields =
-      this.objectMetadataMap[parentObjectMetadata.nameSingular]?.fields;
+      this.objectMetadataMaps.byNameSingular[parentObjectMetadata.nameSingular]
+        ?.fieldsByName;
 
     if (!parentFields) {
       throw new Error(
@@ -117,7 +119,7 @@ export class GraphqlQueryParser {
     }
 
     const selectedFieldsParser = new GraphqlQuerySelectedFieldsParser(
-      this.objectMetadataMap,
+      this.objectMetadataMaps,
     );
 
     return selectedFieldsParser.parse(graphqlSelectedFields, parentFields);

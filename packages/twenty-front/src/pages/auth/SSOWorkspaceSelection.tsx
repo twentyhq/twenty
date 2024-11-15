@@ -1,14 +1,13 @@
 /* @license Enterprise */
 
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
-import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
+import { HorizontalSeparator, MainButton } from 'twenty-ui';
 import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
 import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { MainButton } from 'twenty-ui';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};

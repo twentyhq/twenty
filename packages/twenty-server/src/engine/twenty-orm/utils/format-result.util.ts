@@ -6,18 +6,16 @@ import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-meta
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import {
-  ObjectMetadataMap,
-  ObjectMetadataMapItem,
-} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { computeRelationType } from 'src/engine/twenty-orm/utils/compute-relation-type.util';
 import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils/get-composite-field-metadata-collection';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 export function formatResult<T>(
   data: T,
-  objectMetadata: ObjectMetadataMapItem,
-  objectMetadataMap: ObjectMetadataMap,
+  ObjectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
+  objectMetadataMaps: ObjectMetadataMaps,
 ): T {
   if (!data) {
     return data;
@@ -25,7 +23,7 @@ export function formatResult<T>(
 
   if (Array.isArray(data)) {
     return data.map((item) =>
-      formatResult(item, objectMetadata, objectMetadataMap),
+      formatResult(item, ObjectMetadataItemWithFieldMaps, objectMetadataMaps),
     ) as T;
   }
 
@@ -33,12 +31,13 @@ export function formatResult<T>(
     return data;
   }
 
-  if (!objectMetadata) {
+  if (!ObjectMetadataItemWithFieldMaps) {
     throw new Error('Object metadata is missing');
   }
 
-  const compositeFieldMetadataCollection =
-    getCompositeFieldMetadataCollection(objectMetadata);
+  const compositeFieldMetadataCollection = getCompositeFieldMetadataCollection(
+    ObjectMetadataItemWithFieldMaps,
+  );
 
   const compositeFieldMetadataMap = new Map(
     compositeFieldMetadataCollection.flatMap((fieldMetadata) => {
@@ -58,7 +57,7 @@ export function formatResult<T>(
   );
 
   const relationMetadataMap = new Map(
-    Object.values(objectMetadata.fields)
+    Object.values(ObjectMetadataItemWithFieldMaps.fieldsById)
       .filter(({ type }) => isRelationFieldMetadataType(type))
       .map((fieldMetadata) => [
         fieldMetadata.name,
@@ -75,6 +74,8 @@ export function formatResult<T>(
       ]),
   );
   const newData: object = {};
+  const objectMetadaItemFieldsByName =
+    objectMetadataMaps.byId[ObjectMetadataItemWithFieldMaps.id]?.fieldsByName;
 
   for (const [key, value] of Object.entries(data)) {
     const compositePropertyArgs = compositeFieldMetadataMap.get(key);
@@ -83,11 +84,15 @@ export function formatResult<T>(
 
     if (!compositePropertyArgs && !relationMetadata) {
       if (isPlainObject(value)) {
-        newData[key] = formatResult(value, objectMetadata, objectMetadataMap);
-      } else if (objectMetadata.fields[key]) {
+        newData[key] = formatResult(
+          value,
+          ObjectMetadataItemWithFieldMaps,
+          objectMetadataMaps,
+        );
+      } else if (objectMetadaItemFieldsByName[key]) {
         newData[key] = formatFieldMetadataValue(
           value,
-          objectMetadata.fields[key],
+          objectMetadaItemFieldsByName[key],
         );
       } else {
         newData[key] = value;
@@ -98,10 +103,10 @@ export function formatResult<T>(
 
     if (relationMetadata) {
       const toObjectMetadata =
-        objectMetadataMap[relationMetadata.toObjectMetadataId];
+        objectMetadataMaps.byId[relationMetadata.toObjectMetadataId];
 
       const fromObjectMetadata =
-        objectMetadataMap[relationMetadata.fromObjectMetadataId];
+        objectMetadataMaps.byId[relationMetadata.fromObjectMetadataId];
 
       if (!toObjectMetadata) {
         throw new Error(
@@ -118,7 +123,7 @@ export function formatResult<T>(
       newData[key] = formatResult(
         value,
         relationType === 'one-to-many' ? toObjectMetadata : fromObjectMetadata,
-        objectMetadataMap,
+        objectMetadataMaps,
       );
       continue;
     }

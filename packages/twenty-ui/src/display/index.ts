@@ -49,6 +49,7 @@ export * from './icon/types/IconComponent';
 export * from './info/components/Info';
 export * from './status/components/Status';
 export * from './tag/components/Tag';
+export * from './text/components/HorizontalSeparator';
 export * from './text/components/SeparatorLineText';
 export * from './tooltip/AppTooltip';
 export * from './tooltip/OverflowingTextWithTooltip';

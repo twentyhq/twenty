@@ -43,12 +43,11 @@ const StyledTag = styled.h3<{
   border: ${({ variant, theme }) =>
     variant === 'outline' || variant === 'border'
       ? `1px ${variant === 'border' ? 'solid' : 'dashed'} ${theme.border.color.strong}`
-      : ''};
+      : 'none'};
 
   gap: ${spacing1};
 
-  min-width: ${({ preventShrink }) =>
-    preventShrink ? 'fit-content' : 'none;'};
+  min-width: ${({ preventShrink }) => (preventShrink ? 'fit-content' : 'none')};
 `;
 
 const StyledContent = styled.span`

@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconComponent, MenuItem, MenuItemSelect } from 'twenty-ui';
+import { IconComponent, MenuItemSelect } from 'twenty-ui';
 
 import { SelectableMenuItemSelect } from '@/object-record/relation-picker/components/SelectableMenuItemSelect';
 import { SINGLE_ENTITY_SELECT_BASE_LIST } from '@/object-record/relation-picker/constants/SingleEntitySelectBaseList';
@@ -123,7 +123,7 @@ export const SingleEntitySelectMenuItems = ({
           ) : entitiesInDropdown.length === 0 &&
             !isAllEntitySelectShown &&
             !loading ? (
-            <MenuItem text="No result" />
+            <></>
           ) : (
             entitiesInDropdown?.map((entity) => {
               switch (entity.id) {
