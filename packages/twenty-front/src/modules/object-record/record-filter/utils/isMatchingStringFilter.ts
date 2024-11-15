@@ -5,53 +5,51 @@ export const isMatchingStringFilter = ({
   value,
 }: {
   stringFilter: StringFilter;
-  value: string | null;
+  value: string;
 }) => {
-  const defaultedValue = value ?? '';
-
   switch (true) {
     case stringFilter.eq !== undefined: {
-      return defaultedValue === stringFilter.eq;
+      return value === stringFilter.eq;
     }
     case stringFilter.neq !== undefined: {
-      return defaultedValue !== stringFilter.neq;
+      return value !== stringFilter.neq;
     }
     case stringFilter.like !== undefined: {
       const regexPattern = stringFilter.like.replace(/%/g, '.*');
       const regexCaseSensitive = new RegExp(`^${regexPattern}$`);
 
-      return regexCaseSensitive.test(defaultedValue);
+      return regexCaseSensitive.test(value);
     }
     case stringFilter.ilike !== undefined: {
       const regexPattern = stringFilter.ilike.replace(/%/g, '.*');
       const regexCaseInsensitive = new RegExp(`^${regexPattern}$`, 'i');
 
-      return regexCaseInsensitive.test(defaultedValue);
+      return regexCaseInsensitive.test(value);
     }
     case stringFilter.in !== undefined: {
-      return stringFilter.in.includes(defaultedValue);
+      return stringFilter.in.includes(value);
     }
     case stringFilter.is !== undefined: {
       if (stringFilter.is === 'NULL') {
-        return defaultedValue === null;
+        return value === null;
       } else {
-        return defaultedValue !== null;
+        return value !== null;
       }
     }
     case stringFilter.regex !== undefined: {
       const regexPattern = stringFilter.regex;
       const regexCaseSensitive = new RegExp(regexPattern);
 
-      return regexCaseSensitive.test(defaultedValue);
+      return regexCaseSensitive.test(value);
     }
     case stringFilter.iregex !== undefined: {
       const regexPattern = stringFilter.iregex;
       const regexCaseInsensitive = new RegExp(regexPattern, 'i');
 
-      return regexCaseInsensitive.test(defaultedValue);
+      return regexCaseInsensitive.test(value);
     }
     case stringFilter.startsWith !== undefined: {
-      return defaultedValue.startsWith(stringFilter.startsWith);
+      return value.startsWith(stringFilter.startsWith);
     }
     default: {
       throw new Error(
