@@ -13,6 +13,12 @@ import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinit
 import { isScrollEnabledForRecordTableState } from '@/object-record/record-table/states/isScrollEnabledForRecordTableState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
+import { useRecordTable } from '../hooks/useRecordTable';
+
+import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { Key } from 'ts-key-enum';
 
 const StyledTableWithHeader = styled.div`
   height: 100%;
@@ -45,6 +51,23 @@ export const RecordTableWithWrappers = ({
   const isScrollEnabledForRecordTable = useRecoilComponentValueV2(
     isScrollEnabledForRecordTableState,
     recordTableId,
+  );
+
+  const { resetTableRowSelection, selectAllRows } = useRecordTable({
+    recordTableId,
+  });
+
+  useScopedHotkeys('ctrl+a,meta+a', selectAllRows, TableHotkeyScope.Table);
+  useScopedHotkeys(
+    'ctrl+a,meta+a',
+    selectAllRows,
+    ActionBarHotkeyScope.ActionBar,
+  );
+
+  useScopedHotkeys(
+    Key.Escape,
+    resetTableRowSelection,
+    ActionBarHotkeyScope.ActionBar,
   );
 
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
