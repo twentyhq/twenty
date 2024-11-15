@@ -16,4 +16,5 @@ export enum FeatureFlagKey {
   IsAdvancedFiltersEnabled = 'IS_ADVANCED_FILTERS_ENABLED',
   IsAggregateQueryEnabled = 'IS_AGGREGATE_QUERY_ENABLED',
   IsFavoriteFolderEnabled = 'IS_FAVORITE_FOLDER_ENABLED',
+  IsFavoriteFolderEntityEnabled = 'IS_FAVORITE_FOLDER_ENTITY_ENABLED',
 }
