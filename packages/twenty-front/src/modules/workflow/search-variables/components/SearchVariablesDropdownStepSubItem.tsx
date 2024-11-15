@@ -82,9 +82,7 @@ const SearchVariablesDropdownStepSubItem = ({
           onClick={() => handleSelect(key)}
           text={key}
           hasSubMenu={!value.isLeaf}
-          LeftIcon={
-            value.isLeaf && value.icon ? getIcon(value.icon) : undefined
-          }
+          LeftIcon={value.icon ? getIcon(value.icon) : undefined}
         />
       ))}
     </>

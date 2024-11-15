@@ -9,6 +9,7 @@ type Leaf = {
 
 type Node = {
   isLeaf: false;
+  icon?: string;
   value: OutputSchema;
 };
 
