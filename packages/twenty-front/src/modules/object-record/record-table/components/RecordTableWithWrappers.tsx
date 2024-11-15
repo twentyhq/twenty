@@ -50,17 +50,17 @@ export const RecordTableWithWrappers = ({
     recordTableId,
   });
 
-  useScopedHotkeys(
-    Key.Escape,
-    resetTableRowSelection,
-    ActionBarHotkeyScope.ActionBar,
-  );
-
   useScopedHotkeys('ctrl+a,meta+a', selectAllRows, TableHotkeyScope.Table);
   useScopedHotkeys(
     'ctrl+a,meta+a',
     selectAllRows,
-    TableHotkeyScope.TableSoftFocus,
+    ActionBarHotkeyScope.ActionBar,
+  );
+
+  useScopedHotkeys(
+    Key.Escape,
+    resetTableRowSelection,
+    ActionBarHotkeyScope.ActionBar,
   );
 
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
