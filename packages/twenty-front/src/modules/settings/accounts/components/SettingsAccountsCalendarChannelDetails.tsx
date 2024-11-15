@@ -2,7 +2,7 @@ import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
-import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
 import { Card, H2Title, IllustrationIconUserPlus } from 'twenty-ui';
@@ -64,8 +64,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
           description="Automatically create contacts for people you've participated in an event with."
         />
         <Card rounded>
-          <SettingsOptionCardContent
-            variant="toggle"
+          <SettingsOptionCardContentToggle
             Icon={IllustrationIconUserPlus}
             title="Auto-creation"
             description="Automatically create contacts for people."

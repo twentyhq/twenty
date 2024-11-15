@@ -3,7 +3,7 @@ import { IconCheck, IconX, IllustrationIconCheck } from 'twenty-ui';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
+import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
 import { isDefined } from '~/utils/isDefined';
 
@@ -37,8 +37,7 @@ export const SettingsDataModelFieldBooleanForm = ({
       control={control}
       defaultValue={initialDefaultValue}
       render={({ field: { onChange, value } }) => (
-        <SettingsOptionCardContent
-          variant="select"
+        <SettingsOptionCardContentSelect
           Icon={IllustrationIconCheck}
           title="Default Value"
           description="Select the default value for this boolean field"

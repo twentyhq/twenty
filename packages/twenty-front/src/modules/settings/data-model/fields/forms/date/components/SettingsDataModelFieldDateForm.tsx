@@ -2,7 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useDateSettingsFormInitialValues } from '@/settings/data-model/fields/forms/date/hooks/useDateSettingsFormInitialValues';
 import { IllustrationIconSlash } from 'twenty-ui';
 
@@ -40,8 +40,7 @@ export const SettingsDataModelFieldDateForm = ({
       control={control}
       defaultValue={initialDisplayAsRelativeDateValue}
       render={({ field: { onChange, value } }) => (
-        <SettingsOptionCardContent
-          variant="toggle"
+        <SettingsOptionCardContentToggle
           Icon={IllustrationIconSlash}
           title="Display as relative date"
           checked={value ?? false}

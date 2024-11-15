@@ -1,7 +1,7 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
-import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { OBJECT_NAME_MAXIMUM_LENGTH } from '@/settings/data-model/constants/ObjectNameMaximumLength';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -300,8 +300,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 defaultValue={objectMetadataItem?.isLabelSyncedWithName ?? true}
                 render={({ field: { onChange, value } }) => (
                   <Card rounded>
-                    <SettingsOptionCardContent
-                      variant="toggle"
+                    <SettingsOptionCardContentToggle
                       Icon={IllustrationIconRefresh}
                       title="Synchronize Objects Labels and API Names"
                       description="Should changing an object's label also change the API?"

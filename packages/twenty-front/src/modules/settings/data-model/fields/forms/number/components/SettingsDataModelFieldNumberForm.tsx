@@ -3,8 +3,14 @@ import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { numberFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/numberFieldDefaultValueSchema';
-import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
-import { IllustrationIconDecimal, IllustrationIconEye } from 'twenty-ui';
+import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
+import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
+import {
+  IconNumber9,
+  IconPercentage,
+  IllustrationIconDecimal,
+  IllustrationIconEye,
+} from 'twenty-ui';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
@@ -44,8 +50,7 @@ export const SettingsDataModelFieldNumberForm = ({
 
         return (
           <>
-            <SettingsOptionCardContent
-              variant="select"
+            <SettingsOptionCardContentSelect
               Icon={IllustrationIconEye}
               dropdownId="number-type"
               title="Number type"
@@ -55,24 +60,26 @@ export const SettingsDataModelFieldNumberForm = ({
               disabled={disabled}
               options={[
                 {
+                  Icon: IconNumber9,
                   label: 'Number',
                   value: 'number',
                 },
                 {
+                  Icon: IconPercentage,
                   label: 'Percentage',
                   value: 'percentage',
                 },
               ]}
             />
-            <SettingsOptionCardContent
-              variant="counter"
+            <SettingsOptionCardContentCounter
               Icon={IllustrationIconDecimal}
               title="Number of decimals"
-              description="Set the number of decimal places"
+              description={`Example: ${(1000).toFixed(count)}`}
               value={count}
               onChange={(value) => onChange({ type: type, decimals: value })}
               disabled={disabled}
-              exampleValue={1000}
+              minValue={0}
+              maxValue={100} // needs to be changed
             />
           </>
         );

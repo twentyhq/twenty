@@ -15,7 +15,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
-import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { MessageChannelVisibility } from '~/generated-metadata/graphql';
 
 type SettingsAccountsMessageChannelDetailsProps = {
@@ -105,8 +105,7 @@ export const SettingsAccountsMessageChannelDetails = ({
       </Section>
       <Section>
         <Card rounded>
-          <SettingsOptionCardContent
-            variant="toggle"
+          <SettingsOptionCardContentToggle
             Icon={IllustrationIconBriefcase}
             title="Exclude non-professional emails"
             description="Don’t create contacts from/to Gmail, Outlook emails"
@@ -118,8 +117,7 @@ export const SettingsAccountsMessageChannelDetails = ({
               );
             }}
           />
-          <SettingsOptionCardContent
-            variant="toggle"
+          <SettingsOptionCardContentToggle
             Icon={IllustrationIconUsers}
             title="Exclude group emails"
             description="Don’t sync emails from team@ support@ noreply@..."
