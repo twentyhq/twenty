@@ -1,60 +1,115 @@
+import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
-import { contextStoreTargetedRecordIdsState } from '@/context-store/states/contextStoreTargetedRecordIdsState';
-import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
+import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
-import { useDeleteTableData } from '@/object-record/record-index/options/hooks/useDeleteTableData';
+import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { useFetchAllRecordIds } from '@/object-record/hooks/useFetchAllRecordIds';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useCallback, useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
-import { IconTrash } from 'twenty-ui';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import { IconTrash, isDefined } from 'twenty-ui';
 
 export const DeleteRecordsActionEffect = ({
   position,
+  objectMetadataItem,
 }: {
   position: number;
+  objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
-
-  const contextStoreTargetedRecordIds = useRecoilValue(
-    contextStoreTargetedRecordIdsState,
-  );
-
-  const contextStoreCurrentObjectMetadataId = useRecoilValue(
-    contextStoreCurrentObjectMetadataIdState,
-  );
-
-  const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: contextStoreCurrentObjectMetadataId,
-  });
 
   const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
     useState(false);
 
-  const { deleteTableData } = useDeleteTableData({
-    objectNameSingular: objectMetadataItem?.nameSingular ?? '',
-    recordIndexId: objectMetadataItem?.namePlural ?? '',
+  const { resetTableRowSelection } = useRecordTable({
+    recordTableId: objectMetadataItem.namePlural,
   });
 
-  const handleDeleteClick = useCallback(() => {
-    deleteTableData(contextStoreTargetedRecordIds);
-  }, [deleteTableData, contextStoreTargetedRecordIds]);
+  const { deleteManyRecords } = useDeleteManyRecords({
+    objectNameSingular: objectMetadataItem.nameSingular,
+  });
 
-  const isRemoteObject = objectMetadataItem?.isRemote ?? false;
+  const { favorites, deleteFavorite } = useFavorites();
 
-  const numberOfSelectedRecords = contextStoreTargetedRecordIds.length;
+  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
+  );
+
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+    contextStoreTargetedRecordsRuleComponentState,
+  );
+
+  const contextStoreFilters = useRecoilComponentValueV2(
+    contextStoreFiltersComponentState,
+  );
+
+  const graphqlFilter = computeContextStoreFilters(
+    contextStoreTargetedRecordsRule,
+    contextStoreFilters,
+    objectMetadataItem,
+  );
+
+  const { fetchAllRecordIds } = useFetchAllRecordIds({
+    objectNameSingular: objectMetadataItem.nameSingular,
+    filter: graphqlFilter,
+  });
+
+  const { closeRightDrawer } = useRightDrawer();
+
+  const handleDeleteClick = useCallback(async () => {
+    const recordIdsToDelete = await fetchAllRecordIds();
+
+    resetTableRowSelection();
+
+    for (const recordIdToDelete of recordIdsToDelete) {
+      const foundFavorite = favorites?.find(
+        (favorite) => favorite.recordId === recordIdToDelete,
+      );
+
+      if (foundFavorite !== undefined) {
+        deleteFavorite(foundFavorite.id);
+      }
+    }
+
+    await deleteManyRecords(recordIdsToDelete, {
+      delayInMsBetweenRequests: 50,
+    });
+  }, [
+    deleteFavorite,
+    deleteManyRecords,
+    favorites,
+    fetchAllRecordIds,
+    resetTableRowSelection,
+  ]);
+
+  const isRemoteObject = objectMetadataItem.isRemote;
 
   const canDelete =
-    !isRemoteObject && numberOfSelectedRecords < DELETE_MAX_COUNT;
+    !isRemoteObject &&
+    isDefined(contextStoreNumberOfSelectedRecords) &&
+    contextStoreNumberOfSelectedRecords < DELETE_MAX_COUNT &&
+    contextStoreNumberOfSelectedRecords > 0;
+
+  const { isInRightDrawer, onActionExecutedCallback } =
+    useContext(ActionMenuContext);
 
   useEffect(() => {
     if (canDelete) {
       addActionMenuEntry({
+        type: 'standard',
         key: 'delete',
         label: 'Delete',
         position,
         Icon: IconTrash,
         accent: 'danger',
+        isPinned: true,
         onClick: () => {
           setIsDeleteRecordsModalOpen(true);
         },
@@ -62,17 +117,25 @@ export const DeleteRecordsActionEffect = ({
           <ConfirmationModal
             isOpen={isDeleteRecordsModalOpen}
             setIsOpen={setIsDeleteRecordsModalOpen}
-            title={`Delete ${numberOfSelectedRecords} ${
-              numberOfSelectedRecords === 1 ? `record` : 'records'
+            title={`Delete ${contextStoreNumberOfSelectedRecords} ${
+              contextStoreNumberOfSelectedRecords === 1 ? `record` : 'records'
             }`}
             subtitle={`Are you sure you want to delete ${
-              numberOfSelectedRecords === 1 ? 'this record' : 'these records'
+              contextStoreNumberOfSelectedRecords === 1
+                ? 'this record'
+                : 'these records'
             }? ${
-              numberOfSelectedRecords === 1 ? 'It' : 'They'
+              contextStoreNumberOfSelectedRecords === 1 ? 'It' : 'They'
             } can be recovered from the Options menu.`}
-            onConfirmClick={() => handleDeleteClick()}
+            onConfirmClick={() => {
+              handleDeleteClick();
+              onActionExecutedCallback?.();
+              if (isInRightDrawer) {
+                closeRightDrawer();
+              }
+            }}
             deleteButtonText={`Delete ${
-              numberOfSelectedRecords > 1 ? 'Records' : 'Record'
+              contextStoreNumberOfSelectedRecords > 1 ? 'Records' : 'Record'
             }`}
           />
         ),
@@ -80,14 +143,21 @@ export const DeleteRecordsActionEffect = ({
     } else {
       removeActionMenuEntry('delete');
     }
+
+    return () => {
+      removeActionMenuEntry('delete');
+    };
   }, [
-    canDelete,
     addActionMenuEntry,
-    removeActionMenuEntry,
-    isDeleteRecordsModalOpen,
-    numberOfSelectedRecords,
+    canDelete,
+    closeRightDrawer,
+    contextStoreNumberOfSelectedRecords,
     handleDeleteClick,
+    isDeleteRecordsModalOpen,
+    isInRightDrawer,
+    onActionExecutedCallback,
     position,
+    removeActionMenuEntry,
   ]);
 
   return null;

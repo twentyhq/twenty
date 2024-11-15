@@ -1,13 +1,12 @@
 import { useApolloClient } from '@apollo/client';
 import { useCreateBlockNote } from '@blocknote/react';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
-import { ClipboardEvent, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
-import { blockSchema } from '@/activities/blocks/schema';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { activityBodyFamilyState } from '@/activities/states/activityBodyFamilyState';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
@@ -21,19 +20,16 @@ import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDraw
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
-import { FileFolder, useUploadFileMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-import { getFileType } from '../files/utils/getFileType';
-
+import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import '@blocknote/react/style.css';
-import { getFileAbsoluteURI } from '~/utils/file/getFileAbsoluteURI';
 
 type RichTextEditorProps = {
   activityId: string;
@@ -121,22 +117,13 @@ export const RichTextEditor = ({
     canCreateActivityState,
   );
 
-  const [uploadFile] = useUploadFileMutation();
+  const { uploadAttachmentFile } = useUploadAttachmentFile();
 
-  const handleUploadAttachment = async (file: File): Promise<string> => {
-    if (isUndefinedOrNull(file)) {
-      return '';
-    }
-    const result = await uploadFile({
-      variables: {
-        file,
-        fileFolder: FileFolder.Attachment,
-      },
+  const handleUploadAttachment = async (file: File) => {
+    return await uploadAttachmentFile(file, {
+      id: activityId,
+      targetObjectNameSingular: activityObjectNameSingular,
     });
-    if (!result?.data?.uploadFile) {
-      throw new Error("Couldn't upload Image");
-    }
-    return getFileAbsoluteURI(result.data.uploadFile);
   };
 
   const prepareBody = (newStringifiedBody: string) => {
@@ -151,8 +138,6 @@ export const RichTextEditor = ({
 
       const imageProps = block.props;
       const imageUrl = new URL(imageProps.url);
-
-      imageUrl.searchParams.delete('token');
 
       return {
         ...block,
@@ -284,64 +269,18 @@ export const RichTextEditor = ({
     }
   }, [activity, activityBody]);
 
+  const handleEditorBuiltInUploadFile = async (file: File) => {
+    const { attachementAbsoluteURL } = await handleUploadAttachment(file);
+
+    return attachementAbsoluteURL;
+  };
+
   const editor = useCreateBlockNote({
     initialContent: initialBody,
     domAttributes: { editor: { class: 'editor' } },
-    schema: blockSchema,
-    uploadFile: handleUploadAttachment,
+    schema: BLOCK_SCHEMA,
+    uploadFile: handleEditorBuiltInUploadFile,
   });
-
-  const handleImagePaste = async (event: ClipboardEvent) => {
-    const clipboardItems = event.clipboardData?.items;
-
-    if (isDefined(clipboardItems)) {
-      for (let i = 0; i < clipboardItems.length; i++) {
-        if (clipboardItems[i].kind === 'file') {
-          const isImage = clipboardItems[i].type.match('^image/');
-          const pastedFile = clipboardItems[i].getAsFile();
-          if (!pastedFile) {
-            return;
-          }
-
-          const attachmentUrl = await handleUploadAttachment(pastedFile);
-
-          if (!attachmentUrl) {
-            return;
-          }
-
-          if (isDefined(isImage)) {
-            editor?.insertBlocks(
-              [
-                {
-                  type: 'image',
-                  props: {
-                    url: attachmentUrl,
-                  },
-                },
-              ],
-              editor?.getTextCursorPosition().block,
-              'after',
-            );
-          } else {
-            editor?.insertBlocks(
-              [
-                {
-                  type: 'file',
-                  props: {
-                    url: attachmentUrl,
-                    fileType: getFileType(pastedFile.name),
-                    name: pastedFile.name,
-                  },
-                },
-              ],
-              editor?.getTextCursorPosition().block,
-              'after',
-            );
-          }
-        }
-      }
-    }
-  };
 
   useScopedHotkeys(
     Key.Escape,
@@ -411,6 +350,10 @@ export const RichTextEditor = ({
       editor.focus();
     },
     RightDrawerHotkeyScope.RightDrawer,
+    [],
+    {
+      preventDefault: false,
+    },
   );
 
   const handleBlockEditorFocus = () => {
@@ -427,7 +370,6 @@ export const RichTextEditor = ({
     <BlockEditor
       onFocus={handleBlockEditorFocus}
       onBlur={handlerBlockEditorBlur}
-      onPaste={handleImagePaste}
       onChange={handleEditorChange}
       editor={editor}
     />

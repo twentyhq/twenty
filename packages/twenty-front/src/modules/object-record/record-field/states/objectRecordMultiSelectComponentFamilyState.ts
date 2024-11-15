@@ -1,4 +1,4 @@
-import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
+import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
 import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
 
 export type ObjectRecordAndSelected = ObjectRecordForSelect & {

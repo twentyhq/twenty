@@ -22,13 +22,15 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsDeprecated } from 'src/engine/twenty-orm/decorators/workspace-is-deprecated.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is-unique.decorator';
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
+import {
+  FieldTypeAndNameMetadata,
+  getTsVectorColumnExpressionFromFields,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
@@ -43,13 +45,20 @@ const NAME_FIELD_NAME = 'name';
 const EMAILS_FIELD_NAME = 'emails';
 const JOB_TITLE_FIELD_NAME = 'jobTitle';
 
+export const SEARCH_FIELDS_FOR_PERSON: FieldTypeAndNameMetadata[] = [
+  { name: NAME_FIELD_NAME, type: FieldMetadataType.FULL_NAME },
+  { name: EMAILS_FIELD_NAME, type: FieldMetadataType.EMAILS },
+  { name: JOB_TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
+];
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.person,
   namePlural: 'people',
   labelSingular: 'Person',
   labelPlural: 'People',
   description: 'A person',
-  icon: 'IconUser',
+  icon: STANDARD_OBJECT_ICONS.person,
+  shortcut: 'P',
   labelIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.name,
   imageIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
 })
@@ -71,7 +80,7 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Contact’s Emails',
     icon: 'IconMail',
   })
-  @WorkspaceIsUnique()
+  // @WorkspaceIsUnique()
   [EMAILS_FIELD_NAME]: EmailsMetadata;
 
   @WorkspaceField({
@@ -195,18 +204,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   pointOfContactForOpportunities: Relation<OpportunityWorkspaceEntity[]>;
 
   @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.activityTargets,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Activities',
-    description: 'Activities tied to the contact',
-    icon: 'IconCheckbox',
-    inverseSideTarget: () => ActivityTargetWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsSystem()
-  activityTargets: Relation<ActivityTargetWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.taskTargets,
     type: RelationMetadataType.ONE_TO_MANY,
     label: 'Tasks',
@@ -298,11 +295,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     description: SEARCH_VECTOR_FIELD.description,
     icon: 'IconUser',
     generatedType: 'STORED',
-    asExpression: getTsVectorColumnExpressionFromFields([
-      { name: NAME_FIELD_NAME, type: FieldMetadataType.FULL_NAME },
-      { name: EMAILS_FIELD_NAME, type: FieldMetadataType.EMAILS },
-      { name: JOB_TITLE_FIELD_NAME, type: FieldMetadataType.TEXT },
-    ]),
+    asExpression: getTsVectorColumnExpressionFromFields(
+      SEARCH_FIELDS_FOR_PERSON,
+    ),
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()

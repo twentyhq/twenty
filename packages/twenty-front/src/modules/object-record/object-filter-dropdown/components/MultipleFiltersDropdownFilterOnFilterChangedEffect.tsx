@@ -16,7 +16,7 @@ export const MultipleFiltersDropdownFilterOnFilterChangedEffect = ({
         setDropdownWidth(280);
         break;
       default:
-        setDropdownWidth(160);
+        setDropdownWidth(200);
     }
   }, [filterDefinitionUsedInDropdownType, setDropdownWidth]);
 

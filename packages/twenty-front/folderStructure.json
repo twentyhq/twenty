@@ -1,0 +1,65 @@
+{
+  "$schema": "../../node_modules/eslint-plugin-project-structure/folderStructure.schema.json",
+  "projectRoot": "packages/twenty-front",
+  "structureRoot": "src",
+  "regexParameters": {
+    "camelCase": "^[a-z]+([A-Za-z0-9]+)+",
+    "kebab-case": "[a-z][a-z0-9]*(?:-[a-z0-9]+)*"
+  },
+  "structure": [
+    { "name": "*" },
+    { "name": "*", "children": [] },
+    { "name": "modules", "ruleId": "modulesFolderRule" }
+  ],
+  "rules": {
+    "modulesFolderRule": {
+      "children": [
+        { "ruleId": "moduleFolderRule" },
+        { "name": "types", "children": [] }
+      ]
+    },
+
+    "moduleFolderRule": {
+      "name": "{kebab-case}",
+      "folderRecursionLimit": 6,
+      "children": [
+        { "ruleId": "moduleFolderRule" },
+        { "name": "hooks", "ruleId": "hooksLeafFolderRule" },
+        { "name": "utils", "ruleId": "utilsLeafFolderRule" },
+        { "name": "states", "children": [] },
+        { "name": "types", "children": [] },
+        { "name": "graphql", "children": [] },
+        { "name": "components", "children": [] },
+        { "name": "effect-components", "children": [] },
+        { "name": "constants", "children": [] },
+        { "name": "validation-schemas", "children": [] },
+        { "name": "contexts", "children": [] },
+        { "name": "scopes", "children": [] },
+        { "name": "services", "children": [] },
+        { "name": "errors", "children": [] }
+      ]
+    },
+
+    "hooksLeafFolderRule": {
+      "folderRecursionLimit": 2,
+      "children": [
+        { "name": "use{PascalCase}.(ts|tsx)" },
+        {
+          "name": "__tests__",
+          "children": [{ "name": "use{PascalCase}.test.(ts|tsx)" }]
+        },
+        { "name": "internal", "ruleId": "hooksLeafFolderRule" }
+      ]
+    },
+
+    "utilsLeafFolderRule": {
+      "children": [
+        { "name": "{camelCase}.ts" },
+        {
+          "name": "__tests__",
+          "children": [{ "name": "{camelCase}.test.ts" }]
+        }
+      ]
+    }
+  }
+}

@@ -3,11 +3,10 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
-import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
+import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/components/RecordIndexPageKanbanAddMenuItem';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -15,7 +14,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import styled from '@emotion/styled';
 import { useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconPlus } from 'twenty-ui';
+import { IconButton, IconPlus } from 'twenty-ui';
 
 const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   width: 100%;
@@ -59,7 +58,7 @@ export const RecordIndexPageKanbanAddButton = () => {
   const { handleAddNewCardClick } = useAddNewCard();
 
   const handleItemClick = useCallback(
-    (columnDefinition: RecordBoardColumnDefinition) => {
+    (columnDefinition: RecordGroupDefinition) => {
       const isOpportunityEnabled =
         isOpportunity && !isOpportunitiesCompanyFieldDisabled;
       handleAddNewCardClick(

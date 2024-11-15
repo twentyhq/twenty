@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -39,7 +37,6 @@ export const RecordTableHeaderCheckboxColumn = () => {
     setHasUserSelectedAllRows,
     setNumColumns,
   } = useRecordTable();
-
   const checked = allRowsSelectedStatus === 'all';
   const indeterminate = allRowsSelectedStatus === 'some';
 
@@ -48,7 +45,6 @@ export const RecordTableHeaderCheckboxColumn = () => {
       setHasUserSelectedAllRows(true);
       selectAllRows();
     } else {
-      setHasUserSelectedAllRows(false);
       setHasUserSelectedAllRows(false);
       resetTableRowSelection();
     }

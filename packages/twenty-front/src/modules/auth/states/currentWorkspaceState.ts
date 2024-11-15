@@ -13,6 +13,8 @@ export type CurrentWorkspace = Pick<
   | 'activationStatus'
   | 'currentBillingSubscription'
   | 'workspaceMembersCount'
+  | 'isPublicInviteLinkEnabled'
+  | 'hasValidEntrepriseKey'
   | 'metadataVersion'
 >;
 

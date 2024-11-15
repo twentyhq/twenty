@@ -1,0 +1,28 @@
+INCLUDE "../includes/timeSeries.incl"
+
+NODE timeSeriesWebhookData
+SQL >
+    %
+    SELECT
+        {% if granularity == "hour" %} toStartOfHour(timestamp)
+        {% else %} toDateTime64(toStartOfDay(timestamp), 3)
+        {% end %} AS interval,
+        uniqIf(*, success = true) as success_count,
+        uniqIf(*, success = false) as failure_count
+    FROM webhookEventMV
+    WHERE
+        true
+        AND workspaceId
+        ={{ String(workspaceId, '20202020-1c25-4d02-bf25-6aeccf7ea419', required=True) }}
+        AND webhookId = {{ String(webhookId, '5237a3bc-566d-4290-b951-96e91051f968', required=True) }}
+        AND timestamp >= parseDateTime64BestEffort({{ String(start, '2024-11-01T00:00:00.000Z') }}, 3)
+        AND timestamp < parseDateTime64BestEffort({{ String(end, '2024-11-02T00:00:00.000Z') }}, 3)
+    GROUP BY interval
+    ORDER BY interval
+
+NODE endpoint
+SQL >
+    %
+    SELECT formatDateTime(interval, '%FT%T.000%z') as start, success_count, failure_count
+    FROM selectIntervalByGranularity
+    LEFT JOIN timeSeriesWebhookData USING interval

@@ -14,6 +14,7 @@ import {
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS,
   MESSAGE_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -25,7 +26,7 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
   labelSingular: 'Message Channel Message Association',
   labelPlural: 'Message Channel Message Associations',
   description: 'Message Synced with a Message Channel',
-  icon: 'IconMessage',
+  icon: STANDARD_OBJECT_ICONS.messageChannelMessageAssociation,
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()

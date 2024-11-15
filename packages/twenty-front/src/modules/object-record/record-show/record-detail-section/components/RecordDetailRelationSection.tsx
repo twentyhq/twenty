@@ -2,9 +2,8 @@ import styled from '@emotion/styled';
 import qs from 'qs';
 import { useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconForbid, IconPencil, IconPlus } from 'twenty-ui';
+import { IconForbid, IconPencil, IconPlus, LightIconButton } from 'twenty-ui';
 
-import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -27,7 +26,6 @@ import { EntityForSelect } from '@/object-record/relation-picker/types/EntityFor
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
@@ -84,7 +82,8 @@ export const RecordDetailRelationSection = ({
 
   const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}-${recordId}`;
 
-  const { closeDropdown, isDropdownOpen } = useDropdown(dropdownId);
+  const { closeDropdown, isDropdownOpen, dropdownPlacement } =
+    useDropdown(dropdownId);
 
   const { setRelationPickerSearchFilter } = useRelationPicker({
     relationPickerScopeId: dropdownId,
@@ -185,7 +184,7 @@ export const RecordDetailRelationSection = ({
             <DropdownScope dropdownScopeId={dropdownId}>
               <StyledAddDropdown
                 dropdownId={dropdownId}
-                dropdownPlacement="right-start"
+                dropdownPlacement="left-start"
                 onClose={handleCloseRelationPickerDropdown}
                 clickableComponent={
                   <LightIconButton
@@ -206,15 +205,16 @@ export const RecordDetailRelationSection = ({
                         }
                         relationPickerScopeId={dropdownId}
                         onCreate={createNewRecordAndOpenRightDrawer}
+                        dropdownPlacement={dropdownPlacement}
                       />
                     ) : (
                       <>
-                        <ObjectMetadataItemsRelationPickerEffect />
                         <RelationFromManyFieldInputMultiRecordsEffect />
                         <MultiRecordSelect
                           onCreate={createNewRecordAndOpenRightDrawer}
                           onChange={updateRelation}
                           onSubmit={closeDropdown}
+                          dropdownPlacement={dropdownPlacement}
                         />
                       </>
                     )}

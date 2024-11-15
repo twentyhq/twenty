@@ -143,12 +143,6 @@ const SettingsDevelopers = lazy(() =>
   })),
 );
 
-const SettingsObjectEdit = lazy(() =>
-  import('~/pages/settings/data-model/SettingsObjectEdit').then((module) => ({
-    default: module.SettingsObjectEdit,
-  })),
-);
-
 const SettingsIntegrations = lazy(() =>
   import('~/pages/settings/integrations/SettingsIntegrations').then(
     (module) => ({
@@ -234,16 +228,32 @@ const SettingsCRMMigration = lazy(() =>
   ),
 );
 
+const SettingsSecurity = lazy(() =>
+  import('~/pages/settings/security/SettingsSecurity').then((module) => ({
+    default: module.SettingsSecurity,
+  })),
+);
+
+const SettingsSecuritySSOIdentifyProvider = lazy(() =>
+  import('~/pages/settings/security/SettingsSecuritySSOIdentifyProvider').then(
+    (module) => ({
+      default: module.SettingsSecuritySSOIdentifyProvider,
+    }),
+  ),
+);
+
 type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
   isCRMMigrationEnabled?: boolean;
   isServerlessFunctionSettingsEnabled?: boolean;
+  isSSOEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
   isBillingEnabled,
   isCRMMigrationEnabled,
   isServerlessFunctionSettingsEnabled,
+  isSSOEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
@@ -276,7 +286,6 @@ export const SettingsRoutes = ({
         path={SettingsPath.ObjectDetail}
         element={<SettingsObjectDetailPage />}
       />
-      <Route path={SettingsPath.ObjectEdit} element={<SettingsObjectEdit />} />
       <Route path={SettingsPath.NewObject} element={<SettingsNewObject />} />
       <Route path={SettingsPath.Developers} element={<SettingsDevelopers />} />
       {isCRMMigrationEnabled && (
@@ -357,6 +366,15 @@ export const SettingsRoutes = ({
         element={<SettingsObjectFieldEdit />}
       />
       <Route path={SettingsPath.Releases} element={<Releases />} />
+      {isSSOEnabled && (
+        <>
+          <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
+          <Route
+            path={SettingsPath.NewSSOIdentityProvider}
+            element={<SettingsSecuritySSOIdentifyProvider />}
+          />
+        </>
+      )}
     </Routes>
   </Suspense>
 );

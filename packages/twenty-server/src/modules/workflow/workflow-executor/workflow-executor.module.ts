@@ -1,26 +1,24 @@
 import { Module } from '@nestjs/common';
 
-import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
-import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
-import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
-import { CodeWorkflowAction } from 'src/modules/serverless/workflow-actions/code.workflow-action';
-import { SendEmailWorkflowAction } from 'src/modules/mail-sender/workflow-actions/send-email.workflow-action';
-import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
-import { MessagingGmailDriverModule } from 'src/modules/messaging/message-import-manager/drivers/gmail/messaging-gmail-driver.module';
+import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
+import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
+import { CodeActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/code/code-action.module';
+import { SendEmailActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email-action.module';
+import { RecordCRUDActionModule } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/record-crud-action.module';
+import { WorkflowExecutorWorkspaceService } from 'src/modules/workflow/workflow-executor/workspace-services/workflow-executor.workspace-service';
 
 @Module({
   imports: [
     WorkflowCommonModule,
-    ServerlessFunctionModule,
-    MessagingGmailDriverModule,
+    CodeActionModule,
+    SendEmailActionModule,
+    RecordCRUDActionModule,
   ],
   providers: [
     WorkflowExecutorWorkspaceService,
     ScopedWorkspaceContextFactory,
     WorkflowActionFactory,
-    CodeWorkflowAction,
-    SendEmailWorkflowAction,
   ],
   exports: [WorkflowExecutorWorkspaceService],
 })

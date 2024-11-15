@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
-import { useCallback, useContext, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 
-import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useRecordGroupActions } from '@/object-record/record-group/hooks/useRecordGroupActions';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { MenuItem } from 'twenty-ui';
 
 const StyledMenuContainer = styled.div`
   position: absolute;
@@ -25,6 +25,8 @@ export const RecordBoardColumnDropdownMenu = ({
 }: RecordBoardColumnDropdownMenuProps) => {
   const boardColumnMenuRef = useRef<HTMLDivElement>(null);
 
+  const recordGroupActions = useRecordGroupActions();
+
   const closeMenu = useCallback(() => {
     onClose();
   }, [onClose]);
@@ -34,13 +36,11 @@ export const RecordBoardColumnDropdownMenu = ({
     callback: closeMenu,
   });
 
-  const { columnDefinition } = useContext(RecordBoardColumnContext);
-
   return (
     <StyledMenuContainer ref={boardColumnMenuRef}>
       <DropdownMenu data-select-disable>
         <DropdownMenuItemsContainer>
-          {columnDefinition.actions.map((action) => (
+          {recordGroupActions.map((action) => (
             <MenuItem
               key={action.id}
               onClick={() => {

@@ -3,11 +3,14 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useCallback, useContext } from 'react';
 import {
+  AnimatedEaseInOut,
   IconChevronDown,
   IconComponent,
   IconDotsVertical,
   IconTrash,
   IconUnlink,
+  LightIconButton,
+  MenuItem,
 } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -32,13 +35,10 @@ import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
@@ -60,6 +60,14 @@ const StyledListItem = styled(RecordDetailRecordsListItem)<{
       pointer-events: auto;
     }
   }
+`;
+
+const StyledPropertyBox = styled(PropertyBox)`
+  align-items: flex-start;
+  display: flex;
+  padding-left: ${({ theme }) => theme.spacing(0)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(0)};
 `;
 
 const StyledClickableZone = styled.div`
@@ -233,7 +241,7 @@ export const RecordDetailRelationRecordsListItem = ({
         )}
       </StyledListItem>
       <AnimatedEaseInOut isOpen={isExpanded}>
-        <PropertyBox>
+        <StyledPropertyBox>
           {availableRelationFieldMetadataItems.map(
             (fieldMetadataItem, index) => (
               <FieldContext.Provider
@@ -258,7 +266,7 @@ export const RecordDetailRelationRecordsListItem = ({
               </FieldContext.Provider>
             ),
           )}
-        </PropertyBox>
+        </StyledPropertyBox>
       </AnimatedEaseInOut>
     </>
   );

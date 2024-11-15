@@ -11,197 +11,46 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 
 export const buildMigrationsForCustomObjectRelations = (
   createdObjectMetadata: ObjectMetadataEntity,
-  activityTargetObjectMetadata: ObjectMetadataEntity,
-  attachmentObjectMetadata: ObjectMetadataEntity,
-  timelineActivityObjectMetadata: ObjectMetadataEntity,
-  favoriteObjectMetadata: ObjectMetadataEntity,
-  noteTargetObjectMetadata: ObjectMetadataEntity,
-  taskTargetObjectMetadata: ObjectMetadataEntity,
-): WorkspaceMigrationTableAction[] => [
-  // Add activity target relation
-  {
-    name: computeObjectTargetTable(activityTargetObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
+  relatedObjectMetadataCollection: ObjectMetadataEntity[],
+): WorkspaceMigrationTableAction[] => {
+  const migrations: WorkspaceMigrationTableAction[] = [];
+
+  for (const relatedObjectMetadata of relatedObjectMetadataCollection) {
+    migrations.push(
       {
-        action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-          isForeignKey: true,
-        }),
-        columnType: 'uuid',
-        isNullable: true,
-        defaultValue: null,
-      } satisfies WorkspaceMigrationColumnCreate,
-    ],
-  },
-  {
-    name: computeObjectTargetTable(activityTargetObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-          isForeignKey: true,
-        }),
-        referencedTableName: computeObjectTargetTable(createdObjectMetadata),
-        referencedTableColumnName: 'id',
-        onDelete: RelationOnDeleteAction.CASCADE,
+        name: computeObjectTargetTable(relatedObjectMetadata),
+        action: WorkspaceMigrationTableActionType.ALTER,
+        columns: [
+          {
+            action: WorkspaceMigrationColumnActionType.CREATE,
+            columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+              isForeignKey: true,
+            }),
+            columnType: 'uuid',
+            isNullable: true,
+            defaultValue: null,
+          } satisfies WorkspaceMigrationColumnCreate,
+        ],
       },
-    ],
-  },
-  // Add note target relation
-  {
-    name: computeObjectTargetTable(noteTargetObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
       {
-        action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-          isForeignKey: true,
-        }),
-        columnType: 'uuid',
-        isNullable: true,
-        defaultValue: null,
-      } satisfies WorkspaceMigrationColumnCreate,
-    ],
-  },
-  {
-    name: computeObjectTargetTable(noteTargetObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-          isForeignKey: true,
-        }),
-        referencedTableName: computeObjectTargetTable(createdObjectMetadata),
-        referencedTableColumnName: 'id',
-        onDelete: RelationOnDeleteAction.CASCADE,
+        name: computeObjectTargetTable(relatedObjectMetadata),
+        action: WorkspaceMigrationTableActionType.ALTER,
+        columns: [
+          {
+            action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
+            columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+              isForeignKey: true,
+            }),
+            referencedTableName: computeObjectTargetTable(
+              createdObjectMetadata,
+            ),
+            referencedTableColumnName: 'id',
+            onDelete: RelationOnDeleteAction.CASCADE,
+          },
+        ],
       },
-    ],
-  },
-  // Add task target relation
-  {
-    name: computeObjectTargetTable(taskTargetObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-          isForeignKey: true,
-        }),
-        columnType: 'uuid',
-        isNullable: true,
-        defaultValue: null,
-      } satisfies WorkspaceMigrationColumnCreate,
-    ],
-  },
-  {
-    name: computeObjectTargetTable(taskTargetObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-          isForeignKey: true,
-        }),
-        referencedTableName: computeObjectTargetTable(createdObjectMetadata),
-        referencedTableColumnName: 'id',
-        onDelete: RelationOnDeleteAction.CASCADE,
-      },
-    ],
-  },
-  // Add attachment relation
-  {
-    name: computeObjectTargetTable(attachmentObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-          isForeignKey: true,
-        }),
-        columnType: 'uuid',
-        isNullable: true,
-        defaultValue: null,
-      } satisfies WorkspaceMigrationColumnCreate,
-    ],
-  },
-  {
-    name: computeObjectTargetTable(attachmentObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-          isForeignKey: true,
-        }),
-        referencedTableName: computeObjectTargetTable(createdObjectMetadata),
-        referencedTableColumnName: 'id',
-        onDelete: RelationOnDeleteAction.CASCADE,
-      },
-    ],
-  },
-  // Add timeline activity relation
-  {
-    name: computeObjectTargetTable(timelineActivityObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-          isForeignKey: true,
-        }),
-        columnType: 'uuid',
-        isNullable: true,
-        defaultValue: null,
-      } satisfies WorkspaceMigrationColumnCreate,
-    ],
-  },
-  {
-    name: computeObjectTargetTable(timelineActivityObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-          isForeignKey: true,
-        }),
-        referencedTableName: computeObjectTargetTable(createdObjectMetadata),
-        referencedTableColumnName: 'id',
-        onDelete: RelationOnDeleteAction.CASCADE,
-      },
-    ],
-  },
-  // Add favorite relation
-  {
-    name: computeObjectTargetTable(favoriteObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-          isForeignKey: true,
-        }),
-        columnType: 'uuid',
-        isNullable: true,
-        defaultValue: null,
-      } satisfies WorkspaceMigrationColumnCreate,
-    ],
-  },
-  {
-    name: computeObjectTargetTable(favoriteObjectMetadata),
-    action: WorkspaceMigrationTableActionType.ALTER,
-    columns: [
-      {
-        action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-          isForeignKey: true,
-        }),
-        referencedTableName: computeObjectTargetTable(createdObjectMetadata),
-        referencedTableColumnName: 'id',
-        onDelete: RelationOnDeleteAction.CASCADE,
-      },
-    ],
-  },
-];
+    );
+  }
+
+  return migrations;
+};

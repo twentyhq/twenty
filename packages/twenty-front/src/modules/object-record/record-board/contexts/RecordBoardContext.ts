@@ -16,6 +16,7 @@ type RecordBoardContextProps = {
     updateOneRecordInput: Partial<Omit<ObjectRecord, 'id'>>;
   }) => void;
   deleteOneRecord: (idToDelete: string) => Promise<unknown>;
+  recordBoardId: string;
 };
 
 export const RecordBoardContext = createContext<RecordBoardContextProps>(

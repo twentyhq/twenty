@@ -2,29 +2,43 @@ import { Theme } from '@emotion/react';
 import { Droppable } from '@hello-pangea/dnd';
 import { styled } from '@linaria/react';
 import { ReactNode, useContext, useState } from 'react';
-import { ThemeContext } from 'twenty-ui';
+import { MOBILE_VIEWPORT, ThemeContext } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 const StyledTbody = styled.tbody<{
   theme: Theme;
 }>`
-  overflow: hidden;
-
   &.first-columns-sticky {
     td:nth-of-type(1) {
       position: sticky;
       left: 0;
       z-index: 5;
+      transition: 0.3s ease;
     }
     td:nth-of-type(2) {
       position: sticky;
-      left: 9px;
+      left: 11px;
       z-index: 5;
+      transition: 0.3s ease;
     }
     td:nth-of-type(3) {
       position: sticky;
-      left: 39px;
+      left: 43px;
       z-index: 5;
+      transition: 0.3s ease;
+
+      @media (max-width: ${MOBILE_VIEWPORT}px) {
+        & [data-testid='editable-cell-display-mode'] {
+          [data-testid='tooltip'] {
+            display: none;
+          }
+
+          [data-testid='chip'] {
+            gap: 0;
+          }
+        }
+      }
+
       &::after {
         content: '';
         position: absolute;

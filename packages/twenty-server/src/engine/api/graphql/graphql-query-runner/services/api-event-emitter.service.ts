@@ -5,6 +5,8 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class ApiEventEmitterService {
@@ -16,7 +18,7 @@ export class ApiEventEmitterService {
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.created`,
+      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.CREATED}`,
       records.map((record) => ({
         userId: authContext.user?.id,
         recordId: record.id,
@@ -46,20 +48,28 @@ export class ApiEventEmitterService {
     );
 
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.updated`,
+      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.UPDATED}`,
       records.map((record) => {
+        const before = this.removeGraphQLAndNestedProperties(
+          mappedExistingRecords[record.id],
+        );
+        const after = this.removeGraphQLAndNestedProperties(record);
+        const diff = objectRecordChangedValues(
+          before,
+          after,
+          updatedFields,
+          objectMetadataItem,
+        );
+
         return {
           userId: authContext.user?.id,
           recordId: record.id,
           objectMetadata: objectMetadataItem,
           properties: {
-            before: mappedExistingRecords[record.id]
-              ? this.removeGraphQLAndNestedProperties(
-                  mappedExistingRecords[record.id],
-                )
-              : undefined,
-            after: this.removeGraphQLAndNestedProperties(record),
+            before,
+            after,
             updatedFields,
+            diff,
           },
         };
       }),
@@ -73,7 +83,7 @@ export class ApiEventEmitterService {
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.deleted`,
+      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.DELETED}`,
       records.map((record) => {
         return {
           userId: authContext.user?.id,
@@ -95,7 +105,7 @@ export class ApiEventEmitterService {
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.destroyed`,
+      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.DESTROYED}`,
       records.map((record) => {
         return {
           userId: authContext.user?.id,
