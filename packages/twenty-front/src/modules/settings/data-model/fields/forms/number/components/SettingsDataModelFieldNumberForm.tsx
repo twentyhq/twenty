@@ -5,12 +5,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { numberFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/numberFieldDefaultValueSchema';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
-import {
-  IconNumber9,
-  IconPercentage,
-  IllustrationIconDecimal,
-  IllustrationIconEye,
-} from 'twenty-ui';
+import { IconDecimal, IconEye, IconNumber9, IconPercentage } from 'twenty-ui';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/number';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
@@ -51,7 +46,7 @@ export const SettingsDataModelFieldNumberForm = ({
         return (
           <>
             <SettingsOptionCardContentSelect
-              Icon={IllustrationIconEye}
+              Icon={IconEye}
               dropdownId="number-type"
               title="Number type"
               description="The number type you want to use, e.g. percentage"
@@ -72,7 +67,7 @@ export const SettingsDataModelFieldNumberForm = ({
               ]}
             />
             <SettingsOptionCardContentCounter
-              Icon={IllustrationIconDecimal}
+              Icon={IconDecimal}
               title="Number of decimals"
               description={`Example: ${(1000).toFixed(count)}`}
               value={count}

@@ -1,5 +1,5 @@
 import { Controller, useFormContext } from 'react-hook-form';
-import { IconCheck, IconX, IllustrationIconCheck } from 'twenty-ui';
+import { IconCheck, IconX } from 'twenty-ui';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
@@ -38,7 +38,7 @@ export const SettingsDataModelFieldBooleanForm = ({
       defaultValue={initialDefaultValue}
       render={({ field: { onChange, value } }) => (
         <SettingsOptionCardContentSelect
-          Icon={IllustrationIconCheck}
+          Icon={IconCheck}
           title="Default Value"
           description="Select the default value for this boolean field"
           value={value}

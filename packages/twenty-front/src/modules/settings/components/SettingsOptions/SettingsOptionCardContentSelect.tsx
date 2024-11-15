@@ -1,12 +1,11 @@
-// src/settings/components/option-card/SettingsOptionCardSelect.tsx
 import {
   StyledSettingsOptionCardContent,
   StyledSettingsOptionCardDescription,
   StyledSettingsOptionCardIcon,
   StyledSettingsOptionCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsOptionCardContentBase';
+import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { Select } from '@/ui/input/components/Select';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui';
 
@@ -48,13 +47,11 @@ export const SettingsOptionCardContentSelect = <Value extends SelectValue>({
   dropdownId,
   fullWidth,
 }: SettingsOptionCardContentSelectProps<Value>) => {
-  const theme = useTheme();
-
   return (
     <StyledSettingsOptionCardContent divider={divider} disabled={disabled}>
       {Icon && (
         <StyledSettingsOptionCardIcon>
-          <Icon size={theme.icon.size.xl} stroke={theme.icon.stroke.lg} />
+          <SettingsOptionIconCustomizer Icon={Icon} />
         </StyledSettingsOptionCardIcon>
       )}
       <div>

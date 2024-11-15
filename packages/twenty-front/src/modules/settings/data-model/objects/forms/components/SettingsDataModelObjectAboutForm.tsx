@@ -14,7 +14,7 @@ import {
   AppTooltip,
   Card,
   IconInfoCircle,
-  IllustrationIconRefresh,
+  IconRefresh,
   TooltipDelay,
 } from 'twenty-ui';
 import { z } from 'zod';
@@ -301,7 +301,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 render={({ field: { onChange, value } }) => (
                   <Card rounded>
                     <SettingsOptionCardContentToggle
-                      Icon={IllustrationIconRefresh}
+                      Icon={IconRefresh}
                       title="Synchronize Objects Labels and API Names"
                       description="Should changing an object's label also change the API?"
                       checked={value ?? true}

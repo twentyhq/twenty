@@ -5,7 +5,7 @@ import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
-import { Card, H2Title, IllustrationIconUserPlus } from 'twenty-ui';
+import { Card, H2Title, IconUserPlus } from 'twenty-ui';
 import { CalendarChannelVisibility } from '~/generated-metadata/graphql';
 
 const StyledDetailsContainer = styled.div`
@@ -65,7 +65,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
         />
         <Card rounded>
           <SettingsOptionCardContentToggle
-            Icon={IllustrationIconUserPlus}
+            Icon={IconUserPlus}
             title="Auto-creation"
             description="Automatically create contacts for people."
             checked={calendarChannel.isContactAutoCreationEnabled}

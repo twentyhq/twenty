@@ -5,7 +5,7 @@ import {
   StyledSettingsOptionCardIcon,
   StyledSettingsOptionCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsOptionCardContentBase';
-import { useTheme } from '@emotion/react';
+import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
 import { IconComponent } from 'twenty-ui';
 
 type SettingsOptionCardContentCounterProps = {
@@ -31,13 +31,11 @@ export const SettingsOptionCardContentCounter = ({
   minValue,
   maxValue,
 }: SettingsOptionCardContentCounterProps) => {
-  const theme = useTheme();
-
   return (
     <StyledSettingsOptionCardContent divider={divider} disabled={disabled}>
       {Icon && (
         <StyledSettingsOptionCardIcon>
-          <Icon size={theme.icon.size.xl} stroke={theme.icon.stroke.lg} />
+          <SettingsOptionIconCustomizer Icon={Icon} />
         </StyledSettingsOptionCardIcon>
       )}
       <div>

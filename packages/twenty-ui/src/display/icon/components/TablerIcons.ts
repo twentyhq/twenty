@@ -234,6 +234,7 @@ export {
   IconUpload,
   IconUser,
   IconUserCircle,
+  IconUserPlus,
   IconUsers,
   IconVariablePlus,
   IconVideo,
