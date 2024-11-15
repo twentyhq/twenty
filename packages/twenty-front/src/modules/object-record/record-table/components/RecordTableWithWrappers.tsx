@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -10,6 +10,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
+import { isScrollEnabledForRecordTableState } from '@/object-record/record-table/states/isScrollEnabledForRecordTableState';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 
 const StyledTableWithHeader = styled.div`
@@ -40,6 +41,10 @@ export const RecordTableWithWrappers = ({
   recordTableId,
   viewBarId,
 }: RecordTableWithWrappersProps) => {
+  const isScrollEnabledForRecordTable = useRecoilValue(
+    isScrollEnabledForRecordTableState,
+  );
+
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });

@@ -24,18 +24,21 @@ export const RecordTableColumnHeadWithDropdown = ({
   const isScrollEnabledForRecordTable = useSetRecoilState(
     isScrollEnabledForRecordTableState,
   );
+
   const handleDropdownOpen = useCallback(() => {
     isScrollEnabledForRecordTable({
       enableXScroll: false,
       enableYScroll: false,
     });
   }, [isScrollEnabledForRecordTable]);
+
   const handleDropdownClose = useCallback(() => {
     isScrollEnabledForRecordTable({
       enableXScroll: true,
       enableYScroll: true,
     });
   }, [isScrollEnabledForRecordTable]);
+
   return (
     <StyledDropdown
       onOpen={handleDropdownOpen}

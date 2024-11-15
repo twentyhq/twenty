@@ -1,13 +1,14 @@
 import { createState } from 'twenty-ui';
-type isScrollEnabledForRecordTableStateType = {
+
+export type ScrollEnabled = {
   enableXScroll: boolean;
   enableYScroll: boolean;
 };
-export const isScrollEnabledForRecordTableState =
-  createState<isScrollEnabledForRecordTableStateType>({
-    key: 'isScrollEnabledForRecordTableState',
-    defaultValue: {
-      enableXScroll: true,
-      enableYScroll: true,
-    },
-  });
+
+export const isScrollEnabledForRecordTableState = createState<ScrollEnabled>({
+  key: 'isScrollEnabledForRecordTableState',
+  defaultValue: {
+    enableXScroll: true,
+    enableYScroll: true,
+  },
+});
