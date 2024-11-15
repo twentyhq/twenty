@@ -1,8 +1,12 @@
+import {
+  OverflowingTextWithTooltip,
+  IconChevronLeft,
+  MenuItemSelect,
+} from 'twenty-ui';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
 import { isObject } from '@sniptt/guards';
 import { useState } from 'react';
-import { IconChevronLeft, MenuItemSelect } from 'twenty-ui';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 
 type SearchVariablesDropdownStepSubItemProps = {
@@ -59,7 +63,7 @@ const SearchVariablesDropdownStepSubItem = ({
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={goBack}>
-        {headerLabel}
+        <OverflowingTextWithTooltip text={headerLabel} />
       </DropdownMenuHeader>
       <DropdownMenuSearchInput
         autoFocus
