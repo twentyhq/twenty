@@ -27,6 +27,7 @@ export const RightDrawerWorkflowSelectActionContent = ({
     <StyledActionListContainer>
       {ACTIONS.map((action) => (
         <MenuItem
+          key={action.type}
           LeftIcon={action.icon}
           text={action.label}
           onClick={() => {
