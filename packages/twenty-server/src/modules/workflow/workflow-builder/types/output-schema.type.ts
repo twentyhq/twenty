@@ -1,4 +1,4 @@
-import { InputSchemaPropertyType } from '@/workflow/types/InputSchema';
+import { InputSchemaPropertyType } from 'src/modules/code-introspection/types/input-schema.type';
 
 type Leaf = {
   isLeaf: true;
@@ -13,9 +13,3 @@ type Node = {
 };
 
 export type OutputSchema = Record<string, Leaf | Node>;
-
-export type StepOutputSchema = {
-  id: string;
-  name: string;
-  outputSchema: OutputSchema;
-};
