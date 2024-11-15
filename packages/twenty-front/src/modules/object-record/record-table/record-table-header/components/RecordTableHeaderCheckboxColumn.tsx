@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { Checkbox, MOBILE_VIEWPORT } from 'twenty-ui';
+import { Checkbox } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -13,18 +13,13 @@ const StyledContainer = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
 `;
 
-const StyledColumnHeaderCell = styled.th<{ setNumColumns: number }>`
+const StyledColumnHeaderCell = styled.th`
   background-color: ${({ theme }) => theme.background.primary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-right: transparent;
   text-align: center;
-  width: ${({ setNumColumns }) => {
-    return setNumColumns <= 6 ? '22px' : '32px';
-  }};
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    width: 32px;
-  }
+  width: 32px;
+  min-width: 32px;
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {
@@ -35,7 +30,6 @@ export const RecordTableHeaderCheckboxColumn = () => {
     selectAllRows,
     resetTableRowSelection,
     setHasUserSelectedAllRows,
-    setNumColumns,
   } = useRecordTable();
   const checked = allRowsSelectedStatus === 'all';
   const indeterminate = allRowsSelectedStatus === 'some';
@@ -51,7 +45,7 @@ export const RecordTableHeaderCheckboxColumn = () => {
   };
 
   return (
-    <StyledColumnHeaderCell setNumColumns={setNumColumns}>
+    <StyledColumnHeaderCell>
       <StyledContainer>
         <Checkbox
           hoverable

@@ -54,23 +54,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     recordTableId,
   );
 
-  const numColumnsState = useRecoilComponentCallbackStateV2(
-    tableColumnsComponentState,
-    recordTableId,
-  );
-
-  const setNumColumns = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const tableColumns = getSnapshotValue(
-          snapshot,
-          numColumnsState,
-        );
-        return tableColumns?.filter(column => column.isVisible).length || 0;
-      },
-    [numColumnsState],
-  )();
-
   const setAvailableTableColumns = useRecoilCallback(
     ({ snapshot, set }) =>
       (columns: ColumnDefinition<FieldMetadata>[]) => {
@@ -290,6 +273,5 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setOnToggleColumnFilter,
     setOnToggleColumnSort,
     setPendingRecordId,
-    setNumColumns,
   };
 };
