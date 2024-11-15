@@ -1,16 +1,12 @@
 import { SelectQueryBuilder } from 'typeorm';
 
-import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 
 export class ProcessAggregateHelper {
   public addSelectedAggregatedFieldsQueriesToQueryBuilder = ({
-    fieldMetadataMapByName,
     selectedAggregatedFields,
     queryBuilder,
   }: {
-    fieldMetadataMapByName: Record<string, FieldMetadataInterface>;
     selectedAggregatedFields: Record<string, AggregationField>;
     queryBuilder: SelectQueryBuilder<any>;
   }) => {
@@ -19,17 +15,18 @@ export class ProcessAggregateHelper {
     for (const [aggregatedFieldName, aggregatedField] of Object.entries(
       selectedAggregatedFields,
     )) {
-      const fieldMetadata = fieldMetadataMapByName[aggregatedField.fromField];
-
-      if (!fieldMetadata) {
+      if (
+        !aggregatedField?.fromColumnName ||
+        !aggregatedField?.aggregationOperation
+      ) {
         continue;
       }
 
-      const fieldName = fieldMetadata.name;
+      const columnName = aggregatedField.fromColumnName;
       const operation = aggregatedField.aggregationOperation;
 
       queryBuilder.addSelect(
-        `${operation}("${fieldName}")`,
+        `${operation}("${columnName}")`,
         `${aggregatedFieldName}`,
       );
     }
