@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import graphqlFields from 'graphql-fields';
 
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { DestroyManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -16,46 +16,51 @@ import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class GraphqlQueryDestroyManyResolverService
-  implements ResolverService<DestroyManyResolverArgs, IRecord[]>
+  implements ResolverService<DestroyManyResolverArgs, ObjectRecord[]>
 {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  async resolve<ObjectRecord extends IRecord = IRecord>(
+  async resolve<T extends ObjectRecord = ObjectRecord>(
     args: DestroyManyResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord[]> {
-    const { authContext, objectMetadataMapItem, objectMetadataMap, info } =
-      options;
+  ): Promise<T[]> {
+    const {
+      authContext,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+      info,
+    } = options;
+
     const dataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(
         authContext.workspace.id,
       );
 
     const repository = dataSource.getRepository(
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataMapItem.fields,
-      objectMetadataMap,
+      objectMetadataItemWithFieldMaps.fieldsByName,
+      objectMetadataMaps,
     );
 
     const selectedFields = graphqlFields(info);
 
     const { relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataMapItem,
+      objectMetadataItemWithFieldMaps,
       selectedFields,
     );
 
     const queryBuilder = repository.createQueryBuilder(
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
 
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
       args.filter,
     );
 
@@ -66,31 +71,31 @@ export class GraphqlQueryDestroyManyResolverService
 
     const deletedRecords = formatResult(
       nonFormattedDeletedObjectRecords.raw,
-      objectMetadataMapItem,
-      objectMetadataMap,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     );
 
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
     if (relations) {
-      await processNestedRelationsHelper.processNestedRelations(
-        objectMetadataMap,
-        objectMetadataMapItem,
-        deletedRecords,
+      await processNestedRelationsHelper.processNestedRelations({
+        objectMetadataMaps,
+        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        parentObjectRecords: deletedRecords,
         relations,
-        QUERY_MAX_RECORDS,
+        limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource,
-      );
+      });
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return deletedRecords.map((record: ObjectRecord) =>
+    return deletedRecords.map((record: T) =>
       typeORMObjectRecordsParser.processRecord({
         objectRecord: record,
-        objectName: objectMetadataMapItem.nameSingular,
+        objectName: objectMetadataItemWithFieldMaps.nameSingular,
         take: 1,
         totalCount: 1,
       }),

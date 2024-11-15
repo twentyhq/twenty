@@ -5,24 +5,24 @@ import { join } from 'path';
 
 import { Repository } from 'typeorm';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
+import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
+import { WorkflowSendEmailStepOutputSchema } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
 import {
+  WorkflowAction,
   WorkflowActionType,
-  WorkflowStep,
-} from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
-import { WorkflowSendEmailStepOutputSchema } from 'src/modules/workflow/workflow-executor/types/workflow-step-settings.type';
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   WorkflowTrigger,
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { isDefined } from 'src/utils/is-defined';
-import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
-import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class WorkflowBuilderWorkspaceService {
@@ -37,7 +37,7 @@ export class WorkflowBuilderWorkspaceService {
     step,
     workspaceId,
   }: {
-    step: WorkflowTrigger | WorkflowStep;
+    step: WorkflowTrigger | WorkflowAction;
     workspaceId: string;
   }): Promise<object> {
     const stepType = step.type;
@@ -57,7 +57,7 @@ export class WorkflowBuilderWorkspaceService {
           return {};
         }
 
-        return await this.computeManualTriggerOutputSchema({
+        return await this.computeRecordOutputSchema({
           objectType,
           workspaceId,
           objectMetadataRepository: this.objectMetadataRepository,
@@ -78,6 +78,12 @@ export class WorkflowBuilderWorkspaceService {
           codeIntrospectionService: this.codeIntrospectionService,
         });
       }
+      case WorkflowActionType.RECORD_CRUD:
+        return await this.computeRecordOutputSchema({
+          objectType: step.settings.input.objectName,
+          workspaceId,
+          objectMetadataRepository: this.objectMetadataRepository,
+        });
       default:
         return {};
     }
@@ -116,7 +122,7 @@ export class WorkflowBuilderWorkspaceService {
     );
   }
 
-  private async computeManualTriggerOutputSchema<Entity>({
+  private async computeRecordOutputSchema<Entity>({
     objectType,
     workspaceId,
     objectMetadataRepository,

@@ -115,8 +115,18 @@ const getSchemaComponentsProperties = ({
     let itemProperty = {} as Property;
 
     switch (field.type) {
-      case FieldMetadataType.SELECT:
       case FieldMetadataType.MULTI_SELECT:
+        itemProperty = {
+          type: 'array',
+          items: {
+            type: 'string',
+            enum: field.options.map(
+              (option: { value: string }) => option.value,
+            ),
+          },
+        };
+        break;
+      case FieldMetadataType.SELECT:
         itemProperty = {
           type: 'string',
           enum: field.options.map((option: { value: string }) => option.value),

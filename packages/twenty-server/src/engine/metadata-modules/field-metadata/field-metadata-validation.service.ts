@@ -1,5 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
+import { plainToInstance } from 'class-transformer';
+import {
+  IsEnum,
+  IsInt,
+  IsOptional,
+  Min,
+  validateOrReject,
+} from 'class-validator';
+
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -8,13 +17,29 @@ import {
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 
+enum ValueType {
+  PERCENTAGE = 'percentage',
+  NUMBER = 'number',
+}
+
+class SettingsValidation {
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  decimals?: number;
+
+  @IsOptional()
+  @IsEnum(ValueType)
+  type?: 'percentage' | 'number';
+}
+
 @Injectable()
 export class FieldMetadataValidationService<
   T extends FieldMetadataType | 'default' = 'default',
 > {
   constructor() {}
 
-  validateSettingsOrThrow({
+  async validateSettingsOrThrow({
     fieldType,
     settings,
   }: {
@@ -23,26 +48,28 @@ export class FieldMetadataValidationService<
   }) {
     switch (fieldType) {
       case FieldMetadataType.NUMBER:
-        this.validateNumberSettings(settings);
+        await this.validateNumberSettings(settings);
         break;
       default:
         break;
     }
   }
 
-  private validateNumberSettings(settings: FieldMetadataSettings<T>) {
-    if ('decimals' in settings) {
-      const { decimals } = settings;
+  private async validateNumberSettings(settings: any) {
+    try {
+      const settingsInstance = plainToInstance(SettingsValidation, settings);
 
-      if (
-        decimals !== undefined &&
-        (decimals < 0 || !Number.isInteger(decimals))
-      ) {
-        throw new FieldMetadataException(
-          `Decimals value "${decimals}" must be a positive integer`,
-          FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
-        );
-      }
+      await validateOrReject(settingsInstance);
+    } catch (errors) {
+      const errorMessages = errors
+        .map((error: any) => Object.values(error.constraints))
+        .flat()
+        .join(', ');
+
+      throw new FieldMetadataException(
+        `Value for settings is invalid: ${errorMessages}`,
+        FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
+      );
     }
   }
 }

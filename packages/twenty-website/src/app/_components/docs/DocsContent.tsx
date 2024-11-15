@@ -28,6 +28,7 @@ const StyledContainer = styled('div')`
 
 const StyledWrapper = styled.div`
   @media (max-width: 450px) {
+    width: 100%;
     padding: ${Theme.spacing(10)} 32px ${Theme.spacing(20)};
   }
 
