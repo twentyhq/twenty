@@ -11,6 +11,7 @@ import { recordBoardObjectSingularNameComponentState } from '@/object-record/rec
 import { recordBoardRecordIdsByColumnIdComponentFamilyState } from '@/object-record/record-board/states/recordBoardRecordIdsByColumnIdComponentFamilyState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { recordBoardSortsComponentState } from '@/object-record/record-board/states/recordBoardSortsComponentState';
+import { recordBoardAllRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardAllRecordIdsComponentSelector';
 import { recordBoardColumnsComponentFamilySelector } from '@/object-record/record-board/states/selectors/recordBoardColumnsComponentFamilySelector';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { recordBoardShouldFetchMoreComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardShouldFetchMoreComponentFamilySelector';
@@ -74,6 +75,10 @@ export const useRecordBoardStates = (recordBoardId?: string) => {
     ),
     isRecordBoardCardSelectedFamilyState: extractComponentFamilyState(
       isRecordBoardCardSelectedComponentFamilyState,
+      scopeId,
+    ),
+    allRecordIdsSelector: extractComponentReadOnlySelector(
+      recordBoardAllRecordIdsComponentSelector,
       scopeId,
     ),
     selectedRecordIdsSelector: extractComponentReadOnlySelector(
