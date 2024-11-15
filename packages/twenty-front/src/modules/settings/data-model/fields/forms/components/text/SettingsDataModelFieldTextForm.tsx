@@ -38,10 +38,6 @@ export const SettingsDataModelFieldTextForm = ({
   fieldMetadataItem,
 }: SettingsDataModelFieldTextFormProps) => {
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
-  // console.log(
-  //   'SettingsDataModelFieldTextForm - fieldMetadataItem',
-  //   fieldMetadataItem,
-  // );
   return (
     <CardContent>
       <Controller
@@ -51,7 +47,6 @@ export const SettingsDataModelFieldTextForm = ({
         }}
         control={control}
         render={({ field: { onChange, value } }) => {
-          console.log('value to disopaly in the form', value);
           const displayMaxRows = value?.displayMaxRows ?? 0;
 
           return (
