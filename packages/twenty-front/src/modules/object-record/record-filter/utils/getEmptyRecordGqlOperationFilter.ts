@@ -7,6 +7,7 @@ import {
   EmailsFilter,
   FloatFilter,
   MultiSelectFilter,
+  RatingFilter,
   RawJsonFilter,
   RecordGqlOperationFilter,
   RelationFilter,
@@ -256,7 +257,7 @@ export const getEmptyRecordGqlOperationFilter = (
       break;
     case 'RATING':
       emptyRecordFilter = {
-        [correspondingField.name]: { is: 'NULL' } as StringFilter,
+        [correspondingField.name]: { is: 'NULL' } as RatingFilter,
       };
       break;
     case 'DATE':

@@ -32,8 +32,8 @@ export type StringFilter = {
 };
 
 export type RatingFilter = {
-  eq?: number;
-  in?: number[];
+  eq?: string;
+  in?: string[];
   is?: IsFilter;
 };
 

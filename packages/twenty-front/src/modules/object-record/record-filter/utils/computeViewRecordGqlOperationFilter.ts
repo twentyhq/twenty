@@ -9,6 +9,7 @@ import {
   EmailsFilter,
   FloatFilter,
   MultiSelectFilter,
+  RatingFilter,
   RawJsonFilter,
   RecordGqlOperationFilter,
   RelationFilter,
@@ -243,7 +244,7 @@ const computeFilterRecordGqlOperationFilter = (
           return {
             [correspondingField.name]: {
               eq: convertRatingToRatingValue(parseFloat(filter.value)),
-            } as StringFilter,
+            } as RatingFilter,
           };
         case ViewFilterOperand.GreaterThan:
           return {
@@ -251,7 +252,7 @@ const computeFilterRecordGqlOperationFilter = (
               in: convertGreaterThanRatingToArrayOfRatingValues(
                 parseFloat(filter.value),
               ),
-            } as StringFilter,
+            } as RatingFilter,
           };
         case ViewFilterOperand.LessThan:
           return {
@@ -259,7 +260,7 @@ const computeFilterRecordGqlOperationFilter = (
               in: convertLessThanRatingToArrayOfRatingValues(
                 parseFloat(filter.value),
               ),
-            } as StringFilter,
+            } as RatingFilter,
           };
         case ViewFilterOperand.IsEmpty:
         case ViewFilterOperand.IsNotEmpty:
