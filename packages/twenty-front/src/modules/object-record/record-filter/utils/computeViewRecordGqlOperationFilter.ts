@@ -621,7 +621,7 @@ const computeFilterRecordGqlOperationFilter = (
           return {
             [correspondingField.name]: {
               containsAny: options,
-            } as ArrayFilter,
+            } as MultiSelectFilter,
           };
         case ViewFilterOperand.DoesNotContain:
           return {
