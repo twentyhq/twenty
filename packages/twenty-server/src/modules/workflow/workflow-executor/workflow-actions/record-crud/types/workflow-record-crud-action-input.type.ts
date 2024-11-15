@@ -1,7 +1,7 @@
 import {
-  RecordFilter,
-  RecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+  ObjectRecordFilter,
+  ObjectRecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 type ObjectRecord = Record<string, any>;
 
@@ -34,8 +34,8 @@ export type WorkflowDeleteRecordActionInput = {
 export type WorkflowReadRecordActionInput = {
   type: WorkflowRecordCRUDType.READ;
   objectName: string;
-  filter?: Partial<RecordFilter>;
-  orderBy?: Partial<RecordOrderBy>;
+  filter?: Partial<ObjectRecordFilter>;
+  orderBy?: Partial<ObjectRecordOrderBy>;
   limit?: number;
 };
 

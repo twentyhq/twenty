@@ -54,7 +54,7 @@ export class GraphqlQueryParser {
 
   public applyDeletedAtToBuilder(
     queryBuilder: SelectQueryBuilder<any>,
-    recordFilter: ObjectRecordFilter,
+    recordFilter: Partial<ObjectRecordFilter>,
   ): SelectQueryBuilder<any> {
     if (this.checkForDeletedAtFilter(recordFilter)) {
       queryBuilder.withDeleted();

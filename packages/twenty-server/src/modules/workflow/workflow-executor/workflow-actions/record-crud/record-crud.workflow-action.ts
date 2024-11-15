@@ -4,18 +4,16 @@ import { Entity } from '@microsoft/microsoft-graph-types';
 import { ObjectLiteral } from 'typeorm';
 
 import {
+  ObjectRecordFilter,
+  ObjectRecordOrderBy,
   OrderByDirection,
-  RecordFilter,
-  RecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
-import {
-  ObjectMetadataMap,
-  ObjectMetadataMapItem,
-} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -167,23 +165,23 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
       );
     }
 
-    const objectMetadataMap =
-      await this.workspaceCacheStorageService.getObjectMetadataMap(
+    const objectMetadataMaps =
+      await this.workspaceCacheStorageService.getObjectMetadataMaps(
         workspaceId,
         currentCacheVersion,
       );
 
-    if (!objectMetadataMap) {
+    if (!objectMetadataMaps) {
       throw new RecordCRUDActionException(
         'Failed to read: Object metadata collection not found',
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
       );
     }
 
-    const objectMetadataMapItem =
-      objectMetadataMap[workflowActionInput.objectName];
+    const objectMetadataItemWithFieldsMaps =
+      objectMetadataMaps.byNameSingular[workflowActionInput.objectName];
 
-    if (!objectMetadataMapItem) {
+    if (!objectMetadataItemWithFieldsMaps) {
       throw new RecordCRUDActionException(
         `Failed to read: Object ${workflowActionInput.objectName} not found`,
         RecordCRUDActionExceptionCode.INVALID_REQUEST,
@@ -191,14 +189,14 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
     }
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataMapItem.fields,
-      objectMetadataMap,
+      objectMetadataItemWithFieldsMaps.fieldsByName,
+      objectMetadataMaps,
     );
 
     const objectRecords = await this.getObjectRecords(
       workflowActionInput,
-      objectMetadataMapItem,
-      objectMetadataMap,
+      objectMetadataItemWithFieldsMaps,
+      objectMetadataMaps,
       repository,
       graphqlQueryParser,
     );
@@ -220,8 +218,8 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
 
   private async getObjectRecords<T extends ObjectLiteral>(
     workflowActionInput: WorkflowReadRecordActionInput,
-    objectMetadataMapItem: ObjectMetadataMapItem,
-    objectMetadataMap: ObjectMetadataMap,
+    objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps,
+    objectMetadataMaps: ObjectMetadataMaps,
     repository: WorkspaceRepository<T>,
     graphqlQueryParser: GraphqlQueryParser,
   ) {
@@ -232,13 +230,13 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
       workflowActionInput.objectName,
-      workflowActionInput.filter ?? ({} as RecordFilter),
+      workflowActionInput.filter ?? ({} as ObjectRecordFilter),
     );
 
     const orderByWithIdCondition = [
       ...(workflowActionInput.orderBy ?? []),
       { id: OrderByDirection.AscNullsFirst },
-    ] as RecordOrderBy;
+    ] as ObjectRecordOrderBy;
 
     const withOrderByQueryBuilder = graphqlQueryParser.applyOrderToBuilder(
       withFilterQueryBuilder,
@@ -253,8 +251,8 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
 
     return formatResult(
       nonFormattedObjectRecords,
-      objectMetadataMapItem,
-      objectMetadataMap,
+      objectMetadataItemWithFieldsMaps,
+      objectMetadataMaps,
     );
   }
 
@@ -270,15 +268,15 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
     const withFilterCountQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       countQueryBuilder,
       workflowActionInput.objectName,
-      workflowActionInput.filter ?? ({} as RecordFilter),
+      workflowActionInput.filter ?? ({} as ObjectRecordFilter),
     );
 
     const withDeletedCountQueryBuilder =
       graphqlQueryParser.applyDeletedAtToBuilder(
         withFilterCountQueryBuilder,
         workflowActionInput.filter
-          ? (workflowActionInput.filter as RecordFilter)
-          : ({} as RecordFilter),
+          ? workflowActionInput.filter
+          : ({} as ObjectRecordFilter),
       );
 
     return withDeletedCountQueryBuilder.getCount();
