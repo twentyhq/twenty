@@ -1,10 +1,9 @@
 import { objectOptionsDropdownRecordGroupHideComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownRecordGroupHideComponentState';
-import { recordBoardRecordIdsByColumnIdComponentFamilyState } from '@/object-record/record-board/states/recordBoardRecordIdsByColumnIdComponentFamilyState';
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
 import { ViewType } from '@/views/types/ViewType';
@@ -29,10 +28,7 @@ export const useRecordGroupVisibility = ({
     viewBarId,
   );
 
-  const boardRowIdsByGroupFamilyState = extractComponentFamilyState(
-    recordBoardRecordIdsByColumnIdComponentFamilyState,
-    viewBarId,
-  );
+  const { recordIdsByColumnIdFamilyState } = useRecordBoardStates(viewBarId);
 
   const objectOptionsDropdownRecordGroupHideState =
     useRecoilComponentCallbackStateV2(
@@ -92,18 +88,17 @@ export const useRecordGroupVisibility = ({
 
         const updatedRecordGroupDefinitions = recordGroupDefinitions.map(
           (recordGroup) => {
+            // TODO: Maybe we can improve that and only use one state for both table and board
             const recordGroupRowIds =
-              viewType === ViewType.Kanban
+              viewType === ViewType.Table
                 ? getSnapshotValue(
                     snapshot,
                     tableRowIdsByGroupFamilyState(recordGroup.id),
                   )
                 : getSnapshotValue(
                     snapshot,
-                    boardRowIdsByGroupFamilyState(recordGroup.id),
+                    recordIdsByColumnIdFamilyState(recordGroup.id),
                   );
-
-            console.log('recordGroupRowIds', recordGroupRowIds);
 
             if (recordGroupRowIds.length > 0) {
               return recordGroup;
@@ -111,7 +106,7 @@ export const useRecordGroupVisibility = ({
 
             return {
               ...recordGroup,
-              isVisible: false,
+              isVisible: currentHideState,
             };
           },
         );
@@ -126,7 +121,7 @@ export const useRecordGroupVisibility = ({
       saveViewGroups,
       viewType,
       tableRowIdsByGroupFamilyState,
-      boardRowIdsByGroupFamilyState,
+      recordIdsByColumnIdFamilyState,
     ],
   );
 

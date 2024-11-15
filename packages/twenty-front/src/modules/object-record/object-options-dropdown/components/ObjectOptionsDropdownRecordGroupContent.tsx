@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { Key } from 'ts-key-enum';
 import {
   IconChevronLeft,
   IconCircleOff,
@@ -32,7 +31,6 @@ import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGro
 import { useRecordGroupSelector } from '@/object-record/record-group/hooks/useRecordGroupSelector';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
-import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownContentItem } from '@/ui/layout/dropdown/components/DropdownContentItem';
@@ -42,7 +40,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useDropdownContent } from '@/ui/layout/dropdown/hooks/useDropdownContent';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { RecordGroupsVisibilityDropdownSection } from '@/views/components/RecordGroupsVisibilityDropdownSection';
@@ -71,14 +68,6 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
   const { objectNamePlural } = useObjectNamePluralFromSingular({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
-
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      closeDropdown();
-    },
-    TableOptionsHotkeyScope.Dropdown,
-  );
 
   const {
     hiddenRecordGroups,
@@ -146,7 +135,10 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
   return (
     <>
       <DropdownContentItem id="recordGroupFields">
-        <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
+        <DropdownMenuHeader
+          StartIcon={IconChevronLeft}
+          onClick={() => onContentChange('recordGroups')}
+        >
           Group by
         </DropdownMenuHeader>
         <StyledInput
@@ -157,58 +149,62 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
             setRecordGroupFieldSearchInput(event.target.value)
           }
         />
-        <MenuItem text="None" />
-        {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
-          <MenuItem
-            key={fieldMetadataItem.id}
-            onClick={() => {
-              handleRecordGroupFieldChange(fieldMetadataItem);
-            }}
-            LeftIcon={getIcon(fieldMetadataItem.icon)}
-            text={fieldMetadataItem.label}
-          />
-        ))}
+        <DropdownMenuItemsContainer>
+          <MenuItem text="None" />
+          {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
+            <MenuItem
+              key={fieldMetadataItem.id}
+              onClick={() => {
+                handleRecordGroupFieldChange(fieldMetadataItem);
+              }}
+              LeftIcon={getIcon(fieldMetadataItem.icon)}
+              text={fieldMetadataItem.label}
+            />
+          ))}
+        </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
-        <UndecoratedLink
-          to={viewGroupSettingsUrl}
-          onClick={() => {
-            setNavigationMemorizedUrl(location.pathname + location.search);
-            closeDropdown();
-          }}
-        >
-          <DropdownMenuItemsContainer>
+        <DropdownMenuItemsContainer>
+          <UndecoratedLink
+            to={viewGroupSettingsUrl}
+            onClick={() => {
+              setNavigationMemorizedUrl(location.pathname + location.search);
+              closeDropdown();
+            }}
+          >
             <MenuItem LeftIcon={IconSettings} text="Create select field" />
-          </DropdownMenuItemsContainer>
-        </UndecoratedLink>
+          </UndecoratedLink>
+        </DropdownMenuItemsContainer>
       </DropdownContentItem>
 
       <DropdownContentItem id="recordGroups">
         <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
           Group by
         </DropdownMenuHeader>
-        <MenuItem
-          onClick={() => onContentChange('recordGroupFields')}
-          LeftIcon={IconLayoutList}
-          text={
-            !viewGroupFieldMetadataItem
-              ? 'Group by'
-              : `Group by "${viewGroupFieldMetadataItem.label}"`
-          }
-          hasSubMenu
-        />
-        <MenuItem
-          onClick={() => onContentChange('recordGroupSort')}
-          LeftIcon={IconSortDescending}
-          text="Sort"
-          hasSubMenu
-        />
-        <MenuItemToggle
-          LeftIcon={IconCircleOff}
-          onToggleChange={handleHideEmptyRecordGroupChange}
-          toggled={hideEmptyRecordGroup}
-          text="Hide empty groups"
-          toggleSize="small"
-        />
+        <DropdownMenuItemsContainer>
+          <MenuItem
+            onClick={() => onContentChange('recordGroupFields')}
+            LeftIcon={IconLayoutList}
+            text={
+              !viewGroupFieldMetadataItem
+                ? 'Group by'
+                : `Group by "${viewGroupFieldMetadataItem.label}"`
+            }
+            hasSubMenu
+          />
+          <MenuItem
+            onClick={() => onContentChange('recordGroupSort')}
+            LeftIcon={IconSortDescending}
+            text="Sort"
+            hasSubMenu
+          />
+          <MenuItemToggle
+            LeftIcon={IconCircleOff}
+            onToggleChange={handleHideEmptyRecordGroupChange}
+            toggled={hideEmptyRecordGroup}
+            text="Hide empty groups"
+            toggleSize="small"
+          />
+        </DropdownMenuItemsContainer>
         {visibleRecordGroups.length > 0 && (
           <>
             <DropdownMenuSeparator />
@@ -237,12 +233,15 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
       </DropdownContentItem>
 
       <DropdownContentItem id="hiddenRecordGroups">
-        <DropdownMenuHeader
-          StartIcon={IconChevronLeft}
-          onClick={() => onContentChange('recordGroups')}
-        >
-          Hidden {viewGroupFieldMetadataItem?.label}
-        </DropdownMenuHeader>
+        <DropdownMenuItemsContainer>
+          <DropdownMenuHeader
+            StartIcon={IconChevronLeft}
+            onClick={() => onContentChange('recordGroups')}
+          >
+            Hidden {viewGroupFieldMetadataItem?.label}
+          </DropdownMenuHeader>
+        </DropdownMenuItemsContainer>
+
         <RecordGroupsVisibilityDropdownSection
           title={`Hidden ${viewGroupFieldMetadataItem?.label}`}
           viewGroups={hiddenRecordGroups}
@@ -272,30 +271,32 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
         >
           Sort
         </DropdownMenuHeader>
-        <MenuItem
-          onClick={() => {
-            setRecordGroupSort(RecordGroupSort.MANUAL);
-            closeDropdown();
-          }}
-          LeftIcon={IconHandMove}
-          text={RecordGroupSort.MANUAL}
-        />
-        <MenuItem
-          onClick={() => {
-            setRecordGroupSort(RecordGroupSort.ALPHABETICAL);
-            closeDropdown();
-          }}
-          LeftIcon={IconSortAZ}
-          text={RecordGroupSort.ALPHABETICAL}
-        />
-        <MenuItem
-          onClick={() => {
-            setRecordGroupSort(RecordGroupSort.REVERSE_ALPHABETICAL);
-            closeDropdown();
-          }}
-          LeftIcon={IconSortZA}
-          text={RecordGroupSort.REVERSE_ALPHABETICAL}
-        />
+        <DropdownMenuItemsContainer>
+          <MenuItem
+            onClick={() => {
+              setRecordGroupSort(RecordGroupSort.MANUAL);
+              closeDropdown();
+            }}
+            LeftIcon={IconHandMove}
+            text={RecordGroupSort.MANUAL}
+          />
+          <MenuItem
+            onClick={() => {
+              setRecordGroupSort(RecordGroupSort.ALPHABETICAL);
+              closeDropdown();
+            }}
+            LeftIcon={IconSortAZ}
+            text={RecordGroupSort.ALPHABETICAL}
+          />
+          <MenuItem
+            onClick={() => {
+              setRecordGroupSort(RecordGroupSort.REVERSE_ALPHABETICAL);
+              closeDropdown();
+            }}
+            LeftIcon={IconSortZA}
+            text={RecordGroupSort.REVERSE_ALPHABETICAL}
+          />
+        </DropdownMenuItemsContainer>
       </DropdownContentItem>
     </>
   );

@@ -1,4 +1,3 @@
-import { Key } from 'ts-key-enum';
 import {
   IconChevronLeft,
   IconEyeOff,
@@ -15,7 +14,6 @@ import { RecordIndexOptionsContentId } from '@/object-record/object-options-drop
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useObjectOptionsForTable } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForTable';
-import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownContentItem } from '@/ui/layout/dropdown/components/DropdownContentItem';
@@ -25,7 +23,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useDropdownContent } from '@/ui/layout/dropdown/hooks/useDropdownContent';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { ViewType } from '@/views/types/ViewType';
@@ -55,14 +52,6 @@ export const ObjectOptionsDropdownFieldsContent = ({
   const settingsUrl = getSettingsPagePath(SettingsPath.ObjectDetail, {
     objectSlug: objectNamePlural,
   });
-
-  useScopedHotkeys(
-    [Key.Escape],
-    () => {
-      closeDropdown();
-    },
-    TableOptionsHotkeyScope.Dropdown,
-  );
 
   const {
     handleColumnVisibilityChange,

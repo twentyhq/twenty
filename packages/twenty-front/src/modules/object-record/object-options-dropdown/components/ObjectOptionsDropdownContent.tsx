@@ -1,13 +1,13 @@
 import { Key } from 'ts-key-enum';
 import {
-  IconBaselineDensitySmall,
   IconFileExport,
   IconFileImport,
+  IconLayout,
   IconLayoutList,
+  IconList,
   IconRotate2,
   IconTag,
   MenuItem,
-  MenuItemToggle,
 } from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -20,20 +20,22 @@ import {
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectOptionsDropdownFieldsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownFieldsContent';
 import { ObjectOptionsDropdownRecordGroupContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupContent';
+import { ObjectOptionsDropdownViewSettingsContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownViewSettingsContent';
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { useOpenObjectRecordsSpreasheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreasheetImportDialog';
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useDropdownContent } from '@/ui/layout/dropdown/hooks/useDropdownContent';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 
 export type RecordIndexOptionsContentId =
+  | 'viewSettings'
   | 'fields'
   | 'hiddenFields'
   | 'recordGroups'
@@ -52,8 +54,6 @@ export const ObjectOptionsDropdownContent = ({
   recordIndexId,
   objectMetadataItem,
 }: ObjectOptionsDropdownContentProps) => {
-  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
-
   const { currentContentId, onContentChange } =
     useDropdownContent<RecordIndexOptionsContentId>();
 
@@ -77,11 +77,7 @@ export const ObjectOptionsDropdownContent = ({
       viewBarId: recordIndexId,
     });
 
-  const {
-    visibleBoardFields,
-    isCompactModeActive,
-    setAndPersistIsCompactModeActive,
-  } = useObjectOptionsForBoard({
+  const { visibleBoardFields } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordBoardId: recordIndexId,
     viewBarId: recordIndexId,
@@ -110,43 +106,70 @@ export const ObjectOptionsDropdownContent = ({
   return (
     <>
       {!currentContentId && (
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            onClick={() => onContentChange('fields')}
-            LeftIcon={IconTag}
-            text="Fields"
-            contextualText={contextualFieldsText}
-            hasSubMenu
-          />
-          <MenuItem
-            onClick={() => onContentChange('recordGroups')}
-            LeftIcon={IconLayoutList}
-            text="Group by"
-            contextualText={viewGroupFieldMetadataItem?.label}
-            hasSubMenu
-          />
+        <>
+          <DropdownMenuHeader StartIcon={IconList}>
+            {objectMetadataItem.labelPlural}
+          </DropdownMenuHeader>
+          {/** TODO: Should be removed when view settings contains more options */}
+          {viewType === ViewType.Kanban && (
+            <>
+              <DropdownMenuItemsContainer>
+                <MenuItem
+                  onClick={() => onContentChange('viewSettings')}
+                  LeftIcon={IconLayout}
+                  text="View settings"
+                  hasSubMenu
+                />
+              </DropdownMenuItemsContainer>
+              <DropdownMenuSeparator />
+            </>
+          )}
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              onClick={() => onContentChange('fields')}
+              LeftIcon={IconTag}
+              text="Fields"
+              contextualText={contextualFieldsText}
+              hasSubMenu
+            />
+            <MenuItem
+              onClick={() => onContentChange('recordGroups')}
+              LeftIcon={IconLayoutList}
+              text="Group by"
+              contextualText={viewGroupFieldMetadataItem?.label}
+              hasSubMenu
+            />
+          </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
-          <MenuItem
-            onClick={download}
-            LeftIcon={IconFileExport}
-            text={displayedExportProgress(progress)}
-          />
-          <MenuItem
-            onClick={() => openObjectRecordsSpreasheetImportDialog()}
-            LeftIcon={IconFileImport}
-            text="Import"
-          />
-          <MenuItem
-            onClick={() => {
-              handleToggleTrashColumnFilter();
-              toggleSoftDeleteFilterState(true);
-              closeDropdown();
-            }}
-            LeftIcon={IconRotate2}
-            text={`Deleted ${objectNamePlural}`}
-          />
-        </DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer>
+            <MenuItem
+              onClick={download}
+              LeftIcon={IconFileExport}
+              text={displayedExportProgress(progress)}
+            />
+            <MenuItem
+              onClick={() => openObjectRecordsSpreasheetImportDialog()}
+              LeftIcon={IconFileImport}
+              text="Import"
+            />
+            <MenuItem
+              onClick={() => {
+                handleToggleTrashColumnFilter();
+                toggleSoftDeleteFilterState(true);
+                closeDropdown();
+              }}
+              LeftIcon={IconRotate2}
+              text={`Deleted ${objectNamePlural}`}
+            />
+          </DropdownMenuItemsContainer>
+        </>
       )}
+
+      <ObjectOptionsDropdownViewSettingsContent
+        viewType={viewType}
+        recordIndexId={recordIndexId}
+        objectMetadataItem={objectMetadataItem}
+      />
 
       <ObjectOptionsDropdownFieldsContent
         viewType={viewType}
@@ -159,26 +182,6 @@ export const ObjectOptionsDropdownContent = ({
         recordIndexId={recordIndexId}
         objectMetadataItem={objectMetadataItem}
       />
-
-      {viewType === ViewType.Kanban && !currentContentId && (
-        <>
-          <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer>
-            <MenuItemToggle
-              LeftIcon={IconBaselineDensitySmall}
-              onToggleChange={() =>
-                setAndPersistIsCompactModeActive(
-                  !isCompactModeActive,
-                  currentViewWithCombinedFiltersAndSorts,
-                )
-              }
-              toggled={isCompactModeActive}
-              text="Compact view"
-              toggleSize="small"
-            />
-          </DropdownMenuItemsContainer>
-        </>
-      )}
     </>
   );
 };

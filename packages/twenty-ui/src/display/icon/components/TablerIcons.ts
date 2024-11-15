@@ -152,6 +152,7 @@ export {
   IconKey,
   IconLanguage,
   IconLayersLinked,
+  IconLayout,
   IconLayoutKanban,
   IconLayoutList,
   IconLayoutSidebarLeftCollapse,
