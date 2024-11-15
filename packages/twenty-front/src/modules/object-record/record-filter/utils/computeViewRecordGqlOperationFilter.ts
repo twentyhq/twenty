@@ -607,26 +607,18 @@ const computeFilterRecordGqlOperationFilter = (
           filter.definition,
         );
       }
-      const stringifiedSelectValues = filter.value;
-      let parsedOptionValues: string[] = [];
 
-      if (!isNonEmptyString(stringifiedSelectValues)) return;
+      const options = resolveFilterValue(
+        filter as Filter & { definition: { type: 'MULTI_SELECT' } },
+      );
 
-      try {
-        parsedOptionValues = JSON.parse(stringifiedSelectValues);
-      } catch (e) {
-        throw new Error(
-          `Cannot parse filter value for MULTI_SELECT filter : "${stringifiedSelectValues}"`,
-        );
-      }
-
-      if (parsedOptionValues.length === 0) return;
+      if (options.length === 0) return;
 
       switch (filter.operand) {
         case ViewFilterOperand.Contains:
           return {
             [correspondingField.name]: {
-              containsAny: parsedOptionValues,
+              containsAny: options,
             } as ArrayFilter,
           };
         case ViewFilterOperand.DoesNotContain:
@@ -635,7 +627,7 @@ const computeFilterRecordGqlOperationFilter = (
               {
                 not: {
                   [correspondingField.name]: {
-                    containsAny: parsedOptionValues,
+                    containsAny: options,
                   } as ArrayFilter,
                 },
               },
@@ -665,33 +657,24 @@ const computeFilterRecordGqlOperationFilter = (
           filter.definition,
         );
       }
-      const stringifiedSelectValues = filter.value;
-      let parsedOptionValues: string[] = [];
+      const options = resolveFilterValue(
+        filter as Filter & { definition: { type: 'SELECT' } },
+      );
 
-      if (!isNonEmptyString(stringifiedSelectValues)) return;
-
-      try {
-        parsedOptionValues = JSON.parse(stringifiedSelectValues);
-      } catch (e) {
-        throw new Error(
-          `Cannot parse filter value for SELECT filter : "${stringifiedSelectValues}"`,
-        );
-      }
-
-      if (parsedOptionValues.length === 0) return;
+      if (options.length === 0) return;
 
       switch (filter.operand) {
         case ViewFilterOperand.Is:
           return {
             [correspondingField.name]: {
-              in: parsedOptionValues,
+              in: options,
             } as SelectFilter,
           };
         case ViewFilterOperand.IsNot:
           return {
             not: {
               [correspondingField.name]: {
-                in: parsedOptionValues,
+                in: options,
               } as SelectFilter,
             },
           };
@@ -706,7 +689,7 @@ const computeFilterRecordGqlOperationFilter = (
         case ViewFilterOperand.Contains:
           return {
             [correspondingField.name]: {
-              containsIlike: filter.value, // Why doesn't `%${filter.value}%` here? %-signs only work when they are in compute-where-condition-parts.ts.
+              containsIlike: filter.value, // TODO: Why doesn't `%${filter.value}%` here? %-signs only work when they are in compute-where-condition-parts.ts.
             } as StringFilter,
           };
         case ViewFilterOperand.DoesNotContain:
