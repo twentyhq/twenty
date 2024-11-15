@@ -7,7 +7,7 @@ export const TextFieldDisplay = () => {
   return (
     <TextDisplay
       text={fieldValue}
-      // displayMaxRows={fieldDefinition.metadata?.settings?.displayMaxRows}
+      displayMaxRows={fieldDefinition.metadata?.settings?.displayMaxRows}
     />
   );
 };
