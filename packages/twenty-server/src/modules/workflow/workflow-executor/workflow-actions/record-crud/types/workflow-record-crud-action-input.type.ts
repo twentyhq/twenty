@@ -1,9 +1,15 @@
+import {
+  ObjectRecordFilter,
+  ObjectRecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
 type ObjectRecord = Record<string, any>;
 
 export enum WorkflowRecordCRUDType {
   CREATE = 'create',
   UPDATE = 'update',
   DELETE = 'delete',
+  READ = 'read',
 }
 
 export type WorkflowCreateRecordActionInput = {
@@ -25,7 +31,16 @@ export type WorkflowDeleteRecordActionInput = {
   objectRecordId: string;
 };
 
+export type WorkflowReadRecordActionInput = {
+  type: WorkflowRecordCRUDType.READ;
+  objectName: string;
+  filter?: Partial<ObjectRecordFilter>;
+  orderBy?: Partial<ObjectRecordOrderBy>;
+  limit?: number;
+};
+
 export type WorkflowRecordCRUDActionInput =
   | WorkflowCreateRecordActionInput
   | WorkflowUpdateRecordActionInput
-  | WorkflowDeleteRecordActionInput;
+  | WorkflowDeleteRecordActionInput
+  | WorkflowReadRecordActionInput;

@@ -45,7 +45,7 @@ type ExportProgress = {
   displayType: 'percentage' | 'number';
 };
 
-export const useRecordData = ({
+export const useExportFetchRecords = ({
   objectMetadataItem,
   delayMs,
   maximumRequests = 100,

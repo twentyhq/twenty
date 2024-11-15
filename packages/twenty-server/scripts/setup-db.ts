@@ -8,6 +8,11 @@ rawDataSource
   .initialize()
   .then(async () => {
     await performQuery(
+      'CREATE EXTENSION IF NOT EXISTS "vector"',
+      'create extension "vector (pgvector)"',
+    );
+
+    await performQuery(
       'CREATE SCHEMA IF NOT EXISTS "public"',
       'create schema "public"',
     );
@@ -53,7 +58,7 @@ rawDataSource
     for (const wrapper of supabaseWrappers) {
       await performQuery(
         `
-          CREATE FOREIGN DATA WRAPPER "${wrapper.toLowerCase()}_fdw"
+          CREATE FOREIGN DATA WRAPPER IF NOT EXISTS "${wrapper.toLowerCase()}_fdw"
           HANDLER "${camelToSnakeCase(wrapper)}_fdw_handler"
           VALIDATOR "${camelToSnakeCase(wrapper)}_fdw_validator";
           `,

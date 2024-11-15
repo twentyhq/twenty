@@ -2,13 +2,12 @@ import { json2csv } from 'json-2-csv';
 import { useMemo } from 'react';
 
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
-import { useProcessRecordsForCSVExport } from '@/object-record/object-options-dropdown/hooks/useProcessRecordsForCSVExport';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-
 import {
   UseRecordDataOptions,
-  useRecordData,
-} from '@/object-record/object-options-dropdown/hooks/useRecordData';
+  useExportFetchRecords,
+} from '@/object-record/object-options-dropdown/hooks/useExportFetchRecords';
+import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
@@ -139,7 +138,7 @@ type UseExportTableDataOptions = Omit<UseRecordDataOptions, 'callback'> & {
   filename: string;
 };
 
-export const useExportRecordData = ({
+export const useExportRecords = ({
   delayMs,
   filename,
   maximumRequests = 100,
@@ -148,7 +147,7 @@ export const useExportRecordData = ({
   recordIndexId,
   viewType,
 }: UseExportTableDataOptions) => {
-  const { processRecordsForCSVExport } = useProcessRecordsForCSVExport(
+  const { processRecordsForCSVExport } = useExportProcessRecordsForCSV(
     objectMetadataItem.nameSingular,
   );
 
@@ -162,7 +161,7 @@ export const useExportRecordData = ({
     [filename, processRecordsForCSVExport],
   );
 
-  const { getTableData: download, progress } = useRecordData({
+  const { getTableData: download, progress } = useExportFetchRecords({
     delayMs,
     maximumRequests,
     objectMetadataItem,
