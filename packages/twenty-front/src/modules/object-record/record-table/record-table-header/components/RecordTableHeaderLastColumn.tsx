@@ -27,7 +27,7 @@ const StyledPlusIconHeaderCell = styled.th<{
   border-left: none !important;
   color: ${({ theme }) => theme.font.color.tertiary};
   min-width: 32px;
-  width: 32px;
+  width: 100%;
   border-right: none !important;
 
   ${({ isTableWiderThanScreen, theme }) =>
