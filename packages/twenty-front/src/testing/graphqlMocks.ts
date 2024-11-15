@@ -11,6 +11,7 @@ import {
   getCompanyDuplicateMock,
 } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
+import { mockedFavoritesData } from '~/testing/mock-data/favorite';
 import { mockedNotes } from '~/testing/mock-data/notes';
 import { getPeopleMock } from '~/testing/mock-data/people';
 import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
@@ -212,8 +213,11 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           favorites: {
-            edges: [],
-            totalCount: 0,
+            edges: mockedFavoritesData.map((favorite) => ({
+              node: favorite,
+              cursor: null,
+            })),
+            totalCount: mockedFavoritesData.length,
             pageInfo: {
               hasNextPage: false,
               hasPreviousPage: false,
@@ -449,7 +453,10 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           favorites: {
-            edges: [],
+            edges: mockedFavoritesData.map((favorite) => ({
+              node: favorite,
+              cursor: null,
+            })),
             pageInfo: {
               hasNextPage: false,
               hasPreviousPage: false,

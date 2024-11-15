@@ -2,13 +2,14 @@ import { InputSchemaPropertyType } from 'src/modules/code-introspection/types/in
 
 type Leaf = {
   isLeaf: true;
-  type?: InputSchemaPropertyType;
   icon?: string;
+  type?: InputSchemaPropertyType;
   value: any;
 };
 
 type Node = {
   isLeaf: false;
+  icon?: string;
   value: OutputSchema;
 };
 

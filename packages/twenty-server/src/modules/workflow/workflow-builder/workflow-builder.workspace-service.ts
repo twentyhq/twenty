@@ -10,9 +10,11 @@ import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
+import { WorkflowRecordCRUDType } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import {
   WorkflowAction,
   WorkflowActionType,
@@ -45,7 +47,7 @@ export class WorkflowBuilderWorkspaceService {
 
     switch (stepType) {
       case WorkflowTriggerType.DATABASE_EVENT: {
-        return await this.computeDatabaseEventTriggerOutputSchema({
+        return this.computeDatabaseEventTriggerOutputSchema({
           eventName: step.settings.eventName,
           workspaceId,
           objectMetadataRepository: this.objectMetadataRepository,
@@ -58,7 +60,7 @@ export class WorkflowBuilderWorkspaceService {
           return {};
         }
 
-        return await this.computeRecordOutputSchema({
+        return this.computeRecordOutputSchema({
           objectType,
           workspaceId,
           objectMetadataRepository: this.objectMetadataRepository,
@@ -71,7 +73,7 @@ export class WorkflowBuilderWorkspaceService {
         const { serverlessFunctionId, serverlessFunctionVersion } =
           step.settings.input;
 
-        return await this.computeCodeActionOutputSchema({
+        return this.computeCodeActionOutputSchema({
           serverlessFunctionId,
           serverlessFunctionVersion,
           workspaceId,
@@ -80,8 +82,9 @@ export class WorkflowBuilderWorkspaceService {
         });
       }
       case WorkflowActionType.RECORD_CRUD:
-        return await this.computeRecordOutputSchema({
+        return this.computeRecordCrudOutputSchema({
           objectType: step.settings.input.objectName,
+          operationType: step.settings.input.type,
           workspaceId,
           objectMetadataRepository: this.objectMetadataRepository,
         });
@@ -121,6 +124,39 @@ export class WorkflowBuilderWorkspaceService {
       objectMetadata,
       action as DatabaseEventAction,
     );
+  }
+
+  private async computeRecordCrudOutputSchema({
+    objectType,
+    operationType,
+    workspaceId,
+    objectMetadataRepository,
+  }: {
+    objectType: string;
+    operationType: string;
+    workspaceId: string;
+    objectMetadataRepository: Repository<ObjectMetadataEntity>;
+  }): Promise<OutputSchema> {
+    const recordOutputSchema = await this.computeRecordOutputSchema({
+      objectType,
+      workspaceId,
+      objectMetadataRepository,
+    });
+
+    if (operationType === WorkflowRecordCRUDType.READ) {
+      return {
+        first: { isLeaf: false, icon: 'IconAlpha', value: recordOutputSchema },
+        last: { isLeaf: false, icon: 'IconOmega', value: recordOutputSchema },
+        totalCount: {
+          isLeaf: true,
+          icon: 'IconSum',
+          type: 'number',
+          value: generateFakeValue('number'),
+        },
+      };
+    }
+
+    return recordOutputSchema;
   }
 
   private async computeRecordOutputSchema({
