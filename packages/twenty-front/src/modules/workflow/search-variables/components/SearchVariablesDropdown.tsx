@@ -11,15 +11,17 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Editor } from '@tiptap/react';
 import { useState } from 'react';
-import { IconVariable } from 'twenty-ui';
+import { IconVariablePlus } from 'twenty-ui';
 
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
-)`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
+)<{ transparentBackground?: boolean }>`
+  background-color: ${({ theme, transparentBackground }) =>
+    transparentBackground
+      ? 'transparent'
+      : theme.background.transparent.lighter};
   color: ${({ theme }) => theme.font.color.tertiary};
-  padding: ${({ theme }) => theme.spacing(0)};
-  margin: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const SearchVariablesDropdown = ({
@@ -65,12 +67,15 @@ const SearchVariablesDropdown = ({
         scope: dropdownId,
       }}
       clickableComponent={
-        <StyledDropdownVariableButtonContainer isUnfolded={isDropdownOpen}>
-          <IconVariable size={theme.icon.size.sm} />
+        <StyledDropdownVariableButtonContainer
+          isUnfolded={isDropdownOpen}
+          transparentBackground
+        >
+          <IconVariablePlus size={theme.icon.size.sm} />
         </StyledDropdownVariableButtonContainer>
       }
       dropdownComponents={
-        <DropdownMenuItemsContainer>
+        <DropdownMenuItemsContainer hasMaxHeight>
           {selectedStep ? (
             <SearchVariablesDropdownStepSubItem
               step={selectedStep}
