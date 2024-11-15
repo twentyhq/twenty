@@ -8,15 +8,17 @@ const StyledHeader = styled.li`
   color: ${({ theme }) => theme.font.color.primary};
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme, onClick }) =>
+    onClick ? theme.font.size.sm : theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
   border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(1)} 0;
 
   user-select: none;
+  width: inherit;
 
   &:hover {
     background: ${({ theme, onClick }) =>

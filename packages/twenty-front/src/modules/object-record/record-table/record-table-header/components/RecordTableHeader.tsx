@@ -26,16 +26,22 @@ const StyledTableHead = styled.thead`
       position: sticky;
       left: 0;
       z-index: 5;
+      transition: 0.3s ease;
     }
+
     th:nth-of-type(2) {
       position: sticky;
-      left: 9px;
+      left: 11px;
       z-index: 5;
+      transition: 0.3s ease;
     }
+
     th:nth-of-type(3) {
       position: sticky;
-      left: 39px;
+      left: 43px;
       z-index: 5;
+      transition: 0.3s ease;
+
       &::after {
         content: '';
         position: absolute;
@@ -46,9 +52,10 @@ const StyledTableHead = styled.thead`
         box-shadow: ${({ theme }) => theme.boxShadow.light};
         clip-path: inset(0px -4px 0px 0px);
       }
+
       @media (max-width: ${MOBILE_VIEWPORT}px) {
-        width: 30px;
-        max-width: 35px;
+        width: 34px;
+        max-width: 34px;
       }
     }
   }

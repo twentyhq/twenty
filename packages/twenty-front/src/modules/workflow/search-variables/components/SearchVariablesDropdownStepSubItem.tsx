@@ -1,9 +1,9 @@
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
-import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
 import { isObject } from '@sniptt/guards';
 import { useState } from 'react';
-import { IconChevronLeft } from 'twenty-ui';
+import { IconChevronLeft, MenuItemSelect } from 'twenty-ui';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 
 type SearchVariablesDropdownStepSubItemProps = {
   step: StepOutputSchema;
@@ -17,6 +17,7 @@ const SearchVariablesDropdownStepSubItem = ({
   onBack,
 }: SearchVariablesDropdownStepSubItemProps) => {
   const [currentPath, setCurrentPath] = useState<string[]>([]);
+  const [searchInputValue, setSearchInputValue] = useState('');
 
   const getSelectedObject = () => {
     let selected = step.outputSchema;
@@ -31,6 +32,7 @@ const SearchVariablesDropdownStepSubItem = ({
 
     if (isObject(selectedObject[key])) {
       setCurrentPath([...currentPath, key]);
+      setSearchInputValue('');
     } else {
       onSelect(`{{${step.id}.${[...currentPath, key].join('.')}}}`);
     }
@@ -46,12 +48,25 @@ const SearchVariablesDropdownStepSubItem = ({
 
   const headerLabel = currentPath.length === 0 ? step.name : currentPath.at(-1);
 
+  const options = Object.entries(getSelectedObject());
+
+  const filteredOptions = searchInputValue
+    ? options.filter(([key]) =>
+        key.toLowerCase().includes(searchInputValue.toLowerCase()),
+      )
+    : options;
+
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={goBack}>
         {headerLabel}
       </DropdownMenuHeader>
-      {Object.entries(getSelectedObject()).map(([key, value]) => (
+      <DropdownMenuSearchInput
+        autoFocus
+        value={searchInputValue}
+        onChange={(event) => setSearchInputValue(event.target.value)}
+      />
+      {filteredOptions.map(([key, value]) => (
         <MenuItemSelect
           key={key}
           selected={false}

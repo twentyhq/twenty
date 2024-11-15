@@ -26,6 +26,7 @@ import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActio
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
+import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -51,6 +52,7 @@ const StyledContainer = styled.div`
 
 const StyledContainerWithPadding = styled.div`
   height: calc(100% - 40px);
+  margin-left: ${({ theme }) => theme.spacing(2)};
   width: 100%;
 `;
 
@@ -206,7 +208,7 @@ export const RecordIndexContainer = () => {
             viewBarId={recordIndexId}
           />
         </SpreadsheetImportProvider>
-
+        <RecordIndexFiltersToContextStoreEffect />
         {recordIndexViewType === ViewType.Table && (
           <>
             <RecordIndexTableContainer

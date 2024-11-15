@@ -1,12 +1,14 @@
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataMapItem } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 
 export function getCompositeFieldMetadataCollection(
-  objectMetadata: ObjectMetadataMapItem,
+  ObjectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
 ) {
   const compositeFieldMetadataCollection = Object.values(
-    objectMetadata.fields,
-  ).filter((fieldMetadata) => isCompositeFieldMetadataType(fieldMetadata.type));
+    ObjectMetadataItemWithFieldMaps.fieldsById,
+  ).filter((fieldMetadataItem) =>
+    isCompositeFieldMetadataType(fieldMetadataItem.type),
+  );
 
   return compositeFieldMetadataCollection;
 }

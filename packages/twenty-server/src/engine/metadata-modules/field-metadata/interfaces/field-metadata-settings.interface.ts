@@ -13,6 +13,7 @@ type FieldMetadataDefaultSettings = {
 type FieldMetadataNumberSettings = {
   dataType: NumberDataType;
   decimals?: number;
+  type?: string;
 };
 
 type FieldMetadataDateSettings = {

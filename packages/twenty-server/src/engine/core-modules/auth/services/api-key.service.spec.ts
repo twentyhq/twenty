@@ -61,10 +61,14 @@ describe('ApiKeyService', () => {
 
       expect(result).toEqual({ token: mockToken });
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
-        { sub: workspaceId },
+        {
+          sub: workspaceId,
+          type: 'API_KEY',
+          workspaceId: workspaceId,
+        },
         expect.objectContaining({
           secret: 'mocked-secret',
-          expiresIn: '1h',
+          expiresIn: '100y',
           jwtid: apiKeyId,
         }),
       );
@@ -84,7 +88,11 @@ describe('ApiKeyService', () => {
       await service.generateApiKeyToken(workspaceId, apiKeyId, expiresAt);
 
       expect(jwtWrapperService.sign).toHaveBeenCalledWith(
-        { sub: workspaceId },
+        {
+          sub: workspaceId,
+          type: 'API_KEY',
+          workspaceId: workspaceId,
+        },
         expect.objectContaining({
           secret: 'mocked-secret',
           expiresIn: expect.any(Number),

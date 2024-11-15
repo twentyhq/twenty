@@ -28,6 +28,7 @@ export const useListenClickOutsideV2 = <T extends Element>({
   const {
     getClickOutsideListenerIsMouseDownInsideState,
     getClickOutsideListenerIsActivatedState,
+    getClickOutsideListenerMouseDownHappenedState,
   } = useClickOustideListenerStates(listenerId);
 
   const handleMouseDown = useRecoilCallback(
@@ -36,6 +37,8 @@ export const useListenClickOutsideV2 = <T extends Element>({
         const clickOutsideListenerIsActivated = snapshot
           .getLoadable(getClickOutsideListenerIsActivatedState)
           .getValue();
+
+        set(getClickOutsideListenerMouseDownHappenedState, true);
 
         const isListening = clickOutsideListenerIsActivated && enabled;
 
@@ -92,19 +95,30 @@ export const useListenClickOutsideV2 = <T extends Element>({
         }
       },
     [
+      getClickOutsideListenerIsActivatedState,
+      enabled,
       mode,
       refs,
       getClickOutsideListenerIsMouseDownInsideState,
-      enabled,
-      getClickOutsideListenerIsActivatedState,
+      getClickOutsideListenerMouseDownHappenedState,
     ],
   );
 
   const handleClickOutside = useRecoilCallback(
     ({ snapshot }) =>
       (event: MouseEvent | TouchEvent) => {
+        const clickOutsideListenerIsActivated = snapshot
+          .getLoadable(getClickOutsideListenerIsActivatedState)
+          .getValue();
+
+        const isListening = clickOutsideListenerIsActivated && enabled;
+
         const isMouseDownInside = snapshot
           .getLoadable(getClickOutsideListenerIsMouseDownInsideState)
+          .getValue();
+
+        const hasMouseDownHappened = snapshot
+          .getLoadable(getClickOutsideListenerMouseDownHappenedState)
           .getValue();
 
         if (mode === ClickOutsideMode.compareHTMLRef) {
@@ -132,6 +146,8 @@ export const useListenClickOutsideV2 = <T extends Element>({
             .some((ref) => ref.current?.contains(event.target as Node));
 
           if (
+            isListening &&
+            hasMouseDownHappened &&
             !clickedOnAtLeastOneRef &&
             !isMouseDownInside &&
             !isClickedOnExcluded
@@ -171,13 +187,21 @@ export const useListenClickOutsideV2 = <T extends Element>({
               return true;
             });
 
-          if (!clickedOnAtLeastOneRef && !isMouseDownInside) {
+          if (
+            !clickedOnAtLeastOneRef &&
+            !isMouseDownInside &&
+            isListening &&
+            hasMouseDownHappened
+          ) {
             callback(event);
           }
         }
       },
     [
+      getClickOutsideListenerIsActivatedState,
+      enabled,
       getClickOutsideListenerIsMouseDownInsideState,
+      getClickOutsideListenerMouseDownHappenedState,
       mode,
       refs,
       excludeClassNames,
