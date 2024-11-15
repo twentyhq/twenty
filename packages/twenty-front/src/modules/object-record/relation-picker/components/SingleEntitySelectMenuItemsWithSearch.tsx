@@ -89,7 +89,7 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
             {createNewButton}
           </DropdownMenuItemsContainer>
           {entities.entitiesToSelect.length > 0 && <DropdownMenuSeparator />}
-          {results}
+          {entities.entitiesToSelect.length > 0 && results}
           <DropdownMenuSeparator />
         </>
       )}
@@ -98,7 +98,7 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
         isUndefinedOrNull(dropdownPlacement)) && (
         <>
           <DropdownMenuSeparator />
-          {results}
+          {entities.entitiesToSelect.length > 0 && results}
           {entities.entitiesToSelect.length > 0 && isDefined(onCreate) && (
             <DropdownMenuSeparator />
           )}
