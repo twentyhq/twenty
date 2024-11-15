@@ -8,6 +8,7 @@ import {
   DateFilter,
   EmailsFilter,
   FloatFilter,
+  MultiSelectFilter,
   RawJsonFilter,
   RecordGqlOperationFilter,
   RelationFilter,
@@ -628,18 +629,18 @@ const computeFilterRecordGqlOperationFilter = (
                 not: {
                   [correspondingField.name]: {
                     containsAny: options,
-                  } as ArrayFilter,
+                  } as MultiSelectFilter,
                 },
               },
               {
                 [correspondingField.name]: {
                   isEmptyArray: true,
-                } as ArrayFilter,
+                } as MultiSelectFilter,
               },
               {
                 [correspondingField.name]: {
                   is: 'NULL',
-                } as ArrayFilter,
+                } as MultiSelectFilter,
               },
             ],
           };

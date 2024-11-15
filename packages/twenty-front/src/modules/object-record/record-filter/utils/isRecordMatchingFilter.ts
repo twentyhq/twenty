@@ -14,12 +14,14 @@ import {
   FullNameFilter,
   LeafObjectRecordFilter,
   LinksFilter,
+  MultiSelectFilter,
   NotObjectRecordFilter,
   OrObjectRecordFilter,
   PhonesFilter,
   RatingFilter,
   RawJsonFilter,
   RecordGqlOperationFilter,
+  SelectFilter,
   StringFilter,
   UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
@@ -28,8 +30,10 @@ import { isMatchingBooleanFilter } from '@/object-record/record-filter/utils/isM
 import { isMatchingCurrencyFilter } from '@/object-record/record-filter/utils/isMatchingCurrencyFilter';
 import { isMatchingDateFilter } from '@/object-record/record-filter/utils/isMatchingDateFilter';
 import { isMatchingFloatFilter } from '@/object-record/record-filter/utils/isMatchingFloatFilter';
+import { isMatchingMultiSelectFilter } from '@/object-record/record-filter/utils/isMatchingMultiSelectFilter';
 import { isMatchingRatingFilter } from '@/object-record/record-filter/utils/isMatchingRatingFilter';
 import { isMatchingRawJsonFilter } from '@/object-record/record-filter/utils/isMatchingRawJsonFilter';
+import { isMatchingSelectFilter } from '@/object-record/record-filter/utils/isMatchingSelectFilter';
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
 import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -174,7 +178,15 @@ export const isRecordMatchingFilter = ({
         });
       }
       case FieldMetadataType.Select:
+        return isMatchingSelectFilter({
+          selectFilter: filterValue as SelectFilter,
+          value: record[filterKey],
+        });
       case FieldMetadataType.MultiSelect:
+        return isMatchingMultiSelectFilter({
+          multiSelectFilter: filterValue as MultiSelectFilter,
+          value: record[filterKey],
+        });
       case FieldMetadataType.Array: {
         return isMatchingArrayFilter({
           arrayFilter: filterValue as ArrayFilter,

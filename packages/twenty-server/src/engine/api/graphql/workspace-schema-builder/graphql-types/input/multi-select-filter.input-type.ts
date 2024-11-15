@@ -7,10 +7,10 @@ import {
 
 import { FilterIs } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/filter-is.input-type';
 
-export const ArrayFilterType = new GraphQLInputObjectType({
-  name: 'ArrayFilter',
+export const MultiSelectFilterType = new GraphQLInputObjectType({
+  name: 'MultiSelectFilter',
   fields: {
-    containsIlike: { type: new GraphQLList(GraphQLString) },
+    containsAny: { type: new GraphQLList(GraphQLString) },
     is: { type: FilterIs },
     isEmptyArray: { type: GraphQLBoolean },
   },

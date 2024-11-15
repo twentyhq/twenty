@@ -7,17 +7,7 @@ export const isMatchingArrayFilter = ({
   arrayFilter: ArrayFilter;
   value: string[] | null;
 }) => {
-  if (value === null || !Array.isArray(value)) {
-    return false;
-  }
-
   switch (true) {
-    case arrayFilter.contains !== undefined: {
-      return arrayFilter.contains.every((item) => value.includes(item));
-    }
-    case arrayFilter.notContains !== undefined: {
-      return !arrayFilter.notContains.some((item) => value.includes(item));
-    }
     case arrayFilter.is !== undefined: {
       if (arrayFilter.is === 'NULL') {
         return value === null;
@@ -25,12 +15,15 @@ export const isMatchingArrayFilter = ({
         return value !== null;
       }
     }
-    case arrayFilter.containsAny !== undefined: {
-      return arrayFilter.containsAny.some((item) => value.includes(item));
+    case arrayFilter.isEmptyArray !== undefined: {
+      return Array.isArray(value) && value.length === 0;
     }
     case arrayFilter.containsIlike !== undefined: {
       const searchTerm = arrayFilter.containsIlike.toLowerCase();
-      return value.some((item) => item.toLowerCase().includes(searchTerm));
+      return (
+        Array.isArray(value) &&
+        value.some((item) => item.toLowerCase().includes(searchTerm))
+      );
     }
     default: {
       throw new Error(

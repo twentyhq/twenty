@@ -107,14 +107,19 @@ export type PhonesFilter = {
 };
 
 export type SelectFilter = {
+  is?: IsFilter;
   in?: string[];
 };
 
-export type ArrayFilter = {
-  contains?: string[];
-  notContains?: string[];
+export type MultiSelectFilter = {
   is?: IsFilter;
+  isEmptyArray?: boolean;
   containsAny?: string[];
+};
+
+export type ArrayFilter = {
+  is?: IsFilter;
+  isEmptyArray?: boolean;
   containsIlike?: string;
 };
 
