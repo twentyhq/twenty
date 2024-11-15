@@ -99,10 +99,14 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
         <>
           <DropdownMenuSeparator />
           {results}
-          {entities.entitiesToSelect.length > 0 && <DropdownMenuSeparator />}
-          <DropdownMenuItemsContainer>
-            {createNewButton}
-          </DropdownMenuItemsContainer>
+          {entities.entitiesToSelect.length > 0 && isDefined(onCreate) && (
+            <DropdownMenuSeparator />
+          )}
+          {isDefined(onCreate) && (
+            <DropdownMenuItemsContainer>
+              {createNewButton}
+            </DropdownMenuItemsContainer>
+          )}
         </>
       )}
     </>
