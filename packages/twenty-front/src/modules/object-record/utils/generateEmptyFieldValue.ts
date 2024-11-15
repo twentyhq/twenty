@@ -1,7 +1,7 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
-    FieldMetadataType,
-    RelationDefinitionType,
+  FieldMetadataType,
+  RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
 export const generateEmptyFieldValue = (
