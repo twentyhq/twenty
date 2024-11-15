@@ -34,7 +34,9 @@ export const WorkflowRunActionEffect = () => {
         position: index,
         Icon: IconSettingsAutomation,
         onClick: async () => {
-          await runWorkflowVersion(activeWorkflowVersion.id);
+          await runWorkflowVersion({
+            workflowVersionId: activeWorkflowVersion.id,
+          });
 
           enqueueSnackBar('', {
             variant: SnackBarVariant.Success,
