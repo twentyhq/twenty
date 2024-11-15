@@ -22,7 +22,7 @@ describe('useCurrentTableCellPosition', () => {
 
     expect(result.current).toEqual({
       column: 3,
-      recordId: 'recordId',
+      row: 2,
     });
   });
 });

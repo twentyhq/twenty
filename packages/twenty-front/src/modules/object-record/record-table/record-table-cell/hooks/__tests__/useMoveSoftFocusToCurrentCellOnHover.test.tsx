@@ -19,16 +19,16 @@ const mockSoftFocusActiveState = {
   key: 'isSoftFocusActiveComponentState__{"instanceId":"scopeId"}',
 };
 const mockIsSoftFocusOnTableCellFamilyStateCurrentPosition = {
-  key: 'isSoftFocusOnTableCellComponentFamilyState__{"familyKey":{"column":3,"recordId":"recordId"},"instanceId":"scopeId"}',
+  key: 'isSoftFocusOnTableCellComponentFamilyState__{"familyKey":{"column":1,"row":0},"instanceId":"scopeId"}',
 };
 const mockIsSoftFocusOnTableCellFamilyStateNewPosition = {
-  key: 'isSoftFocusOnTableCellComponentFamilyState__{"familyKey":{"column":3,"recordId":"recordId"},"instanceId":"scopeId"}',
+  key: 'isSoftFocusOnTableCellComponentFamilyState__{"familyKey":{"column":3,"row":2},"instanceId":"scopeId"}',
 };
 const mockCurrentTableCellInEditModePositionState = {
   key: 'currentTableCellInEditModePositionComponentState__{"instanceId":"scopeId"}',
 };
 const mockIsTableCellInEditModeFamilyState = {
-  key: 'isTableCellInEditModeComponentFamilyState__{"familyKey":{"column":3,"recordId":"recordId"},"instanceId":"scopeId"}',
+  key: 'isTableCellInEditModeComponentFamilyState__{"familyKey":{"column":1,"row":0},"instanceId":"scopeId"}',
 };
 const mockCurrentHotKeyScopeState = {
   key: 'currentHotkeyScopeState',
@@ -40,9 +40,9 @@ const mockCallbackInterface = {
     getLoadable: (recoilValue: { key: string }) => ({
       getValue: () => {
         if (recoilValue.key === mockSoftFocusPositionState.key)
-          return { column: 3, recordId: 'recordId' };
+          return { column: 1, row: 0 };
         if (recoilValue.key === mockCurrentTableCellInEditModePositionState.key)
-          return { column: 3, recordId: 'recordId' };
+          return { column: 1, row: 0 };
         else if (recoilValue.key === mockIsTableCellInEditModeFamilyState.key)
           return false;
         else if (recoilValue.key === mockCurrentHotKeyScopeState.key)
@@ -120,7 +120,7 @@ describe('useMoveSoftFocusToCurrentCellOnHover', () => {
     expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(
       3,
       mockSoftFocusPositionState,
-      { column: 3, recordId: 'recordId' },
+      { column: 3, row: 2 },
     );
 
     expect(mockCallbackInterface.set).toHaveBeenNthCalledWith(
