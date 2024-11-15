@@ -778,7 +778,7 @@ export type PublishServerlessFunctionInput = {
 export type Query = {
   __typename?: 'Query';
   billingPortalSession: SessionEntity;
-  checkUserExists: UserExists;
+  checkUserExists: UserExistsOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
   currentUser: User;
@@ -1269,12 +1269,21 @@ export type UserEdge = {
 
 export type UserExists = {
   __typename?: 'UserExists';
+  availableWorkspaces?: Maybe<Array<AvailableWorkspaceOutput>>;
   exists: Scalars['Boolean'];
 };
+
+export type UserExistsOutput = UserExists | UserNotExists;
 
 export type UserMappingOptionsUser = {
   __typename?: 'UserMappingOptionsUser';
   user?: Maybe<Scalars['String']>;
+};
+
+export type UserNotExists = {
+  __typename?: 'UserNotExists';
+  availableWorkspaces?: Maybe<Array<AvailableWorkspaceOutput>>;
+  exists: Scalars['Boolean'];
 };
 
 export type UserWorkspace = {
@@ -1763,14 +1772,7 @@ export type CheckUserExistsQueryVariables = Exact<{
 }>;
 
 
-export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename?: 'UserExists', exists: boolean } };
-
-export type FindAvailableWorkspacesByEmailQueryVariables = Exact<{
-  email: Scalars['String'];
-}>;
-
-
-export type FindAvailableWorkspacesByEmailQuery = { __typename?: 'Query', findAvailableWorkspacesByEmail: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, subdomain: string, logo?: string | null, sso?: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> | null }> };
+export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename?: 'UserExists', exists: boolean, availableWorkspaces?: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, subdomain: string, logo?: string | null, sso?: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> | null }> | null } | { __typename?: 'UserNotExists', exists: boolean } };
 
 export type GetPublicWorkspaceDataBySubdomainQueryVariables = Exact<{
   workspaceId?: InputMaybe<Scalars['String']>;
@@ -2874,7 +2876,25 @@ export type VerifyMutationOptions = Apollo.BaseMutationOptions<VerifyMutation, V
 export const CheckUserExistsDocument = gql`
     query CheckUserExists($email: String!, $captchaToken: String) {
   checkUserExists(email: $email, captchaToken: $captchaToken) {
-    exists
+    ... on UserExists {
+      exists
+      availableWorkspaces {
+        id
+        displayName
+        subdomain
+        logo
+        sso {
+          type
+          id
+          issuer
+          name
+          status
+        }
+      }
+    }
+    ... on UserNotExists {
+      exists
+    }
   }
 }
     `;
@@ -2907,51 +2927,6 @@ export function useCheckUserExistsLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type CheckUserExistsQueryHookResult = ReturnType<typeof useCheckUserExistsQuery>;
 export type CheckUserExistsLazyQueryHookResult = ReturnType<typeof useCheckUserExistsLazyQuery>;
 export type CheckUserExistsQueryResult = Apollo.QueryResult<CheckUserExistsQuery, CheckUserExistsQueryVariables>;
-export const FindAvailableWorkspacesByEmailDocument = gql`
-    query FindAvailableWorkspacesByEmail($email: String!) {
-  findAvailableWorkspacesByEmail(email: $email) {
-    id
-    displayName
-    subdomain
-    logo
-    sso {
-      type
-      id
-      issuer
-      name
-      status
-    }
-  }
-}
-    `;
-
-/**
- * __useFindAvailableWorkspacesByEmailQuery__
- *
- * To run a query within a React component, call `useFindAvailableWorkspacesByEmailQuery` and pass it any options that fit your needs.
- * When your component renders, `useFindAvailableWorkspacesByEmailQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFindAvailableWorkspacesByEmailQuery({
- *   variables: {
- *      email: // value for 'email'
- *   },
- * });
- */
-export function useFindAvailableWorkspacesByEmailQuery(baseOptions: Apollo.QueryHookOptions<FindAvailableWorkspacesByEmailQuery, FindAvailableWorkspacesByEmailQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<FindAvailableWorkspacesByEmailQuery, FindAvailableWorkspacesByEmailQueryVariables>(FindAvailableWorkspacesByEmailDocument, options);
-      }
-export function useFindAvailableWorkspacesByEmailLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindAvailableWorkspacesByEmailQuery, FindAvailableWorkspacesByEmailQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<FindAvailableWorkspacesByEmailQuery, FindAvailableWorkspacesByEmailQueryVariables>(FindAvailableWorkspacesByEmailDocument, options);
-        }
-export type FindAvailableWorkspacesByEmailQueryHookResult = ReturnType<typeof useFindAvailableWorkspacesByEmailQuery>;
-export type FindAvailableWorkspacesByEmailLazyQueryHookResult = ReturnType<typeof useFindAvailableWorkspacesByEmailLazyQuery>;
-export type FindAvailableWorkspacesByEmailQueryResult = Apollo.QueryResult<FindAvailableWorkspacesByEmailQuery, FindAvailableWorkspacesByEmailQueryVariables>;
 export const GetPublicWorkspaceDataBySubdomainDocument = gql`
     query GetPublicWorkspaceDataBySubdomain($workspaceId: String) {
   getPublicWorkspaceDataBySubdomain(workspaceId: $workspaceId) {

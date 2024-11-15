@@ -47,7 +47,7 @@ import { ImpersonateInput } from './dto/impersonate.input';
 import { LoginToken } from './dto/login-token.entity';
 import { SignUpInput } from './dto/sign-up.input';
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
-import { UserExists } from './dto/user-exists.entity';
+import { UserExistsOutput } from './dto/user-exists.entity';
 import { CheckUserExistsInput } from './dto/user-exists.input';
 import { Verify } from './dto/verify.entity';
 import { VerifyInput } from './dto/verify.input';
@@ -73,15 +73,25 @@ export class AuthResolver {
   ) {}
 
   @UseGuards(CaptchaGuard)
-  @Query(() => UserExists)
+  @Query(() => UserExistsOutput)
   async checkUserExists(
     @Args() checkUserExistsInput: CheckUserExistsInput,
-  ): Promise<UserExists> {
+  ): Promise<typeof UserExistsOutput> {
     const { exists } = await this.authService.checkUserExists(
       checkUserExistsInput.email,
     );
 
-    return { exists };
+    return {
+      exists,
+      ...(exists
+        ? {
+            availableWorkspaces:
+              await this.authService.findAvailableWorkspacesByEmail(
+                checkUserExistsInput.email,
+              ),
+          }
+        : {}),
+    };
   }
 
   @Query(() => WorkspaceInviteHashValid)

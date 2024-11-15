@@ -39,14 +39,6 @@ export class SSOResolver {
     );
   }
 
-  // @UseGuards(SSOProviderEnabledGuard)
-  // @Mutation(() => [FindAvailableSSOIDPOutput])
-  // async findAvailableSSOIdentityProviders(
-  //   @Args('input') input: FindAvailableSSOIDPInput,
-  // ): Promise<Array<FindAvailableSSOIDPOutput>> {
-  //   return this.sSOService.findAvailableSSOIdentityProviders(input.email);
-  // }
-
   @UseGuards(SSOProviderEnabledGuard)
   @Query(() => [FindAvailableSSOIDPOutput])
   async listSSOIdentityProvidersByWorkspaceId(

@@ -12,7 +12,6 @@ import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMic
 import { FormProvider } from 'react-hook-form';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
-import { useFindAvailableWorkspacesByEmail } from '@/auth/sign-in-up/hooks/useFindAvailableWorkspacedByEmail';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
@@ -37,6 +36,7 @@ import {
   signInUpModeState,
 } from '@/auth/states/signInUpModeState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { UserExists } from '~/generated/graphql';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -75,9 +75,7 @@ export const SignInUpGlobalScopeForm = () => {
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
 
-  const { findAvailableWorkspacesByEmail } =
-    useFindAvailableWorkspacesByEmail();
-  const setAvailableWorkspacesForAuthState = useSetRecoilState(
+  const setAvailableWorkspacesForAuth = useSetRecoilState(
     availableWorkspacesForAuthState,
   );
   const { enqueueSnackBar } = useSnackBar();
@@ -89,25 +87,17 @@ export const SignInUpGlobalScopeForm = () => {
 
   const { submitCredentials } = useSignInUp(form);
 
-  const continueToWorkspaceSelection = async () => {
-    const { data } = await findAvailableWorkspacesByEmail(
-      form.getValues('email'),
-    );
-
-    if (signInUpStep === SignInUpStep.Password) {
-      await form.handleSubmit(submitCredentials)();
-    }
-
-    if (isDefined(data) && data.findAvailableWorkspacesByEmail.length > 1) {
-      setAvailableWorkspacesForAuthState(data.findAvailableWorkspacesByEmail);
+  const continueToWorkspaceSelection = async (
+    availableWorkspaces: UserExists['availableWorkspaces'],
+  ) => {
+    if (isDefined(availableWorkspaces) && availableWorkspaces.length > 1) {
       return setSignInUpStep(SignInUpStep.WorkspaceSelection);
     }
 
-    if (isDefined(data) && data.findAvailableWorkspacesByEmail.length === 1) {
-      return redirectToWorkspace(
-        data.findAvailableWorkspacesByEmail[0].subdomain,
-        { email: form.getValues('email') },
-      );
+    if (isDefined(availableWorkspaces) && availableWorkspaces.length === 1) {
+      return redirectToWorkspace(availableWorkspaces[0].subdomain, {
+        email: form.getValues('email'),
+      });
     }
 
     // si 1 workspace sans sso redirige sur workspace avec email en query params pour prefill
@@ -115,29 +105,36 @@ export const SignInUpGlobalScopeForm = () => {
     // si plusieurs workspaces redirige sur la liste des workspaces
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const handleSubmit = async () => {
     if (isDefined(form?.formState?.errors?.email)) {
       setShowErrors(true);
       return;
     }
 
     if (signInUpStep === SignInUpStep.Password) {
-      await form.handleSubmit(submitCredentials)();
-      return continueToWorkspaceSelection();
+      await submitCredentials(form.getValues());
+      // TODO AMOREAUX: Continue to workspace creation
+      return;
     }
 
     const token = await readCaptchaToken();
-    checkUserExists.checkUserExistsQuery({
+    await checkUserExists.checkUserExistsQuery({
       variables: {
         email: form.getValues('email'),
         captchaToken: token,
       },
       onCompleted: (data) => {
         requestFreshCaptchaToken();
-        if (data?.checkUserExists.exists) {
-          continueToWorkspaceSelection();
+        if (
+          data?.checkUserExists.exists &&
+          data.checkUserExists.__typename === 'UserExists'
+        ) {
+          setAvailableWorkspacesForAuth(
+            data?.checkUserExists.availableWorkspaces,
+          );
+          continueToWorkspaceSelection(
+            data?.checkUserExists.availableWorkspaces,
+          );
         } else {
           if (!isMultiWorkspaceEnabled) {
             return enqueueSnackBar('User not found', {
@@ -175,7 +172,7 @@ export const SignInUpGlobalScopeForm = () => {
         <HorizontalSeparator visible />
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>
-          <StyledForm onSubmit={handleSubmit}>
+          <StyledForm onSubmit={form.handleSubmit(handleSubmit)}>
             <SignInUpEmailField showErrors={showErrors} />
             {signInUpStep === SignInUpStep.Password && (
               <SignInUpPasswordField

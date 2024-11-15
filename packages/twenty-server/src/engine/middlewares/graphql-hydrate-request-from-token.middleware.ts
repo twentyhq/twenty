@@ -56,7 +56,6 @@ export class GraphQLHydrateRequestFromTokenMiddleware
       'IntrospectionQuery',
       'ExchangeAuthorizationCode',
       'GetAuthorizationUrl',
-      'FindAvailableSSOIdentityProviders',
       'GetPublicWorkspaceDataBySubdomain',
       'FindAvailableWorkspacesByEmail',
     ];

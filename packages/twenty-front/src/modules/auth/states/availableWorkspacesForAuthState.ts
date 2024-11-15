@@ -1,10 +1,9 @@
 import { createState } from 'twenty-ui';
-import { FindAvailableWorkspacesByEmailQuery } from '~/generated/graphql';
+import { UserExists } from '~/generated/graphql';
 
-export const availableWorkspacesForAuthState = createState<Omit<
-  FindAvailableWorkspacesByEmailQuery['findAvailableWorkspacesByEmail'],
-  '__typename'
-> | null>({
+export const availableWorkspacesForAuthState = createState<
+  UserExists['availableWorkspaces']
+>({
   key: 'availableWorkspacesForAuthState',
   defaultValue: null,
 });

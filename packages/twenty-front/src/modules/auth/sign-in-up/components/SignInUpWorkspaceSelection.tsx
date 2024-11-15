@@ -37,11 +37,6 @@ export const SignInUpWorkspaceSelection = () => {
   const availableWorkspacesForAuth = useRecoilValue(
     availableWorkspacesForAuthState,
   );
-  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-
-  const createNewWorkspace = () => {
-    console.log('>>>>>>>>>>>>>> createNewWorkspace');
-  };
 
   return (
     <>
@@ -68,20 +63,6 @@ export const SignInUpWorkspaceSelection = () => {
               ))}
             </>
           )}
-        {isMultiWorkspaceEnabled && (
-          <>
-            {availableWorkspacesForAuth &&
-              availableWorkspacesForAuth.length > 0 && (
-                <HorizontalSeparator text="Or" />
-              )}
-            <MainButton onClick={() => createNewWorkspace()} fullWidth>
-              <StyledMainButtonContent>
-                <StyledIcon src={DEFAULT_WORKSPACE_LOGO} />
-                <StyledDisplayName>Create workspace</StyledDisplayName>
-              </StyledMainButtonContent>
-            </MainButton>
-          </>
-        )}
       </StyledContentContainer>
     </>
   );
