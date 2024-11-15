@@ -79,7 +79,7 @@ export const generateFakeObjectRecordEvent = (
       properties: {
         isLeaf: false,
         value: {
-          after: { isLeaf: false, value: after },
+          before: { isLeaf: false, value: before },
         },
       },
     };

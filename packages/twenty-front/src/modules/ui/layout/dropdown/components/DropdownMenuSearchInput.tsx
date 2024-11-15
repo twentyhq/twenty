@@ -5,11 +5,12 @@ import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 const StyledDropdownMenuSearchInputContainer = styled.div`
   align-items: center;
+  --vertical-padding: ${({ theme }) => theme.spacing(2)};
 
   display: flex;
   flex-direction: row;
   height: calc(36px - 2 * var(--vertical-padding));
-  padding: ${({ theme }) => theme.spacing(2)} 0;
+  padding: var(--vertical-padding) 0;
 
   width: 100%;
 `;

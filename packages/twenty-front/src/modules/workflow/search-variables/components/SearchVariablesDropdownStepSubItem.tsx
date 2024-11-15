@@ -30,7 +30,7 @@ const SearchVariablesDropdownStepSubItem = ({
   const getSelectedObject = (): OutputSchema => {
     let selected = step.outputSchema;
     for (const key of currentPath) {
-      selected = selected[key].value;
+      selected = selected[key]?.value;
     }
     return selected;
   };
@@ -38,7 +38,7 @@ const SearchVariablesDropdownStepSubItem = ({
   const handleSelect = (key: string) => {
     const selectedObject = getSelectedObject();
 
-    if (!selectedObject[key].isLeaf) {
+    if (!selectedObject[key]?.isLeaf) {
       setCurrentPath([...currentPath, key]);
       setSearchInputValue('');
     } else {
