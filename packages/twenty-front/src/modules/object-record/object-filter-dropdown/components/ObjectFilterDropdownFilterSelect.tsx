@@ -187,9 +187,7 @@ export const ObjectFilterDropdownFilterSelect = ({
                 </SelectableItem>
               ),
             )}
-          </DropdownMenuItemsContainer>
-          {shoudShowSeparator && <DropdownMenuSeparator />}
-          <DropdownMenuItemsContainer>
+            {shoudShowSeparator && <DropdownMenuSeparator />}
             {hiddenColumnsFilterDefinitions.map(
               (hiddenFilterDefinition, index) => (
                 <SelectableItem

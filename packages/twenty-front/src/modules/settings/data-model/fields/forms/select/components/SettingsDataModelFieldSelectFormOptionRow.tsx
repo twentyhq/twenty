@@ -18,12 +18,13 @@ import { v4 } from 'uuid';
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
-import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/select/utils/getOptionValueFromLabel';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+
+import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;
@@ -113,7 +114,7 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
           onChange={(input) =>
             onChange({
               ...option,
-              value: getOptionValueFromLabel(input),
+              value: computeOptionValueFromLabel(input),
             })
           }
           RightIcon={isDefault ? IconCheck : undefined}
@@ -149,14 +150,14 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         value={option.label}
         onChange={(label) => {
           const optionNameHasBeenEdited = !(
-            option.value === getOptionValueFromLabel(option.label)
+            option.value === computeOptionValueFromLabel(option.label)
           );
           onChange({
             ...option,
             label,
             value: optionNameHasBeenEdited
               ? option.value
-              : getOptionValueFromLabel(label),
+              : computeOptionValueFromLabel(label),
           });
         }}
         RightIcon={isDefault ? IconCheck : undefined}

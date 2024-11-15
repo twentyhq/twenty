@@ -255,7 +255,7 @@ export const SettingsDataModelFieldSelectForm = ({
                     <StyledIconContainer>
                       <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
                     </StyledIconContainer>
-                    <StyledApiKey>API keys</StyledApiKey>
+                    <StyledApiKey>API values</StyledApiKey>
                   </StyledApiKeyContainer>
                 </AdvancedSettingsWrapper>
                 <StyledOptionsLabel

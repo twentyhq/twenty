@@ -1,7 +1,7 @@
 import {
-  Record as IRecord,
-  RecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+  ObjectRecord,
+  ObjectRecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
@@ -12,23 +12,27 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { encodeCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { getRelationObjectMetadata } from 'src/engine/api/graphql/graphql-query-runner/utils/get-relation-object-metadata.util';
+import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { isPlainObject } from 'src/utils/is-plain-object';
 
 export class ObjectRecordsToGraphqlConnectionHelper {
-  private objectMetadataMap: ObjectMetadataMap;
+  private objectMetadataMaps: ObjectMetadataMaps;
 
-  constructor(objectMetadataMap: ObjectMetadataMap) {
-    this.objectMetadataMap = objectMetadataMap;
+  constructor(objectMetadataMaps: ObjectMetadataMaps) {
+    this.objectMetadataMaps = objectMetadataMaps;
   }
 
-  public createConnection<ObjectRecord extends IRecord = IRecord>({
+  public createConnection<T extends ObjectRecord = ObjectRecord>({
     objectRecords,
+    parentObjectRecord,
+    objectRecordsAggregatedValues = {},
+    selectedAggregatedFields = [],
     objectName,
     take,
     totalCount,
@@ -37,19 +41,24 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     hasPreviousPage,
     depth = 0,
   }: {
-    objectRecords: ObjectRecord[];
+    objectRecords: T[];
+    parentObjectRecord?: T;
+    objectRecordsAggregatedValues?: Record<string, any>;
+    selectedAggregatedFields?: Record<string, any>;
     objectName: string;
     take: number;
     totalCount: number;
-    order?: RecordOrderBy;
+    order?: ObjectRecordOrderBy;
     hasNextPage: boolean;
     hasPreviousPage: boolean;
     depth?: number;
-  }): IConnection<ObjectRecord> {
+  }): IConnection<T> {
     const edges = (objectRecords ?? []).map((objectRecord) => ({
       node: this.processRecord({
         objectRecord,
         objectName,
+        objectRecordsAggregatedValues,
+        selectedAggregatedFields,
         take,
         totalCount,
         order,
@@ -58,7 +67,15 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       cursor: encodeCursor(objectRecord, order),
     }));
 
+    const aggregatedFieldsValues = this.extractAggregatedFieldsValues({
+      selectedAggregatedFields,
+      objectRecordsAggregatedValues: parentObjectRecord
+        ? objectRecordsAggregatedValues[parentObjectRecord.id]
+        : objectRecordsAggregatedValues,
+    });
+
     return {
+      ...aggregatedFieldsValues,
       edges,
       pageInfo: {
         hasNextPage,
@@ -70,9 +87,41 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     };
   }
 
+  private extractAggregatedFieldsValues = ({
+    selectedAggregatedFields,
+    objectRecordsAggregatedValues,
+  }: {
+    selectedAggregatedFields: Record<string, AggregationField[]>;
+    objectRecordsAggregatedValues: Record<string, any>;
+  }) => {
+    if (!objectRecordsAggregatedValues) {
+      return {};
+    }
+
+    return Object.entries(selectedAggregatedFields).reduce(
+      (acc, [aggregatedFieldName]) => {
+        const aggregatedFieldValue =
+          objectRecordsAggregatedValues[aggregatedFieldName];
+
+        if (!aggregatedFieldValue) {
+          return acc;
+        }
+
+        return {
+          ...acc,
+          [aggregatedFieldName]:
+            objectRecordsAggregatedValues[aggregatedFieldName],
+        };
+      },
+      {},
+    );
+  };
+
   public processRecord<T extends Record<string, any>>({
     objectRecord,
     objectName,
+    objectRecordsAggregatedValues = {},
+    selectedAggregatedFields = [],
     take,
     totalCount,
     order,
@@ -80,9 +129,11 @@ export class ObjectRecordsToGraphqlConnectionHelper {
   }: {
     objectRecord: T;
     objectName: string;
+    objectRecordsAggregatedValues?: Record<string, any>;
+    selectedAggregatedFields?: Record<string, any>;
     take: number;
     totalCount: number;
-    order?: RecordOrderBy;
+    order?: ObjectRecordOrderBy;
     depth?: number;
   }): T {
     if (depth >= CONNECTION_MAX_DEPTH) {
@@ -92,7 +143,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
       );
     }
 
-    const objectMetadata = this.objectMetadataMap[objectName];
+    const objectMetadata = this.objectMetadataMaps.byNameSingular[objectName];
 
     if (!objectMetadata) {
       throw new GraphqlQueryRunnerException(
@@ -104,7 +155,7 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     const processedObjectRecord: Record<string, any> = {};
 
     for (const [key, value] of Object.entries(objectRecord)) {
-      const fieldMetadata = objectMetadata.fields[key];
+      const fieldMetadata = objectMetadata.fieldsByName[key];
 
       if (!fieldMetadata) {
         processedObjectRecord[key] = value;
@@ -115,12 +166,19 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         if (Array.isArray(value)) {
           processedObjectRecord[key] = this.createConnection({
             objectRecords: value,
+            parentObjectRecord: objectRecord,
+            objectRecordsAggregatedValues:
+              objectRecordsAggregatedValues[fieldMetadata.name],
+            selectedAggregatedFields:
+              selectedAggregatedFields[fieldMetadata.name],
             objectName: getRelationObjectMetadata(
               fieldMetadata,
-              this.objectMetadataMap,
+              this.objectMetadataMaps,
             ).nameSingular,
             take,
-            totalCount: value.length,
+            totalCount:
+              objectRecordsAggregatedValues[fieldMetadata.name]?.totalCount ??
+              value.length,
             order,
             hasNextPage: false,
             hasPreviousPage: false,
@@ -129,9 +187,13 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         } else if (isPlainObject(value)) {
           processedObjectRecord[key] = this.processRecord({
             objectRecord: value,
+            objectRecordsAggregatedValues:
+              objectRecordsAggregatedValues[fieldMetadata.name],
+            selectedAggregatedFields:
+              selectedAggregatedFields[fieldMetadata.name],
             objectName: getRelationObjectMetadata(
               fieldMetadata,
-              this.objectMetadataMap,
+              this.objectMetadataMaps,
             ).nameSingular,
             take,
             totalCount,

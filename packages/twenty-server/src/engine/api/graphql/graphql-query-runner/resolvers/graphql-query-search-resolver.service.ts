@@ -5,10 +5,10 @@ import { Brackets } from 'typeorm';
 
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import {
-  Record as IRecord,
+  ObjectRecord,
+  ObjectRecordFilter,
   OrderByDirection,
-  RecordFilter,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { SearchResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -22,40 +22,39 @@ import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class GraphqlQuerySearchResolverService
-  implements ResolverService<SearchResolverArgs, IConnection<IRecord>>
+  implements ResolverService<SearchResolverArgs, IConnection<ObjectRecord>>
 {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async resolve<
-    ObjectRecord extends IRecord = IRecord,
-    Filter extends RecordFilter = RecordFilter,
+    T extends ObjectRecord = ObjectRecord,
+    Filter extends ObjectRecordFilter = ObjectRecordFilter,
   >(
     args: SearchResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<IConnection<ObjectRecord>> {
+  ): Promise<IConnection<T>> {
     const {
       authContext,
-      objectMetadataItem,
-      objectMetadataMapItem,
-      objectMetadataMap,
+      objectMetadataMaps,
+      objectMetadataItemWithFieldMaps,
       info,
     } = options;
 
     const repository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         authContext.workspace.id,
-        objectMetadataItem.nameSingular,
+        objectMetadataItemWithFieldMaps.nameSingular,
       );
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     if (!isDefined(args.searchInput)) {
       return typeORMObjectRecordsParser.createConnection({
         objectRecords: [],
-        objectName: objectMetadataItem.nameSingular,
+        objectName: objectMetadataItemWithFieldMaps.nameSingular,
         take: 0,
         totalCount: 0,
         order: [{ id: OrderByDirection.AscNullsFirst }],
@@ -69,16 +68,16 @@ export class GraphqlQuerySearchResolverService
     const limit = args?.limit ?? QUERY_MAX_RECORDS;
 
     const queryBuilder = repository.createQueryBuilder(
-      objectMetadataItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataMapItem.fields,
-      objectMetadataMap,
+      objectMetadataItemWithFieldMaps.fieldsByName,
+      objectMetadataMaps,
     );
 
     const queryBuilderWithFilter = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
       args.filter ?? ({} as Filter),
     );
 
@@ -109,7 +108,7 @@ export class GraphqlQuerySearchResolverService
       .setParameter('searchTerms', searchTerms)
       .setParameter('searchTermsOr', searchTermsOr)
       .take(limit)
-      .getMany()) as ObjectRecord[];
+      .getMany()) as T[];
 
     const objectRecords = await repository.formatResult(resultsWithTsVector);
 
@@ -122,7 +121,7 @@ export class GraphqlQuerySearchResolverService
 
     return typeORMObjectRecordsParser.createConnection({
       objectRecords: objectRecords ?? [],
-      objectName: objectMetadataItem.nameSingular,
+      objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: limit,
       totalCount,
       order,
