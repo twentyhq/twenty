@@ -3,6 +3,6 @@ import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-ru
 
 export const isQueryResultFieldValueARecord = (
   result: QueryResultFieldValue,
-): result is ObjectRecord[] => {
-  return 'id' in result && 'createdAt' in result && 'updatedAt' in result;
+): result is ObjectRecord => {
+  return 'id' in result;
 };
