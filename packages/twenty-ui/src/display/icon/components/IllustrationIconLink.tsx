@@ -10,7 +10,6 @@ export const IllustrationIconLink = (props: IllustrationIconLinkProps) => {
   const theme = useTheme();
   const size = props.size ?? theme.icon.size.lg;
   const { color, fill } = theme.IllustrationIcon;
-
   return (
     <IllustrationIconWrapper>
       <IllustrationIconLinkRaw
