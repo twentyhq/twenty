@@ -13,7 +13,6 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
@@ -31,9 +30,6 @@ export const MainNavigationDrawerItems = () => {
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
-  );
-  const isWorkspaceFavoriteEnabled = useIsFeatureEnabled(
-    'IS_WORKSPACE_FAVORITE_ENABLED',
   );
 
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
@@ -64,20 +60,14 @@ export const MainNavigationDrawerItems = () => {
           />
         </StyledMainSection>
       )}
-      <StyledContainer>
-        {isWorkspaceFavoriteEnabled && <NavigationDrawerOpenedSection />}
 
-        <CurrentWorkspaceMemberFavoritesFolders />
+      <NavigationDrawerOpenedSection />
 
-        {isWorkspaceFavoriteEnabled ? (
-          <WorkspaceFavorites />
-        ) : (
-          <NavigationDrawerSectionForObjectMetadataItemsWrapper
-            isRemote={false}
-          />
-        )}
-        <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
-      </StyledContainer>
+      <CurrentWorkspaceMemberFavoritesFolders />
+
+      <WorkspaceFavorites />
+
+      <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
     </>
   );
 };

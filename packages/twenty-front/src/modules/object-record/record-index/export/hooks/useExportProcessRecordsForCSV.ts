@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { convertCurrencyMicrosToCurrencyAmount } from '~/utils/convertCurrencyToCurrencyMicros';
 
-export const useProcessRecordsForCSVExport = (objectNameSingular: string) => {
+export const useExportProcessRecordsForCSV = (objectNameSingular: string) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
