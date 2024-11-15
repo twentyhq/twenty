@@ -62,6 +62,7 @@ const SearchVariablesDropdown = ({
 
   return (
     <Dropdown
+      dropdownMenuWidth={320}
       dropdownId={dropdownId}
       dropdownHotkeyScope={{
         scope: dropdownId,
