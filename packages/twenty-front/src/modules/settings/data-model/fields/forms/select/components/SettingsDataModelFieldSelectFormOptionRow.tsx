@@ -1,3 +1,11 @@
+import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
+import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
@@ -14,16 +22,6 @@ import {
   MenuItemSelectColor,
 } from 'twenty-ui';
 import { v4 } from 'uuid';
-
-import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
-import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
-import { TextInput } from '@/ui/input/components/TextInput';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
