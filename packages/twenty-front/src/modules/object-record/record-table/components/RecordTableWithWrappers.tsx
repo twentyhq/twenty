@@ -44,6 +44,7 @@ export const RecordTableWithWrappers = ({
 }: RecordTableWithWrappersProps) => {
   const isScrollEnabledForRecordTable = useRecoilComponentValueV2(
     isScrollEnabledForRecordTableState,
+    recordTableId,
   );
 
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
