@@ -23,9 +23,6 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 })
 @WorkspaceIsSystem()
 @WorkspaceGate({
-  featureFlag: FeatureFlagKey.IsFavoriteFolderEnabled,
-})
-@WorkspaceGate({
   featureFlag: FeatureFlagKey.IsFavoriteFolderEntityEnabled,
 })
 export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
