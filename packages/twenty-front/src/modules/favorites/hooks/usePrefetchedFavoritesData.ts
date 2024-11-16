@@ -3,7 +3,6 @@ import { Favorite } from '@/favorites/types/Favorite';
 import { usePrefetchRunQuery } from '@/prefetch/hooks/internal/usePrefetchRunQuery';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 type PrefetchedFavoritesData = {
@@ -25,16 +24,12 @@ export const usePrefetchedFavoritesData = (): PrefetchedFavoritesData => {
     },
   );
 
-  const favorites = useMemo(
-    () =>
-      _favorites.filter(
-        (favorite) => favorite.workspaceMemberId === currentWorkspaceMemberId,
-      ),
-    [_favorites, currentWorkspaceMemberId],
+  const favorites = _favorites.filter(
+    (favorite) => favorite.workspaceMemberId === currentWorkspaceMemberId,
   );
-  const workspaceFavorites = useMemo(
-    () => _favorites.filter((favorite) => favorite.workspaceMemberId === null),
-    [_favorites],
+
+  const workspaceFavorites = _favorites.filter(
+    (favorite) => favorite.workspaceMemberId === null,
   );
 
   const { upsertRecordsInCache: upsertFavorites } =
@@ -42,13 +37,10 @@ export const usePrefetchedFavoritesData = (): PrefetchedFavoritesData => {
       prefetchKey: PrefetchKey.AllFavorites,
     });
 
-  return useMemo(
-    () => ({
-      favorites,
-      workspaceFavorites,
-      upsertFavorites,
-      currentWorkspaceMemberId,
-    }),
-    [favorites, workspaceFavorites, upsertFavorites, currentWorkspaceMemberId],
-  );
+  return {
+    favorites,
+    workspaceFavorites,
+    upsertFavorites,
+    currentWorkspaceMemberId,
+  };
 };

@@ -22,13 +22,13 @@ export class FavoriteFolderDeletionListener {
       ObjectRecordDeleteEvent<FavoriteFolderWorkspaceEntity>
     >,
   ) {
-    const isFavoriteFolderEnabled =
+    const isFavoriteFolderEntityEnabled =
       await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IsFavoriteFolderEnabled,
+        FeatureFlagKey.IsFavoriteFolderEntityEnabled,
         payload.workspaceId,
       );
 
-    if (!isFavoriteFolderEnabled) {
+    if (!isFavoriteFolderEntityEnabled) {
       return;
     }
 

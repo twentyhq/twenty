@@ -3,7 +3,6 @@ import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { usePrefetchRunQuery } from '@/prefetch/hooks/internal/usePrefetchRunQuery';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 type PrefetchedFavoritesFoldersData = {
@@ -17,7 +16,7 @@ export const usePrefetchedFavoritesFoldersData =
     const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
     const currentWorkspaceMemberId = currentWorkspaceMember?.id;
 
-    const { records: _folders } = usePrefetchedData<FavoriteFolder>(
+    const { records: folders } = usePrefetchedData<FavoriteFolder>(
       PrefetchKey.AllFavoritesFolders,
       {
         workspaceMemberId: {
@@ -26,19 +25,14 @@ export const usePrefetchedFavoritesFoldersData =
       },
     );
 
-    const folders = useMemo(() => _folders, [_folders]);
-
     const { upsertRecordsInCache: upsertFolders } =
       usePrefetchRunQuery<FavoriteFolder>({
         prefetchKey: PrefetchKey.AllFavoritesFolders,
       });
 
-    return useMemo(
-      () => ({
-        folders,
-        upsertFolders,
-        currentWorkspaceMemberId,
-      }),
-      [folders, upsertFolders, currentWorkspaceMemberId],
-    );
+    return {
+      folders,
+      upsertFolders,
+      currentWorkspaceMemberId,
+    };
   };

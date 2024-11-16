@@ -18,8 +18,12 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 
 export const useFavoriteFolders = () => {
-  const { favorites, upsertFavorites, currentWorkspaceMemberId } =
-    usePrefetchedFavoritesData();
+  const {
+    favorites,
+    upsertFavorites,
+    currentWorkspaceMemberId,
+    workspaceFavorites,
+  } = usePrefetchedFavoritesData();
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -109,11 +113,13 @@ export const useFavoriteFolders = () => {
       return;
     }
     await deleteOneRecord(folderId);
-    const updatedFavorites = favorites.filter(
-      (favorite) => favorite.favoriteFolderId !== folderId,
-    );
+    const updatedFavorites = [
+      ...favorites.filter((favorite) => favorite.favoriteFolderId !== folderId),
+      ...workspaceFavorites,
+    ];
     upsertFavorites(updatedFavorites);
   };
+
   const getObjectRecordIdentifierByNameSingular =
     useGetObjectRecordIdentifierByNameSingular();
   const favoritesByFolder = useMemo(() => {

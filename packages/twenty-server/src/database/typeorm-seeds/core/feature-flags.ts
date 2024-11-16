@@ -88,12 +88,12 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKey.IsFavoriteFolderEnabled,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
       {
         key: FeatureFlagKey.IsFavoriteFolderEntityEnabled,
         workspaceId: workspaceId,
-        value: false,
+        value: true,
       },
     ])
     .execute();
