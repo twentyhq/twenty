@@ -4,7 +4,7 @@ import graphqlFields from 'graphql-fields';
 import { In, InsertResult } from 'typeorm';
 
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -19,35 +19,40 @@ import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class GraphqlQueryCreateManyResolverService
-  implements ResolverService<CreateManyResolverArgs, IRecord[]>
+  implements ResolverService<CreateManyResolverArgs, ObjectRecord[]>
 {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  async resolve<ObjectRecord extends IRecord = IRecord>(
+  async resolve<T extends ObjectRecord = ObjectRecord>(
     args: CreateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord[]> {
-    const { authContext, info, objectMetadataMap, objectMetadataMapItem } =
-      options;
+  ): Promise<T[]> {
+    const {
+      authContext,
+      info,
+      objectMetadataMaps,
+      objectMetadataItemWithFieldMaps,
+    } = options;
     const dataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(
         authContext.workspace.id,
       );
+
     const repository = dataSource.getRepository(
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataMapItem.fields,
-      objectMetadataMap,
+      objectMetadataItemWithFieldMaps.fieldsByName,
+      objectMetadataMaps,
     );
 
     const selectedFields = graphqlFields(info);
 
     const { relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataMapItem,
+      objectMetadataItemWithFieldMaps,
       selectedFields,
     );
 
@@ -59,7 +64,7 @@ export class GraphqlQueryCreateManyResolverService
         });
 
     const queryBuilder = repository.createQueryBuilder(
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
 
     const nonFormattedUpsertedRecords = (await queryBuilder
@@ -71,42 +76,42 @@ export class GraphqlQueryCreateManyResolverService
 
     const upsertedRecords = formatResult(
       nonFormattedUpsertedRecords,
-      objectMetadataMapItem,
-      objectMetadataMap,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     );
 
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
     if (relations) {
-      await processNestedRelationsHelper.processNestedRelations(
-        objectMetadataMap,
-        objectMetadataMapItem,
-        upsertedRecords,
+      await processNestedRelationsHelper.processNestedRelations({
+        objectMetadataMaps,
+        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        parentObjectRecords: upsertedRecords,
         relations,
-        QUERY_MAX_RECORDS,
+        limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource,
-      );
+      });
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return upsertedRecords.map((record: ObjectRecord) =>
+    return upsertedRecords.map((record: T) =>
       typeORMObjectRecordsParser.processRecord({
         objectRecord: record,
-        objectName: objectMetadataMapItem.nameSingular,
+        objectName: objectMetadataItemWithFieldMaps.nameSingular,
         take: 1,
         totalCount: 1,
       }),
     );
   }
 
-  async validate<ObjectRecord extends IRecord>(
-    args: CreateManyResolverArgs<Partial<ObjectRecord>>,
+  async validate<T extends ObjectRecord>(
+    args: CreateManyResolverArgs<Partial<T>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
-    assertMutationNotOnRemoteObject(options.objectMetadataItem);
+    assertMutationNotOnRemoteObject(options.objectMetadataItemWithFieldMaps);
 
     args.data.forEach((record) => {
       if (record?.id) {

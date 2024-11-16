@@ -65,7 +65,10 @@ export const WorkflowRunRecordActionEffect = ({
             return;
           }
 
-          await runWorkflowVersion(activeWorkflowVersion.id, selectedRecord);
+          await runWorkflowVersion({
+            workflowVersionId: activeWorkflowVersion.id,
+            payload: selectedRecord,
+          });
 
           enqueueSnackBar('', {
             variant: SnackBarVariant.Success,

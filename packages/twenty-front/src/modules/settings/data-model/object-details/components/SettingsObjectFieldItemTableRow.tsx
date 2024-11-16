@@ -90,7 +90,6 @@ export const SettingsObjectFieldItemTableRow = ({
       () => getRelationMetadata({ fieldMetadataItem }),
       [fieldMetadataItem, getRelationMetadata],
     ) ?? {};
-
   const fieldType = fieldMetadataItem.type;
   const isFieldTypeSupported = isFieldTypeSupportedInSettings(fieldType);
 
@@ -233,6 +232,9 @@ export const SettingsObjectFieldItemTableRow = ({
             relationType === RelationDefinitionType.OneToOne
               ? relationObjectMetadataItem?.labelSingular
               : relationObjectMetadataItem?.labelPlural
+          }
+          labelDetail={
+            fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined
           }
           to={
             relationObjectMetadataItem?.namePlural &&

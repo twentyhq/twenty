@@ -31,7 +31,7 @@ export const WorkflowDiagramStepNodeBase = ({
             return (
               <StyledStepNodeLabelIconContainer>
                 <IconPlaylistAdd
-                  size={theme.icon.size.sm}
+                  size={theme.icon.size.lg}
                   color={theme.font.color.tertiary}
                 />
               </StyledStepNodeLabelIconContainer>
@@ -41,7 +41,7 @@ export const WorkflowDiagramStepNodeBase = ({
             return (
               <StyledStepNodeLabelIconContainer>
                 <IconHandMove
-                  size={theme.icon.size.sm}
+                  size={theme.icon.size.lg}
                   color={theme.font.color.tertiary}
                 />
               </StyledStepNodeLabelIconContainer>
@@ -57,7 +57,7 @@ export const WorkflowDiagramStepNodeBase = ({
             return (
               <StyledStepNodeLabelIconContainer>
                 <IconCode
-                  size={theme.icon.size.sm}
+                  size={theme.icon.size.lg}
                   color={theme.color.orange}
                 />
               </StyledStepNodeLabelIconContainer>
@@ -66,7 +66,7 @@ export const WorkflowDiagramStepNodeBase = ({
           case 'SEND_EMAIL': {
             return (
               <StyledStepNodeLabelIconContainer>
-                <IconMail size={theme.icon.size.sm} color={theme.color.blue} />
+                <IconMail size={theme.icon.size.lg} color={theme.color.blue} />
               </StyledStepNodeLabelIconContainer>
             );
           }

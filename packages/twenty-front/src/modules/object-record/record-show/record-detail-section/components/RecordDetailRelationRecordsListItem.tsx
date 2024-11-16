@@ -62,6 +62,14 @@ const StyledListItem = styled(RecordDetailRecordsListItem)<{
   }
 `;
 
+const StyledPropertyBox = styled(PropertyBox)`
+  align-items: flex-start;
+  display: flex;
+  padding-left: ${({ theme }) => theme.spacing(0)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(0)};
+`;
+
 const StyledClickableZone = styled.div`
   align-items: center;
   cursor: pointer;
@@ -233,7 +241,7 @@ export const RecordDetailRelationRecordsListItem = ({
         )}
       </StyledListItem>
       <AnimatedEaseInOut isOpen={isExpanded}>
-        <PropertyBox>
+        <StyledPropertyBox>
           {availableRelationFieldMetadataItems.map(
             (fieldMetadataItem, index) => (
               <FieldContext.Provider
@@ -258,7 +266,7 @@ export const RecordDetailRelationRecordsListItem = ({
               </FieldContext.Provider>
             ),
           )}
-        </PropertyBox>
+        </StyledPropertyBox>
       </AnimatedEaseInOut>
     </>
   );

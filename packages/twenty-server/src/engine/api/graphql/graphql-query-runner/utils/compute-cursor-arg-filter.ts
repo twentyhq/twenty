@@ -1,8 +1,8 @@
 import {
+  ObjectRecordFilter,
+  ObjectRecordOrderBy,
   OrderByDirection,
-  RecordFilter,
-  RecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -11,14 +11,14 @@ import {
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { FieldMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
 export const computeCursorArgFilter = (
   cursor: Record<string, any>,
-  orderBy: RecordOrderBy,
-  fieldMetadataMap: FieldMetadataMap,
+  orderBy: ObjectRecordOrderBy,
+  fieldMetadataMapByName: FieldMetadataMap,
   isForwardPagination = true,
-): RecordFilter[] => {
+): ObjectRecordFilter[] => {
   const cursorKeys = Object.keys(cursor ?? {});
   const cursorValues = Object.values(cursor ?? {});
 
@@ -39,7 +39,7 @@ export const computeCursorArgFilter = (
         ...buildWhereCondition(
           cursorKeys[subConditionIndex],
           cursorValues[subConditionIndex],
-          fieldMetadataMap,
+          fieldMetadataMapByName,
           'eq',
         ),
       };
@@ -68,18 +68,18 @@ export const computeCursorArgFilter = (
 
     return {
       ...whereCondition,
-      ...buildWhereCondition(key, value, fieldMetadataMap, operator),
-    } as RecordFilter;
+      ...buildWhereCondition(key, value, fieldMetadataMapByName, operator),
+    } as ObjectRecordFilter;
   });
 };
 
 const buildWhereCondition = (
   key: string,
   value: any,
-  fieldMetadataMap: FieldMetadataMap,
+  fieldMetadataMapByName: FieldMetadataMap,
   operator: string,
 ): Record<string, any> => {
-  const fieldMetadata = fieldMetadataMap[key];
+  const fieldMetadata = fieldMetadataMapByName[key];
 
   if (!fieldMetadata) {
     throw new GraphqlQueryRunnerException(

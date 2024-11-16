@@ -1,76 +1,88 @@
 import { v4 } from 'uuid';
 
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
-import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
-import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
-import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { OutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
 
-export const generateFakeObjectRecordEvent = <Entity>(
+export const generateFakeObjectRecordEvent = (
   objectMetadataEntity: ObjectMetadataEntity,
   action: DatabaseEventAction,
-):
-  | ObjectRecordCreateEvent<Entity>
-  | ObjectRecordUpdateEvent<Entity>
-  | ObjectRecordDeleteEvent<Entity>
-  | ObjectRecordDestroyEvent<Entity> => {
+): OutputSchema => {
   const recordId = v4();
   const userId = v4();
   const workspaceMemberId = v4();
 
-  const after = generateFakeObjectRecord<Entity>(objectMetadataEntity);
+  const after = generateFakeObjectRecord(objectMetadataEntity);
+  const formattedObjectMetadataEntity = Object.entries(
+    objectMetadataEntity,
+  ).reduce((acc: OutputSchema, [key, value]) => {
+    acc[key] = { isLeaf: true, value };
+
+    return acc;
+  }, {});
+
+  const baseResult: OutputSchema = {
+    recordId: { isLeaf: true, type: 'string', value: recordId },
+    userId: { isLeaf: true, type: 'string', value: userId },
+    workspaceMemberId: {
+      isLeaf: true,
+      type: 'string',
+      value: workspaceMemberId,
+    },
+    objectMetadata: {
+      isLeaf: false,
+      value: formattedObjectMetadataEntity,
+    },
+  };
 
   if (action === DatabaseEventAction.CREATED) {
     return {
-      recordId,
-      userId,
-      workspaceMemberId,
-      objectMetadata: objectMetadataEntity,
+      ...baseResult,
       properties: {
-        after,
+        isLeaf: false,
+        value: { after: { isLeaf: false, value: after } },
       },
-    } satisfies ObjectRecordCreateEvent<Entity>;
+    };
   }
 
-  const before = generateFakeObjectRecord<Entity>(objectMetadataEntity);
+  const before = generateFakeObjectRecord(objectMetadataEntity);
 
   if (action === DatabaseEventAction.UPDATED) {
     return {
-      recordId,
-      userId,
-      workspaceMemberId,
-      objectMetadata: objectMetadataEntity,
+      ...baseResult,
       properties: {
-        before,
-        after,
+        isLeaf: false,
+        value: {
+          before: { isLeaf: false, value: before },
+          after: { isLeaf: false, value: after },
+        },
       },
-    } satisfies ObjectRecordUpdateEvent<Entity>;
+    };
   }
 
   if (action === DatabaseEventAction.DELETED) {
     return {
-      recordId,
-      userId,
-      workspaceMemberId,
-      objectMetadata: objectMetadataEntity,
+      ...baseResult,
       properties: {
-        before,
+        isLeaf: false,
+        value: {
+          before: { isLeaf: false, value: before },
+        },
       },
-    } satisfies ObjectRecordDeleteEvent<Entity>;
+    };
   }
 
   if (action === DatabaseEventAction.DESTROYED) {
     return {
-      recordId,
-      userId,
-      workspaceMemberId,
-      objectMetadata: objectMetadataEntity,
+      ...baseResult,
       properties: {
-        before,
+        isLeaf: false,
+        value: {
+          before: { isLeaf: false, value: before },
+        },
       },
-    } satisfies ObjectRecordDestroyEvent<Entity>;
+    };
   }
 
   throw new Error(`Unknown action '${action}'`);

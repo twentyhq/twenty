@@ -55,8 +55,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly indexMetadataService: IndexMetadataService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {
     super(relationMetadataRepository);
   }
@@ -467,13 +467,13 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       );
     }
 
-    const objectMetadataMap =
-      await this.workspaceCacheStorageService.getObjectMetadataMap(
+    const objectMetadataMaps =
+      await this.workspaceCacheStorageService.getObjectMetadataMaps(
         workspaceId,
         metadataVersion,
       );
 
-    if (!objectMetadataMap) {
+    if (!objectMetadataMaps) {
       throw new NotFoundException(
         `Object metadata map not found for workspace ${workspaceId} and metadata version ${metadataVersion}`,
       );
@@ -481,9 +481,15 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
 
     const mappedResult = fieldMetadataItems.map((fieldMetadataItem) => {
       const objectMetadata =
-        objectMetadataMap[fieldMetadataItem.objectMetadataId];
+        objectMetadataMaps.byId[fieldMetadataItem.objectMetadataId];
 
-      const fieldMetadata = objectMetadata.fields[fieldMetadataItem.id];
+      if (!objectMetadata) {
+        return new NotFoundException(
+          `Object metadata not found for field ${fieldMetadataItem.id}`,
+        );
+      }
+
+      const fieldMetadata = objectMetadata.fieldsById[fieldMetadataItem.id];
 
       const relationMetadata =
         fieldMetadata.fromRelationMetadata ?? fieldMetadata.toRelationMetadata;
@@ -495,18 +501,18 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       }
 
       const fromObjectMetadata =
-        objectMetadataMap[relationMetadata.fromObjectMetadataId];
+        objectMetadataMaps.byId[relationMetadata.fromObjectMetadataId];
 
       const toObjectMetadata =
-        objectMetadataMap[relationMetadata.toObjectMetadataId];
+        objectMetadataMaps.byId[relationMetadata.toObjectMetadataId];
 
       const fromFieldMetadata =
-        objectMetadataMap[fromObjectMetadata.id].fields[
+        objectMetadataMaps.byId[fromObjectMetadata.id].fieldsById[
           relationMetadata.fromFieldMetadataId
         ];
 
       const toFieldMetadata =
-        objectMetadataMap[toObjectMetadata.id].fields[
+        objectMetadataMaps.byId[toObjectMetadata.id].fieldsById[
           relationMetadata.toFieldMetadataId
         ];
 

@@ -21,7 +21,7 @@ import {
   TooltipDelay,
 } from 'twenty-ui';
 import { z } from 'zod';
-import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 import { isDefined } from '~/utils/isDefined';
 
 export const settingsDataModelObjectAboutFormSchema = objectMetadataItemSchema
@@ -144,16 +144,14 @@ export const SettingsDataModelObjectAboutForm = ({
 
   const fillNameSingularFromLabelSingular = (labelSingular: string) => {
     isDefined(labelSingular) &&
-      setValue(
-        'nameSingular',
-        computeMetadataNameFromLabelOrThrow(labelSingular),
-        { shouldDirty: true },
-      );
+      setValue('nameSingular', computeMetadataNameFromLabel(labelSingular), {
+        shouldDirty: true,
+      });
   };
 
   const fillNamePluralFromLabelPlural = (labelPlural: string) => {
     isDefined(labelPlural) &&
-      setValue('namePlural', computeMetadataNameFromLabelOrThrow(labelPlural), {
+      setValue('namePlural', computeMetadataNameFromLabel(labelPlural), {
         shouldDirty: true,
       });
   };
