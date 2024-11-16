@@ -15,10 +15,13 @@ export const useRunWorkflowVersion = () => {
     client: apolloMetadataClient,
   });
 
-  const runWorkflowVersion = async (
-    workflowVersionId: string,
-    payload?: Record<string, any>,
-  ) => {
+  const runWorkflowVersion = async ({
+    workflowVersionId,
+    payload,
+  }: {
+    workflowVersionId: string;
+    payload?: Record<string, any>;
+  }) => {
     await mutate({
       variables: { input: { workflowVersionId, payload } },
     });

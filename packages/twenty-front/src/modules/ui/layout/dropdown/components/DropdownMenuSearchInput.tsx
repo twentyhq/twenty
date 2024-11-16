@@ -4,9 +4,8 @@ import { forwardRef, InputHTMLAttributes } from 'react';
 import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 const StyledDropdownMenuSearchInputContainer = styled.div`
-  --vertical-padding: ${({ theme }) => theme.spacing(1)};
-
   align-items: center;
+  --vertical-padding: ${({ theme }) => theme.spacing(2)};
 
   display: flex;
   flex-direction: row;

@@ -53,6 +53,7 @@ export const RecordShowPageBaseHeader = ({
         key="more"
         recordId={record?.id ?? '0'}
         objectNameSingular={objectNameSingular}
+        isRemote={objectMetadataItem.isRemote}
       />
     </>
   );

@@ -18,10 +18,12 @@ export default defineConfig(({ command, mode }) => {
     VITE_BUILD_SOURCEMAP,
     VITE_DISABLE_TYPESCRIPT_CHECKER,
     VITE_DISABLE_ESLINT_CHECKER,
-    REACT_APP_PORT
+    REACT_APP_PORT,
   } = env;
 
-  const port = isNonEmptyString(REACT_APP_PORT) ? parseInt(REACT_APP_PORT) : 3001;
+  const port = isNonEmptyString(REACT_APP_PORT)
+    ? parseInt(REACT_APP_PORT)
+    : 3001;
 
   const isBuildCommand = command === 'build';
 
@@ -113,6 +115,10 @@ export default defineConfig(({ command, mode }) => {
         },
       }),
     ],
+
+    optimizeDeps: {
+      exclude: ['node_modules/.vite', 'node_modules/.cache'],
+    },
 
     build: {
       outDir: 'build',

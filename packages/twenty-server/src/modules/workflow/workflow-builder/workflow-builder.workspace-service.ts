@@ -14,7 +14,6 @@ import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
-import { WorkflowSendEmailStepOutputSchema } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
 import { WorkflowRecordCRUDType } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import {
   WorkflowAction,
@@ -25,6 +24,8 @@ import {
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { isDefined } from 'src/utils/is-defined';
+import { OutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
+import { InputSchemaPropertyType } from 'src/modules/code-introspection/types/input-schema.type';
 
 @Injectable()
 export class WorkflowBuilderWorkspaceService {
@@ -41,7 +42,7 @@ export class WorkflowBuilderWorkspaceService {
   }: {
     step: WorkflowTrigger | WorkflowAction;
     workspaceId: string;
-  }): Promise<object> {
+  }): Promise<OutputSchema> {
     const stepType = step.type;
 
     switch (stepType) {
@@ -100,7 +101,7 @@ export class WorkflowBuilderWorkspaceService {
     eventName: string;
     workspaceId: string;
     objectMetadataRepository: Repository<ObjectMetadataEntity>;
-  }) {
+  }): Promise<OutputSchema> {
     const [nameSingular, action] = eventName.split('.');
 
     if (!checkStringIsDatabaseEventAction(action)) {
@@ -125,7 +126,7 @@ export class WorkflowBuilderWorkspaceService {
     );
   }
 
-  private async computeRecordCrudOutputSchema<Entity>({
+  private async computeRecordCrudOutputSchema({
     objectType,
     operationType,
     workspaceId,
@@ -135,8 +136,8 @@ export class WorkflowBuilderWorkspaceService {
     operationType: string;
     workspaceId: string;
     objectMetadataRepository: Repository<ObjectMetadataEntity>;
-  }) {
-    const recordOutputSchema = await this.computeRecordOutputSchema<Entity>({
+  }): Promise<OutputSchema> {
+    const recordOutputSchema = await this.computeRecordOutputSchema({
       objectType,
       workspaceId,
       objectMetadataRepository,
@@ -144,16 +145,21 @@ export class WorkflowBuilderWorkspaceService {
 
     if (operationType === WorkflowRecordCRUDType.READ) {
       return {
-        first: recordOutputSchema,
-        last: recordOutputSchema,
-        totalCount: generateFakeValue('number'),
+        first: { isLeaf: false, icon: 'IconAlpha', value: recordOutputSchema },
+        last: { isLeaf: false, icon: 'IconOmega', value: recordOutputSchema },
+        totalCount: {
+          isLeaf: true,
+          icon: 'IconSum',
+          type: 'number',
+          value: generateFakeValue('number'),
+        },
       };
     }
 
     return recordOutputSchema;
   }
 
-  private async computeRecordOutputSchema<Entity>({
+  private async computeRecordOutputSchema({
     objectType,
     workspaceId,
     objectMetadataRepository,
@@ -161,7 +167,7 @@ export class WorkflowBuilderWorkspaceService {
     objectType: string;
     workspaceId: string;
     objectMetadataRepository: Repository<ObjectMetadataEntity>;
-  }) {
+  }): Promise<OutputSchema> {
     const objectMetadata = await objectMetadataRepository.findOneOrFail({
       where: {
         nameSingular: objectType,
@@ -174,11 +180,11 @@ export class WorkflowBuilderWorkspaceService {
       return {};
     }
 
-    return generateFakeObjectRecord<Entity>(objectMetadata);
+    return generateFakeObjectRecord(objectMetadata);
   }
 
-  private computeSendEmailActionOutputSchema(): WorkflowSendEmailStepOutputSchema {
-    return { success: true };
+  private computeSendEmailActionOutputSchema(): OutputSchema {
+    return { success: { isLeaf: true, type: 'boolean', value: true } };
   }
 
   private async computeCodeActionOutputSchema({
@@ -193,7 +199,7 @@ export class WorkflowBuilderWorkspaceService {
     workspaceId: string;
     serverlessFunctionService: ServerlessFunctionService;
     codeIntrospectionService: CodeIntrospectionService;
-  }) {
+  }): Promise<OutputSchema> {
     if (serverlessFunctionId === '') {
       return {};
     }
@@ -223,6 +229,19 @@ export class WorkflowBuilderWorkspaceService {
         serverlessFunctionVersion,
       );
 
-    return resultFromFakeInput.data ?? {};
+    return resultFromFakeInput.data
+      ? Object.entries(resultFromFakeInput.data).reduce(
+          (acc: OutputSchema, [key, value]) => {
+            acc[key] = {
+              isLeaf: true,
+              value,
+              type: typeof value as InputSchemaPropertyType,
+            };
+
+            return acc;
+          },
+          {},
+        )
+      : {};
   }
 }
