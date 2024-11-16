@@ -39,9 +39,10 @@ const StyledMonthDay = styled.div`
 const StyledEvents = styled.div`
   align-items: stretch;
   display: flex;
-  flex: 1 0 auto;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
+  overflow: hidden;
+  flex-grow: 1;
 `;
 
 const StyledEventRow = styled(CalendarEventRow)`
