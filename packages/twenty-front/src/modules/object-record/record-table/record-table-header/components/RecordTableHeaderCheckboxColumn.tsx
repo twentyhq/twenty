@@ -17,20 +17,15 @@ const StyledColumnHeaderCell = styled.th`
   background-color: ${({ theme }) => theme.background.primary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-right: transparent;
-  text-align: center;
-  width: 32px;
-  min-width: 32px;
+  width: 30px;
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {
   const allRowsSelectedStatus = useRecoilComponentValueV2(
     allRowsSelectedStatusComponentSelector,
   );
-  const {
-    selectAllRows,
-    resetTableRowSelection,
-    setHasUserSelectedAllRows,
-  } = useRecordTable();
+  const { selectAllRows, resetTableRowSelection, setHasUserSelectedAllRows } =
+    useRecordTable();
   const checked = allRowsSelectedStatus === 'all';
   const indeterminate = allRowsSelectedStatus === 'some';
 

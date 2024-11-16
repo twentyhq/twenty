@@ -23,9 +23,8 @@ const StyledPlusIconHeaderCell = styled.th<{
   background-color: ${({ theme }) => theme.background.primary};
   border-left: none !important;
   color: ${({ theme }) => theme.font.color.tertiary};
-  min-width: 32px;
-  width: 100%;
   border-right: none !important;
+  width: 32px;
 
   ${({ isTableWiderThanScreen, theme }) =>
     isTableWiderThanScreen
@@ -34,6 +33,12 @@ const StyledPlusIconHeaderCell = styled.th<{
     `
       : ''};
   z-index: 1;
+`;
+
+const StyledEmptyHeaderCell = styled.th`
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  background-color: ${({ theme }) => theme.background.primary};
+  width: 100%;
 `;
 
 const StyledPlusIconContainer = styled.div`
@@ -56,12 +61,12 @@ export const RecordTableHeaderLastColumn = () => {
     (scrollWrapper.ref.current?.clientWidth ?? 0) <
     (scrollWrapper.ref.current?.scrollWidth ?? 0);
 
-
   return (
-    <StyledPlusIconHeaderCell
-      theme={theme}
-      isTableWiderThanScreen={isTableWiderThanScreen}
-    >
+    <>
+      <StyledPlusIconHeaderCell
+        theme={theme}
+        isTableWiderThanScreen={isTableWiderThanScreen}
+      >
         <Dropdown
           dropdownId={HIDDEN_TABLE_COLUMN_DROPDOWN_ID}
           clickableComponent={
@@ -75,6 +80,8 @@ export const RecordTableHeaderLastColumn = () => {
             scope: HIDDEN_TABLE_COLUMN_DROPDOWN_HOTKEY_SCOPE_ID,
           }}
         />
-    </StyledPlusIconHeaderCell>
+      </StyledPlusIconHeaderCell>
+      <StyledEmptyHeaderCell />
+    </>
   );
 };
