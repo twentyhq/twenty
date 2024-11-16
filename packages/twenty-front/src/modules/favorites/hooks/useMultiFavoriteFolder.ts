@@ -1,7 +1,8 @@
+import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
+import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useMemo } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import { useFavoriteFoldersScopedStates } from './useFavoriteFoldersScopedStates';
@@ -30,7 +31,9 @@ export const useMultiFavoriteFolder = ({
     favoriteFoldersIdsMultiSelectState,
   );
 
-  const { createFavorite, deleteFavorite, favorites } = useFavorites();
+  const favorites = useFavorites();
+  const createFavorite = useCreateFavorite();
+  const deleteFavorite = useDeleteFavorite();
 
   const getFoldersByIds = useRecoilCallback(
     ({ snapshot }) =>
@@ -107,11 +110,8 @@ export const useMultiFavoriteFolder = ({
     ],
   );
 
-  return useMemo(
-    () => ({
-      getFoldersByIds,
-      toggleFolderSelection,
-    }),
-    [getFoldersByIds, toggleFolderSelection],
-  );
+  return {
+    getFoldersByIds,
+    toggleFolderSelection,
+  };
 };

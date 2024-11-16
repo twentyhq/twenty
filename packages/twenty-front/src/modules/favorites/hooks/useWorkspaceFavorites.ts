@@ -11,8 +11,8 @@ import { useRecoilValue } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 
-export const useFavorites = () => {
-  const { favorites } = usePrefetchedFavoritesData();
+export const useWorkspaceFavorites = () => {
+  const { workspaceFavorites } = usePrefetchedFavoritesData();
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { objectMetadataItem: favoriteObjectMetadataItem } =
@@ -33,18 +33,18 @@ export const useFavorites = () => {
     [favoriteObjectMetadataItem.fields],
   );
 
-  const sortedFavorites = useMemo(
+  const sortedWorkspaceFavorites = useMemo(
     () =>
       sortFavorites(
-        favorites,
+        workspaceFavorites.filter((favorite) => favorite.viewId),
         favoriteRelationFieldMetadataItems,
         getObjectRecordIdentifierByNameSingular,
-        true,
+        false,
         views,
         objectMetadataItems,
       ),
     [
-      favorites,
+      workspaceFavorites,
       favoriteRelationFieldMetadataItems,
       getObjectRecordIdentifierByNameSingular,
       views,
@@ -52,5 +52,5 @@ export const useFavorites = () => {
     ],
   );
 
-  return sortedFavorites;
+  return sortedWorkspaceFavorites;
 };

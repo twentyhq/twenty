@@ -5,7 +5,7 @@ import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
-import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
+import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 import { useLocation } from 'react-router-dom';
@@ -69,7 +69,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
             label={view.name}
             to={`/objects/${objectMetadataItem.namePlural}?view=${view.id}`}
             active={viewId === view.id}
-            subItemState={getNavigationSubItemState({
+            subItemState={getNavigationSubItemLeftAdornment({
               index,
               arrayLength: subItemArrayLength,
               selectedIndex: selectedSubItemIndex,

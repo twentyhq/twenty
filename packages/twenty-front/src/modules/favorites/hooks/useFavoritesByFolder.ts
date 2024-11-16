@@ -10,19 +10,22 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
+import { usePrefetchedFavoritesFoldersData } from './usePrefetchedFavoritesFoldersData';
 
-export const useFavorites = () => {
+export const useFavoritesByFolder = () => {
   const { favorites } = usePrefetchedFavoritesData();
+  const { favoriteFolders } = usePrefetchedFavoritesFoldersData();
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const getObjectRecordIdentifierByNameSingular =
+    useGetObjectRecordIdentifierByNameSingular();
+
   const { objectMetadataItem: favoriteObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Favorite,
     });
-  const getObjectRecordIdentifierByNameSingular =
-    useGetObjectRecordIdentifierByNameSingular();
 
-  const favoriteRelationFieldMetadataItems = useMemo(
+  const favoriteRelationFields = useMemo(
     () =>
       favoriteObjectMetadataItem.fields.filter(
         (fieldMetadataItem) =>
@@ -33,24 +36,27 @@ export const useFavorites = () => {
     [favoriteObjectMetadataItem.fields],
   );
 
-  const sortedFavorites = useMemo(
-    () =>
-      sortFavorites(
-        favorites,
-        favoriteRelationFieldMetadataItems,
+  const favoritesByFolder = useMemo(() => {
+    return favoriteFolders.map((folder) => ({
+      folderId: folder.id,
+      folderName: folder.name,
+      favorites: sortFavorites(
+        favorites.filter((favorite) => favorite.favoriteFolderId === folder.id),
+        favoriteRelationFields,
         getObjectRecordIdentifierByNameSingular,
         true,
         views,
         objectMetadataItems,
       ),
-    [
-      favorites,
-      favoriteRelationFieldMetadataItems,
-      getObjectRecordIdentifierByNameSingular,
-      views,
-      objectMetadataItems,
-    ],
-  );
+    }));
+  }, [
+    favoriteFolders,
+    favorites,
+    favoriteRelationFields,
+    getObjectRecordIdentifierByNameSingular,
+    views,
+    objectMetadataItems,
+  ]);
 
-  return sortedFavorites;
+  return favoritesByFolder;
 };

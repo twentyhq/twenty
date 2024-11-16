@@ -1,7 +1,11 @@
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
 import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
-import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
-import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
+import { useDeleteFavoriteFolder } from '@/favorites/hooks/useDeleteFavoriteFolder';
+import { useRenameFavoriteFolder } from '@/favorites/hooks/useRenameFavoriteFolder';
+import { useReorderFavorite } from '@/favorites/hooks/useReorderFavorite';
+import { activeFavoriteFolderIdState } from '@/favorites/states/activeFavoriteFolderIdState';
+import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
@@ -13,16 +17,18 @@ import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/compone
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
-import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
+import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useTheme } from '@emotion/react';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 import {
   IconDotsVertical,
   IconFolder,
   IconHeartOff,
   IconPencil,
   IconTrash,
+  LightIconButton,
   MenuItem,
 } from 'twenty-ui';
 
@@ -33,15 +39,11 @@ type CurrentWorkspaceMemberFavoritesProps = {
     favorites: ProcessedFavorite[];
   };
   isGroup: boolean;
-  isOpen: boolean;
-  onToggle: (folderId: string) => void;
 };
 
 export const CurrentWorkspaceMemberFavorites = ({
   folder,
   isGroup,
-  isOpen,
-  onToggle,
 }: CurrentWorkspaceMemberFavoritesProps) => {
   const currentPath = useLocation().pathname;
   const currentViewPath = useLocation().pathname + useLocation().search;
@@ -50,24 +52,33 @@ export const CurrentWorkspaceMemberFavorites = ({
   const [isRenaming, setIsRenaming] = useState(false);
   const [folderName, setFolderName] = useState(folder.folderName);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-  const { renameFolder, deleteFolder } = useFavoriteFolders();
-  const { closeDropdown, isDropdownOpen } = useDropdown(
-    `favorite-folder-${folder.folderId}`,
+  const [activeFavoriteFolderId, setActiveFavoriteFolderId] = useRecoilState(
+    activeFavoriteFolderIdState,
   );
+  const isOpen = activeFavoriteFolderId === folder.folderId;
+
+  const handleToggle = () => {
+    setActiveFavoriteFolderId(isOpen ? null : folder.folderId);
+  };
+
+  const { renameFavoriteFolder } = useRenameFavoriteFolder();
+  const { deleteFavoriteFolder } = useDeleteFavoriteFolder();
+  const {
+    closeDropdown: closeFavoriteFolderEditDropdown,
+    isDropdownOpen: isFavoriteFolderEditDropdownOpen,
+  } = useDropdown(`favorite-folder-edit-${folder.folderId}`);
   const selectedFavoriteIndex = folder.favorites.findIndex((favorite) =>
-    favorite.objectNameSingular === 'view'
-      ? favorite.link === currentViewPath
-      : favorite.link === currentPath,
+    isLocationMatchingFavorite(currentPath, currentViewPath, favorite),
   );
-  const { deleteFavorite, handleReorderFavorite } = useFavorites();
+  const handleReorderFavorite = useReorderFavorite();
 
-  const subItemArrayLength = folder.favorites.length;
+  const deleteFavorite = useDeleteFavorite();
+
+  const favoriteFolderContentLength = folder.favorites.length;
 
   const handleSubmitRename = async (value: string) => {
-    if (!value) return false;
-
-    await renameFolder(folder.folderId, value);
+    if (value === '') return;
+    await renameFavoriteFolder(folder.folderId, value);
     setIsRenaming(false);
     return true;
   };
@@ -86,28 +97,28 @@ export const CurrentWorkspaceMemberFavorites = ({
       return;
     }
 
-    await renameFolder(folder.folderId, value);
+    await renameFavoriteFolder(folder.folderId, value);
     setIsRenaming(false);
   };
 
   const handleDelete = async () => {
     if (folder.favorites.length > 0) {
       setIsDeleteModalOpen(true);
-      closeDropdown();
+      closeFavoriteFolderEditDropdown();
     } else {
-      await deleteFolder(folder.folderId);
-      closeDropdown();
+      await deleteFavoriteFolder(folder.folderId);
+      closeFavoriteFolderEditDropdown();
     }
   };
 
   const handleConfirmDelete = async () => {
-    await deleteFolder(folder.folderId);
+    await deleteFavoriteFolder(folder.folderId);
     setIsDeleteModalOpen(false);
   };
 
   const rightOptions = (
     <Dropdown
-      dropdownId={`favorite-folder-${folder.folderId}`}
+      dropdownId={`favorite-folder-edit-${folder.folderId}`}
       dropdownHotkeyScope={{
         scope: FavoriteFolderHotkeyScope.FavoriteFolderRightIconDropdown,
       }}
@@ -126,7 +137,7 @@ export const CurrentWorkspaceMemberFavorites = ({
             LeftIcon={IconPencil}
             onClick={() => {
               setIsRenaming(true);
-              closeDropdown();
+              closeFavoriteFolderEditDropdown();
             }}
             accent="default"
             text="Rename"
@@ -163,10 +174,10 @@ export const CurrentWorkspaceMemberFavorites = ({
             key={folder.folderId}
             label={folder.folderName}
             Icon={IconFolder}
-            onClick={() => onToggle(folder.folderId)}
+            onClick={handleToggle}
             rightOptions={rightOptions}
             className="navigation-drawer-item"
-            isDropdownOpen={isDropdownOpen}
+            isDropdownOpen={isFavoriteFolderEditDropdownOpen}
           />
         )}
 
@@ -183,25 +194,20 @@ export const CurrentWorkspaceMemberFavorites = ({
                     itemComponent={
                       <NavigationDrawerSubItem
                         key={favorite.id}
-                        className="navigation-drawer-sub-item"
                         label={favorite.labelIdentifier}
                         Icon={() => <FavoriteIcon favorite={favorite} />}
                         to={favorite.link}
-                        active={
-                          favorite.objectNameSingular === 'view'
-                            ? favorite.link === currentViewPath
-                            : favorite.link === currentPath
-                        }
-                        subItemState={getNavigationSubItemState({
+                        active={index === selectedFavoriteIndex}
+                        subItemState={getNavigationSubItemLeftAdornment({
                           index,
-                          arrayLength: subItemArrayLength,
+                          arrayLength: favoriteFolderContentLength,
                           selectedIndex: selectedFavoriteIndex,
                         })}
                         rightOptions={
-                          <IconHeartOff
-                            size={theme.icon.size.sm}
-                            color={theme.color.gray50}
+                          <LightIconButton
+                            Icon={IconHeartOff}
                             onClick={() => deleteFavorite(favorite.id)}
+                            accent="tertiary"
                           />
                         }
                       />

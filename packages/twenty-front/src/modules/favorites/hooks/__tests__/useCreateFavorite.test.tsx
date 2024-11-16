@@ -1,17 +1,23 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import {
+  favoriteTargetObjectRecord,
   initialFavorites,
-  mocks,
+  mockId,
   mockWorkspaceMember,
-  sortedFavorites,
+  mocks,
 } from '../__mocks__/useFavorites';
+
+jest.mock('uuid', () => ({
+  v4: () => mockId,
+}));
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
   useFindManyRecords: () => ({ records: initialFavorites }),
@@ -21,8 +27,8 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 
-describe('useFavorites', () => {
-  it('should fetch and sort favorites successfully', () => {
+describe('useCreateFavorite', () => {
+  it('should create favorite successfully', async () => {
     const { result } = renderHook(
       () => {
         const setCurrentWorkspaceMember = useSetRecoilState(
@@ -33,11 +39,15 @@ describe('useFavorites', () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(generatedMockObjectMetadataItems);
 
-        return useFavorites();
+        return useCreateFavorite();
       },
       { wrapper: Wrapper },
     );
 
-    expect(result.current).toEqual(sortedFavorites);
+    result.current(favoriteTargetObjectRecord, CoreObjectNameSingular.Person);
+
+    await waitFor(() => {
+      expect(mocks[0].result).toHaveBeenCalled();
+    });
   });
 });

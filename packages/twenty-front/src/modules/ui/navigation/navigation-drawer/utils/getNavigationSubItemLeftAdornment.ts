@@ -1,6 +1,6 @@
 import { NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 
-export const getNavigationSubItemState = ({
+export const getNavigationSubItemLeftAdornment = ({
   index,
   arrayLength,
   selectedIndex,

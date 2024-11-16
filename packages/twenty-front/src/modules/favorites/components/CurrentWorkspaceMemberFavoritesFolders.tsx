@@ -2,14 +2,22 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconFolderPlus, IconHeartOff, isDefined } from 'twenty-ui';
+import {
+  IconFolderPlus,
+  IconHeartOff,
+  isDefined,
+  LightIconButton,
+} from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
 import { FavoriteFolders } from '@/favorites/components/FavoritesFolders';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
+import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { useReorderFavorite } from '@/favorites/hooks/useReorderFavorite';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
+import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
@@ -39,7 +47,9 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const currentViewPath = useLocation().pathname + useLocation().search;
   const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const { favorites, handleReorderFavorite, deleteFavorite } = useFavorites();
+  const favorites = useFavorites();
+  const deleteFavorite = useDeleteFavorite();
+  const handleReorderFavorite = useReorderFavorite();
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
     useRecoilState(isFavoriteFolderCreatingState);
 
@@ -64,7 +74,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
     (favorite) => favorite.workspaceMemberId === currentWorkspaceMember?.id,
   );
 
-  const unorganisedFavorites = currentWorkspaceMemberFavorites.filter(
+  const orphanFavorites = currentWorkspaceMemberFavorites.filter(
     (favorite) => !favorite.favoriteFolderId,
   );
 
@@ -101,10 +111,10 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
             />
           )}
 
-          {unorganisedFavorites.length > 0 && (
+          {orphanFavorites.length > 0 && (
             <DraggableList
               onDragEnd={handleReorderFavorite}
-              draggableItems={unorganisedFavorites.map((favorite, index) => (
+              draggableItems={orphanFavorites.map((favorite, index) => (
                 <DraggableItem
                   key={favorite.id}
                   draggableId={favorite.id}
@@ -115,17 +125,17 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
                       className="navigation-drawer-item"
                       label={favorite.labelIdentifier}
                       Icon={() => <FavoriteIcon favorite={favorite} />}
-                      active={
-                        favorite.objectNameSingular === 'view'
-                          ? favorite.link === currentViewPath
-                          : favorite.link === currentPath
-                      }
+                      active={isLocationMatchingFavorite(
+                        currentPath,
+                        currentViewPath,
+                        favorite,
+                      )}
                       to={favorite.link}
                       rightOptions={
-                        <IconHeartOff
-                          size={theme.icon.size.sm}
-                          color={theme.color.gray50}
+                        <LightIconButton
+                          Icon={IconHeartOff}
                           onClick={() => deleteFavorite(favorite.id)}
+                          accent="tertiary"
                         />
                       }
                     />

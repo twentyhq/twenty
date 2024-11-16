@@ -4,7 +4,8 @@ import { IconFolder } from 'twenty-ui';
 
 import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
 import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
-import { useFavoriteFolders } from '@/favorites/hooks/useFavoriteFolders';
+import { useCreateFavoriteFolder } from '@/favorites/hooks/useCreateFavoriteFolder';
+import { useFavoritesByFolder } from '@/favorites/hooks/useFavoritesByFolder';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 
@@ -15,23 +16,24 @@ type FavoriteFoldersProps = {
 export const FavoriteFolders = ({
   isNavigationSectionOpen,
 }: FavoriteFoldersProps) => {
-  const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
-  const [folderName, setFolderName] = useState('');
+  const [newFolderName, setNewFolderName] = useState('');
 
-  const { createFolder, favoritesByFolder } = useFavoriteFolders();
+  const favoritesByFolder = useFavoritesByFolder();
+  const createFavoriteFolder = useCreateFavoriteFolder();
+
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
     useRecoilState(isFavoriteFolderCreatingState);
 
-  const handleFolderNameChange = (value: string) => {
-    setFolderName(value);
+  const handleFavoriteFolderNameChange = (value: string) => {
+    setNewFolderName(value);
   };
 
-  const handleSubmitFolder = async (value: string) => {
-    if (!value) return false;
+  const handleSubmitFavoriteFolderCreation = async (value: string) => {
+    if (value === '') return;
 
     setIsFavoriteFolderCreating(false);
-    setFolderName('');
-    await createFolder(value);
+    setNewFolderName('');
+    await createFavoriteFolder(value);
     return true;
   };
 
@@ -45,12 +47,12 @@ export const FavoriteFolders = ({
     }
 
     setIsFavoriteFolderCreating(false);
-    setFolderName('');
-    await createFolder(value);
+    setNewFolderName('');
+    await createFavoriteFolder(value);
   };
 
-  const handleCancel = () => {
-    setFolderName('');
+  const handleCancelFavoriteFolderCreation = () => {
+    setNewFolderName('');
     setIsFavoriteFolderCreating(false);
   };
 
@@ -63,10 +65,10 @@ export const FavoriteFolders = ({
       {isFavoriteFolderCreating && (
         <NavigationDrawerInput
           Icon={IconFolder}
-          value={folderName}
-          onChange={handleFolderNameChange}
-          onSubmit={handleSubmitFolder}
-          onCancel={handleCancel}
+          value={newFolderName}
+          onChange={handleFavoriteFolderNameChange}
+          onSubmit={handleSubmitFavoriteFolderCreation}
+          onCancel={handleCancelFavoriteFolderCreation}
           onClickOutside={handleClickOutside}
           hotkeyScope={FavoriteFolderHotkeyScope.FavoriteFolderNavigationInput}
         />
@@ -76,12 +78,6 @@ export const FavoriteFolders = ({
           key={folder.folderId}
           folder={folder}
           isGroup={favoritesByFolder.length > 1}
-          isOpen={activeFolderId === folder.folderId}
-          onToggle={(folderId) => {
-            setActiveFolderId((currentId) =>
-              currentId === folderId ? null : folderId,
-            );
-          }}
         />
       ))}
     </>

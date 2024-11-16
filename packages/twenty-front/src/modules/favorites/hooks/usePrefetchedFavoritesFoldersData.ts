@@ -6,8 +6,8 @@ import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useRecoilValue } from 'recoil';
 
 type PrefetchedFavoritesFoldersData = {
-  folders: FavoriteFolder[];
-  upsertFolders: (records: FavoriteFolder[]) => void;
+  favoriteFolders: FavoriteFolder[];
+  upsertFavoriteFolders: (records: FavoriteFolder[]) => void;
   currentWorkspaceMemberId: string | undefined;
 };
 
@@ -16,7 +16,7 @@ export const usePrefetchedFavoritesFoldersData =
     const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
     const currentWorkspaceMemberId = currentWorkspaceMember?.id;
 
-    const { records: folders } = usePrefetchedData<FavoriteFolder>(
+    const { records: favoriteFolders } = usePrefetchedData<FavoriteFolder>(
       PrefetchKey.AllFavoritesFolders,
       {
         workspaceMemberId: {
@@ -25,14 +25,14 @@ export const usePrefetchedFavoritesFoldersData =
       },
     );
 
-    const { upsertRecordsInCache: upsertFolders } =
+    const { upsertRecordsInCache: upsertFavoriteFolders } =
       usePrefetchRunQuery<FavoriteFolder>({
         prefetchKey: PrefetchKey.AllFavoritesFolders,
       });
 
     return {
-      folders,
-      upsertFolders,
+      favoriteFolders,
+      upsertFavoriteFolders,
       currentWorkspaceMemberId,
     };
   };

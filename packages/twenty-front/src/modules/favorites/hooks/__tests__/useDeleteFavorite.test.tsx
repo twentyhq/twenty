@@ -1,16 +1,16 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import {
+  favoriteId,
   initialFavorites,
-  mocks,
   mockWorkspaceMember,
-  sortedFavorites,
+  mocks,
 } from '../__mocks__/useFavorites';
 
 jest.mock('@/object-record/hooks/useFindManyRecords', () => ({
@@ -21,8 +21,8 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 
-describe('useFavorites', () => {
-  it('should fetch and sort favorites successfully', () => {
+describe('useDeleteFavorite', () => {
+  it('should delete favorite successfully', async () => {
     const { result } = renderHook(
       () => {
         const setCurrentWorkspaceMember = useSetRecoilState(
@@ -33,11 +33,15 @@ describe('useFavorites', () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(generatedMockObjectMetadataItems);
 
-        return useFavorites();
+        return useDeleteFavorite();
       },
       { wrapper: Wrapper },
     );
 
-    expect(result.current).toEqual(sortedFavorites);
+    result.current(favoriteId);
+
+    await waitFor(() => {
+      expect(mocks[1].result).toHaveBeenCalled();
+    });
   });
 });

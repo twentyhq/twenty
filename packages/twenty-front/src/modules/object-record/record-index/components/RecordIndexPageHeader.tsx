@@ -2,6 +2,8 @@ import { useRecoilValue } from 'recoil';
 import { isDefined, useIcons } from 'twenty-ui';
 
 import { FAVORITE_FOLDERS_DROPDOWN_ID } from '@/favorites/constants/FavoriteFoldersDropdownId';
+import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
+import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
@@ -41,7 +43,11 @@ export const RecordIndexPageHeader = () => {
 
   const view = views.find((view) => view.id === currentViewId);
 
-  const { favorites, createFavorite, deleteFavorite } = useFavorites();
+  const favorites = useFavorites();
+
+  const createFavorite = useCreateFavorite();
+
+  const deleteFavorite = useDeleteFavorite();
 
   const isFavorite = favorites.some(
     (favorite) =>

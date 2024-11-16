@@ -11,14 +11,15 @@ import { useRecoilValue } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 
-export const useFavorites = () => {
-  const { favorites } = usePrefetchedFavoritesData();
+export const useSortedFavorites = () => {
+  const { favorites, workspaceFavorites } = usePrefetchedFavoritesData();
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { objectMetadataItem: favoriteObjectMetadataItem } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Favorite,
     });
+
   const getObjectRecordIdentifierByNameSingular =
     useGetObjectRecordIdentifierByNameSingular();
 
@@ -33,24 +34,42 @@ export const useFavorites = () => {
     [favoriteObjectMetadataItem.fields],
   );
 
-  const sortedFavorites = useMemo(
-    () =>
-      sortFavorites(
-        favorites,
-        favoriteRelationFieldMetadataItems,
-        getObjectRecordIdentifierByNameSingular,
-        true,
-        views,
-        objectMetadataItems,
-      ),
-    [
+  const favoritesSorted = useMemo(() => {
+    return sortFavorites(
       favorites,
       favoriteRelationFieldMetadataItems,
       getObjectRecordIdentifierByNameSingular,
+      true,
       views,
       objectMetadataItems,
-    ],
-  );
+    );
+  }, [
+    favoriteRelationFieldMetadataItems,
+    favorites,
+    getObjectRecordIdentifierByNameSingular,
+    views,
+    objectMetadataItems,
+  ]);
 
-  return sortedFavorites;
+  const workspaceFavoritesSorted = useMemo(() => {
+    return sortFavorites(
+      workspaceFavorites.filter((favorite) => favorite.viewId),
+      favoriteRelationFieldMetadataItems,
+      getObjectRecordIdentifierByNameSingular,
+      false,
+      views,
+      objectMetadataItems,
+    );
+  }, [
+    favoriteRelationFieldMetadataItems,
+    getObjectRecordIdentifierByNameSingular,
+    workspaceFavorites,
+    views,
+    objectMetadataItems,
+  ]);
+
+  return {
+    favoritesSorted,
+    workspaceFavoritesSorted,
+  };
 };
