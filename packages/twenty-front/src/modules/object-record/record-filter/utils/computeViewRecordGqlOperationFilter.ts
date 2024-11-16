@@ -691,7 +691,7 @@ const computeFilterRecordGqlOperationFilter = (
         case ViewFilterOperand.Contains:
           return {
             [correspondingField.name]: {
-              containsIlike: filter.value, // TODO: Why doesn't `%${filter.value}%` work here? %-signs only work when they are in compute-where-condition-parts.ts.
+              containsIlike: `%${filter.value}%`,
             } as ArrayFilter,
           };
         case ViewFilterOperand.DoesNotContain:

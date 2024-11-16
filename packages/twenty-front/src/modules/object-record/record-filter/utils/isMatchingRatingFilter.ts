@@ -5,7 +5,7 @@ export const isMatchingRatingFilter = ({
   value,
 }: {
   ratingFilter: RatingFilter;
-  value: number | null;
+  value: string | null;
 }) => {
   switch (true) {
     case ratingFilter.eq !== undefined: {

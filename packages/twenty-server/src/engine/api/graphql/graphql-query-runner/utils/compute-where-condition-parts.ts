@@ -102,7 +102,7 @@ export const computeWhereConditionParts = (
     case 'containsIlike':
       return {
         sql: `EXISTS (SELECT 1 FROM unnest("${objectNameSingular}"."${key}") AS elem WHERE elem ILIKE :${key}${uuid})`,
-        params: { [`${key}${uuid}`]: `%${value}%` },
+        params: { [`${key}${uuid}`]: value },
       };
 
     default:
