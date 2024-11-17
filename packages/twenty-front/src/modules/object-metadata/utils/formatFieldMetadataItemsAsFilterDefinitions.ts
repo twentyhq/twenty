@@ -8,10 +8,10 @@ import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const formatFieldMetadataItemsAsFilterDefinitions = ({
   fields,
-  isArrayAndJsonFilterEnabled,
+  isJsonFilterEnabled,
 }: {
   fields: Array<ObjectMetadataItem['fields'][0]>;
-  isArrayAndJsonFilterEnabled: boolean;
+  isJsonFilterEnabled: boolean;
 }): FilterDefinition[] => {
   return fields.reduce((acc, field) => {
     if (
@@ -40,9 +40,8 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Rating,
         FieldMetadataType.Actor,
         FieldMetadataType.Phones,
-        ...(isArrayAndJsonFilterEnabled
-          ? [FieldMetadataType.Array, FieldMetadataType.RawJson]
-          : []),
+        FieldMetadataType.Array,
+        ...(isJsonFilterEnabled ? [FieldMetadataType.RawJson] : []),
       ].includes(field.type)
     ) {
       return acc;

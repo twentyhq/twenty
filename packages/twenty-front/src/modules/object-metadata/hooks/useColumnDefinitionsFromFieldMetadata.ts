@@ -24,13 +24,11 @@ export const useColumnDefinitionsFromFieldMetadata = (
     [objectMetadataItem],
   );
 
-  const isArrayAndJsonFilterEnabled = useIsFeatureEnabled(
-    'IS_ARRAY_AND_JSON_FILTER_ENABLED',
-  );
+  const isJsonFilterEnabled = useIsFeatureEnabled('IS_JSON_FILTER_ENABLED');
 
   const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
     fields: activeFieldMetadataItems,
-    isArrayAndJsonFilterEnabled,
+    isJsonFilterEnabled,
   });
 
   const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
