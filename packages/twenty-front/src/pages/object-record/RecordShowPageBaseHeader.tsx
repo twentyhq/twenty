@@ -1,4 +1,4 @@
-import { FAVORITE_FOLDER_PICKER_DROPDOWN_ID } from '@/favorites/constants/FavoriteFolderPickerDropdownId';
+import { FAVORITE_FOLDER_PICKER_DROPDOWN_ID } from '@/favorites/favorite-folder-picker/constants/FavoriteFolderPickerDropdownId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageFavoriteButton } from '@/ui/layout/page/components/PageFavoriteButton';
