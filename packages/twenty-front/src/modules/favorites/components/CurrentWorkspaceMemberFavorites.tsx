@@ -187,10 +187,8 @@ export const CurrentWorkspaceMemberFavorites = ({
       <ConfirmationModal
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}
-        confirmationValue="yes"
-        confirmationPlaceholder="yes"
-        title={`Remove ${folder.favorites.length} favorites?`}
-        subtitle={`This action will delete this favorite folder and all ${folder.favorites.length} favorites inside. Do you want to continue?`}
+        title={`Remove ${folder.favorites.length} ${folder.favorites.length > 1 ? 'favorites' : 'favorite'}?`}
+        subtitle={`This action will delete this favorite folder ${folder.favorites.length > 1 ? `and all ${folder.favorites.length} favorites` : 'and the favorite'} inside. Do you want to continue?`}
         onConfirmClick={handleConfirmDelete}
         deleteButtonText="Delete Folder"
       />
