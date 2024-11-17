@@ -66,7 +66,11 @@ export const useFavoriteFolderPicker = ({
         const targetObject = record;
 
         if (!isDefined(targetObject) || !isDefined(targetId)) {
-          return;
+          throw new Error(
+            `Cannot toggle folder selection: record ${
+              !isDefined(targetObject) ? 'object' : 'id'
+            } is not defined`,
+          );
         }
 
         const deleteFavoriteForRecord = async (isUnorganized: boolean) => {
