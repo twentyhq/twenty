@@ -22,6 +22,7 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
     background: none;
     border: none;
     color: ${({ theme }) => theme.font.color.primary};
+    margin-left: ${({ theme }) => theme.spacing(2)};
 
     &::placeholder,
     &::-webkit-input-placeholder {

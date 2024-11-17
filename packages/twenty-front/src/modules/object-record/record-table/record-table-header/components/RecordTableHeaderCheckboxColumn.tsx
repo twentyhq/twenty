@@ -17,8 +17,6 @@ const StyledColumnHeaderCell = styled.th`
   background-color: ${({ theme }) => theme.background.primary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-right: transparent;
-  max-width: 30px;
-  min-width: 30px;
   width: 30px;
 `;
 
@@ -28,7 +26,6 @@ export const RecordTableHeaderCheckboxColumn = () => {
   );
   const { selectAllRows, resetTableRowSelection, setHasUserSelectedAllRows } =
     useRecordTable();
-
   const checked = allRowsSelectedStatus === 'all';
   const indeterminate = allRowsSelectedStatus === 'some';
 
@@ -37,6 +34,7 @@ export const RecordTableHeaderCheckboxColumn = () => {
       setHasUserSelectedAllRows(true);
       selectAllRows();
     } else {
+      setHasUserSelectedAllRows(false);
       resetTableRowSelection();
     }
   };
