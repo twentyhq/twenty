@@ -210,6 +210,7 @@ export const CurrentWorkspaceMemberFavorites = ({
                             accent="tertiary"
                           />
                         }
+                        isDraggable
                       />
                     }
                   />

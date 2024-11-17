@@ -1,7 +1,7 @@
 import { useRecoilValue } from 'recoil';
 import { isDefined, useIcons } from 'twenty-ui';
 
-import { FAVORITE_FOLDERS_DROPDOWN_ID } from '@/favorites/constants/FavoriteFoldersDropdownId';
+import { FAVORITE_FOLDER_PICKER_DROPDOWN_ID } from '@/favorites/constants/FavoriteFolderPickerDropdownId';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
@@ -97,7 +97,7 @@ export const RecordIndexPageHeader = () => {
       {isFavoriteFolderEnabled ? (
         <PageFavoriteFoldersDropdown
           record={view}
-          dropdownId={FAVORITE_FOLDERS_DROPDOWN_ID}
+          dropdownId={FAVORITE_FOLDER_PICKER_DROPDOWN_ID}
           objectNameSingular="view"
           isFavorite={isFavorite}
         />

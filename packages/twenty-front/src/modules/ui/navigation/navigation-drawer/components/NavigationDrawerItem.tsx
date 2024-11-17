@@ -39,17 +39,19 @@ export type NavigationDrawerItemProps = {
   keyboard?: string[];
   rightOptions?: ReactNode;
   isDropdownOpen?: boolean;
+  isDraggable?: boolean;
 };
 
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
-  'active' | 'danger' | 'indentationLevel' | 'soon' | 'to'
+  'active' | 'danger' | 'indentationLevel' | 'soon' | 'to' | 'isDraggable'
 > & { isNavigationDrawerExpanded: boolean; isDropdownOpen?: boolean };
 
 const StyledItem = styled('button', {
   shouldForwardProp: (prop) =>
-    !['active', 'danger', 'soon', 'isDropdownOpen'].includes(prop) &&
-    isPropValid(prop),
+    !['active', 'danger', 'soon', 'isDropdownOpen', 'isDraggable'].includes(
+      prop,
+    ) && isPropValid(prop),
 })<StyledItemProps>`
   box-sizing: content-box;
   align-items: center;
@@ -92,6 +94,15 @@ const StyledItem = styled('button', {
     !props.isNavigationDrawerExpanded
       ? `${NAV_DRAWER_WIDTHS.menu.desktop.collapsed - 24}px`
       : '100%'};
+  ${({ isDraggable }) =>
+    isDraggable &&
+    `
+    cursor: grab;
+    
+    &:active {
+      cursor: grabbing;
+    }
+  `}
 
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
@@ -190,6 +201,7 @@ export const NavigationDrawerItem = ({
   subItemState,
   rightOptions,
   isDropdownOpen,
+  isDraggable,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -229,6 +241,7 @@ export const NavigationDrawerItem = ({
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
         isDropdownOpen={isDropdownOpen}
+        isDraggable={isDraggable}
       >
         {showBreadcrumb && (
           <NavigationDrawerAnimatedCollapseWrapper>

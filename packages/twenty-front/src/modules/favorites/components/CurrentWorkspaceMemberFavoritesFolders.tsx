@@ -1,5 +1,4 @@
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
@@ -27,20 +26,6 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-
-const StyledContainer = styled(NavigationDrawerSection)`
-  width: 100%;
-`;
-
-const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
-  :active {
-    cursor: grabbing;
-
-    .fav-avatar:hover {
-      cursor: grabbing;
-    }
-  }
-`;
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const currentPath = useLocation().pathname;
@@ -87,7 +72,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   }
 
   return (
-    <StyledContainer>
+    <NavigationDrawerSection>
       <NavigationDrawerAnimatedCollapseWrapper>
         <NavigationDrawerSectionTitle
           label="Favorites"
@@ -120,7 +105,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
                   draggableId={favorite.id}
                   index={index}
                   itemComponent={
-                    <StyledNavigationDrawerItem
+                    <NavigationDrawerItem
                       key={favorite.id}
                       className="navigation-drawer-item"
                       label={favorite.labelIdentifier}
@@ -138,6 +123,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
                           accent="tertiary"
                         />
                       }
+                      isDraggable={true}
                     />
                   }
                 />
@@ -146,6 +132,6 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
           )}
         </>
       )}
-    </StyledContainer>
+    </NavigationDrawerSection>
   );
 };

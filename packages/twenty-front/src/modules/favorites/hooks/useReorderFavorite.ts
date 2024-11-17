@@ -20,15 +20,15 @@ export const useReorderFavorite = () => {
 
     if (!draggedFavorite) return;
 
-    const relevantFavorites = favoritesSorted.filter(
+    const inSameFolderFavorites = favoritesSorted.filter(
       (fav) => fav.favoriteFolderId === draggedFavorite.favoriteFolderId,
     );
-    if (!relevantFavorites.length) return;
+    if (!inSameFolderFavorites.length) return;
 
     const newPosition = calculateNewPosition({
       destinationIndex: result.destination.index,
       sourceIndex: result.source.index,
-      items: relevantFavorites,
+      items: inSameFolderFavorites,
     });
 
     updateOneFavorite({
