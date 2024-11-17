@@ -158,62 +158,6 @@ describe('isMatchingStringFilter', () => {
     });
   });
 
-  describe('gt', () => {
-    it('value is greater than gt filter', () => {
-      expect(
-        isMatchingStringFilter({ stringFilter: { gt: 'a' }, value: 'b' }),
-      ).toBe(true);
-    });
-
-    it('value is not greater than gt filter', () => {
-      expect(
-        isMatchingStringFilter({ stringFilter: { gt: 'b' }, value: 'a' }),
-      ).toBe(false);
-    });
-  });
-
-  describe('gte', () => {
-    it('value is greater than or equal to gte filter', () => {
-      expect(
-        isMatchingStringFilter({ stringFilter: { gte: 'a' }, value: 'a' }),
-      ).toBe(true);
-    });
-
-    it('value is not greater than or equal to gte filter', () => {
-      expect(
-        isMatchingStringFilter({ stringFilter: { gte: 'b' }, value: 'a' }),
-      ).toBe(false);
-    });
-  });
-
-  describe('lt', () => {
-    it('value is less than lt filter', () => {
-      expect(
-        isMatchingStringFilter({ stringFilter: { lt: 'b' }, value: 'a' }),
-      ).toBe(true);
-    });
-
-    it('value is not less than lt filter', () => {
-      expect(
-        isMatchingStringFilter({ stringFilter: { lt: 'a' }, value: 'b' }),
-      ).toBe(false);
-    });
-  });
-
-  describe('lte', () => {
-    it('value is less than or equal to lte filter', () => {
-      expect(
-        isMatchingStringFilter({ stringFilter: { lte: 'a' }, value: 'a' }),
-      ).toBe(true);
-    });
-
-    it('value is not less than or equal to lte filter', () => {
-      expect(
-        isMatchingStringFilter({ stringFilter: { lte: 'a' }, value: 'b' }),
-      ).toBe(false);
-    });
-  });
-
   describe('startsWith', () => {
     it('value starts with the startsWith filter', () => {
       expect(

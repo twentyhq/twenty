@@ -13,7 +13,7 @@ import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metada
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { capitalize } from 'src/utils/capitalize';
 
-const ARRAY_OPERATORS = ['in', 'contains', 'not_contains'];
+const ARRAY_OPERATORS = ['in', 'contains', 'notContains'];
 
 export class GraphqlQueryFilterFieldParser {
   private fieldMetadataMapByName: FieldMetadataMap;
