@@ -38,33 +38,29 @@ export type NavigationDrawerItemProps = {
   count?: number;
   keyboard?: string[];
   rightOptions?: ReactNode;
-  isDropdownOpen?: boolean;
   isDraggable?: boolean;
 };
 
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
   'active' | 'danger' | 'indentationLevel' | 'soon' | 'to' | 'isDraggable'
-> & { isNavigationDrawerExpanded: boolean; isDropdownOpen?: boolean };
+> & { isNavigationDrawerExpanded: boolean };
 
 const StyledItem = styled('button', {
   shouldForwardProp: (prop) =>
-    !['active', 'danger', 'soon', 'isDropdownOpen', 'isDraggable'].includes(
-      prop,
-    ) && isPropValid(prop),
+    !['active', 'danger', 'soon', 'isDraggable'].includes(prop) &&
+    isPropValid(prop),
 })<StyledItemProps>`
   box-sizing: content-box;
   align-items: center;
   background: ${(props) =>
-    props.active || props.isDropdownOpen
-      ? props.theme.background.transparent.light
-      : 'inherit'};
+    props.active ? props.theme.background.transparent.light : 'inherit'};
   height: ${({ theme }) => theme.spacing(5)};
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   text-decoration: none;
   color: ${(props) => {
-    if (props.active === true || props.isDropdownOpen === true) {
+    if (props.active === true) {
       return props.theme.font.color.primary;
     }
     if (props.danger === true) {
@@ -120,6 +116,7 @@ const StyledItem = styled('button', {
     font-size: ${({ theme }) => theme.font.size.lg};
   }
 `;
+
 const StyledItemElementsContainer = styled.span`
   align-items: center;
   display: flex;
@@ -166,13 +163,14 @@ const StyledNavigationDrawerItemContainer = styled.span`
 const StyledSpacer = styled.span`
   flex-grow: 1;
 `;
+
 const StyledRightOptionsContainer = styled.div<{
   isMobile: boolean;
-  isDropdownOpen?: boolean;
+  active: boolean;
 }>`
   margin-left: auto;
-  visibility: ${({ isMobile, isDropdownOpen }) =>
-    isMobile || isDropdownOpen === true ? 'visible' : 'hidden'};
+  visibility: ${({ isMobile, active }) =>
+    isMobile || active ? 'visible' : 'hidden'};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -186,6 +184,7 @@ const StyledRightOptionsContainer = styled.div<{
     visibility: visible;
   }
 `;
+
 export const NavigationDrawerItem = ({
   className,
   label,
@@ -200,7 +199,6 @@ export const NavigationDrawerItem = ({
   keyboard,
   subItemState,
   rightOptions,
-  isDropdownOpen,
   isDraggable,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
@@ -240,7 +238,6 @@ export const NavigationDrawerItem = ({
         to={to ? to : undefined}
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
-        isDropdownOpen={isDropdownOpen}
         isDraggable={isDraggable}
       >
         {showBreadcrumb && (
@@ -291,7 +288,7 @@ export const NavigationDrawerItem = ({
             {rightOptions && (
               <StyledRightOptionsContainer
                 isMobile={isMobile}
-                isDropdownOpen={isDropdownOpen}
+                active={active || false}
                 onClick={(e) => {
                   e.stopPropagation();
                   e.preventDefault();
