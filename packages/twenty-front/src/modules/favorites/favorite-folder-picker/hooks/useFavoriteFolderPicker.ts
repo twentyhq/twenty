@@ -1,13 +1,18 @@
+import { favoriteFolderIdsPickerComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFolderIdPickerComponentState';
+import { favoriteFolderPickerCheckedComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFolderPickerCheckedComponentState';
+import { favoriteFolderPickerComponentFamilyState } from '@/favorites/favorite-folder-picker/states/favoriteFolderPickerComponentFamilyState';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-ui';
-import { useFavoriteFoldersScopedStates } from './useFavoriteFoldersScopedStates';
 
-type useMultiFavoriteFolderProps = {
+type useFavoriteFolderPickerProps = {
   record?: ObjectRecord;
   objectNameSingular: string;
 };
@@ -17,18 +22,21 @@ type FolderOperations = {
   toggleFolderSelection: (folderId: string) => Promise<void>;
 };
 
-export const useMultiFavoriteFolder = ({
+export const useFavoriteFolderPicker = ({
   record,
   objectNameSingular,
-}: useMultiFavoriteFolderProps): FolderOperations => {
-  const {
-    favoriteFoldersIdsMultiSelectState,
-    favoriteFolderMultiSelectFamilyState,
-    favoriteFoldersMultiSelectCheckedState,
-  } = useFavoriteFoldersScopedStates();
+}: useFavoriteFolderPickerProps): FolderOperations => {
+  const [favoriteFolderIdsPicker] = useRecoilComponentStateV2(
+    favoriteFolderIdsPickerComponentState,
+  );
 
-  const favoriteFoldersIdsMultiSelect = useRecoilValue(
-    favoriteFoldersIdsMultiSelectState,
+  const favoriteFoldersMultiSelectCheckedState =
+    useRecoilComponentCallbackStateV2(
+      favoriteFolderPickerCheckedComponentState,
+    );
+
+  const favoriteFolderPickerFamilyState = useRecoilComponentCallbackStateV2(
+    favoriteFolderPickerComponentFamilyState,
   );
 
   const favorites = useFavorites();
@@ -38,17 +46,17 @@ export const useMultiFavoriteFolder = ({
   const getFoldersByIds = useRecoilCallback(
     ({ snapshot }) =>
       (): FavoriteFolder[] => {
-        return favoriteFoldersIdsMultiSelect
+        return favoriteFolderIdsPicker
           .map((folderId) => {
             const folderValue = snapshot
-              .getLoadable(favoriteFolderMultiSelectFamilyState(folderId))
+              .getLoadable(favoriteFolderPickerFamilyState(folderId))
               .getValue();
 
             return folderValue;
           })
           .filter((folder): folder is FavoriteFolder => isDefined(folder));
       },
-    [favoriteFoldersIdsMultiSelect, favoriteFolderMultiSelectFamilyState],
+    [favoriteFolderIdsPicker, favoriteFolderPickerFamilyState],
   );
 
   const toggleFolderSelection = useRecoilCallback(

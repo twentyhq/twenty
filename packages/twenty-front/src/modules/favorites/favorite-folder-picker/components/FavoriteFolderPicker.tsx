@@ -1,7 +1,8 @@
 import { FAVORITE_FOLDERS_DROPDOWN_ID } from '@/favorites/constants/FavoriteFoldersDropdownId';
-import { useFavoriteFoldersScopedStates } from '@/favorites/hooks/useFavoriteFoldersScopedStates';
-import { useMultiFavoriteFolder } from '@/favorites/hooks/useMultiFavoriteFolder';
-import { FavoriteFoldersScopeInternalContext } from '@/favorites/scopes/scope-internal-context/favoritesScopeInternalContext';
+import { useFavoriteFolderPicker } from '@/favorites/favorite-folder-picker/hooks/useFavoriteFolderPicker';
+import { FavoriteFolderPickerInstanceContext } from '@/favorites/favorite-folder-picker/states/context/FavoriteFolderPickerInstanceContext';
+import { favoriteFolderPickerCheckedComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFolderPickerCheckedComponentState';
+import { favoriteFolderSearchFilterComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFoldersSearchFilterComponentState';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -10,11 +11,12 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useCallback } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { IconPlus, MenuItem, MenuItemMultiSelect } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
@@ -46,7 +48,7 @@ const StyledFooter = styled.div`
   position: sticky;
 `;
 
-type FavoriteFoldersMultiSelectProps = {
+type FavoriteFolderPickerProps = {
   onSubmit?: () => void;
   record?: ObjectRecord;
   objectNameSingular: string;
@@ -64,37 +66,31 @@ const StyledDropdownMenuSeparator = styled(DropdownMenuSeparator)`
 
 const NO_FOLDER_ID = 'no-folder';
 
-export const FavoriteFoldersMultiSelect = ({
+export const FavoriteFolderPicker = ({
   onSubmit,
   record,
   objectNameSingular,
-}: FavoriteFoldersMultiSelectProps) => {
+}: FavoriteFolderPickerProps) => {
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
     useRecoilState(isFavoriteFolderCreatingState);
 
   const theme = useTheme();
 
-  const scopeId = useAvailableScopeIdOrThrow(
-    FavoriteFoldersScopeInternalContext,
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    FavoriteFolderPickerInstanceContext,
   );
-
   const { closeDropdown } = useDropdown(FAVORITE_FOLDERS_DROPDOWN_ID);
 
-  const {
-    favoriteFoldersSearchFilterState,
-    favoriteFoldersMultiSelectCheckedState,
-  } = useFavoriteFoldersScopedStates();
-
-  const { getFoldersByIds, toggleFolderSelection } = useMultiFavoriteFolder({
+  const { getFoldersByIds, toggleFolderSelection } = useFavoriteFolderPicker({
     record,
     objectNameSingular,
   });
 
   const [favoriteFoldersSearchFilter, setFavoriteFoldersSearchFilter] =
-    useRecoilState(favoriteFoldersSearchFilterState);
+    useRecoilComponentStateV2(favoriteFolderSearchFilterComponentState);
 
-  const favoriteFoldersMultiSelectChecked = useRecoilValue(
-    favoriteFoldersMultiSelectCheckedState,
+  const [favoriteFolderPickerChecked] = useRecoilComponentStateV2(
+    favoriteFolderPickerCheckedComponentState,
   );
 
   const debouncedSetSearchFilter = useDebouncedCallback(
@@ -130,7 +126,7 @@ export const FavoriteFoldersMultiSelect = ({
       }
       onSubmit?.();
     },
-    scopeId,
+    instanceId,
     [onSubmit, isFavoriteFolderCreating],
   );
 
@@ -149,7 +145,7 @@ export const FavoriteFoldersMultiSelect = ({
         return;
       }
     },
-    scopeId,
+    instanceId,
     [filteredFolders, showNoFolderOption, toggleFolderSelection, onSubmit],
   );
 
@@ -169,9 +165,7 @@ export const FavoriteFoldersMultiSelect = ({
               <MenuItemMultiSelect
                 key={`menu-${NO_FOLDER_ID}`}
                 onSelectChange={() => toggleFolderSelection(NO_FOLDER_ID)}
-                selected={favoriteFoldersMultiSelectChecked.includes(
-                  NO_FOLDER_ID,
-                )}
+                selected={favoriteFolderPickerChecked.includes(NO_FOLDER_ID)}
                 text="No folder"
                 className="no-folder-menu-item-multi-select"
               />
@@ -184,9 +178,7 @@ export const FavoriteFoldersMultiSelect = ({
                   <MenuItemMultiSelect
                     key={`menu-${folder.id}`}
                     onSelectChange={() => toggleFolderSelection(folder.id)}
-                    selected={favoriteFoldersMultiSelectChecked.includes(
-                      folder.id,
-                    )}
+                    selected={favoriteFolderPickerChecked.includes(folder.id)}
                     text={folder.name}
                     className="folder-menu-item-multi-select"
                   />

@@ -1,6 +1,6 @@
-import { FavoriteFoldersMultiSelect } from '@/favorites/components/FavoriteFoldersMultiSelect';
-import { FavoriteFoldersMultiSelectEffect } from '@/favorites/components/FavoriteFoldersSelectEffects';
-import { FavoriteFoldersScope } from '@/favorites/scopes/FavoriteFoldersScope';
+import { FavoriteFolderPicker } from '@/favorites/favorite-folder-picker/components/FavoriteFolderPicker';
+import { FavoriteFolderPickerEffect } from '@/favorites/favorite-folder-picker/components/FavoriteFolderPickerEffect';
+import { FavoriteFolderPickerScope } from '@/favorites/favorite-folder-picker/scopes/FavoriteFolderPickerScope';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -23,7 +23,7 @@ export const PageFavoriteFoldersDropdown = ({
   const { closeDropdown } = useDropdown(dropdownId);
 
   return (
-    <FavoriteFoldersScope favoriteFoldersScopeId={dropdownId}>
+    <FavoriteFolderPickerScope favoriteFoldersScopeId={dropdownId}>
       <DropdownScope dropdownScopeId={dropdownId}>
         <Dropdown
           dropdownId={dropdownId}
@@ -31,8 +31,8 @@ export const PageFavoriteFoldersDropdown = ({
           clickableComponent={<PageFavoriteButton isFavorite={isFavorite} />}
           dropdownComponents={
             <>
-              <FavoriteFoldersMultiSelectEffect record={record} />
-              <FavoriteFoldersMultiSelect
+              <FavoriteFolderPickerEffect record={record} />
+              <FavoriteFolderPicker
                 onSubmit={closeDropdown}
                 record={record}
                 objectNameSingular={objectNameSingular}
@@ -44,6 +44,6 @@ export const PageFavoriteFoldersDropdown = ({
           }}
         />
       </DropdownScope>
-    </FavoriteFoldersScope>
+    </FavoriteFolderPickerScope>
   );
 };
