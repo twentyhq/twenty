@@ -1,5 +1,5 @@
+import { FavoriteFolderNavigationDrawerItemDropdown } from '@/favorites/components/FavoriteFolderNavigationDrawerItemDropdown';
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
-import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useDeleteFavoriteFolder } from '@/favorites/hooks/useDeleteFavoriteFolder';
 import { useRenameFavoriteFolder } from '@/favorites/hooks/useRenameFavoriteFolder';
@@ -9,8 +9,6 @@ import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatching
 import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
@@ -18,19 +16,10 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
-import { useTheme } from '@emotion/react';
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import {
-  IconDotsVertical,
-  IconFolder,
-  IconHeartOff,
-  IconPencil,
-  IconTrash,
-  LightIconButton,
-  MenuItem,
-} from 'twenty-ui';
+import { IconFolder, IconHeartOff, LightIconButton } from 'twenty-ui';
 
 type CurrentWorkspaceMemberFavoritesProps = {
   folder: {
@@ -48,9 +37,11 @@ export const CurrentWorkspaceMemberFavorites = ({
   const currentPath = useLocation().pathname;
   const currentViewPath = useLocation().pathname + useLocation().search;
 
-  const theme = useTheme();
-  const [isRenaming, setIsRenaming] = useState(false);
-  const [folderName, setFolderName] = useState(folder.folderName);
+  const [isFavoriteFolderRenaming, setIsFavoriteFolderRenaming] =
+    useState(false);
+  const [favoriteFolderName, setFavoriteFolderName] = useState(
+    folder.folderName,
+  );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [activeFavoriteFolderId, setActiveFavoriteFolderId] = useRecoilState(
     activeFavoriteFolderIdState,
@@ -79,13 +70,13 @@ export const CurrentWorkspaceMemberFavorites = ({
   const handleSubmitRename = async (value: string) => {
     if (value === '') return;
     await renameFavoriteFolder(folder.folderId, value);
-    setIsRenaming(false);
+    setIsFavoriteFolderRenaming(false);
     return true;
   };
 
   const handleCancelRename = () => {
-    setFolderName(folder.folderName);
-    setIsRenaming(false);
+    setFavoriteFolderName(folder.folderName);
+    setIsFavoriteFolderRenaming(false);
   };
 
   const handleClickOutside = async (
@@ -93,15 +84,15 @@ export const CurrentWorkspaceMemberFavorites = ({
     value: string,
   ) => {
     if (!value) {
-      setIsRenaming(false);
+      setIsFavoriteFolderRenaming(false);
       return;
     }
 
     await renameFavoriteFolder(folder.folderId, value);
-    setIsRenaming(false);
+    setIsFavoriteFolderRenaming(false);
   };
 
-  const handleDelete = async () => {
+  const handleFavoriteFolderDelete = async () => {
     if (folder.favorites.length > 0) {
       setIsDeleteModalOpen(true);
       closeFavoriteFolderEditDropdown();
@@ -117,39 +108,11 @@ export const CurrentWorkspaceMemberFavorites = ({
   };
 
   const rightOptions = (
-    <Dropdown
-      dropdownId={`favorite-folder-edit-${folder.folderId}`}
-      dropdownHotkeyScope={{
-        scope: FavoriteFolderHotkeyScope.FavoriteFolderRightIconDropdown,
-      }}
-      data-select-disable
-      clickableComponent={
-        <IconDotsVertical
-          size={theme.icon.size.md}
-          color={theme.color.gray50}
-        />
-      }
-      dropdownPlacement="right"
-      dropdownOffset={{ y: -15 }}
-      dropdownComponents={
-        <DropdownMenuItemsContainer>
-          <MenuItem
-            LeftIcon={IconPencil}
-            onClick={() => {
-              setIsRenaming(true);
-              closeFavoriteFolderEditDropdown();
-            }}
-            accent="default"
-            text="Rename"
-          />
-          <MenuItem
-            LeftIcon={IconTrash}
-            onClick={handleDelete}
-            accent="danger"
-            text="Delete"
-          />
-        </DropdownMenuItemsContainer>
-      }
+    <FavoriteFolderNavigationDrawerItemDropdown
+      folderId={folder.folderId}
+      onRename={() => setIsFavoriteFolderRenaming(true)}
+      onDelete={handleFavoriteFolderDelete}
+      closeDropdown={closeFavoriteFolderEditDropdown}
     />
   );
 
@@ -159,11 +122,11 @@ export const CurrentWorkspaceMemberFavorites = ({
         key={folder.folderId}
         isGroup={isGroup}
       >
-        {isRenaming ? (
+        {isFavoriteFolderRenaming ? (
           <NavigationDrawerInput
             Icon={IconFolder}
-            value={folderName}
-            onChange={setFolderName}
+            value={favoriteFolderName}
+            onChange={setFavoriteFolderName}
             onSubmit={handleSubmitRename}
             onCancel={handleCancelRename}
             onClickOutside={handleClickOutside}
