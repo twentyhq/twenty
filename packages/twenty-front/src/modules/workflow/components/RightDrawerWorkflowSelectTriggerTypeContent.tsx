@@ -37,6 +37,7 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
     <StyledActionListContainer>
       {TRIGGER_TYPES.map((action) => (
         <MenuItem
+          key={action.type}
           LeftIcon={action.icon}
           text={action.label}
           onClick={async () => {

@@ -15,6 +15,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
+import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { useRestoreManyRecords } from '@/object-record/hooks/useRestoreManyRecords';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -28,9 +29,11 @@ const StyledContainer = styled.div`
 export const ShowPageMoreButton = ({
   recordId,
   objectNameSingular,
+  isRemote,
 }: {
   recordId: string;
   objectNameSingular: string;
+  isRemote: boolean;
 }) => {
   const { closeDropdown, toggleDropdown } = useDropdown('more-show-page');
   const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState);
@@ -65,6 +68,15 @@ export const ShowPageMoreButton = ({
   const [recordFromStore] = useRecoilState<any>(
     recordStoreFamilyState(recordId),
   );
+
+  if (
+    isObjectMetadataReadOnly({
+      isRemote,
+      nameSingular: objectNameSingular,
+    })
+  ) {
+    return;
+  }
 
   return (
     <StyledContainer>
