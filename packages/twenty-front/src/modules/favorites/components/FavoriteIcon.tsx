@@ -1,15 +1,7 @@
 import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
 import { Avatar, useIcons } from 'twenty-ui';
-
-const StyledAvatar = styled(Avatar)`
-  background: inherit;
-  :hover {
-    cursor: grab;
-  }
-`;
 
 export const FavoriteIcon = ({ favorite }: { favorite: ProcessedFavorite }) => {
   const theme = useTheme();
@@ -22,7 +14,7 @@ export const FavoriteIcon = ({ favorite }: { favorite: ProcessedFavorite }) => {
   const iconColorToUse = StandardIcon ? IconColor : theme.font.color.secondary;
 
   return (
-    <StyledAvatar
+    <Avatar
       size="md"
       type={favorite.avatarType}
       Icon={IconToUse}
