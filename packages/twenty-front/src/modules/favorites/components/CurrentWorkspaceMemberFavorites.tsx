@@ -15,7 +15,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
+import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useTheme } from '@emotion/react';
@@ -155,7 +155,7 @@ export const CurrentWorkspaceMemberFavorites = ({
 
   return (
     <>
-      <NavigationDrawerItemsCollapsedContainer
+      <NavigationDrawerItemsCollapsableContainer
         key={folder.folderId}
         isGroup={isGroup}
       >
@@ -219,7 +219,7 @@ export const CurrentWorkspaceMemberFavorites = ({
             }
           />
         )}
-      </NavigationDrawerItemsCollapsedContainer>
+      </NavigationDrawerItemsCollapsableContainer>
 
       <ConfirmationModal
         isOpen={isDeleteModalOpen}

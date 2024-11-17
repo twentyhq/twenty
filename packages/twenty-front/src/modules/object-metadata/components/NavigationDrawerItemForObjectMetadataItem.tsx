@@ -3,7 +3,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { NavigationDrawerItemsCollapsedContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsedContainer';
+import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { View } from '@/views/types/View';
@@ -53,7 +53,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const subItemArrayLength = sortedObjectMetadataViews.length;
 
   return (
-    <NavigationDrawerItemsCollapsedContainer
+    <NavigationDrawerItemsCollapsableContainer
       isGroup={shouldSubItemsBeDisplayed}
     >
       <NavigationDrawerItem
@@ -78,6 +78,6 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
             key={view.id}
           />
         ))}
-    </NavigationDrawerItemsCollapsedContainer>
+    </NavigationDrawerItemsCollapsableContainer>
   );
 };
