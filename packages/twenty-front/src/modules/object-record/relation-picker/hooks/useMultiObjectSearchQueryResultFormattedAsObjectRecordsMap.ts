@@ -8,7 +8,7 @@ import { formatMultiObjectRecordSearchResults } from '@/object-record/relation-p
 import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
 import { isDefined } from '~/utils/isDefined';
 
-export const useMultiObjectRecordsQueryResultFormattedAsObjectRecordsMap = ({
+export const useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap = ({
   multiObjectRecordsQueryResult,
 }: {
   multiObjectRecordsQueryResult:

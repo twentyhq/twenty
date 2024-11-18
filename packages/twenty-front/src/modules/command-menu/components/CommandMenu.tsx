@@ -16,6 +16,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
+import { useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap } from '@/object-record/relation-picker/hooks/useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -173,13 +174,19 @@ export const CommandMenu = () => {
   );
 
   const {
-    matchesSearchFilterObjectRecords,
+    matchesSearchFilterObjectRecordsQueryResult,
     matchesSearchFilterObjectRecordsLoading: loading,
   } = useMultiObjectSearch({
     excludedObjects: [CoreObjectNameSingular.Task, CoreObjectNameSingular.Note],
     searchFilterValue: deferredCommandMenuSearch ?? undefined,
     limit: 3,
   });
+
+  const { objectRecordsMap: matchesSearchFilterObjectRecords } =
+    useMultiObjectSearchQueryResultFormattedAsObjectRecordsMap({
+      multiObjectRecordsQueryResult:
+        matchesSearchFilterObjectRecordsQueryResult,
+    });
 
   const { loading: isNotesLoading, records: notes } = useFindManyRecords<Note>({
     skip: !isCommandMenuOpened,
@@ -207,9 +214,8 @@ export const CommandMenu = () => {
     return Object.fromEntries(
       Object.entries(matchesSearchFilterObjectRecords).filter(
         ([namePlural, records]) =>
-          !['people', 'opportunities', 'companies', 'notes'].includes(
-            namePlural,
-          ) && !isEmpty(records),
+          !['people', 'opportunities', 'companies'].includes(namePlural) &&
+          !isEmpty(records),
       ),
     );
   }, [matchesSearchFilterObjectRecords]);

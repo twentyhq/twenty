@@ -59,14 +59,8 @@ export const useMultiObjectSearch = ({
     },
   );
 
-  const { objectRecordsMap: matchesSearchFilterObjectRecords } =
-    useMultiObjectRecordsQueryResultFormattedAsObjectRecordMap({
-      multiObjectRecordsQueryResult:
-        matchesSearchFilterObjectRecordsQueryResult,
-    });
-
   return {
     matchesSearchFilterObjectRecordsLoading,
-    matchesSearchFilterObjectRecords,
+    matchesSearchFilterObjectRecordsQueryResult,
   };
 };
