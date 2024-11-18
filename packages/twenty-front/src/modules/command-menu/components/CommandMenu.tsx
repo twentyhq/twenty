@@ -269,13 +269,12 @@ export const CommandMenu = () => {
           id: objectRecord.record.id,
           label: objectRecord.recordIdentifier.name,
           to: `object/${objectRecord.objectMetadataItem.nameSingular}/${objectRecord.record.id}`,
-          onCommandClick: () => openActivityRightDrawer(objectRecord.record.id),
         })),
       );
     });
 
     return customObjectCommandsArray;
-  }, [customObjectRecordsMap, openActivityRightDrawer]);
+  }, [customObjectRecordsMap]);
 
   const otherCommands = useMemo(() => {
     const commandsArray: Command[] = [];
@@ -435,11 +434,14 @@ export const CommandMenu = () => {
                   selectableItemIdArray={selectableItemIds}
                   hotkeyScope={AppHotkeyScope.CommandMenu}
                   onEnter={(itemId) => {
+                    console.log('enter', itemId);
                     const command = [
                       ...copilotCommands,
                       ...commandMenuCommands,
                       ...otherCommands,
                     ].find((cmd) => cmd.id === itemId);
+
+                    console.log('command', command);
 
                     if (isDefined(command)) {
                       const { to, onCommandClick } = command;
