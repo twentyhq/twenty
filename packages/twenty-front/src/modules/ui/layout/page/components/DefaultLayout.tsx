@@ -2,6 +2,7 @@ import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
+import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
@@ -46,6 +47,10 @@ const StyledPageContainer = styled(motion.div)`
   flex: 1 1 auto;
   flex-direction: row;
   min-height: 0;
+`;
+
+const StyledAppNavigationDrawer = styled(AppNavigationDrawer)`
+  flex-shrink: 0;
 `;
 
 const StyledAppNavigationDrawerMock = styled(SignInAppNavigationDrawerMock)`
@@ -93,7 +98,11 @@ export const DefaultLayout = () => {
             duration: theme.animation.duration.normal,
           }}
         >
-          <StyledAppNavigationDrawerMock />
+          {showAuthModal ? (
+            <StyledAppNavigationDrawerMock />
+          ) : (
+            <StyledAppNavigationDrawer />
+          )}
           <StyledMainContainer>
             {showAuthModal ? (
               <>

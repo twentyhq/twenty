@@ -1,7 +1,7 @@
 import { SupportDropdown } from '@/support/components/SupportDropdown';
 import {
-    NavigationDrawer,
-    NavigationDrawerProps,
+  NavigationDrawer,
+  NavigationDrawerProps,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
