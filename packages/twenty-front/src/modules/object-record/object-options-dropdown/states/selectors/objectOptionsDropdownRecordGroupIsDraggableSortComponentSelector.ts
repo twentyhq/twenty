@@ -3,9 +3,9 @@ import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupS
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
-export const objectOptionsDropdownRecordGroupIsDragableSortComponentSelector =
+export const objectOptionsDropdownRecordGroupIsDraggableSortComponentSelector =
   createComponentSelectorV2({
-    key: 'objectOptionsDropdownRecordGroupIsDragableSortComponentSelector',
+    key: 'objectOptionsDropdownRecordGroupIsDraggableSortComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:
       ({ instanceId }) =>

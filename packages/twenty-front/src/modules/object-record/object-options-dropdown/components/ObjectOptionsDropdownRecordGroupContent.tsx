@@ -25,7 +25,7 @@ import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropd
 import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useRecordGroupFieldsDropdown';
 import { objectOptionsDropdownRecordGroupHideComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownRecordGroupHideComponentState';
 import { objectOptionsDropdownRecordGroupSortComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownRecordGroupSortComponentState';
-import { objectOptionsDropdownRecordGroupIsDragableSortComponentSelector } from '@/object-record/object-options-dropdown/states/selectors/objectOptionsDropdownRecordGroupIsDragableSortComponentSelector';
+import { objectOptionsDropdownRecordGroupIsDraggableSortComponentSelector } from '@/object-record/object-options-dropdown/states/selectors/objectOptionsDropdownRecordGroupIsDraggableSortComponentSelector';
 import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
 import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { useRecordGroupSelector } from '@/object-record/record-group/hooks/useRecordGroupSelector';
@@ -78,7 +78,7 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
   });
 
   const isDragableSortRecordGroup = useRecoilComponentValueV2(
-    objectOptionsDropdownRecordGroupIsDragableSortComponentSelector,
+    objectOptionsDropdownRecordGroupIsDraggableSortComponentSelector,
   );
 
   const setRecordGroupSort = useSetRecoilComponentStateV2(
