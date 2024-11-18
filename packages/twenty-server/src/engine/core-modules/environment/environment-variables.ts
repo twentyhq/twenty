@@ -452,11 +452,12 @@ export class EnvironmentVariables {
   @IsOptional()
   @AssertOrWarn(
     (env, value) =>
-      env.AUTH_SSO_ENABLED &&
-      value === 'replace_me_with_a_random_string_session',
+      !env.AUTH_SSO_ENABLED ||
+      (env.AUTH_SSO_ENABLED &&
+        value !== 'replace_me_with_a_random_string_session'),
     {
       message:
-        'Warning: SESSION_STORE_SECRET should be changed to a secure, random string.',
+        'SESSION_STORE_SECRET should be changed to a secure, random string.',
     },
   )
   SESSION_STORE_SECRET = 'replace_me_with_a_random_string_session';

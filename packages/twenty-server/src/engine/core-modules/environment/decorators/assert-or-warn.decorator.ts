@@ -10,7 +10,7 @@ export const AssertOrWarn = (
 ) => {
   return function (object: any, propertyName: string) {
     registerDecorator({
-      name: 'WarningIf',
+      name: 'AssertOrWarn',
       target: object.constructor,
       propertyName: propertyName,
       options: {
@@ -20,10 +20,10 @@ export const AssertOrWarn = (
       constraints: [condition],
       validator: {
         validate(value: any, args: ValidationArguments) {
-          return !condition(args.object, value);
+          return condition(args.object, value);
         },
         defaultMessage(args: ValidationArguments) {
-          return `Warning: '${args.property}' failed the warning validation.`;
+          return `'${args.property}' failed the warning validation.`;
         },
       },
     });
