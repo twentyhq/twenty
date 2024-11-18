@@ -208,8 +208,8 @@ export const SettingsObjectFieldItemTableRow = ({
 
   if (!isFieldTypeSupported) return null;
 
-  const isRelateObjectLinkable =
-    relationObjectMetadataItem?.namePlural &&
+  const isRelatedObjectLinkable =
+    isDefined(relationObjectMetadataItem?.namePlural) &&
     !relationObjectMetadataItem.isSystem;
 
   return (
@@ -245,13 +245,15 @@ export const SettingsObjectFieldItemTableRow = ({
             fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined
           }
           to={
-            isRelateObjectLinkable
+            isRelatedObjectLinkable
               ? `/settings/objects/${getObjectSlug(relationObjectMetadataItem)}`
               : undefined
           }
           value={fieldType}
           onClick={(e) => {
-            e.stopPropagation();
+            if (isRelatedObjectLinkable) {
+              e.stopPropagation();
+            }
           }}
         />
       </TableCell>
