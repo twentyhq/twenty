@@ -195,6 +195,7 @@ export const WorkflowEditActionFormServerlessFunction = (
 
   return (
     <WorkflowEditGenericFormBase
+      key={props.action.id}
       HeaderIcon={<IconCode color={theme.color.orange} />}
       headerTitle="Code - Serverless Function"
       headerType="Code"
