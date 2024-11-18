@@ -1,9 +1,9 @@
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { Select } from '@/ui/input/components/Select';
+import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import styled from '@emotion/styled';
-import { CardContent } from 'twenty-ui';
+import { CardContent, IconTextWrap } from 'twenty-ui';
 import { z } from 'zod';
 
 const StyledFormCardTitle = styled.div`
@@ -51,10 +51,14 @@ export const SettingsDataModelFieldTextForm = ({
 
           return (
             <>
-              <StyledFormCardTitle>Wrap on record pages</StyledFormCardTitle>
-              <Select
+              <SettingsOptionCardContentSelect
+                Icon={IconTextWrap}
+                dropdownId="text-wrap"
+                title="Wrap on record pages"
+                description="Display text on multiple lines"
+                value={displayedMaxRows}
+                onChange={(value) => onChange({ displayedMaxRows: value })}
                 disabled={disabled}
-                dropdownId="selectTextWrap"
                 options={[
                   {
                     label: 'Deactivated',
@@ -77,10 +81,6 @@ export const SettingsDataModelFieldTextForm = ({
                     value: 99,
                   },
                 ]}
-                value={displayedMaxRows}
-                onChange={(value) => onChange({ displayedMaxRows: value })}
-                withSearchInput={false}
-                dropdownWidthAuto={true}
               />
             </>
           );
