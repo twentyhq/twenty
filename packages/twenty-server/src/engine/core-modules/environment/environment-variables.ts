@@ -12,9 +12,6 @@ import {
   Max,
   Min,
   ValidateIf,
-  ValidationArguments,
-  ValidationOptions,
-  registerDecorator,
   validateSync,
 } from 'class-validator';
 
@@ -31,6 +28,7 @@ import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/ca
 import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/environment/decorators/cast-to-positive-number.decorator';
 import { CastToStringArray } from 'src/engine/core-modules/environment/decorators/cast-to-string-array.decorator';
+import { AssertOrWarn } from 'src/engine/core-modules/environment/decorators/assert-or-warn.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/environment/decorators/is-aws-region.decorator';
 import { IsDuration } from 'src/engine/core-modules/environment/decorators/is-duration.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/environment/decorators/is-strictly-lower-than.decorator';
@@ -40,32 +38,6 @@ import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
 import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces';
 import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
 import { assert } from 'src/utils/assert';
-
-function WarningIf(
-  condition: (object: any, value: any) => boolean,
-  validationOptions?: ValidationOptions,
-) {
-  return function (object: any, propertyName: string) {
-    registerDecorator({
-      name: 'WarningIf',
-      target: object.constructor,
-      propertyName: propertyName,
-      options: {
-        ...validationOptions,
-        groups: ['warning'],
-      },
-      constraints: [condition],
-      validator: {
-        validate(value: any, args: ValidationArguments) {
-          return !condition(args.object, value);
-        },
-        defaultMessage(args: ValidationArguments) {
-          return `Warning: '${args.property}' failed the warning validation.`;
-        },
-      },
-    });
-  };
-}
 
 export class EnvironmentVariables {
   // Misc
@@ -478,7 +450,7 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsOptional()
-  @WarningIf(
+  @AssertOrWarn(
     (env, value) =>
       env.AUTH_SSO_ENABLED &&
       value === 'replace_me_with_a_random_string_session',
