@@ -12,6 +12,7 @@ import { Command, CommandType } from '@/command-menu/types/Command';
 import { Company } from '@/companies/types/Company';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -34,6 +35,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import {
   Avatar,
+  IconCheckbox,
   IconNotes,
   IconSparkles,
   IconX,
@@ -200,6 +202,18 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
+  const { loading: isTasksLoading, records: tasks } = useFindManyRecords<Note>({
+    skip: !isCommandMenuOpened,
+    objectNameSingular: CoreObjectNameSingular.Task,
+    filter: deferredCommandMenuSearch
+      ? makeOrFilterVariables([
+          { title: { ilike: `%${deferredCommandMenuSearch}%` } },
+          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
+        ])
+      : undefined,
+    limit: 3,
+  });
+
   const people = matchesSearchFilterObjectRecords.people?.map(
     (people) => people.record,
   );
@@ -214,8 +228,11 @@ export const CommandMenu = () => {
     return Object.fromEntries(
       Object.entries(matchesSearchFilterObjectRecords).filter(
         ([namePlural, records]) =>
-          !['people', 'opportunities', 'companies'].includes(namePlural) &&
-          !isEmpty(records),
+          ![
+            CoreObjectNamePlural.Person,
+            CoreObjectNamePlural.Opportunity,
+            CoreObjectNamePlural.Company,
+          ].includes(namePlural as CoreObjectNamePlural) && !isEmpty(records),
       ),
     );
   }, [matchesSearchFilterObjectRecords]);
@@ -261,6 +278,17 @@ export const CommandMenu = () => {
     [notes, openActivityRightDrawer],
   );
 
+  const tasksCommands = useMemo(
+    () =>
+      tasks?.map((task) => ({
+        id: task.id,
+        label: task.title ?? '',
+        to: '',
+        onCommandClick: () => openActivityRightDrawer(task.id),
+      })),
+    [tasks, openActivityRightDrawer],
+  );
+
   const customObjectCommands = useMemo(() => {
     const customObjectCommandsArray: Command[] = [];
     Object.values(customObjectRecordsMap).forEach((objectRecords) => {
@@ -290,6 +318,9 @@ export const CommandMenu = () => {
     if (noteCommands?.length > 0) {
       commandsArray.push(...(noteCommands as Command[]));
     }
+    if (tasksCommands?.length > 0) {
+      commandsArray.push(...(tasksCommands as Command[]));
+    }
     if (customObjectCommands?.length > 0) {
       commandsArray.push(...(customObjectCommands as Command[]));
     }
@@ -300,6 +331,7 @@ export const CommandMenu = () => {
     opportunityCommands,
     noteCommands,
     customObjectCommands,
+    tasksCommands,
   ]);
 
   const checkInShortcuts = (cmd: Command, search: string) => {
@@ -379,6 +411,7 @@ export const CommandMenu = () => {
     .concat(companies?.map((company) => company.id))
     .concat(opportunities?.map((opportunity) => opportunity.id))
     .concat(notes?.map((note) => note.id))
+    .concat(tasks?.map((task) => task.id))
     .concat(
       Object.values(customObjectRecordsMap)
         ?.map((objectRecords) =>
@@ -395,10 +428,11 @@ export const CommandMenu = () => {
     !people?.length &&
     !companies?.length &&
     !notes?.length &&
+    !tasks?.length &&
     !opportunities?.length &&
     isEmpty(customObjectRecordsMap);
 
-  const isLoading = loading || isNotesLoading;
+  const isLoading = loading || isNotesLoading || isTasksLoading;
 
   const mainContextStoreComponentInstanceId = useRecoilValue(
     mainContextStoreComponentInstanceIdState,
@@ -615,6 +649,19 @@ export const CommandMenu = () => {
                           key={note.id}
                           label={note.title ?? ''}
                           onClick={() => openActivityRightDrawer(note.id)}
+                        />
+                      </SelectableItem>
+                    ))}
+                  </CommandGroup>
+                  <CommandGroup heading="Tasks">
+                    {tasks?.map((task) => (
+                      <SelectableItem itemId={task.id} key={task.id}>
+                        <CommandMenuItem
+                          id={task.id}
+                          Icon={IconCheckbox}
+                          key={task.id}
+                          label={task.title ?? ''}
+                          onClick={() => openActivityRightDrawer(task.id)}
                         />
                       </SelectableItem>
                     ))}
