@@ -447,8 +447,9 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
 
-  @ValidateIf((env) => env.ENTERPRISE_KEY)
-  SESSION_STORE_SECRET: string;
+  @IsString()
+  @IsOptional()
+  SESSION_STORE_SECRET = 'replace_me_with_a_random_string_session';
 
   @CastToBoolean()
   CALENDAR_PROVIDER_GOOGLE_ENABLED = false;
