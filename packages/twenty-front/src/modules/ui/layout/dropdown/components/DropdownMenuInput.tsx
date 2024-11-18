@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { forwardRef, InputHTMLAttributes, ReactNode, useRef } from 'react';
 import 'react-phone-number-input/style.css';
-import { RGBA, TEXT_INPUT_STYLE } from 'twenty-ui';
+import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
@@ -22,14 +22,6 @@ const StyledInput = styled.input<{
   position: relative;
   width: 100%;
 
-  &:focus {
-    ${({ theme, hasError = false }) => {
-      if (hasError) return '';
-      return `box-shadow: 0px 0px 0px 3px ${RGBA(theme.color.blue, 0.1)};
-      border-color: ${theme.color.blue};`;
-    }};
-  }
-
   ${({ withRightComponent }) =>
     withRightComponent &&
     css`
@@ -39,22 +31,20 @@ const StyledInput = styled.input<{
 
 const StyledInputContainer = styled.div`
   box-sizing: border-box;
-  padding: ${({ theme }) => theme.spacing(1)};
   position: relative;
   width: 100%;
 `;
 
 const StyledRightContainer = styled.div`
   position: absolute;
-  right: ${({ theme }) => theme.spacing(2)};
+  right: ${({ theme }) => theme.spacing(1)};
   top: 50%;
   transform: translateY(-50%);
 `;
 
 const StyledErrorDiv = styled.div`
   color: ${({ theme }) => theme.color.red};
-  padding: 0 ${({ theme }) => theme.spacing(2)}
-    ${({ theme }) => theme.spacing(1)};
+  padding: 0 ${({ theme }) => theme.spacing(2)};
 `;
 
 type HTMLInputProps = InputHTMLAttributes<HTMLInputElement>;

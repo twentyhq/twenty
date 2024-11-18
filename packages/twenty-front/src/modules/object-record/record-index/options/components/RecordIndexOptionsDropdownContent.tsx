@@ -9,6 +9,9 @@ import {
   IconRotate2,
   IconSettings,
   IconTag,
+  MenuItem,
+  MenuItemNavigate,
+  MenuItemToggle,
   UndecoratedLink,
   useIcons,
 } from 'twenty-ui';
@@ -17,14 +20,15 @@ import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObje
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 
-import {
-  displayedExportProgress,
-  useExportRecordData,
-} from '@/action-menu/hooks/useExportRecordData';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
-import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
+import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
+import {
+  displayedExportProgress,
+  useExportRecords,
+} from '@/object-record/record-index/export/hooks/useExportRecords';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
@@ -35,11 +39,10 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemNavigate';
-import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { ViewGroupsVisibilityDropdownSection } from '@/views/components/ViewGroupsVisibilityDropdownSection';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -164,7 +167,7 @@ export const RecordIndexOptionsDropdownContent = ({
   const { openObjectRecordsSpreasheetImportDialog } =
     useOpenObjectRecordsSpreasheetImportDialog(objectMetadataItem.nameSingular);
 
-  const { progress, download } = useExportRecordData({
+  const { progress, download } = useExportRecords({
     delayMs: 100,
     filename: `${objectMetadataItem.nameSingular}.csv`,
     objectMetadataItem,
@@ -180,6 +183,12 @@ export const RecordIndexOptionsDropdownContent = ({
   const isViewGroupMenuItemVisible =
     viewGroupFieldMetadataItem &&
     (visibleRecordGroups.length > 0 || hiddenRecordGroups.length > 0);
+
+  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
+  );
+
+  const mode = contextStoreNumberOfSelectedRecords > 0 ? 'selection' : 'all';
 
   useEffect(() => {
     if (currentMenu === 'hiddenViewGroups' && hiddenRecordGroups.length === 0) {
@@ -213,7 +222,7 @@ export const RecordIndexOptionsDropdownContent = ({
           <MenuItem
             onClick={download}
             LeftIcon={IconFileExport}
-            text={displayedExportProgress(progress)}
+            text={displayedExportProgress(mode, progress)}
           />
           <MenuItem
             onClick={() => {
@@ -259,15 +268,17 @@ export const RecordIndexOptionsDropdownContent = ({
           <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
             Fields
           </DropdownMenuHeader>
-          <ViewFieldsVisibilityDropdownSection
-            title="Visible"
-            fields={visibleRecordFields}
-            isDraggable
-            onDragEnd={handleReorderFields}
-            onVisibilityChange={handleChangeFieldVisibility}
-            showSubheader={false}
-            showDragGrip={true}
-          />
+          <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
+            <ViewFieldsVisibilityDropdownSection
+              title="Visible"
+              fields={visibleRecordFields}
+              isDraggable
+              onDragEnd={handleReorderFields}
+              onVisibilityChange={handleChangeFieldVisibility}
+              showSubheader={false}
+              showDragGrip={true}
+            />
+          </ScrollWrapper>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
             <MenuItemNavigate
@@ -317,7 +328,7 @@ export const RecordIndexOptionsDropdownContent = ({
             Hidden Fields
           </DropdownMenuHeader>
           {hiddenRecordFields.length > 0 && (
-            <>
+            <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
               <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
                 fields={hiddenRecordFields}
@@ -326,7 +337,7 @@ export const RecordIndexOptionsDropdownContent = ({
                 showSubheader={false}
                 showDragGrip={false}
               />
-            </>
+            </ScrollWrapper>
           )}
           <DropdownMenuSeparator />
 

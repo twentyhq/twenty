@@ -1,8 +1,10 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
+import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
+import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
@@ -35,7 +37,8 @@ export const DeleteRecordsActionEffect = ({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const { favorites, deleteFavorite } = useFavorites();
+  const favorites = useFavorites();
+  const deleteFavorite = useDeleteFavorite();
 
   const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
     contextStoreNumberOfSelectedRecordsComponentState,
@@ -45,8 +48,13 @@ export const DeleteRecordsActionEffect = ({
     contextStoreTargetedRecordsRuleComponentState,
   );
 
+  const contextStoreFilters = useRecoilComponentValueV2(
+    contextStoreFiltersComponentState,
+  );
+
   const graphqlFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
+    contextStoreFilters,
     objectMetadataItem,
   );
 
@@ -97,6 +105,7 @@ export const DeleteRecordsActionEffect = ({
   useEffect(() => {
     if (canDelete) {
       addActionMenuEntry({
+        type: 'standard',
         key: 'delete',
         label: 'Delete',
         position,

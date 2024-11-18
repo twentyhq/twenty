@@ -82,7 +82,7 @@ export const RecordShowPageWorkflowVersionHeader = ({
     <>
       {showUseAsDraftButton ? (
         <Button
-          title={`Use as Draft${hasAlreadyDraftVersion ? ' (override)' : ''}`}
+          title={'Use as Draft'}
           variant="secondary"
           Icon={IconPencil}
           disabled={isWaitingForWorkflowVersion}

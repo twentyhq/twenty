@@ -1,19 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { Fragment, useRef } from 'react';
+import { useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconComponent, IconPlus } from 'twenty-ui';
+import { IconComponent, MenuItemSelect } from 'twenty-ui';
 
 import { SelectableMenuItemSelect } from '@/object-record/relation-picker/components/SelectableMenuItemSelect';
 import { SINGLE_ENTITY_SELECT_BASE_LIST } from '@/object-record/relation-picker/constants/SingleEntitySelectBaseList';
-import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 
@@ -28,8 +24,6 @@ export type SingleEntitySelectMenuItemsProps = {
   onCancel?: () => void;
   onEntitySelected: (entity?: EntityForSelect) => void;
   selectedEntity?: EntityForSelect;
-  onCreate?: () => void;
-  showCreateButton?: boolean;
   SelectAllIcon?: IconComponent;
   selectAllLabel?: string;
   isAllEntitySelected?: boolean;
@@ -37,6 +31,7 @@ export type SingleEntitySelectMenuItemsProps = {
   onAllEntitySelected?: () => void;
   hotkeyScope?: string;
   isFiltered: boolean;
+  shouldSelectEmptyOption?: boolean;
 };
 
 export const SingleEntitySelectMenuItems = ({
@@ -47,8 +42,6 @@ export const SingleEntitySelectMenuItems = ({
   onCancel,
   onEntitySelected,
   selectedEntity,
-  onCreate,
-  showCreateButton,
   SelectAllIcon,
   selectAllLabel,
   isAllEntitySelected,
@@ -56,16 +49,9 @@ export const SingleEntitySelectMenuItems = ({
   onAllEntitySelected,
   hotkeyScope = RelationPickerHotkeyScope.RelationPicker,
   isFiltered,
+  shouldSelectEmptyOption,
 }: SingleEntitySelectMenuItemsProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const createNewRecord = showCreateButton
-    ? {
-        __typename: '',
-        id: 'add-new',
-        name: 'Add New',
-      }
-    : null;
 
   const selectNone = emptyLabel
     ? {
@@ -88,7 +74,6 @@ export const SingleEntitySelectMenuItems = ({
     selectNone,
     selectedEntity,
     ...entitiesToSelect,
-    createNewRecord,
   ].filter(
     (entity): entity is EntityForSelect =>
       isDefined(entity) && isNonEmptyString(entity.name),
@@ -96,10 +81,6 @@ export const SingleEntitySelectMenuItems = ({
 
   const { isSelectedItemIdSelector, resetSelectedItem } = useSelectableList(
     SINGLE_ENTITY_SELECT_BASE_LIST,
-  );
-
-  const isSelectedAddNewButton = useRecoilValue(
-    isSelectedItemIdSelector('add-new'),
   );
 
   const isSelectedSelectNoneButton = useRecoilValue(
@@ -129,14 +110,10 @@ export const SingleEntitySelectMenuItems = ({
         selectableItemIdArray={selectableItemIds}
         hotkeyScope={hotkeyScope}
         onEnter={(itemId) => {
-          if (itemId === 'add-new' && showCreateButton === true) {
-            onCreate?.();
-          } else {
-            const entityIndex = entitiesInDropdown.findIndex(
-              (entity) => entity.id === itemId,
-            );
-            onEntitySelected(entitiesInDropdown[entityIndex]);
-          }
+          const entityIndex = entitiesInDropdown.findIndex(
+            (entity) => entity.id === itemId,
+          );
+          onEntitySelected(entitiesInDropdown[entityIndex]);
           resetSelectedItem();
         }}
       >
@@ -146,33 +123,10 @@ export const SingleEntitySelectMenuItems = ({
           ) : entitiesInDropdown.length === 0 &&
             !isAllEntitySelectShown &&
             !loading ? (
-            <>
-              <MenuItem text="No result" />
-              {entitiesToSelect.length > 0 && <DropdownMenuSeparator />}
-              <CreateNewButton
-                key="add-new"
-                onClick={onCreate}
-                LeftIcon={IconPlus}
-                text="Add New"
-                hovered={isSelectedAddNewButton}
-              />
-            </>
+            <></>
           ) : (
             entitiesInDropdown?.map((entity) => {
               switch (entity.id) {
-                case 'add-new': {
-                  return (
-                    <Fragment key={entity.id}>
-                      {entitiesToSelect.length > 0 && <DropdownMenuSeparator />}
-                      <CreateNewButton
-                        onClick={onCreate}
-                        LeftIcon={IconPlus}
-                        text="Add New"
-                        hovered={isSelectedAddNewButton}
-                      />
-                    </Fragment>
-                  );
-                }
                 case 'select-none': {
                   return (
                     emptyLabel && (
@@ -181,7 +135,7 @@ export const SingleEntitySelectMenuItems = ({
                         onClick={() => onEntitySelected()}
                         LeftIcon={EmptyIcon}
                         text={emptyLabel}
-                        selected={!selectedEntity}
+                        selected={shouldSelectEmptyOption === true}
                         hovered={isSelectedSelectNoneButton}
                       />
                     )

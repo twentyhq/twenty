@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService, JwtSignOptions, JwtVerifyOptions } from '@nestjs/jwt';
 
 import { createHash } from 'crypto';
@@ -10,14 +10,16 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { isDefined } from 'src/utils/is-defined';
 
-type WorkspaceTokenType =
+export type WorkspaceTokenType =
   | 'ACCESS'
   | 'LOGIN'
   | 'REFRESH'
   | 'FILE'
   | 'POSTGRES_PROXY'
-  | 'REMOTE_SERVER';
+  | 'REMOTE_SERVER'
+  | 'API_KEY';
 
 @Injectable()
 export class JwtWrapperService {
@@ -52,12 +54,27 @@ export class JwtWrapperService {
       json: true,
     });
 
+    if (!isDefined(payload)) {
+      throw new AuthException('No payload', AuthExceptionCode.UNAUTHENTICATED);
+    }
+
     // TODO: check if this is really needed
     if (type !== 'FILE' && !payload.sub) {
-      throw new UnauthorizedException('No payload sub');
+      throw new AuthException(
+        'No payload sub',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
     }
 
     try {
+      // TODO: Deprecate this once old API KEY tokens are no longer in use
+      if (!payload.type && !payload.workspaceId && type === 'ACCESS') {
+        return this.jwtService.verify(token, {
+          ...options,
+          secret: this.generateAppSecretLegacy(),
+        });
+      }
+
       return this.jwtService.verify(token, {
         ...options,
         secret: this.generateAppSecret(type, payload.workspaceId),
@@ -92,5 +109,17 @@ export class JwtWrapperService {
     return createHash('sha256')
       .update(`${appSecret}${workspaceId}${type}`)
       .digest('hex');
+  }
+
+  generateAppSecretLegacy(): string {
+    const accessTokenSecret = this.environmentService.get(
+      'ACCESS_TOKEN_SECRET',
+    );
+
+    if (!accessTokenSecret) {
+      throw new Error('ACCESS_TOKEN_SECRET is not set');
+    }
+
+    return accessTokenSecret;
   }
 }

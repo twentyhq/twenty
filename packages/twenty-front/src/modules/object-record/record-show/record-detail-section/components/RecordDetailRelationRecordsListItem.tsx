@@ -11,6 +11,7 @@ import {
   IconTrash,
   IconUnlink,
   LightIconButton,
+  MenuItem,
 } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -40,7 +41,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -63,6 +63,14 @@ const StyledListItem = styled(RecordDetailRecordsListItem)<{
       pointer-events: auto;
     }
   }
+`;
+
+const StyledPropertyBox = styled(PropertyBox)`
+  align-items: flex-start;
+  display: flex;
+  padding-left: ${({ theme }) => theme.spacing(0)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(0)};
 `;
 
 const StyledClickableZone = styled.div`
@@ -240,7 +248,7 @@ export const RecordDetailRelationRecordsListItem = ({
         )}
       </StyledListItem>
       <AnimatedEaseInOut isOpen={isExpanded}>
-        <PropertyBox>
+        <StyledPropertyBox>
           {availableRelationFieldMetadataItems.map(
             (fieldMetadataItem, index) => (
               <FieldContext.Provider
@@ -265,7 +273,7 @@ export const RecordDetailRelationRecordsListItem = ({
               </FieldContext.Provider>
             ),
           )}
-        </PropertyBox>
+        </StyledPropertyBox>
       </AnimatedEaseInOut>
     </>
   );

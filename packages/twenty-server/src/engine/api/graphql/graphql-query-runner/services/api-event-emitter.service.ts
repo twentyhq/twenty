@@ -1,22 +1,24 @@
 import { Injectable } from '@nestjs/common';
 
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class ApiEventEmitterService {
   constructor(private readonly workspaceEventEmitter: WorkspaceEventEmitter) {}
 
-  public emitCreateEvents<T extends IRecord>(
+  public emitCreateEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.created`,
+      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.CREATED}`,
       records.map((record) => ({
         userId: authContext.user?.id,
         recordId: record.id,
@@ -30,7 +32,7 @@ export class ApiEventEmitterService {
     );
   }
 
-  public emitUpdateEvents<T extends IRecord>(
+  public emitUpdateEvents<T extends ObjectRecord>(
     existingRecords: T[],
     records: T[],
     updatedFields: string[],
@@ -46,20 +48,28 @@ export class ApiEventEmitterService {
     );
 
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.updated`,
+      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.UPDATED}`,
       records.map((record) => {
+        const before = this.removeGraphQLAndNestedProperties(
+          mappedExistingRecords[record.id],
+        );
+        const after = this.removeGraphQLAndNestedProperties(record);
+        const diff = objectRecordChangedValues(
+          before,
+          after,
+          updatedFields,
+          objectMetadataItem,
+        );
+
         return {
           userId: authContext.user?.id,
           recordId: record.id,
           objectMetadata: objectMetadataItem,
           properties: {
-            before: mappedExistingRecords[record.id]
-              ? this.removeGraphQLAndNestedProperties(
-                  mappedExistingRecords[record.id],
-                )
-              : undefined,
-            after: this.removeGraphQLAndNestedProperties(record),
+            before,
+            after,
             updatedFields,
+            diff,
           },
         };
       }),
@@ -67,13 +77,13 @@ export class ApiEventEmitterService {
     );
   }
 
-  public emitDeletedEvents<T extends IRecord>(
+  public emitDeletedEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.deleted`,
+      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.DELETED}`,
       records.map((record) => {
         return {
           userId: authContext.user?.id,
@@ -89,13 +99,13 @@ export class ApiEventEmitterService {
     );
   }
 
-  public emitDestroyEvents<T extends IRecord>(
+  public emitDestroyEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
     this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.destroyed`,
+      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.DESTROYED}`,
       records.map((record) => {
         return {
           userId: authContext.user?.id,
@@ -111,9 +121,7 @@ export class ApiEventEmitterService {
     );
   }
 
-  private removeGraphQLAndNestedProperties<ObjectRecord extends IRecord>(
-    record: ObjectRecord,
-  ) {
+  private removeGraphQLAndNestedProperties<T extends ObjectRecord>(record: T) {
     if (!record) {
       return {};
     }

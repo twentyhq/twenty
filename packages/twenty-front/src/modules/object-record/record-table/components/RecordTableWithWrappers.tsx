@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRef } from 'react';
 import { useRecoilCallback } from 'recoil';
 
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -7,15 +6,19 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
+import { isScrollEnabledForRecordTableState } from '@/object-record/record-table/states/isScrollEnabledForRecordTableState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 
-import { RecordTableInternalEffect } from './RecordTableInternalEffect';
+import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { Key } from 'ts-key-enum';
 
 const StyledTableWithHeader = styled.div`
   height: 100%;
@@ -45,11 +48,27 @@ export const RecordTableWithWrappers = ({
   recordTableId,
   viewBarId,
 }: RecordTableWithWrappersProps) => {
-  const tableBodyRef = useRef<HTMLDivElement>(null);
+  const isScrollEnabledForRecordTable = useRecoilComponentValueV2(
+    isScrollEnabledForRecordTableState,
+    recordTableId,
+  );
 
-  const { resetTableRowSelection, setRowSelected } = useRecordTable({
+  const { resetTableRowSelection, selectAllRows } = useRecordTable({
     recordTableId,
   });
+
+  useScopedHotkeys('ctrl+a,meta+a', selectAllRows, TableHotkeyScope.Table);
+  useScopedHotkeys(
+    'ctrl+a,meta+a',
+    selectAllRows,
+    ActionBarHotkeyScope.ActionBar,
+  );
+
+  useScopedHotkeys(
+    Key.Escape,
+    resetTableRowSelection,
+    ActionBarHotkeyScope.ActionBar,
+  );
 
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
 
@@ -68,26 +87,22 @@ export const RecordTableWithWrappers = ({
 
   return (
     <EntityDeleteContext.Provider value={deleteOneRecord}>
-      <ScrollWrapper contextProviderName="recordTableWithWrappers">
+      <ScrollWrapper
+        enableXScroll={isScrollEnabledForRecordTable.enableXScroll}
+        enableYScroll={isScrollEnabledForRecordTable.enableYScroll}
+        contextProviderName="recordTableWithWrappers"
+      >
         <RecordUpdateContext.Provider value={updateRecordMutation}>
           <StyledTableWithHeader>
             <StyledTableContainer>
-              <StyledTableInternalContainer ref={tableBodyRef}>
+              <StyledTableInternalContainer>
                 <RecordTable
                   viewBarId={viewBarId}
                   recordTableId={recordTableId}
                   objectNameSingular={objectNameSingular}
                   onColumnsChange={handleColumnsChange}
                 />
-                <DragSelect
-                  dragSelectable={tableBodyRef}
-                  onDragSelectionStart={() => {
-                    resetTableRowSelection();
-                  }}
-                  onDragSelectionChange={setRowSelected}
-                />
               </StyledTableInternalContainer>
-              <RecordTableInternalEffect recordTableId={recordTableId} />
             </StyledTableContainer>
           </StyledTableWithHeader>
         </RecordUpdateContext.Provider>

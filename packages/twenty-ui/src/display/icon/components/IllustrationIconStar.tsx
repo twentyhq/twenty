@@ -16,8 +16,8 @@ export const IllustrationIconStar = (props: IllustrationIconStarProps) => {
       <IllustrationIconStarRaw
         height={size}
         width={size}
-        fill={fill}
-        color={color}
+        fill={fill.blue}
+        color={color.blue}
       />
     </IllustrationIconWrapper>
   );

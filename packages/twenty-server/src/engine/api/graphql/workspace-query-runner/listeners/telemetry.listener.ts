@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
+import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TelemetryService } from 'src/engine/core-modules/telemetry/telemetry.service';
@@ -13,7 +15,7 @@ export class TelemetryListener {
     private readonly telemetryService: TelemetryService,
   ) {}
 
-  @OnEvent('*.created')
+  @OnDatabaseEvent('*', DatabaseEventAction.CREATED)
   async handleAllCreate(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
   ) {

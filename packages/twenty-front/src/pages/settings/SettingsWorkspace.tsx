@@ -32,7 +32,7 @@ export const SettingsWorkspace = () => (
       <Section>
         <H2Title
           title="Support"
-          addornment={<ToggleImpersonate />}
+          adornment={<ToggleImpersonate />}
           description="Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
         />
       </Section>

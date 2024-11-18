@@ -4,13 +4,14 @@ import App from '../../index';
 import { triggerRecordKey } from '../../triggers/trigger_record';
 import getBundle from '../../utils/getBundle';
 import requestDb from '../../utils/requestDb';
+import { DatabaseEventAction } from '../../utils/triggers/triggers.utils';
 const appTester = createAppTester(App);
 
 describe('triggers.trigger_record.created', () => {
   test('should succeed to subscribe', async () => {
     const bundle = getBundle({});
     bundle.inputData.nameSingular = 'company';
-    bundle.inputData.operation = 'create';
+    bundle.inputData.operation = DatabaseEventAction.CREATED;
     bundle.targetUrl = 'https://test.com';
     const result = await appTester(
       App.triggers[triggerRecordKey].operation.performSubscribe,
@@ -23,18 +24,18 @@ describe('triggers.trigger_record.created', () => {
         requestDb(
           z,
           bundle,
-          `query webhook {webhooks(filter: {id: {eq: "${result.id}"}}){edges {node {id operation}}}}`,
+          `query webhook {webhooks(filter: {id: {eq: "${result.id}"}}){edges {node {id operations}}}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.webhooks.edges[0].node.operation).toEqual(
-      'create.company',
+    expect(checkDbResult.data.webhooks.edges[0].node.operations[0]).toEqual(
+      'company.created',
     );
   });
   test('should succeed to unsubscribe', async () => {
     const bundle = getBundle({});
     bundle.inputData.nameSingular = 'company';
-    bundle.inputData.operation = 'create';
+    bundle.inputData.operation = DatabaseEventAction.CREATED;
     bundle.targetUrl = 'https://test.com';
     const result = await appTester(
       App.triggers[triggerRecordKey].operation.performSubscribe,
@@ -53,7 +54,7 @@ describe('triggers.trigger_record.created', () => {
         requestDb(
           z,
           bundle,
-          `query webhook {webhooks(filter: {id: {eq: "${result.id}"}}){edges {node {id operation}}}}`,
+          `query webhook {webhooks(filter: {id: {eq: "${result.id}"}}){edges {node {id operations}}}}`,
         ),
       bundle,
     );
@@ -82,19 +83,19 @@ describe('triggers.trigger_record.created', () => {
     );
     expect(results.length).toEqual(1);
     const company = results[0];
-    expect(company.id).toEqual('d6ccb1d1-a90b-4822-a992-a0dd946592c9');
+    expect(company.record.id).toEqual('d6ccb1d1-a90b-4822-a992-a0dd946592c9');
   });
   it('should load companies from list', async () => {
     const bundle = getBundle({});
     bundle.inputData.nameSingular = 'company';
-    bundle.inputData.operation = 'create';
+    bundle.inputData.operation = DatabaseEventAction.CREATED;
     const results = await appTester(
       App.triggers[triggerRecordKey].operation.performList,
       bundle,
     );
     expect(results.length).toBeGreaterThan(1);
     const firstCompany = results[0];
-    expect(firstCompany).toBeDefined();
+    expect(firstCompany.record).toBeDefined();
   });
 });
 
@@ -102,7 +103,7 @@ describe('triggers.trigger_record.update', () => {
   test('should succeed to subscribe', async () => {
     const bundle = getBundle({});
     bundle.inputData.nameSingular = 'company';
-    bundle.inputData.operation = 'update';
+    bundle.inputData.operation = DatabaseEventAction.UPDATED;
     bundle.targetUrl = 'https://test.com';
     const result = await appTester(
       App.triggers[triggerRecordKey].operation.performSubscribe,
@@ -115,18 +116,18 @@ describe('triggers.trigger_record.update', () => {
         requestDb(
           z,
           bundle,
-          `query webhook {webhooks(filter: {id: {eq: "${result.id}"}}){edges {node {id operation}}}}`,
+          `query webhook {webhooks(filter: {id: {eq: "${result.id}"}}){edges {node {id operations}}}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.webhooks.edges[0].node.operation).toEqual(
-      'update.company',
+    expect(checkDbResult.data.webhooks.edges[0].node.operations[0]).toEqual(
+      'company.updated',
     );
   });
   test('should succeed to unsubscribe', async () => {
     const bundle = getBundle({});
     bundle.inputData.nameSingular = 'company';
-    bundle.inputData.operation = 'update';
+    bundle.inputData.operation = DatabaseEventAction.UPDATED;
     bundle.targetUrl = 'https://test.com';
     const result = await appTester(
       App.triggers[triggerRecordKey].operation.performSubscribe,
@@ -145,7 +146,7 @@ describe('triggers.trigger_record.update', () => {
         requestDb(
           z,
           bundle,
-          `query webhook {webhooks(filter: {id: {eq: "${result.id}"}}){edges {node {id operation}}}}`,
+          `query webhook {webhooks(filter: {id: {eq: "${result.id}"}}){edges {node {id operations}}}}`,
         ),
       bundle,
     );
@@ -154,14 +155,15 @@ describe('triggers.trigger_record.update', () => {
   it('should load companies from list', async () => {
     const bundle = getBundle({});
     bundle.inputData.nameSingular = 'company';
-    bundle.inputData.operation = 'update';
+    bundle.inputData.operation = DatabaseEventAction.UPDATED;
     const results = await appTester(
       App.triggers[triggerRecordKey].operation.performList,
       bundle,
     );
     expect(results.length).toBeGreaterThan(1);
     const firstCompany = results[0];
-    expect(firstCompany).toBeDefined();
+    expect(firstCompany.record).toBeDefined();
+    expect(firstCompany.updatedFields).toBeDefined();
   });
 });
 
@@ -169,7 +171,7 @@ describe('triggers.trigger_record.delete', () => {
   test('should succeed to subscribe', async () => {
     const bundle = getBundle({});
     bundle.inputData.nameSingular = 'company';
-    bundle.inputData.operation = 'delete';
+    bundle.inputData.operation = DatabaseEventAction.DELETED;
     bundle.targetUrl = 'https://test.com';
     const result = await appTester(
       App.triggers[triggerRecordKey].operation.performSubscribe,
@@ -182,18 +184,18 @@ describe('triggers.trigger_record.delete', () => {
         requestDb(
           z,
           bundle,
-          `query webhook {webhooks(filter: {id: {eq: "${result.id}"}}){edges {node {id operation}}}}`,
+          `query webhook {webhooks(filter: {id: {eq: "${result.id}"}}){edges {node {id operations}}}}`,
         ),
       bundle,
     );
-    expect(checkDbResult.data.webhooks.edges[0].node.operation).toEqual(
-      'delete.company',
+    expect(checkDbResult.data.webhooks.edges[0].node.operations[0]).toEqual(
+      'company.deleted',
     );
   });
   test('should succeed to unsubscribe', async () => {
     const bundle = getBundle({});
     bundle.inputData.nameSingular = 'company';
-    bundle.inputData.operation = 'delete';
+    bundle.inputData.operation = DatabaseEventAction.DELETED;
     bundle.targetUrl = 'https://test.com';
     const result = await appTester(
       App.triggers[triggerRecordKey].operation.performSubscribe,
@@ -212,7 +214,7 @@ describe('triggers.trigger_record.delete', () => {
         requestDb(
           z,
           bundle,
-          `query webhook {webhooks(filter: {id: {eq: "${result.id}"}}){edges {node {id operation}}}}`,
+          `query webhook {webhooks(filter: {id: {eq: "${result.id}"}}){edges {node {id operations}}}}`,
         ),
       bundle,
     );
@@ -221,7 +223,7 @@ describe('triggers.trigger_record.delete', () => {
   it('should load companies from list', async () => {
     const bundle = getBundle({});
     bundle.inputData.nameSingular = 'company';
-    bundle.inputData.operation = 'delete';
+    bundle.inputData.operation = DatabaseEventAction.DELETED;
     const results = await appTester(
       App.triggers[triggerRecordKey].operation.performList,
       bundle,
@@ -229,7 +231,7 @@ describe('triggers.trigger_record.delete', () => {
     expect(results.length).toBeGreaterThan(1);
     const firstCompany = results[0];
     expect(firstCompany).toBeDefined();
-    expect(firstCompany.id).toBeDefined();
+    expect(firstCompany.record.id).toBeDefined();
     expect(Object.keys(firstCompany).length).toEqual(1);
   });
 });
