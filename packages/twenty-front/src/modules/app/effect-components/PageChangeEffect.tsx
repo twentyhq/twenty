@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import {
@@ -9,7 +9,6 @@ import {
 } from '@/analytics/hooks/useEventTracker';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
-import { isClientConfigLoadedState } from '@/client-config/states/isClientConfigLoadedState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
 import { useNonSystemActiveObjectMetadataItems } from '@/object-metadata/hooks/useNonSystemActiveObjectMetadataItems';
@@ -32,7 +31,6 @@ import { isDefined } from '~/utils/isDefined';
 export const PageChangeEffect = () => {
   const navigate = useNavigate();
   const isMatchingLocation = useIsMatchingLocation();
-  const [isClientConfigLoaded] = useRecoilState(isClientConfigLoadedState);
 
   const [previousLocation, setPreviousLocation] = useState('');
 
@@ -180,9 +178,6 @@ export const PageChangeEffect = () => {
   ]);
 
   useEffect(() => {
-    if (!isClientConfigLoaded) {
-      return;
-    }
     setTimeout(() => {
       setSessionId();
       eventTracker('pageview', {
@@ -194,7 +189,7 @@ export const PageChangeEffect = () => {
         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       });
     }, 500);
-  }, [eventTracker, location.pathname, isClientConfigLoaded]);
+  }, [eventTracker, location.pathname]);
 
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
   const isCaptchaScriptLoaded = useRecoilValue(isCaptchaScriptLoadedState);

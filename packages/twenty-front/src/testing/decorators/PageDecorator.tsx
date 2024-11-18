@@ -16,6 +16,7 @@ import { ApolloMetadataClientMockedProvider } from '@/object-metadata/hooks/__mo
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
+import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { UserProvider } from '~/modules/users/components/UserProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
@@ -69,24 +70,26 @@ const Providers = () => {
         <ApolloProvider client={mockedApolloClient}>
           <ApolloStorybookDevLogEffect />
           <ClientConfigProviderEffect />
-          <UserProviderEffect />
-          <UserProvider>
-            <ApolloMetadataClientMockedProvider>
-              <ObjectMetadataItemsProvider>
-                <FullHeightStorybookLayout>
-                  <HelmetProvider>
-                    <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-                      <IconsProvider>
-                        <PrefetchDataProvider>
-                          <Outlet />
-                        </PrefetchDataProvider>
-                      </IconsProvider>
-                    </SnackBarProviderScope>
-                  </HelmetProvider>
-                </FullHeightStorybookLayout>
-              </ObjectMetadataItemsProvider>
-            </ApolloMetadataClientMockedProvider>
-          </UserProvider>
+          <ClientConfigProvider>
+            <UserProviderEffect />
+            <UserProvider>
+              <ApolloMetadataClientMockedProvider>
+                <ObjectMetadataItemsProvider>
+                  <FullHeightStorybookLayout>
+                    <HelmetProvider>
+                      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+                        <IconsProvider>
+                          <PrefetchDataProvider>
+                            <Outlet />
+                          </PrefetchDataProvider>
+                        </IconsProvider>
+                      </SnackBarProviderScope>
+                    </HelmetProvider>
+                  </FullHeightStorybookLayout>
+                </ObjectMetadataItemsProvider>
+              </ApolloMetadataClientMockedProvider>
+            </UserProvider>
+          </ClientConfigProvider>
         </ApolloProvider>
       </SnackBarProviderScope>
     </RecoilRoot>
