@@ -101,6 +101,7 @@ const companyMocks = [
                   companyId
                   createdAt
                   deletedAt
+                  favoriteFolderId
                   id
                   noteId
                   opportunityId

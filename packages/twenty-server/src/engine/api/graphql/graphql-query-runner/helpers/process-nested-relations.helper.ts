@@ -344,7 +344,6 @@ export class ProcessNestedRelationsHelper {
 
       this.processAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder(
         {
-          fieldMetadataMapByName: referenceObjectMetadata.fieldsByName,
           selectedAggregatedFields: aggregateForRelation,
           queryBuilder: aggregateQueryBuilder,
         },
