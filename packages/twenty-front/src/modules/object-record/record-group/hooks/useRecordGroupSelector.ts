@@ -49,19 +49,33 @@ export const useRecordGroupSelector = ({
           return;
         }
 
-        const viewGroupsToCreate = fieldMetadataItem.options.map(
-          (option, index) =>
-            ({
-              __typename: 'ViewGroup',
-              id: v4(),
-              fieldValue: option.value,
-              isVisible: true,
-              position: index,
-              fieldMetadataId: fieldMetadataItem.id,
-            }) satisfies ViewGroup,
+        const existingGroupKeys = new Set(
+          view.viewGroups.map(
+            (group) => `${group.fieldMetadataId}:${group.fieldValue}`,
+          ),
         );
 
-        await createViewGroupRecords(viewGroupsToCreate, view);
+        const viewGroupsToCreate = fieldMetadataItem.options
+          // Avoid creation of already existing view groups
+          .filter(
+            (option) =>
+              !existingGroupKeys.has(`${fieldMetadataItem.id}:${option.value}`),
+          )
+          .map(
+            (option, index) =>
+              ({
+                __typename: 'ViewGroup',
+                id: v4(),
+                fieldValue: option.value,
+                isVisible: true,
+                position: index,
+                fieldMetadataId: fieldMetadataItem.id,
+              }) satisfies ViewGroup,
+          );
+
+        if (viewGroupsToCreate.length > 0) {
+          await createViewGroupRecords(viewGroupsToCreate, view);
+        }
       },
     [createViewGroupRecords, currentViewIdCallbackState, getViewFromCache],
   );
