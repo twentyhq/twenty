@@ -56,9 +56,12 @@ rawDataSource
     ]; // See https://supabase.github.io/wrappers/
 
     for (const wrapper of supabaseWrappers) {
+      if (await checkForeignDataWrapperExists(wrapper)) {
+        continue;
+      }
       await performQuery(
         `
-          CREATE FOREIGN DATA WRAPPER IF NOT EXISTS "${wrapper.toLowerCase()}_fdw"
+          CREATE FOREIGN DATA WRAPPER "${wrapper.toLowerCase()}_fdw"
           HANDLER "${camelToSnakeCase(wrapper)}_fdw_handler"
           VALIDATOR "${camelToSnakeCase(wrapper)}_fdw_validator";
           `,
@@ -71,3 +74,14 @@ rawDataSource
   .catch((err) => {
     console.error('Error during Data Source initialization:', err);
   });
+
+async function checkForeignDataWrapperExists(
+  wrapperName: string,
+): Promise<boolean> {
+  const result = await rawDataSource.query(
+    `SELECT 1 FROM pg_foreign_data_wrapper WHERE fdwname = $1`,
+    [wrapperName],
+  );
+
+  return result.length > 0;
+}

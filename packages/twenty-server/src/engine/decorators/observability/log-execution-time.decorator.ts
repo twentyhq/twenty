@@ -1,11 +1,13 @@
 import { Logger } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
+
 /**
  * A decorator function that logs the execution time of the decorated method.
  *
  * @returns The modified property descriptor with the execution time logging functionality.
  */
-export function LogExecutionTime() {
+export function LogExecutionTime(label?: string | undefined) {
   return function (
     target: any,
     propertyKey: string,
@@ -21,7 +23,11 @@ export function LogExecutionTime() {
       const end = performance.now();
       const executionTime = end - start;
 
-      logger.log(`Execution time: ${executionTime.toFixed(2)}ms`);
+      if (isDefined(label)) {
+        logger.log(`${label} execution time: ${executionTime.toFixed(2)}ms`);
+      } else {
+        logger.log(`Execution time: ${executionTime.toFixed(2)}ms`);
+      }
 
       return result;
     };

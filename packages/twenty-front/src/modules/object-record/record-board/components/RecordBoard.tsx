@@ -4,6 +4,7 @@ import { useContext, useRef } from 'react';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
 import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
@@ -61,6 +62,7 @@ export const RecordBoard = () => {
     columnIdsState,
     columnsFamilySelector,
     recordIdsByColumnIdFamilyState,
+    allRecordIdsSelector,
   } = useRecordBoardStates(recordBoardId);
 
   const columnIds = useRecoilValue(columnIdsState);
@@ -80,7 +82,28 @@ export const RecordBoard = () => {
     callback: resetRecordSelection,
   });
 
-  useScopedHotkeys([Key.Escape], resetRecordSelection, TableHotkeyScope.Table);
+  const selectAll = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const allRecordIds = snapshot
+          .getLoadable(allRecordIdsSelector())
+          .getValue();
+
+        for (const recordId of allRecordIds) {
+          setRecordAsSelected(recordId, true);
+        }
+      },
+    [allRecordIdsSelector, setRecordAsSelected],
+  );
+
+  useScopedHotkeys('ctrl+a,meta+a', selectAll, TableHotkeyScope.Table);
+  useScopedHotkeys('ctrl+a,meta+a', selectAll, ActionBarHotkeyScope.ActionBar);
+
+  useScopedHotkeys(
+    Key.Escape,
+    resetRecordSelection,
+    ActionBarHotkeyScope.ActionBar,
+  );
 
   const handleDragEnd: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>

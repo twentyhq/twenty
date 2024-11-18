@@ -23,7 +23,7 @@ import {
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingState } from '@/client-config/states/billingState';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
-import { useExpandedHeightAnimation } from '@/settings/hooks/useExpandedHeightAnimation';
+import { useExpandedAnimation } from '@/settings/hooks/useExpandedAnimation';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import {
@@ -69,7 +69,7 @@ const StyledIconTool = styled(IconTool)`
 
 export const SettingsNavigationDrawerItems = () => {
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
-  const { contentRef, motionAnimationVariants } = useExpandedHeightAnimation(
+  const { contentRef, motionAnimationVariants } = useExpandedAnimation(
     isAdvancedModeEnabled,
   );
   const { signOut } = useAuth();

@@ -1,3 +1,4 @@
+import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactElement } from 'react';
@@ -16,11 +17,9 @@ type TabProps = {
   to?: string;
 };
 
-const StyledTab = styled.button<{
-  active?: boolean;
-  disabled?: boolean;
-  to?: string;
-}>`
+const StyledTab = styled('button', {
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'active',
+})<{ active?: boolean; disabled?: boolean; to?: string }>`
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-color: ${({ theme, active }) =>

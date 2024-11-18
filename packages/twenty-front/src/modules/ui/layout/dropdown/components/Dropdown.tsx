@@ -7,7 +7,7 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import { MouseEvent, ReactNode, useRef } from 'react';
+import { MouseEvent, ReactNode, useEffect, useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -66,8 +66,13 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { isDropdownOpen, toggleDropdown, closeDropdown, dropdownWidth } =
-    useDropdown(dropdownId);
+  const {
+    isDropdownOpen,
+    toggleDropdown,
+    closeDropdown,
+    dropdownWidth,
+    setDropdownPlacement,
+  } = useDropdown(dropdownId);
 
   const offsetMiddlewares = [];
 
@@ -79,7 +84,7 @@ export const Dropdown = ({
     offsetMiddlewares.push(offset({ mainAxis: dropdownOffset.y }));
   }
 
-  const { refs, floatingStyles } = useFloating({
+  const { refs, floatingStyles, placement } = useFloating({
     placement: dropdownPlacement,
     middleware: [
       flip(),
@@ -100,6 +105,10 @@ export const Dropdown = ({
     whileElementsMounted: autoUpdate,
     strategy: dropdownStrategy,
   });
+
+  useEffect(() => {
+    setDropdownPlacement(placement);
+  }, [placement, setDropdownPlacement]);
 
   const handleHotkeyTriggered = () => {
     toggleDropdown();
