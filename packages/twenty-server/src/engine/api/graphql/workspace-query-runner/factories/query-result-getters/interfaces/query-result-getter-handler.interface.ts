@@ -1,3 +1,8 @@
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
 export interface QueryResultGetterHandlerInterface {
-  handle(result: any, workspaceId: string): Promise<any>;
+  handle(
+    objectRecord: ObjectRecord,
+    workspaceId: string,
+  ): Promise<ObjectRecord>;
 }

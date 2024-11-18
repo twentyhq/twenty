@@ -14,7 +14,7 @@ const basePerson = {
   xLink: {
     primaryLinkUrl: '',
     primaryLinkLabel: '',
-    secondaryLinks: null,
+    secondaryLinks: [],
   },
   createdAt: '',
   city: '',
@@ -26,7 +26,7 @@ const basePerson = {
   linkedinLink: {
     primaryLinkUrl: '',
     primaryLinkLabel: '',
-    secondaryLinks: null,
+    secondaryLinks: [],
   },
   updatedAt: '',
   avatarUrl: '',

@@ -6,7 +6,6 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { MenuItemSelectTag } from '@/ui/navigation/menu-item/components/MenuItemSelectTag';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useTheme } from '@emotion/react';
@@ -20,7 +19,7 @@ import {
 } from '@floating-ui/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { TagColor, isDefined } from 'twenty-ui';
+import { MenuItemSelectTag, TagColor, isDefined } from 'twenty-ui';
 
 const StyledRelationPickerContainer = styled.div`
   left: -1px;

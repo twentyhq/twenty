@@ -30,12 +30,10 @@ export class UpdateOneResolverFactory
       try {
         const options: WorkspaceQueryRunnerOptions = {
           authContext: internalContext.authContext,
-          objectMetadataItem: internalContext.objectMetadataItem,
           info,
-          fieldMetadataCollection: internalContext.fieldMetadataCollection,
-          objectMetadataCollection: internalContext.objectMetadataCollection,
-          objectMetadataMap: internalContext.objectMetadataMap,
-          objectMetadataMapItem: internalContext.objectMetadataMapItem,
+          objectMetadataMaps: internalContext.objectMetadataMaps,
+          objectMetadataItemWithFieldMaps:
+            internalContext.objectMetadataItemWithFieldMaps,
         };
 
         return await this.graphqlQueryRunnerService.updateOne(args, options);

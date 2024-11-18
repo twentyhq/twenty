@@ -7,7 +7,7 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import { MouseEvent, ReactNode, useRef } from 'react';
+import { MouseEvent, ReactNode, useEffect, useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -15,13 +15,13 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { isDefined } from '~/utils/isDefined';
 
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
@@ -65,8 +65,13 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { isDropdownOpen, toggleDropdown, closeDropdown, dropdownWidth } =
-    useDropdown(dropdownId);
+  const {
+    isDropdownOpen,
+    toggleDropdown,
+    closeDropdown,
+    dropdownWidth,
+    setDropdownPlacement,
+  } = useDropdown(dropdownId);
 
   const offsetMiddlewares = [];
 
@@ -78,7 +83,7 @@ export const Dropdown = ({
     offsetMiddlewares.push(offset({ mainAxis: dropdownOffset.y }));
   }
 
-  const { refs, floatingStyles } = useFloating({
+  const { refs, floatingStyles, placement } = useFloating({
     placement: dropdownPlacement,
     middleware: [
       flip(),
@@ -100,6 +105,10 @@ export const Dropdown = ({
     strategy: dropdownStrategy,
   });
 
+  useEffect(() => {
+    setDropdownPlacement(placement);
+  }, [placement, setDropdownPlacement]);
+
   const handleHotkeyTriggered = () => {
     toggleDropdown();
   };
@@ -112,8 +121,9 @@ export const Dropdown = ({
     onClickOutside?.();
   };
 
-  useListenClickOutside({
-    refs: [refs.floating],
+  useListenClickOutsideV2({
+    refs: [refs.floating, refs.domReference],
+    listenerId: dropdownId,
     callback: () => {
       onClickOutside?.();
 

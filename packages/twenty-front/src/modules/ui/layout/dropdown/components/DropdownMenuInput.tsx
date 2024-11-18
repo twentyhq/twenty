@@ -31,14 +31,13 @@ const StyledInput = styled.input<{
 
 const StyledInputContainer = styled.div`
   box-sizing: border-box;
-  padding: ${({ theme }) => theme.spacing(1)};
   position: relative;
   width: 100%;
 `;
 
 const StyledRightContainer = styled.div`
   position: absolute;
-  right: ${({ theme }) => theme.spacing(2)};
+  right: ${({ theme }) => theme.spacing(1)};
   top: 50%;
   transform: translateY(-50%);
 `;
