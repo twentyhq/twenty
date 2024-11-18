@@ -25,7 +25,7 @@ import {
   useExportRecords,
 } from '@/object-record/record-index/export/hooks/useExportRecords';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
-import { useOpenObjectRecordsSpreasheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreasheetImportDialog';
+import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -88,7 +88,9 @@ export const ObjectOptionsDropdownContent = ({
   });
 
   const { openObjectRecordsSpreasheetImportDialog } =
-    useOpenObjectRecordsSpreasheetImportDialog(objectMetadataItem.nameSingular);
+    useOpenObjectRecordsSpreadsheetImportDialog(
+      objectMetadataItem.nameSingular,
+    );
 
   const { progress, download } = useExportRecords({
     delayMs: 100,

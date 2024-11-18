@@ -11,7 +11,7 @@ import {
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
-export const useOpenObjectRecordsSpreasheetImportDialog = (
+export const useOpenObjectRecordsSpreadsheetImportDialog = (
   objectNameSingular: string,
 ) => {
   const { openSpreadsheetImportDialog } = useOpenSpreadsheetImportDialog<any>();
