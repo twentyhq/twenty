@@ -114,10 +114,20 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
       viewBarComponentId: recordIndexId,
     });
 
-  const viewGroupSettingsUrl = getSettingsPagePath(SettingsPath.ObjectDetail, {
-    id: viewGroupFieldMetadataItem?.name,
-    objectSlug: objectNamePlural,
-  });
+  const newFieldSettingsUrl = getSettingsPagePath(
+    SettingsPath.ObjectNewFieldSelect,
+    {
+      objectSlug: objectNamePlural,
+    },
+  );
+
+  const viewGroupSettingsUrl = getSettingsPagePath(
+    SettingsPath.ObjectFieldEdit,
+    {
+      objectSlug: objectNamePlural,
+      fieldSlug: viewGroupFieldMetadataItem?.name ?? '',
+    },
+  );
 
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
@@ -171,7 +181,7 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer>
           <UndecoratedLink
-            to={viewGroupSettingsUrl}
+            to={newFieldSettingsUrl}
             onClick={() => {
               setNavigationMemorizedUrl(location.pathname + location.search);
               closeDropdown();
