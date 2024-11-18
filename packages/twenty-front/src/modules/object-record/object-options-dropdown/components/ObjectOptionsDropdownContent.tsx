@@ -100,11 +100,6 @@ export const ObjectOptionsDropdownContent = ({
     viewType,
   });
 
-  const contextualFieldsText =
-    visibleBoardFields.length > 1
-      ? `${visibleBoardFields.length} shown`
-      : `${visibleBoardFields.length} show`;
-
   return (
     <>
       {!currentContentId && (
@@ -131,7 +126,7 @@ export const ObjectOptionsDropdownContent = ({
               onClick={() => onContentChange('fields')}
               LeftIcon={IconTag}
               text="Fields"
-              contextualText={contextualFieldsText}
+              contextualText={`${visibleBoardFields.length} shown`}
               hasSubMenu
             />
             <MenuItem
