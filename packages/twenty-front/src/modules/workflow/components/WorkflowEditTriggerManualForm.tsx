@@ -8,7 +8,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { getManualTriggerDefaultSettings } from '@/workflow/utils/getManualTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
-import { IconHandMove, isDefined } from 'twenty-ui';
+import { IconHandMove, isDefined, useIcons } from 'twenty-ui';
 
 type WorkflowEditTriggerManualFormProps =
   | {
@@ -28,6 +28,7 @@ export const WorkflowEditTriggerManualForm = ({
   onTriggerUpdate,
 }: WorkflowEditTriggerManualFormProps) => {
   const theme = useTheme();
+  const { getIcon } = useIcons();
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
@@ -35,6 +36,7 @@ export const WorkflowEditTriggerManualForm = ({
     activeObjectMetadataItems.map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
+      Icon: getIcon(item.icon),
     }));
 
   const manualTriggerAvailability: WorkflowManualTriggerAvailability =

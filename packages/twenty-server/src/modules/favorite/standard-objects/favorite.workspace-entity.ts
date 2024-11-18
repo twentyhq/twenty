@@ -18,6 +18,7 @@ import { FAVORITE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/worksp
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -94,6 +95,27 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('company')
   companyId: string;
+
+  @WorkspaceRelation({
+    standardId: FAVORITE_STANDARD_FIELD_IDS.favoriteFolder,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Favorite Folder',
+    description: 'The folder this favorite belongs to',
+    icon: 'IconFolder',
+    inverseSideTarget: () => FavoriteFolderWorkspaceEntity,
+    inverseSideFieldKey: 'favorites',
+  })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsFavoriteFolderEntityEnabled,
+  })
+  @WorkspaceIsNullable()
+  favoriteFolder: Relation<FavoriteFolderWorkspaceEntity> | null;
+
+  @WorkspaceJoinColumn('favoriteFolder')
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsFavoriteFolderEntityEnabled,
+  })
+  favoriteFolderId: string;
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.opportunity,

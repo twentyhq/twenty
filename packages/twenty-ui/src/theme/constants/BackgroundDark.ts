@@ -22,6 +22,7 @@ export const BACKGROUND_DARK = {
     light: RGBA(GRAY_SCALE.gray0, 0.06),
     lighter: RGBA(GRAY_SCALE.gray0, 0.03),
     danger: RGBA(COLOR.red, 0.08),
+    blue: RGBA(COLOR.blue, 0.2),
   },
   overlayPrimary: RGBA(GRAY_SCALE.gray80, 0.8),
   overlaySecondary: RGBA(GRAY_SCALE.gray80, 0.4),

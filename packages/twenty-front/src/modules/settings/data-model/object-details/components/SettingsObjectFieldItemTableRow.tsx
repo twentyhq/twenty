@@ -27,6 +27,7 @@ import {
   IconMinus,
   IconPlus,
   LightIconButton,
+  UndecoratedLink,
   isDefined,
   useIcons,
 } from 'twenty-ui';
@@ -207,22 +208,29 @@ export const SettingsObjectFieldItemTableRow = ({
 
   if (!isFieldTypeSupported) return null;
 
+  const isRelatedObjectLinkable =
+    isDefined(relationObjectMetadataItem?.namePlural) &&
+    !relationObjectMetadataItem.isSystem;
+
   return (
     <StyledObjectFieldTableRow
-      to={mode === 'view' ? linkToNavigate : undefined}
+      onClick={mode === 'view' ? () => navigate(linkToNavigate) : undefined}
     >
-      <StyledNameTableCell>
-        {!!Icon && (
-          <Icon
-            style={{ minWidth: theme.icon.size.md }}
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        )}
-        <StyledNameLabel title={fieldMetadataItem.label}>
-          {fieldMetadataItem.label}
-        </StyledNameLabel>
-      </StyledNameTableCell>
+      <UndecoratedLink to={linkToNavigate}>
+        <StyledNameTableCell>
+          {!!Icon && (
+            <Icon
+              style={{ minWidth: theme.icon.size.md }}
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+          )}
+          <StyledNameLabel title={fieldMetadataItem.label}>
+            {fieldMetadataItem.label}
+          </StyledNameLabel>
+        </StyledNameTableCell>
+      </UndecoratedLink>
+
       <TableCell>{typeLabel}</TableCell>
       <TableCell>
         <SettingsObjectFieldDataType
@@ -237,12 +245,16 @@ export const SettingsObjectFieldItemTableRow = ({
             fieldMetadataItem.settings?.type === 'percentage' ? '%' : undefined
           }
           to={
-            relationObjectMetadataItem?.namePlural &&
-            !relationObjectMetadataItem.isSystem
+            isRelatedObjectLinkable
               ? `/settings/objects/${getObjectSlug(relationObjectMetadataItem)}`
               : undefined
           }
           value={fieldType}
+          onClick={(e) => {
+            if (isRelatedObjectLinkable) {
+              e.stopPropagation();
+            }
+          }}
         />
       </TableCell>
       <StyledIconTableCell>
