@@ -1,3 +1,11 @@
+import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
+import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useMemo } from 'react';
@@ -14,18 +22,6 @@ import {
   MenuItemSelectColor,
 } from 'twenty-ui';
 import { v4 } from 'uuid';
-
-import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { EXPANDED_WIDTH_ANIMATION_VARIANTS } from '@/settings/constants/ExpandedWidthAnimationVariants';
-import { OPTION_VALUE_MAXIMUM_LENGTH } from '@/settings/data-model/constants/OptionValueMaximumLength';
-import { TextInput } from '@/ui/input/components/TextInput';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { AnimatePresence, motion } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
 import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
@@ -83,7 +79,6 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
   option,
   isNewRow,
 }: SettingsDataModelFieldSelectFormOptionRowProps) => {
-  const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const theme = useTheme();
 
   const dropdownIds = useMemo(() => {
@@ -111,28 +106,19 @@ export const SettingsDataModelFieldSelectFormOptionRow = ({
         stroke={theme.icon.stroke.sm}
         color={theme.font.color.extraLight}
       />
-      <AnimatePresence>
-        {isAdvancedModeEnabled && (
-          <motion.div
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            variants={EXPANDED_WIDTH_ANIMATION_VARIANTS}
-          >
-            <StyledOptionInput
-              value={option.value}
-              onChange={(input) =>
-                onChange({
-                  ...option,
-                  value: computeOptionValueFromLabel(input),
-                })
-              }
-              RightIcon={isDefault ? IconCheck : undefined}
-              maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <AdvancedSettingsWrapper dimension="width" hideIcon={true}>
+        <StyledOptionInput
+          value={option.value}
+          onChange={(input) =>
+            onChange({
+              ...option,
+              value: computeOptionValueFromLabel(input),
+            })
+          }
+          RightIcon={isDefault ? IconCheck : undefined}
+          maxLength={OPTION_VALUE_MAXIMUM_LENGTH}
+        />
+      </AdvancedSettingsWrapper>
       <Dropdown
         dropdownId={dropdownIds.color}
         dropdownPlacement="bottom-start"
