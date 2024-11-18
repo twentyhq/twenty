@@ -142,10 +142,14 @@ export class AuthResolver {
   ): Promise<LoginToken> {
     const user = await this.authService.signInUp({
       ...signUpInput,
-      targetWorkspaceSubdomain: getWorkspaceSubdomainByOrigin(
-        origin,
-        this.environmentService.get('FRONT_BASE_URL'),
-      ),
+      targetWorkspaceSubdomain: this.environmentService.get(
+        'IS_MULTIWORKSPACE_ENABLED',
+      )
+        ? getWorkspaceSubdomainByOrigin(
+            origin,
+            this.environmentService.get('FRONT_BASE_URL'),
+          )
+        : undefined,
       fromSSO: false,
     });
 
