@@ -1,5 +1,5 @@
-import { Ref } from 'react';
 import { styled } from '@linaria/react';
+import { Ref } from 'react';
 
 const StyledOuterContainer = styled.div<{
   hasSoftFocus?: boolean;
@@ -19,6 +19,7 @@ const StyledInnerContainer = styled.div`
   overflow: hidden;
   width: 100%;
   flex-wrap: wrap;
+  white-space: nowrap;
 `;
 
 export type EditableCellDisplayContainerProps = {
