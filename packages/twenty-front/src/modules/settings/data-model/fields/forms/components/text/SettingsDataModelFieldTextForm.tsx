@@ -61,19 +61,19 @@ export const SettingsDataModelFieldTextForm = ({
                     value: 0,
                   },
                   {
-                    label: '2',
+                    label: 'First 2 lines',
                     value: 2,
                   },
                   {
-                    label: '5',
+                    label: 'First 5 lines',
                     value: 5,
                   },
                   {
-                    label: '10',
+                    label: 'First 10 lines',
                     value: 10,
                   },
                   {
-                    label: 'all',
+                    label: 'All lines',
                     value: 99,
                   },
                 ]}
