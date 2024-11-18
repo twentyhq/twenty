@@ -28,6 +28,7 @@ import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { GRAY_SCALE, isDefined, THEME_COMMON } from 'twenty-ui';
+import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -143,6 +144,12 @@ export const WorkflowDiagramCanvasBase = ({
       };
     });
   };
+
+  useListenRightDrawerClose(() => {
+    reactflow.setNodes((nodes) =>
+      nodes.map((node) => ({ ...node, selected: false })),
+    );
+  });
 
   const containerRef = useRef<HTMLDivElement>(null);
 
