@@ -56,7 +56,7 @@ const StyledIconContainer = styled.div`
   height: 75%;
 `;
 
-const StyledDeveloperSection = styled.div`
+const StyledContainer = styled.div`
   display: flex;
   width: 100%;
   gap: ${({ theme }) => theme.spacing(1)};
@@ -187,12 +187,20 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconCode}
           />
         )}
-        <SettingsNavigationDrawerItem
-          label="Security"
-          path={SettingsPath.Security}
-          Icon={IconKey}
-        />
+        {isAdvancedModeEnabled && (
+          <StyledContainer>
+            <StyledIconContainer>
+              <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
+            </StyledIconContainer>
+            <SettingsNavigationDrawerItem
+              label="Security"
+              path={SettingsPath.Security}
+              Icon={IconKey}
+            />
+          </StyledContainer>
+        )}
       </NavigationDrawerSection>
+
       <AnimatePresence>
         {isAdvancedModeEnabled && (
           <motion.div
@@ -202,7 +210,7 @@ export const SettingsNavigationDrawerItems = () => {
             exit="exit"
             variants={motionAnimationVariants}
           >
-            <StyledDeveloperSection>
+            <StyledContainer>
               <StyledIconContainer>
                 <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
               </StyledIconContainer>
@@ -221,7 +229,7 @@ export const SettingsNavigationDrawerItems = () => {
                   />
                 )}
               </NavigationDrawerSection>
-            </StyledDeveloperSection>
+            </StyledContainer>
           </motion.div>
         )}
       </AnimatePresence>
