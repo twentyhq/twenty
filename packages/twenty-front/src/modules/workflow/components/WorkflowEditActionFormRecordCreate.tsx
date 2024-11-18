@@ -5,7 +5,12 @@ import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditG
 import { WorkflowRecordCreateAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
-import { IconAddressBook, isDefined, useIcons } from 'twenty-ui';
+import {
+  HorizontalSeparator,
+  IconAddressBook,
+  isDefined,
+  useIcons,
+} from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';
 
@@ -143,6 +148,8 @@ export const WorkflowEditActionFormRecordCreate = ({
           saveAction(newFormData);
         }}
       />
+
+      <HorizontalSeparator noMargin />
 
       {editableFields.map((field) => (
         <FormFieldInput
