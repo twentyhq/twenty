@@ -26,7 +26,7 @@ export const SettingsOptionIconCustomizer = ({
       <Icon
         size={theme.icon.size.xl}
         color={theme.IllustrationIcon.color.grey}
-        stroke={theme.icon.stroke.lg}
+        stroke={theme.icon.stroke.md}
       />
     </StyledIconCustomizer>
   );

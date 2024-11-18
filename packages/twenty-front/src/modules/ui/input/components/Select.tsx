@@ -150,7 +150,7 @@ export const Select = <Value extends string | number | boolean | null>({
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {filteredOptions.map((option) => (
                     <MenuItem
-                      key={String(option.value)}
+                      key={`${option.value}-${option.label}`}
                       LeftIcon={option.Icon}
                       text={option.label}
                       onClick={() => {
