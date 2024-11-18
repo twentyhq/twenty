@@ -66,8 +66,7 @@ export const MultiItemFieldInput = <T,>({
 
   const handleDropdownCloseOutside = (event: MouseEvent | TouchEvent) => {
     event.stopImmediatePropagation();
-
-    if (inputValue.trim().length > 0) {
+    if (inputValue?.trim().length > 0) {
       handleSubmitInput();
     } else {
       onCancel?.();
