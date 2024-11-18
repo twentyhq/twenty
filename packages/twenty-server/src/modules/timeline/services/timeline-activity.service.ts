@@ -6,7 +6,8 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-type TransformedEvent = ObjectRecordBaseEvent & {
+type TimelineActivity = ObjectRecordBaseEvent & {
+  name: string;
   objectName?: string;
   linkedRecordCachedName?: string;
   linkedRecordId?: string;
@@ -35,26 +36,30 @@ export class TimelineActivityService {
     eventName: string;
     workspaceId: string;
   }) {
-    const events = await this.transformEvent({ event, workspaceId, eventName });
+    const timelineActivities = await this.transformEventToTimelineActivities({
+      event,
+      workspaceId,
+      eventName,
+    });
 
-    if (!events || events.length === 0) return;
+    if (!timelineActivities || timelineActivities.length === 0) return;
 
-    for (const event of events) {
+    for (const timelineActivity of timelineActivities) {
       await this.timelineActivityRepository.upsertOne(
-        eventName,
-        event.properties,
-        event.objectName ?? event.objectMetadata.nameSingular,
-        event.recordId,
+        timelineActivity.name,
+        timelineActivity.properties,
+        timelineActivity.objectName ?? event.objectMetadata.nameSingular,
+        timelineActivity.recordId,
         workspaceId,
-        event.workspaceMemberId,
-        event.linkedRecordCachedName,
-        event.linkedRecordId,
-        event.linkedObjectMetadataId,
+        timelineActivity.workspaceMemberId,
+        timelineActivity.linkedRecordCachedName,
+        timelineActivity.linkedRecordId,
+        timelineActivity.linkedObjectMetadataId,
       );
     }
   }
 
-  private async transformEvent({
+  private async transformEventToTimelineActivities({
     event,
     workspaceId,
     eventName,
@@ -62,16 +67,17 @@ export class TimelineActivityService {
     event: ObjectRecordBaseEvent;
     workspaceId: string;
     eventName: string;
-  }): Promise<TransformedEvent[]> {
+  }): Promise<TimelineActivity[] | undefined> {
     if (['note', 'task'].includes(event.objectMetadata.nameSingular)) {
-      const linkedObjects = await this.handleLinkedObjects({
+      const linkedTimelineActivities = await this.getLinkedTimelineActivities({
         event,
         workspaceId,
         eventName,
       });
 
       // 2 timelines, one for the linked object and one for the task/note
-      if (linkedObjects?.length > 0) return [...linkedObjects, event];
+      if (linkedTimelineActivities && linkedTimelineActivities?.length > 0)
+        return [...linkedTimelineActivities, { ...event, name: eventName }];
     }
 
     if (
@@ -79,13 +85,17 @@ export class TimelineActivityService {
         event.objectMetadata.nameSingular,
       )
     ) {
-      return await this.handleLinkedObjects({ event, workspaceId, eventName });
+      return await this.getLinkedTimelineActivities({
+        event,
+        workspaceId,
+        eventName,
+      });
     }
 
-    return [event];
+    return [{ ...event, name: eventName }];
   }
 
-  private async handleLinkedObjects({
+  private async getLinkedTimelineActivities({
     event,
     workspaceId,
     eventName,
@@ -93,13 +103,13 @@ export class TimelineActivityService {
     event: ObjectRecordBaseEvent;
     workspaceId: string;
     eventName: string;
-  }) {
+  }): Promise<TimelineActivity[] | undefined> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     switch (event.objectMetadata.nameSingular) {
       case 'noteTarget':
-        return this.processActivityTarget({
+        return this.computeActivityTargets({
           event,
           dataSourceSchema,
           activityType: 'note',
@@ -107,7 +117,7 @@ export class TimelineActivityService {
           workspaceId,
         });
       case 'taskTarget':
-        return this.processActivityTarget({
+        return this.computeActivityTargets({
           event,
           dataSourceSchema,
           activityType: 'task',
@@ -116,7 +126,7 @@ export class TimelineActivityService {
         });
       case 'note':
       case 'task':
-        return this.processActivity({
+        return this.computeActivities({
           event,
           dataSourceSchema,
           activityType: event.objectMetadata.nameSingular,
@@ -128,7 +138,7 @@ export class TimelineActivityService {
     }
   }
 
-  private async processActivity({
+  private async computeActivities({
     event,
     dataSourceSchema,
     activityType,
@@ -144,14 +154,14 @@ export class TimelineActivityService {
     const activityTargets =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT * FROM ${dataSourceSchema}."${this.targetObjects[activityType]}"
-          WHERE "${activityType}Id" = $1`,
+         WHERE "${activityType}Id" = $1`,
         [event.recordId],
         workspaceId,
       );
 
     const activity = await this.workspaceDataSourceService.executeRawQuery(
       `SELECT * FROM ${dataSourceSchema}."${activityType}"
-          WHERE "id" = $1`,
+       WHERE "id" = $1`,
       [event.recordId],
       workspaceId,
     );
@@ -184,12 +194,12 @@ export class TimelineActivityService {
           linkedRecordCachedName: activity[0].title,
           linkedRecordId: activity[0].id,
           linkedObjectMetadataId: event.objectMetadata.id,
-        } as TransformedEvent;
+        } as TimelineActivity;
       })
-      .filter((event): event is TransformedEvent => event !== undefined);
+      .filter((event): event is TimelineActivity => event !== undefined);
   }
 
-  private async processActivityTarget({
+  private async computeActivityTargets({
     event,
     dataSourceSchema,
     activityType,
@@ -201,11 +211,11 @@ export class TimelineActivityService {
     activityType: string;
     eventName: string;
     workspaceId: string;
-  }) {
+  }): Promise<TimelineActivity[] | undefined> {
     const activityTarget =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT * FROM ${dataSourceSchema}."${this.targetObjects[activityType]}"
-            WHERE "id" = $1`,
+         WHERE "id" = $1`,
         [event.recordId],
         workspaceId,
       );
@@ -214,7 +224,7 @@ export class TimelineActivityService {
 
     const activity = await this.workspaceDataSourceService.executeRawQuery(
       `SELECT * FROM ${dataSourceSchema}."${activityType}"
-          WHERE "id" = $1`,
+       WHERE "id" = $1`,
       [activityTarget[0].activityId],
       workspaceId,
     );
@@ -247,7 +257,7 @@ export class TimelineActivityService {
         linkedRecordCachedName: activity[0].title,
         linkedRecordId: activity[0].id,
         linkedObjectMetadataId: activityObjectMetadataId,
-      } as TransformedEvent,
+      } as TimelineActivity,
     ];
   }
 }

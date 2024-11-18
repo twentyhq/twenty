@@ -4,25 +4,19 @@ NODE timeSeriesWebhookData
 SQL >
     %
     SELECT
-        {% if granularity == "hour" %} toStartOfHour(timestamp, {{ String(timezone, 'UTC') }})
-        {% elif granularity == "custom" %}
-            toDateTime64(
-                toStartOfMinute(timestamp, {{ String(timezone, 'UTC') }}),
-                3,
-                {{ String(timezone, 'UTC') }}
-            )
-        {% else %} toDateTime64(toStartOfDay(timestamp, {{ String(timezone, 'UTC') }}), 3)
+        {% if granularity == "hour" %} toStartOfHour(timestamp)
+        {% else %} toDateTime64(toStartOfDay(timestamp), 3)
         {% end %} AS interval,
         uniqIf(*, success = true) as success_count,
         uniqIf(*, success = false) as failure_count
     FROM webhookEventMV
     WHERE
         true
-        AND webhookId = {{ String(webhookId, '90f12aed-0276-4bea-bcaa-c21ea2763d7d', required=True) }}
         AND workspaceId
         ={{ String(workspaceId, '20202020-1c25-4d02-bf25-6aeccf7ea419', required=True) }}
-        AND timestamp >= {{ DateTime(start, '2024-10-22 00:00:00') }}
-        AND timestamp < {{ DateTime(end, '2024-10-23 00:00:00') }}
+        AND webhookId = {{ String(webhookId, '5237a3bc-566d-4290-b951-96e91051f968', required=True) }}
+        AND timestamp >= parseDateTime64BestEffort({{ String(start, '2024-11-01T00:00:00.000Z') }}, 3)
+        AND timestamp < parseDateTime64BestEffort({{ String(end, '2024-11-02T00:00:00.000Z') }}, 3)
     GROUP BY interval
     ORDER BY interval
 

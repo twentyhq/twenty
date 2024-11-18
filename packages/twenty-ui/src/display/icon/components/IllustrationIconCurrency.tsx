@@ -17,8 +17,8 @@ export const IllustrationIconCurrency = (
       <IllustrationIconCurrencyRaw
         height={size}
         width={size}
-        fill={fill}
-        color={color}
+        fill={fill.blue}
+        color={color.blue}
       />
     </IllustrationIconWrapper>
   );

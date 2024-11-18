@@ -129,9 +129,9 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: WORKFLOW_RUN_STANDARD_FIELD_IDS.createdBy,
     type: FieldMetadataType.ACTOR,
-    label: 'Created by',
+    label: 'Executed by',
     icon: 'IconCreativeCommonsSa',
-    description: 'The creator of the record',
+    description: 'The executor of the workflow',
     defaultValue: {
       source: `'${FieldActorSource.MANUAL}'`,
       name: "''",

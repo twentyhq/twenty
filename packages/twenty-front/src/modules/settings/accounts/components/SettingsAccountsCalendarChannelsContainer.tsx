@@ -64,7 +64,9 @@ export const SettingsAccountsCalendarChannelsContainer = () => {
       {tabs.length > 1 && (
         <StyledCalenderContainer>
           <TabList
-            tabListId={SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID}
+            tabListInstanceId={
+              SETTINGS_ACCOUNT_CALENDAR_CHANNELS_TAB_LIST_COMPONENT_ID
+            }
             tabs={tabs}
           />
         </StyledCalenderContainer>

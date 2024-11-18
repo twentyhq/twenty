@@ -3,10 +3,10 @@ import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/currencyFieldDefaultValueSchema';
+import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
-import { Select } from '@/ui/input/components/Select';
-import { CardContent } from 'twenty-ui';
+import { IconCurrencyDollar } from 'twenty-ui';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
@@ -41,7 +41,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
     useCurrencySettingsFormInitialValues({ fieldMetadataItem });
 
   return (
-    <CardContent>
+    <>
       <Controller
         name="defaultValue.amountMicros"
         control={control}
@@ -53,17 +53,19 @@ export const SettingsDataModelFieldCurrencyForm = ({
         control={control}
         defaultValue={initialCurrencyCodeValue}
         render={({ field: { onChange, value } }) => (
-          <Select
-            fullWidth
-            disabled={disabled}
-            label="Default Unit"
-            dropdownId="currency-unit-select"
+          <SettingsOptionCardContentSelect
+            Icon={IconCurrencyDollar}
+            title="Default Value"
+            description="Choose the default currency that will apply"
             value={value}
-            options={OPTIONS}
             onChange={onChange}
+            disabled={disabled}
+            fullWidth
+            dropdownId="object-field-default-value-select-currency"
+            options={OPTIONS}
           />
         )}
       />
-    </CardContent>
+    </>
   );
 };

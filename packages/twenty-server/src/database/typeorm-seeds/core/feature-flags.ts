@@ -51,11 +51,6 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
-        key: FeatureFlagKey.IsWorkspaceFavoriteEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IsAnalyticsV2Enabled,
         workspaceId: workspaceId,
         value: true,
@@ -76,7 +71,17 @@ export const seedFeatureFlags = async (
         value: false,
       },
       {
+        key: FeatureFlagKey.IsMicrosoftSyncEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
         key: FeatureFlagKey.IsAdvancedFiltersEnabled,
+        workspaceId: workspaceId,
+        value: false,
+      },
+      {
+        key: FeatureFlagKey.IsAggregateQueryEnabled,
         workspaceId: workspaceId,
         value: false,
       },

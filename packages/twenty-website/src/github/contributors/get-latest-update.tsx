@@ -9,7 +9,11 @@ export async function getLatestUpdate() {
     desc(pullRequestModel.updatedAt),
   );
   const latestIssue = await findOne(issueModel, desc(issueModel.updatedAt));
-  const prDate = new Date(latestPR[0].updatedAt);
-  const issueDate = new Date(latestIssue[0].updatedAt);
+  const prDate = latestPR[0]
+    ? new Date(latestPR[0].updatedAt)
+    : new Date('2023-01-01');
+  const issueDate = latestIssue[0]
+    ? new Date(latestIssue[0].updatedAt)
+    : new Date('2023-01-01');
   return (prDate > issueDate ? prDate : issueDate).toISOString();
 }

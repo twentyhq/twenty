@@ -6,15 +6,19 @@ import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-sto
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-const globalRecordActionEffects = [ExportRecordsActionEffect];
+const noSelectionRecordActionEffects = [ExportRecordsActionEffect];
 
 const singleRecordActionEffects = [
   ManageFavoritesActionEffect,
   DeleteRecordsActionEffect,
 ];
 
-const multipleRecordActionEffects = [DeleteRecordsActionEffect];
+const multipleRecordActionEffects = [
+  ExportRecordsActionEffect,
+  DeleteRecordsActionEffect,
+];
 
 export const RecordActionMenuEntriesSetter = () => {
   const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
@@ -29,6 +33,8 @@ export const RecordActionMenuEntriesSetter = () => {
     objectId: contextStoreCurrentObjectMetadataId ?? '',
   });
 
+  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+
   if (!objectMetadataItem) {
     throw new Error(
       `Object metadata item not found for id ${contextStoreCurrentObjectMetadataId}`,
@@ -36,27 +42,22 @@ export const RecordActionMenuEntriesSetter = () => {
   }
 
   const actions =
-    contextStoreNumberOfSelectedRecords === 1
-      ? singleRecordActionEffects
-      : multipleRecordActionEffects;
+    contextStoreNumberOfSelectedRecords === 0
+      ? noSelectionRecordActionEffects
+      : contextStoreNumberOfSelectedRecords === 1
+        ? singleRecordActionEffects
+        : multipleRecordActionEffects;
 
   return (
     <>
-      {globalRecordActionEffects.map((ActionEffect, index) => (
+      {actions.map((ActionEffect, index) => (
         <ActionEffect
           key={index}
           position={index}
           objectMetadataItem={objectMetadataItem}
         />
       ))}
-      {actions.map((ActionEffect, index) => (
-        <ActionEffect
-          key={index}
-          position={globalRecordActionEffects.length + index}
-          objectMetadataItem={objectMetadataItem}
-        />
-      ))}
-      {contextStoreNumberOfSelectedRecords === 1 && (
+      {contextStoreNumberOfSelectedRecords === 1 && isWorkflowEnabled && (
         <WorkflowRunRecordActionEffect
           objectMetadataItem={objectMetadataItem}
         />

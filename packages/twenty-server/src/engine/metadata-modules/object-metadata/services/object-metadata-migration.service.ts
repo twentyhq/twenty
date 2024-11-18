@@ -93,6 +93,7 @@ export class ObjectMetadataMigrationService {
   public async createRenameTableMigration(
     existingObjectMetadata: ObjectMetadataEntity,
     objectMetadataForUpdate: ObjectMetadataEntity,
+    workspaceId: string,
   ) {
     const newTargetTableName = computeObjectTargetTable(
       objectMetadataForUpdate,
@@ -103,7 +104,7 @@ export class ObjectMetadataMigrationService {
 
     this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`rename-${existingObjectMetadata.nameSingular}`),
-      objectMetadataForUpdate.workspaceId,
+      workspaceId,
       [
         {
           name: existingTargetTableName,
@@ -117,6 +118,7 @@ export class ObjectMetadataMigrationService {
   public async createRelationsUpdatesMigrations(
     existingObjectMetadata: ObjectMetadataEntity,
     updatedObjectMetadata: ObjectMetadataEntity,
+    workspaceId: string,
   ) {
     const existingTableName = computeObjectTargetTable(existingObjectMetadata);
     const newTableName = computeObjectTargetTable(updatedObjectMetadata);
@@ -128,6 +130,7 @@ export class ObjectMetadataMigrationService {
           isForeignKey: true,
         },
         name: `${existingObjectMetadata.nameSingular}Id`,
+        workspaceId: workspaceId,
       };
 
       const fieldsWihStandardRelation = await this.fieldMetadataRepository.find(
@@ -150,7 +153,7 @@ export class ObjectMetadataMigrationService {
         fieldsWihStandardRelation.map(async (fieldWihStandardRelation) => {
           const relatedObject = await this.objectMetadataRepository.findOneBy({
             id: fieldWihStandardRelation.objectMetadataId,
-            workspaceId: updatedObjectMetadata.workspaceId,
+            workspaceId: workspaceId,
           });
 
           if (relatedObject) {
@@ -175,7 +178,7 @@ export class ObjectMetadataMigrationService {
               generateMigrationName(
                 `rename-${existingObjectMetadata.nameSingular}-to-${updatedObjectMetadata.nameSingular}-in-${relatedObject.nameSingular}`,
               ),
-              updatedObjectMetadata.workspaceId,
+              workspaceId,
               [
                 {
                   name: relationTableName,
