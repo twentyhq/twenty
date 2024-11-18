@@ -44,6 +44,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { RecordGroupsVisibilityDropdownSection } from '@/views/components/RecordGroupsVisibilityDropdownSection';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
@@ -58,6 +59,8 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
   recordIndexId,
   objectMetadataItem,
 }: ObjectOptionsDropdownRecordGroupContentProps) => {
+  const isViewGroupEnabled = useIsFeatureEnabled('IS_VIEW_GROUPS_ENABLED');
+
   const { getIcon } = useIcons();
 
   const { currentContentId, onContentChange, resetContent } =
@@ -197,22 +200,26 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
           Group by
         </DropdownMenuHeader>
         <DropdownMenuItemsContainer>
-          <MenuItem
-            onClick={() => onContentChange('recordGroupFields')}
-            LeftIcon={IconLayoutList}
-            text={
-              !viewGroupFieldMetadataItem
-                ? 'Group by'
-                : `Group by "${viewGroupFieldMetadataItem.label}"`
-            }
-            hasSubMenu
-          />
-          <MenuItem
-            onClick={() => onContentChange('recordGroupSort')}
-            LeftIcon={IconSortDescending}
-            text="Sort"
-            hasSubMenu
-          />
+          {isViewGroupEnabled && (
+            <>
+              <MenuItem
+                onClick={() => onContentChange('recordGroupFields')}
+                LeftIcon={IconLayoutList}
+                text={
+                  !viewGroupFieldMetadataItem
+                    ? 'Group by'
+                    : `Group by "${viewGroupFieldMetadataItem.label}"`
+                }
+                hasSubMenu
+              />
+              <MenuItem
+                onClick={() => onContentChange('recordGroupSort')}
+                LeftIcon={IconSortDescending}
+                text="Sort"
+                hasSubMenu
+              />
+            </>
+          )}
           <MenuItemToggle
             LeftIcon={IconCircleOff}
             onToggleChange={handleHideEmptyRecordGroupChange}

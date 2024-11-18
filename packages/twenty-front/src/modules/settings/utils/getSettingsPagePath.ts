@@ -17,10 +17,6 @@ export const getSettingsPagePath = <Path extends SettingsPath>(
     resultPath = resultPath.replace(/:([a-zA-Z]+)/g, (_, key) => {
       const value = params[key as keyof Params<Path>];
 
-      if (!value) {
-        throw new Error(`Missing value for parameter "${key}"`);
-      }
-
       return value;
     });
   }

@@ -14,5 +14,7 @@ export const useIsFeatureEnabled = (featureKey: FeatureFlagKey | null) => {
     (flag) => flag.key === featureKey,
   );
 
+  console.log('featureFlag', currentWorkspace?.featureFlags, featureFlag);
+
   return !!featureFlag?.value;
 };

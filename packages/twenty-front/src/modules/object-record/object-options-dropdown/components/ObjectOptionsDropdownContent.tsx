@@ -33,6 +33,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useDropdownContent } from '@/ui/layout/dropdown/hooks/useDropdownContent';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export type RecordIndexOptionsContentId =
   | 'viewSettings'
@@ -54,6 +55,8 @@ export const ObjectOptionsDropdownContent = ({
   recordIndexId,
   objectMetadataItem,
 }: ObjectOptionsDropdownContentProps) => {
+  const isViewGroupEnabled = useIsFeatureEnabled('IS_VIEW_GROUPS_ENABLED');
+
   const { currentContentId, onContentChange } =
     useDropdownContent<RecordIndexOptionsContentId>();
 
@@ -129,13 +132,15 @@ export const ObjectOptionsDropdownContent = ({
               contextualText={`${visibleBoardFields.length} shown`}
               hasSubMenu
             />
-            <MenuItem
-              onClick={() => onContentChange('recordGroups')}
-              LeftIcon={IconLayoutList}
-              text="Group by"
-              contextualText={viewGroupFieldMetadataItem?.label}
-              hasSubMenu
-            />
+            {(viewType === ViewType.Kanban || isViewGroupEnabled) && (
+              <MenuItem
+                onClick={() => onContentChange('recordGroups')}
+                LeftIcon={IconLayoutList}
+                text="Group by"
+                contextualText={viewGroupFieldMetadataItem?.label}
+                hasSubMenu
+              />
+            )}
           </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
