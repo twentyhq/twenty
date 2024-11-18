@@ -19,6 +19,10 @@ const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;
 `;
 
+const StyledContainer = styled.div`
+  overflow-x: hidden;
+  overflow-y: auto;
+`;
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
   const { toggleCommandMenu } = useCommandMenu();
@@ -55,14 +59,15 @@ export const MainNavigationDrawerItems = () => {
           />
         </StyledMainSection>
       )}
+      <StyledContainer>
+        <NavigationDrawerOpenedSection />
 
-      <NavigationDrawerOpenedSection />
+        <CurrentWorkspaceMemberFavoritesFolders />
 
-      <CurrentWorkspaceMemberFavoritesFolders />
+        <WorkspaceFavorites />
 
-      <WorkspaceFavorites />
-
-      <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
+        <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
+      </StyledContainer>
     </>
   );
 };
