@@ -8,9 +8,8 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
 import { ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import {
   IconComponent,
@@ -204,8 +203,6 @@ export const NavigationDrawerItem = ({
   const theme = useTheme();
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
-
-  const navigate = useNavigate();
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
   const showBreadcrumb = indentationLevel === 2;
@@ -218,10 +215,6 @@ export const NavigationDrawerItem = ({
     if (isDefined(onClick)) {
       onClick();
       return;
-    }
-
-    if (isNonEmptyString(to)) {
-      navigate(to);
     }
   };
 
