@@ -14,37 +14,30 @@ const StyledContainer = styled.div`
   width: 480px;
 `;
 
-const ToggleWithState = ({
-  checked: initialChecked,
-  Icon,
-  title,
-  description,
-  divider,
-  disabled,
-  advancedMode,
-  onChange: _onChange,
-}: React.ComponentProps<typeof SettingsOptionCardContentToggle>) => {
-  const [checked, setChecked] = useState(initialChecked);
+const SettingsOptionCardContentToggleWrapper = (
+  args: React.ComponentProps<typeof SettingsOptionCardContentToggle>,
+) => {
+  const [checked, setChecked] = useState(args.checked);
 
   return (
     <StyledContainer>
       <SettingsOptionCardContentToggle
         checked={checked}
         onChange={setChecked}
-        Icon={Icon}
-        title={title}
-        description={description}
-        divider={divider}
-        disabled={disabled}
-        advancedMode={advancedMode}
+        Icon={args.Icon}
+        title={args.title}
+        description={args.description}
+        divider={args.divider}
+        disabled={args.disabled}
+        advancedMode={args.advancedMode}
       />
     </StyledContainer>
   );
 };
 
-const meta: Meta<typeof SettingsOptionCardContentToggle> = {
+const meta: Meta<typeof SettingsOptionCardContentToggleWrapper> = {
   title: 'Modules/Settings/SettingsOptionCardContentToggle',
-  component: SettingsOptionCardContentToggle,
+  component: SettingsOptionCardContentToggleWrapper,
   decorators: [ComponentDecorator],
   parameters: {
     maxWidth: 800,
@@ -52,27 +45,14 @@ const meta: Meta<typeof SettingsOptionCardContentToggle> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SettingsOptionCardContentToggle>;
+type Story = StoryObj<typeof SettingsOptionCardContentToggleWrapper>;
 
 export const Default: Story = {
-  render: (args) => (
-    <ToggleWithState
-      checked={args.checked}
-      Icon={args.Icon}
-      title={args.title}
-      description={args.description}
-      divider={args.divider}
-      disabled={args.disabled}
-      advancedMode={args.advancedMode}
-      onChange={args.onChange}
-    />
-  ),
   args: {
     Icon: IconBell,
     title: 'Notifications',
     description: 'Receive notifications about important updates',
     checked: true,
-    onChange: () => {},
   },
   argTypes: {
     Icon: { control: false },
@@ -81,89 +61,37 @@ export const Default: Story = {
 };
 
 export const Disabled: Story = {
-  render: (args) => (
-    <ToggleWithState
-      checked={args.checked}
-      Icon={args.Icon}
-      title={args.title}
-      description={args.description}
-      divider={args.divider}
-      disabled={args.disabled}
-      advancedMode={args.advancedMode}
-      onChange={args.onChange}
-    />
-  ),
   args: {
     Icon: IconLock,
     title: 'Locked Setting',
     description: 'This setting is currently unavailable',
     checked: false,
     disabled: true,
-    onChange: () => {},
   },
 };
 
 export const AdvancedMode: Story = {
-  render: (args) => (
-    <ToggleWithState
-      checked={args.checked}
-      Icon={args.Icon}
-      title={args.title}
-      description={args.description}
-      divider={args.divider}
-      disabled={args.disabled}
-      advancedMode={args.advancedMode}
-      onChange={args.onChange}
-    />
-  ),
   args: {
     Icon: IconRobot,
     title: 'Advanced Features',
     description: 'Enable experimental features',
     checked: true,
     advancedMode: true,
-    onChange: () => {},
   },
 };
 
 export const WithoutIcon: Story = {
-  render: (args) => (
-    <ToggleWithState
-      checked={args.checked}
-      Icon={args.Icon}
-      title={args.title}
-      description={args.description}
-      divider={args.divider}
-      disabled={args.disabled}
-      advancedMode={args.advancedMode}
-      onChange={args.onChange}
-    />
-  ),
   args: {
     title: 'Simple Toggle',
     description: 'A basic toggle without an icon',
     checked: true,
-    onChange: () => {},
   },
 };
 
 export const WithoutDescription: Story = {
-  render: (args) => (
-    <ToggleWithState
-      checked={args.checked}
-      Icon={args.Icon}
-      title={args.title}
-      description={args.description}
-      divider={args.divider}
-      disabled={args.disabled}
-      advancedMode={args.advancedMode}
-      onChange={args.onChange}
-    />
-  ),
   args: {
     Icon: IconUsers,
     title: 'Team Access',
     checked: false,
-    onChange: () => {},
   },
 };

@@ -8,39 +8,31 @@ const StyledContainer = styled.div`
   width: 480px;
 `;
 
-const CounterWithState = ({
-  value: initialValue,
-  Icon,
-  title,
-  description,
-  divider,
-  disabled,
-  minValue,
-  maxValue,
-  onChange: _onChange,
-}: React.ComponentProps<typeof SettingsOptionCardContentCounter>) => {
-  const [value, setValue] = useState(initialValue);
+const SettingsOptionCardContentCounterWrapper = (
+  args: React.ComponentProps<typeof SettingsOptionCardContentCounter>,
+) => {
+  const [value, setValue] = useState(args.value);
 
   return (
     <StyledContainer>
       <SettingsOptionCardContentCounter
         value={value}
         onChange={setValue}
-        Icon={Icon}
-        title={title}
-        description={description}
-        divider={divider}
-        disabled={disabled}
-        minValue={minValue}
-        maxValue={maxValue}
+        Icon={args.Icon}
+        title={args.title}
+        description={args.description}
+        divider={args.divider}
+        disabled={args.disabled}
+        minValue={args.minValue}
+        maxValue={args.maxValue}
       />
     </StyledContainer>
   );
 };
 
-const meta: Meta<typeof SettingsOptionCardContentCounter> = {
+const meta: Meta<typeof SettingsOptionCardContentCounterWrapper> = {
   title: 'Modules/Settings/SettingsOptionCardContentCounter',
-  component: SettingsOptionCardContentCounter,
+  component: SettingsOptionCardContentCounterWrapper,
   decorators: [ComponentDecorator],
   parameters: {
     maxWidth: 800,
@@ -48,22 +40,9 @@ const meta: Meta<typeof SettingsOptionCardContentCounter> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SettingsOptionCardContentCounter>;
+type Story = StoryObj<typeof SettingsOptionCardContentCounterWrapper>;
 
 export const Default: Story = {
-  render: (args) => (
-    <CounterWithState
-      value={args.value}
-      Icon={args.Icon}
-      title={args.title}
-      description={args.description}
-      divider={args.divider}
-      disabled={args.disabled}
-      minValue={args.minValue}
-      maxValue={args.maxValue}
-      onChange={args.onChange}
-    />
-  ),
   args: {
     Icon: IconUsers,
     title: 'Team Members',
@@ -71,7 +50,6 @@ export const Default: Story = {
     value: 5,
     minValue: 1,
     maxValue: 10,
-    onChange: () => {},
   },
   argTypes: {
     Icon: { control: false },
@@ -80,42 +58,16 @@ export const Default: Story = {
 };
 
 export const WithoutIcon: Story = {
-  render: (args) => (
-    <CounterWithState
-      value={args.value}
-      title={args.title}
-      description={args.description}
-      divider={args.divider}
-      disabled={args.disabled}
-      minValue={args.minValue}
-      maxValue={args.maxValue}
-      onChange={args.onChange}
-    />
-  ),
   args: {
     title: 'Items Per Page',
     description: 'Configure the number of items shown per page',
     value: 20,
     minValue: 10,
     maxValue: 50,
-    onChange: () => {},
   },
 };
 
 export const Disabled: Story = {
-  render: (args) => (
-    <CounterWithState
-      value={args.value}
-      Icon={args.Icon}
-      title={args.title}
-      description={args.description}
-      divider={args.divider}
-      disabled={args.disabled}
-      minValue={args.minValue}
-      maxValue={args.maxValue}
-      onChange={args.onChange}
-    />
-  ),
   args: {
     Icon: IconUsers,
     title: 'Disabled Counter',
@@ -124,6 +76,5 @@ export const Disabled: Story = {
     disabled: true,
     minValue: 1,
     maxValue: 10,
-    onChange: () => {},
   },
 };

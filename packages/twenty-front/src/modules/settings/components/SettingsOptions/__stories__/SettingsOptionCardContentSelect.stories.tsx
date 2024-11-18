@@ -18,43 +18,33 @@ const StyledContainer = styled.div`
 
 type SelectValue = string | number | boolean | null;
 
-const SelectWithState = <Value extends SelectValue>({
-  value: initialValue,
-  Icon,
-  title,
-  description,
-  divider,
-  disabled,
-  options,
-  selectClassName,
-  dropdownId,
-  fullWidth,
-  onChange: _onChange,
-}: React.ComponentProps<typeof SettingsOptionCardContentSelect<Value>>) => {
-  const [value, setValue] = useState<Value>(initialValue);
+const SettingsOptionCardContentSelectWrapper = <Value extends SelectValue>(
+  args: React.ComponentProps<typeof SettingsOptionCardContentSelect<Value>>,
+) => {
+  const [value, setValue] = useState<Value>(args.value);
 
   return (
     <StyledContainer>
       <SettingsOptionCardContentSelect
         value={value}
-        onChange={(value) => setValue(value as Value)}
-        Icon={Icon}
-        title={title}
-        description={description}
-        divider={divider}
-        disabled={disabled}
-        options={options}
-        selectClassName={selectClassName}
-        dropdownId={dropdownId}
-        fullWidth={fullWidth}
+        onChange={(newValue) => setValue(newValue as Value)}
+        Icon={args.Icon}
+        title={args.title}
+        description={args.description}
+        divider={args.divider}
+        disabled={args.disabled}
+        options={args.options}
+        selectClassName={args.selectClassName}
+        dropdownId={args.dropdownId}
+        fullWidth={args.fullWidth}
       />
     </StyledContainer>
   );
 };
 
-const meta: Meta<typeof SettingsOptionCardContentSelect> = {
+const meta: Meta<typeof SettingsOptionCardContentSelectWrapper> = {
   title: 'Modules/Settings/SettingsOptionCardContentSelect',
-  component: SettingsOptionCardContentSelect,
+  component: SettingsOptionCardContentSelectWrapper,
   decorators: [ComponentDecorator],
   parameters: {
     maxWidth: 800,
@@ -62,24 +52,9 @@ const meta: Meta<typeof SettingsOptionCardContentSelect> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SettingsOptionCardContentSelect>;
+type Story = StoryObj<typeof SettingsOptionCardContentSelectWrapper>;
 
 export const StringSelect: Story = {
-  render: (args) => (
-    <SelectWithState
-      value={args.value}
-      Icon={args.Icon}
-      title={args.title}
-      description={args.description}
-      divider={args.divider}
-      disabled={args.disabled}
-      options={args.options}
-      selectClassName={args.selectClassName}
-      dropdownId={args.dropdownId}
-      fullWidth={args.fullWidth}
-      onChange={args.onChange}
-    />
-  ),
   args: {
     Icon: IconLanguage,
     title: 'Language',
@@ -91,7 +66,6 @@ export const StringSelect: Story = {
       { value: 'es', label: 'Spanish' },
     ],
     dropdownId: 'language-select',
-    onChange: () => {},
   },
   argTypes: {
     Icon: { control: false },
@@ -100,21 +74,6 @@ export const StringSelect: Story = {
 };
 
 export const NumberSelect: Story = {
-  render: (args) => (
-    <SelectWithState
-      value={args.value}
-      Icon={args.Icon}
-      title={args.title}
-      description={args.description}
-      divider={args.divider}
-      disabled={args.disabled}
-      options={args.options}
-      selectClassName={args.selectClassName}
-      dropdownId={args.dropdownId}
-      fullWidth={args.fullWidth}
-      onChange={args.onChange}
-    />
-  ),
   args: {
     Icon: IconNotes,
     title: 'Items Per Page',
@@ -127,26 +86,10 @@ export const NumberSelect: Story = {
       { value: 100, label: '100' },
     ],
     dropdownId: 'page-size-select',
-    onChange: () => {},
   },
 };
 
 export const WithIconOptions: Story = {
-  render: (args) => (
-    <SelectWithState
-      value={args.value}
-      Icon={args.Icon}
-      title={args.title}
-      description={args.description}
-      divider={args.divider}
-      disabled={args.disabled}
-      options={args.options}
-      selectClassName={args.selectClassName}
-      dropdownId={args.dropdownId}
-      fullWidth={args.fullWidth}
-      onChange={args.onChange}
-    />
-  ),
   args: {
     Icon: IconUsers,
     title: 'Team View',
@@ -158,26 +101,10 @@ export const WithIconOptions: Story = {
       { value: 'table', label: 'Table View', Icon: IconTable },
     ],
     dropdownId: 'view-select',
-    onChange: () => {},
   },
 };
 
 export const Disabled: Story = {
-  render: (args) => (
-    <SelectWithState
-      value={args.value}
-      Icon={args.Icon}
-      title={args.title}
-      description={args.description}
-      divider={args.divider}
-      disabled={args.disabled}
-      options={args.options}
-      selectClassName={args.selectClassName}
-      dropdownId={args.dropdownId}
-      fullWidth={args.fullWidth}
-      onChange={args.onChange}
-    />
-  ),
   args: {
     Icon: IconUsers,
     title: 'Disabled Select',
@@ -190,26 +117,10 @@ export const Disabled: Story = {
       { value: 'option3', label: 'Option 3' },
     ],
     dropdownId: 'disabled-select',
-    onChange: () => {},
   },
 };
 
 export const FullWidth: Story = {
-  render: (args) => (
-    <SelectWithState
-      value={args.value}
-      Icon={args.Icon}
-      title={args.title}
-      description={args.description}
-      divider={args.divider}
-      disabled={args.disabled}
-      options={args.options}
-      selectClassName={args.selectClassName}
-      dropdownId={args.dropdownId}
-      fullWidth={args.fullWidth}
-      onChange={args.onChange}
-    />
-  ),
   args: {
     title: 'Full Width Select',
     description: 'This select uses the full width of the dropdown',
@@ -227,6 +138,5 @@ export const FullWidth: Story = {
     ],
     dropdownId: 'full-width-select',
     fullWidth: true,
-    onChange: () => {},
   },
 };
