@@ -44,6 +44,9 @@ const reservedKeywords = [
   'types',
   'object',
   'objects',
+  'index',
+  'relation',
+  'relations',
 ];
 
 export const validateObjectMetadataInputOrThrow = <
