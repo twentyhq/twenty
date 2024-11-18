@@ -14,7 +14,10 @@ import { mainContextStoreComponentInstanceIdState } from '@/context-store/states
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
+import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
+import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { Opportunity } from '@/opportunities/types/Opportunity';
 import { Person } from '@/people/types/Person';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
@@ -170,6 +173,21 @@ export const CommandMenu = () => {
     [closeCommandMenu],
   );
 
+  // TO DO
+  // 1. Update format of result from useMultiObjectSearch
+  // 2. Handle custom objects display here
+
+  const {
+    matchesSearchFilterObjectRecords,
+    matchesSearchFilterObjectRecordsLoading: loading,
+  } = useMultiObjectSearch({
+    excludedObjects: [CoreObjectNameSingular.Task, CoreObjectNameSingular.Note],
+    searchFilterValue: deferredCommandMenuSearch ?? undefined,
+    limit: 3,
+  });
+
+  console.log('data', matchesSearchFilterObjectRecords);
+
   const { loading: isPeopleLoading, records: people } =
     useSearchRecords<Person>({
       skip: !isCommandMenuOpened,
@@ -177,6 +195,8 @@ export const CommandMenu = () => {
       limit: 3,
       searchInput: deferredCommandMenuSearch ?? undefined,
     });
+
+  console.log('people', people);
 
   const { loading: isCompaniesLoading, records: companies } =
     useSearchRecords<Company>({
@@ -186,11 +206,16 @@ export const CommandMenu = () => {
       searchInput: deferredCommandMenuSearch ?? undefined,
     });
 
-  const { loading: isNotesLoading, records: notes } = useSearchRecords<Note>({
+  const { loading: isNotesLoading, records: notes } = useFindManyRecords<Note>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Note,
+    filter: deferredCommandMenuSearch
+      ? makeOrFilterVariables([
+          { title: { ilike: `%${deferredCommandMenuSearch}%` } },
+          { body: { ilike: `%${deferredCommandMenuSearch}%` } },
+        ])
+      : undefined,
     limit: 3,
-    searchInput: deferredCommandMenuSearch ?? undefined,
   });
 
   const { loading: isOpportunitiesLoading, records: opportunities } =
@@ -347,11 +372,7 @@ export const CommandMenu = () => {
     !notes?.length &&
     !opportunities?.length;
 
-  const isLoading =
-    isPeopleLoading ||
-    isNotesLoading ||
-    isOpportunitiesLoading ||
-    isCompaniesLoading;
+  const isLoading = loading || isNotesLoading;
 
   const mainContextStoreComponentInstanceId = useRecoilValue(
     mainContextStoreComponentInstanceIdState,

@@ -4,7 +4,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { objectRecordMultiSelectMatchesFilterRecordsIdsComponentState } from '@/object-record/record-field/states/objectRecordMultiSelectMatchesFilterRecordsIdsComponentState';
 import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
-import { useMultiObjectSearchMatchesSearchFilterQuery } from '@/object-record/relation-picker/hooks/useMultiObjectSearchMatchesSearchFilterQuery';
+import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 
@@ -31,15 +31,14 @@ export const ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect =
       relationPickerSearchFilterState,
     );
 
-    const { matchesSearchFilterObjectRecords } =
-      useMultiObjectSearchMatchesSearchFilterQuery({
-        excludedObjects: [
-          CoreObjectNameSingular.Task,
-          CoreObjectNameSingular.Note,
-        ],
-        searchFilterValue: relationPickerSearchFilter,
-        limit: 10,
-      });
+    const { matchesSearchFilterObjectRecords } = useMultiObjectSearch({
+      excludedObjects: [
+        CoreObjectNameSingular.Task,
+        CoreObjectNameSingular.Note,
+      ],
+      searchFilterValue: relationPickerSearchFilter,
+      limit: 10,
+    });
 
     useEffect(() => {
       setRecordMultiSelectMatchesFilterRecords(

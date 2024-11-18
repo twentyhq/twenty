@@ -13,7 +13,7 @@ import {
 import { isObjectMetadataItemSearchableInCombinedRequest } from '@/object-record/utils/isObjectMetadataItemSearchableInCombinedRequest';
 import { isDefined } from '~/utils/isDefined';
 
-export const useMultiObjectSearchMatchesSearchFilterQuery = ({
+export const useMultiObjectSearch = ({
   searchFilterValue,
   limit,
   excludedObjects,
