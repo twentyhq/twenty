@@ -34,7 +34,7 @@ export default defineConfig({
   expect: {
     timeout: 5000,
   },
-  reporter: [['html', { open: 'never' }]],
+  reporter: process.env.CI ? 'github' : 'list',
   projects: [
     {
       name: 'Login setup',
