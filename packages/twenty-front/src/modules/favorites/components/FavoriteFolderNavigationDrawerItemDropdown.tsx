@@ -1,8 +1,13 @@
 import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useTheme } from '@emotion/react';
-import { IconDotsVertical, IconPencil, IconTrash, MenuItem } from 'twenty-ui';
+import {
+  IconDotsVertical,
+  IconPencil,
+  IconTrash,
+  LightIconButton,
+  MenuItem,
+} from 'twenty-ui';
 
 type FavoriteFolderNavigationDrawerItemDropdownProps = {
   folderId: string;
@@ -17,8 +22,6 @@ export const FavoriteFolderNavigationDrawerItemDropdown = ({
   onDelete,
   closeDropdown,
 }: FavoriteFolderNavigationDrawerItemDropdownProps) => {
-  const theme = useTheme();
-
   const handleRename = () => {
     onRename();
     closeDropdown();
@@ -37,10 +40,7 @@ export const FavoriteFolderNavigationDrawerItemDropdown = ({
       }}
       data-select-disable
       clickableComponent={
-        <IconDotsVertical
-          size={theme.icon.size.md}
-          color={theme.color.gray50}
-        />
+        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }
       dropdownPlacement="right"
       dropdownOffset={{ y: -15 }}
