@@ -15,7 +15,7 @@ export const objectOptionsDropdownRecordGroupIsDraggableSortComponentSelector =
             objectOptionsDropdownRecordGroupSortComponentState.atomFamily({
               instanceId,
             }),
-          ) === RecordGroupSort.MANUAL
+          ) === RecordGroupSort.Manual
         );
       },
   });

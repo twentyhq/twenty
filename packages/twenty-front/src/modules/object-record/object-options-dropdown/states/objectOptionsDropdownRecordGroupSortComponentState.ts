@@ -5,6 +5,6 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 export const objectOptionsDropdownRecordGroupSortComponentState =
   createComponentStateV2<RecordGroupSort>({
     key: 'objectOptionsDropdownRecordGroupSortComponentState',
-    defaultValue: RecordGroupSort.MANUAL,
+    defaultValue: RecordGroupSort.Manual,
     componentInstanceContext: ViewComponentInstanceContext,
   });

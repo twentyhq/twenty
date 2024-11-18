@@ -124,6 +124,11 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
     navigationMemorizedUrlState,
   );
 
+  const handleRecordGroupSortChange = (sort: RecordGroupSort) => {
+    setRecordGroupSort(sort);
+    closeDropdown();
+  };
+
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
@@ -274,28 +279,23 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
         </DropdownMenuHeader>
         <DropdownMenuItemsContainer>
           <MenuItem
-            onClick={() => {
-              setRecordGroupSort(RecordGroupSort.MANUAL);
-              closeDropdown();
-            }}
+            onClick={() => handleRecordGroupSortChange(RecordGroupSort.Manual)}
             LeftIcon={IconHandMove}
-            text={RecordGroupSort.MANUAL}
+            text={RecordGroupSort.Manual}
           />
           <MenuItem
-            onClick={() => {
-              setRecordGroupSort(RecordGroupSort.ALPHABETICAL);
-              closeDropdown();
-            }}
+            onClick={() =>
+              handleRecordGroupSortChange(RecordGroupSort.Alphabetical)
+            }
             LeftIcon={IconSortAZ}
-            text={RecordGroupSort.ALPHABETICAL}
+            text={RecordGroupSort.Alphabetical}
           />
           <MenuItem
-            onClick={() => {
-              setRecordGroupSort(RecordGroupSort.REVERSE_ALPHABETICAL);
-              closeDropdown();
-            }}
+            onClick={() =>
+              handleRecordGroupSortChange(RecordGroupSort.Reverse_alphabetical)
+            }
             LeftIcon={IconSortZA}
-            text={RecordGroupSort.REVERSE_ALPHABETICAL}
+            text={RecordGroupSort.Reverse_alphabetical}
           />
         </DropdownMenuItemsContainer>
       </DropdownContentItem>

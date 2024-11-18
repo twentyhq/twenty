@@ -1,5 +1,5 @@
 export enum RecordGroupSort {
-  MANUAL = 'Manual',
-  ALPHABETICAL = 'Alphabetical',
-  REVERSE_ALPHABETICAL = 'Reverse Alphabetical',
+  Manual = 'Manual',
+  Alphabetical = 'Alphabetical',
+  Reverse_alphabetical = 'Reverse Alphabetical',
 }

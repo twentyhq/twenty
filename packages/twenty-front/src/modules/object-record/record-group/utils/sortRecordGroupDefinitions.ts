@@ -6,7 +6,7 @@ export const sortRecordGroupDefinitions = (
   recordGroupSort: RecordGroupSort,
 ) => {
   switch (recordGroupSort) {
-    case RecordGroupSort.MANUAL:
+    case RecordGroupSort.Manual:
     default:
       return recordGroupDefinitions
         .filter((boardGroup) => boardGroup.isVisible)
@@ -14,7 +14,7 @@ export const sortRecordGroupDefinitions = (
           (boardGroupA, boardGroupB) =>
             boardGroupA.position - boardGroupB.position,
         );
-    case RecordGroupSort.ALPHABETICAL:
+    case RecordGroupSort.Alphabetical:
       return recordGroupDefinitions
         .filter((boardGroup) => boardGroup.isVisible)
         .sort((boardGroupA, boardGroupB) => {
@@ -22,7 +22,7 @@ export const sortRecordGroupDefinitions = (
           const b = boardGroupB.title.toLowerCase();
           return a < b ? -1 : a > b ? 1 : 0;
         });
-    case RecordGroupSort.REVERSE_ALPHABETICAL:
+    case RecordGroupSort.Reverse_alphabetical:
       return recordGroupDefinitions
         .filter((boardGroup) => boardGroup.isVisible)
         .sort((boardGroupA, boardGroupB) => {
