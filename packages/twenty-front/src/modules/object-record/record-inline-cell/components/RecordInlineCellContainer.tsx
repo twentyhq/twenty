@@ -93,7 +93,7 @@ export const RecordInlineCellContainer = () => {
 
   const { recordId, fieldDefinition } = useContext(FieldContext);
 
-  if (fieldDefinition.type === FieldMetadataType.Text) {
+  if (isFieldText(fieldDefinition)) {
     assertFieldMetadata(FieldMetadataType.Text, isFieldText, fieldDefinition);
   }
 
