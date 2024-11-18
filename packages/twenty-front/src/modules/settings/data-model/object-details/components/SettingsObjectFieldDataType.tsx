@@ -28,13 +28,16 @@ const StyledDataType = styled.div<{
   height: 20px;
   overflow: hidden;
   text-decoration: none;
-
   ${({ to, theme }) =>
     to
       ? css`
           cursor: pointer;
           color: ${theme.font.color.secondary};
           text-decoration: underline;
+
+          &:hover {
+            color: ${theme.font.color.primary};
+          }
         `
       : ''}
 `;
