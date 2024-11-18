@@ -144,7 +144,6 @@ export class OAuthService {
     );
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
-      user.defaultWorkspaceId,
     );
 
     return {

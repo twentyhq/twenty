@@ -187,7 +187,7 @@ export class AuthService {
     });
   }
 
-  async verify(email: string, workspaceId: string): Promise<Verify> {
+  async verify(email: string, workspaceId?: string): Promise<Verify> {
     if (!email) {
       throw new AuthException(
         'Email is required',
@@ -197,7 +197,7 @@ export class AuthService {
 
     let user = await this.findOneWithWorkspacesByEmail(email);
 
-    if (user && user.defaultWorkspaceId !== workspaceId) {
+    if (user && workspaceId && user.defaultWorkspaceId !== workspaceId) {
       await this.userService.saveDefaultWorkspace(user, workspaceId);
       user = await this.findOneWithWorkspacesByEmail(email);
     }
