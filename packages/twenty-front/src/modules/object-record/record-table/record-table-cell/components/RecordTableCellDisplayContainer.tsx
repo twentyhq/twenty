@@ -18,7 +18,6 @@ const StyledInnerContainer = styled.div`
   height: 100%;
   overflow: hidden;
   width: 100%;
-  flex-wrap: wrap;
   white-space: nowrap;
 `;
 
