@@ -34,15 +34,11 @@ export const RecordTableRecordGroupBodyEffect = () => {
 
   useEffect(() => {
     if (isNonEmptyString(lastShowPageRecordId) && !hasInitializedScroll) {
-      const isRecordAlreadyFetched = records.some(
+      const recordPosition = records.findIndex(
         (record) => record.id === lastShowPageRecordId,
       );
 
-      if (isRecordAlreadyFetched) {
-        const recordPosition = records.findIndex(
-          (record) => record.id === lastShowPageRecordId,
-        );
-
+      if (recordPosition !== -1) {
         const positionInPx = recordPosition * ROW_HEIGHT;
 
         scrollToPosition(positionInPx);
