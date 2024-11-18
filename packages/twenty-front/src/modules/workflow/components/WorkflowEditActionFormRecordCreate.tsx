@@ -4,8 +4,7 @@ import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditG
 import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
 import { WorkflowRecordCreateAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
-import { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
 import { IconAddressBook, isDefined, useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';
@@ -41,25 +40,34 @@ export const WorkflowEditActionFormRecordCreate = (
       value: item.nameSingular,
     }));
 
-  const form = useForm<SendEmailFormData>({
-    defaultValues: {
-      objectName: activeObjectMetadataItems[0].nameSingular,
-      ...props.action.settings.input.objectRecord,
-    },
-    disabled: props.readonly,
+  const [formData, setFormData] = useState<SendEmailFormData>({
+    objectName: props.action.settings.input.objectName,
+    ...props.action.settings.input.objectRecord,
   });
+  const isFormDisabled = props.readonly;
+
+  const handleFieldChange = (
+    fieldName: keyof SendEmailFormData,
+    updatedValue: string,
+  ) => {
+    const newFormData: SendEmailFormData = {
+      ...formData,
+      [fieldName]: updatedValue,
+    };
+
+    setFormData(newFormData);
+
+    saveAction(newFormData);
+  };
 
   useEffect(() => {
-    form.setValue('objectName', props.action.settings.input.objectName);
+    setFormData({
+      objectName: props.action.settings.input.objectName,
+      ...props.action.settings.input.objectRecord,
+    });
+  }, [props.action.settings.input]);
 
-    for (const [property, value] of Object.entries(
-      props.action.settings.input.objectRecord,
-    )) {
-      form.setValue(property, value);
-    }
-  }, [props.action.settings.input, form]);
-
-  const selectedObjectMetadataItemNameSingular = form.watch('objectName');
+  const selectedObjectMetadataItemNameSingular = formData.objectName;
 
   const selectedObjectMetadataItem = activeObjectMetadataItems.find(
     (item) => item.nameSingular === selectedObjectMetadataItemNameSingular,
@@ -104,10 +112,6 @@ export const WorkflowEditActionFormRecordCreate = (
     };
   }, [saveAction]);
 
-  const handleSave = form.handleSubmit((formData: SendEmailFormData) =>
-    saveAction(formData),
-  );
-
   return (
     <WorkflowEditGenericFormBase
       HeaderIcon={
@@ -119,44 +123,35 @@ export const WorkflowEditActionFormRecordCreate = (
       headerTitle="Record Create"
       headerType="Action"
     >
-      <Controller
-        name="objectName"
-        control={form.control}
-        render={({ field, formState }) => (
-          <Select
-            dropdownId="workflow-edit-action-record-create-object-name"
-            label="Object"
-            fullWidth
-            disabled={formState.disabled}
-            value={field.value}
-            emptyOption={{ label: 'Select an option', value: '' }}
-            options={availableMetadata}
-            onChange={(updatedObjectName) => {
-              field.onChange(updatedObjectName);
-              handleSave();
-            }}
-          />
-        )}
+      <Select
+        dropdownId="workflow-edit-action-record-create-object-name"
+        label="Object"
+        fullWidth
+        disabled={isFormDisabled}
+        value={formData.objectName}
+        emptyOption={{ label: 'Select an option', value: '' }}
+        options={availableMetadata}
+        onChange={(updatedObjectName) => {
+          const newFormData: SendEmailFormData = {
+            objectName: updatedObjectName,
+          };
+
+          setFormData(newFormData);
+
+          saveAction(newFormData);
+        }}
       />
 
       {editableFields.map((field) => (
-        <Controller
+        <VariableTagInput
           key={field.id}
-          name={field.name}
-          control={form.control}
-          render={({ field: formField }) => (
-            <VariableTagInput
-              inputId={field.id}
-              label={field.label}
-              placeholder="Enter value (use {{variable}} for dynamic content)"
-              // @ts-expect-error Temporary fix
-              value={formField.value}
-              onChange={(value) => {
-                formField.onChange(value);
-                handleSave();
-              }}
-            />
-          )}
+          inputId={field.id}
+          label={field.label}
+          placeholder="Enter value (use {{variable}} for dynamic content)"
+          value={formData[field.name] as string | undefined}
+          onChange={(value) => {
+            handleFieldChange(field.name, value);
+          }}
         />
       ))}
     </WorkflowEditGenericFormBase>
