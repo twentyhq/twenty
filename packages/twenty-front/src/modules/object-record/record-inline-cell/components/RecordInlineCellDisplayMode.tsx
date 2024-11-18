@@ -23,8 +23,10 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
     isDisplayModeFixHeight ? '16px' : 'auto'};
   min-height: 16px;
   overflow: hidden;
-  padding: ${({ theme }) => theme.spacing(1)};
-
+  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-top: 2px;
+  padding-bottom: 2px;
   ${(props) => {
     if (props.isHovered === true) {
       return css`

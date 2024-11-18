@@ -12,6 +12,7 @@ const StyledOverflowingText = styled.div<{
   cursorPointer: boolean;
   size: 'large' | 'small';
   displayMaxRows?: number;
+  isLabel: boolean;
 }>`
   cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'inherit')};
   font-family: inherit;
@@ -27,13 +28,14 @@ const StyledOverflowingText = styled.div<{
 
   height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
 
-  text-wrap: ${({ displayMaxRows }) => (displayMaxRows ? 'auto' : 'inherit')};
-  -webkit-line-clamp: ${({ displayMaxRows }) =>
-    displayMaxRows ? displayMaxRows : 'inherit'};
-  display: ${({ displayMaxRows }) =>
-    displayMaxRows ? `-webkit-box` : 'inherit'};
-  -webkit-box-orient: ${({ displayMaxRows }) =>
-    displayMaxRows ? 'vertical' : 'inherit'};
+  text-wrap-mode: ${({ isLabel, displayMaxRows }) =>
+    isLabel === false && displayMaxRows ? 'wrap' : 'nowrap'};
+  -webkit-line-clamp: ${({ isLabel, displayMaxRows }) =>
+    isLabel === false && displayMaxRows ? displayMaxRows : 'inherit'};
+  display: ${({ isLabel, displayMaxRows }) =>
+    isLabel === false && displayMaxRows ? `-webkit-box` : 'block'};
+  -webkit-box-orient: ${({ isLabel, displayMaxRows }) =>
+    isLabel === false && displayMaxRows ? 'vertical' : 'inherit'};
 
   & :hover {
     text-overflow: ${({ cursorPointer }) =>
@@ -48,11 +50,13 @@ export const OverflowingTextWithTooltip = ({
   text,
   isTooltipMultiline,
   displayMaxRows,
+  isLabel,
 }: {
   size?: 'large' | 'small';
   text: string | null | undefined;
   isTooltipMultiline?: boolean;
   displayMaxRows?: number;
+  isLabel?: boolean;
 }) => {
   const textElementId = `title-id-${+new Date()}`;
 
@@ -86,6 +90,7 @@ export const OverflowingTextWithTooltip = ({
         cursorPointer={isTitleOverflowing}
         size={size}
         displayMaxRows={displayMaxRows}
+        isLabel={isLabel ?? false}
         ref={textRef}
         id={textElementId}
         onMouseEnter={handleMouseEnter}
