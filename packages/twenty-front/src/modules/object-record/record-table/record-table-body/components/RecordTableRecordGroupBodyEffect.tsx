@@ -26,9 +26,7 @@ export const RecordTableRecordGroupBodyEffect = () => {
       hasRecordTableFetchedAllRecordsComponentStateV2,
     );
 
-  const [lastShowPageRecordId, setLastShowPageRecordId] = useRecoilState(
-    lastShowPageRecordIdState,
-  );
+  const [lastShowPageRecordId] = useRecoilState(lastShowPageRecordIdState);
 
   const { scrollToPosition } = useScrollToPosition();
 
@@ -52,7 +50,6 @@ export const RecordTableRecordGroupBodyEffect = () => {
     records,
     scrollToPosition,
     hasInitializedScroll,
-    setLastShowPageRecordId,
   ]);
 
   useEffect(() => {
