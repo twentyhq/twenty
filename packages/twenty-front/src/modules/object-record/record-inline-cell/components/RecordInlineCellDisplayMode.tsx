@@ -25,8 +25,6 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   overflow: hidden;
   padding-right: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-top: 2px;
-  padding-bottom: 2px;
   ${(props) => {
     if (props.isHovered === true) {
       return css`
@@ -41,15 +39,17 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
 `;
 
 const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
+  align-content: center;
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
   font-size: 'inherit';
+
   font-weight: 'inherit';
 
   height: fit-content;
 
+  min-height: 24px;
   overflow: hidden;
-
   text-overflow: ellipsis;
   white-space: nowrap;
 `;

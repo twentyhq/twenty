@@ -61,7 +61,7 @@ const StyledInlineCellBaseContainer = styled.div`
   width: 100%;
   display: flex;
   height: fit-content;
-  line-height: 20px;
+  line-height: 24px;
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   justify-content: center;

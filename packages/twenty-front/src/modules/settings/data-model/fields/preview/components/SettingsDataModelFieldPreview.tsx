@@ -37,7 +37,7 @@ const StyledFieldPreview = styled.div<{ shrink?: boolean }>`
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: fit-content;
-  line-height: 20px;
+  line-height: 24px;
   overflow: hidden;
   padding: 0
     ${({ shrink, theme }) => (shrink ? theme.spacing(1) : theme.spacing(2))};
