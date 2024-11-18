@@ -392,7 +392,7 @@ resource "azurerm_container_app" "twenty_db" {
     max_replicas = 1
     container {
       name   = local.db_app_name
-      image  = "docker.io/twentycrm/twenty-postgres:${local.db_tag}"
+      image  = "docker.io/twentycrm/twenty-postgres-spilo:${local.db_tag}"
       cpu    = local.cpu
       memory = local.memory
 
@@ -402,16 +402,12 @@ resource "azurerm_container_app" "twenty_db" {
       }
 
       env {
-        name  = "POSTGRES_USER"
+        name  = "PGUSER_SUPERUSER"
         value = "postgres"
       }
       env {
-        name  = "POSTGRES_PASSWORD"
-        value = "postgres"
-      }
-      env {
-        name  = "POSTGRES_DB"
-        value = "default"
+        name  = "PGPASSWORD_SUPERUSER"
+        value = "twenty"
       }
     }
 

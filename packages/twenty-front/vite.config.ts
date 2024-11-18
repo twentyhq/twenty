@@ -135,6 +135,10 @@ export default defineConfig(({ command, mode }) => {
       }),
     ],
 
+    optimizeDeps: {
+      exclude: ['node_modules/.vite', 'node_modules/.cache'],
+    },
+
     build: {
       outDir: 'build',
       sourcemap: VITE_BUILD_SOURCEMAP === 'true',

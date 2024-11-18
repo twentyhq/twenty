@@ -13,8 +13,8 @@ export const IllustrationIconCalendarEvent = (
   return (
     <IllustrationIconWrapper>
       <IllustrationIconCalendarEventRaw
-        fill={fill}
-        color={color}
+        fill={fill.blue}
+        color={color.blue}
         height={size}
         width={size}
       />

@@ -81,5 +81,3 @@ services:
     value: postgres
   - key: POSTGRES_PASSWORD
     value: postgres
-  - key: POSTGRES_DB
-    value: default

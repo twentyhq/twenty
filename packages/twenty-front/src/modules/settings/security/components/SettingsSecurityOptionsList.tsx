@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
@@ -118,34 +118,38 @@ export const SettingsSecurityOptionsList = () => {
       {currentWorkspace && (
         <>
           <Card>
-            <SettingsOptionCardContent
+            <SettingsOptionCardContentToggle
               Icon={IconGoogle}
               title="Google"
               description="Allow logins through Google's single sign-on functionality."
               checked={currentWorkspace?.isGoogleAuthEnabled}
+              advancedMode
               onChange={() => toggleAuthMethod('google')}
             />
-            <SettingsOptionCardContent
+            <SettingsOptionCardContentToggle
               Icon={IconMicrosoft}
               title="Microsoft"
               description="Allow logins through Microsoft's single sign-on functionality."
               checked={currentWorkspace?.isMicrosoftAuthEnabled}
+              advancedMode
               onChange={() => toggleAuthMethod('microsoft')}
             />
-            <SettingsOptionCardContent
+            <SettingsOptionCardContentToggle
               Icon={IconPassword}
               title="Password"
               description="Allow users to sign in with an email and password."
               checked={currentWorkspace?.isPasswordAuthEnabled}
+              advancedMode
               onChange={() => toggleAuthMethod('password')}
             />
           </Card>
-          <Card>
-            <SettingsOptionCardContent
+          <Card rounded>
+            <SettingsOptionCardContentToggle
               Icon={IconLink}
               title="Invite by Link"
               description="Allow the invitation of new users by sharing an invite link."
               checked={currentWorkspace.isPublicInviteLinkEnabled}
+              advancedMode
               onChange={() =>
                 handleChange(!currentWorkspace.isPublicInviteLinkEnabled)
               }

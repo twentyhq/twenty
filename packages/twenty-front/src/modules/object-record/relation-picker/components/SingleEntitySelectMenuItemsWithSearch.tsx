@@ -4,9 +4,12 @@ import {
 } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItems';
 import { useEntitySelectSearch } from '@/object-record/relation-picker/hooks/useEntitySelectSearch';
 import { useRelationPickerEntitiesOptions } from '@/object-record/relation-picker/hooks/useRelationPickerEntitiesOptions';
+import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { Placement } from '@floating-ui/react';
+import { IconPlus } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -49,21 +52,13 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
       excludedRelationRecordIds,
     });
 
-  const showCreateButton = isDefined(onCreate);
-
-  let onCreateWithInput = undefined;
-
-  if (isDefined(onCreate)) {
-    onCreateWithInput = () => {
-      if (onCreate.length > 0) {
-        (onCreate as (searchInput?: string) => void)(
-          relationPickerSearchFilter,
-        );
-      } else {
-        (onCreate as () => void)();
-      }
-    };
-  }
+  const createNewButton = isDefined(onCreate) && (
+    <CreateNewButton
+      onClick={() => onCreate?.(relationPickerSearchFilter)}
+      LeftIcon={IconPlus}
+      text="Add New"
+    />
+  );
 
   const results = (
     <SingleEntitySelectMenuItems
@@ -76,14 +71,12 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
       }
       shouldSelectEmptyOption={selectedRelationRecordIds?.length === 0}
       hotkeyScope={relationPickerScopeId}
-      onCreate={onCreateWithInput}
       isFiltered={!!relationPickerSearchFilter}
       {...{
         EmptyIcon,
         emptyLabel,
         onCancel,
         onEntitySelected,
-        showCreateButton,
       }}
     />
   );
@@ -92,7 +85,11 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
     <>
       {dropdownPlacement?.includes('end') && (
         <>
-          {results}
+          <DropdownMenuItemsContainer>
+            {createNewButton}
+          </DropdownMenuItemsContainer>
+          {entities.entitiesToSelect.length > 0 && <DropdownMenuSeparator />}
+          {entities.entitiesToSelect.length > 0 && results}
           <DropdownMenuSeparator />
         </>
       )}
@@ -101,7 +98,15 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
         isUndefinedOrNull(dropdownPlacement)) && (
         <>
           <DropdownMenuSeparator />
-          {results}
+          {entities.entitiesToSelect.length > 0 && results}
+          {entities.entitiesToSelect.length > 0 && isDefined(onCreate) && (
+            <DropdownMenuSeparator />
+          )}
+          {isDefined(onCreate) && (
+            <DropdownMenuItemsContainer>
+              {createNewButton}
+            </DropdownMenuItemsContainer>
+          )}
         </>
       )}
     </>

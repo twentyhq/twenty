@@ -1,6 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { GraphQLInputObjectType, GraphQLInputType, GraphQLList } from 'graphql';
+import {
+  GraphQLBoolean,
+  GraphQLInputObjectType,
+  GraphQLInputType,
+  GraphQLList,
+} from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 
@@ -103,7 +108,9 @@ export class InputTypeFactory {
         eq: { type: enumType },
         neq: { type: enumType },
         in: { type: new GraphQLList(enumType) },
+        containsAny: { type: new GraphQLList(enumType) },
         is: { type: FilterIs },
+        isEmptyArray: { type: GraphQLBoolean },
       }),
     });
   }

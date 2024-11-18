@@ -11,6 +11,7 @@ type SettingsObjectFieldDataTypeProps = {
   to?: string;
   Icon?: IconComponent;
   label?: string;
+  labelDetail?: string;
   value: SettingsFieldType;
 };
 
@@ -50,11 +51,15 @@ const StyledLabelContainer = styled.div`
   white-space: nowrap;
 `;
 
+const StyledSpan = styled.span`
+  color: ${({ theme }) => theme.font.color.extraLight};
+`;
 export const SettingsObjectFieldDataType = ({
   to,
   value,
   Icon: IconFromProps,
   label: labelFromProps,
+  labelDetail,
 }: SettingsObjectFieldDataTypeProps) => {
   const theme = useTheme();
 
@@ -70,7 +75,9 @@ export const SettingsObjectFieldDataType = ({
   return (
     <StyledDataType as={to ? Link : 'div'} to={to} value={value}>
       <StyledIcon size={theme.icon.size.sm} />
-      <StyledLabelContainer>{label}</StyledLabelContainer>
+      <StyledLabelContainer>
+        {label} <StyledSpan>{labelDetail && `· ${labelDetail}`}</StyledSpan>
+      </StyledLabelContainer>
     </StyledDataType>
   );
 };
