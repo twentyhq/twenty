@@ -1,7 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
+import { FormFieldInput } from '@/workflow/components/FormFieldInput';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
-import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
 import { WorkflowRecordCreateAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
@@ -143,12 +143,11 @@ export const WorkflowEditActionFormRecordCreate = (
       />
 
       {editableFields.map((field) => (
-        <VariableTagInput
+        <FormFieldInput
           key={field.id}
-          inputId={field.id}
+          recordFieldInputdId={field.id}
           label={field.label}
-          placeholder="Enter value (use {{variable}} for dynamic content)"
-          value={formData[field.name] as string | undefined}
+          value={formData[field.name] as string}
           onChange={(value) => {
             handleFieldChange(field.name, value);
           }}
