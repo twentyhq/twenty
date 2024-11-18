@@ -434,14 +434,11 @@ export const CommandMenu = () => {
                   selectableItemIdArray={selectableItemIds}
                   hotkeyScope={AppHotkeyScope.CommandMenu}
                   onEnter={(itemId) => {
-                    console.log('enter', itemId);
                     const command = [
                       ...copilotCommands,
                       ...commandMenuCommands,
                       ...otherCommands,
                     ].find((cmd) => cmd.id === itemId);
-
-                    console.log('command', command);
 
                     if (isDefined(command)) {
                       const { to, onCommandClick } = command;
