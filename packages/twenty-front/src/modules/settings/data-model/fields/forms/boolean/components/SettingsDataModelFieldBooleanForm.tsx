@@ -5,7 +5,6 @@ import { z } from 'zod';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
-import { isDefined } from '~/utils/isDefined';
 
 export const settingsDataModelFieldBooleanFormSchema = z.object({
   defaultValue: z.boolean(),
@@ -26,7 +25,6 @@ export const SettingsDataModelFieldBooleanForm = ({
 }: SettingsDataModelFieldBooleanFormProps) => {
   const { control } = useFormContext<SettingsDataModelFieldBooleanFormValues>();
 
-  const isEditMode = isDefined(fieldMetadataItem?.defaultValue);
   const { initialDefaultValue } = useBooleanSettingsFormInitialValues({
     fieldMetadataItem,
   });
@@ -44,9 +42,6 @@ export const SettingsDataModelFieldBooleanForm = ({
           value={value}
           onChange={onChange}
           selectClassName={className}
-          // TODO: temporary fix - disabling edition because after editing the defaultValue,
-          // newly created records are not taking into account the updated defaultValue properly.
-          disabled={isEditMode}
           dropdownId="object-field-default-value-select-boolean"
           options={[
             {
