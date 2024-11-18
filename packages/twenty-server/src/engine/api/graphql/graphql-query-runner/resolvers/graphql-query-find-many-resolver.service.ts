@@ -213,7 +213,7 @@ export class GraphqlQueryFindManyResolverService
       selectedAggregatedFields: graphqlQuerySelectedFieldsResult.aggregate,
       objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: limit,
-      totalCount: parentObjectRecordsAggregatedValues.totalCount,
+      totalCount: parentObjectRecordsAggregatedValues?.totalCount,
       order: orderByWithIdCondition,
       hasNextPage,
       hasPreviousPage,
