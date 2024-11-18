@@ -10,17 +10,16 @@ export const useSearchRecordGroupField = () => {
   const [recordGroupFieldSearchInput, setRecordGroupFieldSearchInput] =
     useRecoilComponentStateV2(objectOptionsDropdownSearchInputComponentState);
 
-  const filteredRecordGroupFieldMetadataItems = useMemo(
-    () =>
-      objectMetadataItem.fields.filter(
-        (field) =>
-          field.type === FieldMetadataType.Select &&
-          field.label
-            .toLocaleLowerCase()
-            .includes(recordGroupFieldSearchInput.toLocaleLowerCase()),
-      ),
-    [objectMetadataItem.fields, recordGroupFieldSearchInput],
-  );
+  const filteredRecordGroupFieldMetadataItems = useMemo(() => {
+    const searchInputLowerCase =
+      recordGroupFieldSearchInput.toLocaleLowerCase();
+
+    return objectMetadataItem.fields.filter(
+      (field) =>
+        field.type === FieldMetadataType.Select &&
+        field.label.includes(searchInputLowerCase),
+    );
+  }, [objectMetadataItem.fields, recordGroupFieldSearchInput]);
 
   return {
     recordGroupFieldSearchInput,
