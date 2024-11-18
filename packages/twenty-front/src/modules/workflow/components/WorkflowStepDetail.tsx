@@ -55,8 +55,7 @@ export const WorkflowStepDetail = ({
           return (
             <WorkflowEditTriggerDatabaseEventForm
               trigger={stepDefinition.definition}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              triggerOptions={props}
             />
           );
         }
@@ -64,8 +63,7 @@ export const WorkflowStepDetail = ({
           return (
             <WorkflowEditTriggerManualForm
               trigger={stepDefinition.definition}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              triggerOptions={props}
             />
           );
         }
@@ -82,8 +80,7 @@ export const WorkflowStepDetail = ({
           return (
             <WorkflowEditActionFormServerlessFunction
               action={stepDefinition.definition}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              actionOptions={props}
             />
           );
         }
@@ -91,8 +88,7 @@ export const WorkflowStepDetail = ({
           return (
             <WorkflowEditActionFormSendEmail
               action={stepDefinition.definition}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              actionOptions={props}
             />
           );
         }
@@ -101,8 +97,7 @@ export const WorkflowStepDetail = ({
             return (
               <WorkflowEditActionFormRecordCreate
                 action={stepDefinition.definition}
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                {...props}
+                actionOptions={props}
               />
             );
           }

@@ -1,6 +1,6 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { FormFieldInput } from '@/workflow/components/FormFieldInput';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
 import { WorkflowRecordCreateAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
@@ -9,25 +9,27 @@ import { IconAddressBook, isDefined, useIcons } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';
 
-type WorkflowEditActionFormRecordCreateProps =
-  | {
-      action: WorkflowRecordCreateAction;
-      readonly: true;
-    }
-  | {
-      action: WorkflowRecordCreateAction;
-      readonly?: false;
-      onActionUpdate: (action: WorkflowRecordCreateAction) => void;
-    };
+type WorkflowEditActionFormRecordCreateProps = {
+  action: WorkflowRecordCreateAction;
+  actionOptions:
+    | {
+        readonly: true;
+      }
+    | {
+        readonly?: false;
+        onActionUpdate: (action: WorkflowRecordCreateAction) => void;
+      };
+};
 
 type SendEmailFormData = {
   objectName: string;
   [field: string]: unknown;
 };
 
-export const WorkflowEditActionFormRecordCreate = (
-  props: WorkflowEditActionFormRecordCreateProps,
-) => {
+export const WorkflowEditActionFormRecordCreate = ({
+  action,
+  actionOptions,
+}: WorkflowEditActionFormRecordCreateProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
 
@@ -41,10 +43,10 @@ export const WorkflowEditActionFormRecordCreate = (
     }));
 
   const [formData, setFormData] = useState<SendEmailFormData>({
-    objectName: props.action.settings.input.objectName,
-    ...props.action.settings.input.objectRecord,
+    objectName: action.settings.input.objectName,
+    ...action.settings.input.objectRecord,
   });
-  const isFormDisabled = props.readonly;
+  const isFormDisabled = actionOptions.readonly;
 
   const handleFieldChange = (
     fieldName: keyof SendEmailFormData,
@@ -62,10 +64,10 @@ export const WorkflowEditActionFormRecordCreate = (
 
   useEffect(() => {
     setFormData({
-      objectName: props.action.settings.input.objectName,
-      ...props.action.settings.input.objectRecord,
+      objectName: action.settings.input.objectName,
+      ...action.settings.input.objectRecord,
     });
-  }, [props.action.settings.input]);
+  }, [action.settings.input]);
 
   const selectedObjectMetadataItemNameSingular = formData.objectName;
 
@@ -85,16 +87,16 @@ export const WorkflowEditActionFormRecordCreate = (
 
   const saveAction = useDebouncedCallback(
     async (formData: SendEmailFormData) => {
-      if (props.readonly === true) {
+      if (actionOptions.readonly === true) {
         return;
       }
 
       const { objectName: updatedObjectName, ...updatedOtherFields } = formData;
 
-      props.onActionUpdate({
-        ...props.action,
+      actionOptions.onActionUpdate({
+        ...action,
         settings: {
-          ...props.action.settings,
+          ...action.settings,
           input: {
             type: 'CREATE',
             objectName: updatedObjectName,

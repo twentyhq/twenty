@@ -37,20 +37,22 @@ const StyledInputContainer = styled.div`
   position: relative;
 `;
 
-type WorkflowEditActionFormServerlessFunctionProps =
-  | {
-      action: WorkflowCodeAction;
-      readonly: true;
-    }
-  | {
-      action: WorkflowCodeAction;
-      readonly?: false;
-      onActionUpdate: (action: WorkflowCodeAction) => void;
-    };
+type WorkflowEditActionFormServerlessFunctionProps = {
+  action: WorkflowCodeAction;
+  actionOptions:
+    | {
+        readonly: true;
+      }
+    | {
+        readonly?: false;
+        onActionUpdate: (action: WorkflowCodeAction) => void;
+      };
+};
 
-export const WorkflowEditActionFormServerlessFunction = (
-  props: WorkflowEditActionFormServerlessFunctionProps,
-) => {
+export const WorkflowEditActionFormServerlessFunction = ({
+  action,
+  actionOptions,
+}: WorkflowEditActionFormServerlessFunctionProps) => {
   const theme = useTheme();
   const { serverlessFunctions } = useGetManyServerlessFunctions();
 
@@ -66,8 +68,7 @@ export const WorkflowEditActionFormServerlessFunction = (
     const defaultFunctionInput =
       getDefaultFunctionInputFromInputSchema(inputSchema);
 
-    const existingFunctionInput =
-      props.action.settings.input.serverlessFunctionInput;
+    const existingFunctionInput = action.settings.input.serverlessFunctionInput;
 
     return mergeDefaultFunctionInputAndFunctionInput({
       defaultFunctionInput,
@@ -76,21 +77,21 @@ export const WorkflowEditActionFormServerlessFunction = (
   };
 
   const functionInput = getFunctionInput(
-    props.action.settings.input.serverlessFunctionId,
+    action.settings.input.serverlessFunctionId,
   );
 
   const updateFunctionInput = useDebouncedCallback(
     async (newFunctionInput: object) => {
-      if (props.readonly === true) {
+      if (actionOptions.readonly === true) {
         return;
       }
 
-      props.onActionUpdate({
-        ...props.action,
+      actionOptions.onActionUpdate({
+        ...action,
         settings: {
-          ...props.action.settings,
+          ...action.settings,
           input: {
-            ...props.action.settings.input,
+            ...action.settings.input,
             serverlessFunctionInput: newFunctionInput,
           },
         },
@@ -116,14 +117,18 @@ export const WorkflowEditActionFormServerlessFunction = (
   ];
 
   const handleFunctionChange = (newServerlessFunctionId: string) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+
     const serverlessFunction = serverlessFunctions.find(
       (f) => f.id === newServerlessFunctionId,
     );
 
     const newProps = {
-      ...props.action,
+      ...action,
       settings: {
-        ...props.action.settings,
+        ...action.settings,
         input: {
           serverlessFunctionId: newServerlessFunctionId,
           serverlessFunctionVersion:
@@ -133,9 +138,7 @@ export const WorkflowEditActionFormServerlessFunction = (
       },
     };
 
-    if (!props.readonly) {
-      props.onActionUpdate(newProps);
-    }
+    actionOptions.onActionUpdate(newProps);
   };
 
   const renderFields = (
@@ -203,10 +206,10 @@ export const WorkflowEditActionFormServerlessFunction = (
         dropdownId="select-serverless-function-id"
         label="Function"
         fullWidth
-        value={props.action.settings.input.serverlessFunctionId}
+        value={action.settings.input.serverlessFunctionId}
         options={availableFunctions}
         emptyOption={{ label: 'None', value: '' }}
-        disabled={props.readonly}
+        disabled={actionOptions.readonly}
         onChange={handleFunctionChange}
       />
       {renderFields(functionInput)}
