@@ -12,13 +12,13 @@ export const useSearchRecordGroupField = () => {
 
   const filteredRecordGroupFieldMetadataItems = useMemo(
     () =>
-      objectMetadataItem.fields
-        .filter((field) => field.type === FieldMetadataType.Select)
-        .filter((field) =>
+      objectMetadataItem.fields.filter(
+        (field) =>
+          field.type === FieldMetadataType.Select &&
           field.label
             .toLocaleLowerCase()
             .includes(recordGroupFieldSearchInput.toLocaleLowerCase()),
-        ),
+      ),
     [objectMetadataItem.fields, recordGroupFieldSearchInput],
   );
 
