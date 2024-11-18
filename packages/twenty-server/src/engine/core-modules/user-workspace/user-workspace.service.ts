@@ -132,7 +132,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     return await this.addUserToWorkspace(user, appToken.workspace);
   }
 
-  public async getUserCount(workspaceId): Promise<number | undefined> {
+  public async getUserCount(workspaceId: string): Promise<number | undefined> {
     return await this.userWorkspaceRepository.countBy({
       workspaceId,
     });

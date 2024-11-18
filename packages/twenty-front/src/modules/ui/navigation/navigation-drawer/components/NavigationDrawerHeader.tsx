@@ -13,6 +13,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -62,7 +63,9 @@ export const NavigationDrawerHeader = ({
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
   const workspaces = useRecoilValue(workspacesState);
-  const isMultiWorkspace = workspaces !== null && workspaces.length > 1;
+  const isMultiworkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspace =
+    workspaces !== null && workspaces.length > 1 && isMultiworkspaceEnabled;
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );

@@ -7,16 +7,12 @@ export function computeRedirectErrorUrl({
 }: {
   errorMessage: string;
   frontBaseUrl: string;
-  subdomain?: string;
+  subdomain: string | null;
 }) {
-  const url = buildWorkspaceURL(
-    frontBaseUrl,
-    { subdomain: subdomain ?? 'app' },
-    {
-      withPathname: '/verify',
-      withSearchParams: { errorMessage },
-    },
-  );
+  const url = buildWorkspaceURL(frontBaseUrl, subdomain, {
+    withPathname: '/verify',
+    withSearchParams: { errorMessage },
+  });
 
   return url.toString();
 }

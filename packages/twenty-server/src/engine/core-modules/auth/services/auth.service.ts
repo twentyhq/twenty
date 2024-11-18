@@ -43,6 +43,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 @Injectable()
 export class AuthService {
@@ -50,6 +51,7 @@ export class AuthService {
     private readonly accessTokenService: AccessTokenService,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly workspaceService: WorkspaceService,
     private readonly userService: UserService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly signInUpService: SignInUpService,
@@ -459,10 +461,10 @@ export class AuthService {
     return workspace;
   }
 
-  async computeRedirectURI(loginToken: string, subdomain) {
+  async computeRedirectURI(loginToken: string, subdomain: string) {
     const url = buildWorkspaceURL(
       this.environmentService.get('FRONT_BASE_URL'),
-      { subdomain },
+      this.workspaceService.getSubdomainIfMultiworkspaceEnabled({ subdomain }),
       {
         withPathname: '/verify',
         withSearchParams: { loginToken },

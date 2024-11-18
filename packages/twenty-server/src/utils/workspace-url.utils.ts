@@ -1,12 +1,6 @@
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-
 export const buildWorkspaceURL = (
   baseUrl: string,
-  params:
-    | {
-        workspace: Workspace;
-      }
-    | { subdomain: string },
+  subdomain: string | null,
   {
     withPathname,
     withSearchParams,
@@ -15,20 +9,9 @@ export const buildWorkspaceURL = (
     withSearchParams?: Record<string, string | number>;
   } = {},
 ) => {
-  const subdomain =
-    'subdomain' in params
-      ? params.subdomain
-      : 'workspace' in params
-        ? params.workspace.subdomain
-        : null;
-
-  if (!subdomain) {
-    throw new Error('Subdomain not found');
-  }
-
   const url = new URL(baseUrl);
 
-  url.hostname = `${subdomain}.${url.hostname}`;
+  url.hostname = subdomain ? `${subdomain}.${url.hostname}` : url.hostname;
 
   if (withPathname) {
     url.pathname = withPathname;

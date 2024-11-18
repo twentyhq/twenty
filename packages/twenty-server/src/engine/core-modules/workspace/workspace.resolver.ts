@@ -154,13 +154,8 @@ export class WorkspaceResolver {
   }
 
   @Query(() => PublicWorkspaceDataOutput)
-  async getPublicWorkspaceDataBySubdomain(
-    @OriginHeader() origin: string,
-    @Args('workspaceId', { nullable: true }) workspaceId?: string,
-  ) {
-    const workspace = workspaceId
-      ? await this.workspaceService.findById(workspaceId)
-      : await this.workspaceService.getWorkspaceByOrigin(origin);
+  async getPublicWorkspaceDataBySubdomain(@OriginHeader() origin: string) {
+    const workspace = await this.workspaceService.getWorkspaceByOrigin(origin);
 
     if (!workspace) {
       return new WorkspaceException(

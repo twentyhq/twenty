@@ -43,8 +43,12 @@ const bootstrap = async () => {
   const environmentService = app.get(EnvironmentService);
 
   const serverUrl = new URL(
-    `${environmentService.get('SERVER_URL')}:${environmentService.get('PORT')}`,
+    environmentService.get('SERVER_URL').startsWith('http')
+      ? environmentService.get('SERVER_URL')
+      : `http://${environmentService.get('SERVER_URL')}`,
   );
+
+  serverUrl.port = environmentService.get('PORT').toString();
 
   if (
     serverUrl.protocol === 'https:' &&

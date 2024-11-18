@@ -21,6 +21,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { computeRedirectErrorUrl } from 'src/engine/core-modules/auth/utils/compute-redirect-error-url';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -28,6 +29,7 @@ export class MicrosoftAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
+    private readonly workspaceService: WorkspaceService,
     private readonly environmentService: EnvironmentService,
   ) {}
 
@@ -87,6 +89,9 @@ export class MicrosoftAuthController {
       return res.redirect(
         computeRedirectErrorUrl({
           frontBaseUrl: this.environmentService.get('FRONT_BASE_URL'),
+          subdomain: this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
+            ? 'app'
+            : null,
           errorMessage: err.message,
         }),
       );

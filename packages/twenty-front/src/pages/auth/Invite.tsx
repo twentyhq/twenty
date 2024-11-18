@@ -16,6 +16,7 @@ import {
   useAddUserToWorkspaceMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { currentUserState } from '@/auth/states/currentUserState';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -28,6 +29,7 @@ export const Invite = () => {
 
   const { form } = useSignInUpForm();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentUser = useRecoilValue(currentUserState);
   const [addUserToWorkspace] = useAddUserToWorkspaceMutation();
   const [addUserToWorkspaceByInviteToken] =
     useAddUserToWorkspaceByInviteTokenMutation();
@@ -77,7 +79,7 @@ export const Invite = () => {
         <Logo workspaceLogo={workspaceFromInviteHash?.logo} />
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
-      {isDefined(workspaceFromInviteHash) ? (
+      {isDefined(workspaceFromInviteHash) && isDefined(currentUser) ? (
         <>
           <StyledContentContainer>
             <MainButton

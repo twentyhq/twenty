@@ -842,11 +842,6 @@ export type QueryGetProductPricesArgs = {
 };
 
 
-export type QueryGetPublicWorkspaceDataBySubdomainArgs = {
-  workspaceId?: InputMaybe<Scalars['String']>;
-};
-
-
 export type QueryGetServerlessFunctionSourceCodeArgs = {
   input: GetServerlessFunctionSourceCodeInput;
 };
@@ -1772,11 +1767,9 @@ export type CheckUserExistsQueryVariables = Exact<{
 }>;
 
 
-export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename?: 'UserExists', exists: boolean, availableWorkspaces?: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, subdomain: string, logo?: string | null, sso?: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> | null }> | null } | { __typename?: 'UserNotExists', exists: boolean } };
+export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename: 'UserExists', exists: boolean, availableWorkspaces?: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, subdomain: string, logo?: string | null, sso?: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> | null }> | null } | { __typename: 'UserNotExists', exists: boolean } };
 
-export type GetPublicWorkspaceDataBySubdomainQueryVariables = Exact<{
-  workspaceId?: InputMaybe<Scalars['String']>;
-}>;
+export type GetPublicWorkspaceDataBySubdomainQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetPublicWorkspaceDataBySubdomainQuery = { __typename?: 'Query', getPublicWorkspaceDataBySubdomain: { __typename?: 'PublicWorkspaceDataOutput', id: string, logo?: string | null, displayName?: string | null, subdomain: string, authProviders: { __typename?: 'AuthProviders', google: boolean, magicLink: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: string, status: string, issuer: string }> } } };
@@ -2876,6 +2869,7 @@ export type VerifyMutationOptions = Apollo.BaseMutationOptions<VerifyMutation, V
 export const CheckUserExistsDocument = gql`
     query CheckUserExists($email: String!, $captchaToken: String) {
   checkUserExists(email: $email, captchaToken: $captchaToken) {
+    __typename
     ... on UserExists {
       exists
       availableWorkspaces {
@@ -2928,8 +2922,8 @@ export type CheckUserExistsQueryHookResult = ReturnType<typeof useCheckUserExist
 export type CheckUserExistsLazyQueryHookResult = ReturnType<typeof useCheckUserExistsLazyQuery>;
 export type CheckUserExistsQueryResult = Apollo.QueryResult<CheckUserExistsQuery, CheckUserExistsQueryVariables>;
 export const GetPublicWorkspaceDataBySubdomainDocument = gql`
-    query GetPublicWorkspaceDataBySubdomain($workspaceId: String) {
-  getPublicWorkspaceDataBySubdomain(workspaceId: $workspaceId) {
+    query GetPublicWorkspaceDataBySubdomain {
+  getPublicWorkspaceDataBySubdomain {
     id
     logo
     displayName
@@ -2963,7 +2957,6 @@ export const GetPublicWorkspaceDataBySubdomainDocument = gql`
  * @example
  * const { data, loading, error } = useGetPublicWorkspaceDataBySubdomainQuery({
  *   variables: {
- *      workspaceId: // value for 'workspaceId'
  *   },
  * });
  */

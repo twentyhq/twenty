@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Logger } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -313,8 +313,32 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     };
   }
 
+  getSubdomainIfMultiworkspaceEnabled(workspace: Pick<Workspace, 'subdomain'>) {
+    if (this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      return workspace.subdomain;
+    }
+
+    return null;
+  }
+
   async getWorkspaceByOrigin(origin: string) {
     try {
+      if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+        const workspaces = await this.workspaceRepository.find({
+          order: {
+            createdAt: 'DESC',
+          },
+        });
+
+        if (workspaces.length > 1) {
+          Logger.warn(
+            `In single-workspace mode, there should be only one workspace. Today there are ${workspaces.length} workspaces`,
+          );
+        }
+
+        return workspaces[0];
+      }
+
       const subdomain = getWorkspaceSubdomainByOrigin(
         origin,
         this.environmentService.get('FRONT_BASE_URL'),

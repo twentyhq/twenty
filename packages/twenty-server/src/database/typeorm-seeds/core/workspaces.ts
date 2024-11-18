@@ -23,6 +23,7 @@ export const seedWorkspaces = async (
       | 'domainName'
       | 'inviteHash'
       | 'logo'
+      | 'subdomain'
       | 'activationStatus'
     >;
   } = {
@@ -30,6 +31,7 @@ export const seedWorkspaces = async (
       id: workspaceId,
       displayName: 'Apple',
       domainName: 'apple.dev',
+      subdomain: 'apple',
       inviteHash: 'apple.dev-invite-hash',
       logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -38,6 +40,7 @@ export const seedWorkspaces = async (
       id: workspaceId,
       displayName: 'Twenty',
       domainName: 'twenty.dev',
+      subdomain: 'twenty',
       inviteHash: 'twenty.dev-invite-hash',
       logo: 'https://twentyhq.github.io/placeholder-images/workspaces/twenty-logo.png',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
@@ -51,6 +54,7 @@ export const seedWorkspaces = async (
       'id',
       'displayName',
       'domainName',
+      'subdomain',
       'inviteHash',
       'logo',
       'activationStatus',

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -39,10 +39,10 @@ export class WorkspaceInvitationService {
     private readonly appTokenRepository: Repository<AppToken>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    private readonly environmentService: EnvironmentService,
-    private readonly emailService: EmailService,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    private readonly environmentService: EnvironmentService,
+    private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
   ) {}
 
@@ -377,7 +377,9 @@ export class WorkspaceInvitationService {
 
     const link = buildWorkspaceURL(
       this.environmentService.get('FRONT_BASE_URL'),
-      { workspace },
+      this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
+        ? workspace.subdomain
+        : null,
     );
 
     for (const invitation of invitationsPr) {

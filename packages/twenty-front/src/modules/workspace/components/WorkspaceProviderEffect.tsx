@@ -12,6 +12,7 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { useEffect } from 'react';
 import { isDefined } from '~/utils/isDefined';
 import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 
 export const WorkspaceProviderEffect = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
@@ -28,6 +29,8 @@ export const WorkspaceProviderEffect = () => {
     lastAuthenticateWorkspaceState,
   );
 
+  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+
   useGetPublicWorkspaceDataBySubdomainQuery({
     onCompleted: (data) => {
       setAuthProviders(data.getPublicWorkspaceDataBySubdomain.authProviders);
@@ -42,6 +45,7 @@ export const WorkspaceProviderEffect = () => {
 
   useEffect(() => {
     if (
+      isMultiWorkspaceEnabled &&
       isDefined(workspacePublicData?.subdomain) &&
       workspacePublicData.subdomain !== getWorkspaceSubdomain()
     ) {
@@ -50,7 +54,11 @@ export const WorkspaceProviderEffect = () => {
   }, [workspacePublicData]);
 
   useEffect(() => {
-    if (isDefined(lastAuthenticateWorkspace?.subdomain) && isTwentyHomePage) {
+    if (
+      isMultiWorkspaceEnabled &&
+      isDefined(lastAuthenticateWorkspace?.subdomain) &&
+      isTwentyHomePage
+    ) {
       redirectToWorkspace(lastAuthenticateWorkspace.subdomain);
     }
   }, [lastAuthenticateWorkspace]);

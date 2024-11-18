@@ -13,6 +13,7 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { isDefined } from 'src/utils/is-defined';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import ServerUrl from 'src/engine/utils/serverUrl';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 @Controller('auth/redirect')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -20,6 +21,7 @@ export class SignUpAuthController {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly authService: AuthService,
+    private readonly workspaceService: WorkspaceService,
     private readonly environmentService: EnvironmentService,
   ) {}
 
@@ -50,7 +52,9 @@ export class SignUpAuthController {
 
     const redirectUrl = buildWorkspaceURL(
       this.environmentService.get('FRONT_BASE_URL'),
-      { subdomain: workspace.subdomain },
+      this.workspaceService.getSubdomainIfMultiworkspaceEnabled(
+        user.defaultWorkspace,
+      ),
     );
 
     res.cookie(
