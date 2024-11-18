@@ -91,7 +91,6 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
 );
 
 type SettingsDataModelFieldSettingsFormCardProps = {
-  isCreatingField?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
     'icon' | 'label' | 'type' | 'isCustom'
@@ -124,7 +123,6 @@ const previewableTypes = [
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({
-  isCreatingField,
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
@@ -144,7 +142,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.Currency) {
     return (
       <SettingsDataModelFieldCurrencySettingsFormCard
-        disabled={!isCreatingField}
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
@@ -157,7 +154,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   ) {
     return (
       <SettingsDataModelFieldDateSettingsFormCard
-        disabled={!isCreatingField}
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
