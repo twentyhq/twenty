@@ -5,30 +5,27 @@ export const sortRecordGroupDefinitions = (
   recordGroupDefinitions: RecordGroupDefinition[],
   recordGroupSort: RecordGroupSort,
 ) => {
+  const visibleGroups = recordGroupDefinitions.filter(
+    (boardGroup) => boardGroup.isVisible,
+  );
+
+  const compareAlphabetical = (a: string, b: string, reverse = false) => {
+    if (a < b) return reverse ? 1 : -1;
+    if (a > b) return reverse ? -1 : 1;
+    return 0;
+  };
+
   switch (recordGroupSort) {
+    case RecordGroupSort.Alphabetical:
+      return visibleGroups.sort((a, b) =>
+        compareAlphabetical(a.title.toLowerCase(), b.title.toLowerCase()),
+      );
+    case RecordGroupSort.Reverse_alphabetical:
+      return visibleGroups.sort((a, b) =>
+        compareAlphabetical(a.title.toLowerCase(), b.title.toLowerCase(), true),
+      );
     case RecordGroupSort.Manual:
     default:
-      return recordGroupDefinitions
-        .filter((boardGroup) => boardGroup.isVisible)
-        .sort(
-          (boardGroupA, boardGroupB) =>
-            boardGroupA.position - boardGroupB.position,
-        );
-    case RecordGroupSort.Alphabetical:
-      return recordGroupDefinitions
-        .filter((boardGroup) => boardGroup.isVisible)
-        .sort((boardGroupA, boardGroupB) => {
-          const a = boardGroupA.title.toLowerCase();
-          const b = boardGroupB.title.toLowerCase();
-          return a < b ? -1 : a > b ? 1 : 0;
-        });
-    case RecordGroupSort.Reverse_alphabetical:
-      return recordGroupDefinitions
-        .filter((boardGroup) => boardGroup.isVisible)
-        .sort((boardGroupA, boardGroupB) => {
-          const a = boardGroupA.title.toLowerCase();
-          const b = boardGroupB.title.toLowerCase();
-          return a > b ? -1 : a < b ? 1 : 0;
-        });
+      return visibleGroups.sort((a, b) => a.position - b.position);
   }
 };
