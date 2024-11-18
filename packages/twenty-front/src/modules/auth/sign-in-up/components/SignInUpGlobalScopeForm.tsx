@@ -15,7 +15,6 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
-import { availableWorkspacesForAuthState } from '@/auth/states/availableWorkspacesForAuthState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -75,9 +74,6 @@ export const SignInUpGlobalScopeForm = () => {
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
 
-  const setAvailableWorkspacesForAuth = useSetRecoilState(
-    availableWorkspacesForAuthState,
-  );
   const { enqueueSnackBar } = useSnackBar();
   const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
 
@@ -86,24 +82,6 @@ export const SignInUpGlobalScopeForm = () => {
   const { form } = useSignInUpForm();
 
   const { submitCredentials } = useSignInUp(form);
-
-  const continueToWorkspaceSelection = async (
-    availableWorkspaces: UserExists['availableWorkspaces'],
-  ) => {
-    if (isDefined(availableWorkspaces) && availableWorkspaces.length > 1) {
-      return setSignInUpStep(SignInUpStep.WorkspaceSelection);
-    }
-
-    if (isDefined(availableWorkspaces) && availableWorkspaces.length === 1) {
-      return redirectToWorkspace(availableWorkspaces[0].subdomain, {
-        email: form.getValues('email'),
-      });
-    }
-
-    // si 1 workspace sans sso redirige sur workspace avec email en query params pour prefill
-    // si 1 workspace avec sso et 1 sso login avec le sso
-    // si plusieurs workspaces redirige sur la liste des workspaces
-  };
 
   const handleSubmit = async () => {
     if (isDefined(form?.formState?.errors?.email)) {
@@ -128,13 +106,22 @@ export const SignInUpGlobalScopeForm = () => {
           data?.checkUserExists.exists &&
           data.checkUserExists.__typename === 'UserExists'
         ) {
-          setAvailableWorkspacesForAuth(
-            data?.checkUserExists.availableWorkspaces,
-          );
-          continueToWorkspaceSelection(
-            data?.checkUserExists.availableWorkspaces,
-          );
-        } else {
+          if (
+            isDefined(data?.checkUserExists.availableWorkspaces) &&
+            data.checkUserExists.availableWorkspaces.length >= 1
+          ) {
+            return redirectToWorkspace(
+              data?.checkUserExists.availableWorkspaces[0].subdomain,
+              {
+                email: form.getValues('email'),
+              },
+            );
+          }
+        }
+        if (
+          data?.checkUserExists.exists &&
+          data.checkUserExists.__typename === 'UserNotExists'
+        ) {
           if (!isMultiWorkspaceEnabled) {
             return enqueueSnackBar('User not found', {
               variant: SnackBarVariant.Error,

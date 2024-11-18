@@ -10,7 +10,6 @@ import {
   redirectToHome,
   twentyHomePageUrl,
 } from '~/utils/workspace-url.helper';
-import { SignInUpWorkspaceSelection } from '@/auth/sign-in-up/components/SignInUpWorkspaceSelection';
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { AnimatedEaseIn } from 'twenty-ui';
@@ -52,9 +51,7 @@ export const SignInUp = () => {
       <Title animate>
         {`Welcome to ${workspacePublicData?.displayName ?? DEFAULT_WORKSPACE_NAME}`}
       </Title>
-      {isTwentyHomePage && signInUpStep === SignInUpStep.WorkspaceSelection ? (
-        <SignInUpWorkspaceSelection />
-      ) : isTwentyHomePage ? (
+      {isTwentyHomePage ? (
         <SignInUpGlobalScopeForm />
       ) : isTwentyWorkspaceSubdomain &&
         signInUpStep === SignInUpStep.SSOIdentityProviderSelection ? (

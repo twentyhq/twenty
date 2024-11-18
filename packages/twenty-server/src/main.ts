@@ -105,6 +105,8 @@ const bootstrap = async () => {
   url.hostname = url.hostname === '[::1]' ? 'localhost' : url.hostname;
 
   ServerUrl.set(url.toString());
+
+  logger.log(`Application is running on: ${url.toString()}`, 'Server Info');
 };
 
 bootstrap();
