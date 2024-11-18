@@ -202,7 +202,7 @@ export const WorkflowEditActionFormSendEmail = (
             <VariableTagInput
               inputId="email-input"
               label="Email"
-              placeholder="Enter receiver email (use {{variable}} for dynamic content)"
+              placeholder="Enter receiver email"
               value={field.value}
               onChange={(email) => {
                 field.onChange(email);
@@ -218,7 +218,7 @@ export const WorkflowEditActionFormSendEmail = (
             <VariableTagInput
               inputId="email-subject-input"
               label="Subject"
-              placeholder="Enter email subject (use {{variable}} for dynamic content)"
+              placeholder="Enter email subject"
               value={field.value}
               onChange={(email) => {
                 field.onChange(email);
@@ -234,7 +234,7 @@ export const WorkflowEditActionFormSendEmail = (
             <VariableTagInput
               inputId="email-body-input"
               label="Body"
-              placeholder="Enter email body (use {{variable}} for dynamic content)"
+              placeholder="Enter email body"
               value={field.value}
               onChange={(email) => {
                 field.onChange(email);
