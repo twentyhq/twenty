@@ -3,7 +3,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { IconSearch, IconSettings } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
+import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { NavigationDrawerSectionForObjectMetadataItemsWrapper } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsWrapper';
@@ -19,6 +19,10 @@ const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;
 `;
 
+const StyledContainer = styled.div`
+  overflow-x: hidden;
+  overflow-y: auto;
+`;
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
   const { toggleCommandMenu } = useCommandMenu();
@@ -55,10 +59,15 @@ export const MainNavigationDrawerItems = () => {
           />
         </StyledMainSection>
       )}
-      <NavigationDrawerOpenedSection />
-      <CurrentWorkspaceMemberFavorites />
-      <WorkspaceFavorites />
-      <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
+      <StyledContainer>
+        <NavigationDrawerOpenedSection />
+
+        <CurrentWorkspaceMemberFavoritesFolders />
+
+        <WorkspaceFavorites />
+
+        <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
+      </StyledContainer>
     </>
   );
 };

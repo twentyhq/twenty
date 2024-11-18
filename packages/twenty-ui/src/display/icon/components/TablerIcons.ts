@@ -131,6 +131,8 @@ export {
   IconFilterCog,
   IconFilterOff,
   IconFocusCentered,
+  IconFolder,
+  IconFolderPlus,
   IconForbid,
   IconFunction,
   IconGauge,

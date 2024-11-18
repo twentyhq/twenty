@@ -126,7 +126,6 @@ export const Dropdown = ({
     listenerId: dropdownId,
     callback: () => {
       onClickOutside?.();
-
       if (isDropdownOpen) {
         closeDropdown();
       }
@@ -141,10 +140,12 @@ export const Dropdown = ({
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      closeDropdown();
+      if (isDropdownOpen) {
+        closeDropdown();
+      }
     },
     dropdownHotkeyScope.scope,
-    [closeDropdown],
+    [closeDropdown, isDropdownOpen],
   );
 
   return (

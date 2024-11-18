@@ -45,7 +45,6 @@ export const ScrollWrapper = ({
     useScrollStates(contextProviderName);
   const setScrollTop = useSetRecoilState(scrollTopComponentState);
   const setScrollLeft = useSetRecoilState(scrollLeftComponentState);
-
   const handleScroll = (overlayScroll: OverlayScrollbars) => {
     const target = overlayScroll.elements().scrollOffsetElement;
     setScrollTop(target.scrollTop);
@@ -78,7 +77,12 @@ export const ScrollWrapper = ({
   }, [instance, setOverlayScrollbars]);
 
   return (
-    <Context.Provider value={{ ref: scrollableRef, id: contextProviderName }}>
+    <Context.Provider
+      value={{
+        ref: scrollableRef,
+        id: contextProviderName,
+      }}
+    >
       <StyledScrollWrapper ref={scrollableRef} className={className}>
         {children}
       </StyledScrollWrapper>
