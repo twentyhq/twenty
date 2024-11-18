@@ -49,12 +49,7 @@ export const RecordShowPageBaseHeader = ({
           targetObjectNameSingular: objectMetadataItem.nameSingular,
         }}
       />
-      <ShowPageMoreButton
-        key="more"
-        recordId={record?.id ?? '0'}
-        objectNameSingular={objectNameSingular}
-        isRemote={objectMetadataItem.isRemote}
-      />
+      <ShowPageMoreButton key="more" />
     </>
   );
 };
