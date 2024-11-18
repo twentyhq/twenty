@@ -39,7 +39,7 @@ export const GenericErrorFallback = ({
           <AnimatedPlaceholder type="errorIndex" />
           <AnimatedPlaceholderEmptyTextContainer>
             <AnimatedPlaceholderEmptyTitle>
-              Sorry, something went wrong
+              Server’s on a coffee break
             </AnimatedPlaceholderEmptyTitle>
             <AnimatedPlaceholderEmptySubTitle>
               {error.message}

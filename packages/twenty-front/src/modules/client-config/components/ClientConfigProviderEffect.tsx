@@ -46,51 +46,46 @@ export const ClientConfigProviderEffect = () => {
   });
 
   useEffect(() => {
-    if (loading) {
-      return;
+    if (!loading) {
+      if (error !== undefined) {
+        setIsClientConfigLoaded(false);
+        enqueueSnackBar('Unable to reach backend', {
+          variant: SnackBarVariant.Error,
+        });
+        return;
+      }
+      if (isDefined(data?.clientConfig)) {
+        setIsClientConfigLoaded(true);
+        setAuthProviders({
+          google: data?.clientConfig.authProviders.google,
+          microsoft: data?.clientConfig.authProviders.microsoft,
+          password: data?.clientConfig.authProviders.password,
+          magicLink: false,
+          sso: data?.clientConfig.authProviders.sso,
+        });
+        setIsDebugMode(data?.clientConfig.debugMode);
+        setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
+        setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
+        setIsSignUpDisabled(data?.clientConfig.signUpDisabled);
+
+        setBilling(data?.clientConfig.billing);
+        setSupportChat(data?.clientConfig.support);
+
+        setSentryConfig({
+          dsn: data?.clientConfig?.sentry?.dsn,
+          release: data?.clientConfig?.sentry?.release,
+          environment: data?.clientConfig?.sentry?.environment,
+        });
+
+        setCaptchaProvider({
+          provider: data?.clientConfig?.captcha?.provider,
+          siteKey: data?.clientConfig?.captcha?.siteKey,
+        });
+
+        setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
+        setApiConfig(data?.clientConfig?.api);
+      }
     }
-
-    if (error instanceof Error) {
-      setIsClientConfigLoaded(false);
-      enqueueSnackBar(`Unable to reach backend: ${error.message}`, {
-        variant: SnackBarVariant.Error,
-      });
-      return;
-    }
-
-    if (!isDefined(data?.clientConfig)) {
-      return;
-    }
-
-    setIsClientConfigLoaded(true);
-    setAuthProviders({
-      google: data?.clientConfig.authProviders.google,
-      microsoft: data?.clientConfig.authProviders.microsoft,
-      password: data?.clientConfig.authProviders.password,
-      magicLink: false,
-      sso: data?.clientConfig.authProviders.sso,
-    });
-    setIsDebugMode(data?.clientConfig.debugMode);
-    setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
-    setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
-    setIsSignUpDisabled(data?.clientConfig.signUpDisabled);
-
-    setBilling(data?.clientConfig.billing);
-    setSupportChat(data?.clientConfig.support);
-
-    setSentryConfig({
-      dsn: data?.clientConfig?.sentry?.dsn,
-      release: data?.clientConfig?.sentry?.release,
-      environment: data?.clientConfig?.sentry?.environment,
-    });
-
-    setCaptchaProvider({
-      provider: data?.clientConfig?.captcha?.provider,
-      siteKey: data?.clientConfig?.captcha?.siteKey,
-    });
-
-    setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
-    setApiConfig(data?.clientConfig?.api);
   }, [
     data,
     setAuthProviders,
