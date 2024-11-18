@@ -15,11 +15,8 @@ import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeybo
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
 import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
-import { Opportunity } from '@/opportunities/types/Opportunity';
-import { Person } from '@/people/types/Person';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -30,6 +27,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import isEmpty from 'lodash.isempty';
 import { useMemo, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -43,6 +41,7 @@ import {
 } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
 import { getLogoUrlFromDomainName } from '~/utils';
+import { capitalize } from '~/utils/string/capitalize';
 
 const SEARCH_BAR_HEIGHT = 56;
 const SEARCH_BAR_PADDING = 3;
@@ -173,10 +172,6 @@ export const CommandMenu = () => {
     [closeCommandMenu],
   );
 
-  // TO DO
-  // 1. Update format of result from useMultiObjectSearch
-  // 2. Handle custom objects display here
-
   const {
     matchesSearchFilterObjectRecords,
     matchesSearchFilterObjectRecordsLoading: loading,
@@ -185,26 +180,6 @@ export const CommandMenu = () => {
     searchFilterValue: deferredCommandMenuSearch ?? undefined,
     limit: 3,
   });
-
-  console.log('data', matchesSearchFilterObjectRecords);
-
-  const { loading: isPeopleLoading, records: people } =
-    useSearchRecords<Person>({
-      skip: !isCommandMenuOpened,
-      objectNameSingular: CoreObjectNameSingular.Person,
-      limit: 3,
-      searchInput: deferredCommandMenuSearch ?? undefined,
-    });
-
-  console.log('people', people);
-
-  const { loading: isCompaniesLoading, records: companies } =
-    useSearchRecords<Company>({
-      skip: !isCommandMenuOpened,
-      objectNameSingular: CoreObjectNameSingular.Company,
-      limit: 3,
-      searchInput: deferredCommandMenuSearch ?? undefined,
-    });
 
   const { loading: isNotesLoading, records: notes } = useFindManyRecords<Note>({
     skip: !isCommandMenuOpened,
@@ -218,13 +193,26 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
-  const { loading: isOpportunitiesLoading, records: opportunities } =
-    useSearchRecords<Opportunity>({
-      skip: !isCommandMenuOpened,
-      objectNameSingular: CoreObjectNameSingular.Opportunity,
-      limit: 3,
-      searchInput: deferredCommandMenuSearch ?? undefined,
-    });
+  const people = matchesSearchFilterObjectRecords.people?.map(
+    (people) => people.record,
+  );
+  const companies = matchesSearchFilterObjectRecords.companies?.map(
+    (companies) => companies.record,
+  );
+  const opportunities = matchesSearchFilterObjectRecords.opportunities?.map(
+    (opportunities) => opportunities.record,
+  );
+
+  const customObjectRecordsMap = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(matchesSearchFilterObjectRecords).filter(
+        ([namePlural, records]) =>
+          !['people', 'opportunities', 'companies', 'notes'].includes(
+            namePlural,
+          ) && !isEmpty(records),
+      ),
+    );
+  }, [matchesSearchFilterObjectRecords]);
 
   const peopleCommands = useMemo(
     () =>
@@ -267,6 +255,22 @@ export const CommandMenu = () => {
     [notes, openActivityRightDrawer],
   );
 
+  const customObjectCommands = useMemo(() => {
+    const customObjectCommandsArray: Command[] = [];
+    Object.values(customObjectRecordsMap).forEach((objectRecords) => {
+      customObjectCommandsArray.push(
+        ...objectRecords.map((objectRecord) => ({
+          id: objectRecord.record.id,
+          label: objectRecord.recordIdentifier.name,
+          to: `object/${objectRecord.objectMetadataItem.nameSingular}/${objectRecord.record.id}`,
+          onCommandClick: () => openActivityRightDrawer(objectRecord.record.id),
+        })),
+      );
+    });
+
+    return customObjectCommandsArray;
+  }, [customObjectRecordsMap, openActivityRightDrawer]);
+
   const otherCommands = useMemo(() => {
     const commandsArray: Command[] = [];
     if (peopleCommands?.length > 0) {
@@ -281,8 +285,17 @@ export const CommandMenu = () => {
     if (noteCommands?.length > 0) {
       commandsArray.push(...(noteCommands as Command[]));
     }
+    if (customObjectCommands?.length > 0) {
+      commandsArray.push(...(customObjectCommands as Command[]));
+    }
     return commandsArray;
-  }, [peopleCommands, companyCommands, noteCommands, opportunityCommands]);
+  }, [
+    peopleCommands,
+    companyCommands,
+    opportunityCommands,
+    noteCommands,
+    customObjectCommands,
+  ]);
 
   const checkInShortcuts = (cmd: Command, search: string) => {
     return (cmd.firstHotKey + (cmd.secondHotKey ?? ''))
@@ -360,7 +373,14 @@ export const CommandMenu = () => {
     .concat(people?.map((person) => person.id))
     .concat(companies?.map((company) => company.id))
     .concat(opportunities?.map((opportunity) => opportunity.id))
-    .concat(notes?.map((note) => note.id));
+    .concat(notes?.map((note) => note.id))
+    .concat(
+      Object.values(customObjectRecordsMap)
+        ?.map((objectRecords) =>
+          objectRecords.map((objectRecord) => objectRecord.record.id),
+        )
+        .flat() ?? [],
+    );
 
   const isNoResults =
     !matchingStandardActionCommands.length &&
@@ -370,7 +390,8 @@ export const CommandMenu = () => {
     !people?.length &&
     !companies?.length &&
     !notes?.length &&
-    !opportunities?.length;
+    !opportunities?.length &&
+    isEmpty(customObjectRecordsMap);
 
   const isLoading = loading || isNotesLoading;
 
@@ -549,7 +570,7 @@ export const CommandMenu = () => {
                               placeholderColorSeed={company.id}
                               placeholder={company.name}
                               avatarUrl={getLogoUrlFromDomainName(
-                                getCompanyDomainName(company),
+                                getCompanyDomainName(company as Company),
                               )}
                             />
                           )}
@@ -593,6 +614,30 @@ export const CommandMenu = () => {
                       </SelectableItem>
                     ))}
                   </CommandGroup>
+                  {Object.entries(customObjectRecordsMap).map(
+                    ([customObjectNamePlural, objectRecords]) => (
+                      <CommandGroup
+                        heading={capitalize(customObjectNamePlural)}
+                        key={customObjectNamePlural}
+                      >
+                        {objectRecords?.map((objectRecord) => {
+                          return (
+                            <SelectableItem
+                              itemId={objectRecord.record.id}
+                              key={objectRecord.record.id}
+                            >
+                              <CommandMenuItem
+                                id={objectRecord.record.id}
+                                key={objectRecord.record.id}
+                                label={objectRecord.recordIdentifier.name}
+                                to={`object/${objectRecord.objectMetadataItem.nameSingular}/${objectRecord.record.id}`}
+                              />
+                            </SelectableItem>
+                          );
+                        })}
+                      </CommandGroup>
+                    ),
+                  )}
                 </SelectableList>
               </StyledInnerList>
             </ScrollWrapper>
