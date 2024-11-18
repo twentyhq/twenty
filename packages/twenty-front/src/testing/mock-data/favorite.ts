@@ -1,0 +1,36 @@
+import { companiesQueryResult } from '~/testing/mock-data/companies';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
+
+export const mockedFavoritesData = [
+  {
+    id: '20202020-dede-koko-873b-de4264d89025',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    deletedAt: null,
+    position: 0,
+    recordId: null,
+    workflowId: null,
+    workflow: null,
+    workflowRunId: null,
+    workflowRun: null,
+    workflowVersionId: null,
+    workflowVersion: null,
+    workspaceMemberId: mockedWorkspaceMemberData.id,
+    workspaceMember: mockedWorkspaceMemberData,
+    companyId: companiesQueryResult.companies.edges[0].node.id,
+    company: companiesQueryResult.companies.edges[0].node,
+    viewId: null,
+    view: null,
+    taskId: null,
+    task: null,
+    rocketId: null,
+    rocket: null,
+    personId: null,
+    person: null,
+    opportunityId: null,
+    opportunity: null,
+    noteId: null,
+    note: null,
+    __typename: 'Favorite',
+  },
+];

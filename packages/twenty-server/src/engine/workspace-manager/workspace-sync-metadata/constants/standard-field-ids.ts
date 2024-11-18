@@ -445,6 +445,7 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   eventListeners: '20202020-0229-4c66-832e-035c67579a38',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
   timelineActivities: '20202020-906e-486a-a798-131a5f081faf',
+  createdBy: '20202020-6007-401a-8aa5-e6f48581a6f3',
 };
 
 export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {

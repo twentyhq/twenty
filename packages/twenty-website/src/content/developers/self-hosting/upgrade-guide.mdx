@@ -127,5 +127,10 @@ We have also simplifed the way we handle the JWT tokens.
 - Added: `APP_SECRET`
 
 Update your `.env` file to use the new `APP_SECRET` variable instead of the individual tokens secrets (you can use the same secret as before or generate a new random string)
+*Note*: Keep the `ACCESS_TOKEN_SECRET` variable to keep the backward compatibility with the previous API tokens.
+
+### Connected Account
+
+If you are using connected account to synchronize your Google emails and calendars, you will need to activate the [People API](https://developers.google.com/people) on your Google Admin console.
 
 <ArticleEditContent></ArticleEditContent>

@@ -331,12 +331,6 @@ export type FullName = {
   lastName: Scalars['String'];
 };
 
-export type FunctionParameter = {
-  __typename?: 'FunctionParameter';
-  name: Scalars['String'];
-  type: Scalars['String'];
-};
-
 export type GenerateJwt = GenerateJwtOutputWithAuthTokens | GenerateJwtOutputWithSsoauth;
 
 export type GenerateJwtOutputWithAuthTokens = {
@@ -983,7 +977,7 @@ export type ServerlessFunction = {
   description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   latestVersion?: Maybe<Scalars['String']>;
-  latestVersionInputSchema?: Maybe<Array<FunctionParameter>>;
+  latestVersionInputSchema?: Maybe<Scalars['JSON']>;
   name: Scalars['String'];
   publishedVersions: Array<Scalars['String']>;
   runtime: Scalars['String'];
