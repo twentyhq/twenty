@@ -105,6 +105,14 @@ By default, Twenty runs on `localhost` at port `3000`. To access it via an exter
 - **Domain/IP:** This is the domain name or IP address where your application is accessible.
 - **Port:** Include the port number if you're not using the default ports (`80` for `http`, `443` for `https`).
 
+### SSL Requirements
+
+SSL (HTTPS) is required for certain browser features to work properly. While these features might work during local development (as browsers treat localhost differently), a proper SSL setup is needed when hosting Twenty on a regular domain.
+
+For example, the clipboard API might require a secure context - some features like copy buttons throughout the application might not work without HTTPS enabled.
+
+We strongly recommend setting up Twenty behind a reverse proxy with SSL termination for optimal security and functionality.
+
 #### Configuring `SERVER_URL`
 
 1. **Determine Your Access URL**

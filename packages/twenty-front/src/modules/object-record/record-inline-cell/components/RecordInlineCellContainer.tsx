@@ -14,6 +14,9 @@ import { RecordInlineCellValue } from '@/object-record/record-inline-cell/compon
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
+import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
+import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useRecordInlineCellContext } from './RecordInlineCellContext';
 
 const StyledIconContainer = styled.div`
@@ -36,6 +39,7 @@ const StyledLabelAndIconContainer = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+  height: 24px;
 `;
 
 const StyledValueContainer = styled.div`
@@ -52,11 +56,12 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
 `;
 
 const StyledInlineCellBaseContainer = styled.div`
-  align-items: center;
+  align-items: flex-start;
   box-sizing: border-box;
   width: 100%;
   display: flex;
-  height: 24px;
+  height: fit-content;
+  line-height: 24px;
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   justify-content: center;
@@ -87,6 +92,10 @@ export const RecordInlineCellContainer = () => {
     useRecordInlineCellContext();
 
   const { recordId, fieldDefinition } = useContext(FieldContext);
+
+  if (isFieldText(fieldDefinition)) {
+    assertFieldMetadata(FieldMetadataType.Text, isFieldText, fieldDefinition);
+  }
 
   const { setIsFocused } = useFieldFocus();
 
@@ -122,7 +131,7 @@ export const RecordInlineCellContainer = () => {
           )}
           {showLabel && label && (
             <StyledLabelContainer width={labelWidth}>
-              <OverflowingTextWithTooltip text={label} />
+              <OverflowingTextWithTooltip text={label} isLabel={true} />
             </StyledLabelContainer>
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}

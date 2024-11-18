@@ -40,9 +40,14 @@ const reservedKeywords = [
   'fullNames',
   'address',
   'addresses',
+  'type',
+  'types',
+  'object',
+  'objects',
+  'index',
+  'relation',
+  'relations',
 ];
-
-const METADATA_NAME_VALID_PATTERN = /^[a-zA-Z][a-zA-Z0-9]*$/;
 
 export const validateObjectMetadataInputOrThrow = <
   T extends UpdateObjectPayload | CreateObjectInput,
