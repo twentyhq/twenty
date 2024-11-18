@@ -1,4 +1,4 @@
-import { LogLevel } from '@nestjs/common';
+import { LogLevel, Logger } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
@@ -12,6 +12,9 @@ import {
   Max,
   Min,
   ValidateIf,
+  ValidationArguments,
+  ValidationOptions,
+  registerDecorator,
   validateSync,
 } from 'class-validator';
 
@@ -37,6 +40,32 @@ import { LoggerDriverType } from 'src/engine/core-modules/logger/interfaces';
 import { MessageQueueDriverType } from 'src/engine/core-modules/message-queue/interfaces';
 import { ServerlessDriverType } from 'src/engine/core-modules/serverless/serverless.interface';
 import { assert } from 'src/utils/assert';
+
+function WarningIf(
+  condition: (object: any, value: any) => boolean,
+  validationOptions?: ValidationOptions,
+) {
+  return function (object: any, propertyName: string) {
+    registerDecorator({
+      name: 'WarningIf',
+      target: object.constructor,
+      propertyName: propertyName,
+      options: {
+        ...validationOptions,
+        groups: ['warning'],
+      },
+      constraints: [condition],
+      validator: {
+        validate(value: any, args: ValidationArguments) {
+          return !condition(args.object, value);
+        },
+        defaultMessage(args: ValidationArguments) {
+          return `Warning: '${args.property}' failed the warning validation.`;
+        },
+      },
+    });
+  };
+}
 
 export class EnvironmentVariables {
   // Misc
@@ -449,6 +478,15 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsOptional()
+  @WarningIf(
+    (env, value) =>
+      env.AUTH_SSO_ENABLED &&
+      value === 'replace_me_with_a_random_string_session',
+    {
+      message:
+        'Warning: SESSION_STORE_SECRET should be changed to a secure, random string.',
+    },
+  )
   SESSION_STORE_SECRET = 'replace_me_with_a_random_string_session';
 
   @CastToBoolean()
@@ -471,7 +509,19 @@ export const validate = (
 ): EnvironmentVariables => {
   const validatedConfig = plainToClass(EnvironmentVariables, config);
 
-  const errors = validateSync(validatedConfig);
+  const errors = validateSync(validatedConfig, { strictGroups: true });
+
+  const warnings = validateSync(validatedConfig, { groups: ['warning'] });
+
+  if (warnings.length > 0) {
+    warnings.forEach((warning) => {
+      if (warning.constraints && warning.property) {
+        Object.values(warning.constraints).forEach((message) => {
+          Logger.warn(message);
+        });
+      }
+    });
+  }
 
   assert(!errors.length, errors.toString());
 
