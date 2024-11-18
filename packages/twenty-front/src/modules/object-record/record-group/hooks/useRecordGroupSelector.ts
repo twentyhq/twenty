@@ -15,7 +15,8 @@ type UseRecordGroupSelectorParams = {
 export const useRecordGroupSelector = ({
   viewBarComponentId,
 }: UseRecordGroupSelectorParams) => {
-  const { createViewGroupRecords } = usePersistViewGroupRecords();
+  const { createViewGroupRecords, deleteViewGroupRecords } =
+    usePersistViewGroupRecords();
 
   const currentViewIdCallbackState = useRecoilComponentCallbackStateV2(
     currentViewIdComponentState,
@@ -65,5 +66,31 @@ export const useRecordGroupSelector = ({
     [createViewGroupRecords, currentViewIdCallbackState, getViewFromCache],
   );
 
-  return { handleRecordGroupFieldChange };
+  const resetRecordGroupField = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const currentViewId = snapshot
+          .getLoadable(currentViewIdCallbackState)
+          .getValue();
+
+        if (!currentViewId) {
+          return;
+        }
+
+        const view = await getViewFromCache(currentViewId);
+
+        if (isUndefinedOrNull(view)) {
+          return;
+        }
+
+        if (view.viewGroups.length === 0) {
+          return;
+        }
+
+        await deleteViewGroupRecords(view.viewGroups);
+      },
+    [deleteViewGroupRecords, currentViewIdCallbackState, getViewFromCache],
+  );
+
+  return { handleRecordGroupFieldChange, resetRecordGroupField };
 };

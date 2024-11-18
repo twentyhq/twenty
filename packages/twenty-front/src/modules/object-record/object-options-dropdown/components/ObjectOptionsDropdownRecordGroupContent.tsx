@@ -109,9 +109,10 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
       viewBarId: recordIndexId,
     });
 
-  const { handleRecordGroupFieldChange } = useRecordGroupSelector({
-    viewBarComponentId: recordIndexId,
-  });
+  const { handleRecordGroupFieldChange, resetRecordGroupField } =
+    useRecordGroupSelector({
+      viewBarComponentId: recordIndexId,
+    });
 
   const viewGroupSettingsUrl = getSettingsPagePath(SettingsPath.ObjectDetail, {
     id: viewGroupFieldMetadataItem?.name,
@@ -150,7 +151,7 @@ export const ObjectOptionsDropdownRecordGroupContent = ({
           }
         />
         <DropdownMenuItemsContainer>
-          <MenuItem text="None" />
+          <MenuItem text="None" onClick={resetRecordGroupField} />
           {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
             <MenuItem
               key={fieldMetadataItem.id}
