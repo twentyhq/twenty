@@ -1,5 +1,9 @@
 import { WorkflowStepType } from '@/workflow/types/Workflow';
-import { IconComponent, IconSettingsAutomation } from 'twenty-ui';
+import {
+  IconAddressBook,
+  IconComponent,
+  IconSettingsAutomation,
+} from 'twenty-ui';
 
 export const ACTIONS: Array<{
   label: string;
@@ -15,5 +19,10 @@ export const ACTIONS: Array<{
     label: 'Send Email',
     type: 'SEND_EMAIL',
     icon: IconSettingsAutomation,
+  },
+  {
+    label: 'Create Record',
+    type: 'RECORD_CRUD.CREATE',
+    icon: IconAddressBook,
   },
 ];
