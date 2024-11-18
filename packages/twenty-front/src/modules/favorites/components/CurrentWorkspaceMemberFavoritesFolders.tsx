@@ -55,19 +55,11 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
     return <FavoritesSkeletonLoader />;
   }
 
-  const currentWorkspaceMemberFavorites = favorites.filter(
-    (favorite) => favorite.workspaceMemberId === currentWorkspaceMember?.id,
-  );
-
-  const orphanFavorites = currentWorkspaceMemberFavorites.filter(
+  const orphanFavorites = favorites.filter(
     (favorite) => !favorite.favoriteFolderId,
   );
 
-  if (
-    (!currentWorkspaceMemberFavorites ||
-      currentWorkspaceMemberFavorites.length === 0) &&
-    !isFavoriteFolderCreating
-  ) {
+  if ((!favorites || favorites.length === 0) && !isFavoriteFolderCreating) {
     return null;
   }
 
