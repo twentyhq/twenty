@@ -17,6 +17,8 @@ export enum WorkspaceCacheKeys {
   MetadataVersion = 'metadata:workspace-metadata-version',
 }
 
+const TTL_INFINITE = 0;
+
 @Injectable()
 export class WorkspaceCacheStorageService {
   constructor(
@@ -51,6 +53,7 @@ export class WorkspaceCacheStorageService {
     return this.cacheStorageService.set<number>(
       `${WorkspaceCacheKeys.MetadataVersion}:${workspaceId}`,
       metadataVersion,
+      TTL_INFINITE,
     );
   }
 

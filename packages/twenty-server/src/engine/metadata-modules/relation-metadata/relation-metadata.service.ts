@@ -55,8 +55,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceMetadataVersionService: WorkspaceMetadataVersionService,
-    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly indexMetadataService: IndexMetadataService,
+    private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
   ) {
     super(relationMetadataRepository);
   }
@@ -482,6 +482,12 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const mappedResult = fieldMetadataItems.map((fieldMetadataItem) => {
       const objectMetadata =
         objectMetadataMaps.byId[fieldMetadataItem.objectMetadataId];
+
+      if (!objectMetadata) {
+        return new NotFoundException(
+          `Object metadata not found for field ${fieldMetadataItem.id}`,
+        );
+      }
 
       const fieldMetadata = objectMetadata.fieldsById[fieldMetadataItem.id];
 

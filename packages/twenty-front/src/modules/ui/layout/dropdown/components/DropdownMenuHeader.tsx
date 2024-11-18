@@ -40,6 +40,7 @@ const StyledEndIcon = styled.div`
 `;
 
 const StyledChildrenWrapper = styled.span`
+  overflow: hidden;
   padding: 0 ${({ theme }) => theme.spacing(1)};
 `;
 
