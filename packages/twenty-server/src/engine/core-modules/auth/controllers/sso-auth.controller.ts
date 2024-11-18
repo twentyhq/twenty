@@ -164,6 +164,9 @@ export class SSOAuthController {
       );
     }
 
-    return this.loginTokenService.generateLoginToken(user.email);
+    return this.loginTokenService.generateLoginToken(
+      user.email,
+      identityProvider.workspaceId,
+    );
   }
 }

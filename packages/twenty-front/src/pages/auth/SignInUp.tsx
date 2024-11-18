@@ -21,7 +21,6 @@ import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/consta
 import { Link } from 'react-router-dom';
 import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
 import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/SignInUpSSOIdentityProviderSelection';
-import { useCallback } from 'react';
 
 export const SignInUp = () => {
   const setLastAuthenticateWorkspaceState = useSetRecoilState(
@@ -39,27 +38,6 @@ export const SignInUp = () => {
     redirectToHome();
   };
 
-  const CurrentFormComponent = useCallback(() => {
-    if (isTwentyHomePage && signInUpStep === SignInUpStep.WorkspaceSelection) {
-      return <SignInUpWorkspaceSelection />;
-    }
-
-    if (isTwentyHomePage) {
-      return <SignInUpGlobalScopeForm />;
-    }
-
-    if (
-      isTwentyWorkspaceSubdomain &&
-      signInUpStep === SignInUpStep.SSOIdentityProviderSelection
-    ) {
-      return <SignInUpSSOIdentityProviderSelection />;
-    }
-
-    if (isTwentyWorkspaceSubdomain) {
-      return <SignInUpWorkspaceScopeForm />;
-    }
-  }, [signInUpStep]);
-
   return (
     <>
       {/* TODO AMOREAUX: Need design for this */}
@@ -74,7 +52,16 @@ export const SignInUp = () => {
       <Title animate>
         {`Welcome to ${workspacePublicData?.displayName ?? DEFAULT_WORKSPACE_NAME}`}
       </Title>
-      <CurrentFormComponent />
+      {isTwentyHomePage && signInUpStep === SignInUpStep.WorkspaceSelection ? (
+        <SignInUpWorkspaceSelection />
+      ) : isTwentyHomePage ? (
+        <SignInUpGlobalScopeForm />
+      ) : isTwentyWorkspaceSubdomain &&
+        signInUpStep === SignInUpStep.SSOIdentityProviderSelection ? (
+        <SignInUpSSOIdentityProviderSelection />
+      ) : isTwentyWorkspaceSubdomain ? (
+        <SignInUpWorkspaceScopeForm />
+      ) : null}
       <FooterNote />
     </>
   );

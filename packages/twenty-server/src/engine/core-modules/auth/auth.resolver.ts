@@ -129,6 +129,7 @@ export class AuthResolver {
     const user = await this.authService.challenge(challengeInput, workspace);
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
+      workspace.id,
     );
 
     return { loginToken };
@@ -151,6 +152,7 @@ export class AuthResolver {
 
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
+      user.defaultWorkspaceId,
     );
 
     return { loginToken };
@@ -196,18 +198,19 @@ export class AuthResolver {
   ): Promise<Verify> {
     const workspace = await this.workspaceService.getWorkspaceByOrigin(origin);
 
-    if (!workspace) {
+    const { sub: email, workspaceId: workspaceIdFromLoginToken } =
+      await this.loginTokenService.verifyLoginToken(verifyInput.loginToken);
+
+    const workspaceId = workspaceIdFromLoginToken ?? workspace?.id;
+
+    if (!workspaceId) {
       throw new AuthException(
         'Workspace not found',
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
       );
     }
 
-    const email = await this.loginTokenService.verifyLoginToken(
-      verifyInput.loginToken,
-    );
-
-    return await this.authService.verify(email, workspace.id);
+    return await this.authService.verify(email, workspaceId);
   }
 
   @Mutation(() => AuthorizeApp)

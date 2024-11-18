@@ -2,6 +2,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
+import fs from 'fs';
+
 import session from 'express-session';
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
@@ -17,7 +19,7 @@ import './instrument';
 
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
-import ServerUrl from 'src/engine/utils/serverUrl';
+import ServerUrl from './engine/utils/serverUrl';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -25,9 +27,35 @@ const bootstrap = async () => {
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
     snapshot: process.env.DEBUG_MODE === 'true',
+    ...(process.env.SERVER_URL &&
+    process.env.SERVER_URL.startsWith('https') &&
+    process.env.SSL_KEY_PATH &&
+    process.env.SSL_CERT_PATH
+      ? {
+          httpsOptions: {
+            key: fs.readFileSync(process.env.SSL_KEY_PATH),
+            cert: fs.readFileSync(process.env.SSL_CERT_PATH),
+          },
+        }
+      : {}),
   });
   const logger = app.get(LoggerService);
   const environmentService = app.get(EnvironmentService);
+
+  const serverUrl = new URL(
+    `${environmentService.get('SERVER_URL')}:${environmentService.get('PORT')}`,
+  );
+
+  if (
+    serverUrl.protocol === 'https:' &&
+    (!environmentService.get('SSL_KEY_PATH') ||
+      !environmentService.get('SSL_CERT_PATH'))
+  )
+    throw new Error(
+      'SSL_KEY_PATH and SSL_CERT_PATH must be defined if https is used',
+    );
+
+  // set httpsOptions here
 
   // TODO: Double check this as it's not working for now, it's going to be heplful for durable trees in twenty "orm"
   // // Apply context id strategy for durable trees
@@ -69,10 +97,13 @@ const bootstrap = async () => {
     app.use(session(getSessionStorageOptions(environmentService)));
   }
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(serverUrl.port, serverUrl.hostname);
 
   const url = new URL(await app.getUrl());
+
+  // prevent ipv6 issue for redirectUri builder
   url.hostname = url.hostname === '[::1]' ? 'localhost' : url.hostname;
+
   ServerUrl.set(url.toString());
 };
 

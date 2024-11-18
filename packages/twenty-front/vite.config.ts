@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import path from 'path';
+import fs from 'fs';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
@@ -63,9 +64,13 @@ export default defineConfig(({ command, mode }) => {
     };
   }
 
-  const { hostname, protocol } = new URL(
-    REACT_APP_BASE_URL ?? 'http://localhost',
-  );
+  const { hostname, protocol } = new URL(REACT_APP_BASE_URL ?? `localhost`);
+
+  if (protocol === 'https:' && (!env.SSL_KEY_PATH || !env.SSL_CERT_PATH)) {
+    throw new Error(
+      'to use https SSL_KEY_PATH and SSL_CERT_PATH must be both defined',
+    );
+  }
 
   return {
     root: __dirname,
@@ -75,6 +80,14 @@ export default defineConfig(({ command, mode }) => {
       port: port,
       host: hostname,
       protocol: protocol.slice(0, -1) as 'http' | 'https',
+      ...(protocol === 'https:'
+        ? {
+            https: {
+              key: fs.readFileSync(env.SSL_KEY_PATH),
+              cert: fs.readFileSync(env.SSL_CERT_PATH),
+            },
+          }
+        : {}),
       fs: {
         allow: [
           searchForWorkspaceRoot(process.cwd()),

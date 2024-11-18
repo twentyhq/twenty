@@ -1,11 +1,14 @@
-import { INestApplication } from '@nestjs/common';
-
-// serverConfig.ts
 const ServerUrl = (() => {
-  let serverUrl = 'http://localhost:3000';
+  let serverUrl = '';
 
   return {
-    get: () => serverUrl,
+    get: () => {
+      if (serverUrl === '') {
+        throw new Error('ServerUrl is not initialized. Call set() first.');
+      }
+
+      return serverUrl;
+    },
     set: (url: string) => {
       serverUrl = url;
     },

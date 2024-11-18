@@ -26,7 +26,7 @@ export const useSignInUpForm = () => {
   const searchParams = new URLSearchParams(location.search);
   const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
   const form = useForm<Form>({
-    mode: 'onChange',
+    mode: 'onSubmit',
     defaultValues: {
       exist: false,
       email: '',

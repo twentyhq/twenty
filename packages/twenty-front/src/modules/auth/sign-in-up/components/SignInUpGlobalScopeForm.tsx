@@ -113,7 +113,6 @@ export const SignInUpGlobalScopeForm = () => {
 
     if (signInUpStep === SignInUpStep.Password) {
       await submitCredentials(form.getValues());
-      // TODO AMOREAUX: Continue to workspace creation
       return;
     }
 

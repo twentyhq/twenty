@@ -75,6 +75,7 @@ export class MicrosoftAuthController {
 
       const loginToken = await this.loginTokenService.generateLoginToken(
         user.email,
+        user.defaultWorkspace.id,
       );
 
       return res.redirect(

@@ -96,19 +96,21 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           throw new Error('Email and password are required');
         }
 
-        signInUpMode === SignInUpMode.SignIn && !isInviteMode
-          ? await signInWithCredentials(
-              data.email.toLowerCase().trim(),
-              data.password,
-              token,
-            )
-          : await signUpWithCredentials(
-              data.email.toLowerCase().trim(),
-              data.password,
-              workspaceInviteHash,
-              workspacePersonalInviteToken,
-              token,
-            );
+        if (signInUpMode === SignInUpMode.SignIn && !isInviteMode) {
+          await signInWithCredentials(
+            data.email.toLowerCase().trim(),
+            data.password,
+            token,
+          );
+        } else {
+          await signUpWithCredentials(
+            data.email.toLowerCase().trim(),
+            data.password,
+            workspaceInviteHash,
+            workspacePersonalInviteToken,
+            token,
+          );
+        }
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
           variant: SnackBarVariant.Error,

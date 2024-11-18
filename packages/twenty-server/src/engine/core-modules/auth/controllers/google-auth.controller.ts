@@ -20,7 +20,6 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { buildWorkspaceURL } from 'src/utils/workspace-url.utils';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { computeRedirectErrorUrl } from 'src/engine/core-modules/auth/utils/compute-redirect-error-url';
 
@@ -75,6 +74,7 @@ export class GoogleAuthController {
 
       const loginToken = await this.loginTokenService.generateLoginToken(
         user.email,
+        user.defaultWorkspace.id,
       );
 
       return res.redirect(

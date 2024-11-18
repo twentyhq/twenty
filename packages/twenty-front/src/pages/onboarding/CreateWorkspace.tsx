@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { H2Title, Loader, MainButton } from 'twenty-ui';
 import { z } from 'zod';
@@ -22,6 +22,8 @@ import {
   useActivateWorkspaceMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { tokenPairState } from '@/auth/states/tokenPairState';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -47,6 +49,7 @@ type Form = z.infer<typeof validationSchema>;
 export const CreateWorkspace = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
+  const tokenPair = useRecoilValue(tokenPairState);
 
   const [activateWorkspace] = useActivateWorkspaceMutation();
   const apolloMetadataClient = useApolloMetadataClient();
@@ -75,6 +78,7 @@ export const CreateWorkspace = () => {
             },
           },
         });
+
         setIsCurrentUserLoaded(false);
 
         await apolloMetadataClient?.refetchQueries({
@@ -84,6 +88,8 @@ export const CreateWorkspace = () => {
         if (isDefined(result.errors)) {
           throw result.errors ?? new Error('Unknown error');
         }
+
+        window.location.href = `${REACT_APP_SERVER_BASE_URL}/auth/redirect?accessToken=${tokenPair?.accessToken.token}`;
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
           variant: SnackBarVariant.Error,

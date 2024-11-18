@@ -1,10 +1,9 @@
 import { createState } from 'twenty-ui';
-import { FindAvailableWorkspacesByEmailQuery } from '~/generated/graphql';
+import { UserExists } from '~/generated/graphql';
 
-export const availableSSOIdentityProvidersForAuthState = createState<Omit<
-  FindAvailableWorkspacesByEmailQuery['findAvailableWorkspacesByEmail'][0]['sso'],
-  '__typename'
-> | null>({
+export const availableSSOIdentityProvidersForAuthState = createState<
+  NonNullable<UserExists['availableWorkspaces']>[0]['sso']
+>({
   key: 'availableSSOIdentityProvidersForAuth',
   defaultValue: [],
 });

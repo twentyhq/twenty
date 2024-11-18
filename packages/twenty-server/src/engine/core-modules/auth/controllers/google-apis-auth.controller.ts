@@ -23,7 +23,6 @@ import { TransientTokenService } from 'src/engine/core-modules/auth/token/servic
 import { GoogleAPIsRequest } from 'src/engine/core-modules/auth/types/google-api-request.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { buildWorkspaceURL } from 'src/utils/workspace-url.utils';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -34,7 +33,6 @@ export class GoogleAPIsAuthController {
     private readonly googleAPIsService: GoogleAPIsService,
     private readonly transientTokenService: TransientTokenService,
     private readonly environmentService: EnvironmentService,
-    private readonly workspaceService: WorkspaceService,
     private readonly onboardingService: OnboardingService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,

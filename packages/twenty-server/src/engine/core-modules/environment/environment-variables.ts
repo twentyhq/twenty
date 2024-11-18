@@ -132,7 +132,7 @@ export class EnvironmentVariables {
   // Server URL
   @IsUrl({ require_tld: false })
   @IsOptional()
-  SERVER_URL: string;
+  SERVER_URL = 'localhost';
 
   @IsString()
   APP_SECRET: string;
@@ -463,6 +463,15 @@ export class EnvironmentVariables {
   // milliseconds
   @CastToPositiveNumber()
   SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 1000;
+
+  // SSL
+  @IsString()
+  @ValidateIf((env) => env.SERVER_URL.startsWith('https'))
+  SSL_KEY_PATH: string;
+
+  @IsString()
+  @ValidateIf((env) => env.SERVER_URL.startsWith('https'))
+  SSL_CERT_PATH: string;
 }
 
 export const validate = (
