@@ -11,7 +11,7 @@ const spacing4 = THEME_COMMON.spacing(4);
 const StyledOverflowingText = styled.div<{
   cursorPointer: boolean;
   size: 'large' | 'small';
-  displayMaxRows?: number;
+  displayedMaxRows?: number;
   isLabel: boolean;
 }>`
   cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'inherit')};
@@ -28,14 +28,14 @@ const StyledOverflowingText = styled.div<{
 
   height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
 
-  text-wrap-mode: ${({ isLabel, displayMaxRows }) =>
-    isLabel === false && displayMaxRows ? 'wrap' : 'nowrap'};
-  -webkit-line-clamp: ${({ isLabel, displayMaxRows }) =>
-    isLabel === false && displayMaxRows ? displayMaxRows : 'inherit'};
-  display: ${({ isLabel, displayMaxRows }) =>
-    isLabel === false && displayMaxRows ? `-webkit-box` : 'block'};
-  -webkit-box-orient: ${({ isLabel, displayMaxRows }) =>
-    isLabel === false && displayMaxRows ? 'vertical' : 'inherit'};
+  text-wrap-mode: ${({ isLabel, displayedMaxRows }) =>
+    isLabel === false && displayedMaxRows ? 'wrap' : 'nowrap'};
+  -webkit-line-clamp: ${({ isLabel, displayedMaxRows }) =>
+    isLabel === false && displayedMaxRows ? displayedMaxRows : 'inherit'};
+  display: ${({ isLabel, displayedMaxRows }) =>
+    isLabel === false && displayedMaxRows ? `-webkit-box` : 'block'};
+  -webkit-box-orient: ${({ isLabel, displayedMaxRows }) =>
+    isLabel === false && displayedMaxRows ? 'vertical' : 'inherit'};
 
   & :hover {
     text-overflow: ${({ cursorPointer }) =>
@@ -49,13 +49,13 @@ export const OverflowingTextWithTooltip = ({
   size = 'small',
   text,
   isTooltipMultiline,
-  displayMaxRows,
+  displayedMaxRows,
   isLabel,
 }: {
   size?: 'large' | 'small';
   text: string | null | undefined;
   isTooltipMultiline?: boolean;
-  displayMaxRows?: number;
+  displayedMaxRows?: number;
   isLabel?: boolean;
 }) => {
   const textElementId = `title-id-${+new Date()}`;
@@ -89,7 +89,7 @@ export const OverflowingTextWithTooltip = ({
         data-testid="tooltip"
         cursorPointer={isTitleOverflowing}
         size={size}
-        displayMaxRows={displayMaxRows}
+        displayedMaxRows={displayedMaxRows}
         isLabel={isLabel ?? false}
         ref={textRef}
         id={textElementId}

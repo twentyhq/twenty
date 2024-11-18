@@ -2,9 +2,9 @@ import { OverflowingTextWithTooltip } from 'twenty-ui';
 
 type TextDisplayProps = {
   text: string;
-  displayMaxRows?: number;
+  displayedMaxRows?: number;
 };
 
-export const TextDisplay = ({ text, displayMaxRows }: TextDisplayProps) => (
-  <OverflowingTextWithTooltip text={text} displayMaxRows={displayMaxRows} />
+export const TextDisplay = ({ text, displayedMaxRows }: TextDisplayProps) => (
+  <OverflowingTextWithTooltip text={text} displayedMaxRows={displayedMaxRows} />
 );

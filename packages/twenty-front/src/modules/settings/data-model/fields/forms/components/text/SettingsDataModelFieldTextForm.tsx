@@ -22,7 +22,7 @@ type SettingsDataModelFieldTextFormProps = {
 };
 
 export const textFieldDefaultValueSchema = z.object({
-  displayMaxRows: z.number().nullable(),
+  displayedMaxRows: z.number().nullable(),
 });
 
 export const settingsDataModelFieldtextFormSchema = z.object({
@@ -43,11 +43,11 @@ export const SettingsDataModelFieldTextForm = ({
       <Controller
         name="settings"
         defaultValue={{
-          displayMaxRows: fieldMetadataItem?.settings?.displayMaxRows || 0,
+          displayedMaxRows: fieldMetadataItem?.settings?.displayedMaxRows || 0,
         }}
         control={control}
         render={({ field: { onChange, value } }) => {
-          const displayMaxRows = value?.displayMaxRows ?? 0;
+          const displayedMaxRows = value?.displayedMaxRows ?? 0;
 
           return (
             <>
@@ -77,8 +77,8 @@ export const SettingsDataModelFieldTextForm = ({
                     value: 99,
                   },
                 ]}
-                value={displayMaxRows}
-                onChange={(value) => onChange({ displayMaxRows: value })}
+                value={displayedMaxRows}
+                onChange={(value) => onChange({ displayedMaxRows: value })}
                 withSearchInput={false}
                 dropdownWidthAuto={true}
               />

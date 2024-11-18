@@ -17,7 +17,7 @@ type FieldMetadataNumberSettings = {
 };
 
 type FieldMetadataTextSettings = {
-  displayMaxRows?: number;
+  displayedMaxRows?: number;
 };
 
 type FieldMetadataDateSettings = {

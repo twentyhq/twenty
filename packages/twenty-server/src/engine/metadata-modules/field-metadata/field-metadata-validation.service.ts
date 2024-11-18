@@ -2,20 +2,20 @@ import { Injectable } from '@nestjs/common';
 
 import { plainToInstance } from 'class-transformer';
 import {
-  IsEnum,
-  IsInt,
-  IsOptional,
-  Max,
-  Min,
-  validateOrReject,
+    IsEnum,
+    IsInt,
+    IsOptional,
+    Max,
+    Min,
+    validateOrReject,
 } from 'class-validator';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
-  FieldMetadataException,
-  FieldMetadataExceptionCode,
+    FieldMetadataException,
+    FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
 
 enum ValueType {
@@ -37,7 +37,7 @@ class SettingsValidation {
   @IsInt()
   @Min(0)
   @Max(100)
-  displayMaxRows?: number;
+  displayedMaxRows?: number;
 }
 
 @Injectable()

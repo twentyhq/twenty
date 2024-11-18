@@ -24,7 +24,7 @@ export type FieldTextMetadata = {
   placeHolder: string;
   fieldName: string;
   settings?: {
-    displayMaxRows?: number;
+    displayedMaxRows?: number;
   };
 };
 
