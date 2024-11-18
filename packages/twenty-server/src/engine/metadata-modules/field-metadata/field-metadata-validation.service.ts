@@ -55,8 +55,6 @@ export class FieldMetadataValidationService<
   }) {
     switch (fieldType) {
       case FieldMetadataType.NUMBER:
-        await this.validateSettings(settings);
-        break;
       case FieldMetadataType.TEXT:
         await this.validateSettings(settings);
         break;
