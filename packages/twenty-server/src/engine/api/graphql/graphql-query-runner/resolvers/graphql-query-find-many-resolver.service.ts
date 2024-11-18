@@ -159,7 +159,6 @@ export class GraphqlQueryFindManyResolverService
     const processAggregateHelper = new ProcessAggregateHelper();
 
     processAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      fieldMetadataMapByName: objectMetadataItemWithFieldMaps.fieldsByName,
       selectedAggregatedFields: graphqlQuerySelectedFieldsResult.aggregate,
       queryBuilder: withDeletedAggregateQueryBuilder,
     });
@@ -214,7 +213,7 @@ export class GraphqlQueryFindManyResolverService
       selectedAggregatedFields: graphqlQuerySelectedFieldsResult.aggregate,
       objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: limit,
-      totalCount: parentObjectRecordsAggregatedValues.totalCount,
+      totalCount: parentObjectRecordsAggregatedValues?.totalCount,
       order: orderByWithIdCondition,
       hasNextPage,
       hasPreviousPage,

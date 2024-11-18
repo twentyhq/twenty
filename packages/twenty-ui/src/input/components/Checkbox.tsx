@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
-import { IconCheck, IconMinus } from '@ui/display';
+
+import { IconCheck, IconMinus } from '@ui/display/icon/components/TablerIcons';
 import * as React from 'react';
 
 export enum CheckboxVariant {
@@ -62,7 +63,7 @@ const StyledInputContainer = styled.div<InputProps>`
     return `&:hover{
       background-color: ${
         indeterminate || isChecked
-          ? theme.color.blue10
+          ? theme.background.transparent.blue
           : theme.background.transparent.light
       };
     }}
