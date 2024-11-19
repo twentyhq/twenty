@@ -44,7 +44,7 @@ type StyledMainLogoProps = {
   size?: string | null;
 };
 
-const StyledMainLogo = styled.div<StyledMainLogoProps>`
+const StyledMainLogo = styled.div<Pick<StyledMainLogoProps, 'logo'>>`
   background: url(${(props) => props.logo});
   background-size: cover;
   height: 100%;
