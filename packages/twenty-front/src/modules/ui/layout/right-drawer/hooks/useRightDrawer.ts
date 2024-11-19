@@ -6,6 +6,7 @@ import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/righ
 import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerPages } from '../types/RightDrawerPages';
+import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 
 export const useRightDrawer = () => {
   const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState);
@@ -28,6 +29,7 @@ export const useRightDrawer = () => {
       () => {
         set(isRightDrawerOpenState, false);
         set(isRightDrawerMinimizedState, false);
+        emitRightDrawerCloseEvent();
       },
     [],
   );
