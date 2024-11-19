@@ -66,7 +66,7 @@ export default defineConfig(({ command, mode }) => {
 
   const baseUrl = new URL(REACT_APP_BASE_URL ?? `http://localhost`);
 
-  baseUrl.port = port;
+  baseUrl.port = port.toString();
 
   if (
     baseUrl.protocol === 'https:' &&
