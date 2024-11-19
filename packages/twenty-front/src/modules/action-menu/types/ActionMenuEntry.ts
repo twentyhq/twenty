@@ -3,6 +3,7 @@ import { IconComponent, MenuItemAccent } from 'twenty-ui';
 
 export type ActionMenuEntry = {
   type: 'standard' | 'workflow-run';
+  scope: 'global' | 'record-selection';
   key: string;
   label: string;
   position: number;
