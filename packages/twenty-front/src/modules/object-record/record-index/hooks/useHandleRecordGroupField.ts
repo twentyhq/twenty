@@ -8,13 +8,13 @@ import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-type UseRecordGroupSelectorParams = {
+type UseHandleRecordGroupFieldParams = {
   viewBarComponentId: string;
 };
 
-export const useRecordGroupSelector = ({
+export const useHandleRecordGroupField = ({
   viewBarComponentId,
-}: UseRecordGroupSelectorParams) => {
+}: UseHandleRecordGroupFieldParams) => {
   const { createViewGroupRecords, deleteViewGroupRecords } =
     usePersistViewGroupRecords();
 

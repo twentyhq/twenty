@@ -13,7 +13,7 @@ import { StyledInput } from '@/object-record/object-filter-dropdown/components/O
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useRecordGroupFieldsDropdown';
 import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
-import { useRecordGroupSelector } from '@/object-record/record-group/hooks/useRecordGroupSelector';
+import { useHandleRecordGroupField } from '@/object-record/record-index/hooks/useHandleRecordGroupField';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
@@ -49,7 +49,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   } = useSearchRecordGroupField();
 
   const { handleRecordGroupFieldChange, resetRecordGroupField } =
-    useRecordGroupSelector({
+    useHandleRecordGroupField({
       viewBarComponentId: recordIndexId,
     });
 
