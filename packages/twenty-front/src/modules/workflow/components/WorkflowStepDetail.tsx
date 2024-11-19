@@ -52,7 +52,6 @@ export const WorkflowStepDetail = ({
         case 'DATABASE_EVENT': {
           return (
             <WorkflowEditTriggerDatabaseEventForm
-              key={stepId}
               trigger={stepDefinition.definition}
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...props}
@@ -62,7 +61,6 @@ export const WorkflowStepDetail = ({
         case 'MANUAL': {
           return (
             <WorkflowEditTriggerManualForm
-              key={stepId}
               trigger={stepDefinition.definition}
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...props}
@@ -81,7 +79,6 @@ export const WorkflowStepDetail = ({
         case 'CODE': {
           return (
             <WorkflowEditActionFormServerlessFunction
-              key={stepId}
               action={stepDefinition.definition}
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...props}
@@ -91,7 +88,6 @@ export const WorkflowStepDetail = ({
         case 'SEND_EMAIL': {
           return (
             <WorkflowEditActionFormSendEmail
-              key={stepId}
               action={stepDefinition.definition}
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...props}
