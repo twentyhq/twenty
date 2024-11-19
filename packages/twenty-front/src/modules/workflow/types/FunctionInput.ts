@@ -1,3 +1,5 @@
-export type FunctionInput = {
-  [key: string]: FunctionInput | string;
-};
+export type FunctionInput =
+  | {
+      [name: string]: FunctionInput;
+    }
+  | any;
