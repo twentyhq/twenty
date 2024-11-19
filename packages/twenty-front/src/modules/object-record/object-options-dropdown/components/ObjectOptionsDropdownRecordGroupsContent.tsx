@@ -11,6 +11,7 @@ import {
 } from 'twenty-ui';
 
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
+import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
 import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
 import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
@@ -20,7 +21,6 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { RecordGroupsVisibilityDropdownSection } from '@/views/components/RecordGroupsVisibilityDropdownSection';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
@@ -113,7 +113,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           <DropdownMenuSeparator />
           <RecordGroupsVisibilityDropdownSection
             title="Visible groups"
-            viewGroups={visibleRecordGroups}
+            recordGroups={visibleRecordGroups}
             onDragEnd={handleRecordGroupOrderChange}
             onVisibilityChange={handleRecordGroupVisibilityChange}
             isDraggable={isDragableSortRecordGroup}

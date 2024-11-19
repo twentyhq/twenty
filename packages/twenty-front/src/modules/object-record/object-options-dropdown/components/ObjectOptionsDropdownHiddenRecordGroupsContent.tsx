@@ -9,6 +9,7 @@ import {
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
+import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
 import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -17,7 +18,6 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { RecordGroupsVisibilityDropdownSection } from '@/views/components/RecordGroupsVisibilityDropdownSection';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
@@ -80,7 +80,7 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
 
       <RecordGroupsVisibilityDropdownSection
         title={`Hidden ${viewGroupFieldMetadataItem?.label}`}
-        viewGroups={hiddenRecordGroups}
+        recordGroups={hiddenRecordGroups}
         onVisibilityChange={handleRecordGroupVisibilityChange}
         isDraggable={false}
         showSubheader={false}
