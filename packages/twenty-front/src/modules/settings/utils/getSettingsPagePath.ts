@@ -1,4 +1,5 @@
-import { ExtractPathParams, SettingsPath } from '@/types/SettingsPath';
+import { ExtractPathParams } from '@/types/ExtractPathParams';
+import { SettingsPath } from '@/types/SettingsPath';
 import { isDefined } from '~/utils/isDefined';
 
 type Params<V extends string> = {
