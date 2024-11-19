@@ -82,9 +82,26 @@ const getFieldProperties = (
             type: 'object',
             description: `A secondary link`,
             properties: {
-              url: { type: 'string' },
+              url: { type: 'string', format: 'uri' },
               label: { type: 'string' },
             },
+          },
+        };
+      }
+      if (propertyName === 'additionalPhones') {
+        return {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        };
+      }
+      if (propertyName === 'additionalEmails') {
+        return {
+          type: 'array',
+          items: {
+            type: 'string',
+            format: 'email',
           },
         };
       }
