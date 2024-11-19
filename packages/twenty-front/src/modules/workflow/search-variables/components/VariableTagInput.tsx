@@ -39,23 +39,36 @@ const StyledInputContainer = styled.div<{
     multiline ? `${5 * LINE_HEIGHT}px` : 'auto'};
 `;
 
-const StyledSearchVariablesDropdownOutsideContainer = styled.div`
+const StyledSearchVariablesDropdownContainer = styled.div<{
+  multiline?: boolean;
+  readonly?: boolean;
+}>`
+  align-items: center;
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
-  border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-`;
 
-const StyledSearchVariablesDropdownInsideContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: ${({ theme }) => theme.spacing(0.5)};
-  right: ${({ theme }) => theme.spacing(0.5)};
+  ${({ theme, readonly }) =>
+    !readonly &&
+    `
+      :hover {
+        background-color: ${theme.background.transparent.light};
+      }`}
+
+  ${({ theme, multiline }) =>
+    multiline
+      ? `
+        position: absolute;
+        top: ${theme.spacing(0)};
+        right: ${theme.spacing(0)};
+        padding: ${theme.spacing(0.5)} ${theme.spacing(0)};
+        border-radius: ${theme.border.radius.sm};
+      `
+      : `
+        background-color: ${theme.background.transparent.lighter};
+        border-top-right-radius: ${theme.border.radius.sm};
+        border-bottom-right-radius: ${theme.border.radius.sm};
+        border: 1px solid ${theme.border.color.medium};
+      `}
 `;
 
 const StyledEditor = styled.div<{ multiline: boolean; readonly: boolean }>`
@@ -137,10 +150,6 @@ export const VariableTagInput = ({
   onChange,
   readonly,
 }: VariableTagInputProps) => {
-  const StyledSearchVariablesDropdownContainer = multiline
-    ? StyledSearchVariablesDropdownInsideContainer
-    : StyledSearchVariablesDropdownOutsideContainer;
-
   const deboucedOnUpdate = useDebouncedCallback((editor) => {
     const jsonContent = editor.getJSON();
     const parsedContent = parseEditorContent(jsonContent);
@@ -209,7 +218,10 @@ export const VariableTagInput = ({
         <StyledEditor multiline={!!multiline} readonly={!!readonly}>
           <EditorContent className="editor-content" editor={editor} />
         </StyledEditor>
-        <StyledSearchVariablesDropdownContainer>
+        <StyledSearchVariablesDropdownContainer
+          multiline={multiline}
+          readonly={readonly}
+        >
           <SearchVariablesDropdown
             inputId={inputId}
             editor={editor}

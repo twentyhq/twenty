@@ -15,7 +15,7 @@ import { IconVariablePlus } from 'twenty-ui';
 
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
-)<{ transparentBackground?: boolean; disabled: boolean }>`
+)<{ transparentBackground?: boolean; disabled?: boolean }>`
   background-color: ${({ theme, transparentBackground }) =>
     transparentBackground
       ? 'transparent'
@@ -74,7 +74,7 @@ const SearchVariablesDropdown = ({
       >
         <IconVariablePlus
           size={theme.icon.size.sm}
-          color={disabled ? theme.font.color.light : theme.font.color.tertiary}
+          color={theme.font.color.light}
         />
       </StyledDropdownVariableButtonContainer>
     );
@@ -90,7 +90,7 @@ const SearchVariablesDropdown = ({
       clickableComponent={
         <StyledDropdownVariableButtonContainer
           isUnfolded={isDropdownOpen}
-          disabled={!!disabled}
+          disabled={disabled}
           transparentBackground
         >
           <IconVariablePlus size={theme.icon.size.sm} />
