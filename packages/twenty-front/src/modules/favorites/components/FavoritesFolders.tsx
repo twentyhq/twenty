@@ -38,7 +38,7 @@ export const FavoriteFolders = ({
   };
 
   const handleClickOutside = async (
-    event: MouseEvent | TouchEvent,
+    _event: MouseEvent | TouchEvent,
     value: string,
   ) => {
     if (!value) {

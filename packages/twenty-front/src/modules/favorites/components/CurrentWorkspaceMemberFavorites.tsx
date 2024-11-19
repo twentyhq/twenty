@@ -154,6 +154,7 @@ export const CurrentWorkspaceMemberFavorites = ({
                     key={favorite.id}
                     draggableId={favorite.id}
                     index={index}
+                    isInsideScrollableContainer
                     itemComponent={
                       <NavigationDrawerSubItem
                         key={favorite.id}
