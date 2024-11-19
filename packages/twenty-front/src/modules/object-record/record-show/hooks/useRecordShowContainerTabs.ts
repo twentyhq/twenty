@@ -1,125 +1,268 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { BASE_RECORD_LAYOUT } from '@/object-record/record-show/constants/BaseRecordLayout';
+import { CardType } from '@/object-record/record-show/types/CardType';
+import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
+import { SingleTabProps } from '@/ui/layout/tab/components/TabList';
+import { RecordLayoutTab } from '@/ui/layout/tab/types/RecordLayoutTab';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useRecoilValue } from 'recoil';
 import {
   IconCalendarEvent,
-  IconCheckbox,
-  IconList,
   IconMail,
   IconNotes,
-  IconPaperclip,
   IconPrinter,
   IconSettings,
-  IconTimelineEvent,
 } from 'twenty-ui';
+import { FeatureFlag, FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useRecordShowContainerTabs = (
   loading: boolean,
   targetObjectNameSingular: CoreObjectNameSingular,
   isInRightDrawer: boolean,
-) => {
+  objectMetadataItem: ObjectMetadataItem,
+): SingleTabProps[] => {
   const isMobile = useIsMobile();
-  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const isWorkflow =
-    isWorkflowEnabled &&
-    targetObjectNameSingular === CoreObjectNameSingular.Workflow;
-  const isWorkflowVersion =
-    isWorkflowEnabled &&
-    targetObjectNameSingular === CoreObjectNameSingular.WorkflowVersion;
-  const isWorkflowRun =
-    isWorkflowEnabled &&
-    targetObjectNameSingular === CoreObjectNameSingular.WorkflowRun;
-  const isWorkflowRelated = isWorkflow || isWorkflowVersion || isWorkflowRun;
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
-  const isCompanyOrPerson = [
-    CoreObjectNameSingular.Company,
-    CoreObjectNameSingular.Person,
-  ].includes(targetObjectNameSingular);
-  const shouldDisplayCalendarTab = isCompanyOrPerson;
-  const shouldDisplayEmailsTab = isCompanyOrPerson;
+  // Object-specific layouts that override or extend the base layout
+  const OBJECT_SPECIFIC_LAYOUTS: Partial<
+    Record<CoreObjectNameSingular, RecordLayout>
+  > = {
+    [CoreObjectNameSingular.Note]: {
+      richText: {
+        title: 'Note',
+        position: 0,
+        Icon: IconNotes,
+        cards: [{ type: CardType.RichTextCard }],
+        hide: {
+          ifMobile: false,
+          ifDesktop: false,
+          ifInRightDrawer: false,
+          ifFeaturesDisabled: [],
+          ifRequiredObjectsInactive: [],
+          ifRelationsMissing: [],
+        },
+      },
+      tasks: null,
+      notes: null,
+    },
+    [CoreObjectNameSingular.Task]: {
+      richText: {
+        title: 'Note',
+        position: 0,
+        Icon: IconNotes,
+        cards: [{ type: CardType.RichTextCard }],
+        hide: {
+          ifMobile: false,
+          ifDesktop: false,
+          ifInRightDrawer: false,
+          ifFeaturesDisabled: [],
+          ifRequiredObjectsInactive: [],
+          ifRelationsMissing: [],
+        },
+      },
+      tasks: null,
+      notes: null,
+    },
+    [CoreObjectNameSingular.Company]: {
+      emails: {
+        title: 'Emails',
+        position: 600,
+        Icon: IconMail,
+        cards: [{ type: CardType.EmailCard }],
+        hide: {
+          ifMobile: false,
+          ifDesktop: false,
+          ifInRightDrawer: false,
+          ifFeaturesDisabled: [],
+          ifRequiredObjectsInactive: [],
+          ifRelationsMissing: [],
+        },
+      },
+      calendar: {
+        title: 'Calendar',
+        position: 700,
+        Icon: IconCalendarEvent,
+        cards: [{ type: CardType.CalendarCard }],
+        hide: {
+          ifMobile: false,
+          ifDesktop: false,
+          ifInRightDrawer: false,
+          ifFeaturesDisabled: [],
+          ifRequiredObjectsInactive: [],
+          ifRelationsMissing: [],
+        },
+      },
+    },
+    [CoreObjectNameSingular.Person]: {
+      emails: {
+        title: 'Emails',
+        position: 600,
+        Icon: IconMail,
+        cards: [{ type: CardType.EmailCard }],
+        hide: {
+          ifMobile: false,
+          ifDesktop: false,
+          ifInRightDrawer: false,
+          ifFeaturesDisabled: [],
+          ifRequiredObjectsInactive: [],
+          ifRelationsMissing: [],
+        },
+      },
+      calendar: {
+        title: 'Calendar',
+        position: 700,
+        Icon: IconCalendarEvent,
+        cards: [{ type: CardType.CalendarCard }],
+        hide: {
+          ifMobile: false,
+          ifDesktop: false,
+          ifInRightDrawer: false,
+          ifFeaturesDisabled: [],
+          ifRequiredObjectsInactive: [],
+          ifRelationsMissing: [],
+        },
+      },
+    },
+    [CoreObjectNameSingular.Workflow]: {
+      workflow: {
+        title: 'Flow',
+        position: 0,
+        Icon: IconSettings,
+        cards: [{ type: CardType.WorkflowCard }],
+        hide: {
+          ifMobile: false,
+          ifDesktop: false,
+          ifInRightDrawer: false,
+          ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+          ifRequiredObjectsInactive: [],
+          ifRelationsMissing: [],
+        },
+      },
+      timeline: null,
+    },
+    [CoreObjectNameSingular.WorkflowVersion]: {
+      workflowVersion: {
+        title: 'Flow',
+        position: 0,
+        Icon: IconSettings,
+        cards: [{ type: CardType.WorkflowVersionCard }],
+        hide: {
+          ifMobile: false,
+          ifDesktop: false,
+          ifInRightDrawer: false,
+          ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+          ifRequiredObjectsInactive: [],
+          ifRelationsMissing: [],
+        },
+      },
+      timeline: null,
+    },
+    [CoreObjectNameSingular.WorkflowRun]: {
+      workflowRunOutput: {
+        title: 'Output',
+        position: 0,
+        Icon: IconPrinter,
+        cards: [{ type: CardType.WorkflowRunOutputCard }],
+        hide: {
+          ifMobile: false,
+          ifDesktop: false,
+          ifInRightDrawer: false,
+          ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+          ifRequiredObjectsInactive: [],
+          ifRelationsMissing: [],
+        },
+      },
+      workflowRunFlow: {
+        title: 'Flow',
+        position: 0,
+        Icon: IconSettings,
+        cards: [{ type: CardType.WorkflowRunCard }],
+        hide: {
+          ifMobile: false,
+          ifDesktop: false,
+          ifInRightDrawer: false,
+          ifFeaturesDisabled: ['IS_WORKFLOW_ENABLED'],
+          ifRequiredObjectsInactive: [],
+          ifRelationsMissing: [],
+        },
+      },
+      timeline: null,
+    },
+  };
 
-  return [
-    {
-      id: 'richText',
-      title: 'Note',
-      Icon: IconNotes,
-      hide:
-        loading ||
-        (targetObjectNameSingular !== CoreObjectNameSingular.Note &&
-          targetObjectNameSingular !== CoreObjectNameSingular.Task),
-    },
-    {
-      id: 'fields',
-      title: 'Fields',
-      Icon: IconList,
-      hide: !(isMobile || isInRightDrawer),
-    },
-    {
-      id: 'timeline',
-      title: 'Timeline',
-      Icon: IconTimelineEvent,
-      hide: isInRightDrawer || isWorkflowRelated,
-    },
-    {
-      id: 'tasks',
-      title: 'Tasks',
-      Icon: IconCheckbox,
-      hide:
-        targetObjectNameSingular === CoreObjectNameSingular.Note ||
-        targetObjectNameSingular === CoreObjectNameSingular.Task ||
-        isWorkflowRelated,
-    },
-    {
-      id: 'notes',
-      title: 'Notes',
-      Icon: IconNotes,
-      hide:
-        targetObjectNameSingular === CoreObjectNameSingular.Note ||
-        targetObjectNameSingular === CoreObjectNameSingular.Task ||
-        isWorkflowRelated,
-    },
-    {
-      id: 'files',
-      title: 'Files',
-      Icon: IconPaperclip,
-      hide: isWorkflowRelated,
-    },
-    {
-      id: 'emails',
-      title: 'Emails',
-      Icon: IconMail,
-      hide: !shouldDisplayEmailsTab,
-    },
-    {
-      id: 'calendar',
-      title: 'Calendar',
-      Icon: IconCalendarEvent,
-      hide: !shouldDisplayCalendarTab,
-    },
-    {
-      id: 'workflow',
-      title: 'Workflow',
-      Icon: IconSettings,
-      hide: !isWorkflow,
-    },
-    {
-      id: 'workflowVersion',
-      title: 'Flow',
-      Icon: IconSettings,
-      hide: !isWorkflowVersion,
-    },
-    {
-      id: 'workflowRunOutput',
-      title: 'Output',
-      Icon: IconPrinter,
-      hide: !isWorkflowRun,
-    },
-    {
-      id: 'workflowRunFlow',
-      title: 'Flow',
-      Icon: IconSettings,
-      hide: !isWorkflowRun,
-    },
-  ];
+  // Merge base layout with object-specific layout
+  const tabDefinitions: RecordLayout = {
+    ...BASE_RECORD_LAYOUT,
+    ...(OBJECT_SPECIFIC_LAYOUTS[targetObjectNameSingular] || {}),
+  };
+
+  return Object.entries(tabDefinitions)
+    .filter(
+      (entry): entry is [string, NonNullable<RecordLayoutTab>] =>
+        entry[1] !== null && entry[1] !== undefined,
+    )
+    .sort(([, a], [, b]) => a.position - b.position)
+    .map(([key, { title, Icon, hide, cards }]) => {
+      // Special handling for fields tab
+      if (key === 'fields') {
+        return {
+          id: key,
+          title,
+          Icon,
+          cards,
+          hide: !(isMobile || isInRightDrawer),
+        };
+      }
+
+      const baseHide =
+        (hide.ifMobile && isMobile) ||
+        (hide.ifDesktop && !isMobile) ||
+        (hide.ifInRightDrawer && isInRightDrawer);
+
+      const featureNotEnabled =
+        hide.ifFeaturesDisabled.length > 0 &&
+        !hide.ifFeaturesDisabled.every((flagKey) => {
+          return !!currentWorkspace?.featureFlags?.find(
+            (flag: FeatureFlag) => flag.key === flagKey && flag.value,
+          );
+        });
+
+      const requiredObjectsInactive =
+        hide.ifRequiredObjectsInactive.length > 0 &&
+        !hide.ifRequiredObjectsInactive.every((obj) =>
+          objectMetadataItems.some(
+            (item) => item.nameSingular === obj && item.isActive,
+          ),
+        );
+
+      const relationsDontExist =
+        hide.ifRelationsMissing.length > 0 &&
+        !hide.ifRelationsMissing.every((rel) =>
+          objectMetadataItem.fields.some(
+            (field) =>
+              field.type === FieldMetadataType.Relation &&
+              field.name === rel &&
+              field.isActive,
+          ),
+        );
+
+      return {
+        id: key,
+        title,
+        Icon,
+        cards,
+        hide:
+          loading ||
+          baseHide ||
+          featureNotEnabled ||
+          requiredObjectsInactive ||
+          relationsDontExist,
+      };
+    });
 };

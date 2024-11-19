@@ -58,8 +58,14 @@ export const getOperandsForFilterDefinition = (
       ];
     case 'RELATION':
       return [...relationOperands, ...emptyOperands];
+    case 'MULTI_SELECT':
+      return [
+        ViewFilterOperand.Contains,
+        ViewFilterOperand.DoesNotContain,
+        ...emptyOperands,
+      ];
     case 'SELECT':
-      return [...relationOperands];
+      return [ViewFilterOperand.Is, ViewFilterOperand.IsNot, ...emptyOperands];
     case 'ACTOR': {
       if (isActorSourceCompositeFilter(filterDefinition)) {
         return [

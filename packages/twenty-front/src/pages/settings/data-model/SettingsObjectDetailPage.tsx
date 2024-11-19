@@ -26,10 +26,11 @@ import {
   IconPlus,
   IconSettings,
   IconTool,
-  isDefined,
   MAIN_COLORS,
   UndecoratedLink,
+  isDefined,
 } from 'twenty-ui';
+import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
 
 const StyledTabListContainer = styled.div`
@@ -63,11 +64,6 @@ const StyledTitleContainer = styled.div`
   display: flex;
 `;
 
-const TAB_LIST_COMPONENT_ID = 'object-details-tab-list';
-const FIELDS_TAB_ID = 'fields';
-const SETTINGS_TAB_ID = 'settings';
-const INDEXES_TAB_ID = 'indexes';
-
 export const SettingsObjectDetailPage = () => {
   const navigate = useNavigate();
 
@@ -82,7 +78,9 @@ export const SettingsObjectDetailPage = () => {
     findActiveObjectMetadataItemBySlug(objectSlug) ??
     findActiveObjectMetadataItemBySlug(updatedObjectSlug);
 
-  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabIdState } = useTabList(
+    SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+  );
   const activeTabId = useRecoilValue(activeTabIdState);
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
@@ -105,19 +103,19 @@ export const SettingsObjectDetailPage = () => {
 
   const tabs = [
     {
-      id: FIELDS_TAB_ID,
+      id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS,
       title: 'Fields',
       Icon: IconListDetails,
       hide: false,
     },
     {
-      id: SETTINGS_TAB_ID,
+      id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.SETTINGS,
       title: 'Settings',
       Icon: IconSettings,
       hide: false,
     },
     {
-      id: INDEXES_TAB_ID,
+      id: SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.INDEXES,
       title: 'Indexes',
       Icon: IconCodeCircle,
       hide: !isAdvancedModeEnabled || !isUniqueIndexesEnabled,
@@ -127,11 +125,11 @@ export const SettingsObjectDetailPage = () => {
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
-      case FIELDS_TAB_ID:
+      case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS:
         return <ObjectFields objectMetadataItem={objectMetadataItem} />;
-      case SETTINGS_TAB_ID:
+      case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.SETTINGS:
         return <ObjectSettings objectMetadataItem={objectMetadataItem} />;
-      case INDEXES_TAB_ID:
+      case SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.INDEXES:
         return <ObjectIndexes objectMetadataItem={objectMetadataItem} />;
       default:
         return <></>;
@@ -141,49 +139,53 @@ export const SettingsObjectDetailPage = () => {
   const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
 
   return (
-    <SubMenuTopBarContainer
-      title={
-        <StyledTitleContainer>
-          <H3Title title={objectMetadataItem.labelPlural} />
-          <StyledObjectTypeTag objectTypeLabel={objectTypeLabel} />
-        </StyledTitleContainer>
-      }
-      links={[
-        {
-          children: 'Workspace',
-          href: getSettingsPagePath(SettingsPath.Workspace),
-        },
-        { children: 'Objects', href: '/settings/objects' },
-        {
-          children: objectMetadataItem.labelPlural,
-        },
-      ]}
-      actionButton={
-        activeTabId === FIELDS_TAB_ID && (
-          <UndecoratedLink to={'./new-field/select'}>
-            <Button
-              title="New Field"
-              variant="primary"
-              size="small"
-              accent="blue"
-              Icon={IconPlus}
+    <>
+      <SubMenuTopBarContainer
+        title={
+          <StyledTitleContainer>
+            <H3Title title={objectMetadataItem.labelPlural} />
+            <StyledObjectTypeTag objectTypeLabel={objectTypeLabel} />
+          </StyledTitleContainer>
+        }
+        links={[
+          {
+            children: 'Workspace',
+            href: getSettingsPagePath(SettingsPath.Workspace),
+          },
+          { children: 'Objects', href: '/settings/objects' },
+          {
+            children: objectMetadataItem.labelPlural,
+          },
+        ]}
+        actionButton={
+          activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
+            <UndecoratedLink to={'./new-field/select'}>
+              <Button
+                title="New Field"
+                variant="primary"
+                size="small"
+                accent="blue"
+                Icon={IconPlus}
+              />
+            </UndecoratedLink>
+          )
+        }
+      >
+        <SettingsPageContainer>
+          <StyledTabListContainer>
+            <TabList
+              tabListInstanceId={
+                SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
+              }
+              tabs={tabs}
+              className="tab-list"
             />
-          </UndecoratedLink>
-        )
-      }
-    >
-      <SettingsPageContainer>
-        <StyledTabListContainer>
-          <TabList
-            tabListId={TAB_LIST_COMPONENT_ID}
-            tabs={tabs}
-            className="tab-list"
-          />
-        </StyledTabListContainer>
-        <StyledContentContainer>
-          {renderActiveTabContent()}
-        </StyledContentContainer>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+          </StyledTabListContainer>
+          <StyledContentContainer>
+            {renderActiveTabContent()}
+          </StyledContentContainer>
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </>
   );
 };

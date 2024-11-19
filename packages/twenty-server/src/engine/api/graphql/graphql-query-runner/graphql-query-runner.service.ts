@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import {
-  Record as IRecord,
-  RecordFilter,
-  RecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+  ObjectRecord,
+  ObjectRecordFilter,
+  ObjectRecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { IEdge } from 'src/engine/api/graphql/workspace-query-runner/interfaces/edge.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
@@ -48,11 +48,11 @@ export class GraphqlQueryRunnerService {
   /** QUERIES */
 
   @LogExecutionTime()
-  async findOne<ObjectRecord extends IRecord, Filter extends RecordFilter>(
+  async findOne<T extends ObjectRecord, Filter extends ObjectRecordFilter>(
     args: FindOneResolverArgs<Filter>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord> {
-    return this.executeQuery<FindOneResolverArgs<Filter>, ObjectRecord>(
+  ): Promise<T> {
+    return this.executeQuery<FindOneResolverArgs<Filter>, T>(
       'findOne',
       args,
       options,
@@ -61,36 +61,36 @@ export class GraphqlQueryRunnerService {
 
   @LogExecutionTime()
   async findMany<
-    ObjectRecord extends IRecord,
-    Filter extends RecordFilter,
-    OrderBy extends RecordOrderBy,
+    T extends ObjectRecord,
+    Filter extends ObjectRecordFilter,
+    OrderBy extends ObjectRecordOrderBy,
   >(
     args: FindManyResolverArgs<Filter, OrderBy>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<IConnection<ObjectRecord, IEdge<ObjectRecord>>> {
+  ): Promise<IConnection<T, IEdge<T>>> {
     return this.executeQuery<
       FindManyResolverArgs<Filter, OrderBy>,
-      IConnection<ObjectRecord, IEdge<ObjectRecord>>
+      IConnection<T, IEdge<T>>
     >('findMany', args, options);
   }
 
   @LogExecutionTime()
-  async findDuplicates<ObjectRecord extends IRecord>(
-    args: FindDuplicatesResolverArgs<Partial<ObjectRecord>>,
+  async findDuplicates<T extends ObjectRecord>(
+    args: FindDuplicatesResolverArgs<Partial<T>>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<IConnection<ObjectRecord>[]> {
+  ): Promise<IConnection<T>[]> {
     return this.executeQuery<
-      FindDuplicatesResolverArgs<Partial<ObjectRecord>>,
-      IConnection<ObjectRecord>[]
+      FindDuplicatesResolverArgs<Partial<T>>,
+      IConnection<T>[]
     >('findDuplicates', args, options);
   }
 
   @LogExecutionTime()
-  async search<ObjectRecord extends IRecord = IRecord>(
+  async search<T extends ObjectRecord = ObjectRecord>(
     args: SearchResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<IConnection<ObjectRecord>> {
-    return this.executeQuery<SearchResolverArgs, IConnection<ObjectRecord>>(
+  ): Promise<IConnection<T>> {
+    return this.executeQuery<SearchResolverArgs, IConnection<T>>(
       'search',
       args,
       options,
@@ -100,13 +100,13 @@ export class GraphqlQueryRunnerService {
   /** MUTATIONS */
 
   @LogExecutionTime()
-  async createOne<ObjectRecord extends IRecord>(
-    args: CreateOneResolverArgs<Partial<ObjectRecord>>,
+  async createOne<T extends ObjectRecord>(
+    args: CreateOneResolverArgs<Partial<T>>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord> {
+  ): Promise<T> {
     const results = await this.executeQuery<
-      CreateManyResolverArgs<Partial<ObjectRecord>>,
-      ObjectRecord[]
+      CreateManyResolverArgs<Partial<T>>,
+      T[]
     >('createMany', { data: [args.data], upsert: args.upsert }, options);
 
     // TODO: emitCreateEvents should be moved to the ORM layer
@@ -114,7 +114,7 @@ export class GraphqlQueryRunnerService {
       this.apiEventEmitterService.emitCreateEvents(
         results,
         options.authContext,
-        options.objectMetadataItem,
+        options.objectMetadataItemWithFieldMaps,
       );
     }
 
@@ -122,20 +122,20 @@ export class GraphqlQueryRunnerService {
   }
 
   @LogExecutionTime()
-  async createMany<ObjectRecord extends IRecord>(
-    args: CreateManyResolverArgs<Partial<ObjectRecord>>,
+  async createMany<T extends ObjectRecord>(
+    args: CreateManyResolverArgs<Partial<T>>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord[]> {
+  ): Promise<T[]> {
     const results = await this.executeQuery<
-      CreateManyResolverArgs<Partial<ObjectRecord>>,
-      ObjectRecord[]
+      CreateManyResolverArgs<Partial<T>>,
+      T[]
     >('createMany', args, options);
 
     if (results) {
       this.apiEventEmitterService.emitCreateEvents(
         results,
         options.authContext,
-        options.objectMetadataItem,
+        options.objectMetadataItemWithFieldMaps,
       );
     }
 
@@ -143,14 +143,11 @@ export class GraphqlQueryRunnerService {
   }
 
   @LogExecutionTime()
-  public async updateOne<ObjectRecord extends IRecord>(
-    args: UpdateOneResolverArgs<Partial<ObjectRecord>>,
+  public async updateOne<T extends ObjectRecord>(
+    args: UpdateOneResolverArgs<Partial<T>>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord> {
-    const existingRecord = await this.executeQuery<
-      FindOneResolverArgs,
-      ObjectRecord
-    >(
+  ): Promise<T> {
+    const existingRecord = await this.executeQuery<FindOneResolverArgs, T>(
       'findOne',
       {
         filter: { id: { eq: args.id } },
@@ -159,8 +156,8 @@ export class GraphqlQueryRunnerService {
     );
 
     const result = await this.executeQuery<
-      UpdateOneResolverArgs<Partial<ObjectRecord>>,
-      ObjectRecord
+      UpdateOneResolverArgs<Partial<T>>,
+      T
     >('updateOne', args, options);
 
     this.apiEventEmitterService.emitUpdateEvents(
@@ -168,20 +165,20 @@ export class GraphqlQueryRunnerService {
       [result],
       Object.keys(args.data),
       options.authContext,
-      options.objectMetadataItem,
+      options.objectMetadataItemWithFieldMaps,
     );
 
     return result;
   }
 
   @LogExecutionTime()
-  public async updateMany<ObjectRecord extends IRecord>(
-    args: UpdateManyResolverArgs<Partial<ObjectRecord>>,
+  public async updateMany<T extends ObjectRecord>(
+    args: UpdateManyResolverArgs<Partial<T>>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord[]> {
+  ): Promise<T[]> {
     const existingRecords = await this.executeQuery<
       FindManyResolverArgs,
-      IConnection<ObjectRecord, IEdge<ObjectRecord>>
+      IConnection<T, IEdge<T>>
     >(
       'findMany',
       {
@@ -191,8 +188,8 @@ export class GraphqlQueryRunnerService {
     );
 
     const result = await this.executeQuery<
-      UpdateManyResolverArgs<Partial<ObjectRecord>>,
-      ObjectRecord[]
+      UpdateManyResolverArgs<Partial<T>>,
+      T[]
     >('updateMany', args, options);
 
     this.apiEventEmitterService.emitUpdateEvents(
@@ -200,25 +197,25 @@ export class GraphqlQueryRunnerService {
       result,
       Object.keys(args.data),
       options.authContext,
-      options.objectMetadataItem,
+      options.objectMetadataItemWithFieldMaps,
     );
 
     return result;
   }
 
   @LogExecutionTime()
-  public async deleteOne<ObjectRecord extends IRecord & { deletedAt?: Date }>(
+  public async deleteOne<T extends ObjectRecord & { deletedAt?: Date }>(
     args: DeleteOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord> {
+  ): Promise<T> {
     const result = await this.executeQuery<
-      UpdateOneResolverArgs<Partial<ObjectRecord>>,
-      ObjectRecord
+      UpdateOneResolverArgs<Partial<T>>,
+      T
     >(
       'deleteOne',
       {
         id: args.id,
-        data: { deletedAt: new Date() } as Partial<ObjectRecord>,
+        data: { deletedAt: new Date() } as Partial<T>,
       },
       options,
     );
@@ -226,26 +223,26 @@ export class GraphqlQueryRunnerService {
     this.apiEventEmitterService.emitDeletedEvents(
       [result],
       options.authContext,
-      options.objectMetadataItem,
+      options.objectMetadataItemWithFieldMaps,
     );
 
     return result;
   }
 
   @LogExecutionTime()
-  public async deleteMany<ObjectRecord extends IRecord & { deletedAt?: Date }>(
+  public async deleteMany<T extends ObjectRecord & { deletedAt?: Date }>(
     args: DeleteManyResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord[]> {
+  ): Promise<T[]> {
     const result = await this.executeQuery<
-      UpdateManyResolverArgs<Partial<ObjectRecord>>,
-      ObjectRecord[]
+      UpdateManyResolverArgs<Partial<T>>,
+      T[]
     >(
       'deleteMany',
       {
         filter: args.filter,
 
-        data: { deletedAt: new Date() } as Partial<ObjectRecord>,
+        data: { deletedAt: new Date() } as Partial<T>,
       },
       options,
     );
@@ -253,63 +250,62 @@ export class GraphqlQueryRunnerService {
     this.apiEventEmitterService.emitDeletedEvents(
       result,
       options.authContext,
-      options.objectMetadataItem,
+      options.objectMetadataItemWithFieldMaps,
     );
 
     return result;
   }
 
   @LogExecutionTime()
-  async destroyOne<ObjectRecord extends IRecord>(
+  async destroyOne<T extends ObjectRecord>(
     args: DestroyOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord> {
-    const result = await this.executeQuery<
-      DestroyOneResolverArgs,
-      ObjectRecord
-    >('destroyOne', args, options);
+  ): Promise<T> {
+    const result = await this.executeQuery<DestroyOneResolverArgs, T>(
+      'destroyOne',
+      args,
+      options,
+    );
 
     this.apiEventEmitterService.emitDestroyEvents(
       [result],
       options.authContext,
-      options.objectMetadataItem,
+      options.objectMetadataItemWithFieldMaps,
     );
 
     return result;
   }
 
   @LogExecutionTime()
-  async destroyMany<ObjectRecord extends IRecord>(
+  async destroyMany<T extends ObjectRecord>(
     args: DestroyManyResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord[]> {
-    const result = await this.executeQuery<
-      DestroyManyResolverArgs,
-      ObjectRecord[]
-    >('destroyMany', args, options);
+  ): Promise<T[]> {
+    const result = await this.executeQuery<DestroyManyResolverArgs, T[]>(
+      'destroyMany',
+      args,
+      options,
+    );
 
     this.apiEventEmitterService.emitDestroyEvents(
       result,
       options.authContext,
-      options.objectMetadataItem,
+      options.objectMetadataItemWithFieldMaps,
     );
 
     return result;
   }
 
   @LogExecutionTime()
-  public async restoreMany<ObjectRecord extends IRecord>(
+  public async restoreMany<T extends ObjectRecord>(
     args: RestoreManyResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord> {
-    return await this.executeQuery<
-      UpdateManyResolverArgs<Partial<ObjectRecord>>,
-      ObjectRecord
-    >(
+  ): Promise<T> {
+    return await this.executeQuery<UpdateManyResolverArgs<Partial<T>>, T>(
       'restoreMany',
       {
         filter: args.filter,
-        data: { deletedAt: null } as Partial<ObjectRecord>,
+        data: { deletedAt: null } as Partial<T>,
       },
       options,
     );
@@ -320,7 +316,7 @@ export class GraphqlQueryRunnerService {
     args: Input,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Response> {
-    const { authContext, objectMetadataItem } = options;
+    const { authContext, objectMetadataItemWithFieldMaps } = options;
 
     const resolver =
       this.graphqlQueryResolverFactory.getResolver(operationName);
@@ -330,7 +326,7 @@ export class GraphqlQueryRunnerService {
     const hookedArgs =
       await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
-        objectMetadataItem.nameSingular,
+        objectMetadataItemWithFieldMaps.nameSingular,
         operationName,
         args,
       );
@@ -345,8 +341,9 @@ export class GraphqlQueryRunnerService {
 
     const resultWithGetters = await this.queryResultGettersFactory.create(
       results,
-      objectMetadataItem,
+      objectMetadataItemWithFieldMaps,
       authContext.workspace.id,
+      options.objectMetadataMaps,
     );
 
     const resultWithGettersArray = Array.isArray(resultWithGetters)
@@ -355,7 +352,7 @@ export class GraphqlQueryRunnerService {
 
     await this.workspaceQueryHookService.executePostQueryHooks(
       authContext,
-      objectMetadataItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
       operationName,
       resultWithGettersArray,
     );

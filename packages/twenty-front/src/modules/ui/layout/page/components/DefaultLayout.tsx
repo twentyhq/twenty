@@ -6,6 +6,7 @@ import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
+import { SignInAppNavigationDrawerMock } from '@/sign-in-background-mock/components/SignInAppNavigationDrawerMock';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
@@ -52,6 +53,10 @@ const StyledAppNavigationDrawer = styled(AppNavigationDrawer)`
   flex-shrink: 0;
 `;
 
+const StyledAppNavigationDrawerMock = styled(SignInAppNavigationDrawerMock)`
+  flex-shrink: 0;
+`;
+
 const StyledMainContainer = styled.div`
   display: flex;
   flex: 0 1 100%;
@@ -93,7 +98,11 @@ export const DefaultLayout = () => {
             duration: theme.animation.duration.normal,
           }}
         >
-          <StyledAppNavigationDrawer />
+          {showAuthModal ? (
+            <StyledAppNavigationDrawerMock />
+          ) : (
+            <StyledAppNavigationDrawer />
+          )}
           <StyledMainContainer>
             {showAuthModal ? (
               <>

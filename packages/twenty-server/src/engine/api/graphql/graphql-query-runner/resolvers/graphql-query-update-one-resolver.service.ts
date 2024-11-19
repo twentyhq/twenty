@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import graphqlFields from 'graphql-fields';
 
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -23,18 +23,22 @@ import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class GraphqlQueryUpdateOneResolverService
-  implements ResolverService<UpdateOneResolverArgs, IRecord>
+  implements ResolverService<UpdateOneResolverArgs, ObjectRecord>
 {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
-  async resolve<ObjectRecord extends IRecord = IRecord>(
-    args: UpdateOneResolverArgs<Partial<ObjectRecord>>,
+  async resolve<T extends ObjectRecord = ObjectRecord>(
+    args: UpdateOneResolverArgs<Partial<T>>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord> {
-    const { authContext, objectMetadataMapItem, objectMetadataMap, info } =
-      options;
+  ): Promise<T> {
+    const {
+      authContext,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+      info,
+    } = options;
 
     const dataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(
@@ -42,26 +46,26 @@ export class GraphqlQueryUpdateOneResolverService
       );
 
     const repository = dataSource.getRepository(
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataMapItem.fields,
-      objectMetadataMap,
+      objectMetadataItemWithFieldMaps.fieldsByName,
+      objectMetadataMaps,
     );
 
     const selectedFields = graphqlFields(info);
 
     const { relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataMapItem,
+      objectMetadataItemWithFieldMaps,
       selectedFields,
     );
 
     const queryBuilder = repository.createQueryBuilder(
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const data = formatData(args.data, objectMetadataMapItem);
+    const data = formatData(args.data, objectMetadataItemWithFieldMaps);
 
     const result = await queryBuilder
       .update(data)
@@ -73,8 +77,8 @@ export class GraphqlQueryUpdateOneResolverService
 
     const updatedRecords = formatResult(
       nonFormattedUpdatedObjectRecords,
-      objectMetadataMapItem,
-      objectMetadataMap,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     );
 
     if (updatedRecords.length === 0) {
@@ -84,38 +88,38 @@ export class GraphqlQueryUpdateOneResolverService
       );
     }
 
-    const updatedRecord = updatedRecords[0] as ObjectRecord;
+    const updatedRecord = updatedRecords[0] as T;
 
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
     if (relations) {
-      await processNestedRelationsHelper.processNestedRelations(
-        objectMetadataMap,
-        objectMetadataMapItem,
-        [updatedRecord],
+      await processNestedRelationsHelper.processNestedRelations({
+        objectMetadataMaps,
+        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        parentObjectRecords: [updatedRecord],
         relations,
-        QUERY_MAX_RECORDS,
+        limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource,
-      );
+      });
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return typeORMObjectRecordsParser.processRecord<ObjectRecord>({
+    return typeORMObjectRecordsParser.processRecord<T>({
       objectRecord: updatedRecord,
-      objectName: objectMetadataMapItem.nameSingular,
+      objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: 1,
       totalCount: 1,
     });
   }
 
-  async validate<ObjectRecord extends IRecord = IRecord>(
-    args: UpdateOneResolverArgs<Partial<ObjectRecord>>,
+  async validate<T extends ObjectRecord = ObjectRecord>(
+    args: UpdateOneResolverArgs<Partial<T>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
-    assertMutationNotOnRemoteObject(options.objectMetadataMapItem);
+    assertMutationNotOnRemoteObject(options.objectMetadataItemWithFieldMaps);
     assertIsValidUuid(args.id);
   }
 }

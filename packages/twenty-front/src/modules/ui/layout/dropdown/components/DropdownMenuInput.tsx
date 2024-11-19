@@ -15,6 +15,8 @@ const StyledInput = styled.input<{
 
   border: 1px solid ${({ theme, hasError }) =>
     hasError ? theme.border.color.danger : theme.border.color.medium};
+  background-color: ${({ theme }) => theme.background.transparent.secondary};
+  backdrop-filter: ${({ theme }) => theme.blur.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -30,6 +32,7 @@ const StyledInput = styled.input<{
 `;
 
 const StyledInputContainer = styled.div`
+  background-color: transparent;
   box-sizing: border-box;
   position: relative;
   width: 100%;
@@ -41,7 +44,7 @@ const StyledInputContainer = styled.div`
 
 const StyledRightContainer = styled.div`
   position: absolute;
-  right: ${({ theme }) => theme.spacing(2)};
+  right: ${({ theme }) => theme.spacing(1)};
   top: 50%;
   transform: translateY(-50%);
 `;

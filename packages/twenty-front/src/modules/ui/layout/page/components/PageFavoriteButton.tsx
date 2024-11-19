@@ -2,7 +2,7 @@ import { IconButton, IconHeart } from 'twenty-ui';
 
 type PageFavoriteButtonProps = {
   isFavorite: boolean;
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 export const PageFavoriteButton = ({

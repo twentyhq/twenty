@@ -93,7 +93,7 @@ const fieldLinksMock = {
   type: FieldMetadataType.LINKS,
   isNullable: false,
   defaultValue: [
-    { primaryLinkLabel: '', primaryLinkUrl: '', secondaryLinks: {} },
+    { primaryLinkLabel: '', primaryLinkUrl: '', secondaryLinks: [] },
   ],
 };
 

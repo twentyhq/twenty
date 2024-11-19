@@ -15,8 +15,8 @@ export const IllustrationIconUid = (props: IllustrationIconUidProps) => {
       <IllustrationIconUidRaw
         height={size}
         width={size}
-        fill={fill}
-        color={color}
+        fill={fill.blue}
+        color={color.blue}
       />
     </IllustrationIconWrapper>
   );

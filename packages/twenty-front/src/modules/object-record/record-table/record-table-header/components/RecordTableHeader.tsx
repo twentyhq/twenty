@@ -78,9 +78,9 @@ const StyledTableHead = styled.thead`
 `;
 
 export const RecordTableHeader = ({
-  objectMetadataNameSingular,
+  objectNameSingular,
 }: {
-  objectMetadataNameSingular: string;
+  objectNameSingular: string;
 }) => {
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
@@ -95,7 +95,7 @@ export const RecordTableHeader = ({
           <RecordTableHeaderCell
             key={column.fieldMetadataId}
             column={column}
-            objectMetadataNameSingular={objectMetadataNameSingular}
+            objectNameSingular={objectNameSingular}
           />
         ))}
         <RecordTableHeaderLastColumn />

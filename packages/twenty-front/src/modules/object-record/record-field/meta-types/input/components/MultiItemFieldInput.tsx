@@ -19,9 +19,8 @@ import { toSpliced } from '~/utils/array/toSpliced';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 const StyledDropdownMenu = styled(DropdownMenu)`
-  margin-bottom: -1px;
-  margin-left: -2px;
-  margin-top: -1px;
+  margin: -1px;
+  position: relative;
 `;
 
 type MultiItemFieldInputProps<T> = {

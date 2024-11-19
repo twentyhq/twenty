@@ -32,6 +32,7 @@ export const WorkflowDiagramStepNodeEditable = ({
       RightFloatingElement={
         selected ? (
           <FloatingIconButton
+            size="medium"
             Icon={IconTrash}
             onClick={() => {
               return deleteOneStep();

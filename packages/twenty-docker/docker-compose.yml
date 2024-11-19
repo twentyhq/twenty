@@ -22,10 +22,10 @@ services:
       - "3000:3000"
     environment:
       PORT: 3000
-      PG_DATABASE_URL: postgres://twenty:twenty@${PG_DATABASE_HOST}/default
+      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-twenty}@${PG_DATABASE_HOST:-db:5432}/default
       SERVER_URL: ${SERVER_URL}
       FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
-      REDIS_URL: ${REDIS_URL:-redis://localhost:6379}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
       ENABLE_DB_MIGRATIONS: "true"
 
@@ -52,10 +52,10 @@ services:
     image: twentycrm/twenty:${TAG}
     command: ["yarn", "worker:prod"]
     environment:
-      PG_DATABASE_URL: postgres://twenty:twenty@${PG_DATABASE_HOST}/default
+      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-twenty}@${PG_DATABASE_HOST:-db:5432}/default
       SERVER_URL: ${SERVER_URL}
       FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
-      REDIS_URL: ${REDIS_URL:-redis://localhost:6379}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
       ENABLE_DB_MIGRATIONS: "false" # it already runs on the server
 
@@ -73,13 +73,16 @@ services:
     restart: always
 
   db:
-    image: twentycrm/twenty-postgres:${TAG}
+    image: twentycrm/twenty-postgres-spilo:${TAG}
     volumes:
-      - db-data:/bitnami/postgresql
+      - db-data:/home/postgres/pgdata
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+      PGUSER_SUPERUSER: ${PGUSER_SUPERUSER:-postgres}
+      PGPASSWORD_SUPERUSER: ${PGPASSWORD_SUPERUSER:-twenty}
+      ALLOW_NOSSL: "true"
+      SPILO_PROVIDER: "local"
     healthcheck:
-      test: pg_isready -U twenty -d default
+      test: pg_isready -U ${PGUSER_SUPERUSER:-postgres} -h localhost -d postgres
       interval: 5s
       timeout: 5s
       retries: 10

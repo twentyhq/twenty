@@ -12,11 +12,13 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { isDefined } from '~/utils/isDefined';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
-export type SelectOption<Value extends string | number | null> = {
+export type SelectOption<Value extends string | number | boolean | null> = {
   value: Value;
   label: string;
   Icon?: IconComponent;
 };
+
+export type SelectSizeVariant = 'small' | 'default';
 
 type CallToActionButton = {
   text: string;
@@ -24,9 +26,10 @@ type CallToActionButton = {
   Icon?: IconComponent;
 };
 
-export type SelectProps<Value extends string | number | null> = {
+export type SelectProps<Value extends string | number | boolean | null> = {
   className?: string;
   disabled?: boolean;
+  selectSizeVariant?: SelectSizeVariant;
   disableBlur?: boolean;
   dropdownId: string;
   dropdownWidth?: `${string}px` | 'auto' | number;
@@ -54,9 +57,10 @@ const StyledLabel = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const Select = <Value extends string | number | null>({
+export const Select = <Value extends string | number | boolean | null>({
   className,
   disabled: disabledFromProps,
+  selectSizeVariant,
   disableBlur = false,
   dropdownId,
   dropdownWidth = 176,
@@ -115,6 +119,7 @@ export const Select = <Value extends string | number | null>({
         <SelectControl
           selectedOption={selectedOption}
           isDisabled={isDisabled}
+          selectSizeVariant={selectSizeVariant}
         />
       ) : (
         <Dropdown
@@ -125,6 +130,7 @@ export const Select = <Value extends string | number | null>({
             <SelectControl
               selectedOption={selectedOption}
               isDisabled={isDisabled}
+              selectSizeVariant={selectSizeVariant}
             />
           }
           disableBlur={disableBlur}
@@ -144,7 +150,7 @@ export const Select = <Value extends string | number | null>({
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {filteredOptions.map((option) => (
                     <MenuItem
-                      key={option.value}
+                      key={`${option.value}-${option.label}`}
                       LeftIcon={option.Icon}
                       text={option.label}
                       onClick={() => {
