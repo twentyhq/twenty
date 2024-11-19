@@ -71,9 +71,9 @@ export class GraphqlQueryUpdateOneResolverService
 
     const existingRecordBuilder = queryBuilder.clone();
 
-    const existingRecords = await existingRecordBuilder
+    const existingRecords = (await existingRecordBuilder
       .where({ id: args.id })
-      .execute();
+      .getMany()) as ObjectRecord[];
 
     const formattedExistingRecords = formatResult(
       existingRecords,
@@ -81,16 +81,14 @@ export class GraphqlQueryUpdateOneResolverService
       objectMetadataMaps,
     );
 
-    const result = await queryBuilder
+    const nonFormattedUpdatedObjectRecords = await queryBuilder
       .update(data)
       .where({ id: args.id })
       .returning('*')
       .execute();
 
-    const nonFormattedUpdatedObjectRecords = result.raw;
-
     const formattedUpdatedRecords = formatResult(
-      nonFormattedUpdatedObjectRecords,
+      nonFormattedUpdatedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     );

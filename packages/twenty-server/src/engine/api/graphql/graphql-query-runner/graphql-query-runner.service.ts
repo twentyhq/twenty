@@ -127,7 +127,7 @@ export class GraphqlQueryRunnerService {
     args: UpdateOneResolverArgs<Partial<T>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<T> {
-    return await this.executeQuery<UpdateOneResolverArgs<Partial<T>>, T>(
+    return this.executeQuery<UpdateOneResolverArgs<Partial<T>>, T>(
       'updateOne',
       args,
       options,

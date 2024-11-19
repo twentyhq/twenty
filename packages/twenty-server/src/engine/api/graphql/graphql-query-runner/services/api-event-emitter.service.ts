@@ -25,7 +25,7 @@ export class ApiEventEmitterService {
         objectMetadata: objectMetadataItem,
         properties: {
           before: null,
-          after: this.removeGraphQLAndNestedProperties(record),
+          after: record,
         },
       })),
       authContext.workspace.id,
@@ -50,10 +50,8 @@ export class ApiEventEmitterService {
     this.workspaceEventEmitter.emit(
       `${objectMetadataItem.nameSingular}.${DatabaseEventAction.UPDATED}`,
       records.map((record) => {
-        const before = this.removeGraphQLAndNestedProperties(
-          mappedExistingRecords[record.id],
-        );
-        const after = this.removeGraphQLAndNestedProperties(record);
+        const before = mappedExistingRecords[record.id];
+        const after = record;
         const diff = objectRecordChangedValues(
           before,
           after,
@@ -90,7 +88,7 @@ export class ApiEventEmitterService {
           recordId: record.id,
           objectMetadata: objectMetadataItem,
           properties: {
-            before: this.removeGraphQLAndNestedProperties(record),
+            before: record,
             after: null,
           },
         };
@@ -112,34 +110,12 @@ export class ApiEventEmitterService {
           recordId: record.id,
           objectMetadata: objectMetadataItem,
           properties: {
-            before: this.removeGraphQLAndNestedProperties(record),
+            before: record,
             after: null,
           },
         };
       }),
       authContext.workspace.id,
     );
-  }
-
-  private removeGraphQLAndNestedProperties<T extends ObjectRecord>(record: T) {
-    if (!record) {
-      return {};
-    }
-
-    const sanitizedRecord = {};
-
-    for (const [key, value] of Object.entries(record)) {
-      if (value && typeof value === 'object' && value['edges']) {
-        continue;
-      }
-
-      if (key === '__typename') {
-        continue;
-      }
-
-      sanitizedRecord[key] = value;
-    }
-
-    return sanitizedRecord;
   }
 }
