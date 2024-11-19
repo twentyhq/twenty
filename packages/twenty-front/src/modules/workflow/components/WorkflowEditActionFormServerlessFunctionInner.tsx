@@ -192,12 +192,12 @@ export const WorkflowEditActionFormServerlessFunctionInner = ({
       if (inputValue !== null && typeof inputValue === 'object') {
         if (isRoot) {
           return (
-            <>
+            <Fragment key={pathKey}>
               {displaySeparator(functionInput) && (
                 <HorizontalSeparator noMargin />
               )}
               {renderFields(inputValue, currentPath, false)}
-            </>
+            </Fragment>
           );
         }
         return (
