@@ -56,7 +56,11 @@ export const MainNavigationDrawerItems = () => {
           />
         </StyledMainSection>
       )}
-      <ScrollWrapper contextProviderName="navigationDrawer">
+      <ScrollWrapper
+        contextProviderName="navigationDrawer"
+        enableXScroll={false}
+        scrollHide={true}
+      >
         <NavigationDrawerOpenedSection />
         <CurrentWorkspaceMemberFavoritesFolders />
         <WorkspaceFavorites />
