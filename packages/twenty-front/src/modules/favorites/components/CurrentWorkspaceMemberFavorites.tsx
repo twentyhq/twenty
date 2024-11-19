@@ -19,7 +19,7 @@ import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-dr
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { IconFolder, LightIconButton, IconHeartOff } from 'twenty-ui';
+import { IconFolder, IconHeartOff, LightIconButton } from 'twenty-ui';
 
 type CurrentWorkspaceMemberFavoritesProps = {
   folder: {
@@ -107,15 +107,6 @@ export const CurrentWorkspaceMemberFavorites = ({
     setIsDeleteModalOpen(false);
   };
 
-  const rightOptions = (
-    <FavoriteFolderNavigationDrawerItemDropdown
-      folderId={folder.folderId}
-      onRename={() => setIsFavoriteFolderRenaming(true)}
-      onDelete={handleFavoriteFolderDelete}
-      closeDropdown={closeFavoriteFolderEditDropdown}
-    />
-  );
-
   return (
     <>
       <NavigationDrawerItemsCollapsableContainer
@@ -138,7 +129,14 @@ export const CurrentWorkspaceMemberFavorites = ({
             label={folder.folderName}
             Icon={IconFolder}
             onClick={handleToggle}
-            rightOptions={rightOptions}
+            rightOptions={
+              <FavoriteFolderNavigationDrawerItemDropdown
+                folderId={folder.folderId}
+                onRename={() => setIsFavoriteFolderRenaming(true)}
+                onDelete={handleFavoriteFolderDelete}
+                closeDropdown={closeFavoriteFolderEditDropdown}
+              />
+            }
             className="navigation-drawer-item"
             active={isFavoriteFolderEditDropdownOpen}
           />
@@ -183,7 +181,6 @@ export const CurrentWorkspaceMemberFavorites = ({
           />
         )}
       </NavigationDrawerItemsCollapsableContainer>
-
       <ConfirmationModal
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}
