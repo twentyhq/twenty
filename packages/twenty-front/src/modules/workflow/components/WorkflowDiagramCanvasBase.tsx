@@ -29,6 +29,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { GRAY_SCALE, isDefined, THEME_COMMON } from 'twenty-ui';
 import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
+import { workflowReactFlowRefState } from '@/workflow/states/workflowReactFlowRefState';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -87,6 +88,9 @@ export const WorkflowDiagramCanvasBase = ({
   children?: React.ReactNode;
 }) => {
   const reactflow = useReactFlow();
+  const setWorkflowReactFlowRefState = useSetRecoilState(
+    workflowReactFlowRefState,
+  );
 
   const { nodes, edges } = useMemo(
     () => getOrganizedDiagram(diagram),
@@ -183,6 +187,11 @@ export const WorkflowDiagramCanvasBase = ({
   return (
     <StyledResetReactflowStyles ref={containerRef}>
       <ReactFlow
+        ref={(node) => {
+          if (isDefined(node)) {
+            setWorkflowReactFlowRefState({ current: node });
+          }
+        }}
         onInit={() => {
           if (!isDefined(containerRef.current)) {
             throw new Error('Expect the container ref to be defined');
