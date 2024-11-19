@@ -4,6 +4,7 @@ import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
+import { useState } from 'react';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui';
 
 const StyledItemsContainer = styled.div`
@@ -29,6 +30,8 @@ export const FavoriteFolderPickerList = ({
   const [favoriteFoldersSearchFilter] = useRecoilComponentStateV2(
     favoriteFolderSearchFilterComponentState,
   );
+
+  const favoritesFolder = useState(folders);
   const [favoriteFolderPickerChecked] = useRecoilComponentStateV2(
     favoriteFolderPickerCheckedComponentState,
   );
