@@ -1,3 +1,5 @@
+import { ReactNode, Fragment } from 'react';
+import styled from '@emotion/styled';
 import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
@@ -8,8 +10,6 @@ import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefa
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { setNestedValue } from '@/workflow/utils/setNestedValue';
 import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { ReactNode } from 'react';
 import { HorizontalSeparator, IconCode, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -165,12 +165,12 @@ export const WorkflowEditActionFormServerlessFunction = ({
       if (inputValue !== null && typeof inputValue === 'object') {
         if (isRoot) {
           return (
-            <>
+            <Fragment key={pathKey}>
               {displaySeparator(functionInput) && (
                 <HorizontalSeparator noMargin />
               )}
               {renderFields(inputValue, currentPath, false)}
-            </>
+            </Fragment>
           );
         }
         return (
