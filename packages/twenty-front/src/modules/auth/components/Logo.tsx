@@ -64,10 +64,7 @@ export const Logo = (props: LogoProps) => {
   if (!props.workspaceLogo) {
     return (
       <StyledContainer size={size}>
-        <StyledMainLogo
-          size={size}
-          logo="/icons/android/android-launchericon-192-192.png"
-        />
+        <StyledMainLogo logo="/icons/android/android-launchericon-192-192.png" />
       </StyledContainer>
     );
   }
