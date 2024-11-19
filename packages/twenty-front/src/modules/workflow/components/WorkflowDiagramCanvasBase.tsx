@@ -199,11 +199,15 @@ export const WorkflowDiagramCanvasBase = ({
         minZoom={defaultFitViewOptions.minZoom}
         maxZoom={defaultFitViewOptions.maxZoom}
         nodeTypes={nodeTypes}
-        nodes={nodes.map((node) => ({ ...node, draggable: false }))}
+        nodes={nodes}
         edges={edges}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
         proOptions={{ hideAttribution: true }}
+        multiSelectionKeyCode={null}
+        nodesFocusable={false}
+        edgesFocusable={false}
+        nodesDraggable={false}
       >
         <Background color={GRAY_SCALE.gray25} size={2} />
 

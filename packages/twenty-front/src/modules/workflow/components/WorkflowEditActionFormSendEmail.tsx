@@ -167,6 +167,7 @@ export const WorkflowEditActionFormSendEmail = (
   return (
     !loading && (
       <WorkflowEditGenericFormBase
+        key={props.action.id}
         HeaderIcon={<IconMail color={theme.color.blue} />}
         headerTitle="Send Email"
         headerType="Email"

@@ -46,6 +46,7 @@ export const WorkflowEditTriggerManualForm = ({
 
   return (
     <WorkflowEditGenericFormBase
+      key={trigger.type}
       HeaderIcon={<IconHandMove color={theme.font.color.tertiary} />}
       headerTitle="Manual Trigger"
       headerType="Trigger · Manual"
