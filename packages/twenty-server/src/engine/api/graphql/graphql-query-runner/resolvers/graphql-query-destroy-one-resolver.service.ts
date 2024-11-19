@@ -15,6 +15,7 @@ import {
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
@@ -24,6 +25,7 @@ export class GraphqlQueryDestroyOneResolverService
 {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly apiEventEmitterService: ApiEventEmitterService,
   ) {}
 
   async resolve<T extends ObjectRecord = ObjectRecord>(
@@ -78,11 +80,17 @@ export class GraphqlQueryDestroyOneResolverService
       );
     }
 
-    const recordBeforeDeletion = formatResult(
+    const deletedRecords = formatResult(
       nonFormattedDeletedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
-    )[0];
+    );
+
+    this.apiEventEmitterService.emitDestroyEvents(
+      deletedRecords,
+      options.authContext,
+      options.objectMetadataItemWithFieldMaps,
+    );
 
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
@@ -90,7 +98,7 @@ export class GraphqlQueryDestroyOneResolverService
       await processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: [recordBeforeDeletion],
+        parentObjectRecords: deletedRecords,
         relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
@@ -102,7 +110,7 @@ export class GraphqlQueryDestroyOneResolverService
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return typeORMObjectRecordsParser.processRecord({
-      objectRecord: recordBeforeDeletion,
+      objectRecord: deletedRecords[0],
       objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: 1,
       totalCount: 1,

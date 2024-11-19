@@ -15,6 +15,7 @@ import {
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -27,6 +28,7 @@ export class GraphqlQueryUpdateOneResolverService
 {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly apiEventEmitterService: ApiEventEmitterService,
   ) {}
 
   async resolve<T extends ObjectRecord = ObjectRecord>(
@@ -67,6 +69,18 @@ export class GraphqlQueryUpdateOneResolverService
 
     const data = formatData(args.data, objectMetadataItemWithFieldMaps);
 
+    const existingRecordBuilder = queryBuilder.clone();
+
+    const existingRecords = await existingRecordBuilder
+      .where({ id: args.id })
+      .execute();
+
+    const formattedExistingRecords = formatResult(
+      existingRecords,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+    );
+
     const result = await queryBuilder
       .update(data)
       .where({ id: args.id })
@@ -75,20 +89,28 @@ export class GraphqlQueryUpdateOneResolverService
 
     const nonFormattedUpdatedObjectRecords = result.raw;
 
-    const updatedRecords = formatResult(
+    const formattedUpdatedRecords = formatResult(
       nonFormattedUpdatedObjectRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     );
 
-    if (updatedRecords.length === 0) {
+    this.apiEventEmitterService.emitUpdateEvents(
+      formattedExistingRecords,
+      formattedUpdatedRecords,
+      Object.keys(args.data),
+      options.authContext,
+      options.objectMetadataItemWithFieldMaps,
+    );
+
+    if (formattedUpdatedRecords.length === 0) {
       throw new GraphqlQueryRunnerException(
         'Record not found',
         GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
       );
     }
 
-    const updatedRecord = updatedRecords[0] as T;
+    const updatedRecord = formattedUpdatedRecords[0] as T;
 
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 

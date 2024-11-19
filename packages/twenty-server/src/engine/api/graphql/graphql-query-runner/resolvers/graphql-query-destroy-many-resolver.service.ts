@@ -11,6 +11,7 @@ import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/c
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
@@ -20,6 +21,7 @@ export class GraphqlQueryDestroyManyResolverService
 {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly apiEventEmitterService: ApiEventEmitterService,
   ) {}
 
   async resolve<T extends ObjectRecord = ObjectRecord>(
@@ -73,6 +75,12 @@ export class GraphqlQueryDestroyManyResolverService
       nonFormattedDeletedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+    );
+
+    this.apiEventEmitterService.emitDestroyEvents(
+      deletedRecords,
+      options.authContext,
+      options.objectMetadataItemWithFieldMaps,
     );
 
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();

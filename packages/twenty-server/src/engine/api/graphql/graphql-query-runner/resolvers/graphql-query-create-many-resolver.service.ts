@@ -12,6 +12,7 @@ import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/c
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -23,6 +24,7 @@ export class GraphqlQueryCreateManyResolverService
 {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly apiEventEmitterService: ApiEventEmitterService,
   ) {}
 
   async resolve<T extends ObjectRecord = ObjectRecord>(
@@ -78,6 +80,12 @@ export class GraphqlQueryCreateManyResolverService
       nonFormattedUpsertedRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+    );
+
+    this.apiEventEmitterService.emitCreateEvents(
+      upsertedRecords,
+      options.authContext,
+      options.objectMetadataItemWithFieldMaps,
     );
 
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();

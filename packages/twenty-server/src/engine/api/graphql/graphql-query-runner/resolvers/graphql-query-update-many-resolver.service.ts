@@ -11,6 +11,7 @@ import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/c
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
+import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -24,6 +25,7 @@ export class GraphqlQueryUpdateManyResolverService
 {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly apiEventEmitterService: ApiEventEmitterService,
   ) {}
 
   async resolve<T extends ObjectRecord = ObjectRecord>(
@@ -73,6 +75,16 @@ export class GraphqlQueryUpdateManyResolverService
       args.filter,
     );
 
+    const existingRecordsBuilder = withFilterQueryBuilder.clone();
+
+    const existingRecords = await existingRecordsBuilder.getMany();
+
+    const formattedExistingRecords = formatResult(
+      existingRecords,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
+    );
+
     const data = formatData(args.data, objectMetadataItemWithFieldMaps);
 
     const nonFormattedUpdatedObjectRecords = await withFilterQueryBuilder
@@ -80,10 +92,18 @@ export class GraphqlQueryUpdateManyResolverService
       .returning('*')
       .execute();
 
-    const updatedRecords = formatResult(
+    const formattedUpdatedRecords = formatResult(
       nonFormattedUpdatedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
+    );
+
+    this.apiEventEmitterService.emitUpdateEvents(
+      formattedExistingRecords,
+      formattedUpdatedRecords,
+      Object.keys(args.data),
+      options.authContext,
+      options.objectMetadataItemWithFieldMaps,
     );
 
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
@@ -92,7 +112,7 @@ export class GraphqlQueryUpdateManyResolverService
       await processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: updatedRecords,
+        parentObjectRecords: formattedUpdatedRecords,
         relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
@@ -103,7 +123,7 @@ export class GraphqlQueryUpdateManyResolverService
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return updatedRecords.map((record: T) =>
+    return formattedUpdatedRecords.map((record: T) =>
       typeORMObjectRecordsParser.processRecord({
         objectRecord: record,
         objectName: objectMetadataItemWithFieldMaps.nameSingular,
