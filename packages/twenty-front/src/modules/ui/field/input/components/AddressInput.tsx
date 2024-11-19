@@ -26,6 +26,11 @@ const StyledAddressContainer = styled.div`
     margin-bottom: 6px;
   }
 
+  input {
+    background-color: ${({ theme }) => theme.background.transparent.secondary};
+    backdrop-filter: ${({ theme }) => theme.blur.medium};
+  }
+
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     width: auto;
     min-width: 100px;
