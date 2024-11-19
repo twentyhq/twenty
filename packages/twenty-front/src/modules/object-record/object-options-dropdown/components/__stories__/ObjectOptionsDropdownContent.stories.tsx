@@ -3,17 +3,52 @@ import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
+import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { ViewType } from '@/views/types/ViewType';
+import { MemoryRouter } from 'react-router-dom';
+import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const meta: Meta<typeof ObjectOptionsDropdownContent> = {
   title:
     'Modules/ObjectRecord/ObjectOptionsDropdown/ObjectOptionsDropdownContent',
   component: ObjectOptionsDropdownContent,
-  decorators: [ComponentDecorator],
+  decorators: [
+    (Story) => {
+      const instanceId = 'entity-options-scope';
+
+      return (
+        <RecordTableComponentInstanceContext.Provider
+          value={{ instanceId, onColumnsChange: () => {} }}
+        >
+          <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+            <ContextStoreComponentInstanceContext.Provider
+              value={{ instanceId }}
+            >
+              <MemoryRouter
+                initialEntries={['/one', '/two', { pathname: '/three' }]}
+                initialIndex={1}
+              >
+                <Story />
+              </MemoryRouter>
+            </ContextStoreComponentInstanceContext.Provider>
+          </ViewComponentInstanceContext.Provider>
+        </RecordTableComponentInstanceContext.Provider>
+      );
+    },
+    ObjectMetadataItemsDecorator,
+    SnackBarDecorator,
+    ComponentDecorator,
+    IconsProviderDecorator,
+  ],
   parameters: {
     layout: 'centered',
   },
@@ -36,6 +71,7 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
             labelSingular: 'Company',
             labelPlural: 'Companies',
             icon: 'IconBuildingSkyscraper',
+            fields: [{}],
           } as ObjectMetadataItem,
           recordIndexId: 'test-record-index',
           currentContentId: contentId,
@@ -43,7 +79,9 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
           resetContent: () => {},
         }}
       >
-        <Story />
+        <DropdownMenu>
+          <Story />
+        </DropdownMenu>
       </ObjectOptionsDropdownContext.Provider>
     ),
   ],
