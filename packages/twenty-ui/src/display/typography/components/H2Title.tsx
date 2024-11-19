@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 type H2TitleProps = {
   title: string;
   description?: string;
-  addornment?: React.ReactNode;
+  adornment?: React.ReactNode;
   className?: string;
 };
 
@@ -37,13 +37,13 @@ const StyledDescription = styled.h3`
 export const H2Title = ({
   title,
   description,
-  addornment,
+  adornment,
   className,
 }: H2TitleProps) => (
   <StyledContainer className={className}>
     <StyledTitleContainer>
       <StyledTitle>{title}</StyledTitle>
-      {addornment}
+      {adornment}
     </StyledTitleContainer>
     {description && <StyledDescription>{description}</StyledDescription>}
   </StyledContainer>

@@ -3,7 +3,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { IconSearch, IconSettings } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
+import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
 import { NavigationDrawerSectionForObjectMetadataItemsWrapper } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsWrapper';
@@ -13,13 +13,16 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;
 `;
 
+const StyledContainer = styled.div`
+  overflow-x: hidden;
+  overflow-y: auto;
+`;
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
   const { toggleCommandMenu } = useCommandMenu();
@@ -27,9 +30,7 @@ export const MainNavigationDrawerItems = () => {
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
   );
-  const isWorkspaceFavoriteEnabled = useIsFeatureEnabled(
-    'IS_WORKSPACE_FAVORITE_ENABLED',
-  );
+
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useRecoilState(isNavigationDrawerExpandedState);
   const setNavigationDrawerExpandedMemorized = useSetRecoilState(
@@ -58,19 +59,15 @@ export const MainNavigationDrawerItems = () => {
           />
         </StyledMainSection>
       )}
+      <StyledContainer>
+        <NavigationDrawerOpenedSection />
 
-      {isWorkspaceFavoriteEnabled && <NavigationDrawerOpenedSection />}
+        <CurrentWorkspaceMemberFavoritesFolders />
 
-      <CurrentWorkspaceMemberFavorites />
-
-      {isWorkspaceFavoriteEnabled ? (
         <WorkspaceFavorites />
-      ) : (
-        <NavigationDrawerSectionForObjectMetadataItemsWrapper
-          isRemote={false}
-        />
-      )}
-      <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
+
+        <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
+      </StyledContainer>
     </>
   );
 };

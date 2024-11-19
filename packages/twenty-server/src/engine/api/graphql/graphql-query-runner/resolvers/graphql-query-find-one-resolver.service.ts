@@ -4,9 +4,9 @@ import graphqlFields from 'graphql-fields';
 
 import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import {
-  Record as IRecord,
-  RecordFilter,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+  ObjectRecord,
+  ObjectRecordFilter,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -27,21 +27,25 @@ import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
 export class GraphqlQueryFindOneResolverService
-  implements ResolverService<FindOneResolverArgs, IRecord>
+  implements ResolverService<FindOneResolverArgs, ObjectRecord>
 {
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
   async resolve<
-    ObjectRecord extends IRecord = IRecord,
-    Filter extends RecordFilter = RecordFilter,
+    T extends ObjectRecord = ObjectRecord,
+    Filter extends ObjectRecordFilter = ObjectRecordFilter,
   >(
     args: FindOneResolverArgs<Filter>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<ObjectRecord> {
-    const { authContext, objectMetadataMapItem, info, objectMetadataMap } =
-      options;
+  ): Promise<T> {
+    const {
+      authContext,
+      objectMetadataItemWithFieldMaps,
+      info,
+      objectMetadataMaps,
+    } = options;
 
     const dataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(
@@ -49,28 +53,28 @@ export class GraphqlQueryFindOneResolverService
       );
 
     const repository = dataSource.getRepository(
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
 
     const queryBuilder = repository.createQueryBuilder(
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
 
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataMapItem.fields,
-      objectMetadataMap,
+      objectMetadataItemWithFieldMaps.fieldsByName,
+      objectMetadataMaps,
     );
 
     const selectedFields = graphqlFields(info);
 
     const { relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataMapItem,
+      objectMetadataItemWithFieldMaps,
       selectedFields,
     );
 
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
       args.filter ?? ({} as Filter),
     );
 
@@ -83,8 +87,8 @@ export class GraphqlQueryFindOneResolverService
 
     const objectRecord = formatResult(
       nonFormattedObjectRecord,
-      objectMetadataMapItem,
-      objectMetadataMap,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     );
 
     if (!objectRecord) {
@@ -99,29 +103,29 @@ export class GraphqlQueryFindOneResolverService
     const objectRecords = [objectRecord];
 
     if (relations) {
-      await processNestedRelationsHelper.processNestedRelations(
-        objectMetadataMap,
-        objectMetadataMapItem,
-        objectRecords,
+      await processNestedRelationsHelper.processNestedRelations({
+        objectMetadataMaps,
+        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        parentObjectRecords: objectRecords,
         relations,
-        QUERY_MAX_RECORDS,
+        limit: QUERY_MAX_RECORDS,
         authContext,
         dataSource,
-      );
+      });
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return typeORMObjectRecordsParser.processRecord({
       objectRecord: objectRecords[0],
-      objectName: objectMetadataMapItem.nameSingular,
+      objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: 1,
       totalCount: 1,
-    }) as ObjectRecord;
+    }) as T;
   }
 
-  async validate<Filter extends RecordFilter>(
+  async validate<Filter extends ObjectRecordFilter>(
     args: FindOneResolverArgs<Filter>,
     _options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {

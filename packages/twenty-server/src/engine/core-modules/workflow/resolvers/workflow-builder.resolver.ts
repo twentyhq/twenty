@@ -10,7 +10,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkflowBuilderWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-builder.workspace-service';
-import { OutputSchema } from 'src/modules/workflow/workflow-executor/types/workflow-step-settings.type';
+import { OutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
 
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)

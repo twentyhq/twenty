@@ -3,7 +3,13 @@ import { WorkflowDiagramStepNodeData } from '@/workflow/types/WorkflowDiagram';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCode, IconHandMove, IconMail, IconPlaylistAdd } from 'twenty-ui';
+import {
+  IconAddressBook,
+  IconCode,
+  IconHandMove,
+  IconMail,
+  IconPlaylistAdd,
+} from 'twenty-ui';
 
 const StyledStepNodeLabelIconContainer = styled.div`
   align-items: center;
@@ -31,7 +37,7 @@ export const WorkflowDiagramStepNodeBase = ({
             return (
               <StyledStepNodeLabelIconContainer>
                 <IconPlaylistAdd
-                  size={theme.icon.size.sm}
+                  size={theme.icon.size.lg}
                   color={theme.font.color.tertiary}
                 />
               </StyledStepNodeLabelIconContainer>
@@ -41,7 +47,7 @@ export const WorkflowDiagramStepNodeBase = ({
             return (
               <StyledStepNodeLabelIconContainer>
                 <IconHandMove
-                  size={theme.icon.size.sm}
+                  size={theme.icon.size.lg}
                   color={theme.font.color.tertiary}
                 />
               </StyledStepNodeLabelIconContainer>
@@ -57,7 +63,7 @@ export const WorkflowDiagramStepNodeBase = ({
             return (
               <StyledStepNodeLabelIconContainer>
                 <IconCode
-                  size={theme.icon.size.sm}
+                  size={theme.icon.size.lg}
                   color={theme.color.orange}
                 />
               </StyledStepNodeLabelIconContainer>
@@ -66,9 +72,24 @@ export const WorkflowDiagramStepNodeBase = ({
           case 'SEND_EMAIL': {
             return (
               <StyledStepNodeLabelIconContainer>
-                <IconMail size={theme.icon.size.sm} color={theme.color.blue} />
+                <IconMail size={theme.icon.size.lg} color={theme.color.blue} />
               </StyledStepNodeLabelIconContainer>
             );
+          }
+          case 'RECORD_CRUD.CREATE': {
+            return (
+              <StyledStepNodeLabelIconContainer>
+                <IconAddressBook
+                  size={theme.icon.size.lg}
+                  color={theme.font.color.tertiary}
+                  stroke={theme.icon.stroke.sm}
+                />
+              </StyledStepNodeLabelIconContainer>
+            );
+          }
+          case 'RECORD_CRUD.DELETE':
+          case 'RECORD_CRUD.UPDATE': {
+            return null;
           }
         }
       }

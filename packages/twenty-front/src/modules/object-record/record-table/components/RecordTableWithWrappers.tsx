@@ -10,7 +10,15 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
+import { isScrollEnabledForRecordTableState } from '@/object-record/record-table/states/isScrollEnabledForRecordTableState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
+import { useRecordTable } from '../hooks/useRecordTable';
+
+import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { Key } from 'ts-key-enum';
 
 const StyledTableWithHeader = styled.div`
   height: 100%;
@@ -40,6 +48,28 @@ export const RecordTableWithWrappers = ({
   recordTableId,
   viewBarId,
 }: RecordTableWithWrappersProps) => {
+  const isScrollEnabledForRecordTable = useRecoilComponentValueV2(
+    isScrollEnabledForRecordTableState,
+    recordTableId,
+  );
+
+  const { resetTableRowSelection, selectAllRows } = useRecordTable({
+    recordTableId,
+  });
+
+  useScopedHotkeys('ctrl+a,meta+a', selectAllRows, TableHotkeyScope.Table);
+  useScopedHotkeys(
+    'ctrl+a,meta+a',
+    selectAllRows,
+    ActionBarHotkeyScope.ActionBar,
+  );
+
+  useScopedHotkeys(
+    Key.Escape,
+    resetTableRowSelection,
+    ActionBarHotkeyScope.ActionBar,
+  );
+
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
@@ -57,7 +87,11 @@ export const RecordTableWithWrappers = ({
 
   return (
     <EntityDeleteContext.Provider value={deleteOneRecord}>
-      <ScrollWrapper contextProviderName="recordTableWithWrappers">
+      <ScrollWrapper
+        enableXScroll={isScrollEnabledForRecordTable.enableXScroll}
+        enableYScroll={isScrollEnabledForRecordTable.enableYScroll}
+        contextProviderName="recordTableWithWrappers"
+      >
         <RecordUpdateContext.Provider value={updateRecordMutation}>
           <StyledTableWithHeader>
             <StyledTableContainer>

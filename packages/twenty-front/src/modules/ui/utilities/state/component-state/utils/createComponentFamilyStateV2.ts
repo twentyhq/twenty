@@ -6,11 +6,18 @@ import { AtomEffect, atomFamily, SerializableParam } from 'recoil';
 
 import { isDefined } from 'twenty-ui';
 
-type CreateComponentFamilyStateArgs<ValueType> = {
+type CreateComponentFamilyStateArgs<
+  ValueType,
+  FamilyKey extends SerializableParam,
+> = {
   key: string;
   defaultValue: ValueType;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
-  effects?: AtomEffect<ValueType>[];
+  effects?:
+    | AtomEffect<ValueType>[]
+    | ((
+        param: ComponentFamilyStateKeyV2<FamilyKey>,
+      ) => ReadonlyArray<AtomEffect<ValueType>>);
 };
 
 export const createComponentFamilyStateV2 = <
@@ -21,10 +28,10 @@ export const createComponentFamilyStateV2 = <
   effects,
   defaultValue,
   componentInstanceContext,
-}: CreateComponentFamilyStateArgs<ValueType>): ComponentFamilyStateV2<
+}: CreateComponentFamilyStateArgs<
   ValueType,
   FamilyKey
-> => {
+>): ComponentFamilyStateV2<ValueType, FamilyKey> => {
   if (isDefined(componentInstanceContext)) {
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }

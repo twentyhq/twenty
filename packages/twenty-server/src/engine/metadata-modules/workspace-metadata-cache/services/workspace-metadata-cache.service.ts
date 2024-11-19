@@ -1,12 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import console from 'console';
+
 import { Repository } from 'typeorm';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { LogExecutionTime } from 'src/engine/decorators/observability/log-execution-time.decorator';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { generateObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { generateObjectMetadataMaps } from 'src/engine/metadata-modules/utils/generate-object-metadata-maps.util';
 import {
   WorkspaceMetadataCacheException,
   WorkspaceMetadataCacheExceptionCode,
@@ -85,15 +87,15 @@ export class WorkspaceMetadataCacheService {
     console.timeEnd('fetching object metadata');
 
     console.time('generating object metadata map');
-    const freshObjectMetadataMap =
-      generateObjectMetadataMap(objectMetadataItems);
+    const freshObjectMetadataMaps =
+      generateObjectMetadataMaps(objectMetadataItems);
 
     console.timeEnd('generating object metadata map');
 
-    await this.workspaceCacheStorageService.setObjectMetadataMap(
+    await this.workspaceCacheStorageService.setObjectMetadataMaps(
       workspaceId,
       currentDatabaseVersion,
-      freshObjectMetadataMap,
+      freshObjectMetadataMaps,
     );
 
     await this.workspaceCacheStorageService.removeObjectMetadataOngoingCachingLock(
