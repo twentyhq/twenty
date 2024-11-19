@@ -420,6 +420,7 @@ export const CommandMenu = () => {
   const selectableItemIds = copilotCommands
     .map((cmd) => cmd.id)
     .concat(matchingStandardActionCommands.map((cmd) => cmd.id))
+    .concat(matchingWorkflowRunCommands.map((cmd) => cmd.id))
     .concat(matchingCreateCommand.map((cmd) => cmd.id))
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people?.map((person) => person.id))
