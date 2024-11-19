@@ -30,7 +30,7 @@ export const WorkflowRunActionEffect = () => {
       addActionMenuEntry({
         type: 'workflow-run',
         key: `workflow-run-${activeWorkflowVersion.id}`,
-        label: capitalize(activeWorkflowVersion?.workflow?.name),
+        label: capitalize(activeWorkflowVersion.workflow.name),
         position: index,
         Icon: IconSettingsAutomation,
         onClick: async () => {
@@ -40,7 +40,7 @@ export const WorkflowRunActionEffect = () => {
 
           enqueueSnackBar('', {
             variant: SnackBarVariant.Success,
-            title: `${capitalize(activeWorkflowVersion?.workflow?.name)} starting...`,
+            title: `${capitalize(activeWorkflowVersion.workflow.name)} starting...`,
             icon: (
               <IconSettingsAutomation
                 size={16}
