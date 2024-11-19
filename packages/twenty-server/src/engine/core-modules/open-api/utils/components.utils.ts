@@ -418,22 +418,59 @@ export const computeMetadataSchemaComponents = (
           return schemas;
         }
         case 'field': {
-          schemas[`${capitalize(item.nameSingular)}`] = {
+          const baseFieldProperties = ({
+            withImmutableFields,
+            withRequiredFields,
+          }: {
+            withImmutableFields: boolean;
+            withRequiredFields: boolean;
+          }): OpenAPIV3_1.SchemaObject => ({
             type: 'object',
             description: `A field`,
             properties: {
-              type: {
-                type: 'string',
-                enum: Object.keys(FieldMetadataType),
-              },
+              ...(withImmutableFields
+                ? {
+                    type: {
+                      type: 'string',
+                      enum: Object.keys(FieldMetadataType),
+                    },
+                    objectMetadataId: { type: 'string', format: 'uuid' },
+                  }
+                : {}),
               name: { type: 'string' },
               label: { type: 'string' },
               description: { type: 'string' },
               icon: { type: 'string' },
+              defaultValue: {},
               isNullable: { type: 'boolean' },
-              objectMetadataId: { type: 'string', format: 'uuid' },
+              settings: { type: 'object' },
+              options: {
+                type: 'array',
+                description: 'For enum field types like SELECT or MULTI_SELECT',
+                items: {
+                  type: 'object',
+                  properties: {
+                    color: { type: 'string' },
+                    label: { type: 'string' },
+                    value: {
+                      type: 'string',
+                      pattern: '^[A-Z0-9]+_[A-Z0-9]+$',
+                      example: 'OPTION_1',
+                    },
+                    position: { type: 'number' },
+                  },
+                },
+              },
             },
-          };
+            ...(withRequiredFields
+              ? { required: ['type', 'name', 'label', 'objectMetadataId'] }
+              : {}),
+          });
+
+          schemas[`${capitalize(item.nameSingular)}`] = baseFieldProperties({
+            withImmutableFields: true,
+            withRequiredFields: true,
+          });
           schemas[`${capitalize(item.namePlural)}`] = {
             type: 'array',
             description: `A list of ${item.namePlural}`,
@@ -441,38 +478,22 @@ export const computeMetadataSchemaComponents = (
               $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
             },
           };
-          schemas[`${capitalize(item.nameSingular)} for Update`] = {
-            type: 'object',
-            description: `An object`,
-            properties: {
-              description: { type: 'string' },
-              icon: { type: 'string' },
-              isActive: { type: 'boolean' },
-              isCustom: { type: 'boolean' },
-              isNullable: { type: 'boolean' },
-              isSystem: { type: 'boolean' },
-              label: { type: 'string' },
-              name: { type: 'string' },
-            },
-          };
+          schemas[`${capitalize(item.nameSingular)} for Update`] =
+            baseFieldProperties({
+              withImmutableFields: false,
+              withRequiredFields: false,
+            });
           schemas[`${capitalize(item.nameSingular)} for Response`] = {
-            ...schemas[`${capitalize(item.nameSingular)}`],
+            ...baseFieldProperties({
+              withImmutableFields: true,
+              withRequiredFields: false,
+            }),
             properties: {
-              type: {
-                type: 'string',
-                enum: Object.keys(FieldMetadataType),
-              },
-              name: { type: 'string' },
-              label: { type: 'string' },
-              description: { type: 'string' },
-              icon: { type: 'string' },
-              isNullable: { type: 'boolean' },
+              ...schemas[`${capitalize(item.nameSingular)}`].properties,
               id: { type: 'string', format: 'uuid' },
               isCustom: { type: 'boolean' },
               isActive: { type: 'boolean' },
               isSystem: { type: 'boolean' },
-              defaultValue: { type: 'object' },
-              options: { type: 'object' },
               createdAt: { type: 'string', format: 'date-time' },
               updatedAt: { type: 'string', format: 'date-time' },
               fromRelationMetadata: {
