@@ -50,15 +50,6 @@ const bootstrap = async () => {
 
   serverUrl.port = environmentService.get('PORT').toString();
 
-  if (
-    serverUrl.protocol === 'https:' &&
-    (!environmentService.get('SSL_KEY_PATH') ||
-      !environmentService.get('SSL_CERT_PATH'))
-  )
-    throw new Error(
-      'SSL_KEY_PATH and SSL_CERT_PATH must be defined if https is used',
-    );
-
   // TODO: Double check this as it's not working for now, it's going to be heplful for durable trees in twenty "orm"
   // // Apply context id strategy for durable trees
   // ContextIdFactory.apply(new AggregateByWorkspaceContextIdStrategy());

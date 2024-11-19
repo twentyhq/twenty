@@ -21,8 +21,8 @@ describe('ServerUrl', () => {
 });
 
 describe('ApiUrl', () => {
-  afterEach(() => {
-    // Reset the ServerUrl and apiUrl after each test
+  beforeEach(() => {
+    // Reset the ServerUrl and apiUrl before each test
     ServerUrl.set('');
     ApiUrl.set('');
   });
