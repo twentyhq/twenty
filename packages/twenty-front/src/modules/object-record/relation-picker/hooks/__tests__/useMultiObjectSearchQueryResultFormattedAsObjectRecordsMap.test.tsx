@@ -69,8 +69,6 @@ describe('useMultiObjectRecordsQueryResultFormattedAsObjectRecordsMap', () => {
       result.current.setObjectMetadata(generatedMockObjectMetadataItems);
     });
 
-    console.log('$*******', result.current.formattedRecord.objectRecordsMap);
-
     expect(
       Object.values(result.current.formattedRecord.objectRecordsMap).flat()
         .length,
