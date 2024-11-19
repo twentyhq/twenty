@@ -1,3 +1,4 @@
+import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandMenuContextRecordChip';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -19,6 +20,7 @@ const StyledInputContainer = styled.div`
   position: relative;
 
   padding: 0 ${({ theme }) => theme.spacing(COMMAND_MENU_SEARCH_BAR_PADDING)};
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledInput = styled.input`
@@ -31,7 +33,7 @@ const StyledInput = styled.input`
   outline: none;
   height: 24px;
   padding: 0;
-  width: ${({ theme }) => `calc(100% - ${theme.spacing(8)})`};
+  flex: 1;
 
   &::placeholder {
     color: ${({ theme }) => theme.font.color.light};
@@ -65,10 +67,11 @@ export const CommandMenuTopBar = ({
 
   return (
     <StyledInputContainer>
+      <CommandMenuContextRecordChip />
       <StyledInput
         autoFocus
         value={commandMenuSearch}
-        placeholder="Search"
+        placeholder="Type anything"
         onChange={handleSearchChange}
       />
       {!isMobile && (
