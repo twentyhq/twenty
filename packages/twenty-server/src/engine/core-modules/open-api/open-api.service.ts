@@ -4,7 +4,6 @@ import { Request } from 'express';
 import { OpenAPIV3_1 } from 'openapi-types';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
 import {
   computeMetadataSchemaComponents,
@@ -38,20 +37,17 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { capitalize } from 'src/utils/capitalize';
 import { getServerUrl } from 'src/utils/get-server-url';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import ServerUrl from 'src/engine/utils/serverUrl';
 
 @Injectable()
 export class OpenApiService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
-    private readonly environmentService: EnvironmentService,
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}
 
   async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
-    const baseUrl = getServerUrl(
-      request,
-      this.environmentService.get('SERVER_URL'),
-    );
+    const baseUrl = getServerUrl(request, ServerUrl.get());
 
     const schema = baseSchema('core', baseUrl);
 
@@ -121,10 +117,7 @@ export class OpenApiService {
   async generateMetaDataSchema(
     request: Request,
   ): Promise<OpenAPIV3_1.Document> {
-    const baseUrl = getServerUrl(
-      request,
-      this.environmentService.get('SERVER_URL'),
-    );
+    const baseUrl = getServerUrl(request, ServerUrl.get());
 
     const schema = baseSchema('metadata', baseUrl);
 
