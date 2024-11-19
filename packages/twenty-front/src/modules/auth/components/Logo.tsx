@@ -1,42 +1,47 @@
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
+import { isDefined } from '~/utils/isDefined';
 
 type LogoProps = {
   workspaceLogo?: string | null;
+  size?: string | null;
+  includeTwentyLogo?: boolean;
 };
 
-const StyledContainer = styled.div`
-  height: 48px;
+const StyledContainer = styled.div<StyledMainLogoProps>`
+  height: ${({ size }) => size};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
   margin-top: ${({ theme }) => theme.spacing(4)};
 
   position: relative;
-  width: 48px;
+  width: ${({ size }) => size};
 `;
 
-const StyledTwentyLogo = styled.img`
+const StyledTwentyLogo = styled.img<StyledMainLogoProps>`
   border-radius: ${({ theme }) => theme.border.radius.xs};
-  height: 24px;
-  width: 24px;
+  height: calc(${({ size }) => size} / 2);
+  width: calc(${({ size }) => size} / 2);
 `;
 
-const StyledTwentyLogoContainer = styled.div`
+const StyledTwentyLogoContainer = styled.div<StyledMainLogoProps>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  bottom: ${({ theme }) => `-${theme.spacing(3)}`};
+  bottom: calc(-12 * ${({ size }) => size} / 48);
   display: flex;
-  height: 28px;
+  height: calc((28 * ${({ size }) => size}) / 48);
   justify-content: center;
 
   position: absolute;
-  right: ${({ theme }) => `-${theme.spacing(3)}`};
-  width: 28px;
+  right: calc(-12 * ${({ size }) => size} / 48);
+  width: calc(28 * ${({ size }) => size} / 48);
 `;
 
 type StyledMainLogoProps = {
   logo?: string | null;
+  size?: string | null;
 };
 
 const StyledMainLogo = styled.div<StyledMainLogoProps>`
@@ -47,21 +52,37 @@ const StyledMainLogo = styled.div<StyledMainLogoProps>`
   width: 100%;
 `;
 
-export const Logo = ({ workspaceLogo }: LogoProps) => {
-  if (!workspaceLogo) {
+export const Logo = (props: LogoProps) => {
+  const theme = useTheme();
+
+  const size = props.size ?? theme.spacing(12);
+
+  const includeTwentyLogo = isDefined(props.includeTwentyLogo)
+    ? props.includeTwentyLogo
+    : true;
+
+  if (!props.workspaceLogo) {
     return (
-      <StyledContainer>
-        <StyledMainLogo logo="/icons/android/android-launchericon-192-192.png" />
+      <StyledContainer size={size}>
+        <StyledMainLogo
+          size={size}
+          logo="/icons/android/android-launchericon-192-192.png"
+        />
       </StyledContainer>
     );
   }
 
   return (
-    <StyledContainer>
-      <StyledMainLogo logo={getImageAbsoluteURI(workspaceLogo)} />
-      <StyledTwentyLogoContainer>
-        <StyledTwentyLogo src="/icons/android/android-launchericon-192-192.png" />
-      </StyledTwentyLogoContainer>
+    <StyledContainer size={size}>
+      <StyledMainLogo logo={getImageAbsoluteURI(props.workspaceLogo)} />
+      {includeTwentyLogo && (
+        <StyledTwentyLogoContainer size={size}>
+          <StyledTwentyLogo
+            size={size}
+            src="/icons/android/android-launchericon-192-192.png"
+          />
+        </StyledTwentyLogoContainer>
+      )}
     </StyledContainer>
   );
 };
