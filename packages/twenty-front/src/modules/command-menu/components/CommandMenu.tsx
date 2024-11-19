@@ -4,6 +4,9 @@ import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRi
 import { Note } from '@/activities/types/Note';
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
+import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
+import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuCommandsState } from '@/command-menu/states/commandMenuCommandsState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
@@ -30,19 +33,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useRef } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import {
-  Avatar,
-  IconNotes,
-  IconSparkles,
-  IconX,
-  LightIconButton,
-  isDefined,
-} from 'twenty-ui';
+import { Avatar, IconNotes, IconSparkles, isDefined } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
 import { getLogoUrlFromDomainName } from '~/utils';
 
-const SEARCH_BAR_HEIGHT = 56;
-const SEARCH_BAR_PADDING = 3;
 const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
 
 const StyledCommandMenu = styled.div`
@@ -60,48 +54,6 @@ const StyledCommandMenu = styled.div`
   z-index: 1000;
 `;
 
-const StyledInputContainer = styled.div`
-  align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: none;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: 0;
-
-  display: flex;
-  font-size: ${({ theme }) => theme.font.size.lg};
-  height: ${SEARCH_BAR_HEIGHT}px;
-  margin: 0;
-  outline: none;
-  position: relative;
-
-  padding: 0 ${({ theme }) => theme.spacing(SEARCH_BAR_PADDING)};
-`;
-
-const StyledInput = styled.input`
-  border: none;
-  border-radius: 0;
-  background-color: transparent;
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  margin: 0;
-  outline: none;
-  height: 24px;
-  padding: 0;
-  width: ${({ theme }) => `calc(100% - ${theme.spacing(8)})`};
-
-  &::placeholder {
-    color: ${({ theme }) => theme.font.color.light};
-    font-weight: ${({ theme }) => theme.font.weight.medium};
-  }
-`;
-
-const StyledCloseButtonContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: 32px;
-  justify-content: center;
-`;
-
 const StyledList = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   overscroll-behavior: contain;
@@ -112,10 +64,12 @@ const StyledList = styled.div`
 const StyledInnerList = styled.div<{ isMobile: boolean }>`
   max-height: ${({ isMobile }) =>
     isMobile
-      ? `calc(100dvh - ${SEARCH_BAR_HEIGHT}px - ${
-          SEARCH_BAR_PADDING * 2
+      ? `calc(100dvh - ${COMMAND_MENU_SEARCH_BAR_HEIGHT}px - ${
+          COMMAND_MENU_SEARCH_BAR_PADDING * 2
         }px - ${MOBILE_NAVIGATION_BAR_HEIGHT}px)`
-      : `calc(100dvh - ${SEARCH_BAR_HEIGHT}px - ${SEARCH_BAR_PADDING * 2}px)`};
+      : `calc(100dvh - ${COMMAND_MENU_SEARCH_BAR_HEIGHT}px - ${
+          COMMAND_MENU_SEARCH_BAR_PADDING * 2
+        }px)`};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   padding-top: ${({ theme }) => theme.spacing(1)};
@@ -145,9 +99,6 @@ export const CommandMenu = () => {
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300); // 200ms - 500ms
   const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCommandMenuSearch(event.target.value);
-  };
 
   const isMobile = useIsMobile();
 
@@ -361,24 +312,10 @@ export const CommandMenu = () => {
     <>
       {isCommandMenuOpened && (
         <StyledCommandMenu ref={commandMenuRef} className="command-menu">
-          <StyledInputContainer>
-            <StyledInput
-              autoFocus
-              value={commandMenuSearch}
-              placeholder="Search"
-              onChange={handleSearchChange}
-            />
-            {!isMobile && (
-              <StyledCloseButtonContainer>
-                <LightIconButton
-                  accent={'tertiary'}
-                  size={'medium'}
-                  Icon={IconX}
-                  onClick={closeCommandMenu}
-                />
-              </StyledCloseButtonContainer>
-            )}
-          </StyledInputContainer>
+          <CommandMenuTopBar
+            commandMenuSearch={commandMenuSearch}
+            setCommandMenuSearch={setCommandMenuSearch}
+          />
           <StyledList>
             <ScrollWrapper contextProviderName="commandMenu">
               <StyledInnerList isMobile={isMobile}>
