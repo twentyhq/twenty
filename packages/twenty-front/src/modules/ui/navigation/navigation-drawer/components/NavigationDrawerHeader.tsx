@@ -61,9 +61,9 @@ export const NavigationDrawerHeader = ({
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
   const workspaces = useRecoilValue(workspacesState);
-  const isMultiworkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const isMultiWorkspace =
-    workspaces !== null && workspaces.length > 1 && isMultiworkspaceEnabled;
+    workspaces !== null && workspaces.length > 1 && isMultiWorkspaceEnabled;
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
