@@ -1,3 +1,4 @@
+import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
@@ -38,6 +39,8 @@ export type NavigationDrawerItemProps = {
   keyboard?: string[];
   rightOptions?: ReactNode;
   isDraggable?: boolean;
+  isFavorite?: boolean;
+  objectName?: string | undefined;
 };
 
 type StyledItemProps = Pick<
@@ -129,6 +132,25 @@ const StyledItemLabel = styled.span`
   white-space: nowrap;
 `;
 
+const StyledItemLabelWithObjectName = styled.span`
+  color: ${({ theme }) => theme.font.color.light};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+type CreateLabelWithObjectNameProps = ProcessedFavorite;
+
+export const CreateLabelWithObjectName = (
+  favorite: CreateLabelWithObjectNameProps,
+) => {
+  return (
+    favorite.labelIdentifier +
+    ' . ' +
+    String(favorite.objectNameSingular?.charAt(0).toUpperCase()) +
+    favorite.objectNameSingular?.slice(1)
+  );
+};
+
 const StyledItemCount = styled.span`
   align-items: center;
   background-color: ${({ theme }) => theme.color.blue};
@@ -199,6 +221,8 @@ export const NavigationDrawerItem = ({
   subItemState,
   rightOptions,
   isDraggable,
+  isFavorite,
+  objectName,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -254,6 +278,12 @@ export const NavigationDrawerItem = ({
 
           <NavigationDrawerAnimatedCollapseWrapper>
             <StyledItemLabel>{label}</StyledItemLabel>
+            {isFavorite && objectName && (
+              <StyledItemLabelWithObjectName>
+                {' '}
+                · {objectName.charAt(0).toUpperCase() + objectName.slice(1)}
+              </StyledItemLabelWithObjectName>
+            )}
           </NavigationDrawerAnimatedCollapseWrapper>
 
           <StyledSpacer />

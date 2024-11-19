@@ -174,6 +174,8 @@ export const CurrentWorkspaceMemberFavorites = ({
                           />
                         }
                         isDraggable
+                        isFavorite
+                        objectName={favorite.objectNameSingular}
                       />
                     }
                   />
