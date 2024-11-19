@@ -42,7 +42,7 @@ type MenuItemSelectProps = {
   selected: boolean;
   text: string;
   className?: string;
-  onClick?: (event: React.MouseEvent) => void;
+  onClick?: () => void;
   disabled?: boolean;
   hovered?: boolean;
   hasSubMenu?: boolean;

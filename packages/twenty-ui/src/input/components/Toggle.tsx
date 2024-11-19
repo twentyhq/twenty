@@ -74,9 +74,6 @@ export const Toggle = ({
         type="checkbox"
         checked={value}
         disabled={disabled}
-        onClick={(event) => {
-          event.stopPropagation();
-        }}
         onChange={(event) => {
           onChange?.(event.target.checked);
         }}
