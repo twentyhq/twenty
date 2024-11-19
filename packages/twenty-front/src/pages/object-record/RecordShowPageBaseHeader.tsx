@@ -1,8 +1,8 @@
+import { PageFavoriteButton } from '@/favorites/components/PageFavoriteButton';
+import { PageFavoriteFoldersDropdown } from '@/favorites/components/PageFavoriteFolderDropdown';
 import { FAVORITE_FOLDER_PICKER_DROPDOWN_ID } from '@/favorites/favorite-folder-picker/constants/FavoriteFolderPickerDropdownId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { PageFavoriteButton } from '@/ui/layout/page/components/PageFavoriteButton';
-import { PageFavoriteFoldersDropdown } from '@/ui/layout/page/components/PageFavoriteFolderDropdown';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
 import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMoreButton';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
