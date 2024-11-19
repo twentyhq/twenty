@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, Fragment } from 'react';
 import styled from '@emotion/styled';
 import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
 import { setNestedValue } from '@/workflow/utils/setNestedValue';
@@ -162,12 +162,12 @@ export const WorkflowEditActionFormServerlessFunction = (
       if (inputValue !== null && typeof inputValue === 'object') {
         if (isRoot) {
           return (
-            <>
+            <Fragment key={pathKey}>
               {displaySeparator(functionInput) && (
                 <HorizontalSeparator noMargin />
               )}
               {renderFields(inputValue, currentPath, false)}
-            </>
+            </Fragment>
           );
         }
         return (
@@ -195,13 +195,13 @@ export const WorkflowEditActionFormServerlessFunction = (
 
   return (
     <WorkflowEditGenericFormBase
-      key={props.action.id}
       HeaderIcon={<IconCode color={theme.color.orange} />}
       headerTitle="Code - Serverless Function"
       headerType="Code"
     >
       <Select
         dropdownId="select-serverless-function-id"
+        key={'select-serverless-function-id'}
         label="Function"
         fullWidth
         value={props.action.settings.input.serverlessFunctionId}
