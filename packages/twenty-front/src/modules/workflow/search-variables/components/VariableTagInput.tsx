@@ -27,7 +27,7 @@ const StyledLabel = styled.div`
 `;
 
 const StyledInputContainer = styled.div<{
-  multiline: boolean;
+  multiline?: boolean;
 }>`
   display: flex;
   flex-direction: row;
@@ -71,7 +71,7 @@ const StyledSearchVariablesDropdownContainer = styled.div<{
       `}
 `;
 
-const StyledEditor = styled.div<{ multiline: boolean; readonly: boolean }>`
+const StyledEditor = styled.div<{ multiline?: boolean; readonly?: boolean }>`
   display: flex;
   width: 100%;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -214,8 +214,8 @@ export const VariableTagInput = ({
   return (
     <StyledContainer>
       {label && <StyledLabel>{label}</StyledLabel>}
-      <StyledInputContainer multiline={!!multiline}>
-        <StyledEditor multiline={!!multiline} readonly={!!readonly}>
+      <StyledInputContainer multiline={multiline}>
+        <StyledEditor multiline={multiline} readonly={readonly}>
           <EditorContent className="editor-content" editor={editor} />
         </StyledEditor>
         <StyledSearchVariablesDropdownContainer
