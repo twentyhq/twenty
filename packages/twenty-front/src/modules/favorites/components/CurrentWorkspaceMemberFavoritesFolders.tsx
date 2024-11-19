@@ -1,11 +1,17 @@
 import { useTheme } from '@emotion/react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconFolderPlus, IconHeartOff, LightIconButton } from 'twenty-ui';
+import {
+  IconFolderPlus,
+  IconHeartOff,
+  LightIconButton,
+  isDefined,
+} from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
 import { FavoriteFolders } from '@/favorites/components/FavoritesFolders';
+import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useReorderFavorite } from '@/favorites/hooks/useReorderFavorite';
@@ -45,9 +51,9 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
     setIsFavoriteFolderCreating((current) => !current);
   };
 
-  // if (loading && isDefined(currentWorkspaceMember)) {
-  //   return <FavoritesSkeletonLoader />;
-  // }
+  if (loading && isDefined(currentWorkspaceMember)) {
+    return <FavoritesSkeletonLoader />;
+  }
 
   const orphanFavorites = favorites.filter(
     (favorite) => !favorite.favoriteFolderId,
@@ -90,6 +96,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
                   key={favorite.id}
                   draggableId={favorite.id}
                   index={index}
+                  isInsideScrollableContainer={true}
                   itemComponent={
                     <NavigationDrawerItem
                       key={favorite.id}
