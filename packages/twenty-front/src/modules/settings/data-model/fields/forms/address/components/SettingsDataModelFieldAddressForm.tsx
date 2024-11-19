@@ -1,10 +1,10 @@
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
-import { Select } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
-import { CardContent } from 'twenty-ui';
+import { IconMap } from 'twenty-ui';
 import { z } from 'zod';
 
 const StyledFormCardTitle = styled.div`
@@ -45,7 +45,6 @@ export const SettingsDataModelFieldAddressForm = ({
     value: country.countryName
   }))
   return (
-    <CardContent>
       <Controller
         name="settings"
         defaultValue={{
@@ -57,20 +56,19 @@ export const SettingsDataModelFieldAddressForm = ({
 
           return (
             <>
-              <StyledFormCardTitle>Default Country</StyledFormCardTitle>
-              <Select
-                disabled={disabled}
-                dropdownId="selectDefaultCountry"
-                options={countries}
-                value={defaultCountry}
-                onChange={(value) => onChange({ defaultCountry: value })}
-                withSearchInput={true}
-                dropdownWidthAuto={true}
-              />
+              <SettingsOptionCardContentSelect
+              Icon={IconMap}
+              dropdownId="selectDefaultCountry"
+              title="Default Country"
+              description="The default country for new addresses"
+              value={defaultCountry}
+              onChange={(value) => onChange({ defaultCountry: value })}
+              disabled={disabled}
+              options={countries}
+            />
             </>
           );
         }}
       />
-    </CardContent>
   );
 };
