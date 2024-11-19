@@ -1,22 +1,22 @@
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { AnimationControls, motion, TargetAndTransition } from 'framer-motion';
 import { ReactNode } from 'react';
 import { useRecoilValue } from 'recoil';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { AnimationControls, motion, TargetAndTransition } from 'framer-motion';
-import { useTheme } from '@emotion/react';
 
 const StyledAnimationGroupContainer = styled(motion.div)``;
 
-type NavigationDrawerItemsCollapsedContainerProps = {
+type NavigationDrawerItemsCollapsableContainerProps = {
   isGroup?: boolean;
   children: ReactNode;
 };
 
-export const NavigationDrawerItemsCollapsedContainer = ({
+export const NavigationDrawerItemsCollapsableContainer = ({
   isGroup = false,
   children,
-}: NavigationDrawerItemsCollapsedContainerProps) => {
+}: NavigationDrawerItemsCollapsableContainerProps) => {
   const theme = useTheme();
   const isSettingsPage = useIsSettingsPage();
   const isNavigationDrawerExpanded = useRecoilValue(
