@@ -28,16 +28,16 @@ export const AppRouterProviders = () => {
   return (
     <ApolloProvider>
       <ClientConfigProviderEffect />
-      <ClientConfigProvider>
-        <ChromeExtensionSidecarEffect />
-        <ChromeExtensionSidecarProvider>
-          <UserProviderEffect />
-          <UserProvider>
-            <AuthProvider>
-              <ApolloMetadataClientProvider>
-                <ObjectMetadataItemsProvider>
-                  <PrefetchDataProvider>
-                    <AppThemeProvider>
+      <ApolloMetadataClientProvider>
+        <ObjectMetadataItemsProvider>
+          <AppThemeProvider>
+            <ClientConfigProvider>
+              <ChromeExtensionSidecarEffect />
+              <ChromeExtensionSidecarProvider>
+                <UserProviderEffect />
+                <UserProvider>
+                  <AuthProvider>
+                    <PrefetchDataProvider>
                       <SnackBarProvider>
                         <DialogManagerScope dialogManagerScopeId="dialog-manager">
                           <DialogManager>
@@ -50,15 +50,15 @@ export const AppRouterProviders = () => {
                           </DialogManager>
                         </DialogManagerScope>
                       </SnackBarProvider>
-                    </AppThemeProvider>
-                  </PrefetchDataProvider>
-                  <PageChangeEffect />
-                </ObjectMetadataItemsProvider>
-              </ApolloMetadataClientProvider>
-            </AuthProvider>
-          </UserProvider>
-        </ChromeExtensionSidecarProvider>
-      </ClientConfigProvider>
+                    </PrefetchDataProvider>
+                    <PageChangeEffect />
+                  </AuthProvider>
+                </UserProvider>
+              </ChromeExtensionSidecarProvider>
+            </ClientConfigProvider>
+          </AppThemeProvider>
+        </ObjectMetadataItemsProvider>
+      </ApolloMetadataClientProvider>
     </ApolloProvider>
   );
 };

@@ -1,11 +1,32 @@
 import { useRecoilValue } from 'recoil';
 
-import { isClientConfigLoadedState } from '@/client-config/states/isClientConfigLoadedState';
+import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
+import { GenericErrorFallback } from '@/error-handler/components/GenericErrorFallback';
+import styled from '@emotion/styled';
+
+const StyledContainer = styled.div`
+  display: flex;
+  height: 100dvh;
+  width: 100%;
+`;
 
 export const ClientConfigProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  const isClientConfigLoaded = useRecoilValue(isClientConfigLoadedState);
+  const { isLoaded, isErrored } = useRecoilValue(clientConfigApiStatusState);
 
-  return isClientConfigLoaded ? <>{children}</> : <></>;
+  if (isLoaded && isErrored) {
+    return (
+      <StyledContainer>
+        <GenericErrorFallback
+          error={new Error('Failed to fetch')}
+          resetErrorBoundary={() => {}}
+          title="Unable to Reach Back-end"
+          shouldShowRefetch={false}
+        />
+      </StyledContainer>
+    );
+  }
+
+  return isLoaded ? <>{children}</> : null;
 };

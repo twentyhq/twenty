@@ -17,7 +17,7 @@ import { workspacesState } from '@/auth/states/workspaces';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
-import { isClientConfigLoadedState } from '@/client-config/states/isClientConfigLoadedState';
+import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
@@ -229,8 +229,8 @@ export const useAuth = () => {
         const captchaProvider = snapshot
           .getLoadable(captchaProviderState)
           .getValue();
-        const isClientConfigLoaded = snapshot
-          .getLoadable(isClientConfigLoadedState)
+        const clientConfigApiStatus = snapshot
+          .getLoadable(clientConfigApiStatusState)
           .getValue();
         const isCurrentUserLoaded = snapshot
           .getLoadable(isCurrentUserLoadedState)
@@ -244,7 +244,7 @@ export const useAuth = () => {
           set(supportChatState, supportChat);
           set(isDebugModeState, isDebugMode);
           set(captchaProviderState, captchaProvider);
-          set(isClientConfigLoadedState, isClientConfigLoaded);
+          set(clientConfigApiStatusState, clientConfigApiStatus);
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
           return undefined;
         });
