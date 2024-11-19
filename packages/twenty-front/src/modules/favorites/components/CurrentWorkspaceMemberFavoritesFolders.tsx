@@ -50,6 +50,15 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const toggleNewFolder = () => {
     setIsFavoriteFolderCreating((current) => !current);
   };
+  const shouldDisplayFavoritesWithFeatureFlagEnabled = true;
+
+  //todo: remove this logic once feature flag gating is removed
+  const shouldDisplayFavoritesWithoutFeatureFlagEnabled =
+    favorites.length > 0 || isFavoriteFolderCreating;
+
+  const shouldDisplayFavorites = isFavoriteFolderEnabled
+    ? shouldDisplayFavoritesWithFeatureFlagEnabled
+    : shouldDisplayFavoritesWithoutFeatureFlagEnabled;
 
   if (loading && isDefined(currentWorkspaceMember)) {
     return <FavoritesSkeletonLoader />;
@@ -59,7 +68,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
     (favorite) => !favorite.favoriteFolderId,
   );
 
-  if ((!favorites || favorites.length === 0) && !isFavoriteFolderCreating) {
+  if (!shouldDisplayFavorites) {
     return null;
   }
 
