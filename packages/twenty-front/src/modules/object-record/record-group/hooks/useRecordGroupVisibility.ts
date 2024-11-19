@@ -1,7 +1,7 @@
-import { objectOptionsDropdownRecordGroupHideComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownRecordGroupHideComponentState';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { recordIndexRecordGroupHideComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentState';
 import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -31,9 +31,7 @@ export const useRecordGroupVisibility = ({
   const { recordIdsByColumnIdFamilyState } = useRecordBoardStates(viewBarId);
 
   const objectOptionsDropdownRecordGroupHideState =
-    useRecoilComponentCallbackStateV2(
-      objectOptionsDropdownRecordGroupHideComponentState,
-    );
+    useRecoilComponentCallbackStateV2(recordIndexRecordGroupHideComponentState);
 
   const { saveViewGroups } = useSaveCurrentViewGroups(viewBarId);
 

@@ -8,9 +8,9 @@ import {
 } from 'twenty-ui';
 
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
-import { objectOptionsDropdownRecordGroupSortComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownRecordGroupSortComponentState';
 import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
+import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -28,7 +28,7 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
   });
 
   const setRecordGroupSort = useSetRecoilComponentStateV2(
-    objectOptionsDropdownRecordGroupSortComponentState,
+    recordIndexRecordGroupSortComponentState,
   );
 
   const handleRecordGroupSortChange = (sort: RecordGroupSort) => {

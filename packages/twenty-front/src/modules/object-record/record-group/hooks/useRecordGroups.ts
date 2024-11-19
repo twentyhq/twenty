@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { objectOptionsDropdownRecordGroupSortComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownRecordGroupSortComponentState';
 import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
 import { sortRecordGroupDefinitions } from '@/object-record/record-group/utils/sortRecordGroupDefinitions';
+import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 type UseRecordGroupsParams = {
@@ -18,7 +18,7 @@ export const useRecordGroups = ({
   );
 
   const recordGroupSort = useRecoilComponentValueV2(
-    objectOptionsDropdownRecordGroupSortComponentState,
+    recordIndexRecordGroupSortComponentState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({

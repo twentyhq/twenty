@@ -11,11 +11,11 @@ import {
 } from 'twenty-ui';
 
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
-import { objectOptionsDropdownRecordGroupHideComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownRecordGroupHideComponentState';
-import { objectOptionsDropdownRecordGroupIsDraggableSortComponentSelector } from '@/object-record/object-options-dropdown/states/selectors/objectOptionsDropdownRecordGroupIsDraggableSortComponentSelector';
 import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
 import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
+import { recordIndexRecordGroupHideComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentState';
+import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexRecordGroupIsDraggableSortComponentSelector';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -44,11 +44,11 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
   });
 
   const isDragableSortRecordGroup = useRecoilComponentValueV2(
-    objectOptionsDropdownRecordGroupIsDraggableSortComponentSelector,
+    recordIndexRecordGroupIsDraggableSortComponentSelector,
   );
 
   const hideEmptyRecordGroup = useRecoilComponentValueV2(
-    objectOptionsDropdownRecordGroupHideComponentState,
+    recordIndexRecordGroupHideComponentState,
   );
 
   const {

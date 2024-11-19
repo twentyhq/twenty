@@ -1,9 +1,9 @@
 import { useRecoilCallback } from 'recoil';
 
-import { objectOptionsDropdownRecordGroupSortComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownRecordGroupSortComponentState';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { sortRecordGroupDefinitions } from '@/object-record/record-group/utils/sortRecordGroupDefinitions';
+import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -12,7 +12,7 @@ export const useSetRecordBoardColumns = (recordBoardId?: string) => {
     useRecordBoardStates(recordBoardId);
 
   const recordGroupSort = useRecoilComponentValueV2(
-    objectOptionsDropdownRecordGroupSortComponentState,
+    recordIndexRecordGroupSortComponentState,
     recordBoardId,
   );
 

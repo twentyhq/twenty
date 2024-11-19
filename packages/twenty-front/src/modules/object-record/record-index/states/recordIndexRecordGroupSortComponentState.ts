@@ -2,9 +2,9 @@ import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupS
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
-export const objectOptionsDropdownRecordGroupSortComponentState =
+export const recordIndexRecordGroupSortComponentState =
   createComponentStateV2<RecordGroupSort>({
-    key: 'objectOptionsDropdownRecordGroupSortComponentState',
+    key: 'recordIndexRecordGroupSortComponentState',
     defaultValue: RecordGroupSort.Manual,
     componentInstanceContext: ViewComponentInstanceContext,
   });
