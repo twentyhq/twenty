@@ -23,11 +23,11 @@ export const ManageFavoritesActionEffect = ({
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const favorites = useFavorites();
+  const { sortedFavorites: favorites } = useFavorites();
 
-  const createFavorite = useCreateFavorite();
+  const { createFavorite } = useCreateFavorite();
 
-  const deleteFavorite = useDeleteFavorite();
+  const { deleteFavorite } = useDeleteFavorite();
 
   const selectedRecordId =
     contextStoreTargetedRecordsRule.mode === 'selection'

@@ -37,8 +37,8 @@ export const DeleteRecordsActionEffect = ({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const favorites = useFavorites();
-  const deleteFavorite = useDeleteFavorite();
+  const { sortedFavorites: favorites } = useFavorites();
+  const { deleteFavorite } = useDeleteFavorite();
 
   const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
     contextStoreNumberOfSelectedRecordsComponentState,
