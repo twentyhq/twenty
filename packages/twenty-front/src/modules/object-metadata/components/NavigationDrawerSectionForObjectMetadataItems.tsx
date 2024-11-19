@@ -21,7 +21,6 @@ const StyledObjectsMetaDataItemsWrapper = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.betweenSiblingsGap};
   width: 100%;
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
   flex: 1;
   overflow-y: auto;
 `;
