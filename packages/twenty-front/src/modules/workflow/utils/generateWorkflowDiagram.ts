@@ -52,6 +52,7 @@ export const generateWorkflowDiagram = ({
         type: MarkerType.ArrowClosed,
       },
       deletable: false,
+      selectable: false,
     });
 
     return nodeId;
