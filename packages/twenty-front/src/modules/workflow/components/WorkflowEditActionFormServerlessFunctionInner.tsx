@@ -9,10 +9,9 @@ import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/utils/merg
 import { setNestedValue } from '@/workflow/utils/setNestedValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactNode, useEffect, useState } from 'react';
+import { Fragment, ReactNode, useEffect, useState } from 'react';
 import { HorizontalSeparator, IconCode, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { ServerlessFunction } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -40,7 +39,6 @@ const StyledInputContainer = styled.div`
 
 type WorkflowEditActionFormServerlessFunctionInnerProps = {
   action: WorkflowCodeAction;
-  selectedServerlessFunction: ServerlessFunction;
   actionOptions:
     | {
         readonly: true;
