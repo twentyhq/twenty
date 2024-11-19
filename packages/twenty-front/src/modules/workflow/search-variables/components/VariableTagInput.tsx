@@ -26,7 +26,9 @@ const StyledLabel = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledInputContainer = styled.div<{ multiline: boolean }>`
+const StyledInputContainer = styled.div<{
+  multiline: boolean;
+}>`
   display: flex;
   flex-direction: row;
   position: relative;
@@ -56,7 +58,7 @@ const StyledSearchVariablesDropdownInsideContainer = styled.div`
   right: ${({ theme }) => theme.spacing(0.5)};
 `;
 
-const StyledEditor = styled.div<{ multiline: boolean }>`
+const StyledEditor = styled.div<{ multiline: boolean; readonly: boolean }>`
   display: flex;
   width: 100%;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -82,7 +84,8 @@ const StyledEditor = styled.div<{ multiline: boolean }>`
   .tiptap {
     display: flex;
     height: 100%;
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${({ theme, readonly }) =>
+      readonly ? theme.font.color.light : theme.font.color.primary};
     font-family: ${({ theme }) => theme.font.family};
     font-weight: ${({ theme }) => theme.font.weight.regular};
     border: none !important;
@@ -122,6 +125,7 @@ interface VariableTagInputProps {
   placeholder?: string;
   multiline?: boolean;
   onChange?: (content: string) => void;
+  readonly?: boolean;
 }
 
 export const VariableTagInput = ({
@@ -131,6 +135,7 @@ export const VariableTagInput = ({
   placeholder,
   multiline,
   onChange,
+  readonly,
 }: VariableTagInputProps) => {
   const StyledSearchVariablesDropdownContainer = multiline
     ? StyledSearchVariablesDropdownInsideContainer
@@ -159,7 +164,7 @@ export const VariableTagInput = ({
           ]
         : []),
     ],
-    editable: true,
+    editable: !readonly,
     onCreate: ({ editor }) => {
       if (isDefined(value)) {
         initializeEditorContent(editor, value);
@@ -201,11 +206,15 @@ export const VariableTagInput = ({
     <StyledContainer>
       {label && <StyledLabel>{label}</StyledLabel>}
       <StyledInputContainer multiline={!!multiline}>
-        <StyledEditor multiline={!!multiline}>
+        <StyledEditor multiline={!!multiline} readonly={!!readonly}>
           <EditorContent className="editor-content" editor={editor} />
         </StyledEditor>
         <StyledSearchVariablesDropdownContainer>
-          <SearchVariablesDropdown inputId={inputId} editor={editor} />
+          <SearchVariablesDropdown
+            inputId={inputId}
+            editor={editor}
+            disabled={readonly}
+          />
         </StyledSearchVariablesDropdownContainer>
       </StyledInputContainer>
     </StyledContainer>

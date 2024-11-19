@@ -190,6 +190,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
             placeholder="Enter value"
             value={`${inputValue || ''}`}
             onChange={(value) => handleInputChange(value, currentPath)}
+            readonly={actionOptions.readonly}
           />
         );
       }
