@@ -10,6 +10,7 @@ const StyledSection = styled.div<{
   overflow: hidden;
   flex-direction: ${({ isMobile }) => (isMobile ? 'row' : 'column')};
   min-width: ${({ isMobile }) => (isMobile ? '20%' : '')};
+  flex-shrink: 1;
 `;
 
 export { StyledSection as NavigationDrawerSection };

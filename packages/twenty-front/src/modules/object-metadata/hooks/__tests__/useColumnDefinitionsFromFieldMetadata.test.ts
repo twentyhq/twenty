@@ -61,7 +61,7 @@ describe('useColumnDefinitionsFromFieldMetadata', () => {
       result.current;
 
     expect(columnDefinitions.length).toBe(21);
-    expect(filterDefinitions.length).toBe(14);
+    expect(filterDefinitions.length).toBe(15);
     expect(sortDefinitions.length).toBe(14);
   });
 });

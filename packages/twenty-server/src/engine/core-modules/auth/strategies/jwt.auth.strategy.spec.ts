@@ -7,7 +7,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
 
-xdescribe('JwtAuthStrategy', () => {
+describe('JwtAuthStrategy', () => {
   let strategy: JwtAuthStrategy;
 
   let workspaceRepository: any;
@@ -151,8 +151,13 @@ xdescribe('JwtAuthStrategy', () => {
     );
 
     await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
-      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+      new AuthException('User not found', expect.any(String)),
     );
+    try {
+      await strategy.validate(payload as JwtPayload);
+    } catch (e) {
+      expect(e.code).toBe(AuthExceptionCode.USER_NOT_FOUND);
+    }
   });
 
   it('should be truthy if type is ACCESS, no jti, and user exist', async () => {

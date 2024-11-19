@@ -2,8 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { IResolvers } from '@graphql-tools/utils';
 
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-
 import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/delete-many-resolver.factory';
 import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
 import { DestroyOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-one-resolver.factory';
@@ -11,7 +9,7 @@ import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-res
 import { SearchResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/search-resolver-factory';
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { getResolverName } from 'src/engine/utils/get-resolver-name.util';
 
 import { CreateManyResolverFactory } from './factories/create-many-resolver.factory';
@@ -49,8 +47,7 @@ export class WorkspaceResolverFactory {
 
   async create(
     authContext: AuthContext,
-    objectMetadataCollection: ObjectMetadataInterface[],
-    objectMetadataMap: ObjectMetadataMap,
+    objectMetadataMaps: ObjectMetadataMaps,
     workspaceResolverBuilderMethods: WorkspaceResolverBuilderMethods,
   ): Promise<IResolvers> {
     const factories = new Map<
@@ -76,7 +73,7 @@ export class WorkspaceResolverFactory {
       Mutation: {},
     };
 
-    for (const objectMetadata of objectMetadataCollection) {
+    for (const objectMetadata of Object.values(objectMetadataMaps.byId)) {
       // Generate query resolvers
       for (const methodName of workspaceResolverBuilderMethods.queries) {
         const resolverName = getResolverName(objectMetadata, methodName);
@@ -94,11 +91,8 @@ export class WorkspaceResolverFactory {
 
         resolvers.Query[resolverName] = resolverFactory.create({
           authContext,
-          objectMetadataItem: objectMetadata,
-          fieldMetadataCollection: objectMetadata.fields,
-          objectMetadataCollection,
-          objectMetadataMap,
-          objectMetadataMapItem: objectMetadataMap[objectMetadata.nameSingular],
+          objectMetadataMaps,
+          objectMetadataItemWithFieldMaps: objectMetadata,
         });
       }
 
@@ -119,11 +113,8 @@ export class WorkspaceResolverFactory {
 
         resolvers.Mutation[resolverName] = resolverFactory.create({
           authContext,
-          objectMetadataItem: objectMetadata,
-          fieldMetadataCollection: objectMetadata.fields,
-          objectMetadataCollection,
-          objectMetadataMap,
-          objectMetadataMapItem: objectMetadataMap[objectMetadata.nameSingular],
+          objectMetadataMaps,
+          objectMetadataItemWithFieldMaps: objectMetadata,
         });
       }
     }

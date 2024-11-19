@@ -1,4 +1,4 @@
-import { LogLevel } from '@nestjs/common';
+import { LogLevel, Logger } from '@nestjs/common';
 
 import { plainToClass } from 'class-transformer';
 import {
@@ -28,6 +28,7 @@ import { CastToBoolean } from 'src/engine/core-modules/environment/decorators/ca
 import { CastToLogLevelArray } from 'src/engine/core-modules/environment/decorators/cast-to-log-level-array.decorator';
 import { CastToPositiveNumber } from 'src/engine/core-modules/environment/decorators/cast-to-positive-number.decorator';
 import { CastToStringArray } from 'src/engine/core-modules/environment/decorators/cast-to-string-array.decorator';
+import { AssertOrWarn } from 'src/engine/core-modules/environment/decorators/assert-or-warn.decorator';
 import { IsAWSRegion } from 'src/engine/core-modules/environment/decorators/is-aws-region.decorator';
 import { IsDuration } from 'src/engine/core-modules/environment/decorators/is-duration.decorator';
 import { IsStrictlyLowerThan } from 'src/engine/core-modules/environment/decorators/is-strictly-lower-than.decorator';
@@ -200,6 +201,10 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_CALLBACK_URL: string;
+
+  @IsUrl({ require_tld: false })
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
 
   @CastToBoolean()
   @IsOptional()
@@ -443,8 +448,19 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
 
-  @ValidateIf((env) => env.ENTERPRISE_KEY)
-  SESSION_STORE_SECRET: string;
+  @IsString()
+  @IsOptional()
+  @AssertOrWarn(
+    (env, value) =>
+      !env.AUTH_SSO_ENABLED ||
+      (env.AUTH_SSO_ENABLED &&
+        value !== 'replace_me_with_a_random_string_session'),
+    {
+      message:
+        'SESSION_STORE_SECRET should be changed to a secure, random string.',
+    },
+  )
+  SESSION_STORE_SECRET = 'replace_me_with_a_random_string_session';
 
   @CastToBoolean()
   CALENDAR_PROVIDER_GOOGLE_ENABLED = false;
@@ -466,7 +482,19 @@ export const validate = (
 ): EnvironmentVariables => {
   const validatedConfig = plainToClass(EnvironmentVariables, config);
 
-  const errors = validateSync(validatedConfig);
+  const errors = validateSync(validatedConfig, { strictGroups: true });
+
+  const warnings = validateSync(validatedConfig, { groups: ['warning'] });
+
+  if (warnings.length > 0) {
+    warnings.forEach((warning) => {
+      if (warning.constraints && warning.property) {
+        Object.values(warning.constraints).forEach((message) => {
+          Logger.warn(message);
+        });
+      }
+    });
+  }
 
   assert(!errors.length, errors.toString());
 

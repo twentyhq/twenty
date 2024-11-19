@@ -1,6 +1,6 @@
 import { OpenAPIV3_1 } from 'openapi-types';
 
-import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { DEFAULT_CONJUNCTION } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/add-default-conjunction.utils';
 import { FilterComparators } from 'src/engine/api/rest/core/query-builder/utils/filter-utils/parse-base-filter.utils';

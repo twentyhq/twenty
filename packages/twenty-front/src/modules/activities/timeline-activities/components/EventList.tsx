@@ -26,8 +26,6 @@ const StyledTimelineContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: flex-start;
-
-  width: calc(100% - ${({ theme }) => theme.spacing(8)});
 `;
 
 export const EventList = ({ events, targetableObject }: EventListProps) => {

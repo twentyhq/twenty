@@ -7,15 +7,11 @@ import {
 } from 'recoil';
 
 import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
-import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
-import {
-  ObjectRecordForSelect,
-  SelectedObjectRecordId,
-  useMultiObjectSearch,
-} from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
+import { objectRecordMultiSelectMatchesFilterRecordsIdsComponentState } from '@/object-record/record-field/states/objectRecordMultiSelectMatchesFilterRecordsIdsComponentState';
 import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
+import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
+import { SelectedObjectRecordId } from '@/object-record/types/SelectedObjectRecordId';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -30,42 +26,13 @@ export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
   const {
     objectRecordsIdsMultiSelectState,
     objectRecordMultiSelectCheckedRecordsIdsState,
-    recordMultiSelectIsLoadingState,
   } = useObjectRecordMultiSelectScopedStates(scopeId);
   const [objectRecordsIdsMultiSelect, setObjectRecordsIdsMultiSelect] =
     useRecoilState(objectRecordsIdsMultiSelectState);
 
-  const setRecordMultiSelectIsLoading = useSetRecoilState(
-    recordMultiSelectIsLoadingState,
+  const setObjectRecordMultiSelectCheckedRecordsIds = useSetRecoilState(
+    objectRecordMultiSelectCheckedRecordsIdsState,
   );
-
-  const relationPickerScopedId = useAvailableScopeIdOrThrow(
-    RelationPickerScopeInternalContext,
-  );
-
-  const { relationPickerSearchFilterState } = useRelationPickerScopedStates({
-    relationPickerScopedId,
-  });
-  const relationPickerSearchFilter = useRecoilValue(
-    relationPickerSearchFilterState,
-  );
-
-  const { filteredSelectedObjectRecords, loading, objectRecordsToSelect } =
-    useMultiObjectSearch({
-      searchFilterValue: relationPickerSearchFilter,
-      excludedObjects: [
-        CoreObjectNameSingular.Task,
-        CoreObjectNameSingular.Note,
-      ],
-      selectedObjectRecordIds,
-      excludedObjectRecordIds: [],
-      limit: 10,
-    });
-
-  const [
-    objectRecordMultiSelectCheckedRecordsIds,
-    setObjectRecordMultiSelectCheckedRecordsIds,
-  ] = useRecoilState(objectRecordMultiSelectCheckedRecordsIdsState);
 
   const updateRecords = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -78,6 +45,10 @@ export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
                 familyKey: newRecord.record.id,
               }),
             )
+            .getValue();
+
+          const objectRecordMultiSelectCheckedRecordsIds = snapshot
+            .getLoadable(objectRecordMultiSelectCheckedRecordsIdsState)
             .getValue();
 
           const newRecordWithSelected = {
@@ -103,23 +74,25 @@ export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
           }
         }
       },
-    [objectRecordMultiSelectCheckedRecordsIds, scopeId],
+    [objectRecordMultiSelectCheckedRecordsIdsState, scopeId],
+  );
+
+  const matchesSearchFilterObjectRecords = useRecoilValue(
+    objectRecordMultiSelectMatchesFilterRecordsIdsComponentState({
+      scopeId,
+    }),
   );
 
   useEffect(() => {
-    const allRecords = [
-      ...(filteredSelectedObjectRecords ?? []),
-      ...(objectRecordsToSelect ?? []),
-    ];
+    const allRecords = matchesSearchFilterObjectRecords ?? [];
     updateRecords(allRecords);
     const allRecordsIds = allRecords.map((record) => record.record.id);
     if (!isDeeplyEqual(allRecordsIds, objectRecordsIdsMultiSelect)) {
       setObjectRecordsIdsMultiSelect(allRecordsIds);
     }
   }, [
-    filteredSelectedObjectRecords,
+    matchesSearchFilterObjectRecords,
     objectRecordsIdsMultiSelect,
-    objectRecordsToSelect,
     setObjectRecordsIdsMultiSelect,
     updateRecords,
   ]);
@@ -129,10 +102,6 @@ export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
       selectedObjectRecordIds.map((rec) => rec.id),
     );
   }, [selectedObjectRecordIds, setObjectRecordMultiSelectCheckedRecordsIds]);
-
-  useEffect(() => {
-    setRecordMultiSelectIsLoading(loading);
-  }, [loading, setRecordMultiSelectIsLoading]);
 
   return <></>;
 };

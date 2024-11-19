@@ -6,6 +6,8 @@ import {
   IconPencil,
   IconPlus,
   LightIconButtonAccent,
+  MenuItem,
+  MenuItemDraggable,
   useIcons,
 } from 'twenty-ui';
 
@@ -14,8 +16,6 @@ import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableLi
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';

@@ -93,7 +93,9 @@ export const ObjectFilterDropdownFilterInput = ({
               <ObjectFilterDropdownSourceSelect />
             </>
           )}
-          {filterDefinitionUsedInDropdown.type === 'SELECT' && (
+          {['SELECT', 'MULTI_SELECT'].includes(
+            filterDefinitionUsedInDropdown.type,
+          ) && (
             <>
               <ObjectFilterDropdownSearchInput />
               <ObjectFilterDropdownOptionSelect />

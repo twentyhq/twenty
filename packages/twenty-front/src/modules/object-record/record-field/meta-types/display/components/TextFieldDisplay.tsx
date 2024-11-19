@@ -2,7 +2,12 @@ import { useTextFieldDisplay } from '@/object-record/record-field/meta-types/hoo
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
 
 export const TextFieldDisplay = () => {
-  const { fieldValue } = useTextFieldDisplay();
+  const { fieldValue, fieldDefinition } = useTextFieldDisplay();
 
-  return <TextDisplay text={fieldValue} />;
+  return (
+    <TextDisplay
+      text={fieldValue}
+      displayedMaxRows={fieldDefinition.metadata?.settings?.displayedMaxRows}
+    />
+  );
 };

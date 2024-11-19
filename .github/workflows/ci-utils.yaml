@@ -15,10 +15,13 @@ permissions:
   statuses: write
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # We don't cancel in-progress because this workflow is triggered on
+  # pull_request_target, which means the ref can be the same accross two PRs.
+  # cancel-in-progress: true
 
 jobs:
   danger-js:
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     if: github.event.action != 'closed'
     steps:
@@ -31,6 +34,7 @@ jobs:
           DANGER_GITHUB_API_TOKEN: ${{ github.token }}
   
   congratulate:
+    timeout-minutes: 3
     runs-on: ubuntu-latest
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
     steps:

@@ -18,12 +18,9 @@ const StyledDropdownMenu = styled.div<{
   border: ${({ disableBorder, theme }) =>
     disableBorder ? 'none' : `1px solid ${theme.border.color.medium}`};
   border-radius: ${({ theme }) => theme.border.radius.md};
-
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
 
   display: flex;
-
-  height: auto;
 
   flex-direction: column;
   z-index: 30;

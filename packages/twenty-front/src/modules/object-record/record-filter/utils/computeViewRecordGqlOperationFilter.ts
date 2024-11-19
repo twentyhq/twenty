@@ -3,15 +3,18 @@ import { isNonEmptyString } from '@sniptt/guards';
 import {
   ActorFilter,
   AddressFilter,
+  ArrayFilter,
   CurrencyFilter,
   DateFilter,
   EmailsFilter,
   FloatFilter,
+  MultiSelectFilter,
+  RatingFilter,
   RawJsonFilter,
   RecordGqlOperationFilter,
   RelationFilter,
+  SelectFilter,
   StringFilter,
-  UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
@@ -241,7 +244,7 @@ const computeFilterRecordGqlOperationFilter = (
           return {
             [correspondingField.name]: {
               eq: convertRatingToRatingValue(parseFloat(filter.value)),
-            } as StringFilter,
+            } as RatingFilter,
           };
         case ViewFilterOperand.GreaterThan:
           return {
@@ -249,7 +252,7 @@ const computeFilterRecordGqlOperationFilter = (
               in: convertGreaterThanRatingToArrayOfRatingValues(
                 parseFloat(filter.value),
               ),
-            } as StringFilter,
+            } as RatingFilter,
           };
         case ViewFilterOperand.LessThan:
           return {
@@ -257,7 +260,7 @@ const computeFilterRecordGqlOperationFilter = (
               in: convertLessThanRatingToArrayOfRatingValues(
                 parseFloat(filter.value),
               ),
-            } as StringFilter,
+            } as RatingFilter,
           };
         case ViewFilterOperand.IsEmpty:
         case ViewFilterOperand.IsNotEmpty:
@@ -309,30 +312,28 @@ const computeFilterRecordGqlOperationFilter = (
 
         const parsedRecordIds = JSON.parse(filter.value) as string[];
 
-        if (parsedRecordIds.length > 0) {
-          switch (filter.operand) {
-            case ViewFilterOperand.Is:
-              return {
+        if (parsedRecordIds.length === 0) return;
+        switch (filter.operand) {
+          case ViewFilterOperand.Is:
+            return {
+              [correspondingField.name + 'Id']: {
+                in: parsedRecordIds,
+              } as RelationFilter,
+            };
+          case ViewFilterOperand.IsNot: {
+            if (parsedRecordIds.length === 0) return;
+            return {
+              not: {
                 [correspondingField.name + 'Id']: {
                   in: parsedRecordIds,
                 } as RelationFilter,
-              };
-            case ViewFilterOperand.IsNot:
-              if (parsedRecordIds.length > 0) {
-                return {
-                  not: {
-                    [correspondingField.name + 'Id']: {
-                      in: parsedRecordIds,
-                    } as RelationFilter,
-                  },
-                };
-              }
-              break;
-            default:
-              throw new Error(
-                `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
-              );
+              },
+            };
           }
+          default:
+            throw new Error(
+              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+            );
         }
       } else {
         switch (filter.operand) {
@@ -349,7 +350,6 @@ const computeFilterRecordGqlOperationFilter = (
             );
         }
       }
-      break;
     }
     case 'CURRENCY':
       switch (filter.operand) {
@@ -601,6 +601,56 @@ const computeFilterRecordGqlOperationFilter = (
             `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
           );
       }
+    case 'MULTI_SELECT': {
+      if (isEmptyOperand) {
+        return getEmptyRecordGqlOperationFilter(
+          filter.operand,
+          correspondingField,
+          filter.definition,
+        );
+      }
+
+      const options = resolveFilterValue(
+        filter as Filter & { definition: { type: 'MULTI_SELECT' } },
+      );
+
+      if (options.length === 0) return;
+
+      switch (filter.operand) {
+        case ViewFilterOperand.Contains:
+          return {
+            [correspondingField.name]: {
+              containsAny: options,
+            } as MultiSelectFilter,
+          };
+        case ViewFilterOperand.DoesNotContain:
+          return {
+            or: [
+              {
+                not: {
+                  [correspondingField.name]: {
+                    containsAny: options,
+                  } as MultiSelectFilter,
+                },
+              },
+              {
+                [correspondingField.name]: {
+                  isEmptyArray: true,
+                } as MultiSelectFilter,
+              },
+              {
+                [correspondingField.name]: {
+                  is: 'NULL',
+                } as MultiSelectFilter,
+              },
+            ],
+          };
+        default:
+          throw new Error(
+            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+          );
+      }
+    }
     case 'SELECT': {
       if (isEmptyOperand) {
         return getEmptyRecordGqlOperationFilter(
@@ -609,44 +659,61 @@ const computeFilterRecordGqlOperationFilter = (
           filter.definition,
         );
       }
-      const stringifiedSelectValues = filter.value;
-      let parsedOptionValues: string[] = [];
+      const options = resolveFilterValue(
+        filter as Filter & { definition: { type: 'SELECT' } },
+      );
 
-      if (!isNonEmptyString(stringifiedSelectValues)) {
-        break;
-      }
+      if (options.length === 0) return;
 
-      try {
-        parsedOptionValues = JSON.parse(stringifiedSelectValues);
-      } catch (e) {
-        throw new Error(
-          `Cannot parse filter value for SELECT filter : "${stringifiedSelectValues}"`,
-        );
-      }
-
-      if (parsedOptionValues.length > 0) {
-        switch (filter.operand) {
-          case ViewFilterOperand.Is:
-            return {
+      switch (filter.operand) {
+        case ViewFilterOperand.Is:
+          return {
+            [correspondingField.name]: {
+              in: options,
+            } as SelectFilter,
+          };
+        case ViewFilterOperand.IsNot:
+          return {
+            not: {
               [correspondingField.name]: {
-                in: parsedOptionValues,
-              } as UUIDFilter,
-            };
-          case ViewFilterOperand.IsNot:
-            return {
-              not: {
-                [correspondingField.name]: {
-                  in: parsedOptionValues,
-                } as UUIDFilter,
-              },
-            };
-          default:
-            throw new Error(
-              `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
-            );
-        }
+                in: options,
+              } as SelectFilter,
+            },
+          };
+        default:
+          throw new Error(
+            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+          );
       }
-      break;
+    }
+    case 'ARRAY': {
+      switch (filter.operand) {
+        case ViewFilterOperand.Contains:
+          return {
+            [correspondingField.name]: {
+              containsIlike: `%${filter.value}%`,
+            } as ArrayFilter,
+          };
+        case ViewFilterOperand.DoesNotContain:
+          return {
+            not: {
+              [correspondingField.name]: {
+                containsIlike: `%${filter.value}%`,
+              } as ArrayFilter,
+            },
+          };
+        case ViewFilterOperand.IsEmpty:
+        case ViewFilterOperand.IsNotEmpty:
+          return getEmptyRecordGqlOperationFilter(
+            filter.operand,
+            correspondingField,
+            filter.definition,
+          );
+        default:
+          throw new Error(
+            `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
+          );
+      }
     }
     // TODO: fix this with a new composite field in ViewFilter entity
     case 'ACTOR': {
@@ -665,18 +732,17 @@ const computeFilterRecordGqlOperationFilter = (
         case ViewFilterOperand.IsNot: {
           const parsedRecordIds = JSON.parse(filter.value) as string[];
 
-          if (parsedRecordIds.length > 0) {
-            return {
-              not: {
-                [correspondingField.name]: {
-                  source: {
-                    in: parsedRecordIds,
-                  } as RelationFilter,
-                },
+          if (parsedRecordIds.length === 0) return;
+
+          return {
+            not: {
+              [correspondingField.name]: {
+                source: {
+                  in: parsedRecordIds,
+                } as RelationFilter,
               },
-            };
-          }
-          break;
+            },
+          };
         }
         case ViewFilterOperand.Contains:
           return {
@@ -716,7 +782,6 @@ const computeFilterRecordGqlOperationFilter = (
             `Unknown operand ${filter.operand} for ${filter.definition.label} filter`,
           );
       }
-      break;
     }
     case 'EMAILS':
       switch (filter.operand) {
@@ -806,7 +871,7 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
   );
 
   if (!currentViewFilterGroup) {
-    return undefined;
+    return;
   }
 
   const groupFilters = filters.filter(

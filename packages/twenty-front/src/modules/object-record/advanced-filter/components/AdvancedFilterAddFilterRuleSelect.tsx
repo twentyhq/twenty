@@ -4,7 +4,6 @@ import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dr
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -13,7 +12,13 @@ import { availableFilterDefinitionsComponentState } from '@/views/states/availab
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { useCallback } from 'react';
-import { IconLibraryPlus, IconPlus, isDefined, LightButton } from 'twenty-ui';
+import {
+  IconLibraryPlus,
+  IconPlus,
+  isDefined,
+  LightButton,
+  MenuItem,
+} from 'twenty-ui';
 import { v4 } from 'uuid';
 
 type AdvancedFilterAddFilterRuleSelectProps = {

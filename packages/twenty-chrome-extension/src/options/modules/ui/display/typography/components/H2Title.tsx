@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 type H2TitleProps = {
   title: string;
   description?: string;
-  addornment?: React.ReactNode;
+  adornment?: React.ReactNode;
 };
 
 const StyledContainer = styled.div`
@@ -33,11 +33,11 @@ const StyledDescription = styled.h3`
   margin-top: ${({ theme }) => theme.spacing(3)};
 `;
 
-export const H2Title = ({ title, description, addornment }: H2TitleProps) => (
+export const H2Title = ({ title, description, adornment }: H2TitleProps) => (
   <StyledContainer>
     <StyledTitleContainer>
       <StyledTitle>{title}</StyledTitle>
-      {addornment}
+      {adornment}
     </StyledTitleContainer>
     {description && <StyledDescription>{description}</StyledDescription>}
   </StyledContainer>

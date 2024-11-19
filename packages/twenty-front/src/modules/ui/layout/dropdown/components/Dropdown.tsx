@@ -7,7 +7,7 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import { MouseEvent, ReactNode, useRef } from 'react';
+import { MouseEvent, ReactNode, useEffect, useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -65,8 +65,13 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { isDropdownOpen, toggleDropdown, closeDropdown, dropdownWidth } =
-    useDropdown(dropdownId);
+  const {
+    isDropdownOpen,
+    toggleDropdown,
+    closeDropdown,
+    dropdownWidth,
+    setDropdownPlacement,
+  } = useDropdown(dropdownId);
 
   const offsetMiddlewares = [];
 
@@ -78,7 +83,7 @@ export const Dropdown = ({
     offsetMiddlewares.push(offset({ mainAxis: dropdownOffset.y }));
   }
 
-  const { refs, floatingStyles } = useFloating({
+  const { refs, floatingStyles, placement } = useFloating({
     placement: dropdownPlacement,
     middleware: [
       flip(),
@@ -100,6 +105,10 @@ export const Dropdown = ({
     strategy: dropdownStrategy,
   });
 
+  useEffect(() => {
+    setDropdownPlacement(placement);
+  }, [placement, setDropdownPlacement]);
+
   const handleHotkeyTriggered = () => {
     toggleDropdown();
   };
@@ -113,11 +122,10 @@ export const Dropdown = ({
   };
 
   useListenClickOutsideV2({
-    refs: [refs.floating],
+    refs: [refs.floating, refs.domReference],
     listenerId: dropdownId,
     callback: () => {
       onClickOutside?.();
-
       if (isDropdownOpen) {
         closeDropdown();
       }
@@ -132,10 +140,12 @@ export const Dropdown = ({
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      closeDropdown();
+      if (isDropdownOpen) {
+        closeDropdown();
+      }
     },
     dropdownHotkeyScope.scope,
-    [closeDropdown],
+    [closeDropdown, isDropdownOpen],
   );
 
   return (

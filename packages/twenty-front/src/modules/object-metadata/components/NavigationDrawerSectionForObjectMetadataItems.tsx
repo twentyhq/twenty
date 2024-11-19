@@ -24,7 +24,6 @@ const StyledObjectsMetaDataItemsWrapper = styled.div<{
   gap: ${({ theme, isMobile }) =>
     isMobile ? theme.spacing(3) : theme.betweenSiblingsGap};
   width: 100%;
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
   flex: 1;
   overflow-y: auto;
 `;

@@ -110,11 +110,7 @@ export const Avatar = ({
     <StyledAvatar
       size={size}
       backgroundColor={
-        Icon
-          ? theme.background.tertiary
-          : showBackgroundColor
-            ? fixedBackgroundColor
-            : 'none'
+        Icon ? 'inherit' : showBackgroundColor ? fixedBackgroundColor : 'none'
       }
       color={fixedColor}
       clickable={!isUndefined(onClick)}
