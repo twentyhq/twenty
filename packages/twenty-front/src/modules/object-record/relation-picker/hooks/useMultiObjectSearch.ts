@@ -6,14 +6,11 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { useGenerateCombinedSearchRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedSearchRecordsQuery';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
-import {
-  MultiObjectRecordQueryResult,
-  useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray,
-} from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
+import { MultiObjectRecordQueryResult } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { isObjectMetadataItemSearchableInCombinedRequest } from '@/object-record/utils/isObjectMetadataItemSearchableInCombinedRequest';
 import { isDefined } from '~/utils/isDefined';
 
-export const useMultiObjectSearchMatchesSearchFilterQuery = ({
+export const useMultiObjectSearch = ({
   searchFilterValue,
   limit,
   excludedObjects,
@@ -62,14 +59,8 @@ export const useMultiObjectSearchMatchesSearchFilterQuery = ({
     },
   );
 
-  const { objectRecordForSelectArray: matchesSearchFilterObjectRecords } =
-    useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray({
-      multiObjectRecordsQueryResult:
-        matchesSearchFilterObjectRecordsQueryResult,
-    });
-
   return {
     matchesSearchFilterObjectRecordsLoading,
-    matchesSearchFilterObjectRecords,
+    matchesSearchFilterObjectRecordsQueryResult,
   };
 };
