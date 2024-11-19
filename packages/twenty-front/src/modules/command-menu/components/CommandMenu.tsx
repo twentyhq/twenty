@@ -2,6 +2,7 @@ import { useOpenCopilotRightDrawer } from '@/activities/copilot/right-drawer/hoo
 import { copilotQueryState } from '@/activities/copilot/right-drawer/states/copilotQueryState';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Note } from '@/activities/types/Note';
+import { Task } from '@/activities/types/Task';
 import { CommandGroup } from '@/command-menu/components/CommandGroup';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -36,6 +37,7 @@ import { Key } from 'ts-key-enum';
 import {
   Avatar,
   IconCheckbox,
+  IconComponent,
   IconNotes,
   IconSparkles,
   IconX,
@@ -49,6 +51,19 @@ import { capitalize } from '~/utils/string/capitalize';
 const SEARCH_BAR_HEIGHT = 56;
 const SEARCH_BAR_PADDING = 3;
 const MOBILE_NAVIGATION_BAR_HEIGHT = 64;
+
+type CommandGroupConfig = {
+  heading: string;
+  items?: any[];
+  renderItem: (item: any) => {
+    id: string;
+    Icon?: IconComponent;
+    label: string;
+    to?: string;
+    onClick?: () => void;
+    key?: string;
+  };
+};
 
 const StyledCommandMenu = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -202,7 +217,7 @@ export const CommandMenu = () => {
     limit: 3,
   });
 
-  const { loading: isTasksLoading, records: tasks } = useFindManyRecords<Note>({
+  const { loading: isTasksLoading, records: tasks } = useFindManyRecords<Task>({
     skip: !isCommandMenuOpened,
     objectNameSingular: CoreObjectNameSingular.Task,
     filter: deferredCommandMenuSearch
@@ -438,6 +453,115 @@ export const CommandMenu = () => {
     mainContextStoreComponentInstanceIdState,
   );
 
+  const commandGroups: CommandGroupConfig[] = [
+    {
+      heading: 'Navigate',
+      items: matchingNavigateCommand,
+      renderItem: (command) => ({
+        id: command.id,
+        Icon: command.Icon,
+        label: command.label,
+        to: command.to,
+        onClick: command.onCommandClick,
+      }),
+    },
+    {
+      heading: 'Other',
+      items: matchingCreateCommand,
+      renderItem: (command) => ({
+        id: command.id,
+        Icon: command.Icon,
+        label: command.label,
+        to: command.to,
+        onClick: command.onCommandClick,
+      }),
+    },
+    {
+      heading: 'People',
+      items: people,
+      renderItem: (person) => ({
+        id: person.id,
+        label: `${person.name.firstName} ${person.name.lastName}`,
+        to: `object/person/${person.id}`,
+        Icon: () => (
+          <Avatar
+            type="rounded"
+            avatarUrl={null}
+            placeholderColorSeed={person.id}
+            placeholder={`${person.name.firstName} ${person.name.lastName}`}
+          />
+        ),
+      }),
+    },
+    {
+      heading: 'Companies',
+      items: companies,
+      renderItem: (company) => ({
+        id: company.id,
+        label: company.name,
+        to: `object/company/${company.id}`,
+        Icon: () => (
+          <Avatar
+            placeholderColorSeed={company.id}
+            placeholder={company.name}
+            avatarUrl={getLogoUrlFromDomainName(
+              getCompanyDomainName(company as Company),
+            )}
+          />
+        ),
+      }),
+    },
+    {
+      heading: 'Opportunities',
+      items: opportunities,
+      renderItem: (opportunity) => ({
+        id: opportunity.id,
+        label: opportunity.name ?? '',
+        to: `object/opportunity/${opportunity.id}`,
+        Icon: () => (
+          <Avatar
+            type="rounded"
+            avatarUrl={null}
+            placeholderColorSeed={opportunity.id}
+            placeholder={opportunity.name ?? ''}
+          />
+        ),
+      }),
+    },
+    {
+      heading: 'Notes',
+      items: notes,
+      renderItem: (note) => ({
+        id: note.id,
+        Icon: IconNotes,
+        label: note.title ?? '',
+        onClick: () => openActivityRightDrawer(note.id),
+      }),
+    },
+    {
+      heading: 'Tasks',
+      items: tasks,
+      renderItem: (task) => ({
+        id: task.id,
+        Icon: IconCheckbox,
+        label: task.title ?? '',
+        onClick: () => openActivityRightDrawer(task.id),
+      }),
+    },
+    ...Object.entries(customObjectRecordsMap).map(
+      ([customObjectNamePlural, objectRecords]): CommandGroupConfig => ({
+        heading: capitalize(customObjectNamePlural),
+        items: objectRecords,
+        renderItem: (objectRecord) => ({
+          key: objectRecord.record.id,
+          id: objectRecord.record.id,
+          label: objectRecord.recordIdentifier.name,
+          to: `object/${objectRecord.objectMetadataItem.nameSingular}/${objectRecord.record.id}`,
+        }),
+      }),
+    ),
+  ];
+
   return (
     <>
       {isCommandMenuOpened && (
@@ -538,157 +662,27 @@ export const CommandMenu = () => {
                       </CommandGroup>
                     </>
                   )}
-                  <CommandGroup heading="Navigate">
-                    {matchingNavigateCommand.map((cmd) => (
-                      <SelectableItem itemId={cmd.id} key={cmd.id}>
-                        <CommandMenuItem
-                          id={cmd.id}
-                          to={cmd.to}
-                          key={cmd.id}
-                          label={cmd.label}
-                          Icon={cmd.Icon}
-                          onClick={cmd.onCommandClick}
-                          firstHotKey={cmd.firstHotKey}
-                          secondHotKey={cmd.secondHotKey}
-                        />
-                      </SelectableItem>
-                    ))}
-                  </CommandGroup>
-                  <CommandGroup heading="Other">
-                    {matchingCreateCommand.map((cmd) => (
-                      <SelectableItem itemId={cmd.id} key={cmd.id}>
-                        <CommandMenuItem
-                          id={cmd.id}
-                          to={cmd.to}
-                          key={cmd.id}
-                          Icon={cmd.Icon}
-                          label={cmd.label}
-                          onClick={cmd.onCommandClick}
-                          firstHotKey={cmd.firstHotKey}
-                          secondHotKey={cmd.secondHotKey}
-                        />
-                      </SelectableItem>
-                    ))}
-                  </CommandGroup>
-                  <CommandGroup heading="People">
-                    {people?.map((person) => (
-                      <SelectableItem itemId={person.id} key={person.id}>
-                        <CommandMenuItem
-                          id={person.id}
-                          key={person.id}
-                          to={`object/person/${person.id}`}
-                          label={
-                            person.name.firstName + ' ' + person.name.lastName
-                          }
-                          Icon={() => (
-                            <Avatar
-                              type="rounded"
-                              avatarUrl={null}
-                              placeholderColorSeed={person.id}
-                              placeholder={
-                                person.name.firstName +
-                                ' ' +
-                                person.name.lastName
-                              }
-                            />
-                          )}
-                        />
-                      </SelectableItem>
-                    ))}
-                  </CommandGroup>
-                  <CommandGroup heading="Companies">
-                    {companies?.map((company) => (
-                      <SelectableItem itemId={company.id} key={company.id}>
-                        <CommandMenuItem
-                          id={company.id}
-                          key={company.id}
-                          label={company.name}
-                          to={`object/company/${company.id}`}
-                          Icon={() => (
-                            <Avatar
-                              placeholderColorSeed={company.id}
-                              placeholder={company.name}
-                              avatarUrl={getLogoUrlFromDomainName(
-                                getCompanyDomainName(company as Company),
-                              )}
-                            />
-                          )}
-                        />
-                      </SelectableItem>
-                    ))}
-                  </CommandGroup>
-                  <CommandGroup heading="Opportunities">
-                    {opportunities?.map((opportunity) => (
-                      <SelectableItem
-                        itemId={opportunity.id}
-                        key={opportunity.id}
-                      >
-                        <CommandMenuItem
-                          id={opportunity.id}
-                          key={opportunity.id}
-                          label={opportunity.name ?? ''}
-                          to={`object/opportunity/${opportunity.id}`}
-                          Icon={() => (
-                            <Avatar
-                              type="rounded"
-                              avatarUrl={null}
-                              placeholderColorSeed={opportunity.id}
-                              placeholder={opportunity.name ?? ''}
-                            />
-                          )}
-                        />
-                      </SelectableItem>
-                    ))}
-                  </CommandGroup>
-                  <CommandGroup heading="Notes">
-                    {notes?.map((note) => (
-                      <SelectableItem itemId={note.id} key={note.id}>
-                        <CommandMenuItem
-                          id={note.id}
-                          Icon={IconNotes}
-                          key={note.id}
-                          label={note.title ?? ''}
-                          onClick={() => openActivityRightDrawer(note.id)}
-                        />
-                      </SelectableItem>
-                    ))}
-                  </CommandGroup>
-                  <CommandGroup heading="Tasks">
-                    {tasks?.map((task) => (
-                      <SelectableItem itemId={task.id} key={task.id}>
-                        <CommandMenuItem
-                          id={task.id}
-                          Icon={IconCheckbox}
-                          key={task.id}
-                          label={task.title ?? ''}
-                          onClick={() => openActivityRightDrawer(task.id)}
-                        />
-                      </SelectableItem>
-                    ))}
-                  </CommandGroup>
-                  {Object.entries(customObjectRecordsMap).map(
-                    ([customObjectNamePlural, objectRecords]) => (
-                      <CommandGroup
-                        heading={capitalize(customObjectNamePlural)}
-                        key={customObjectNamePlural}
-                      >
-                        {objectRecords?.map((objectRecord) => {
+                  {commandGroups.map(({ heading, items, renderItem }) =>
+                    items?.length ? (
+                      <CommandGroup heading={heading} key={heading}>
+                        {items.map((item) => {
+                          const { id, Icon, label, to, onClick, key } =
+                            renderItem(item);
                           return (
-                            <SelectableItem
-                              itemId={objectRecord.record.id}
-                              key={objectRecord.record.id}
-                            >
+                            <SelectableItem itemId={id} key={id}>
                               <CommandMenuItem
-                                id={objectRecord.record.id}
-                                key={objectRecord.record.id}
-                                label={objectRecord.recordIdentifier.name}
-                                to={`object/${objectRecord.objectMetadataItem.nameSingular}/${objectRecord.record.id}`}
+                                key={key}
+                                id={id}
+                                Icon={Icon}
+                                label={label}
+                                to={to}
+                                onClick={onClick}
                               />
                             </SelectableItem>
                           );
                         })}
                       </CommandGroup>
-                    ),
+                    ) : null,
                   )}
                 </SelectableList>
               </StyledInnerList>
