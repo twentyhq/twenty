@@ -187,7 +187,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
             key={pathKey}
             inputId={`input-${inputKey}`}
             label={inputKey}
-            placeholder="Enter value (use {{variable}} for dynamic content)"
+            placeholder="Enter value"
             value={`${inputValue || ''}`}
             onChange={(value) => handleInputChange(value, currentPath)}
           />
