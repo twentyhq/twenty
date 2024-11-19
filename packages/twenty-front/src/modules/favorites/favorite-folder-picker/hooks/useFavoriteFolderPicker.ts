@@ -39,9 +39,9 @@ export const useFavoriteFolderPicker = ({
     favoriteFolderPickerComponentFamilyState,
   );
 
-  const favorites = useFavorites();
-  const createFavorite = useCreateFavorite();
-  const deleteFavorite = useDeleteFavorite();
+  const { sortedFavorites: favorites } = useFavorites();
+  const { createFavorite } = useCreateFavorite();
+  const { deleteFavorite } = useDeleteFavorite();
 
   const getFoldersByIds = useRecoilCallback(
     ({ snapshot }) =>

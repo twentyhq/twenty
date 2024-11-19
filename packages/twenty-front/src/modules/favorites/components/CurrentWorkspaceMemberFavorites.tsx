@@ -61,9 +61,9 @@ export const CurrentWorkspaceMemberFavorites = ({
   const selectedFavoriteIndex = folder.favorites.findIndex((favorite) =>
     isLocationMatchingFavorite(currentPath, currentViewPath, favorite),
   );
-  const handleReorderFavorite = useReorderFavorite();
+  const { handleReorderFavorite } = useReorderFavorite();
 
-  const deleteFavorite = useDeleteFavorite();
+  const { deleteFavorite } = useDeleteFavorite();
 
   const favoriteFolderContentLength = folder.favorites.length;
 

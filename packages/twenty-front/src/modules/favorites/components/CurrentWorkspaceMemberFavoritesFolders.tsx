@@ -32,9 +32,9 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const currentViewPath = useLocation().pathname + useLocation().search;
   const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const favorites = useFavorites();
-  const deleteFavorite = useDeleteFavorite();
-  const handleReorderFavorite = useReorderFavorite();
+  const { sortedFavorites: favorites } = useFavorites();
+  const { deleteFavorite } = useDeleteFavorite();
+  const { handleReorderFavorite } = useReorderFavorite();
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
     useRecoilState(isFavoriteFolderCreatingState);
 

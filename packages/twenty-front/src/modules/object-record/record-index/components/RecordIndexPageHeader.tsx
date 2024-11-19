@@ -39,7 +39,7 @@ export const RecordIndexPageHeader = () => {
 
   const view = views.find((view) => view.id === currentViewId);
 
-  const favorites = useFavorites();
+  const { sortedFavorites: favorites } = useFavorites();
 
   const isFavorite = favorites.some(
     (favorite) =>
