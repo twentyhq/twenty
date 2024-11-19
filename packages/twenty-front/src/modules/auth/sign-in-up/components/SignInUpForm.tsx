@@ -232,7 +232,6 @@ export const SignInUpForm = () => {
                   <Controller
                     name="email"
                     control={form.control}
-                    defaultValue=""
                     render={({
                       field: { onChange, onBlur, value },
                       fieldState: { error },
