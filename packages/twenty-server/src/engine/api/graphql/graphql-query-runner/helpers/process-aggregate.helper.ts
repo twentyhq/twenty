@@ -19,7 +19,7 @@ export class ProcessAggregateHelper {
     )) {
       if (
         !isDefined(aggregatedField?.fromField) ||
-        !isDefined(aggregatedField?.aggregationOperation)
+        !isDefined(aggregatedField?.aggregateOperation)
       ) {
         continue;
       }
@@ -28,7 +28,7 @@ export class ProcessAggregateHelper {
         aggregatedField.fromField,
         aggregatedField.fromSubField,
       );
-      const operation = aggregatedField.aggregationOperation;
+      const operation = aggregatedField.aggregateOperation;
 
       queryBuilder.addSelect(
         `${operation}("${columnName}")`,

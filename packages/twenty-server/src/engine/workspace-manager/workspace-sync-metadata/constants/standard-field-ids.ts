@@ -380,6 +380,7 @@ export const VIEW_FIELD_STANDARD_FIELD_IDS = {
   size: '20202020-6fab-4bd0-ae72-20f3ee39d581',
   position: '20202020-19e5-4e4c-8c15-3a96d1fd0650',
   view: '20202020-e8da-4521-afab-d6d231f9fa18',
+  aggregateOperation: '20202020-2cd7-4f94-ae83-4a14f5731a04',
 };
 
 export const VIEW_GROUP_STANDARD_FIELD_IDS = {
