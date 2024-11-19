@@ -201,7 +201,6 @@ export const WorkflowEditActionFormServerlessFunction = (
     >
       <Select
         dropdownId="select-serverless-function-id"
-        key={'select-serverless-function-id'}
         label="Function"
         fullWidth
         value={props.action.settings.input.serverlessFunctionId}
