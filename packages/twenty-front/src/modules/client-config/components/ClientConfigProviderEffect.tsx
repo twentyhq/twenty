@@ -7,7 +7,7 @@ import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabl
 import { isClientConfigLoadedState } from '@/client-config/states/isClientConfigLoadedState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
-import { isSignUpDisabledState } from '@/client-config/states/isSignUpDisabledState';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { useEffect } from 'react';
@@ -21,7 +21,9 @@ export const ClientConfigProviderEffect = () => {
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
 
   const setIsSignInPrefilled = useSetRecoilState(isSignInPrefilledState);
-  const setIsSignUpDisabled = useSetRecoilState(isSignUpDisabledState);
+  const setIsMultiworkspaceEnabled = useSetRecoilState(
+    isMultiWorkspaceEnabledState,
+  );
 
   const setBilling = useSetRecoilState(billingState);
   const setSupportChat = useSetRecoilState(supportChatState);
@@ -54,7 +56,7 @@ export const ClientConfigProviderEffect = () => {
       setIsDebugMode(data?.clientConfig.debugMode);
       setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
       setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
-      setIsSignUpDisabled(data?.clientConfig.signUpDisabled);
+      setIsMultiworkspaceEnabled(data?.clientConfig.isMultiworkspaceEnabled);
 
       setBilling(data?.clientConfig.billing);
       setSupportChat(data?.clientConfig.support);
@@ -78,7 +80,7 @@ export const ClientConfigProviderEffect = () => {
     setAuthProviders,
     setIsDebugMode,
     setIsSignInPrefilled,
-    setIsSignUpDisabled,
+    setIsMultiworkspaceEnabled,
     setSupportChat,
     setBilling,
     setSentryConfig,
