@@ -5,10 +5,10 @@ import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 import { isDefined } from 'twenty-ui';
 
-export const foldersByIdsComponentSelector = createComponentSelectorV2<
+export const favoriteFoldersComponentSelector = createComponentSelectorV2<
   FavoriteFolder[]
 >({
-  key: 'foldersByIdsSelector',
+  key: 'favoriteFoldersComponentSelector',
   componentInstanceContext: FavoriteFolderPickerInstanceContext,
   get:
     ({ instanceId }) =>

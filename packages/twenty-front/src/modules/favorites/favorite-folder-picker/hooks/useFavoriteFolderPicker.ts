@@ -1,5 +1,5 @@
 import { favoriteFolderPickerCheckedComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFolderPickerCheckedComponentState';
-import { foldersByIdsComponentSelector } from '@/favorites/favorite-folder-picker/states/selectors/foldersByIdsComponentSelector';
+import { favoriteFoldersComponentSelector } from '@/favorites/favorite-folder-picker/states/selectors/favoriteFoldersComponentSelector';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
@@ -16,15 +16,15 @@ type useFavoriteFolderPickerProps = {
   objectNameSingular: string;
 };
 
-type FolderOperations = {
-  getFoldersByIds: () => FavoriteFolder[];
+type useFavoriteFolderPickerReturnType = {
+  favoriteFolders: FavoriteFolder[];
   toggleFolderSelection: (folderId: string) => Promise<void>;
 };
 
 export const useFavoriteFolderPicker = ({
   record,
   objectNameSingular,
-}: useFavoriteFolderPickerProps): FolderOperations => {
+}: useFavoriteFolderPickerProps): useFavoriteFolderPickerReturnType => {
   const favoriteFoldersMultiSelectCheckedState =
     useRecoilComponentCallbackStateV2(
       favoriteFolderPickerCheckedComponentState,
@@ -34,9 +34,9 @@ export const useFavoriteFolderPicker = ({
   const { createFavorite } = useCreateFavorite();
   const { deleteFavorite } = useDeleteFavorite();
 
-  const folders = useRecoilComponentValueV2(foldersByIdsComponentSelector);
-
-  const getFoldersByIds = () => folders;
+  const favoriteFolders = useRecoilComponentValueV2(
+    favoriteFoldersComponentSelector,
+  );
 
   const toggleFolderSelection = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -102,7 +102,7 @@ export const useFavoriteFolderPicker = ({
   );
 
   return {
-    getFoldersByIds,
+    favoriteFolders,
     toggleFolderSelection,
   };
 };
