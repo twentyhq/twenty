@@ -37,7 +37,7 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { capitalize } from 'src/utils/capitalize';
 import { getServerUrl } from 'src/utils/get-server-url';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { ApiUrl } from 'src/engine/utils/serverAndApiUrl';
+import { ApiUrl } from 'src/engine/utils/server-and-api-urls';
 
 @Injectable()
 export class OpenApiService {

@@ -28,7 +28,7 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ApiUrl } from 'src/engine/utils/serverAndApiUrl';
+import { ApiUrl } from 'src/engine/utils/server-and-api-urls';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

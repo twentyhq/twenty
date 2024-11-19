@@ -24,7 +24,7 @@ import {
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { ApiUrl } from 'src/engine/utils/serverAndApiUrl';
+import { ApiUrl } from 'src/engine/utils/server-and-api-urls';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

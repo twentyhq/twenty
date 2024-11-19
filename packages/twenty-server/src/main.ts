@@ -19,7 +19,7 @@ import './instrument';
 
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
-import { ServerUrl, ApiUrl } from './engine/utils/serverAndApiUrl';
+import { ServerUrl, ApiUrl } from './engine/utils/server-and-api-urls';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {

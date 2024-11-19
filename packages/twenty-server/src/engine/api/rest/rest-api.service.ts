@@ -7,7 +7,7 @@ import { AxiosResponse } from 'axios';
 import { Query } from 'src/engine/api/rest/core/types/query.type';
 import { getServerUrl } from 'src/utils/get-server-url';
 import { RestApiException } from 'src/engine/api/rest/errors/RestApiException';
-import { ApiUrl } from 'src/engine/utils/serverAndApiUrl';
+import { ApiUrl } from 'src/engine/utils/server-and-api-urls';
 
 export enum GraphqlApiType {
   CORE = 'core',
