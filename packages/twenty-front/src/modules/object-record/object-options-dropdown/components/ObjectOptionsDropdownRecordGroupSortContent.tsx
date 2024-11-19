@@ -68,10 +68,10 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
         />
         <MenuItem
           onClick={() =>
-            handleRecordGroupSortChange(RecordGroupSort.Reverse_alphabetical)
+            handleRecordGroupSortChange(RecordGroupSort.ReverseAlphabetical)
           }
           LeftIcon={IconSortZA}
-          text={RecordGroupSort.Reverse_alphabetical}
+          text={RecordGroupSort.ReverseAlphabetical}
         />
       </DropdownMenuItemsContainer>
     </>

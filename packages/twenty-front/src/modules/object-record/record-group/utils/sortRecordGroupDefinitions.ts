@@ -20,7 +20,7 @@ export const sortRecordGroupDefinitions = (
       return visibleGroups.sort((a, b) =>
         compareAlphabetical(a.title.toLowerCase(), b.title.toLowerCase()),
       );
-    case RecordGroupSort.Reverse_alphabetical:
+    case RecordGroupSort.ReverseAlphabetical:
       return visibleGroups.sort((a, b) =>
         compareAlphabetical(a.title.toLowerCase(), b.title.toLowerCase(), true),
       );
