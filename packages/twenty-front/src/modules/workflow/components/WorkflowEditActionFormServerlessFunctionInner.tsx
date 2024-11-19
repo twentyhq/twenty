@@ -9,7 +9,7 @@ import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/utils/merg
 import { setNestedValue } from '@/workflow/utils/setNestedValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Fragment, ReactNode, useEffect, useState } from 'react';
+import { Fragment, ReactNode, useState } from 'react';
 import { HorizontalSeparator, IconCode, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -87,11 +87,6 @@ export const WorkflowEditActionFormServerlessFunctionInner = ({
         functionInput: action.settings.input.serverlessFunctionInput,
       }),
     );
-
-  useEffect(() => {
-    // TODO
-    setSelectedFunctionId(action.settings.input.serverlessFunctionId);
-  }, [action.settings.input.serverlessFunctionId]);
 
   const updateFunctionInput = useDebouncedCallback(
     async (newFunctionInput: object) => {
