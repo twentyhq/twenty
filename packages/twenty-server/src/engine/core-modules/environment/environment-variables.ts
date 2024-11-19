@@ -232,6 +232,11 @@ export class EnvironmentVariables {
   @IsOptional()
   ENTERPRISE_KEY: string;
 
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  IS_MULTIWORKSPACE_ENABLED = false;
+
   // Custom Code Engine
   @IsEnum(ServerlessDriverType)
   @IsOptional()
