@@ -373,11 +373,6 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION > 0)
   WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 60;
 
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  IS_SIGN_UP_DISABLED = false;
-
   @IsEnum(CaptchaDriverType)
   @IsOptional()
   CAPTCHA_DRIVER?: CaptchaDriverType;
