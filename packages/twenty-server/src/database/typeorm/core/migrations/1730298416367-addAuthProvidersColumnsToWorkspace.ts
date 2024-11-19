@@ -15,9 +15,6 @@ export class AddAuthProvidersColumnsToWorkspace1730298416367
     await queryRunner.query(
       `ALTER TABLE "core"."workspace" ADD "isPasswordAuthEnabled" BOOLEAN DEFAULT true`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD "isSSOAuthEnabled" BOOLEAN DEFAULT false`,
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -29,9 +26,6 @@ export class AddAuthProvidersColumnsToWorkspace1730298416367
     );
     await queryRunner.query(
       `ALTER TABLE "core"."workspace" DROP COLUMN "isPasswordAuthEnabled"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."workspace" DROP COLUMN "isSSOAuthEnabled"`,
     );
   }
 }

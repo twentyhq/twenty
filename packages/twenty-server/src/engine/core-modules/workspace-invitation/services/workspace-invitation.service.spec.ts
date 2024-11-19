@@ -38,6 +38,10 @@ describe('WorkspaceInvitationService', () => {
           useClass: Repository,
         },
         {
+          provide: getRepositoryToken(Workspace, 'core'),
+          useClass: Repository,
+        },
+        {
           provide: EnvironmentService,
           useValue: {
             get: jest.fn(),
