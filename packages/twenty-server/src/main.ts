@@ -19,7 +19,7 @@ import './instrument';
 
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
-import ServerUrl from './engine/utils/serverUrl';
+import { ServerUrl, ApiUrl } from './engine/utils/serverAndApiUrl';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -58,8 +58,6 @@ const bootstrap = async () => {
     throw new Error(
       'SSL_KEY_PATH and SSL_CERT_PATH must be defined if https is used',
     );
-
-  // set httpsOptions here
 
   // TODO: Double check this as it's not working for now, it's going to be heplful for durable trees in twenty "orm"
   // // Apply context id strategy for durable trees
@@ -109,6 +107,7 @@ const bootstrap = async () => {
   url.hostname = url.hostname === '[::1]' ? 'localhost' : url.hostname;
 
   ServerUrl.set(url.toString());
+  ApiUrl.set(environmentService.get('API_URL'));
 
   logger.log(`Application is running on: ${url.toString()}`, 'Server Info');
 };

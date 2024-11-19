@@ -7,7 +7,7 @@ import { AxiosResponse } from 'axios';
 import { Query } from 'src/engine/api/rest/core/types/query.type';
 import { getServerUrl } from 'src/utils/get-server-url';
 import { RestApiException } from 'src/engine/api/rest/errors/RestApiException';
-import ServerUrl from 'src/engine/utils/serverUrl';
+import { ApiUrl } from 'src/engine/utils/serverAndApiUrl';
 
 export enum GraphqlApiType {
   CORE = 'core',
@@ -19,7 +19,7 @@ export class RestApiService {
   constructor(private readonly httpService: HttpService) {}
 
   async call(graphqlApiType: GraphqlApiType, request: Request, data: Query) {
-    const baseUrl = getServerUrl(request, ServerUrl.get());
+    const baseUrl = getServerUrl(request, ApiUrl.get());
     let response: AxiosResponse;
     const url = `${baseUrl}/${
       graphqlApiType === GraphqlApiType.CORE

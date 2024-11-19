@@ -37,7 +37,7 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { capitalize } from 'src/utils/capitalize';
 import { getServerUrl } from 'src/utils/get-server-url';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import ServerUrl from 'src/engine/utils/serverUrl';
+import { ApiUrl } from 'src/engine/utils/serverAndApiUrl';
 
 @Injectable()
 export class OpenApiService {
@@ -47,7 +47,7 @@ export class OpenApiService {
   ) {}
 
   async generateCoreSchema(request: Request): Promise<OpenAPIV3_1.Document> {
-    const baseUrl = getServerUrl(request, ServerUrl.get());
+    const baseUrl = getServerUrl(request, ApiUrl.get());
 
     const schema = baseSchema('core', baseUrl);
 
@@ -117,7 +117,7 @@ export class OpenApiService {
   async generateMetaDataSchema(
     request: Request,
   ): Promise<OpenAPIV3_1.Document> {
-    const baseUrl = getServerUrl(request, ServerUrl.get());
+    const baseUrl = getServerUrl(request, ApiUrl.get());
 
     const schema = baseSchema('metadata', baseUrl);
 
