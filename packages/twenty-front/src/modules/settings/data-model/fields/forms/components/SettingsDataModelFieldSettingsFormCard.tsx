@@ -5,6 +5,8 @@ import { z } from 'zod';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import { settingsDataModelFieldAddressFormSchema } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm';
+import { SettingsDataModelFieldAddressSettingsFormCard } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressSettingsFormCard';
 import { settingsDataModelFieldBooleanFormSchema } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
 import { SettingsDataModelFieldBooleanSettingsFormCard } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanSettingsFormCard';
 import { settingsDataModelFieldtextFormSchema } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm';
@@ -64,6 +66,10 @@ const textFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.Text) })
   .merge(settingsDataModelFieldtextFormSchema);
 
+const addressFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.Address) })
+  .merge(settingsDataModelFieldAddressFormSchema);
+
 const otherFieldsFormSchema = z.object({
   type: z.enum(
     Object.keys(
@@ -76,6 +82,7 @@ const otherFieldsFormSchema = z.object({
         FieldMetadataType.Date,
         FieldMetadataType.DateTime,
         FieldMetadataType.Number,
+        FieldMetadataType.Address,
         FieldMetadataType.Text,
       ]),
     ) as [FieldMetadataType, ...FieldMetadataType[]],
@@ -94,6 +101,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     multiSelectFieldFormSchema,
     numberFieldFormSchema,
     textFieldFormSchema,
+    addressFieldFormSchema,
     otherFieldsFormSchema,
   ],
 );
@@ -194,6 +202,16 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.Text) {
     return (
       <SettingsDataModelFieldTextSettingsFormCard
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
+  if (fieldMetadataItem.type === FieldMetadataType.Address) {
+    console.log('fieldMetadataItem', fieldMetadataItem);
+    return (
+      <SettingsDataModelFieldAddressSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
