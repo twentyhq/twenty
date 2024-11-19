@@ -21,7 +21,6 @@ import { isDefined } from '~/utils/isDefined';
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
-import { DropdownContentProvider } from '@/ui/layout/dropdown/components/DropdownContentProvider';
 import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
@@ -176,9 +175,7 @@ export const Dropdown = ({
               ref={refs.setFloating}
               style={floatingStyles}
             >
-              <DropdownContentProvider>
-                {dropdownComponents}
-              </DropdownContentProvider>
+              {dropdownComponents}
             </DropdownMenu>
           </FloatingPortal>
         )}
@@ -190,9 +187,7 @@ export const Dropdown = ({
             ref={refs.setFloating}
             style={floatingStyles}
           >
-            <DropdownContentProvider>
-              {dropdownComponents}
-            </DropdownContentProvider>
+            {dropdownComponents}
           </DropdownMenu>
         )}
         <DropdownOnToggleEffect
