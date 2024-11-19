@@ -100,7 +100,7 @@ describe('SignInUpService', () => {
   it('signInUp - sso - new user', async () => {
     const email = 'test@test.com';
 
-    UserFindOneMock.mockReturnValueOnce(false);
+    UserFindOneMock.mockReturnValueOnce(null);
     workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock.mockReturnValueOnce(
       undefined,
     );
@@ -112,7 +112,6 @@ describe('SignInUpService', () => {
     await service.signInUp({
       email: 'test@test.com',
       fromSSO: true,
-      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(spy).toHaveBeenCalledWith(
@@ -142,7 +141,6 @@ describe('SignInUpService', () => {
     const result = await service.signInUp({
       email,
       fromSSO: true,
-      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(result).toEqual(existingUser);
@@ -177,7 +175,6 @@ describe('SignInUpService', () => {
     await service.signInUp({
       email,
       fromSSO: true,
-      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(spySignInUpOnExistingWorkspace).toHaveBeenCalledWith(
@@ -230,7 +227,6 @@ describe('SignInUpService', () => {
     const result = await service.signInUp({
       email,
       fromSSO: true,
-      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(result).toEqual(existingUser);
@@ -270,7 +266,6 @@ describe('SignInUpService', () => {
       email,
       fromSSO: true,
       workspacePersonalInviteToken,
-      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(spySignInUpOnExistingWorkspace).toHaveBeenCalledWith(
@@ -321,7 +316,6 @@ describe('SignInUpService', () => {
       email,
       fromSSO: true,
       workspacePersonalInviteToken,
-      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(
@@ -363,7 +357,6 @@ describe('SignInUpService', () => {
       email,
       password,
       fromSSO: false,
-      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(
@@ -400,7 +393,6 @@ describe('SignInUpService', () => {
       email,
       password,
       fromSSO: false,
-      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(UserCreateMock).toHaveBeenCalledTimes(1);
@@ -437,7 +429,6 @@ describe('SignInUpService', () => {
       password,
       fromSSO: false,
       workspacePersonalInviteToken,
-      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(UserCreateMock).toHaveBeenCalledTimes(1);

@@ -37,7 +37,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly environmentService: EnvironmentService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private moduleRef: ModuleRef,
   ) {
