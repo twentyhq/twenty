@@ -557,6 +557,14 @@ export const CommandMenu = () => {
           id: objectRecord.record.id,
           label: objectRecord.recordIdentifier.name,
           to: `object/${objectRecord.objectMetadataItem.nameSingular}/${objectRecord.record.id}`,
+          Icon: () => (
+            <Avatar
+              type="rounded"
+              avatarUrl={null}
+              placeholderColorSeed={objectRecord.id}
+              placeholder={objectRecord.recordIdentifier.name ?? ''}
+            />
+          ),
         }),
       }),
     ),
