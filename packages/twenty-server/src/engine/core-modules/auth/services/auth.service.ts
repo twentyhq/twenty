@@ -38,12 +38,21 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly refreshTokenService: RefreshTokenService,
+    private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly workspaceService: WorkspaceService,
+    private readonly userService: UserService,
+    private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -56,8 +65,11 @@ export class AuthService {
   ) {}
 
   async challenge(challengeInput: ChallengeInput) {
-    const user = await this.userRepository.findOneBy({
-      email: challengeInput.email,
+    const user = await this.userRepository.findOne({
+      where: {
+        email: challengeInput.email,
+      },
+      relations: ['workspaces'],
     });
 
     if (!user) {
@@ -103,8 +115,8 @@ export class AuthService {
     password?: string;
     firstName?: string | null;
     lastName?: string | null;
-    workspaceInviteHash?: string | null;
-    workspacePersonalInviteToken?: string | null;
+    workspaceInviteHash?: string;
+    workspacePersonalInviteToken?: string;
     picture?: string | null;
     fromSSO: boolean;
   }) {
@@ -120,7 +132,16 @@ export class AuthService {
     });
   }
 
-  async verify(email: string): Promise<Verify> {
+  private async findOneWithWorkspacesByEmail(email: string) {
+    return this.userRepository.findOne({
+      where: {
+        email,
+      },
+      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
+    });
+  }
+
+  async verify(email: string, workspaceId?: string): Promise<Verify> {
     if (!email) {
       throw new AuthException(
         'Email is required',
@@ -128,12 +149,12 @@ export class AuthService {
       );
     }
 
-    const user = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
-    });
+    let user = await this.findOneWithWorkspacesByEmail(email);
+
+    if (user && workspaceId && user.defaultWorkspaceId !== workspaceId) {
+      await this.userService.saveDefaultWorkspace(user, workspaceId);
+      user = await this.findOneWithWorkspacesByEmail(email);
+    }
 
     if (!user) {
       throw new AuthException(
@@ -403,5 +424,48 @@ export class AuthService {
     return `${this.environmentService.get(
       'FRONT_BASE_URL',
     )}/verify?loginToken=${loginToken}`;
+  }
+
+  async findAvailableWorkspacesByEmail(email: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+      relations: [
+        'workspaces',
+        'workspaces.workspace',
+        'workspaces.workspace.workspaceSSOIdentityProviders',
+      ],
+    });
+
+    if (!user) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.USER_NOT_FOUND,
+      );
+    }
+
+    return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
+      id: userWorkspace.workspaceId,
+      displayName: userWorkspace.workspace.displayName,
+      logo: userWorkspace.workspace.logo,
+      sso: userWorkspace.workspace.workspaceSSOIdentityProviders.reduce(
+        (acc, identityProvider) =>
+          acc.concat(
+            identityProvider.status === 'Inactive'
+              ? []
+              : [
+                  {
+                    id: identityProvider.id,
+                    name: identityProvider.name ?? 'Unknown',
+                    issuer: identityProvider.issuer,
+                    type: identityProvider.type,
+                    status: identityProvider.status,
+                  },
+                ],
+          ),
+        [] as AvailableWorkspaceOutput['sso'],
+      ),
+    }));
   }
 }

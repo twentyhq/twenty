@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Logger } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -19,10 +19,15 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+} from 'src/engine/core-modules/workspace/workspace.exception';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
-  private userWorkspaceService: UserWorkspaceService;
+  private readonly userWorkspaceService: UserWorkspaceService;
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -32,6 +37,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly environmentService: EnvironmentService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private moduleRef: ModuleRef,
   ) {
@@ -82,12 +88,15 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       user.defaultWorkspaceId,
       user,
     );
+
     await this.workspaceRepository.update(user.defaultWorkspaceId, {
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
 
-    return existingWorkspace;
+    return await this.workspaceRepository.findOneBy({
+      id: user.defaultWorkspaceId,
+    });
   }
 
   async softDeleteWorkspace(id: string) {
@@ -159,5 +168,35 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         },
       );
     }
+  }
+
+  async getAuthProvidersByWorkspaceId(workspaceId: string) {
+    const workspace = await this.workspaceRepository.findOne({
+      where: {
+        id: workspaceId,
+      },
+      relations: ['workspaceSSOIdentityProviders'],
+    });
+
+    if (!workspace) {
+      throw new WorkspaceException(
+        'Workspace not found',
+        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    return {
+      google: workspace.isGoogleAuthEnabled,
+      magicLink: false,
+      password: workspace.isPasswordAuthEnabled,
+      microsoft: workspace.isMicrosoftAuthEnabled,
+      sso: workspace.workspaceSSOIdentityProviders.map((identityProvider) => ({
+        id: identityProvider.id,
+        name: identityProvider.name,
+        type: identityProvider.type,
+        status: identityProvider.status,
+        issuer: identityProvider.issuer,
+      })),
+    };
   }
 }
