@@ -28,11 +28,16 @@ type FieldMetadataDateTimeSettings = {
   displayAsRelativeDate?: boolean;
 };
 
+type FieldMetadataAddressSettings = {
+  defaultCountry?: string;
+};
+
 type FieldMetadataSettingsMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings;
   [FieldMetadataType.DATE]: FieldMetadataDateSettings;
   [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings;
   [FieldMetadataType.TEXT]: FieldMetadataTextSettings;
+  [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings;
 };
 
 type SettingsByFieldMetadata<T extends FieldMetadataType | 'default'> =
