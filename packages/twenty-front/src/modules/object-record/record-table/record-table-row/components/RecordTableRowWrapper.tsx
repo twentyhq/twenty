@@ -12,7 +12,6 @@ import { RecordTableRowContext } from '@/object-record/record-table/contexts/Rec
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { tableCellWidthsComponentState } from '@/object-record/record-table/states/tableCellWidthsComponentState';
-import { isRecordReadonly } from '@/object-record/utils/isRecordReadOnly';
 import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -120,10 +119,6 @@ export const RecordTableRowWrapper = ({
                 }) + recordId,
               objectNameSingular: objectMetadataItem.nameSingular,
               isSelected: currentRowSelected,
-              isReadOnly: isRecordReadonly({
-                objectMetadataItem,
-                record: recordFromStore,
-              }),
               isPendingRow,
               isDragging: draggableSnapshot.isDragging,
               dragHandleProps: draggableProvided.dragHandleProps,

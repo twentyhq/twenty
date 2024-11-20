@@ -10,7 +10,6 @@ import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEm
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useCloseCurrentTableCellInEditMode } from '@/object-record/record-table/hooks/internal/useCloseCurrentTableCellInEditMode';
 import { RecordTableCellButton } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
@@ -22,7 +21,7 @@ import { isDefined } from '~/utils/isDefined';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
-import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
 type RecordTableCellSoftFocusModeProps = {
@@ -36,11 +35,10 @@ export const RecordTableCellSoftFocusMode = ({
 }: RecordTableCellSoftFocusModeProps) => {
   const { columnIndex } = useContext(RecordTableCellContext);
   const closeCurrentTableCell = useCloseCurrentTableCellInEditMode();
-  const { isReadOnly: isRowReadOnly } = useContext(RecordTableRowContext);
 
-  const isFieldReadOnly = useIsFieldReadOnly();
+  const isFieldReadOnly = useIsFieldValueReadOnly();
 
-  const isCellReadOnly = isFieldReadOnly || isRowReadOnly;
+  const isCellReadOnly = isFieldReadOnly;
 
   const { openTableCell } = useOpenRecordTableCellFromCell();
 

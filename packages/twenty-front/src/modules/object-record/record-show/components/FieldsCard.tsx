@@ -15,7 +15,6 @@ import { useRecordShowContainerData } from '@/object-record/record-show/hooks/us
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
-import { isRecordReadonly } from '@/object-record/utils/isRecordReadOnly';
 import { isNull } from '@sniptt/guards';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -91,11 +90,6 @@ export const FieldsCard = ({
     return null;
   }
 
-  const isReadOnly = isRecordReadonly({
-    objectMetadataItem,
-    record: recordFromStore,
-  });
-
   return (
     <>
       {isDefined(recordFromStore) && (
@@ -159,10 +153,7 @@ export const FieldsCard = ({
                       hotkeyScope: InlineCellHotkeyScope.InlineCell,
                     }}
                   >
-                    <RecordInlineCell
-                      loading={recordLoading}
-                      readonly={isReadOnly}
-                    />
+                    <RecordInlineCell loading={recordLoading} />
                   </FieldContext.Provider>
                 ))}
               </>
