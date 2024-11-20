@@ -2,8 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import Stripe from 'stripe';
 
-import { SubscriptionInterval } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-
+import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/subcription-interval.enum';
 @ObjectType()
 export class ProductPriceEntity {
   @Field(() => SubscriptionInterval)

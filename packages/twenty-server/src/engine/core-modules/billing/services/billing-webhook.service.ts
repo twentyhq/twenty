@@ -4,11 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import Stripe from 'stripe';
 import { Repository } from 'typeorm';
 
+import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import {
-  BillingSubscription,
-  SubscriptionStatus,
-} from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { FeatureStripeLookupKey } from 'src/engine/core-modules/billing/enums/feature-stripe-lookup-key.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/subcription-status.enum';
 import {
   Workspace,
   WorkspaceActivationStatus,
@@ -20,6 +20,8 @@ export class BillingWebhookService {
   constructor(
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(BillingEntitlement, 'core')
+    private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
     @InjectRepository(BillingSubscriptionItem, 'core')
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     @InjectRepository(Workspace, 'core')
@@ -43,7 +45,7 @@ export class BillingWebhookService {
 
     await this.billingSubscriptionRepository.upsert(
       {
-        workspaceId: workspaceId,
+        workspaceId,
         stripeCustomerId: data.object.customer as string,
         stripeSubscriptionId: data.object.id,
         status: data.object.status as SubscriptionStatus,
@@ -95,5 +97,35 @@ export class BillingWebhookService {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       });
     }
+  }
+
+  async processCustomerActiveEntitlement(
+    data: Stripe.EntitlementsActiveEntitlementSummaryUpdatedEvent.Data,
+  ) {
+    const billingSubscription =
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: { stripeCustomerId: data.object.customer },
+      });
+    const workspaceId = billingSubscription.workspaceId;
+    const stripeCustomerId = data.object.customer;
+
+    const currentEntitlements = data.object.entitlements.data.map(
+      (item) => item.lookup_key,
+    );
+
+    await this.billingEntitlementRepository.upsert(
+      Object.values(FeatureStripeLookupKey).map((key) => {
+        return {
+          workspaceId,
+          key,
+          value: currentEntitlements.includes(key),
+          stripeCustomerId,
+        };
+      }),
+      {
+        conflictPaths: ['workspaceId', 'key'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
   }
 }
