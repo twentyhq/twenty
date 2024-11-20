@@ -11,10 +11,10 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
+import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
+import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { useFindManyParams } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
-import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-index/options/constants/ExportTableDataDefaultPageSize';
-import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
@@ -62,7 +62,7 @@ export const useExportFetchRecords = ({
   });
   const [previousRecordCount, setPreviousRecordCount] = useState(0);
 
-  const { hiddenBoardFields } = useRecordIndexOptionsForBoard({
+  const { hiddenBoardFields } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordBoardId: recordIndexId,
     viewBarId: recordIndexId,

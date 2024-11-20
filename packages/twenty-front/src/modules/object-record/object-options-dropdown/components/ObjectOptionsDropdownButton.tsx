@@ -1,10 +1,10 @@
-import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
+import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
-export const RecordIndexOptionsDropdownButton = () => {
+export const ObjectOptionsDropdownButton = () => {
   const { isDropdownOpen, toggleDropdown } = useDropdown(
-    RECORD_INDEX_OPTIONS_DROPDOWN_ID,
+    OBJECT_OPTIONS_DROPDOWN_ID,
   );
 
   return (

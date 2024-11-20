@@ -6,7 +6,7 @@ import { useRecoilValue } from 'recoil';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 
-import { useOpenObjectRecordsSpreasheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreasheetImportDialog';
+import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -330,7 +330,7 @@ describe('useSpreadsheetCompanyImport', () => {
         );
         const {
           openObjectRecordsSpreasheetImportDialog: openRecordSpreadsheetImport,
-        } = useOpenObjectRecordsSpreasheetImportDialog(
+        } = useOpenObjectRecordsSpreadsheetImportDialog(
           CoreObjectNameSingular.Company,
         );
         return {
