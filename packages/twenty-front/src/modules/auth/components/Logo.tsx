@@ -2,46 +2,48 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
+import { Spacing } from 'twenty-ui';
 
 type LogoProps = {
   primaryLogo?: string | null;
   secondaryLogo?: string | null;
-  size?: string | null;
+  size?: Spacing | null;
 };
 
-const StyledContainer = styled.div<StyledPrimaryLogoProps>`
-  height: ${({ size }) => size};
+const StyledContainer = styled.div<{ size: number }>`
+  height: ${({ size }) => size}px;
   margin-bottom: ${({ theme }) => theme.spacing(4)};
   margin-top: ${({ theme }) => theme.spacing(4)};
 
   position: relative;
-  width: ${({ size }) => size};
+  width: ${({ size }) => size}px;
 `;
 
-const StyledSecondaryLogo = styled.img<StyledPrimaryLogoProps>`
+const StyledSecondaryLogo = styled.img<{ size: number }>`
   border-radius: ${({ theme }) => theme.border.radius.xs};
-  height: calc(${({ size }) => size} / 2);
-  width: calc(${({ size }) => size} / 2);
+  height: calc(${({ size }) => size}px / 2);
+  width: calc(${({ size }) => size}px / 2);
 `;
 
-const StyledSecondaryLogoContainer = styled.div<StyledPrimaryLogoProps>`
+const StyledSecondaryLogoContainer = styled.div<{ size: number }>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  bottom: calc(-12 * ${({ size }) => size} / 48);
+  bottom: calc(
+    (${({ theme }) => theme.spacing(3)} * -1) * ${({ size }) => size} / 48
+  );
   display: flex;
-  height: calc((28 * ${({ size }) => size}) / 48);
+  height: calc(
+    (${({ theme }) => theme.spacing(7)} * ${({ size }) => size}) / 48
+  );
   justify-content: center;
 
   position: absolute;
-  right: calc(-12 * ${({ size }) => size} / 48);
-  width: calc(28 * ${({ size }) => size} / 48);
+  right: calc(
+    (${({ theme }) => theme.spacing(3)} * -1) * ${({ size }) => size} / 48
+  );
+  width: calc(${({ theme }) => theme.spacing(7)} * ${({ size }) => size} / 48);
 `;
-
-type StyledPrimaryLogoProps = {
-  logo?: string | null;
-  size?: string | null;
-};
 
 const StyledPrimaryLogo = styled.div<{ src: string }>`
   background: url(${(props) => props.src});
@@ -62,12 +64,14 @@ export const Logo = (props: LogoProps) => {
   );
   const secondaryLogoUrl = getImageAbsoluteURI(props.secondaryLogo);
 
+  const sizeInNumber = parseInt(size, 10);
+
   return (
-    <StyledContainer size={size}>
+    <StyledContainer size={sizeInNumber}>
       <StyledPrimaryLogo src={primaryLogoUrl} />
       {secondaryLogoUrl && (
-        <StyledSecondaryLogoContainer size={size}>
-          <StyledSecondaryLogo size={size} src={secondaryLogoUrl} />
+        <StyledSecondaryLogoContainer size={sizeInNumber}>
+          <StyledSecondaryLogo size={sizeInNumber} src={secondaryLogoUrl} />
         </StyledSecondaryLogoContainer>
       )}
     </StyledContainer>
