@@ -42,11 +42,7 @@ const bootstrap = async () => {
   const logger = app.get(LoggerService);
   const environmentService = app.get(EnvironmentService);
 
-  const serverUrl = new URL(
-    environmentService.get('SERVER_URL').startsWith('http')
-      ? environmentService.get('SERVER_URL')
-      : `http://${environmentService.get('SERVER_URL')}`,
-  );
+  const serverUrl = new URL(environmentService.get('SERVER_URL'));
 
   serverUrl.port = environmentService.get('PORT').toString();
 
