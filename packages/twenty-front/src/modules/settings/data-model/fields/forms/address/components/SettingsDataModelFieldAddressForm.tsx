@@ -40,23 +40,24 @@ export const SettingsDataModelFieldAddressForm = ({
   fieldMetadataItem,
 }: SettingsDataModelFieldAddressFormProps) => {
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
-  const countries = useCountries().map(country => ({
+  const countries = useCountries().map((country) => ({
     label: country.countryName,
-    value: country.countryName
-  }))
+    value: country.countryName,
+  }));
   return (
-      <Controller
-        name="settings"
-        defaultValue={{
-          defaultCountry: fieldMetadataItem?.settings?.defaultCountry || 'United States',
-        }}
-        control={control}
-        render={({ field: { onChange, value } }) => {
-          const defaultCountry = value?.defaultCountry ?? 0;
+    <Controller
+      name="settings"
+      defaultValue={{
+        defaultCountry:
+          fieldMetadataItem?.settings?.defaultCountry || 'United States',
+      }}
+      control={control}
+      render={({ field: { onChange, value } }) => {
+        const defaultCountry = value?.defaultCountry ?? 0;
 
-          return (
-            <>
-              <SettingsOptionCardContentSelect
+        return (
+          <>
+            <SettingsOptionCardContentSelect
               Icon={IconMap}
               dropdownId="selectDefaultCountry"
               title="Default Country"
@@ -66,9 +67,9 @@ export const SettingsDataModelFieldAddressForm = ({
               disabled={disabled}
               options={countries}
             />
-            </>
-          );
-        }}
-      />
+          </>
+        );
+      }}
+    />
   );
 };
