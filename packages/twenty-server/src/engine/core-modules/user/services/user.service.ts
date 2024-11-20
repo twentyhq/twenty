@@ -123,4 +123,25 @@ export class UserService extends TypeOrmQueryService<User> {
 
     return user;
   }
+
+  async saveDefaultWorkspace(user: User, workspaceId: string) {
+    const exist = await this.userRepository.exists({
+      where: {
+        id: user.id,
+        workspaces: {
+          workspaceId,
+        },
+      },
+      relations: ['workspaces'],
+    });
+
+    if (!exist) {
+      throw new Error('User does not have access to this workspace');
+    }
+
+    return await this.userRepository.save({
+      id: user.id,
+      defaultWorkspaceId: workspaceId,
+    });
+  }
 }

@@ -1,5 +1,4 @@
 import { apiConfigState } from '@/client-config/states/apiConfigState';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
@@ -16,7 +15,6 @@ import { useGetClientConfigQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const ClientConfigProviderEffect = () => {
-  const setAuthProviders = useSetRecoilState(authProvidersState);
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
 
@@ -46,13 +44,7 @@ export const ClientConfigProviderEffect = () => {
   useEffect(() => {
     if (!loading && isDefined(data?.clientConfig)) {
       setIsClientConfigLoaded(true);
-      setAuthProviders({
-        google: data?.clientConfig.authProviders.google,
-        microsoft: data?.clientConfig.authProviders.microsoft,
-        password: data?.clientConfig.authProviders.password,
-        magicLink: false,
-        sso: data?.clientConfig.authProviders.sso,
-      });
+
       setIsDebugMode(data?.clientConfig.debugMode);
       setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
       setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
@@ -77,7 +69,6 @@ export const ClientConfigProviderEffect = () => {
     }
   }, [
     data,
-    setAuthProviders,
     setIsDebugMode,
     setIsSignInPrefilled,
     setIsMultiworkspaceEnabled,

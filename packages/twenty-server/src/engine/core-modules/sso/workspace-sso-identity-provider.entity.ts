@@ -31,7 +31,7 @@ export enum OIDCResponseType {
 }
 
 registerEnumType(IdentityProviderType, {
-  name: 'IdpType',
+  name: 'IdentityProviderType',
 });
 
 export enum SSOIdentityProviderStatus {

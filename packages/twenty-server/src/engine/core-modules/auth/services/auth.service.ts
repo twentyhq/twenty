@@ -38,6 +38,8 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { buildWorkspaceURL } from 'src/utils/workspace-url.utils';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 
 @Injectable()
 export class AuthService {
@@ -399,9 +401,59 @@ export class AuthService {
     return workspace;
   }
 
-  computeRedirectURI(loginToken: string): string {
-    return `${this.environmentService.get(
-      'FRONT_BASE_URL',
-    )}/verify?loginToken=${loginToken}`;
+  computeRedirectURI(loginToken: string) {
+    const url = buildWorkspaceURL(
+      this.environmentService.get('FRONT_BASE_URL'),
+      null,
+      {
+        withPathname: '/verify',
+        withSearchParams: { loginToken },
+      },
+    );
+
+    return url.toString();
+  }
+
+  async findAvailableWorkspacesByEmail(email: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+      relations: [
+        'workspaces',
+        'workspaces.workspace',
+        'workspaces.workspace.workspaceSSOIdentityProviders',
+      ],
+    });
+
+    if (!user) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.USER_NOT_FOUND,
+      );
+    }
+
+    return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
+      id: userWorkspace.workspaceId,
+      displayName: userWorkspace.workspace.displayName,
+      logo: userWorkspace.workspace.logo,
+      sso: userWorkspace.workspace.workspaceSSOIdentityProviders.reduce(
+        (acc, identityProvider) =>
+          acc.concat(
+            identityProvider.status === 'Inactive'
+              ? []
+              : [
+                  {
+                    id: identityProvider.id,
+                    name: identityProvider.name ?? 'Unknown',
+                    issuer: identityProvider.issuer,
+                    type: identityProvider.type,
+                    status: identityProvider.status,
+                  },
+                ],
+          ),
+        [] as AvailableWorkspaceOutput['sso'],
+      ),
+    }));
   }
 }

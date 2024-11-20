@@ -140,4 +140,16 @@ export class Workspace {
   @Field()
   @Column({ default: '' })
   databaseSchema: string;
+
+  @Field()
+  @Column({ default: true })
+  isGoogleAuthEnabled: boolean;
+
+  @Field()
+  @Column({ default: true })
+  isPasswordAuthEnabled: boolean;
+
+  @Field()
+  @Column({ default: false })
+  isMicrosoftAuthEnabled: boolean;
 }

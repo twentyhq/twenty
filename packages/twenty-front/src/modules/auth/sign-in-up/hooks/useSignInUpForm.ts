@@ -3,9 +3,11 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
+import { useLocation } from 'react-router-dom';
 
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { isDefined } from '~/utils/isDefined';
 
 export const validationSchema = z
   .object({
@@ -20,17 +22,24 @@ export const validationSchema = z
 
 export type Form = z.infer<typeof validationSchema>;
 export const useSignInUpForm = () => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
   const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
   const form = useForm<Form>({
-    mode: 'onChange',
+    mode: 'onSubmit',
     defaultValues: {
       exist: false,
+      email: '',
+      password: '',
     },
     resolver: zodResolver(validationSchema),
   });
 
   useEffect(() => {
-    if (isSignInPrefilled === true) {
+    const email = searchParams.get('email');
+    if (isDefined(email)) {
+      form.setValue('email', email);
+    } else if (isSignInPrefilled === true) {
       form.setValue('email', 'tim@apple.dev');
       form.setValue('password', 'Applecar2025');
     }

@@ -33,4 +33,19 @@ export class UpdateWorkspaceInput {
   @IsBoolean()
   @IsOptional()
   allowImpersonation?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isGoogleAuthEnabled?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isMicrosoftAuthEnabled?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isPasswordAuthEnabled?: boolean;
 }

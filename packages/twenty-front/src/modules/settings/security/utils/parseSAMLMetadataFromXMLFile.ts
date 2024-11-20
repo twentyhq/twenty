@@ -16,7 +16,6 @@ export const parseSAMLMetadataFromXMLFile = (
   try {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xmlString, 'application/xml');
-
     if (xmlDoc.getElementsByTagName('parsererror').length > 0) {
       throw new Error('Error parsing XML');
     }
@@ -28,10 +27,10 @@ export const parseSAMLMetadataFromXMLFile = (
       'md:IDPSSODescriptor',
     )?.[0];
     const keyDescriptor = xmlDoc.getElementsByTagName('md:KeyDescriptor')[0];
-    const keyInfo = keyDescriptor.getElementsByTagName('ds:KeyInfo')[0];
-    const x509Data = keyInfo.getElementsByTagName('ds:X509Data')[0];
+    const keyInfo = keyDescriptor?.getElementsByTagName('ds:KeyInfo')[0];
+    const x509Data = keyInfo?.getElementsByTagName('ds:X509Data')[0];
     const x509Certificate = x509Data
-      .getElementsByTagName('ds:X509Certificate')?.[0]
+      ?.getElementsByTagName('ds:X509Certificate')?.[0]
       .textContent?.trim();
 
     const singleSignOnServices = Array.from(

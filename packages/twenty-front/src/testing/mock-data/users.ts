@@ -45,6 +45,9 @@ export const mockDefaultWorkspace: Workspace = {
   allowImpersonation: true,
   activationStatus: WorkspaceActivationStatus.Active,
   hasValidEntrepriseKey: false,
+  isGoogleAuthEnabled: true,
+  isPasswordAuthEnabled: true,
+  isMicrosoftAuthEnabled: false,
   featureFlags: [
     {
       id: '1492de61-5018-4368-8923-4f1eeaf988c4',
