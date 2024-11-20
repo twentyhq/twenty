@@ -65,21 +65,25 @@ export const RightDrawerActionMenuDropdown = () => {
       }}
       dropdownComponents={
         <DropdownMenuItemsContainer>
-          {actionMenuEntries.map((item, index) => (
-            <MenuItem
-              key={index}
-              LeftIcon={item.Icon}
-              onClick={() => {
-                closeDropdown(
-                  getRightDrawerActionMenuDropdownIdFromActionMenuId(
-                    actionMenuId,
-                  ),
-                );
-                item.onClick?.();
-              }}
-              text={item.label}
-            />
-          ))}
+          {actionMenuEntries
+            .filter(
+              (actionMenuEntry) => actionMenuEntry.scope === 'record-selection',
+            )
+            .map((actionMenuEntry, index) => (
+              <MenuItem
+                key={index}
+                LeftIcon={actionMenuEntry.Icon}
+                onClick={() => {
+                  closeDropdown(
+                    getRightDrawerActionMenuDropdownIdFromActionMenuId(
+                      actionMenuId,
+                    ),
+                  );
+                  actionMenuEntry.onClick?.();
+                }}
+                text={actionMenuEntry.label}
+              />
+            ))}
         </DropdownMenuItemsContainer>
       }
     />
