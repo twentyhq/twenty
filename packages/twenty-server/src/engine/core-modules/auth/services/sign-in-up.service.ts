@@ -108,11 +108,7 @@ export class SignInUpService {
         );
       }
     }
-    console.log(
-      '>>>>>>>>>>>>>>',
-      workspacePersonalInviteToken,
-      workspaceInviteHash,
-    );
+
     const invitationValidation =
       workspacePersonalInviteToken || workspaceInviteHash
         ? await this.workspaceInvitationService.validateInvitation({
@@ -121,8 +117,6 @@ export class SignInUpService {
             email,
           })
         : null;
-
-    console.log('>>>>>>>>>>>>>>', invitationValidation);
 
     if (
       invitationValidation?.isValid === true &&
