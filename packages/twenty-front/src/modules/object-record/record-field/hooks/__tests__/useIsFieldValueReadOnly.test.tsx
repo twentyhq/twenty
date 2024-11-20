@@ -7,9 +7,10 @@ import {
   phonesFieldDefinition,
 } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+
+import { useIsFieldValueReadOnly } from '../useIsFieldValueReadOnly';
 
 const recordId = 'recordId';
 
@@ -31,9 +32,9 @@ const getWrapper =
 const ActorWrapper = getWrapper(actorFieldDefinition);
 const PhoneWrapper = getWrapper(phonesFieldDefinition);
 
-describe('useIsFieldReadOnly', () => {
+describe('useIsFieldValueReadOnly', () => {
   it('should return true', () => {
-    const { result } = renderHook(() => useIsFieldReadOnly(), {
+    const { result } = renderHook(() => useIsFieldValueReadOnly(), {
       wrapper: ActorWrapper,
     });
 
@@ -41,7 +42,7 @@ describe('useIsFieldReadOnly', () => {
   });
 
   it('should return false', () => {
-    const { result } = renderHook(() => useIsFieldReadOnly(), {
+    const { result } = renderHook(() => useIsFieldValueReadOnly(), {
       wrapper: PhoneWrapper,
     });
 

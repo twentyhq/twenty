@@ -28,7 +28,7 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { isFieldMetadataReadOnly } from '@/object-record/record-field/utils/isFieldMetadataReadOnly';
+import { isFieldMetadataReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnlyParams';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
@@ -37,12 +37,13 @@ import { RecordValueSetterEffect } from '@/object-record/record-store/components
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
+import { isRecordReadonly } from '@/object-record/utils/isRecordReadOnly';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { isNull } from '@sniptt/guards';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
   isDropdownOpen?: boolean;
@@ -194,9 +195,17 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
+  if (isNull(record)) {
+    return null;
+  }
+
+  const isReadOnly = isRecordReadonly({
+    objectMetadataItem: relationObjectMetadataItem,
+    record,
+  });
+
   const canEdit =
-    !isFieldMetadataReadOnly(fieldDefinition.metadata) &&
-    !isDefined(record?.deletedAt);
+    !isFieldMetadataReadOnly(fieldDefinition.metadata) && !isReadOnly;
 
   return (
     <>

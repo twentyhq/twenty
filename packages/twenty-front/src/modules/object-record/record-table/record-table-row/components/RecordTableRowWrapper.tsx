@@ -12,10 +12,11 @@ import { RecordTableRowContext } from '@/object-record/record-table/contexts/Rec
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { tableCellWidthsComponentState } from '@/object-record/record-table/states/tableCellWidthsComponentState';
+import { isRecordReadonly } from '@/object-record/utils/isRecordReadOnly';
 import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { isDefined } from '~/utils/isDefined';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { isNull } from '@sniptt/guards';
 
 export const RecordTableRowWrapper = ({
   recordId,
@@ -55,7 +56,7 @@ export const RecordTableRowWrapper = ({
     rootMargin: '1000px',
   });
 
-  const [, setTableCellWidths] = useRecoilComponentStateV2(
+  const setTableCellWidths = useSetRecoilComponentStateV2(
     tableCellWidthsComponentState,
   );
 
@@ -79,6 +80,10 @@ export const RecordTableRowWrapper = ({
       onIndexRecordsLoaded?.();
     }
   }, [inView, onIndexRecordsLoaded]);
+
+  if (isNull(recordFromStore)) {
+    return null;
+  }
 
   return (
     <Draggable key={recordId} draggableId={recordId} index={rowIndex}>
@@ -115,9 +120,10 @@ export const RecordTableRowWrapper = ({
                 }) + recordId,
               objectNameSingular: objectMetadataItem.nameSingular,
               isSelected: currentRowSelected,
-              isReadOnly:
-                objectMetadataItem.isRemote ||
-                isDefined(recordFromStore?.deletedAt),
+              isReadOnly: isRecordReadonly({
+                objectMetadataItem,
+                record: recordFromStore,
+              }),
               isPendingRow,
               isDragging: draggableSnapshot.isDragging,
               dragHandleProps: draggableProvided.dragHandleProps,

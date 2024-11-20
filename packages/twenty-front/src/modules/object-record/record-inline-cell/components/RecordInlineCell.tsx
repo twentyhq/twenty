@@ -13,7 +13,7 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
-import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
+import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
