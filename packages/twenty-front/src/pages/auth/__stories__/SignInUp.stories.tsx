@@ -52,9 +52,7 @@ export type Story = StoryObj<typeof SignInUp>;
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const continueWithEmailButton = await canvas.findByText(
-      'Continue With Email',
-    );
+    const continueWithEmailButton = await canvas.findByText('Continue');
 
     await fireEvent.click(continueWithEmailButton);
   },
