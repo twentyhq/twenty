@@ -2,15 +2,14 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
-import { isDefined } from '~/utils/isDefined';
 
 type LogoProps = {
-  workspaceLogo?: string | null;
+  primaryLogo?: string | null;
+  secondaryLogo?: string | null;
   size?: string | null;
-  includeTwentyLogo?: boolean;
 };
 
-const StyledContainer = styled.div<StyledMainLogoProps>`
+const StyledContainer = styled.div<StyledPrimaryLogoProps>`
   height: ${({ size }) => size};
   margin-bottom: ${({ theme }) => theme.spacing(4)};
   margin-top: ${({ theme }) => theme.spacing(4)};
@@ -19,13 +18,13 @@ const StyledContainer = styled.div<StyledMainLogoProps>`
   width: ${({ size }) => size};
 `;
 
-const StyledTwentyLogo = styled.img<StyledMainLogoProps>`
+const StyledSecondaryLogo = styled.img<StyledPrimaryLogoProps>`
   border-radius: ${({ theme }) => theme.border.radius.xs};
   height: calc(${({ size }) => size} / 2);
   width: calc(${({ size }) => size} / 2);
 `;
 
-const StyledTwentyLogoContainer = styled.div<StyledMainLogoProps>`
+const StyledSecondaryLogoContainer = styled.div<StyledPrimaryLogoProps>`
   align-items: center;
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -39,16 +38,15 @@ const StyledTwentyLogoContainer = styled.div<StyledMainLogoProps>`
   width: calc(28 * ${({ size }) => size} / 48);
 `;
 
-type StyledMainLogoProps = {
+type StyledPrimaryLogoProps = {
   logo?: string | null;
   size?: string | null;
 };
 
-const StyledMainLogo = styled.div<Pick<StyledMainLogoProps, 'logo'>>`
-  background: url(${(props) => props.logo});
+const StyledPrimaryLogo = styled.div<{ src: string }>`
+  background: url(${(props) => props.src});
   background-size: cover;
   height: 100%;
-
   width: 100%;
 `;
 
@@ -57,28 +55,20 @@ export const Logo = (props: LogoProps) => {
 
   const size = props.size ?? theme.spacing(12);
 
-  const includeTwentyLogo = isDefined(props.includeTwentyLogo)
-    ? props.includeTwentyLogo
-    : true;
+  const defaultPrimaryLogoUrl = `${window.location.origin}/icons/android/android-launchericon-192-192.png`;
 
-  if (!props.workspaceLogo) {
-    return (
-      <StyledContainer size={size}>
-        <StyledMainLogo logo="/icons/android/android-launchericon-192-192.png" />
-      </StyledContainer>
-    );
-  }
+  const primaryLogoUrl = getImageAbsoluteURI(
+    props.primaryLogo ?? defaultPrimaryLogoUrl,
+  );
+  const secondaryLogoUrl = getImageAbsoluteURI(props.secondaryLogo);
 
   return (
     <StyledContainer size={size}>
-      <StyledMainLogo logo={getImageAbsoluteURI(props.workspaceLogo)} />
-      {includeTwentyLogo && (
-        <StyledTwentyLogoContainer size={size}>
-          <StyledTwentyLogo
-            size={size}
-            src="/icons/android/android-launchericon-192-192.png"
-          />
-        </StyledTwentyLogoContainer>
+      <StyledPrimaryLogo src={primaryLogoUrl} />
+      {secondaryLogoUrl && (
+        <StyledSecondaryLogoContainer size={size}>
+          <StyledSecondaryLogo size={size} src={secondaryLogoUrl} />
+        </StyledSecondaryLogoContainer>
       )}
     </StyledContainer>
   );
