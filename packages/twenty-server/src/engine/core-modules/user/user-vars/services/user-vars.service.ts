@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { mergeUserVars } from 'src/engine/core-modules/user/user-vars/utils/merge-user-vars.util';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class UserVarsService<
@@ -75,32 +76,32 @@ export class UserVarsService<
     ]).get(key) as KeyValueTypesMap[K];
   }
 
-  public async getAll({
-    userId,
-    workspaceId,
-  }: {
-    userId?: string;
-    workspaceId?: string;
-  }): Promise<Map<Extract<keyof KeyValueTypesMap, string>, any>> {
-    const userVarsWorkspaceLevel = await this.keyValuePairService.get({
+  public async getAll(
+    user: User,
+  ): Promise<Map<Extract<keyof KeyValueTypesMap, string>, any>> {
+    let result = await this.keyValuePairService.get({
       type: KeyValuePairType.USER_VAR,
-      userId: null,
-      workspaceId,
+      userId: user.id,
+      workspaceId: null,
     });
 
-    let userVarsUserLevel: any[] = [];
-
-    if (userId) {
-      userVarsUserLevel = await this.keyValuePairService.get({
-        type: KeyValuePairType.USER_VAR,
-        userId,
-      });
+    if (user.defaultWorkspaceId) {
+      result = [
+        ...result,
+        ...(await this.keyValuePairService.get({
+          type: KeyValuePairType.USER_VAR,
+          userId: null,
+          workspaceId: user.defaultWorkspaceId,
+        })),
+        ...(await this.keyValuePairService.get({
+          type: KeyValuePairType.USER_VAR,
+          userId: user.id,
+          workspaceId: user.defaultWorkspaceId,
+        })),
+      ];
     }
 
-    return mergeUserVars<Extract<keyof KeyValueTypesMap, string>>([
-      ...userVarsWorkspaceLevel,
-      ...userVarsUserLevel,
-    ]);
+    return mergeUserVars<Extract<keyof KeyValueTypesMap, string>>(result);
   }
 
   set<K extends keyof KeyValueTypesMap>({
