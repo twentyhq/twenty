@@ -6,6 +6,8 @@
   </a>
 </p>
 
+<p>Hello.</p>
+
 <h2 align="center" >The #1 Open-Source CRM </h3>
 <p align="center">Tailored to your unique business needs</p>
 
