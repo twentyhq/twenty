@@ -6,7 +6,6 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { Avatar } from 'twenty-ui';
@@ -52,8 +51,6 @@ const CommandMenuContextRecordChipAvatars = ({
     record,
   });
 
-  const theme = useTheme();
-
   return (
     <StyledAvatarWrapper>
       <Avatar
@@ -62,7 +59,6 @@ const CommandMenuContextRecordChipAvatars = ({
         placeholder={recordChipData.name}
         size="sm"
         type="squared"
-        backgroundColor={theme.background.primary}
       />
     </StyledAvatarWrapper>
   );
