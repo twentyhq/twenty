@@ -2,6 +2,7 @@ import { useContextStoreSelectedRecords } from '@/context-store/hooks/useContext
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -91,7 +92,8 @@ export const CommandMenuContextRecordChip = () => {
         ))}
       </StyledAvatarContainer>
       {totalCount === 1
-        ? records[0].name
+        ? getObjectRecordIdentifier({ objectMetadataItem, record: records[0] })
+            .name
         : `${totalCount} ${capitalize(objectMetadataItem.namePlural)}`}
     </StyledChip>
   );
