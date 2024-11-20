@@ -53,6 +53,7 @@ const StyledTextInput = styled.input`
   ${TEXT_INPUT_STYLE}
   margin: 0;
   width: 100%;
+  padding: 0;
 `;
 
 export const NavigationDrawerInput = ({
@@ -115,7 +116,10 @@ export const NavigationDrawerInput = ({
       <StyledItemElementsContainer>
         {Icon && (
           <Icon
-            style={{ minWidth: theme.icon.size.md }}
+            style={{
+              minWidth: theme.icon.size.md,
+              paddingRight: theme.spacing(2),
+            }}
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.md}
             color="currentColor"
