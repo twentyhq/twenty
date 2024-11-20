@@ -43,9 +43,14 @@ const SearchVariablesDropdown = ({
   const availableVariablesInWorkflowStep =
     useAvailableVariablesInWorkflowStep();
 
+  const initialStep =
+    availableVariablesInWorkflowStep.length === 1
+      ? availableVariablesInWorkflowStep[0]
+      : undefined;
+
   const [selectedStep, setSelectedStep] = useState<
     StepOutputSchema | undefined
-  >(undefined);
+  >(initialStep);
 
   const insertVariableTag = (variable: string) => {
     editor.commands.insertVariableTag(variable);
