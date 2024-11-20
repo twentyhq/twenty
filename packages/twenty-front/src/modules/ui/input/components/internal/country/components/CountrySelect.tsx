@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { IconComponentProps } from 'twenty-ui';
+import { IconCircleOff, IconComponentProps } from 'twenty-ui';
 
 import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/country/constants/SelectCountryDropdownId';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
@@ -15,12 +15,20 @@ export const CountrySelect = ({
   const countries = useCountries();
 
   const options: SelectOption<string>[] = useMemo(() => {
-    return countries.map<SelectOption<string>>(({ countryName, Flag }) => ({
-      label: countryName,
-      value: countryName,
-      Icon: (props: IconComponentProps) =>
-        Flag({ width: props.size, height: props.size }), // TODO : improve this ?
-    }));
+    const countryList = countries.map<SelectOption<string>>(
+      ({ countryName, Flag }) => ({
+        label: countryName,
+        value: countryName,
+        Icon: (props: IconComponentProps) =>
+          Flag({ width: props.size, height: props.size }), // TODO : improve this ?
+      }),
+    );
+    countryList.unshift({
+      label: 'No country',
+      value: '',
+      Icon: IconCircleOff,
+    });
+    return countryList;
   }, [countries]);
 
   return (
