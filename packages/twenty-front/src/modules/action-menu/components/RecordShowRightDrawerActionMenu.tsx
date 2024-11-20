@@ -1,4 +1,4 @@
-import { GlobalActionMenuEntriesSetter } from '@/action-menu/actions/global-actions/components/GlobalActionMenuEntriesSetter';
+import { GlobalActionMenuEntriesSetterEffect } from '@/action-menu/actions/global-actions/components/GlobalActionMenuEntriesSetterEffect';
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { RightDrawerActionMenuDropdown } from '@/action-menu/components/RightDrawerActionMenuDropdown';
@@ -24,7 +24,7 @@ export const RecordShowRightDrawerActionMenu = () => {
           <RightDrawerActionMenuDropdown />
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />
-          <GlobalActionMenuEntriesSetter />
+          <GlobalActionMenuEntriesSetterEffect />
         </ActionMenuContext.Provider>
       )}
     </>

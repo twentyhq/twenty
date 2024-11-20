@@ -1,4 +1,4 @@
-import { GlobalActionMenuEntriesSetter } from '@/action-menu/actions/global-actions/components/GlobalActionMenuEntriesSetter';
+import { GlobalActionMenuEntriesSetterEffect } from '@/action-menu/actions/global-actions/components/GlobalActionMenuEntriesSetterEffect';
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexActionMenuBar';
@@ -28,7 +28,7 @@ export const RecordIndexActionMenu = () => {
           <ActionMenuConfirmationModals />
           <RecordIndexActionMenuEffect />
           <RecordActionMenuEntriesSetter />
-          <GlobalActionMenuEntriesSetter />
+          <GlobalActionMenuEntriesSetterEffect />
         </ActionMenuContext.Provider>
       )}
     </>
