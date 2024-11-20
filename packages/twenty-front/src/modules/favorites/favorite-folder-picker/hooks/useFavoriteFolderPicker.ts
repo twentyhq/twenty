@@ -1,6 +1,5 @@
-import { favoriteFolderIdsPickerComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFolderIdPickerComponentState';
 import { favoriteFolderPickerCheckedComponentState } from '@/favorites/favorite-folder-picker/states/favoriteFolderPickerCheckedComponentState';
-import { favoriteFolderPickerComponentFamilyState } from '@/favorites/favorite-folder-picker/states/favoriteFolderPickerComponentFamilyState';
+import { favoriteFoldersComponentSelector } from '@/favorites/favorite-folder-picker/states/selectors/favoriteFoldersComponentSelector';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
@@ -8,7 +7,7 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
@@ -17,46 +16,26 @@ type useFavoriteFolderPickerProps = {
   objectNameSingular: string;
 };
 
-type FolderOperations = {
-  getFoldersByIds: () => FavoriteFolder[];
+type useFavoriteFolderPickerReturnType = {
+  favoriteFolders: FavoriteFolder[];
   toggleFolderSelection: (folderId: string) => Promise<void>;
 };
 
 export const useFavoriteFolderPicker = ({
   record,
   objectNameSingular,
-}: useFavoriteFolderPickerProps): FolderOperations => {
-  const [favoriteFolderIdsPicker] = useRecoilComponentStateV2(
-    favoriteFolderIdsPickerComponentState,
-  );
-
+}: useFavoriteFolderPickerProps): useFavoriteFolderPickerReturnType => {
   const favoriteFoldersMultiSelectCheckedState =
     useRecoilComponentCallbackStateV2(
       favoriteFolderPickerCheckedComponentState,
     );
 
-  const favoriteFolderPickerFamilyState = useRecoilComponentCallbackStateV2(
-    favoriteFolderPickerComponentFamilyState,
-  );
+  const { sortedFavorites: favorites } = useFavorites();
+  const { createFavorite } = useCreateFavorite();
+  const { deleteFavorite } = useDeleteFavorite();
 
-  const favorites = useFavorites();
-  const createFavorite = useCreateFavorite();
-  const deleteFavorite = useDeleteFavorite();
-
-  const getFoldersByIds = useRecoilCallback(
-    ({ snapshot }) =>
-      (): FavoriteFolder[] => {
-        return favoriteFolderIdsPicker
-          .map((folderId) => {
-            const folderValue = snapshot
-              .getLoadable(favoriteFolderPickerFamilyState(folderId))
-              .getValue();
-
-            return folderValue;
-          })
-          .filter((folder): folder is FavoriteFolder => isDefined(folder));
-      },
-    [favoriteFolderIdsPicker, favoriteFolderPickerFamilyState],
+  const favoriteFolders = useRecoilComponentValueV2(
+    favoriteFoldersComponentSelector,
   );
 
   const toggleFolderSelection = useRecoilCallback(
@@ -123,7 +102,7 @@ export const useFavoriteFolderPicker = ({
   );
 
   return {
-    getFoldersByIds,
+    favoriteFolders,
     toggleFolderSelection,
   };
 };

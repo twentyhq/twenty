@@ -36,7 +36,7 @@ export const FavoriteFolderPicker = ({
     FavoriteFolderPickerInstanceContext,
   );
 
-  const { getFoldersByIds, toggleFolderSelection } = useFavoriteFolderPicker({
+  const { favoriteFolders, toggleFolderSelection } = useFavoriteFolderPicker({
     record,
     objectNameSingular,
   });
@@ -45,8 +45,7 @@ export const FavoriteFolderPicker = ({
     favoriteFolderSearchFilterComponentState,
   );
 
-  const folders = getFoldersByIds();
-  const filteredFolders = folders.filter((folder) =>
+  const filteredFolders = favoriteFolders.filter((folder) =>
     folder.name
       .toLowerCase()
       .includes(favoriteFoldersSearchFilter.toLowerCase()),
@@ -94,7 +93,7 @@ export const FavoriteFolderPicker = ({
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer hasMaxHeight>
         <FavoriteFolderPickerList
-          folders={folders}
+          folders={favoriteFolders}
           toggleFolderSelection={toggleFolderSelection}
         />
       </DropdownMenuItemsContainer>

@@ -32,6 +32,7 @@ export const ExportRecordsActionEffect = ({
   useEffect(() => {
     addActionMenuEntry({
       type: 'standard',
+      scope: 'record-selection',
       key: 'export',
       position,
       label: displayedExportProgress(
