@@ -124,10 +124,10 @@ export class UserService extends TypeOrmQueryService<User> {
     return user;
   }
 
-  async saveDefaultWorkspace(user: User, workspaceId: string) {
+  async saveDefaultWorkspace(userId: string, workspaceId: string) {
     const exist = await this.userRepository.exists({
       where: {
-        id: user.id,
+        id: userId,
         workspaces: {
           workspaceId,
         },
@@ -140,7 +140,7 @@ export class UserService extends TypeOrmQueryService<User> {
     }
 
     return await this.userRepository.save({
-      id: user.id,
+      id: userId,
       defaultWorkspaceId: workspaceId,
     });
   }

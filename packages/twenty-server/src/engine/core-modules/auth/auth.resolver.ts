@@ -32,8 +32,6 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SwitchWorkspaceInput } from 'src/engine/core-modules/auth/dto/switch-workspace.input';
 import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 
 import { ChallengeInput } from './dto/challenge.input';
@@ -57,13 +55,11 @@ export class AuthResolver {
     private renewTokenService: RenewTokenService,
     private userService: UserService,
     private apiKeyService: ApiKeyService,
-    private workspaceService: WorkspaceService,
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
     private switchWorkspaceService: SwitchWorkspaceService,
     private transientTokenService: TransientTokenService,
     private oauthService: OAuthService,
-    private environmentService: EnvironmentService,
   ) {}
 
   @UseGuards(CaptchaGuard)

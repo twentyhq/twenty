@@ -23,7 +23,6 @@ export const validationSchema = z
 export type Form = z.infer<typeof validationSchema>;
 export const useSignInUpForm = () => {
   const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
   const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
   const form = useForm<Form>({
     mode: 'onSubmit',
@@ -37,6 +36,7 @@ export const useSignInUpForm = () => {
   });
 
   useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
     const email = searchParams.get('email');
     if (isDefined(email)) {
       form.setValue('email', email);
@@ -44,6 +44,6 @@ export const useSignInUpForm = () => {
       form.setValue('email', 'tim@apple.dev');
       form.setValue('password', 'Applecar2025');
     }
-  }, [form, isSignInPrefilled]);
+  }, [form, isSignInPrefilled, location.search]);
   return { form: form };
 };

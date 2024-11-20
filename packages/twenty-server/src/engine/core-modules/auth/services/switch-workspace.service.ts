@@ -80,7 +80,7 @@ export class SwitchWorkspaceService {
     user: User,
     workspace: Workspace,
   ): Promise<AuthTokens> {
-    await this.userService.saveDefaultWorkspace(user, workspace.id);
+    await this.userService.saveDefaultWorkspace(user.id, workspace.id);
 
     const token = await this.accessTokenService.generateAccessToken(
       user.id,

@@ -52,7 +52,12 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         ? SignInUpMode.SignIn
         : SignInUpMode.SignUp,
     );
-  }, [isMatchingLocation, requestFreshCaptchaToken, setSignInUpStep]);
+  }, [
+    isMatchingLocation,
+    requestFreshCaptchaToken,
+    setSignInUpMode,
+    setSignInUpStep,
+  ]);
 
   const continueWithCredentials = useCallback(async () => {
     const token = await readCaptchaToken();
@@ -86,6 +91,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     enqueueSnackBar,
     requestFreshCaptchaToken,
     setSignInUpStep,
+    setSignInUpMode,
   ]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
