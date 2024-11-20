@@ -22,6 +22,7 @@ export const Default: Story = {
   args: {
     entry: {
       type: 'standard',
+      scope: 'record-selection',
       key: 'delete',
       label: 'Delete',
       position: 0,
@@ -35,6 +36,7 @@ export const WithDangerAccent: Story = {
   args: {
     entry: {
       type: 'standard',
+      scope: 'record-selection',
       key: 'delete',
       label: 'Delete',
       position: 0,
@@ -49,6 +51,7 @@ export const WithInteraction: Story = {
   args: {
     entry: {
       type: 'standard',
+      scope: 'record-selection',
       key: 'markAsDone',
       label: 'Mark as done',
       position: 0,

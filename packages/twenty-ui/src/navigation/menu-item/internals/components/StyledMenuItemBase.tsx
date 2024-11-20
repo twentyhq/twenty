@@ -69,6 +69,8 @@ export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
 `;
 
 export const StyledMenuItemLabel = styled.div<{ hasLeftIcon: boolean }>`
+  display: flex;
+  flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
 

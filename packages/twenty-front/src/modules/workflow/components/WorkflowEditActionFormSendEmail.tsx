@@ -194,6 +194,7 @@ export const WorkflowEditActionFormSendEmail = ({
                 field.onChange(connectedAccountId);
                 handleSave(true);
               }}
+              disabled={actionOptions.readonly}
             />
           )}
         />
@@ -210,6 +211,7 @@ export const WorkflowEditActionFormSendEmail = ({
                 field.onChange(email);
                 handleSave();
               }}
+              readonly={actionOptions.readonly}
             />
           )}
         />
@@ -226,6 +228,7 @@ export const WorkflowEditActionFormSendEmail = ({
                 field.onChange(email);
                 handleSave();
               }}
+              readonly={actionOptions.readonly}
             />
           )}
         />
@@ -243,6 +246,7 @@ export const WorkflowEditActionFormSendEmail = ({
                 handleSave();
               }}
               multiline
+              readonly={actionOptions.readonly}
             />
           )}
         />

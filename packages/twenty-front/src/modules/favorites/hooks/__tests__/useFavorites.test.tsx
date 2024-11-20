@@ -38,6 +38,6 @@ describe('useFavorites', () => {
       { wrapper: Wrapper },
     );
 
-    expect(result.current).toEqual(sortedFavorites);
+    expect(result.current.sortedFavorites).toEqual(sortedFavorites);
   });
 });

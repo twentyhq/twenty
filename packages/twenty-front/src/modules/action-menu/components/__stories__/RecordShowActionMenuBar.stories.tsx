@@ -55,6 +55,7 @@ const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
 
           map.set('addToFavorites', {
             type: 'standard',
+            scope: 'record-selection',
             key: 'addToFavorites',
             label: 'Add to favorites',
             position: 0,
@@ -64,6 +65,7 @@ const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
 
           map.set('export', {
             type: 'standard',
+            scope: 'record-selection',
             key: 'export',
             label: 'Export',
             position: 1,
@@ -73,6 +75,7 @@ const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
 
           map.set('delete', {
             type: 'standard',
+            scope: 'record-selection',
             key: 'delete',
             label: 'Delete',
             position: 2,
