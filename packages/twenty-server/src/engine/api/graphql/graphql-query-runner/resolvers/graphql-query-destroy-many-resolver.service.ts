@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
 
-import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
+import { GraphqlQueryBaseResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { DestroyManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -11,23 +11,22 @@ import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/c
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
-import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
-export class GraphqlQueryDestroyManyResolverService
-  implements ResolverService<DestroyManyResolverArgs, ObjectRecord[]>
-{
-  constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly apiEventEmitterService: ApiEventEmitterService,
-  ) {}
+export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseResolverService<
+  DestroyManyResolverArgs,
+  ObjectRecord[]
+> {
+  constructor() {
+    super();
+    this.operationName = 'destroyMany';
+  }
 
-  async resolve<T extends ObjectRecord = ObjectRecord>(
+  async resolve(
     args: DestroyManyResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<T[]> {
+  ): Promise<ObjectRecord[]> {
     const {
       authContext,
       objectMetadataItemWithFieldMaps,
@@ -100,7 +99,7 @@ export class GraphqlQueryDestroyManyResolverService
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return deletedRecords.map((record: T) =>
+    return deletedRecords.map((record: ObjectRecord) =>
       typeORMObjectRecordsParser.processRecord({
         objectRecord: record,
         objectName: objectMetadataItemWithFieldMaps.nameSingular,

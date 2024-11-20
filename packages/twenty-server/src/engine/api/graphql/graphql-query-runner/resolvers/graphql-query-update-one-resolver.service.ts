@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
 
-import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
+import { GraphqlQueryBaseResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -15,26 +15,25 @@ import {
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
-import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
-export class GraphqlQueryUpdateOneResolverService
-  implements ResolverService<UpdateOneResolverArgs, ObjectRecord>
-{
-  constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly apiEventEmitterService: ApiEventEmitterService,
-  ) {}
+export class GraphqlQueryUpdateOneResolverService extends GraphqlQueryBaseResolverService<
+  UpdateOneResolverArgs,
+  ObjectRecord
+> {
+  constructor() {
+    super();
+    this.operationName = 'updateOne';
+  }
 
-  async resolve<T extends ObjectRecord = ObjectRecord>(
-    args: UpdateOneResolverArgs<Partial<T>>,
+  async resolve(
+    args: UpdateOneResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<T> {
+  ): Promise<ObjectRecord> {
     const {
       authContext,
       objectMetadataItemWithFieldMaps,
@@ -108,7 +107,7 @@ export class GraphqlQueryUpdateOneResolverService
       );
     }
 
-    const updatedRecord = formattedUpdatedRecords[0] as T;
+    const updatedRecord = formattedUpdatedRecords[0];
 
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
@@ -127,7 +126,7 @@ export class GraphqlQueryUpdateOneResolverService
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return typeORMObjectRecordsParser.processRecord<T>({
+    return typeORMObjectRecordsParser.processRecord({
       objectRecord: updatedRecord,
       objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: 1,
@@ -135,8 +134,8 @@ export class GraphqlQueryUpdateOneResolverService
     });
   }
 
-  async validate<T extends ObjectRecord = ObjectRecord>(
-    args: UpdateOneResolverArgs<Partial<T>>,
+  async validate(
+    args: UpdateOneResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataItemWithFieldMaps);

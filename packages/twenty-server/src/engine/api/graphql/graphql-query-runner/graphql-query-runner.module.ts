@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { GraphqlQueryResolverFactory } from 'src/engine/api/graphql/graphql-query-runner/factories/graphql-query-resolver.factory';
 import { GraphqlQueryRunnerService } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-runner.service';
 import { GraphqlQueryCreateManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-many-resolver.service';
+import { GraphqlQueryCreateOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-create-one-resolver.service';
 import { GraphqlQueryDestroyManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-destroy-many-resolver.service';
 import { GraphqlQueryDestroyOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-destroy-one-resolver.service';
 import { GraphqlQueryFindDuplicatesResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-duplicates-resolver.service';
@@ -17,6 +17,7 @@ import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-que
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 
 const graphqlQueryResolvers = [
+  GraphqlQueryCreateOneResolverService,
   GraphqlQueryCreateManyResolverService,
   GraphqlQueryDestroyManyResolverService,
   GraphqlQueryDestroyOneResolverService,
@@ -36,10 +37,9 @@ const graphqlQueryResolvers = [
   ],
   providers: [
     GraphqlQueryRunnerService,
-    GraphqlQueryResolverFactory,
     ApiEventEmitterService,
     ...graphqlQueryResolvers,
   ],
-  exports: [GraphqlQueryRunnerService],
+  exports: [GraphqlQueryRunnerService, ...graphqlQueryResolvers],
 })
 export class GraphqlQueryRunnerModule {}

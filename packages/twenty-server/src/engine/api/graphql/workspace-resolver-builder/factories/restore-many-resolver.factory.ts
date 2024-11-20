@@ -8,7 +8,6 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
-import { GraphqlQueryRunnerService } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-runner.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 
 @Injectable()
@@ -18,7 +17,7 @@ export class RestoreManyResolverFactory
   public static methodName = 'restoreMany' as const;
 
   constructor(
-    private readonly graphqlQueryRunnerService: GraphqlQueryRunnerService,
+    private readonly graphqlQueryRunnerService: GraphqlQueryRestoreManyResolverService,
   ) {}
 
   create(

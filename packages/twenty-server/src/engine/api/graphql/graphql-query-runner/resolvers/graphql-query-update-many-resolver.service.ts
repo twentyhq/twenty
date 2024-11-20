@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
 
-import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
+import { GraphqlQueryBaseResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { UpdateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -11,27 +11,26 @@ import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/c
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
-import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
-export class GraphqlQueryUpdateManyResolverService
-  implements ResolverService<UpdateManyResolverArgs, ObjectRecord[]>
-{
-  constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly apiEventEmitterService: ApiEventEmitterService,
-  ) {}
+export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResolverService<
+  UpdateManyResolverArgs,
+  ObjectRecord[]
+> {
+  constructor() {
+    super();
+    this.operationName = 'updateMany';
+  }
 
-  async resolve<T extends ObjectRecord = ObjectRecord>(
-    args: UpdateManyResolverArgs<Partial<T>>,
+  async resolve(
+    args: UpdateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<T[]> {
+  ): Promise<ObjectRecord[]> {
     const {
       authContext,
       objectMetadataItemWithFieldMaps,
@@ -123,7 +122,7 @@ export class GraphqlQueryUpdateManyResolverService
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return formattedUpdatedRecords.map((record: T) =>
+    return formattedUpdatedRecords.map((record: ObjectRecord) =>
       typeORMObjectRecordsParser.processRecord({
         objectRecord: record,
         objectName: objectMetadataItemWithFieldMaps.nameSingular,
@@ -133,8 +132,8 @@ export class GraphqlQueryUpdateManyResolverService
     );
   }
 
-  async validate<T extends ObjectRecord = ObjectRecord>(
-    args: UpdateManyResolverArgs<Partial<T>>,
+  async validate(
+    args: UpdateManyResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataItemWithFieldMaps);

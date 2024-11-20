@@ -1,5 +1,7 @@
 import { isPlainObject } from '@nestjs/common/utils/shared.utils';
 
+import { ObjectLiteral } from 'typeorm';
+
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -13,7 +15,7 @@ import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 export function formatResult<T>(
-  data: T,
+  data: ObjectLiteral | ObjectLiteral[],
   ObjectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   objectMetadataMaps: ObjectMetadataMaps,
 ): T {

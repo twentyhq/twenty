@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import graphqlFields from 'graphql-fields';
 import { Brackets } from 'typeorm';
 
-import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
+import { GraphqlQueryBaseResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import {
   ObjectRecord,
   ObjectRecordFilter,
@@ -17,24 +17,22 @@ import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/c
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
-export class GraphqlQuerySearchResolverService
-  implements ResolverService<SearchResolverArgs, IConnection<ObjectRecord>>
-{
-  constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) {}
+export class GraphqlQuerySearchResolverService extends GraphqlQueryBaseResolverService<
+  SearchResolverArgs,
+  IConnection<ObjectRecord>
+> {
+  constructor() {
+    super();
+    this.operationName = 'search';
+  }
 
-  async resolve<
-    T extends ObjectRecord = ObjectRecord,
-    Filter extends ObjectRecordFilter = ObjectRecordFilter,
-  >(
+  async resolve(
     args: SearchResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<IConnection<T>> {
+  ): Promise<IConnection<ObjectRecord>> {
     const {
       authContext,
       objectMetadataMaps,
@@ -62,6 +60,7 @@ export class GraphqlQuerySearchResolverService
         hasPreviousPage: false,
       });
     }
+
     const searchTerms = this.formatSearchTerms(args.searchInput, 'and');
     const searchTermsOr = this.formatSearchTerms(args.searchInput, 'or');
 
@@ -78,7 +77,7 @@ export class GraphqlQuerySearchResolverService
     const queryBuilderWithFilter = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
       objectMetadataItemWithFieldMaps.nameSingular,
-      args.filter ?? ({} as Filter),
+      args.filter ?? ({} as ObjectRecordFilter),
     );
 
     const resultsWithTsVector = (await queryBuilderWithFilter
@@ -108,7 +107,7 @@ export class GraphqlQuerySearchResolverService
       .setParameter('searchTerms', searchTerms)
       .setParameter('searchTermsOr', searchTermsOr)
       .take(limit)
-      .getMany()) as T[];
+      .getMany()) as ObjectRecord[];
 
     const objectRecords = await repository.formatResult(resultsWithTsVector);
 

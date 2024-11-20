@@ -1,9 +1,9 @@
 import { GraphQLFieldResolver } from 'graphql';
 
 import {
-  ObjectRecord,
-  ObjectRecordFilter,
-  ObjectRecordOrderBy,
+    ObjectRecord,
+    ObjectRecordFilter,
+    ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
@@ -37,7 +37,7 @@ export interface FindManyResolverArgs<
   orderBy?: OrderBy;
 }
 
-export interface FindOneResolverArgs<Filter = any> {
+export interface FindOneResolverArgs<Filter = ObjectRecordFilter> {
   filter?: Filter;
 }
 

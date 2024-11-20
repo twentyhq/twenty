@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
 
-import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
+import { GraphqlQueryBaseResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import {
   ObjectRecord,
   ObjectRecordFilter,
@@ -22,24 +22,22 @@ import {
   WorkspaceQueryRunnerException,
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
-export class GraphqlQueryFindOneResolverService
-  implements ResolverService<FindOneResolverArgs, ObjectRecord>
-{
-  constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) {}
+export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolverService<
+  FindOneResolverArgs,
+  ObjectRecord
+> {
+  constructor() {
+    super();
+    this.operationName = 'findOne';
+  }
 
-  async resolve<
-    T extends ObjectRecord = ObjectRecord,
-    Filter extends ObjectRecordFilter = ObjectRecordFilter,
-  >(
-    args: FindOneResolverArgs<Filter>,
+  async resolve(
+    args: FindOneResolverArgs<ObjectRecordFilter>,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<T> {
+  ): Promise<ObjectRecord> {
     const {
       authContext,
       objectMetadataItemWithFieldMaps,
@@ -75,12 +73,12 @@ export class GraphqlQueryFindOneResolverService
     const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
       objectMetadataItemWithFieldMaps.nameSingular,
-      args.filter ?? ({} as Filter),
+      args.filter ?? ({} as ObjectRecordFilter),
     );
 
     const withDeletedQueryBuilder = graphqlQueryParser.applyDeletedAtToBuilder(
       withFilterQueryBuilder,
-      args.filter ?? ({} as Filter),
+      args.filter ?? ({} as ObjectRecordFilter),
     );
 
     const nonFormattedObjectRecord = await withDeletedQueryBuilder.getOne();
@@ -122,11 +120,11 @@ export class GraphqlQueryFindOneResolverService
       objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: 1,
       totalCount: 1,
-    }) as T;
+    }) as ObjectRecord;
   }
 
-  async validate<Filter extends ObjectRecordFilter>(
-    args: FindOneResolverArgs<Filter>,
+  async validate(
+    args: FindOneResolverArgs<ObjectRecordFilter>,
     _options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     if (!args.filter || Object.keys(args.filter).length === 0) {

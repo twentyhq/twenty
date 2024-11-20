@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import graphqlFields from 'graphql-fields';
 
-import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
+import { GraphqlQueryBaseResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { DestroyOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -15,23 +15,22 @@ import {
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
-import { ApiEventEmitterService } from 'src/engine/api/graphql/graphql-query-runner/services/api-event-emitter.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
-export class GraphqlQueryDestroyOneResolverService
-  implements ResolverService<DestroyOneResolverArgs, ObjectRecord>
-{
-  constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly apiEventEmitterService: ApiEventEmitterService,
-  ) {}
+export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResolverService<
+  DestroyOneResolverArgs,
+  ObjectRecord
+> {
+  constructor() {
+    super();
+    this.operationName = 'destroyOne';
+  }
 
-  async resolve<T extends ObjectRecord = ObjectRecord>(
+  async resolve(
     args: DestroyOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
-  ): Promise<T> {
+  ): Promise<ObjectRecord> {
     const {
       authContext,
       objectMetadataItemWithFieldMaps,
