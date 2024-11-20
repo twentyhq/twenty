@@ -12,7 +12,11 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { commandMenuCommandsState } from '@/command-menu/states/commandMenuCommandsState';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
-import { Command, CommandType } from '@/command-menu/types/Command';
+import {
+  Command,
+  CommandScope,
+  CommandType,
+} from '@/command-menu/types/Command';
 import { Company } from '@/companies/types/Company';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -363,20 +367,45 @@ export const CommandMenu = () => {
         : true) && cmd.type === CommandType.Create,
   );
 
-  const matchingStandardActionCommands = commandMenuCommands.filter(
+  const matchingStandardActionRecordSelectionCommands =
+    commandMenuCommands.filter(
+      (cmd) =>
+        (deferredCommandMenuSearch.length > 0
+          ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
+            checkInLabels(cmd, deferredCommandMenuSearch)
+          : true) &&
+        cmd.type === CommandType.StandardAction &&
+        cmd.scope === CommandScope.RecordSelection,
+    );
+
+  const matchingStandardActionGlobalCommands = commandMenuCommands.filter(
     (cmd) =>
       (deferredCommandMenuSearch.length > 0
         ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
           checkInLabels(cmd, deferredCommandMenuSearch)
-        : true) && cmd.type === CommandType.StandardAction,
+        : true) &&
+      cmd.type === CommandType.StandardAction &&
+      cmd.scope === CommandScope.Global,
   );
 
-  const matchingWorkflowRunCommands = commandMenuCommands.filter(
+  const matchingWorkflowRunRecordSelectionCommands = commandMenuCommands.filter(
     (cmd) =>
       (deferredCommandMenuSearch.length > 0
         ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
           checkInLabels(cmd, deferredCommandMenuSearch)
-        : true) && cmd.type === CommandType.WorkflowRun,
+        : true) &&
+      cmd.type === CommandType.WorkflowRun &&
+      cmd.scope === CommandScope.RecordSelection,
+  );
+
+  const matchingWorkflowRunGlobalCommands = commandMenuCommands.filter(
+    (cmd) =>
+      (deferredCommandMenuSearch.length > 0
+        ? checkInShortcuts(cmd, deferredCommandMenuSearch) ||
+          checkInLabels(cmd, deferredCommandMenuSearch)
+        : true) &&
+      cmd.type === CommandType.WorkflowRun &&
+      cmd.scope === CommandScope.Global,
   );
 
   useListenClickOutside({
@@ -404,8 +433,10 @@ export const CommandMenu = () => {
 
   const selectableItemIds = copilotCommands
     .map((cmd) => cmd.id)
-    .concat(matchingStandardActionCommands.map((cmd) => cmd.id))
-    .concat(matchingWorkflowRunCommands.map((cmd) => cmd.id))
+    .concat(matchingStandardActionRecordSelectionCommands.map((cmd) => cmd.id))
+    .concat(matchingWorkflowRunRecordSelectionCommands.map((cmd) => cmd.id))
+    .concat(matchingStandardActionGlobalCommands.map((cmd) => cmd.id))
+    .concat(matchingWorkflowRunGlobalCommands.map((cmd) => cmd.id))
     .concat(matchingCreateCommand.map((cmd) => cmd.id))
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people?.map((person) => person.id))
@@ -422,8 +453,10 @@ export const CommandMenu = () => {
     );
 
   const isNoResults =
-    !matchingStandardActionCommands.length &&
-    !matchingWorkflowRunCommands.length &&
+    !matchingStandardActionRecordSelectionCommands.length &&
+    !matchingWorkflowRunRecordSelectionCommands.length &&
+    !matchingStandardActionGlobalCommands.length &&
+    !matchingWorkflowRunGlobalCommands.length &&
     !matchingCreateCommand.length &&
     !matchingNavigateCommand.length &&
     !people?.length &&
@@ -599,38 +632,82 @@ export const CommandMenu = () => {
                       </SelectableItem>
                     </CommandGroup>
                   )}
-                  <CommandGroup heading="Standard Actions">
-                    {matchingStandardActionCommands?.map(
-                      (standardActionCommand) => (
+                  <CommandGroup heading="Record Selection">
+                    {matchingStandardActionRecordSelectionCommands?.map(
+                      (standardActionrecordSelectionCommand) => (
                         <SelectableItem
-                          itemId={standardActionCommand.id}
-                          key={standardActionCommand.id}
+                          itemId={standardActionrecordSelectionCommand.id}
+                          key={standardActionrecordSelectionCommand.id}
                         >
                           <CommandMenuItem
-                            id={standardActionCommand.id}
-                            label={standardActionCommand.label}
-                            Icon={standardActionCommand.Icon}
-                            onClick={standardActionCommand.onCommandClick}
+                            id={standardActionrecordSelectionCommand.id}
+                            label={standardActionrecordSelectionCommand.label}
+                            Icon={standardActionrecordSelectionCommand.Icon}
+                            onClick={
+                              standardActionrecordSelectionCommand.onCommandClick
+                            }
+                          />
+                        </SelectableItem>
+                      ),
+                    )}
+                    {matchingWorkflowRunRecordSelectionCommands?.map(
+                      (workflowRunRecordSelectionCommand) => (
+                        <SelectableItem
+                          itemId={workflowRunRecordSelectionCommand.id}
+                          key={workflowRunRecordSelectionCommand.id}
+                        >
+                          <CommandMenuItem
+                            id={workflowRunRecordSelectionCommand.id}
+                            label={workflowRunRecordSelectionCommand.label}
+                            Icon={workflowRunRecordSelectionCommand.Icon}
+                            onClick={
+                              workflowRunRecordSelectionCommand.onCommandClick
+                            }
                           />
                         </SelectableItem>
                       ),
                     )}
                   </CommandGroup>
-                  <CommandGroup heading="Workflows">
-                    {matchingWorkflowRunCommands?.map((workflowRunCommand) => (
-                      <SelectableItem
-                        itemId={workflowRunCommand.id}
-                        key={workflowRunCommand.id}
-                      >
-                        <CommandMenuItem
-                          id={workflowRunCommand.id}
-                          label={workflowRunCommand.label}
-                          Icon={workflowRunCommand.Icon}
-                          onClick={workflowRunCommand.onCommandClick}
-                        />
-                      </SelectableItem>
-                    ))}
-                  </CommandGroup>
+                  {matchingStandardActionGlobalCommands?.length > 0 && (
+                    <CommandGroup heading="View">
+                      {matchingStandardActionGlobalCommands?.map(
+                        (standardActionGlobalCommand) => (
+                          <SelectableItem
+                            itemId={standardActionGlobalCommand.id}
+                            key={standardActionGlobalCommand.id}
+                          >
+                            <CommandMenuItem
+                              id={standardActionGlobalCommand.id}
+                              label={standardActionGlobalCommand.label}
+                              Icon={standardActionGlobalCommand.Icon}
+                              onClick={
+                                standardActionGlobalCommand.onCommandClick
+                              }
+                            />
+                          </SelectableItem>
+                        ),
+                      )}
+                    </CommandGroup>
+                  )}
+                  {matchingWorkflowRunGlobalCommands?.length > 0 && (
+                    <CommandGroup heading="Workflows">
+                      {matchingWorkflowRunGlobalCommands?.map(
+                        (workflowRunGlobalCommand) => (
+                          <SelectableItem
+                            itemId={workflowRunGlobalCommand.id}
+                            key={workflowRunGlobalCommand.id}
+                          >
+                            <CommandMenuItem
+                              id={workflowRunGlobalCommand.id}
+                              label={workflowRunGlobalCommand.label}
+                              Icon={workflowRunGlobalCommand.Icon}
+                              onClick={workflowRunGlobalCommand.onCommandClick}
+                            />
+                          </SelectableItem>
+                        ),
+                      )}
+                    </CommandGroup>
+                  )}
 
                   {commandGroups.map(({ heading, items, renderItem }) =>
                     items?.length ? (
