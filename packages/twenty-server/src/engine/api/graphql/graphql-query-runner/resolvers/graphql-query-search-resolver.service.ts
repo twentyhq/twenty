@@ -14,8 +14,10 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import { SearchResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
+import { GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/constants/search-vector-field.constants';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -113,10 +115,36 @@ export class GraphqlQuerySearchResolverService extends GraphqlQueryBaseResolverS
 
     const selectedFields = graphqlFields(info);
 
+    const graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult =
+      graphqlQueryParser.parseSelectedFields(
+        objectMetadataItemWithFieldMaps,
+        selectedFields,
+      );
+
     const totalCount = isDefined(selectedFields.totalCount)
       ? await queryBuilderWithFilter.getCount()
       : 0;
     const order = undefined;
+
+    const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
+
+    const dataSource =
+      await this.twentyORMGlobalManager.getDataSourceForWorkspace(
+        authContext.workspace.id,
+      );
+
+    if (graphqlQuerySelectedFieldsResult.relations) {
+      await processNestedRelationsHelper.processNestedRelations({
+        objectMetadataMaps,
+        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        parentObjectRecords: objectRecords,
+        relations: graphqlQuerySelectedFieldsResult.relations,
+        aggregate: graphqlQuerySelectedFieldsResult.aggregate,
+        limit,
+        authContext,
+        dataSource,
+      });
+    }
 
     return typeORMObjectRecordsParser.createConnection({
       objectRecords: objectRecords ?? [],

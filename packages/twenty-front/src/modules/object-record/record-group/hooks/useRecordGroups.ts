@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
+import { sortRecordGroupDefinitions } from '@/object-record/record-group/utils/sortRecordGroupDefinitions';
+import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 type UseRecordGroupsParams = {
@@ -13,6 +15,10 @@ export const useRecordGroups = ({
 }: UseRecordGroupsParams) => {
   const recordGroupDefinitions = useRecoilComponentValueV2(
     recordGroupDefinitionsComponentState,
+  );
+
+  const recordGroupSort = useRecoilComponentValueV2(
+    recordIndexRecordGroupSortComponentState,
   );
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -35,14 +41,8 @@ export const useRecordGroups = ({
   }, [objectMetadataItem, recordGroupDefinitions]);
 
   const visibleRecordGroups = useMemo(
-    () =>
-      recordGroupDefinitions
-        .filter((boardGroup) => boardGroup.isVisible)
-        .sort(
-          (boardGroupA, boardGroupB) =>
-            boardGroupA.position - boardGroupB.position,
-        ),
-    [recordGroupDefinitions],
+    () => sortRecordGroupDefinitions(recordGroupDefinitions, recordGroupSort),
+    [recordGroupDefinitions, recordGroupSort],
   );
 
   const hiddenRecordGroups = useMemo(

@@ -10,5 +10,5 @@ export const useDeleteFavorite = () => {
     deleteOneRecord(favoriteId);
   };
 
-  return deleteFavorite;
+  return { deleteFavorite };
 };

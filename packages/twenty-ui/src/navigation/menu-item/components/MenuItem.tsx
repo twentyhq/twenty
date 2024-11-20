@@ -30,6 +30,7 @@ export type MenuItemProps = {
   onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
   testId?: string;
   text: ReactNode;
+  contextualText?: ReactNode;
   hasSubMenu?: boolean;
 };
 
@@ -44,6 +45,7 @@ export const MenuItem = ({
   onMouseLeave,
   testId,
   text,
+  contextualText,
   hasSubMenu = false,
 }: MenuItemProps) => {
   const theme = useTheme();
@@ -68,7 +70,11 @@ export const MenuItem = ({
       onMouseLeave={onMouseLeave}
     >
       <StyledMenuItemLeftContent>
-        <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
+        <MenuItemLeftContent
+          LeftIcon={LeftIcon ?? undefined}
+          text={text}
+          contextualText={contextualText}
+        />
       </StyledMenuItemLeftContent>
       <div className="hoverable-buttons">
         {showIconButtons && (

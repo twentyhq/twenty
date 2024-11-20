@@ -1,3 +1,4 @@
+import { PageFavoriteFoldersDropdown } from '@/favorites/components/PageFavoriteFolderDropdown';
 import { FAVORITE_FOLDER_PICKER_DROPDOWN_ID } from '@/favorites/favorite-folder-picker/constants/FavoriteFolderPickerDropdownId';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -8,7 +9,6 @@ import { recordIndexViewTypeState } from '@/object-record/record-index/states/re
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
-import { PageFavoriteFoldersDropdown } from '@/ui/layout/page/components/PageFavoriteFolderDropdown';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/components/PageHotkeysEffect';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -39,7 +39,7 @@ export const RecordIndexPageHeader = () => {
 
   const view = views.find((view) => view.id === currentViewId);
 
-  const favorites = useFavorites();
+  const { sortedFavorites: favorites } = useFavorites();
 
   const isFavorite = favorites.some(
     (favorite) =>
