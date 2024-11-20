@@ -38,7 +38,7 @@ export const useContextStoreSelectedRecords = (
     filter: queryFilter,
     orderBy: [
       {
-        createdAt: 'DescNullsFirst',
+        position: 'AscNullsFirst',
       },
     ],
     skip:

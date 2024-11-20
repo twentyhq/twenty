@@ -84,6 +84,7 @@ export const CommandMenuContextRecordChip = () => {
 
   const { records, loading, totalCount } = useContextStoreSelectedRecords(
     mainContextStoreComponentInstanceId,
+    3,
   );
 
   if (loading || !totalCount) {
