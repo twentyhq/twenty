@@ -19,7 +19,7 @@ export default defineConfig(({ command, mode }) => {
     VITE_BUILD_SOURCEMAP,
     VITE_DISABLE_TYPESCRIPT_CHECKER,
     VITE_DISABLE_ESLINT_CHECKER,
-    REACT_APP_BASE_URL,
+    VITE_ENABLE_SSL,
     REACT_APP_PORT,
   } = env;
 
@@ -64,14 +64,7 @@ export default defineConfig(({ command, mode }) => {
     };
   }
 
-  const baseUrl = new URL(REACT_APP_BASE_URL ?? `http://localhost`);
-
-  baseUrl.port = port.toString();
-
-  if (
-    baseUrl.protocol === 'https:' &&
-    (!env.SSL_KEY_PATH || !env.SSL_CERT_PATH)
-  ) {
+  if (VITE_ENABLE_SSL && (!env.SSL_KEY_PATH || !env.SSL_CERT_PATH)) {
     throw new Error(
       'to use https SSL_KEY_PATH and SSL_CERT_PATH must be both defined',
     );
@@ -83,9 +76,8 @@ export default defineConfig(({ command, mode }) => {
 
     server: {
       port: port,
-      host: baseUrl.hostname,
-      protocol: baseUrl.protocol.slice(0, -1) as 'http' | 'https',
-      ...(baseUrl.protocol === 'https:'
+      protocol: VITE_ENABLE_SSL ? 'https' : 'http',
+      ...(VITE_ENABLE_SSL
         ? {
             https: {
               key: fs.readFileSync(env.SSL_KEY_PATH),
@@ -154,7 +146,6 @@ export default defineConfig(({ command, mode }) => {
     define: {
       'process.env': {
         REACT_APP_SERVER_BASE_URL,
-        REACT_APP_BASE_URL: baseUrl.toString(),
       },
     },
     css: {
