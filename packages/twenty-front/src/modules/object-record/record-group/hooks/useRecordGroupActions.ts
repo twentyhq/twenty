@@ -7,12 +7,19 @@ import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/use
 import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { ViewType } from '@/views/types/ViewType';
 import { useCallback, useContext, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { IconEyeOff, IconSettings, isDefined } from 'twenty-ui';
 
-export const useRecordGroupActions = () => {
+type UseRecordGroupActionsParams = {
+  viewType: ViewType;
+};
+
+export const useRecordGroupActions = ({
+  viewType,
+}: UseRecordGroupActionsParams) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -35,6 +42,7 @@ export const useRecordGroupActions = () => {
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
     useRecordGroupVisibility({
       viewBarId: recordIndexId,
+      viewType,
     });
 
   const setNavigationMemorizedUrl = useSetRecoilState(

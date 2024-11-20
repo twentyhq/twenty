@@ -35,10 +35,7 @@ export const ExportRecordsActionEffect = ({
       scope: 'record-selection',
       key: 'export',
       position,
-      label: displayedExportProgress(
-        contextStoreNumberOfSelectedRecords > 0 ? 'selection' : 'all',
-        progress,
-      ),
+      label: displayedExportProgress(progress),
       Icon: IconDatabaseExport,
       accent: 'default',
       onClick: () => download(),

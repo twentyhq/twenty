@@ -7,7 +7,7 @@ import { visibleTableColumnsComponentSelector } from '@/object-record/record-tab
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 
-export const useRecordIndexOptionsForTable = (recordTableId: string) => {
+export const useObjectOptionsForTable = (recordTableId: string) => {
   const hiddenTableColumns = useRecoilComponentValueV2(
     hiddenTableColumnsComponentSelector,
     recordTableId,
