@@ -224,7 +224,9 @@ export const VariableTagInput = ({
         >
           <SearchVariablesDropdown
             inputId={inputId}
-            editor={editor}
+            insertVariableTag={(variable) => {
+              editor.commands.insertVariableTag(variable);
+            }}
             disabled={readonly}
           />
         </StyledSearchVariablesDropdownContainer>
