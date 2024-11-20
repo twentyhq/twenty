@@ -45,22 +45,22 @@ const StyledTriggerSettings = styled.div`
   row-gap: ${({ theme }) => theme.spacing(4)};
 `;
 
-type WorkflowEditTriggerDatabaseEventFormProps =
-  | {
-      trigger: WorkflowDatabaseEventTrigger;
-      readonly: true;
-      onTriggerUpdate?: undefined;
-    }
-  | {
-      trigger: WorkflowDatabaseEventTrigger;
-      readonly?: false;
-      onTriggerUpdate: (trigger: WorkflowDatabaseEventTrigger) => void;
-    };
+type WorkflowEditTriggerDatabaseEventFormProps = {
+  trigger: WorkflowDatabaseEventTrigger;
+  triggerOptions:
+    | {
+        readonly: true;
+        onTriggerUpdate?: undefined;
+      }
+    | {
+        readonly?: false;
+        onTriggerUpdate: (trigger: WorkflowDatabaseEventTrigger) => void;
+      };
+};
 
 export const WorkflowEditTriggerDatabaseEventForm = ({
   trigger,
-  readonly,
-  onTriggerUpdate,
+  triggerOptions,
 }: WorkflowEditTriggerDatabaseEventFormProps) => {
   const theme = useTheme();
 
@@ -112,16 +112,16 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
           dropdownId="workflow-edit-trigger-record-type"
           label="Record Type"
           fullWidth
-          disabled={readonly}
+          disabled={triggerOptions.readonly}
           value={triggerEvent?.objectType}
           emptyOption={{ label: 'Select an option', value: '' }}
           options={availableMetadata}
           onChange={(updatedRecordType) => {
-            if (readonly === true) {
+            if (triggerOptions.readonly === true) {
               return;
             }
 
-            onTriggerUpdate(
+            triggerOptions.onTriggerUpdate(
               isDefined(trigger) && isDefined(triggerEvent)
                 ? {
                     ...trigger,
@@ -147,13 +147,13 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
           value={triggerEvent?.event}
           emptyOption={{ label: 'Select an option', value: '' }}
           options={OBJECT_EVENT_TRIGGERS}
-          disabled={readonly}
+          disabled={triggerOptions.readonly}
           onChange={(updatedEvent) => {
-            if (readonly === true) {
+            if (triggerOptions.readonly === true) {
               return;
             }
 
-            onTriggerUpdate(
+            triggerOptions.onTriggerUpdate(
               isDefined(trigger) && isDefined(triggerEvent)
                 ? {
                     ...trigger,

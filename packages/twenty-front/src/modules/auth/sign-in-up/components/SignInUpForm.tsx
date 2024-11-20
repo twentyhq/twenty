@@ -1,14 +1,4 @@
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
-import {
-  HorizontalSeparator,
-  ActionLink,
-  IconGoogle,
-  IconKey,
-  IconMicrosoft,
-  Loader,
-  MainButton,
-  StyledText,
-} from 'twenty-ui';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { SignInUpMode, useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import {
@@ -29,6 +19,16 @@ import { useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
+import {
+  ActionLink,
+  HorizontalSeparator,
+  IconGoogle,
+  IconKey,
+  IconMicrosoft,
+  Loader,
+  MainButton,
+  StyledText,
+} from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledContentContainer = styled.div`

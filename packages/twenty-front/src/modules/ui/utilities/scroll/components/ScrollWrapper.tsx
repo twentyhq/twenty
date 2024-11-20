@@ -23,12 +23,17 @@ const StyledScrollWrapper = styled.div`
   }
 `;
 
+const StyledInnerContainer = styled.div`
+  flex: 1;
+`;
+
 export type ScrollWrapperProps = {
   children: React.ReactNode;
   className?: string;
   enableXScroll?: boolean;
   enableYScroll?: boolean;
   contextProviderName: ContextProviderName;
+  scrollHide?: boolean;
 };
 
 export const ScrollWrapper = ({
@@ -37,6 +42,7 @@ export const ScrollWrapper = ({
   enableXScroll = true,
   enableYScroll = true,
   contextProviderName,
+  scrollHide = false,
 }: ScrollWrapperProps) => {
   const scrollableRef = useRef<HTMLDivElement>(null);
   const Context = getContextByProviderName(contextProviderName);
@@ -55,7 +61,10 @@ export const ScrollWrapper = ({
 
   const [initialize, instance] = useOverlayScrollbars({
     options: {
-      scrollbars: { autoHide: 'scroll' },
+      scrollbars: {
+        autoHide: scrollHide ? 'scroll' : 'never',
+        visibility: scrollHide ? 'hidden' : 'visible',
+      },
       overflow: {
         x: enableXScroll ? undefined : 'hidden',
         y: enableYScroll ? undefined : 'hidden',
@@ -84,7 +93,7 @@ export const ScrollWrapper = ({
       }}
     >
       <StyledScrollWrapper ref={scrollableRef} className={className}>
-        {children}
+        <StyledInnerContainer>{children}</StyledInnerContainer>
       </StyledScrollWrapper>
     </Context.Provider>
   );

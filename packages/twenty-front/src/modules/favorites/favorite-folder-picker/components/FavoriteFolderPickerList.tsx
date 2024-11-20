@@ -4,8 +4,7 @@ import { FavoriteFolder } from '@/favorites/types/FavoriteFolder';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import styled from '@emotion/styled';
-import { MenuItem } from 'twenty-ui';
-import { FavoriteFolderMenuItemMultiSelect } from './FavoriteFolderMenuItemMultiSelect';
+import { MenuItem, MenuItemMultiSelect } from 'twenty-ui';
 
 const StyledItemsContainer = styled.div`
   width: 100%;
@@ -30,6 +29,7 @@ export const FavoriteFolderPickerList = ({
   const [favoriteFoldersSearchFilter] = useRecoilComponentStateV2(
     favoriteFolderSearchFilterComponentState,
   );
+
   const [favoriteFolderPickerChecked] = useRecoilComponentStateV2(
     favoriteFolderPickerCheckedComponentState,
   );
@@ -47,7 +47,7 @@ export const FavoriteFolderPickerList = ({
   return (
     <StyledItemsContainer>
       {showNoFolderOption && (
-        <FavoriteFolderMenuItemMultiSelect
+        <MenuItemMultiSelect
           key={`menu-${NO_FOLDER_ID}`}
           onSelectChange={() => toggleFolderSelection(NO_FOLDER_ID)}
           selected={favoriteFolderPickerChecked.includes(NO_FOLDER_ID)}
@@ -60,7 +60,7 @@ export const FavoriteFolderPickerList = ({
       )}
       {filteredFolders.length > 0
         ? filteredFolders.map((folder) => (
-            <FavoriteFolderMenuItemMultiSelect
+            <MenuItemMultiSelect
               key={`menu-${folder.id}`}
               onSelectChange={() => toggleFolderSelection(folder.id)}
               selected={favoriteFolderPickerChecked.includes(folder.id)}

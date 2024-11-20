@@ -23,11 +23,11 @@ export const ManageFavoritesActionEffect = ({
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const favorites = useFavorites();
+  const { sortedFavorites: favorites } = useFavorites();
 
-  const createFavorite = useCreateFavorite();
+  const { createFavorite } = useCreateFavorite();
 
-  const deleteFavorite = useDeleteFavorite();
+  const { deleteFavorite } = useDeleteFavorite();
 
   const selectedRecordId =
     contextStoreTargetedRecordsRule.mode === 'selection'
@@ -51,6 +51,7 @@ export const ManageFavoritesActionEffect = ({
 
     addActionMenuEntry({
       type: 'standard',
+      scope: 'record-selection',
       key: 'manage-favorites',
       label: isFavorite ? 'Remove from favorites' : 'Add to favorites',
       position,

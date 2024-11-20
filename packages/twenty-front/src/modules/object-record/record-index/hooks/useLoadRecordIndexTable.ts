@@ -57,7 +57,9 @@ export const useFindManyParams = (
       );
 
       if (!fieldMetadataItem) {
-        return {};
+        throw new Error(
+          `Field metadata item with id ${currentRecordGroupDefinition.fieldMetadataId} not found`,
+        );
       }
 
       return {

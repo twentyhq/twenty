@@ -57,6 +57,7 @@ export const WorkflowRunRecordActionEffect = ({
       addActionMenuEntry({
         type: 'workflow-run',
         key: `workflow-run-${activeWorkflowVersion.id}`,
+        scope: 'record-selection',
         label: capitalize(activeWorkflowVersion.workflow.name),
         position: index,
         Icon: IconSettingsAutomation,

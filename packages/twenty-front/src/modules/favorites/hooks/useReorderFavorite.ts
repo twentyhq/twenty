@@ -12,7 +12,7 @@ export const useReorderFavorite = () => {
     objectNameSingular: CoreObjectNameSingular.Favorite,
   });
 
-  const reorderFavorite: OnDragEndResponder = (result) => {
+  const handleReorderFavorite: OnDragEndResponder = (result) => {
     if (!result.destination) return;
 
     const draggedFavoriteId = result.draggableId;
@@ -37,5 +37,5 @@ export const useReorderFavorite = () => {
     });
   };
 
-  return reorderFavorite;
+  return { handleReorderFavorite };
 };

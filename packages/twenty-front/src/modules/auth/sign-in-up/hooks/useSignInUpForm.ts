@@ -25,6 +25,9 @@ export const useSignInUpForm = () => {
     mode: 'onChange',
     defaultValues: {
       exist: false,
+      email: '',
+      password: '',
+      captchaToken: '',
     },
     resolver: zodResolver(validationSchema),
   });
