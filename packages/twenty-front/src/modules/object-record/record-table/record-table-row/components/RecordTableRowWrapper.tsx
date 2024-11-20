@@ -2,11 +2,9 @@ import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
 import { ReactNode, useContext, useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useRecoilState } from 'recoil';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
@@ -15,7 +13,6 @@ import { tableCellWidthsComponentState } from '@/object-record/record-table/stat
 import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { isNull } from '@sniptt/guards';
 
 export const RecordTableRowWrapper = ({
   recordId,
@@ -42,10 +39,6 @@ export const RecordTableRowWrapper = ({
 
   const scrollWrapperRef = useContext(
     RecordTableWithWrappersScrollWrapperContext,
-  );
-
-  const [recordFromStore] = useRecoilState<any>(
-    recordStoreFamilyState(recordId),
   );
 
   const { ref: elementRef, inView } = useInView({
@@ -79,10 +72,6 @@ export const RecordTableRowWrapper = ({
       onIndexRecordsLoaded?.();
     }
   }, [inView, onIndexRecordsLoaded]);
-
-  if (isNull(recordFromStore)) {
-    return null;
-  }
 
   return (
     <Draggable key={recordId} draggableId={recordId} index={rowIndex}>

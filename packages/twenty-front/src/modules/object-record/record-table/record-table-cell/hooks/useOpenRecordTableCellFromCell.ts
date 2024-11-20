@@ -36,7 +36,6 @@ export const useOpenRecordTableCellFromCell = () => {
     RecordTableRowContext,
   );
   const isFieldReadOnly = useIsFieldValueReadOnly();
-  const cellIsReadOnly = isFieldReadOnly;
 
   const openTableCell = (
     initialValue?: string,
@@ -47,7 +46,7 @@ export const useOpenRecordTableCellFromCell = () => {
       customCellHotkeyScope,
       recordId,
       fieldDefinition,
-      isReadOnly: cellIsReadOnly,
+      isReadOnly: isFieldReadOnly,
       pathToShowPage,
       objectNameSingular,
       initialValue,

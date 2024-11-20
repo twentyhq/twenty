@@ -38,8 +38,6 @@ export const RecordTableCellSoftFocusMode = ({
 
   const isFieldReadOnly = useIsFieldValueReadOnly();
 
-  const isCellReadOnly = isFieldReadOnly;
-
   const { openTableCell } = useOpenRecordTableCellFromCell();
 
   const editModeContentOnly = useIsFieldInputOnly();
@@ -76,7 +74,7 @@ export const RecordTableCellSoftFocusMode = ({
   useScopedHotkeys(
     Key.Enter,
     () => {
-      if (isCellReadOnly) {
+      if (isFieldReadOnly) {
         return;
       }
 
@@ -93,7 +91,7 @@ export const RecordTableCellSoftFocusMode = ({
   useScopedHotkeys(
     '*',
     (keyboardEvent) => {
-      if (isCellReadOnly) {
+      if (isFieldReadOnly) {
         return;
       }
 
@@ -122,7 +120,7 @@ export const RecordTableCellSoftFocusMode = ({
   );
 
   const handleClick = () => {
-    if (!isFieldInputOnly && !isCellReadOnly) {
+    if (!isFieldInputOnly && !isFieldReadOnly) {
       openTableCell();
     }
   };
@@ -154,9 +152,9 @@ export const RecordTableCellSoftFocusMode = ({
     isDefined(buttonIcon) &&
     !editModeContentOnly &&
     (!isFirstColumn || !isEmpty) &&
-    !isCellReadOnly;
+    !isFieldReadOnly;
 
-  const dontShowContent = isEmpty && isCellReadOnly;
+  const dontShowContent = isEmpty && isFieldReadOnly;
 
   return (
     <>

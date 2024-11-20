@@ -5,7 +5,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilValue } from 'recoil';
 import { FieldContext } from '../contexts/FieldContext';
-import { isFieldValueReadOnly } from '../utils/isFieldValueReadOnlyParams';
+import { isFieldValueReadOnly } from '../utils/isFieldValueReadOnly';
 
 export const useIsFieldValueReadOnly = () => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
