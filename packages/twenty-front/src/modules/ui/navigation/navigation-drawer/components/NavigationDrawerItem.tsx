@@ -1,4 +1,3 @@
-import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
