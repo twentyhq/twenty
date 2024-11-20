@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import {
+  HorizontalSeparator,
   IconGoogle,
   IconMicrosoft,
   Loader,
   MainButton,
-  HorizontalSeparator,
 } from 'twenty-ui';
 import { useTheme } from '@emotion/react';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
@@ -19,7 +19,6 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { redirectToWorkspace } from '~/utils/workspace-url.helper';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -35,7 +34,6 @@ import {
   signInUpModeState,
 } from '@/auth/states/signInUpModeState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
-import { UserExists } from '~/generated/graphql';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
