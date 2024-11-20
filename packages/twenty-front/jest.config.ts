@@ -6,7 +6,7 @@ process.env.TZ = 'GMT';
 
 const jestConfig: JestConfigWithTsJest = {
   // to enable logs, comment out the following line
-  silent: false,
+  silent: true,
   displayName: 'twenty-front',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./setupTests.ts'],
