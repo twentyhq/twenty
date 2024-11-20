@@ -1,6 +1,7 @@
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldInputDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
@@ -40,6 +41,20 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
         : (fieldValue.amountMicros / 1000000).toString(),
       currencyCode: fieldValue?.currencyCode ?? '',
     } as unknown as FieldInputDraftValue<FieldValue>;
+  }
+
+  if(isFieldAddress(fieldDefinition)){
+    if(
+      isFieldValueEmpty({ fieldValue, fieldDefinition })
+      && fieldDefinition.metadata.settings?.defaultCountry
+    ){
+      return {
+        ...fieldValue, 
+        addressCountry: fieldDefinition.metadata.settings.defaultCountry
+      } as unknown as FieldInputDraftValue<FieldValue>;
+    }
+
+    return fieldValue as FieldInputDraftValue<FieldValue>;
   }
 
   if (
