@@ -48,6 +48,7 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
 
             map.set('delete', {
               isPinned: true,
+              scope: 'record-selection',
               type: 'standard',
               key: 'delete',
               label: 'Delete',

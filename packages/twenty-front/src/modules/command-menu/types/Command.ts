@@ -11,7 +11,7 @@ export type Command = {
   id: string;
   to?: string;
   label: string;
-  type:
+  type?:
     | CommandType.Navigate
     | CommandType.Create
     | CommandType.StandardAction

@@ -233,6 +233,7 @@ export {
   IconTargetArrow,
   IconTestPipe,
   IconTextSize,
+  IconTextWrap,
   IconTimelineEvent,
   IconTool,
   IconTrash,

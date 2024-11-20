@@ -30,6 +30,7 @@ export const WorkflowRunActionEffect = () => {
       addActionMenuEntry({
         type: 'workflow-run',
         key: `workflow-run-${activeWorkflowVersion.id}`,
+        scope: 'global',
         label: capitalize(activeWorkflowVersion.workflow.name),
         position: index,
         Icon: IconSettingsAutomation,

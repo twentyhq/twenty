@@ -1,15 +1,15 @@
 import { FavoriteFolderPickerInstanceContext } from '@/favorites/favorite-folder-picker/states/context/FavoriteFolderPickerInstanceContext';
 import { ReactNode } from 'react';
 
-type FavoriteFolderPickerScopeProps = {
+type FavoriteFolderPickerComponentInstanceContextProps = {
   children: ReactNode;
   favoriteFoldersScopeId: string;
 };
 
-export const FavoriteFolderPickerScope = ({
+export const FavoriteFolderPickerComponentInstanceContext = ({
   children,
   favoriteFoldersScopeId,
-}: FavoriteFolderPickerScopeProps) => {
+}: FavoriteFolderPickerComponentInstanceContextProps) => {
   return (
     <FavoriteFolderPickerInstanceContext.Provider
       value={{ instanceId: favoriteFoldersScopeId }}

@@ -14,10 +14,6 @@ const StyledFooter = styled.div`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
-const StyledIconPlus = styled(IconPlus)`
-  padding-left: ${({ theme }) => theme.spacing(1)};
-`;
-
 export const FavoriteFolderPickerFooter = () => {
   const [, setIsFavoriteFolderCreating] = useRecoilState(
     isFavoriteFolderCreatingState,
@@ -35,7 +31,7 @@ export const FavoriteFolderPickerFooter = () => {
             closeDropdown();
           }}
           text="Add folder"
-          LeftIcon={() => <StyledIconPlus size={theme.icon.size.md} />}
+          LeftIcon={() => <IconPlus size={theme.icon.size.md} />}
         />
       </DropdownMenuItemsContainer>
     </StyledFooter>

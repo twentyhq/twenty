@@ -82,25 +82,42 @@ export class UserVarsService<
     userId?: string;
     workspaceId?: string;
   }): Promise<Map<Extract<keyof KeyValueTypesMap, string>, any>> {
-    const userVarsWorkspaceLevel = await this.keyValuePairService.get({
-      type: KeyValuePairType.USER_VAR,
-      userId: null,
-      workspaceId,
-    });
-
-    let userVarsUserLevel: any[] = [];
+    let result: any[] = [];
 
     if (userId) {
-      userVarsUserLevel = await this.keyValuePairService.get({
-        type: KeyValuePairType.USER_VAR,
-        userId,
-      });
+      result = [
+        ...result,
+        ...(await this.keyValuePairService.get({
+          type: KeyValuePairType.USER_VAR,
+          userId,
+          workspaceId: null,
+        })),
+      ];
     }
 
-    return mergeUserVars<Extract<keyof KeyValueTypesMap, string>>([
-      ...userVarsWorkspaceLevel,
-      ...userVarsUserLevel,
-    ]);
+    if (workspaceId) {
+      result = [
+        ...result,
+        ...(await this.keyValuePairService.get({
+          type: KeyValuePairType.USER_VAR,
+          userId: null,
+          workspaceId,
+        })),
+      ];
+    }
+
+    if (workspaceId && userId) {
+      result = [
+        ...result,
+        ...(await this.keyValuePairService.get({
+          type: KeyValuePairType.USER_VAR,
+          userId,
+          workspaceId,
+        })),
+      ];
+    }
+
+    return mergeUserVars<Extract<keyof KeyValueTypesMap, string>>(result);
   }
 
   set<K extends keyof KeyValueTypesMap>({
