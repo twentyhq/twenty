@@ -138,18 +138,6 @@ const StyledItemLabelWithObjectName = styled.span`
   text-overflow: ellipsis;
   white-space: nowrap;
 `;
-type CreateLabelWithObjectNameProps = ProcessedFavorite;
-
-export const CreateLabelWithObjectName = (
-  favorite: CreateLabelWithObjectNameProps,
-) => {
-  return (
-    favorite.labelIdentifier +
-    ' . ' +
-    String(favorite.objectNameSingular?.charAt(0).toUpperCase()) +
-    favorite.objectNameSingular?.slice(1)
-  );
-};
 
 const StyledItemCount = styled.span`
   align-items: center;
