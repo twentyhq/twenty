@@ -1,7 +1,5 @@
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
-import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { DropResult, ResponderProvided } from '@hello-pangea/dnd';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
@@ -42,12 +40,6 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
   })),
 }));
 
-jest.mock('@/object-record/record-board/hooks/useRecordBoard', () => ({
-  useRecordBoard: jest.fn(() => ({
-    isCompactModeActiveState: { key: 'isCompactModeActiveState' },
-  })),
-}));
-
 describe('useObjectOptionsForBoard', () => {
   const initialRecoilState = [
     { fieldMetadataId: 'field1', isVisible: true, position: 0 },
@@ -67,13 +59,6 @@ describe('useObjectOptionsForBoard', () => {
           <RecoilRoot
             initializeState={({ set }) => {
               set(recordIndexFieldDefinitionsState, initialRecoilState as any);
-              set(
-                extractComponentState(
-                  isRecordBoardCompactModeActiveComponentState,
-                  'scope-id',
-                ),
-                false,
-              );
             }}
           >
             {children}
@@ -86,8 +71,8 @@ describe('useObjectOptionsForBoard', () => {
     const { result } = renderWithRecoil();
 
     const dropResult: DropResult = {
-      source: { droppableId: 'droppable', index: 0 },
-      destination: { droppableId: 'droppable', index: 1 },
+      source: { droppableId: 'droppable', index: 1 },
+      destination: { droppableId: 'droppable', index: 2 },
       draggableId: 'field1',
       type: 'TYPE',
       mode: 'FLUID',
@@ -115,21 +100,5 @@ describe('useObjectOptionsForBoard', () => {
         position: 1,
       },
     ]);
-  });
-
-  it('handles visibility changes correctly', () => {
-    const { result } = renderWithRecoil();
-
-    act(() => {
-      result.current.handleBoardFieldVisibilityChange({
-        fieldMetadataId: 'field1',
-      } as any);
-    });
-
-    expect(result.current.hiddenBoardFields).toContainEqual({
-      fieldMetadataId: 'field1',
-      isVisible: false,
-      position: 0,
-    });
   });
 });
