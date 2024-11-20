@@ -1,0 +1,196 @@
+import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
+import { VARIABLE_TAG_STYLES } from '@/workflow/search-variables/components/VariableTagInput';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { useId, useState } from 'react';
+import { IconX, TEXT_INPUT_STYLE, VisibilityHidden } from 'twenty-ui';
+import {
+  canBeCastAsNumberOrNull,
+  castAsNumberOrNull,
+} from '~/utils/cast-as-number-or-null';
+
+const LINE_HEIGHT = 24;
+
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledInputContainer = styled.div<{
+  multiline?: boolean;
+}>`
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  line-height: ${({ multiline }) => (multiline ? `${LINE_HEIGHT}px` : 'auto')};
+  min-height: ${({ multiline }) =>
+    multiline ? `${3 * LINE_HEIGHT}px` : 'auto'};
+  max-height: ${({ multiline }) =>
+    multiline ? `${5 * LINE_HEIGHT}px` : 'auto'};
+`;
+
+const StyledInputContainer2 = styled.div<{
+  multiline?: boolean;
+  readonly?: boolean;
+}>`
+  background-color: ${({ theme }) => theme.background.transparent.lighter};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
+  border-bottom-right-radius: ${({ multiline, theme }) =>
+    multiline ? theme.border.radius.sm : 'none'};
+  border-right: ${({ multiline }) => (multiline ? 'auto' : 'none')};
+  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
+  border-top-right-radius: ${({ multiline, theme }) =>
+    multiline ? theme.border.radius.sm : 'none'};
+  box-sizing: border-box;
+  display: flex;
+  height: ${({ multiline }) => (multiline ? 'auto' : `${1.5 * LINE_HEIGHT}px`)};
+  overflow: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
+  /* padding-right: ${({ multiline, theme }) =>
+    multiline ? theme.spacing(6) : theme.spacing(2)}; */
+  width: 100%;
+`;
+
+const StyledInput = styled.input`
+  ${TEXT_INPUT_STYLE}
+
+  padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
+  width: 100%;
+`;
+
+const StyledVariableContainer = styled.div`
+  ${VARIABLE_TAG_STYLES}
+
+  margin: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
+  align-self: center;
+
+  display: flex;
+  align-items: center;
+`;
+
+const StyledSearchVariablesDropdownContainer = styled.div<{
+  multiline?: boolean;
+  readonly?: boolean;
+}>`
+  align-items: center;
+  display: flex;
+  justify-content: center;
+
+  ${({ theme, readonly }) =>
+    !readonly &&
+    `
+      :hover {
+        background-color: ${theme.background.transparent.light};
+      }`}
+
+  ${({ theme, multiline }) =>
+    multiline
+      ? `
+        position: absolute;
+        top: ${theme.spacing(0)};
+        right: ${theme.spacing(0)};
+        padding: ${theme.spacing(0.5)} ${theme.spacing(0)};
+        border-radius: ${theme.border.radius.sm};
+      `
+      : `
+        background-color: ${theme.background.transparent.lighter};
+        border-top-right-radius: ${theme.border.radius.sm};
+        border-bottom-right-radius: ${theme.border.radius.sm};
+        border: 1px solid ${theme.border.color.medium};
+      `}
+`;
+
+type EditingMode = 'input' | 'variable';
+
+type FormNumberFieldInputProps = {
+  placeholder: string;
+  defaultValue: string | undefined;
+  onPersist: (value: number | null | string) => void;
+};
+
+export const FormNumberFieldInput = ({
+  placeholder,
+  defaultValue,
+  onPersist,
+}: FormNumberFieldInputProps) => {
+  const theme = useTheme();
+
+  const id = useId();
+
+  const [draftValue, setDraftValue] = useState(defaultValue ?? '');
+  const [editingMode, setEditingMode] = useState<EditingMode>(() => {
+    return defaultValue?.startsWith('{{') ? 'variable' : 'input';
+  });
+
+  const persistNumber = (newValue: string) => {
+    if (!canBeCastAsNumberOrNull(newValue)) {
+      return;
+    }
+
+    const castedValue = castAsNumberOrNull(newValue);
+
+    onPersist(castedValue);
+  };
+
+  const handleChange = (newText: string) => {
+    setDraftValue(newText);
+
+    persistNumber(newText.trim());
+  };
+
+  return (
+    <StyledContainer>
+      <StyledInputContainer>
+        <StyledInputContainer2>
+          {editingMode === 'input' ? (
+            <StyledInput
+              type="text"
+              placeholder={placeholder}
+              value={draftValue}
+              onChange={(event) => {
+                handleChange(event.target.value);
+              }}
+            />
+          ) : (
+            <StyledVariableContainer>
+              {draftValue}
+
+              <button
+                style={{
+                  all: 'unset',
+                  display: 'inline-flex',
+                  cursor: 'pointer',
+                  marginLeft: theme.spacing(1),
+                }}
+                onClick={() => {
+                  setDraftValue('');
+                  setEditingMode('input');
+                  onPersist(null);
+                }}
+              >
+                <VisibilityHidden>Unlink the variable</VisibilityHidden>
+
+                <IconX size={theme.icon.size.sm} />
+              </button>
+            </StyledVariableContainer>
+          )}
+        </StyledInputContainer2>
+
+        <StyledSearchVariablesDropdownContainer
+          multiline={false}
+          readonly={false}
+        >
+          <SearchVariablesDropdown
+            inputId={id}
+            insertVariableTag={(variable) => {
+              setDraftValue(variable);
+              setEditingMode('variable');
+              onPersist(variable);
+            }}
+            disabled={false}
+          />
+        </StyledSearchVariablesDropdownContainer>
+      </StyledInputContainer>
+    </StyledContainer>
+  );
+};

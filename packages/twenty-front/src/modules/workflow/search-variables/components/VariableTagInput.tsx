@@ -2,6 +2,7 @@ import SearchVariablesDropdown from '@/workflow/search-variables/components/Sear
 import { initializeEditorContent } from '@/workflow/search-variables/utils/initializeEditorContent';
 import { parseEditorContent } from '@/workflow/search-variables/utils/parseEditorContent';
 import { VariableTag } from '@/workflow/search-variables/utils/variableTag';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
@@ -9,7 +10,7 @@ import Paragraph from '@tiptap/extension-paragraph';
 import Placeholder from '@tiptap/extension-placeholder';
 import Text from '@tiptap/extension-text';
 import { EditorContent, useEditor } from '@tiptap/react';
-import { isDefined } from 'twenty-ui';
+import { isDefined, ThemeType } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
 const LINE_HEIGHT = 24;
@@ -71,6 +72,13 @@ const StyledSearchVariablesDropdownContainer = styled.div<{
       `}
 `;
 
+export const VARIABLE_TAG_STYLES = ({ theme }: { theme: ThemeType }) => css`
+  background-color: ${theme.color.blue10};
+  border-radius: ${theme.border.radius.sm};
+  color: ${theme.color.blue};
+  padding: ${theme.spacing(1)};
+`;
+
 const StyledEditor = styled.div<{ multiline?: boolean; readonly?: boolean }>`
   display: flex;
   width: 100%;
@@ -119,10 +127,7 @@ const StyledEditor = styled.div<{ multiline?: boolean; readonly?: boolean }>`
     }
 
     .variable-tag {
-      color: ${({ theme }) => theme.color.blue};
-      background-color: ${({ theme }) => theme.color.blue10};
-      padding: ${({ theme }) => theme.spacing(1)};
-      border-radius: ${({ theme }) => theme.border.radius.sm};
+      ${VARIABLE_TAG_STYLES}
     }
   }
 
