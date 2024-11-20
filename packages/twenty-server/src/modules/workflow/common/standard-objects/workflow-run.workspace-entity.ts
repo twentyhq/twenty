@@ -101,7 +101,7 @@ export class WorkflowRunWorkspaceEntity extends BaseWorkspaceEntity {
         value: WorkflowRunStatus.NOT_STARTED,
         label: 'Not started',
         position: 0,
-        color: 'grey',
+        color: 'gray',
       },
       {
         value: WorkflowRunStatus.RUNNING,
