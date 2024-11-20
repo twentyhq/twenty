@@ -1,13 +1,11 @@
 import { useContextStoreSelectedRecords } from '@/context-store/hooks/useContextStoreSelectedRecords';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
-import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 import { Avatar } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -65,23 +63,17 @@ const CommandMenuContextRecordChipAvatars = ({
 };
 
 export const CommandMenuContextRecordChip = () => {
-  const mainContextStoreComponentInstanceId = useRecoilValue(
-    mainContextStoreComponentInstanceIdState,
-  );
-
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
-    mainContextStoreComponentInstanceId,
   );
 
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: contextStoreCurrentObjectMetadataId ?? '',
   });
 
-  const { records, loading, totalCount } = useContextStoreSelectedRecords(
-    mainContextStoreComponentInstanceId,
-    3,
-  );
+  const { records, loading, totalCount } = useContextStoreSelectedRecords({
+    limit: 3,
+  });
 
   if (loading || !totalCount) {
     return null;

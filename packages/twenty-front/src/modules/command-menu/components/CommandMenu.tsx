@@ -13,11 +13,8 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { Command, CommandType } from '@/command-menu/types/Command';
 import { Company } from '@/companies/types/Company';
-import {
-  ContextStoreTargetedRecordsRule,
-  contextStoreTargetedRecordsRuleComponentState,
-} from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
@@ -31,16 +28,12 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useRef } from 'react';
-import {
-  useRecoilCallback,
-  useRecoilState,
-  useRecoilValue,
-  useSetRecoilState,
-} from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { Avatar, IconNotes, IconSparkles, isDefined } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
@@ -109,23 +102,12 @@ export const CommandMenu = () => {
   const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
-  const mainContextStoreComponentInstanceId = useRecoilValue(
-    mainContextStoreComponentInstanceIdState,
+  const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
+    contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const setContextStoreTargetedRecordsRule = useRecoilCallback(
-    ({ set }) =>
-      (rule: ContextStoreTargetedRecordsRule) => {
-        if (isDefined(mainContextStoreComponentInstanceId)) {
-          set(
-            contextStoreTargetedRecordsRuleComponentState.atomFamily({
-              instanceId: mainContextStoreComponentInstanceId,
-            }),
-            rule,
-          );
-        }
-      },
-    [mainContextStoreComponentInstanceId],
+  const setContextStoreNumberOfSelectedRecords = useSetRecoilComponentStateV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
   );
 
   const isMobile = useIsMobile();
@@ -157,6 +139,8 @@ export const CommandMenu = () => {
           mode: 'selection',
           selectedRecordIds: [],
         });
+
+        setContextStoreNumberOfSelectedRecords(0);
       }
     },
     AppHotkeyScope.CommandMenu,
@@ -396,45 +380,38 @@ export const CommandMenu = () => {
                       </SelectableItem>
                     </CommandGroup>
                   )}
-                  {mainContextStoreComponentInstanceId && (
-                    <>
-                      <CommandGroup heading="Standard Actions">
-                        {matchingStandardActionCommands?.map(
-                          (standardActionCommand) => (
-                            <SelectableItem
-                              itemId={standardActionCommand.id}
-                              key={standardActionCommand.id}
-                            >
-                              <CommandMenuItem
-                                id={standardActionCommand.id}
-                                label={standardActionCommand.label}
-                                Icon={standardActionCommand.Icon}
-                                onClick={standardActionCommand.onCommandClick}
-                              />
-                            </SelectableItem>
-                          ),
-                        )}
-                      </CommandGroup>
-
-                      <CommandGroup heading="Workflows">
-                        {matchingWorkflowRunCommands?.map(
-                          (workflowRunCommand) => (
-                            <SelectableItem
-                              itemId={workflowRunCommand.id}
-                              key={workflowRunCommand.id}
-                            >
-                              <CommandMenuItem
-                                id={workflowRunCommand.id}
-                                label={workflowRunCommand.label}
-                                Icon={workflowRunCommand.Icon}
-                                onClick={workflowRunCommand.onCommandClick}
-                              />
-                            </SelectableItem>
-                          ),
-                        )}
-                      </CommandGroup>
-                    </>
-                  )}
+                  <CommandGroup heading="Standard Actions">
+                    {matchingStandardActionCommands?.map(
+                      (standardActionCommand) => (
+                        <SelectableItem
+                          itemId={standardActionCommand.id}
+                          key={standardActionCommand.id}
+                        >
+                          <CommandMenuItem
+                            id={standardActionCommand.id}
+                            label={standardActionCommand.label}
+                            Icon={standardActionCommand.Icon}
+                            onClick={standardActionCommand.onCommandClick}
+                          />
+                        </SelectableItem>
+                      ),
+                    )}
+                  </CommandGroup>
+                  <CommandGroup heading="Workflows">
+                    {matchingWorkflowRunCommands?.map((workflowRunCommand) => (
+                      <SelectableItem
+                        itemId={workflowRunCommand.id}
+                        key={workflowRunCommand.id}
+                      >
+                        <CommandMenuItem
+                          id={workflowRunCommand.id}
+                          label={workflowRunCommand.label}
+                          Icon={workflowRunCommand.Icon}
+                          onClick={workflowRunCommand.onCommandClick}
+                        />
+                      </SelectableItem>
+                    ))}
+                  </CommandGroup>
                   <CommandGroup heading="Navigate">
                     {matchingNavigateCommand.map((cmd) => (
                       <SelectableItem itemId={cmd.id} key={cmd.id}>
