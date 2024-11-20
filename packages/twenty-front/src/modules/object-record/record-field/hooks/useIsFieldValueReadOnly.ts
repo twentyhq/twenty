@@ -29,6 +29,6 @@ export const useIsFieldValueReadOnly = () => {
     fieldName: metadata.fieldName,
     fieldType: type,
     isObjectRemote: objectMetadataItem.isRemote,
-    isRecordDeleted: recordFromStore?.isDeleted,
+    isRecordDeleted: recordFromStore?.deletedAt,
   });
 };

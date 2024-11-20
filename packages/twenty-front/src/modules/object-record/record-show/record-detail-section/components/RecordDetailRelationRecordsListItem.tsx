@@ -189,7 +189,7 @@ export const RecordDetailRelationRecordsListItem = ({
     [isExpanded],
   );
 
-  const canEdit = useIsFieldValueReadOnly();
+  const isReadOnly = useIsFieldValueReadOnly();
 
   return (
     <>
@@ -206,7 +206,7 @@ export const RecordDetailRelationRecordsListItem = ({
             accent="tertiary"
           />
         </StyledClickableZone>
-        {canEdit && (
+        {!isReadOnly && (
           <DropdownScope dropdownScopeId={dropdownScopeId}>
             <Dropdown
               dropdownId={dropdownScopeId}
