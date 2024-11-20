@@ -129,7 +129,7 @@ export const DefaultWithoutSearch: Story = {
 export const MatchingPersonCompanyActivityCreateNavigate: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByPlaceholderText('Search');
+    const searchInput = await canvas.findByPlaceholderText('Type anything');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'n');
     expect(await canvas.findByText('Linkedin')).toBeInTheDocument();
@@ -142,7 +142,7 @@ export const MatchingPersonCompanyActivityCreateNavigate: Story = {
 export const OnlyMatchingCreateAndNavigate: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByPlaceholderText('Search');
+    const searchInput = await canvas.findByPlaceholderText('Type anything');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'ta');
     expect(await canvas.findByText('Create Task')).toBeInTheDocument();
@@ -153,7 +153,7 @@ export const OnlyMatchingCreateAndNavigate: Story = {
 export const AtleastMatchingOnePerson: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByPlaceholderText('Search');
+    const searchInput = await canvas.findByPlaceholderText('Type anything');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'alex');
     expect(await canvas.findByText('Sylvie Palmer')).toBeInTheDocument();
