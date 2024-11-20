@@ -207,7 +207,8 @@ export const WorkflowEditActionFormServerlessFunctionInner = ({
             key={pathKey}
             inputId={`input-${inputKey}`}
             label={inputKey}
-            placeholder="Enter value (use {{variable}} for dynamic content)"
+            placeholder="Enter value"
+            readonly={actionOptions.readonly}
             value={`${inputValue || ''}`}
             onChange={(value) => handleInputChange(value, currentPath)}
           />
