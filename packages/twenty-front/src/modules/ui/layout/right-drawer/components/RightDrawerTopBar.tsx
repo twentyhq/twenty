@@ -122,7 +122,7 @@ export const RightDrawerTopBar = () => {
           <RightDrawerTopBarMinimizeButton />
         )}
 
-        {!isMobile && !isRightDrawerMinimized && (
+        {!isMobile && !isRightDrawerMinimized && rightDrawerPage !== RightDrawerPages.ViewEmailThread && rightDrawerPage !== RightDrawerPages.ViewCalendarEvent && (
           <RightDrawerTopBarExpandButton
             to={
               getBasePathToShowPage({
@@ -131,6 +131,7 @@ export const RightDrawerTopBar = () => {
             }
           />
         )}
+
         <RightDrawerTopBarCloseButton />
       </StyledTopBarWrapper>
     </StyledRightDrawerTopBar>
