@@ -209,7 +209,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   }
 
   if (fieldMetadataItem.type === FieldMetadataType.Address) {
-    console.log('fieldMetadataItem', fieldMetadataItem);
     return (
       <SettingsDataModelFieldAddressSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}

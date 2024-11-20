@@ -3,16 +3,8 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
-import styled from '@emotion/styled';
 import { IconMap } from 'twenty-ui';
 import { z } from 'zod';
-
-const StyledFormCardTitle = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-`;
 
 type SettingsDataModelFieldAddressFormProps = {
   disabled?: boolean;
