@@ -11,7 +11,7 @@ import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObje
 
 import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
-import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useRecordGroupFieldsDropdown';
+import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useSearchRecordGroupField';
 import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { useHandleRecordGroupField } from '@/object-record/record-index/hooks/useHandleRecordGroupField';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';

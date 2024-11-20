@@ -17,7 +17,7 @@ export const useSearchRecordGroupField = () => {
     return objectMetadataItem.fields.filter(
       (field) =>
         field.type === FieldMetadataType.Select &&
-        field.label.includes(searchInputLowerCase),
+        field.label.toLocaleLowerCase().includes(searchInputLowerCase),
     );
   }, [objectMetadataItem.fields, recordGroupFieldSearchInput]);
 
