@@ -50,7 +50,10 @@ export class OnboardingService {
       return OnboardingStatus.WORKSPACE_ACTIVATION;
     }
 
-    const userVars = await this.userVarsService.getAll(user);
+    const userVars = await this.userVarsService.getAll({
+      userId: user.id,
+      workspaceId: user.defaultWorkspaceId,
+    });
 
     const isProfileCreationPending =
       userVars.get(OnboardingStepKeys.ONBOARDING_CREATE_PROFILE_PENDING) ===

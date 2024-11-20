@@ -79,8 +79,14 @@ export class UserResolver {
   }
 
   @ResolveField(() => GraphQLJSONObject)
-  async userVars(@Parent() user: User): Promise<Record<string, any>> {
-    const userVars = await this.userVarService.getAll(user);
+  async userVars(
+    @Parent() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<Record<string, any>> {
+    const userVars = await this.userVarService.getAll({
+      userId: user.id,
+      workspaceId: workspace.id,
+    });
 
     const userVarAllowList = [
       OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,

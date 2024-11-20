@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { mergeUserVars } from 'src/engine/core-modules/user/user-vars/utils/merge-user-vars.util';
-import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class UserVarsService<
@@ -76,27 +75,44 @@ export class UserVarsService<
     ]).get(key) as KeyValueTypesMap[K];
   }
 
-  public async getAll(
-    user: User,
-  ): Promise<Map<Extract<keyof KeyValueTypesMap, string>, any>> {
-    let result = await this.keyValuePairService.get({
-      type: KeyValuePairType.USER_VAR,
-      userId: user.id,
-      workspaceId: null,
-    });
+  public async getAll({
+    userId,
+    workspaceId,
+  }: {
+    userId?: string;
+    workspaceId?: string;
+  }): Promise<Map<Extract<keyof KeyValueTypesMap, string>, any>> {
+    let result: any[] = [];
 
-    if (user.defaultWorkspaceId) {
+    if (userId) {
+      result = [
+        ...result,
+        ...(await this.keyValuePairService.get({
+          type: KeyValuePairType.USER_VAR,
+          userId,
+          workspaceId: null,
+        })),
+      ];
+    }
+
+    if (workspaceId) {
       result = [
         ...result,
         ...(await this.keyValuePairService.get({
           type: KeyValuePairType.USER_VAR,
           userId: null,
-          workspaceId: user.defaultWorkspaceId,
+          workspaceId,
         })),
+      ];
+    }
+
+    if (workspaceId && userId) {
+      result = [
+        ...result,
         ...(await this.keyValuePairService.get({
           type: KeyValuePairType.USER_VAR,
-          userId: user.id,
-          workspaceId: user.defaultWorkspaceId,
+          userId,
+          workspaceId,
         })),
       ];
     }
