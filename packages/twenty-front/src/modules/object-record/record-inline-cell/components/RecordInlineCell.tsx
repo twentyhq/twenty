@@ -36,8 +36,6 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
 
   const { closeInlineCell } = useInlineCell();
 
-  const cellIsReadOnly = isFieldReadOnly;
-
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
     closeInlineCell();
@@ -74,7 +72,7 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   const { getIcon } = useIcons();
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
-    readonly: cellIsReadOnly,
+    readonly: isFieldReadOnly,
     buttonIcon: buttonIcon,
     customEditHotkeyScope: isFieldRelation(fieldDefinition)
       ? { scope: RelationPickerHotkeyScope.RelationPicker }
@@ -99,7 +97,7 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
         onTab={handleTab}
         onShiftTab={handleShiftTab}
         onClickOutside={handleClickOutside}
-        isReadOnly={cellIsReadOnly}
+        isReadOnly={isFieldReadOnly}
       />
     ),
     displayModeContent: <FieldDisplay />,

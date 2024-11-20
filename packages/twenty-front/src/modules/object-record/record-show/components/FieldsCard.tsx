@@ -15,7 +15,6 @@ import { useRecordShowContainerData } from '@/object-record/record-show/hooks/us
 import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
 import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
-import { isNull } from '@sniptt/guards';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -85,10 +84,6 @@ export const FieldsCard = ({
           fieldMetadataItem.name === 'taskTargets')
       ),
   );
-
-  if (isNull(recordFromStore)) {
-    return null;
-  }
 
   return (
     <>
