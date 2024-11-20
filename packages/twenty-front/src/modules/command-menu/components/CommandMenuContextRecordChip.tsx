@@ -31,7 +31,7 @@ const StyledAvatarWrapper = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   padding: ${({ theme }) => theme.spacing(0.5)};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  &:not(:first-child) {
+  &:not(:first-of-type) {
     margin-left: -${({ theme }) => theme.spacing(1)};
   }
 `;
@@ -75,7 +75,7 @@ export const CommandMenuContextRecordChip = () => {
 
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
-    mainContextStoreComponentInstanceId ?? undefined,
+    mainContextStoreComponentInstanceId,
   );
 
   const { objectMetadataItem } = useObjectMetadataItemById({
@@ -83,7 +83,7 @@ export const CommandMenuContextRecordChip = () => {
   });
 
   const { records, loading, totalCount } = useContextStoreSelectedRecords(
-    mainContextStoreComponentInstanceId ?? undefined,
+    mainContextStoreComponentInstanceId,
   );
 
   if (loading || !totalCount) {
@@ -96,6 +96,7 @@ export const CommandMenuContextRecordChip = () => {
         {records.map((record) => (
           <CommandMenuContextRecordChipAvatars
             objectMetadataItem={objectMetadataItem}
+            key={record.id}
             record={record}
           />
         ))}

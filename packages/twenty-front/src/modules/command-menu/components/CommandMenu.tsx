@@ -13,6 +13,10 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { Command, CommandType } from '@/command-menu/types/Command';
 import { Company } from '@/companies/types/Company';
+import {
+  ContextStoreTargetedRecordsRule,
+  contextStoreTargetedRecordsRuleComponentState,
+} from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -31,7 +35,12 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useRef } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from 'recoil';
 import { Key } from 'ts-key-enum';
 import { Avatar, IconNotes, IconSparkles, isDefined } from 'twenty-ui';
 import { useDebounce } from 'use-debounce';
@@ -100,6 +109,25 @@ export const CommandMenu = () => {
   const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
+  const mainContextStoreComponentInstanceId = useRecoilValue(
+    mainContextStoreComponentInstanceIdState,
+  );
+
+  const setContextStoreTargetedRecordsRule = useRecoilCallback(
+    ({ set }) =>
+      (rule: ContextStoreTargetedRecordsRule) => {
+        if (isDefined(mainContextStoreComponentInstanceId)) {
+          set(
+            contextStoreTargetedRecordsRuleComponentState.atomFamily({
+              instanceId: mainContextStoreComponentInstanceId,
+            }),
+            rule,
+          );
+        }
+      },
+    [mainContextStoreComponentInstanceId],
+  );
+
   const isMobile = useIsMobile();
 
   useScopedHotkeys(
@@ -119,6 +147,23 @@ export const CommandMenu = () => {
     },
     AppHotkeyScope.CommandMenuOpen,
     [closeCommandMenu],
+  );
+
+  useScopedHotkeys(
+    [Key.Backspace, Key.Delete],
+    () => {
+      if (!isNonEmptyString(commandMenuSearch)) {
+        setContextStoreTargetedRecordsRule({
+          mode: 'selection',
+          selectedRecordIds: [],
+        });
+      }
+    },
+    AppHotkeyScope.CommandMenu,
+    [closeCommandMenu],
+    {
+      preventDefault: false,
+    },
   );
 
   const { loading: isPeopleLoading, records: people } =
@@ -303,10 +348,6 @@ export const CommandMenu = () => {
     isNotesLoading ||
     isOpportunitiesLoading ||
     isCompaniesLoading;
-
-  const mainContextStoreComponentInstanceId = useRecoilValue(
-    mainContextStoreComponentInstanceIdState,
-  );
 
   return (
     <>

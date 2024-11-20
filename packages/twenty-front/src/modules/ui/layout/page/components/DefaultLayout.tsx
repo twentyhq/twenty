@@ -1,5 +1,6 @@
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
+import { CommandMenuCommandsEffect } from '@/command-menu/components/CommandMenuCommandsEffect';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
@@ -80,6 +81,7 @@ export const DefaultLayout = () => {
         `}
       />
       <StyledLayout>
+        <CommandMenuCommandsEffect />
         <CommandMenu />
         <KeyboardShortcutMenu />
 

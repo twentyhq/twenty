@@ -11,6 +11,7 @@ import { isDefined } from '~/utils/isDefined';
 
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { COMMAND_MENU_COMMANDS } from '@/command-menu/constants/CommandMenuCommands';
+import { computeCommandMenuCommands } from '@/command-menu/utils/computeCommandMenuCommands';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ALL_ICONS } from '@ui/display/icon/providers/internal/AllIcons';
@@ -37,39 +38,17 @@ export const useCommandMenu = () => {
     ({ snapshot }) =>
       () => {
         if (isDefined(mainContextStoreComponentInstanceId)) {
-          const actionMenuEntries = snapshot.getLoadable(
-            actionMenuEntriesComponentSelector.selectorFamily({
-              instanceId: mainContextStoreComponentInstanceId,
-            }),
-          );
-
-          const commands = Object.values(COMMAND_MENU_COMMANDS);
-
-          const actionCommands = actionMenuEntries
-            .getValue()
-            ?.filter((actionMenuEntry) => actionMenuEntry.type === 'standard')
-            ?.map((actionMenuEntry) => ({
-              id: actionMenuEntry.key,
-              label: actionMenuEntry.label,
-              Icon: actionMenuEntry.Icon,
-              onCommandClick: actionMenuEntry.onClick,
-              type: CommandType.StandardAction,
-            }));
-
-          const workflowRunCommands = actionMenuEntries
-            .getValue()
-            ?.filter(
-              (actionMenuEntry) => actionMenuEntry.type === 'workflow-run',
+          const actionMenuEntries = snapshot
+            .getLoadable(
+              actionMenuEntriesComponentSelector.selectorFamily({
+                instanceId: mainContextStoreComponentInstanceId,
+              }),
             )
-            ?.map((actionMenuEntry) => ({
-              id: actionMenuEntry.key,
-              label: actionMenuEntry.label,
-              Icon: actionMenuEntry.Icon,
-              onCommandClick: actionMenuEntry.onClick,
-              type: CommandType.WorkflowRun,
-            }));
+            .getValue();
 
-          setCommands([...commands, ...actionCommands, ...workflowRunCommands]);
+          const commands = computeCommandMenuCommands(actionMenuEntries);
+
+          setCommands(commands);
         }
 
         setIsCommandMenuOpened(true);
