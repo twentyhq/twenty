@@ -36,8 +36,6 @@ export const useObjectOptionsForTable = (recordTableId: string) => {
         toIndex: result.destination.index - 1,
       });
 
-      console.log('reorderedFields', reorderedFields);
-
       handleColumnReorder(reorderedFields);
     },
     [visibleTableColumns, handleColumnReorder],

@@ -8,8 +8,6 @@ export const useOptionsDropdown = () => {
 
   const context = useContext(ObjectOptionsDropdownContext);
 
-  console.log('context', context);
-
   if (!context) {
     throw new Error(
       'useOptionsDropdown must be used within a ObjectOptionsDropdownContext.Provider',

@@ -2,13 +2,7 @@ import { objectOptionsDropdownSearchInputComponentState } from '@/object-record/
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useContext, useMemo } from 'react';
-import { atom } from 'recoil';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-
-const myRecoilState = atom<boolean>({
-  key: 'myRecoilState',
-  default: false,
-});
 
 export const useSearchRecordGroupField = () => {
   const { objectMetadataItem } = useContext(RecordIndexRootPropsContext);
