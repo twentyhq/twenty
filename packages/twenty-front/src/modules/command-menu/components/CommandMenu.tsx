@@ -143,7 +143,7 @@ export const CommandMenu = () => {
         setContextStoreNumberOfSelectedRecords(0);
       }
     },
-    AppHotkeyScope.CommandMenu,
+    AppHotkeyScope.CommandMenuOpen,
     [closeCommandMenu],
     {
       preventDefault: false,
