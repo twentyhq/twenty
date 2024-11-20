@@ -1,16 +1,10 @@
 import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useSearchRecordGroupField';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { RecoilRoot } from 'recoil';
 import { FieldMetadataType } from '~/generated/graphql';
-
-jest.mock(
-  '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2',
-  () => ({
-    useRecoilComponentStateV2: jest.fn(() => ['', jest.fn()]),
-  }),
-);
 
 describe('useSearchRecordGroupField', () => {
   const renderWithContext = (contextValue: any) =>
@@ -18,7 +12,11 @@ describe('useSearchRecordGroupField', () => {
       wrapper: ({ children }) => (
         <RecoilRoot>
           <RecordIndexRootPropsContext.Provider value={contextValue}>
-            {children}
+            <ViewComponentInstanceContext.Provider
+              value={{ instanceId: 'myViewInstanceId' }}
+            >
+              {children}
+            </ViewComponentInstanceContext.Provider>
           </RecordIndexRootPropsContext.Provider>
         </RecoilRoot>
       ),
