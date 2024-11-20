@@ -109,6 +109,7 @@ export type PhonesFilter = {
 export type SelectFilter = {
   is?: IsFilter;
   in?: string[];
+  eq?: string;
 };
 
 export type MultiSelectFilter = {

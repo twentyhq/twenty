@@ -1,11 +1,11 @@
+import { PageFavoriteButton } from '@/favorites/components/PageFavoriteButton';
 import { FavoriteFolderPicker } from '@/favorites/favorite-folder-picker/components/FavoriteFolderPicker';
 import { FavoriteFolderPickerEffect } from '@/favorites/favorite-folder-picker/components/FavoriteFolderPickerEffect';
-import { FavoriteFolderPickerScope } from '@/favorites/favorite-folder-picker/scopes/FavoriteFolderPickerScope';
+import { FavoriteFolderPickerComponentInstanceContext } from '@/favorites/favorite-folder-picker/scopes/FavoriteFolderPickerScope';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { PageFavoriteButton } from '@/ui/layout/page/components/PageFavoriteButton';
 
 type PageFavoriteFoldersDropdownProps = {
   dropdownId: string;
@@ -23,7 +23,9 @@ export const PageFavoriteFoldersDropdown = ({
   const { closeDropdown } = useDropdown(dropdownId);
 
   return (
-    <FavoriteFolderPickerScope favoriteFoldersScopeId={dropdownId}>
+    <FavoriteFolderPickerComponentInstanceContext
+      favoriteFoldersScopeId={dropdownId}
+    >
       <DropdownScope dropdownScopeId={dropdownId}>
         <Dropdown
           dropdownId={dropdownId}
@@ -44,6 +46,6 @@ export const PageFavoriteFoldersDropdown = ({
           }}
         />
       </DropdownScope>
-    </FavoriteFolderPickerScope>
+    </FavoriteFolderPickerComponentInstanceContext>
   );
 };

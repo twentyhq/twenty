@@ -4,7 +4,6 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -21,7 +20,6 @@ const StyledObjectsMetaDataItemsWrapper = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.betweenSiblingsGap};
   width: 100%;
-  margin-bottom: ${({ theme }) => theme.spacing(3)};
   flex: 1;
   overflow-y: auto;
 `;
@@ -79,19 +77,15 @@ export const NavigationDrawerSectionForObjectMetadataItems = ({
             onClick={() => toggleNavigationSection()}
           />
         </NavigationDrawerAnimatedCollapseWrapper>
-        <ScrollWrapper contextProviderName="navigationDrawer">
-          <StyledObjectsMetaDataItemsWrapper>
-            {isNavigationSectionOpen &&
-              objectMetadataItemsForNavigationItems.map(
-                (objectMetadataItem) => (
-                  <NavigationDrawerItemForObjectMetadataItem
-                    key={`navigation-drawer-item-${objectMetadataItem.id}`}
-                    objectMetadataItem={objectMetadataItem}
-                  />
-                ),
-              )}
-          </StyledObjectsMetaDataItemsWrapper>
-        </ScrollWrapper>
+        <StyledObjectsMetaDataItemsWrapper>
+          {isNavigationSectionOpen &&
+            objectMetadataItemsForNavigationItems.map((objectMetadataItem) => (
+              <NavigationDrawerItemForObjectMetadataItem
+                key={`navigation-drawer-item-${objectMetadataItem.id}`}
+                objectMetadataItem={objectMetadataItem}
+              />
+            ))}
+        </StyledObjectsMetaDataItemsWrapper>
       </NavigationDrawerSection>
     )
   );

@@ -31,6 +31,7 @@ export const useSignInUpForm = () => {
       exist: false,
       email: '',
       password: '',
+      captchaToken: '',
     },
     resolver: zodResolver(validationSchema),
   });

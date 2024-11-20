@@ -20,6 +20,7 @@ import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmp
 
 const StyledDropdownMenu = styled(DropdownMenu)`
   margin-left: -1px;
+  position: relative;
   margin-top: -1px;
 `;
 

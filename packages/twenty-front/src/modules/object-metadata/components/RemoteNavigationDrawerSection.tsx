@@ -7,16 +7,12 @@ import { NavigationDrawerSectionForObjectMetadataItemsSkeletonLoader } from '@/o
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 
-export const NavigationDrawerSectionForObjectMetadataItemsWrapper = ({
-  isRemote,
-}: {
-  isRemote: boolean;
-}) => {
+export const RemoteNavigationDrawerSection = () => {
   const currentUser = useRecoilValue(currentUserState);
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const filteredActiveObjectMetadataItems = activeObjectMetadataItems.filter(
-    (item) => (isRemote ? item.isRemote : !item.isRemote),
+    (item) => item.isRemote,
   );
   const loading = useIsPrefetchLoading();
 
@@ -26,9 +22,9 @@ export const NavigationDrawerSectionForObjectMetadataItemsWrapper = ({
 
   return (
     <NavigationDrawerSectionForObjectMetadataItems
-      sectionTitle={isRemote ? 'Remote' : 'Workspace'}
+      sectionTitle={'Remote'}
       objectMetadataItems={filteredActiveObjectMetadataItems}
-      isRemote={isRemote}
+      isRemote={true}
     />
   );
 };

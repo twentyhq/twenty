@@ -6,23 +6,20 @@ import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
-import { NavigationDrawerSectionForObjectMetadataItemsWrapper } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsWrapper';
+import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
   min-height: fit-content;
 `;
 
-const StyledContainer = styled.div`
-  overflow-x: hidden;
-  overflow-y: auto;
-`;
 export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
   const { toggleCommandMenu } = useCommandMenu();
@@ -59,15 +56,16 @@ export const MainNavigationDrawerItems = () => {
           />
         </StyledMainSection>
       )}
-      <StyledContainer>
+      <ScrollWrapper
+        contextProviderName="navigationDrawer"
+        enableXScroll={false}
+        scrollHide={true}
+      >
         <NavigationDrawerOpenedSection />
-
         <CurrentWorkspaceMemberFavoritesFolders />
-
         <WorkspaceFavorites />
-
-        <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
-      </StyledContainer>
+        <RemoteNavigationDrawerSection />
+      </ScrollWrapper>
     </>
   );
 };
