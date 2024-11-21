@@ -7,6 +7,7 @@ import {
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import {
   CreateManyResolverArgs,
+  CreateOneResolverArgs,
   FindDuplicatesResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
@@ -43,6 +44,19 @@ export class QueryRunnerArgsFactory {
     );
 
     switch (resolverArgsType) {
+      case ResolverArgsType.CreateOne:
+        return {
+          ...args,
+          data: await this.overrideDataByFieldMetadata(
+            (args as CreateOneResolverArgs).data,
+            options,
+            fieldMetadataMapByNameByName,
+            {
+              argIndex: 0,
+              shouldBackfillPosition,
+            },
+          ),
+        } satisfies CreateOneResolverArgs;
       case ResolverArgsType.CreateMany:
         return {
           ...args,
