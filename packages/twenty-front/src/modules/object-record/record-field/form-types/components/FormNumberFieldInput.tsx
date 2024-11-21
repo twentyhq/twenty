@@ -13,7 +13,7 @@ const StyledInput = styled(TextInput)`
 
 type FormNumberFieldInputProps = {
   placeholder: string;
-  defaultValue: string | undefined;
+  defaultValue: number | string | undefined;
   onPersist: (value: number | null | string) => void;
 };
 
@@ -46,7 +46,7 @@ export const FormNumberFieldInput = ({
       Input={
         <StyledInput
           placeholder={placeholder}
-          value={draftValue}
+          value={String(draftValue)}
           copyButton={false}
           hotkeyScope="record-create"
           onChange={(value) => {
