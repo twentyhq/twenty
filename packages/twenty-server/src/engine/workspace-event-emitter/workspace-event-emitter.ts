@@ -20,7 +20,7 @@ type CustomEventName = `${string}_${string}`;
 export class WorkspaceEventEmitter {
   constructor(private readonly eventEmitter: EventEmitter2) {}
 
-  public emitDatabaseEvents<T, A extends keyof ActionEventMap<T>>({
+  public emitDatabaseBatchEvent<T, A extends keyof ActionEventMap<T>>({
     objectMetadataNameSingular,
     action,
     events,
@@ -44,7 +44,7 @@ export class WorkspaceEventEmitter {
     });
   }
 
-  public emitCustomEvents(
+  public emitCustomBatchEvent(
     eventName: CustomEventName,
     events: object[],
     workspaceId: string,

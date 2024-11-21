@@ -44,7 +44,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       workspaceId,
     });
 
-    this.workspaceEventEmitter.emitCustomEvents(
+    this.workspaceEventEmitter.emitCustomBatchEvent(
       USER_SIGNUP_EVENT_NAME,
       [{ userId }],
       workspaceId,
@@ -88,7 +88,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       },
     });
 
-    this.workspaceEventEmitter.emitDatabaseEvents({
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: 'workspaceMember',
       action: DatabaseEventAction.CREATED,
       events: [

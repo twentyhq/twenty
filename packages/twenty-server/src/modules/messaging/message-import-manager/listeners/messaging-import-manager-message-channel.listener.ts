@@ -10,7 +10,7 @@ import {
   MessagingCleanCacheJob,
   MessagingCleanCacheJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-clean-cache';
-import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class MessagingMessageImportManagerMessageChannelListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnDatabaseEvent('messageChannel', DatabaseEventAction.DESTROYED)
+  @OnDatabaseBatchEvent('messageChannel', DatabaseEventAction.DESTROYED)
   async handleDestroyedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<MessageChannelWorkspaceEntity>

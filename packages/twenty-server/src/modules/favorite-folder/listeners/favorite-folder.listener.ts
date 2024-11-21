@@ -7,7 +7,7 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
-import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class FavoriteFolderDeletionListener {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  @OnDatabaseEvent('favoriteFolder', DatabaseEventAction.DELETED)
+  @OnDatabaseBatchEvent('favoriteFolder', DatabaseEventAction.DELETED)
   async handleDelete(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<FavoriteFolderWorkspaceEntity>

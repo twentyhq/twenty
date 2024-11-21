@@ -10,7 +10,7 @@ import {
   MessagingConnectedAccountDeletionCleanupJob,
   MessagingConnectedAccountDeletionCleanupJobData,
 } from 'src/modules/messaging/message-cleaner/jobs/messaging-connected-account-deletion-cleanup.job';
-import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class MessagingMessageCleanerConnectedAccountListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnDatabaseEvent('connectedAccount', DatabaseEventAction.DESTROYED)
+  @OnDatabaseBatchEvent('connectedAccount', DatabaseEventAction.DESTROYED)
   async handleDestroyedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<ConnectedAccountWorkspaceEntity>

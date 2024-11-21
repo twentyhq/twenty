@@ -9,7 +9,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
-import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 import { CallWebhookJobsJob } from 'src/modules/webhook/jobs/call-webhook-jobs.job';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
@@ -22,22 +22,22 @@ export class EntityEventsToDbListener {
     private readonly webhookQueueService: MessageQueueService,
   ) {}
 
-  @OnDatabaseEvent('*', DatabaseEventAction.CREATED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
   async handleCreate(batchEvent: WorkspaceEventBatch<ObjectRecordCreateEvent>) {
     return this.handle(batchEvent);
   }
 
-  @OnDatabaseEvent('*', DatabaseEventAction.UPDATED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
   async handleUpdate(batchEvent: WorkspaceEventBatch<ObjectRecordUpdateEvent>) {
     return this.handle(batchEvent);
   }
 
-  @OnDatabaseEvent('*', DatabaseEventAction.DELETED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
   async handleDelete(batchEvent: WorkspaceEventBatch<ObjectRecordUpdateEvent>) {
     return this.handle(batchEvent);
   }
 
-  @OnDatabaseEvent('*', DatabaseEventAction.DESTROYED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.DESTROYED)
   async handleDestroy(
     batchEvent: WorkspaceEventBatch<ObjectRecordUpdateEvent>,
   ) {

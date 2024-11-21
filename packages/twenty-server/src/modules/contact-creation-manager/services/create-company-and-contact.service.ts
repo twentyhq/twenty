@@ -194,7 +194,7 @@ export class CreateCompanyAndContactService {
         source,
       );
 
-      this.workspaceEventEmitter.emitDatabaseEvents({
+      this.workspaceEventEmitter.emitDatabaseBatchEvent({
         objectMetadataNameSingular: 'person',
         action: DatabaseEventAction.CREATED,
         events: createdPeople.map((createdPerson) => ({

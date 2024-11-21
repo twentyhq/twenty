@@ -57,7 +57,7 @@ export class WorkflowCreateOnePostQueryHook
       },
     });
 
-    this.workspaceEventEmitter.emitDatabaseEvents({
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: 'workflowVersion',
       action: DatabaseEventAction.CREATED,
       events: [

@@ -119,7 +119,7 @@ export class MatchParticipantService<
       transactionManager,
     );
 
-    this.workspaceEventEmitter.emitCustomEvents(
+    this.workspaceEventEmitter.emitCustomBatchEvent(
       `${objectMetadataName}_matched`,
       [
         {
@@ -174,7 +174,7 @@ export class MatchParticipantService<
         },
       });
 
-      this.workspaceEventEmitter.emitCustomEvents(
+      this.workspaceEventEmitter.emitCustomBatchEvent(
         `${objectMetadataName}_matched`,
         [
           {

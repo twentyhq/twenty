@@ -46,7 +46,7 @@ export class ConnectedAccountDeleteOnePreQueryHook
       },
     });
 
-    this.workspaceEventEmitter.emitDatabaseEvents({
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
       objectMetadataNameSingular: 'messageChannel',
       action: DatabaseEventAction.DESTROYED,
       events: messageChannels.map((messageChannel) => ({

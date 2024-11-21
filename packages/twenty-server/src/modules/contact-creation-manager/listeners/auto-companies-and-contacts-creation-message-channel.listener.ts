@@ -11,7 +11,7 @@ import {
   MessagingCreateCompanyAndContactAfterSyncJob,
   MessagingCreateCompanyAndContactAfterSyncJobData,
 } from 'src/modules/messaging/message-participant-manager/jobs/messaging-create-company-and-contact-after-sync.job';
-import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class AutoCompaniesAndContactsCreationMessageChannelListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnDatabaseEvent('messageChannel', DatabaseEventAction.UPDATED)
+  @OnDatabaseBatchEvent('messageChannel', DatabaseEventAction.UPDATED)
   async handleUpdatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<MessageChannelWorkspaceEntity>
