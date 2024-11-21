@@ -9,10 +9,10 @@ import { Not, Repository } from 'typeorm';
 
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { AvailableProduct } from 'src/engine/core-modules/billing/enums/available-product.enum';
-import { FeatureStripeLookupKey } from 'src/engine/core-modules/billing/enums/feature-stripe-lookup-key.enum';
-import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/subcription-interval.enum';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/subcription-status.enum';
+import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
@@ -99,19 +99,19 @@ export class BillingSubscriptionService {
 
   async getWorkspaceEntitlementByKey(
     workspaceId: string,
-    lookupKey: FeatureStripeLookupKey,
+    key: BillingEntitlementKey,
   ) {
     const entitlement = await this.billingEntitlementRepository.findOneBy({
       workspaceId,
-      key: lookupKey,
+      key,
       value: true,
     });
 
-    if (!entitlement?.value) {
+    if (!entitlement) {
       return false;
     }
 
-    return true;
+    return entitlement.value;
   }
 
   async applyBillingSubscription(user: User) {

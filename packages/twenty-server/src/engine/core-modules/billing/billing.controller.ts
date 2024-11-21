@@ -10,7 +10,11 @@ import {
 
 import { Response } from 'express';
 
-import { WebhookEvent } from 'src/engine/core-modules/billing/enums/webhook-events.enum';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
+import { WebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingWebhookService } from 'src/engine/core-modules/billing/services/billing-webhook.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
@@ -62,15 +66,20 @@ export class BillingController {
         event.data,
       );
     }
-    if (event.type === WebhookEvent.CUSTOMER_ACTIVE_ENTITLEMENT) {
+    if (
+      event.type === WebhookEvent.CUSTOMER_ACTIVE_ENTITLEMENT_SUMMARY_UPDATED
+    ) {
       try {
         await this.billingWehbookService.processCustomerActiveEntitlement(
           event.data,
         );
       } catch (error) {
-        res.status(500).end();
-
-        return;
+        if (
+          error instanceof BillingException &&
+          error.code === BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND
+        ) {
+          res.status(404).end();
+        }
       }
     }
     res.status(200).end();

@@ -14,7 +14,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { FeatureStripeLookupKey } from 'src/engine/core-modules/billing/enums/feature-stripe-lookup-key.enum';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Entity({ name: 'billingEntitlement', schema: 'core' })
 @ObjectType('billingEntitlement')
@@ -26,7 +26,7 @@ export class BillingEntitlement {
 
   @Field(() => String)
   @Column({ nullable: false, type: 'text' })
-  key: FeatureStripeLookupKey;
+  key: BillingEntitlementKey;
 
   @Field()
   @Column({ nullable: false, type: 'uuid' })

@@ -4,11 +4,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import Stripe from 'stripe';
 import { Repository } from 'typeorm';
 
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { FeatureStripeLookupKey } from 'src/engine/core-modules/billing/enums/feature-stripe-lookup-key.enum';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/subcription-status.enum';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import {
   Workspace,
   WorkspaceActivationStatus,
@@ -103,22 +107,30 @@ export class BillingWebhookService {
     data: Stripe.EntitlementsActiveEntitlementSummaryUpdatedEvent.Data,
   ) {
     const billingSubscription =
-      await this.billingSubscriptionRepository.findOneOrFail({
+      await this.billingSubscriptionRepository.findOne({
         where: { stripeCustomerId: data.object.customer },
       });
+
+    if (!billingSubscription) {
+      throw new BillingException(
+        'Billing customer not found',
+        BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND,
+      );
+    }
+
     const workspaceId = billingSubscription.workspaceId;
     const stripeCustomerId = data.object.customer;
 
-    const currentEntitlements = data.object.entitlements.data.map(
-      (item) => item.lookup_key,
+    const activeEntitlementsKeys = data.object.entitlements.data.map(
+      (entitlement) => entitlement.lookup_key,
     );
 
     await this.billingEntitlementRepository.upsert(
-      Object.values(FeatureStripeLookupKey).map((key) => {
+      Object.values(BillingEntitlementKey).map((key) => {
         return {
           workspaceId,
           key,
-          value: currentEntitlements.includes(key),
+          value: activeEntitlementsKeys.includes(key),
           stripeCustomerId,
         };
       }),

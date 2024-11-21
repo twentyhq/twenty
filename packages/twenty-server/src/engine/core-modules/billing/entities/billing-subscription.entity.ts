@@ -16,8 +16,8 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/subcription-interval.enum';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/subcription-status.enum';
+import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });

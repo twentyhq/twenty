@@ -7,7 +7,7 @@ import { ProductPricesEntity } from 'src/engine/core-modules/billing/dto/product
 import { ProductInput } from 'src/engine/core-modules/billing/dto/product.input';
 import { SessionEntity } from 'src/engine/core-modules/billing/dto/session.entity';
 import { UpdateBillingEntity } from 'src/engine/core-modules/billing/dto/update-billing.entity';
-import { AvailableProduct } from 'src/engine/core-modules/billing/enums/available-product.enum';
+import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';

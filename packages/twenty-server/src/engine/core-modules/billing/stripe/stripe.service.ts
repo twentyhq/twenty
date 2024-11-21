@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 
 import { ProductPriceEntity } from 'src/engine/core-modules/billing/dto/product-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { AvailableProduct } from 'src/engine/core-modules/billing/enums/available-product.enum';
+import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 

@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Issuer } from 'openid-client';
 import { Repository } from 'typeorm';
 
-import { FeatureStripeLookupKey } from 'src/engine/core-modules/billing/enums/feature-stripe-lookup-key.enum';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -30,7 +30,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class SSOService {
-  private readonly featureLookUpKey = 'sso_feat' as FeatureStripeLookupKey;
+  private readonly featureLookUpKey = 'sso_feat' as BillingEntitlementKey;
   constructor(
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,

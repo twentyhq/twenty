@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 
-import { FeatureStripeLookupKey } from 'src/engine/core-modules/billing/enums/feature-stripe-lookup-key.enum';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/subcription-status.enum';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
@@ -56,7 +56,7 @@ export class BillingService {
 
   async verifyWorkspaceEntitlement(
     workspaceId: string,
-    entitlementKey: FeatureStripeLookupKey,
+    entitlementKey: BillingEntitlementKey,
   ) {
     const isBillingEnabled = this.isBillingEnabled();
 
