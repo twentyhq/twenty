@@ -1,5 +1,5 @@
-import { FormFieldInput } from '@/object-record/record-field/form-types/components/FormFieldInput';
 import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
+import { WorkflowFormFieldInput } from '@/workflow/components/WorkflowFormFieldInput';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
@@ -7,17 +7,17 @@ const StyledBooleanInputContainer = styled.div`
   padding-inline: ${({ theme }) => theme.spacing(2)};
 `;
 
-type FormBooleanFieldInputProps = {
+type WorkflowFormBooleanFieldInputProps = {
   defaultValue: boolean | string | undefined;
   onPersist: (value: boolean | null | string) => void;
   readonly?: boolean;
 };
 
-export const FormBooleanFieldInput = ({
+export const WorkflowFormBooleanFieldInput = ({
   defaultValue,
   onPersist,
   readonly,
-}: FormBooleanFieldInputProps) => {
+}: WorkflowFormBooleanFieldInputProps) => {
   const [draftValue, setDraftValue] = useState(defaultValue ?? false);
 
   const handleChange = (newValue: boolean) => {
@@ -27,7 +27,8 @@ export const FormBooleanFieldInput = ({
   };
 
   return (
-    <FormFieldInput
+    <WorkflowFormFieldInput
+      variableMode="static-or-variable"
       Input={
         <StyledBooleanInputContainer>
           <BooleanInput
@@ -39,6 +40,16 @@ export const FormBooleanFieldInput = ({
           />
         </StyledBooleanInputContainer>
       }
+      draftValue={draftValue}
+      readonly={readonly}
+      onUnlinkVariable={() => {
+        setDraftValue(false);
+        onPersist(false);
+      }}
+      onVariableTagInsert={(variable) => {
+        setDraftValue(variable);
+        onPersist(variable);
+      }}
     />
   );
 };

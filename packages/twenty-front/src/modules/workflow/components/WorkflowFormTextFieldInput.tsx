@@ -1,10 +1,10 @@
-import { FormFieldInput } from '@/object-record/record-field/form-types/components/FormFieldInput';
 import { TextVariableEditor } from '@/object-record/record-field/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
+import { WorkflowFormFieldInput } from '@/workflow/components/WorkflowFormFieldInput';
 import { parseEditorContent } from '@/workflow/search-variables/utils/parseEditorContent';
 import { isDefined } from 'twenty-ui';
 
-type FormTextFieldInputProps = {
+type WorkflowFormTextFieldInputProps = {
   defaultValue: string | undefined;
   placeholder: string;
   onPersist: (value: null | string) => void;
@@ -12,14 +12,13 @@ type FormTextFieldInputProps = {
   readonly?: boolean;
 };
 
-export const FormTextFieldInput = ({
+export const WorkflowFormTextFieldInput = ({
   defaultValue,
   placeholder,
   onPersist,
   multiline,
   readonly,
-}: FormTextFieldInputProps) => {
-  // TODO: Might use a specific editor that doesn't know about variables (more lightweight)
+}: WorkflowFormTextFieldInputProps) => {
   const editor = useTextVariableEditor({
     placeholder,
     multiline,
@@ -38,7 +37,9 @@ export const FormTextFieldInput = ({
   }
 
   return (
-    <FormFieldInput
+    <WorkflowFormFieldInput
+      variableMode="full-editor"
+      readonly={readonly}
       Input={
         <TextVariableEditor
           editor={editor}
@@ -47,6 +48,9 @@ export const FormTextFieldInput = ({
         />
       }
       multiline={multiline}
+      onVariableTagInsert={(variable) => {
+        editor.commands.insertVariableTag(variable);
+      }}
     />
   );
 };

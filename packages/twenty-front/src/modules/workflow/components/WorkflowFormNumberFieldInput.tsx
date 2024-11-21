@@ -1,5 +1,5 @@
-import { FormFieldInput } from '@/object-record/record-field/form-types/components/FormFieldInput';
 import { TextInput } from '@/ui/field/input/components/TextInput';
+import { WorkflowFormFieldInput } from '@/workflow/components/WorkflowFormFieldInput';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import {
@@ -11,17 +11,17 @@ const StyledInput = styled(TextInput)`
   padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
 `;
 
-type FormNumberFieldInputProps = {
+type WorkflowFormNumberFieldInputProps = {
   placeholder: string;
   defaultValue: number | string | undefined;
   onPersist: (value: number | null | string) => void;
 };
 
-export const FormNumberFieldInput = ({
+export const WorkflowFormNumberFieldInput = ({
   placeholder,
   defaultValue,
   onPersist,
-}: FormNumberFieldInputProps) => {
+}: WorkflowFormNumberFieldInputProps) => {
   const [draftValue, setDraftValue] = useState(defaultValue ?? '');
 
   const persistNumber = (newValue: string) => {
@@ -41,7 +41,8 @@ export const FormNumberFieldInput = ({
   };
 
   return (
-    <FormFieldInput
+    <WorkflowFormFieldInput
+      variableMode="static-or-variable"
       Input={
         <StyledInput
           placeholder={placeholder}
@@ -53,6 +54,15 @@ export const FormNumberFieldInput = ({
           }}
         />
       }
+      draftValue={draftValue}
+      onUnlinkVariable={() => {
+        setDraftValue('');
+        onPersist(null);
+      }}
+      onVariableTagInsert={(variable) => {
+        setDraftValue(variable);
+        onPersist(variable);
+      }}
     />
   );
 };
