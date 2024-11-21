@@ -53,7 +53,7 @@ export const VariableTag = Node.create({
     insertVariableTag:
       (variable: string) =>
       ({ commands }) => {
-        commands.insertContent?.({
+        commands.insertContent({
           type: 'variableTag',
           attrs: { variable },
         });
