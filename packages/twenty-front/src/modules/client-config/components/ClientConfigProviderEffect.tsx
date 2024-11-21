@@ -19,7 +19,7 @@ export const ClientConfigProviderEffect = () => {
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
 
   const setIsSignInPrefilled = useSetRecoilState(isSignInPrefilledState);
-  const setIsMultiworkspaceEnabled = useSetRecoilState(
+  const setIsMultiWorkspaceEnabled = useSetRecoilState(
     isMultiWorkspaceEnabledState,
   );
 
@@ -48,7 +48,7 @@ export const ClientConfigProviderEffect = () => {
       setIsDebugMode(data?.clientConfig.debugMode);
       setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
       setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
-      setIsMultiworkspaceEnabled(data?.clientConfig.isMultiworkspaceEnabled);
+      setIsMultiWorkspaceEnabled(data?.clientConfig.isMultiWorkspaceEnabled);
 
       setBilling(data?.clientConfig.billing);
       setSupportChat(data?.clientConfig.support);
@@ -71,7 +71,7 @@ export const ClientConfigProviderEffect = () => {
     data,
     setIsDebugMode,
     setIsSignInPrefilled,
-    setIsMultiworkspaceEnabled,
+    setIsMultiWorkspaceEnabled,
     setSupportChat,
     setBilling,
     setSentryConfig,

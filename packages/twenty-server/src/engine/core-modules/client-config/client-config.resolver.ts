@@ -20,7 +20,7 @@ export class ClientConfigResolver {
       },
 
       signInPrefilled: this.environmentService.get('SIGN_IN_PREFILLED'),
-      isMultiworkspaceEnabled: this.environmentService.get(
+      isMultiWorkspaceEnabled: this.environmentService.get(
         'IS_MULTIWORKSPACE_ENABLED',
       ),
       debugMode: this.environmentService.get('DEBUG_MODE'),
