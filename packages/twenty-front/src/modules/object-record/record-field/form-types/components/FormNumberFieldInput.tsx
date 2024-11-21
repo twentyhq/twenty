@@ -1,10 +1,9 @@
+import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
-import { VARIABLE_TAG_STYLES } from '@/workflow/search-variables/components/VariableTagInput';
 import { extractVariableLabel } from '@/workflow/search-variables/utils/extractVariableLabel';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
-import { IconX, TEXT_INPUT_STYLE, VisibilityHidden } from 'twenty-ui';
+import { TEXT_INPUT_STYLE } from 'twenty-ui';
 import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,
@@ -60,13 +59,8 @@ const StyledInput = styled.input`
 `;
 
 const StyledVariableContainer = styled.div`
-  ${VARIABLE_TAG_STYLES}
-
-  margin: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
-  align-self: center;
-
-  display: flex;
   align-items: center;
+  display: flex;
 `;
 
 const StyledSearchVariablesDropdownContainer = styled.div<{
@@ -114,8 +108,6 @@ export const FormNumberFieldInput = ({
   defaultValue,
   onPersist,
 }: FormNumberFieldInputProps) => {
-  const theme = useTheme();
-
   const id = useId();
 
   const [draftValue, setDraftValue] = useState(defaultValue ?? '');
@@ -154,25 +146,14 @@ export const FormNumberFieldInput = ({
             />
           ) : (
             <StyledVariableContainer>
-              {extractVariableLabel(draftValue)}
-
-              <button
-                style={{
-                  all: 'unset',
-                  display: 'inline-flex',
-                  cursor: 'pointer',
-                  marginLeft: theme.spacing(1),
-                }}
-                onClick={() => {
+              <SortOrFilterChip
+                labelValue={extractVariableLabel(draftValue)}
+                onRemove={() => {
                   setDraftValue('');
                   setEditingMode('input');
                   onPersist(null);
                 }}
-              >
-                <VisibilityHidden>Unlink the variable</VisibilityHidden>
-
-                <IconX size={theme.icon.size.sm} />
-              </button>
+              />
             </StyledVariableContainer>
           )}
         </StyledInputContainer2>
