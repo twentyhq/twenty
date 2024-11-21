@@ -4,7 +4,7 @@ import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
-import { EnforceUniqueConstraintsCommand } from 'src/database/commands/upgrade-version/0-32/0-32-enforce-unique-constraints.command';
+import { EnforceUniqueConstraintsCommand } from 'src/database/commands/upgrade-version/0-33/0-33-enforce-unique-constraints.command';
 import { UpdateRichTextSearchVectorCommand } from 'src/database/commands/upgrade-version/0-33/0-33-update-rich-text-search-vector-expression';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
