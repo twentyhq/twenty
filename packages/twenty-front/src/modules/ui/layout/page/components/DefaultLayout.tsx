@@ -1,5 +1,6 @@
 import { GlobalActionMenuEntriesSetter } from '@/action-menu/actions/global-actions/components/GlobalActionMenuEntriesSetter';
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
+import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
@@ -93,6 +94,7 @@ export const DefaultLayout = () => {
           >
             <RecordActionMenuEntriesSetter />
             <GlobalActionMenuEntriesSetter />
+            <ActionMenuConfirmationModals />
             <CommandMenuCommandsEffect />
             <CommandMenu />
           </ActionMenuComponentInstanceContext.Provider>
