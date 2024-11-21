@@ -15,6 +15,7 @@ import {
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { deduceRelationDirection } from 'src/engine/utils/deduce-relation-direction.util';
 
@@ -180,10 +181,10 @@ export class ProcessNestedRelationsHelper {
     if (Object.keys(nestedRelations).length > 0) {
       await this.processNestedRelations({
         objectMetadataMaps,
-        parentObjectMetadataItem:
-          objectMetadataMaps.byNameSingular[
-            referenceObjectMetadata.nameSingular
-          ],
+        parentObjectMetadataItem: getObjectMetadataMapItemByNameSingular(
+          objectMetadataMaps,
+          referenceObjectMetadata.nameSingular,
+        ),
         parentObjectRecords: relationResults as ObjectRecord[],
         parentObjectRecordsAggregatedValues: relationAggregatedFieldsResult,
         relations: nestedRelations as Record<
@@ -261,10 +262,10 @@ export class ProcessNestedRelationsHelper {
     if (Object.keys(nestedRelations).length > 0) {
       await this.processNestedRelations({
         objectMetadataMaps,
-        parentObjectMetadataItem:
-          objectMetadataMaps.byNameSingular[
-            referenceObjectMetadata.nameSingular
-          ],
+        parentObjectMetadataItem: getObjectMetadataMapItemByNameSingular(
+          objectMetadataMaps,
+          referenceObjectMetadata.nameSingular,
+        ),
         parentObjectRecords: relationResults as ObjectRecord[],
         parentObjectRecordsAggregatedValues: relationAggregatedFieldsResult,
         relations: nestedRelations as Record<

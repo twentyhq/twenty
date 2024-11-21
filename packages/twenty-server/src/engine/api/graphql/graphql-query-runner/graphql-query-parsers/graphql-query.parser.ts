@@ -19,6 +19,7 @@ import {
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 
 export class GraphqlQueryParser {
   private fieldMetadataMapByName: FieldMetadataMap;
@@ -108,9 +109,10 @@ export class GraphqlQueryParser {
     parentObjectMetadata: ObjectMetadataItemWithFieldMaps,
     graphqlSelectedFields: Partial<Record<string, any>>,
   ): GraphqlQuerySelectedFieldsResult {
-    const parentFields =
-      this.objectMetadataMaps.byNameSingular[parentObjectMetadata.nameSingular]
-        ?.fieldsByName;
+    const parentFields = getObjectMetadataMapItemByNameSingular(
+      this.objectMetadataMaps,
+      parentObjectMetadata.nameSingular,
+    )?.fieldsByName;
 
     if (!parentFields) {
       throw new Error(
