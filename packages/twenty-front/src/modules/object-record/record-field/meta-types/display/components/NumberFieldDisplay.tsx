@@ -6,11 +6,14 @@ export const NumberFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useNumberFieldDisplay();
   const decimals = fieldDefinition.metadata.settings?.decimals;
   const type = fieldDefinition.metadata.settings?.type;
-  const value =
-    type === 'percentage' && fieldValue
-      ? `${formatNumber(Number(fieldValue) * 100, decimals)}%`
-      : fieldValue
-        ? formatNumber(Number(fieldValue), decimals)
-        : null;
+  
+  if (!fieldValue) return <NumberDisplay value={null} />;
+  
+  const numericValue = Number(fieldValue);
+  
+  const value = type === 'percentage'
+    ? `${formatNumber(numericValue, decimals)}%`
+    : formatNumber(numericValue, decimals);
+    
   return <NumberDisplay value={value} decimals={decimals} />;
 };
