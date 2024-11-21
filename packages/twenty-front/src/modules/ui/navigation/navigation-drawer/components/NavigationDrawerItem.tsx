@@ -274,7 +274,6 @@ export const NavigationDrawerItem = ({
             />
           )}
 
-          {/* <NavigationDrawerAnimatedCollapseWrapper> */}
           <StyledLabelParent>
             <StyledItemLabel>{label}</StyledItemLabel>
             {objectName ? (
@@ -284,7 +283,6 @@ export const NavigationDrawerItem = ({
               </StyledItemObjectName>
             ) : null}
           </StyledLabelParent>
-          {/* </NavigationDrawerAnimatedCollapseWrapper> */}
 
           <StyledSpacer />
 
