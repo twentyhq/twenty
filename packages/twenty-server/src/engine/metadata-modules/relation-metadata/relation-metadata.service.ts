@@ -332,6 +332,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       type: FieldMetadataType.UUID,
       objectMetadataId: relationMetadataInput.toObjectMetadataId,
       workspaceId: relationMetadataInput.workspaceId,
+      settings: { isForeignKey: true },
     };
   }
 

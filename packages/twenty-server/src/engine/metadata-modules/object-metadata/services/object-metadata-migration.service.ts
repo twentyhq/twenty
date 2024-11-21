@@ -7,6 +7,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { buildMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/build-migrations-for-custom-object-relations.util';
+import { buildNameLabelAndDescriptionForForeignKeyFieldMetadata } from 'src/engine/metadata-modules/object-metadata/utils/build-name-label-and-description-for-foreign-key-field-metadata.util';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { RelationToDelete } from 'src/engine/metadata-modules/relation-metadata/types/relation-to-delete';
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
@@ -115,7 +116,7 @@ export class ObjectMetadataMigrationService {
     );
   }
 
-  public async createRelationsUpdatesMigrations(
+  public async createStandardRelationsUpdatesMigrations(
     existingObjectMetadata: ObjectMetadataEntity,
     updatedObjectMetadata: ObjectMetadataEntity,
     workspaceId: string,
@@ -124,85 +125,113 @@ export class ObjectMetadataMigrationService {
     const newTableName = computeObjectTargetTable(updatedObjectMetadata);
 
     if (existingTableName !== newTableName) {
-      const searchCriteria = {
-        isCustom: false,
-        settings: {
-          isForeignKey: true,
-        },
-        name: `${existingObjectMetadata.nameSingular}Id`,
-        workspaceId: workspaceId,
-      };
+      const relatedObjectsIds = await this.relationMetadataRepository
+        .find({
+          where: {
+            workspaceId,
+            fromObjectMetadataId: existingObjectMetadata.id,
+          },
+        })
+        .then((relations) =>
+          relations.map((relation) => relation.toObjectMetadataId),
+        );
 
-      const fieldsWihStandardRelation = await this.fieldMetadataRepository.find(
-        {
+      const fieldsWithStandardRelation =
+        await this.fieldMetadataRepository.find({
           where: {
             isCustom: false,
             settings: {
               isForeignKey: true,
             },
             name: `${existingObjectMetadata.nameSingular}Id`,
+            workspaceId: workspaceId,
           },
-        },
-      );
-
-      await this.fieldMetadataRepository.update(searchCriteria, {
-        name: `${updatedObjectMetadata.nameSingular}Id`,
-      });
+        });
 
       await Promise.all(
-        fieldsWihStandardRelation.map(async (fieldWihStandardRelation) => {
-          const relatedObject = await this.objectMetadataRepository.findOneBy({
-            id: fieldWihStandardRelation.objectMetadataId,
-            workspaceId: workspaceId,
-          });
-
-          if (relatedObject) {
-            await this.fieldMetadataRepository.update(
+        fieldsWithStandardRelation.map(async (fieldWithStandardRelation) => {
+          if (
+            relatedObjectsIds.includes(
+              fieldWithStandardRelation.objectMetadataId,
+            )
+          ) {
+            const relatedObject = await this.objectMetadataRepository.findOneBy(
               {
-                name: existingObjectMetadata.nameSingular,
-                label: existingObjectMetadata.labelSingular,
-              },
-              {
-                name: updatedObjectMetadata.nameSingular,
-                label: updatedObjectMetadata.labelSingular,
+                id: fieldWithStandardRelation.objectMetadataId,
+                workspaceId: workspaceId,
               },
             );
 
-            const relationTableName = computeObjectTargetTable(relatedObject);
-            const columnName = `${existingObjectMetadata.nameSingular}Id`;
-            const columnType = fieldMetadataTypeToColumnType(
-              fieldWihStandardRelation.type,
-            );
-
-            await this.workspaceMigrationService.createCustomMigration(
-              generateMigrationName(
-                `rename-${existingObjectMetadata.nameSingular}-to-${updatedObjectMetadata.nameSingular}-in-${relatedObject.nameSingular}`,
-              ),
-              workspaceId,
-              [
+            if (relatedObject) {
+              await this.fieldMetadataRepository.update(
                 {
-                  name: relationTableName,
-                  action: WorkspaceMigrationTableActionType.ALTER,
-                  columns: [
-                    {
-                      action: WorkspaceMigrationColumnActionType.ALTER,
-                      currentColumnDefinition: {
-                        columnName,
-                        columnType,
-                        isNullable: true,
-                        defaultValue: null,
-                      },
-                      alteredColumnDefinition: {
-                        columnName: `${updatedObjectMetadata.nameSingular}Id`,
-                        columnType,
-                        isNullable: true,
-                        defaultValue: null,
-                      },
-                    },
-                  ],
+                  name: existingObjectMetadata.nameSingular,
+                  label: existingObjectMetadata.labelSingular,
+                  objectMetadataId: relatedObject.id,
+                  workspaceId: workspaceId,
                 },
-              ],
-            );
+                {
+                  name: updatedObjectMetadata.nameSingular,
+                  label: updatedObjectMetadata.labelSingular,
+                },
+              );
+
+              const {
+                name: updatedNameForForeignKeyFieldMetadata,
+                label: updatedLabelForForeignKeyFieldMetadata,
+                description: updatedDescriptionForForeignKeyFieldMetadata,
+              } = buildNameLabelAndDescriptionForForeignKeyFieldMetadata({
+                targetObjectNameSingular: updatedObjectMetadata.nameSingular,
+                targetObjectLabelSingular: updatedObjectMetadata.labelSingular,
+                relatedObjectLabelSingular: relatedObject.labelSingular,
+              });
+
+              await this.fieldMetadataRepository.update(
+                fieldWithStandardRelation.id,
+                {
+                  name: updatedNameForForeignKeyFieldMetadata,
+                  label: updatedLabelForForeignKeyFieldMetadata,
+                  description: updatedDescriptionForForeignKeyFieldMetadata,
+                },
+              );
+
+              const relatedObjectTableName =
+                computeObjectTargetTable(relatedObject);
+              const columnName = `${existingObjectMetadata.nameSingular}Id`;
+              const columnType = fieldMetadataTypeToColumnType(
+                fieldWithStandardRelation.type,
+              );
+
+              await this.workspaceMigrationService.createCustomMigration(
+                generateMigrationName(
+                  `rename-${existingObjectMetadata.nameSingular}-to-${updatedObjectMetadata.nameSingular}-in-${relatedObject.nameSingular}`,
+                ),
+                workspaceId,
+                [
+                  {
+                    name: relatedObjectTableName,
+                    action: WorkspaceMigrationTableActionType.ALTER,
+                    columns: [
+                      {
+                        action: WorkspaceMigrationColumnActionType.ALTER,
+                        currentColumnDefinition: {
+                          columnName,
+                          columnType,
+                          isNullable: true,
+                          defaultValue: null,
+                        },
+                        alteredColumnDefinition: {
+                          columnName: `${updatedObjectMetadata.nameSingular}Id`,
+                          columnType,
+                          isNullable: true,
+                          defaultValue: null,
+                        },
+                      },
+                    ],
+                  },
+                ],
+              );
+            }
           }
         }),
       );

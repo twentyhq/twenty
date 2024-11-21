@@ -10,6 +10,7 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { buildNameLabelAndDescriptionForForeignKeyFieldMetadata } from 'src/engine/metadata-modules/object-metadata/utils/build-name-label-and-description-for-foreign-key-field-metadata.util';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
@@ -94,6 +95,13 @@ export class ObjectMetadataRelationService {
       );
     }
 
+    const { name, label, description } =
+      buildNameLabelAndDescriptionForForeignKeyFieldMetadata({
+        targetObjectNameSingular: createdObjectMetadata.nameSingular,
+        targetObjectLabelSingular: createdObjectMetadata.labelSingular,
+        relatedObjectLabelSingular: relatedObjectMetadata.labelSingular,
+      });
+
     await this.fieldMetadataRepository.save({
       standardId: createForeignKeyDeterministicUuid({
         objectId: createdObjectMetadata.id,
@@ -104,9 +112,9 @@ export class ObjectMetadataRelationService {
       isCustom: false,
       isActive: true,
       type: objectPrimaryKeyType,
-      name: `${createdObjectMetadata.nameSingular}Id`,
-      label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
-      description: `${relatedObjectMetadata.labelSingular} ${createdObjectMetadata.labelSingular} id foreign key`,
+      name,
+      label,
+      description,
       icon: undefined,
       isNullable: true,
       isSystem: true,
