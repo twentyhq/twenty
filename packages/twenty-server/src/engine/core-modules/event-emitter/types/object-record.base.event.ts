@@ -17,24 +17,4 @@ export class ObjectRecordBaseEvent<T> {
   workspaceMemberId?: string;
   objectMetadata: ObjectMetadataInterface;
   properties: Properties<T>;
-
-  constructor({
-    recordId,
-    objectMetadata,
-    properties,
-    userId,
-    workspaceMemberId,
-  }: {
-    recordId: string;
-    objectMetadata: ObjectMetadataInterface;
-    properties: any;
-    userId?: string;
-    workspaceMemberId?: string;
-  }) {
-    this.recordId = recordId;
-    this.objectMetadata = objectMetadata;
-    this.properties = properties;
-    this.userId = userId;
-    this.workspaceMemberId = workspaceMemberId;
-  }
 }
