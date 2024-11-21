@@ -6,13 +6,14 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
-type TimelineActivity = ObjectRecordBaseEvent & {
-  name: string;
-  objectName?: string;
-  linkedRecordCachedName?: string;
-  linkedRecordId?: string;
-  linkedObjectMetadataId?: string;
-};
+type TimelineActivity =
+  ObjectRecordBaseEvent<TimelineActivityWorkspaceEntity> & {
+    name: string;
+    objectName?: string;
+    linkedRecordCachedName?: string;
+    linkedRecordId?: string;
+    linkedObjectMetadataId?: string;
+  };
 
 @Injectable()
 export class TimelineActivityService {
@@ -32,7 +33,7 @@ export class TimelineActivityService {
     eventName,
     workspaceId,
   }: {
-    event: ObjectRecordBaseEvent;
+    event: ObjectRecordBaseEvent<TimelineActivityWorkspaceEntity>;
     eventName: string;
     workspaceId: string;
   }) {
@@ -64,7 +65,7 @@ export class TimelineActivityService {
     workspaceId,
     eventName,
   }: {
-    event: ObjectRecordBaseEvent;
+    event: ObjectRecordBaseEvent<TimelineActivityWorkspaceEntity>;
     workspaceId: string;
     eventName: string;
   }): Promise<TimelineActivity[] | undefined> {
@@ -100,7 +101,7 @@ export class TimelineActivityService {
     workspaceId,
     eventName,
   }: {
-    event: ObjectRecordBaseEvent;
+    event: ObjectRecordBaseEvent<TimelineActivityWorkspaceEntity>;
     workspaceId: string;
     eventName: string;
   }): Promise<TimelineActivity[] | undefined> {
@@ -145,7 +146,7 @@ export class TimelineActivityService {
     eventName,
     workspaceId,
   }: {
-    event: ObjectRecordBaseEvent;
+    event: ObjectRecordBaseEvent<TimelineActivityWorkspaceEntity>;
     dataSourceSchema: string;
     activityType: string;
     eventName: string;
@@ -206,7 +207,7 @@ export class TimelineActivityService {
     eventName,
     workspaceId,
   }: {
-    event: ObjectRecordBaseEvent;
+    event: ObjectRecordBaseEvent<TimelineActivityWorkspaceEntity>;
     dataSourceSchema: string;
     activityType: string;
     eventName: string;

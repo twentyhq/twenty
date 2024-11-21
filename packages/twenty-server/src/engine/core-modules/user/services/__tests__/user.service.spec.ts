@@ -9,6 +9,7 @@ import { WorkspaceService } from 'src/engine/core-modules/workspace/services/wor
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 describe('UserService', () => {
   let service: UserService;
@@ -23,6 +24,10 @@ describe('UserService', () => {
         },
         {
           provide: getRepositoryToken(UserWorkspace, 'core'),
+          useValue: {},
+        },
+        {
+          provide: getRepositoryToken(ObjectMetadataEntity, 'metadata'),
           useValue: {},
         },
         {
