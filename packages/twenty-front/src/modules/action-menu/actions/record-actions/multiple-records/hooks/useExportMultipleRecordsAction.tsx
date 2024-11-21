@@ -1,16 +1,13 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { IconDatabaseExport } from 'twenty-ui';
 
 import {
   displayedExportProgress,
   useExportRecords,
 } from '@/object-record/record-index/export/hooks/useExportRecords';
-import { useEffect } from 'react';
 
-export const ExportRecordsActionEffect = ({
+export const useExportMultipleRecordsAction = ({
   position,
   objectMetadataItem,
 }: {
@@ -18,9 +15,6 @@ export const ExportRecordsActionEffect = ({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
-  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
-    contextStoreNumberOfSelectedRecordsComponentState,
-  );
 
   const { progress, download } = useExportRecords({
     delayMs: 100,
@@ -29,29 +23,25 @@ export const ExportRecordsActionEffect = ({
     filename: `${objectMetadataItem.nameSingular}.csv`,
   });
 
-  useEffect(() => {
+  const registerExportMultipleRecordsAction = () => {
     addActionMenuEntry({
       type: 'standard',
       scope: 'record-selection',
-      key: 'export',
+      key: 'export-multiple-records',
       position,
       label: displayedExportProgress(progress),
       Icon: IconDatabaseExport,
       accent: 'default',
       onClick: () => download(),
     });
+  };
 
-    return () => {
-      removeActionMenuEntry('export');
-    };
-  }, [
-    contextStoreNumberOfSelectedRecords,
-    download,
-    progress,
-    addActionMenuEntry,
-    removeActionMenuEntry,
-    position,
-  ]);
+  const unregisterExportMultipleRecordsAction = () => {
+    removeActionMenuEntry('export-multiple-records');
+  };
 
-  return null;
+  return {
+    registerExportMultipleRecordsAction,
+    unregisterExportMultipleRecordsAction,
+  };
 };
