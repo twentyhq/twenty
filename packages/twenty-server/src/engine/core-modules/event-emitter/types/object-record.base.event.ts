@@ -1,6 +1,6 @@
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-type Diff<T> = {
+export type ObjectRecordDiff<T> = {
   [K in keyof T]: { before: T[K]; after: T[K] };
 };
 
@@ -8,7 +8,7 @@ type Properties<T> = {
   updatedFields?: string[];
   before?: T;
   after?: T;
-  diff?: Partial<Diff<T>>;
+  diff?: Partial<ObjectRecordDiff<T>>;
 };
 
 export class ObjectRecordBaseEvent<T> {
