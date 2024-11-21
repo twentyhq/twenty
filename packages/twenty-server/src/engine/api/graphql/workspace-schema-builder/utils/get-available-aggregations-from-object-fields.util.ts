@@ -19,6 +19,7 @@ export type AggregationField = {
   type: GraphQLScalarType;
   description: string;
   fromField: string;
+  fromSubField?: string;
   aggregationOperation: AGGREGATION_OPERATIONS;
 };
 
@@ -76,6 +77,16 @@ export const getAvailableAggregationsFromObjectFields = (
         description: `Sum of amounts contained in the field ${field.name}`,
         fromField: field.name,
         aggregationOperation: AGGREGATION_OPERATIONS.sum,
+      };
+    }
+
+    if (field.type === FieldMetadataType.CURRENCY) {
+      acc[`avg${capitalize(field.name)}AmountMicros`] = {
+        type: GraphQLFloat,
+        description: `Average amount contained in the field ${field.name}`,
+        fromField: field.name,
+        fromSubField: 'amountMicros',
+        aggregationOperation: AGGREGATION_OPERATIONS.avg,
       };
     }
 

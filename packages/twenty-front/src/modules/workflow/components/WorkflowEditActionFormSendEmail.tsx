@@ -7,7 +7,7 @@ import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
 import { VariableTagInput } from '@/workflow/search-variables/components/VariableTagInput';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { WorkflowSendEmailStep } from '@/workflow/types/Workflow';
+import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -15,16 +15,17 @@ import { useRecoilValue } from 'recoil';
 import { IconMail, IconPlus, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
-type WorkflowEditActionFormSendEmailProps =
-  | {
-      action: WorkflowSendEmailStep;
-      readonly: true;
-    }
-  | {
-      action: WorkflowSendEmailStep;
-      readonly?: false;
-      onActionUpdate: (action: WorkflowSendEmailStep) => void;
-    };
+type WorkflowEditActionFormSendEmailProps = {
+  action: WorkflowSendEmailAction;
+  actionOptions:
+    | {
+        readonly: true;
+      }
+    | {
+        readonly?: false;
+        onActionUpdate: (action: WorkflowSendEmailAction) => void;
+      };
+};
 
 type SendEmailFormData = {
   connectedAccountId: string;
@@ -33,9 +34,10 @@ type SendEmailFormData = {
   body: string;
 };
 
-export const WorkflowEditActionFormSendEmail = (
-  props: WorkflowEditActionFormSendEmailProps,
-) => {
+export const WorkflowEditActionFormSendEmail = ({
+  action,
+  actionOptions,
+}: WorkflowEditActionFormSendEmailProps) => {
   const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { triggerApisOAuth } = useTriggerApisOAuth();
@@ -50,7 +52,7 @@ export const WorkflowEditActionFormSendEmail = (
       subject: '',
       body: '',
     },
-    disabled: props.readonly,
+    disabled: actionOptions.readonly,
   });
 
   const checkConnectedAccountScopes = async (
@@ -77,23 +79,23 @@ export const WorkflowEditActionFormSendEmail = (
   useEffect(() => {
     form.setValue(
       'connectedAccountId',
-      props.action.settings.input.connectedAccountId ?? '',
+      action.settings.input.connectedAccountId ?? '',
     );
-    form.setValue('email', props.action.settings.input.email ?? '');
-    form.setValue('subject', props.action.settings.input.subject ?? '');
-    form.setValue('body', props.action.settings.input.body ?? '');
-  }, [props.action.settings, form]);
+    form.setValue('email', action.settings.input.email ?? '');
+    form.setValue('subject', action.settings.input.subject ?? '');
+    form.setValue('body', action.settings.input.body ?? '');
+  }, [action.settings, form]);
 
   const saveAction = useDebouncedCallback(
     async (formData: SendEmailFormData, checkScopes = false) => {
-      if (props.readonly === true) {
+      if (actionOptions.readonly === true) {
         return;
       }
 
-      props.onActionUpdate({
-        ...props.action,
+      actionOptions.onActionUpdate({
+        ...action,
         settings: {
-          ...props.action.settings,
+          ...action.settings,
           input: {
             connectedAccountId: formData.connectedAccountId,
             email: formData.email,
@@ -132,12 +134,12 @@ export const WorkflowEditActionFormSendEmail = (
   };
 
   if (
-    isDefined(props.action.settings.input.connectedAccountId) &&
-    props.action.settings.input.connectedAccountId !== ''
+    isDefined(action.settings.input.connectedAccountId) &&
+    action.settings.input.connectedAccountId !== ''
   ) {
     filter.or.push({
       id: {
-        eq: props.action.settings.input.connectedAccountId,
+        eq: action.settings.input.connectedAccountId,
       },
     });
   }
@@ -192,6 +194,7 @@ export const WorkflowEditActionFormSendEmail = (
                 field.onChange(connectedAccountId);
                 handleSave(true);
               }}
+              disabled={actionOptions.readonly}
             />
           )}
         />
@@ -202,12 +205,13 @@ export const WorkflowEditActionFormSendEmail = (
             <VariableTagInput
               inputId="email-input"
               label="Email"
-              placeholder="Enter receiver email (use {{variable}} for dynamic content)"
+              placeholder="Enter receiver email"
               value={field.value}
               onChange={(email) => {
                 field.onChange(email);
                 handleSave();
               }}
+              readonly={actionOptions.readonly}
             />
           )}
         />
@@ -218,12 +222,13 @@ export const WorkflowEditActionFormSendEmail = (
             <VariableTagInput
               inputId="email-subject-input"
               label="Subject"
-              placeholder="Enter email subject (use {{variable}} for dynamic content)"
+              placeholder="Enter email subject"
               value={field.value}
               onChange={(email) => {
                 field.onChange(email);
                 handleSave();
               }}
+              readonly={actionOptions.readonly}
             />
           )}
         />
@@ -234,13 +239,14 @@ export const WorkflowEditActionFormSendEmail = (
             <VariableTagInput
               inputId="email-body-input"
               label="Body"
-              placeholder="Enter email body (use {{variable}} for dynamic content)"
+              placeholder="Enter email body"
               value={field.value}
               onChange={(email) => {
                 field.onChange(email);
                 handleSave();
               }}
               multiline
+              readonly={actionOptions.readonly}
             />
           )}
         />

@@ -3,8 +3,10 @@ import { renderHook } from '@testing-library/react';
 import { ReactNode } from 'react';
 
 import { mocks } from '@/auth/hooks/__mocks__/useAuth';
+import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
+import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 const recordTableId = 'people';
@@ -23,12 +25,18 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
   return (
     <HookMockWrapper>
       <ObjectNamePluralSetter>
-        <RecordTableComponentInstance
-          recordTableId={recordTableId}
-          onColumnsChange={onColumnsChange}
+        <ViewComponentInstanceContext.Provider
+          value={{ instanceId: 'instanceId' }}
         >
-          {children}
-        </RecordTableComponentInstance>
+          <RecordTableComponentInstance
+            recordTableId={recordTableId}
+            onColumnsChange={onColumnsChange}
+          >
+            <RecordGroupContext.Provider value={{ recordGroupId: 'default' }}>
+              {children}
+            </RecordGroupContext.Provider>
+          </RecordTableComponentInstance>
+        </ViewComponentInstanceContext.Provider>
       </ObjectNamePluralSetter>
     </HookMockWrapper>
   );

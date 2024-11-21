@@ -11,6 +11,7 @@ import {
   getCompanyDuplicateMock,
 } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
+import { mockedFavoritesData } from '~/testing/mock-data/favorite';
 import { mockedNotes } from '~/testing/mock-data/notes';
 import { getPeopleMock } from '~/testing/mock-data/people';
 import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
@@ -103,6 +104,45 @@ export const graphqlMocks = {
         data: {
           searchOpportunities: {
             edges: [],
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+        },
+      });
+    }),
+    graphql.query('CombinedSearchRecords', () => {
+      return HttpResponse.json({
+        data: {
+          searchOpportunities: {
+            edges: [],
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+          searchCompanies: {
+            edges: companiesMock.slice(0, 3).map((company) => ({
+              node: company,
+              cursor: null,
+            })),
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+          searchPeople: {
+            edges: peopleMock.slice(0, 3).map((person) => ({
+              node: person,
+              cursor: null,
+            })),
             pageInfo: {
               hasNextPage: false,
               hasPreviousPage: false,
@@ -212,8 +252,20 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           favorites: {
+            edges: mockedFavoritesData.map((favorite) => ({
+              node: favorite,
+              cursor: null,
+            })),
+            totalCount: mockedFavoritesData.length,
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: null,
+              endCursor: null,
+            },
+          },
+          favoriteFolders: {
             edges: [],
-            totalCount: 0,
             pageInfo: {
               hasNextPage: false,
               hasPreviousPage: false,
@@ -449,7 +501,10 @@ export const graphqlMocks = {
       return HttpResponse.json({
         data: {
           favorites: {
-            edges: [],
+            edges: mockedFavoritesData.map((favorite) => ({
+              node: favorite,
+              cursor: null,
+            })),
             pageInfo: {
               hasNextPage: false,
               hasPreviousPage: false,

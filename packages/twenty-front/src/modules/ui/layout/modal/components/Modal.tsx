@@ -15,9 +15,14 @@ const StyledModalDiv = styled(motion.div)<{
   size?: ModalSize;
   padding?: ModalPadding;
   isMobile: boolean;
+  modalVariant: ModalVariants;
 }>`
   display: flex;
   flex-direction: column;
+  box-shadow: ${({ theme, modalVariant }) =>
+    modalVariant === 'primary'
+      ? theme.boxShadow.superHeavy
+      : theme.boxShadow.strong};
   background: ${({ theme }) => theme.background.primary};
   color: ${({ theme }) => theme.font.color.primary};
   border-radius: ${({ theme, isMobile }) => {
@@ -231,6 +236,7 @@ export const Modal = ({
         animate="visible"
         exit="exit"
         layout
+        modalVariant={modalVariant}
         variants={modalAnimation}
         className={className}
         isMobile={isMobile}

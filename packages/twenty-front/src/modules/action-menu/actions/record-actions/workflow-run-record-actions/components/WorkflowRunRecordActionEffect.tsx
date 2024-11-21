@@ -57,6 +57,7 @@ export const WorkflowRunRecordActionEffect = ({
       addActionMenuEntry({
         type: 'workflow-run',
         key: `workflow-run-${activeWorkflowVersion.id}`,
+        scope: 'record-selection',
         label: capitalize(activeWorkflowVersion.workflow.name),
         position: index,
         Icon: IconSettingsAutomation,
@@ -65,7 +66,10 @@ export const WorkflowRunRecordActionEffect = ({
             return;
           }
 
-          await runWorkflowVersion(activeWorkflowVersion.id, selectedRecord);
+          await runWorkflowVersion({
+            workflowVersionId: activeWorkflowVersion.id,
+            payload: selectedRecord,
+          });
 
           enqueueSnackBar('', {
             variant: SnackBarVariant.Success,

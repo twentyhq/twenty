@@ -343,6 +343,7 @@ export class GraphqlQueryRunnerService {
       results,
       objectMetadataItemWithFieldMaps,
       authContext.workspace.id,
+      options.objectMetadataMaps,
     );
 
     const resultWithGettersArray = Array.isArray(resultWithGetters)

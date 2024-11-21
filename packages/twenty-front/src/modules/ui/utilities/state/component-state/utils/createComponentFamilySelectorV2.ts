@@ -1,3 +1,5 @@
+/* eslint-disable no-redeclare */
+/* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { selectorFamily, SerializableParam } from 'recoil';
 
 import { ComponentFamilyReadOnlySelectorV2 } from '@/ui/utilities/state/component-state/types/ComponentFamilyReadOnlySelectorV2';
@@ -9,7 +11,26 @@ import { SelectorGetter } from '@/ui/utilities/state/types/SelectorGetter';
 import { SelectorSetter } from '@/ui/utilities/state/types/SelectorSetter';
 import { isDefined } from 'twenty-ui';
 
-export const createComponentFamilySelectorV2 = <
+export function createComponentFamilySelectorV2<
+  ValueType,
+  FamilyKey extends SerializableParam,
+>(options: {
+  key: string;
+  get: SelectorGetter<ValueType, ComponentFamilyStateKeyV2<FamilyKey>>;
+  componentInstanceContext: ComponentInstanceStateContext<any> | null;
+}): ComponentFamilyReadOnlySelectorV2<ValueType, FamilyKey>;
+
+export function createComponentFamilySelectorV2<
+  ValueType,
+  FamilyKey extends SerializableParam,
+>(options: {
+  key: string;
+  get: SelectorGetter<ValueType, ComponentFamilyStateKeyV2<FamilyKey>>;
+  set: SelectorSetter<ValueType, ComponentFamilyStateKeyV2<FamilyKey>>;
+  componentInstanceContext: ComponentInstanceStateContext<any> | null;
+}): ComponentFamilySelectorV2<ValueType, FamilyKey>;
+
+export function createComponentFamilySelectorV2<
   ValueType,
   FamilyKey extends SerializableParam,
 >({
@@ -24,7 +45,7 @@ export const createComponentFamilySelectorV2 = <
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
 }):
   | ComponentFamilySelectorV2<ValueType, FamilyKey>
-  | ComponentFamilyReadOnlySelectorV2<ValueType, FamilyKey> => {
+  | ComponentFamilyReadOnlySelectorV2<ValueType, FamilyKey> {
   if (isDefined(componentInstanceContext)) {
     globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
@@ -55,4 +76,4 @@ export const createComponentFamilySelectorV2 = <
       }),
     } satisfies ComponentFamilyReadOnlySelectorV2<ValueType, FamilyKey>;
   }
-};
+}

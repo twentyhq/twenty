@@ -3,16 +3,17 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { IconSearch, IconSettings } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
+import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { WorkspaceFavorites } from '@/favorites/components/WorkspaceFavorites';
 import { NavigationDrawerOpenedSection } from '@/object-metadata/components/NavigationDrawerOpenedSection';
-import { NavigationDrawerSectionForObjectMetadataItemsWrapper } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItemsWrapper';
+import { RemoteNavigationDrawerSection } from '@/object-metadata/components/RemoteNavigationDrawerSection';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import styled from '@emotion/styled';
 
 const StyledMainSection = styled(NavigationDrawerSection)`
@@ -55,10 +56,16 @@ export const MainNavigationDrawerItems = () => {
           />
         </StyledMainSection>
       )}
-      <NavigationDrawerOpenedSection />
-      <CurrentWorkspaceMemberFavorites />
-      <WorkspaceFavorites />
-      <NavigationDrawerSectionForObjectMetadataItemsWrapper isRemote={true} />
+      <ScrollWrapper
+        contextProviderName="navigationDrawer"
+        enableXScroll={false}
+        scrollHide={true}
+      >
+        <NavigationDrawerOpenedSection />
+        <CurrentWorkspaceMemberFavoritesFolders />
+        <WorkspaceFavorites />
+        <RemoteNavigationDrawerSection />
+      </ScrollWrapper>
     </>
   );
 };

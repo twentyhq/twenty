@@ -30,11 +30,14 @@ export const WorkflowRunActionEffect = () => {
       addActionMenuEntry({
         type: 'workflow-run',
         key: `workflow-run-${activeWorkflowVersion.id}`,
+        scope: 'global',
         label: capitalize(activeWorkflowVersion.workflow.name),
         position: index,
         Icon: IconSettingsAutomation,
         onClick: async () => {
-          await runWorkflowVersion(activeWorkflowVersion.id);
+          await runWorkflowVersion({
+            workflowVersionId: activeWorkflowVersion.id,
+          });
 
           enqueueSnackBar('', {
             variant: SnackBarVariant.Success,

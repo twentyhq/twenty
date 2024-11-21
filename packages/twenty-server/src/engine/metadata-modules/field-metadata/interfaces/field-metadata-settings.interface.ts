@@ -16,6 +16,10 @@ type FieldMetadataNumberSettings = {
   type?: string;
 };
 
+type FieldMetadataTextSettings = {
+  displayedMaxRows?: number;
+};
+
 type FieldMetadataDateSettings = {
   displayAsRelativeDate?: boolean;
 };
@@ -28,6 +32,7 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings;
   [FieldMetadataType.DATE]: FieldMetadataDateSettings;
   [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings;
+  [FieldMetadataType.TEXT]: FieldMetadataTextSettings;
 };
 
 type SettingsByFieldMetadata<T extends FieldMetadataType | 'default'> =
