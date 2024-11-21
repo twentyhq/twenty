@@ -106,6 +106,7 @@ export const DeleteRecordsActionEffect = ({
     if (canDelete) {
       addActionMenuEntry({
         type: 'standard',
+        scope: 'record-selection',
         key: 'delete',
         label: 'Delete',
         position,

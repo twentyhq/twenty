@@ -7,7 +7,6 @@ import { WorkspaceQueryPostHookInstance } from 'src/engine/api/graphql/workspace
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -58,9 +57,10 @@ export class WorkflowCreateOnePostQueryHook
       },
     });
 
-    this.workspaceEventEmitter.emit(
-      `workflowVersion.${DatabaseEventAction.CREATED}`,
-      [
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: 'workflowVersion',
+      action: DatabaseEventAction.CREATED,
+      events: [
         {
           userId: authContext.user?.id,
           recordId: workflowVersionToCreate.id,
@@ -68,9 +68,9 @@ export class WorkflowCreateOnePostQueryHook
           properties: {
             after: workflowVersionToCreate,
           },
-        } satisfies ObjectRecordCreateEvent<any>,
+        },
       ],
-      authContext.workspace.id,
-    );
+      workspaceId: authContext.workspace.id,
+    });
   }
 }

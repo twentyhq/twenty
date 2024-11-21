@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
 import path from 'path';
+import fs from 'fs';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
@@ -18,6 +19,7 @@ export default defineConfig(({ command, mode }) => {
     VITE_BUILD_SOURCEMAP,
     VITE_DISABLE_TYPESCRIPT_CHECKER,
     VITE_DISABLE_ESLINT_CHECKER,
+    VITE_ENABLE_SSL,
     REACT_APP_PORT,
   } = env;
 
@@ -62,13 +64,27 @@ export default defineConfig(({ command, mode }) => {
     };
   }
 
+  if (VITE_ENABLE_SSL && (!env.SSL_KEY_PATH || !env.SSL_CERT_PATH)) {
+    throw new Error(
+      'to use https SSL_KEY_PATH and SSL_CERT_PATH must be both defined',
+    );
+  }
+
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-front',
 
     server: {
-      port,
-      host: 'localhost',
+      port: port,
+      protocol: VITE_ENABLE_SSL ? 'https' : 'http',
+      ...(VITE_ENABLE_SSL
+        ? {
+            https: {
+              key: fs.readFileSync(env.SSL_KEY_PATH),
+              cert: fs.readFileSync(env.SSL_CERT_PATH),
+            },
+          }
+        : {}),
       fs: {
         allow: [
           searchForWorkspaceRoot(process.cwd()),
