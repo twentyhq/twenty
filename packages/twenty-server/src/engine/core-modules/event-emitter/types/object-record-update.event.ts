@@ -5,9 +5,9 @@ import {
 
 export class ObjectRecordUpdateEvent<T> extends ObjectRecordBaseEvent<T> {
   properties: {
-    updatedFields: string[];
+    updatedFields?: string[];
     before: T;
     after: T;
-    diff: Partial<ObjectRecordDiff<T>>;
+    diff?: Partial<ObjectRecordDiff<T>>;
   };
 }

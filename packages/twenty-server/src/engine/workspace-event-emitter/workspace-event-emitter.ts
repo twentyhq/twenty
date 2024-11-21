@@ -48,7 +48,7 @@ export class WorkspaceEventEmitter {
 
   public emitCustomEvents(
     eventName: CustomEventName,
-    events: any[],
+    events: object[],
     workspaceId: string,
   ) {
     if (!events.length) {

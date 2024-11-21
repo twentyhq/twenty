@@ -359,7 +359,7 @@ export class WorkflowTriggerWorkspaceService {
   private async emitStatusUpdateEvents(
     workflowVersion: WorkflowVersionWorkspaceEntity,
     newStatus: WorkflowVersionStatus,
-    workspaceId,
+    workspaceId: string,
   ) {
     const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
       where: {
