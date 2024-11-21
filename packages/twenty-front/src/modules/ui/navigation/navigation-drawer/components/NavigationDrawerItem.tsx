@@ -26,6 +26,7 @@ export type NavigationDrawerItemIndentationLevel = 1 | 2;
 export type NavigationDrawerItemProps = {
   className?: string;
   label: string;
+  objectName?: string;
   indentationLevel?: NavigationDrawerItemIndentationLevel;
   subItemState?: NavigationDrawerSubItemState;
   to?: string;
@@ -123,10 +124,30 @@ const StyledItemElementsContainer = styled.span`
   width: 100%;
 `;
 
+const StyledLabelParent = styled.span`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  overflow: hidden;
+`;
+
 const StyledItemLabel = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 12ch;
+`;
+
+const StyledItemObjectName = styled.span`
+  display: block
+  color: ${({ theme }) => theme.font.color.extraLight};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  .navigation-drawer-item:hover & {
+    display: none;
+  }
 `;
 
 const StyledItemCount = styled.span`
@@ -187,6 +208,7 @@ const StyledRightOptionsContainer = styled.div<{
 export const NavigationDrawerItem = ({
   className,
   label,
+  objectName,
   indentationLevel = DEFAULT_INDENTATION_LEVEL,
   Icon,
   to,
@@ -252,9 +274,17 @@ export const NavigationDrawerItem = ({
             />
           )}
 
-          <NavigationDrawerAnimatedCollapseWrapper>
+          {/* <NavigationDrawerAnimatedCollapseWrapper> */}
+          <StyledLabelParent>
             <StyledItemLabel>{label}</StyledItemLabel>
-          </NavigationDrawerAnimatedCollapseWrapper>
+            {objectName ? (
+              <StyledItemObjectName>
+                {' · '}
+                {objectName.charAt(0).toUpperCase() + objectName.slice(1)}
+              </StyledItemObjectName>
+            ) : null}
+          </StyledLabelParent>
+          {/* </NavigationDrawerAnimatedCollapseWrapper> */}
 
           <StyledSpacer />
 
