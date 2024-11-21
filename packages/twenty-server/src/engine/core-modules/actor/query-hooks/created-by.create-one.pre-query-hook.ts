@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
-import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { buildCreatedByFromWorkspaceMember } from 'src/engine/core-modules/actor/utils/build-created-by-from-workspace-member.util';
@@ -26,9 +26,11 @@ type CustomWorkspaceItem = Omit<
   updatedAt: string;
 };
 
-@WorkspaceQueryHook(`*.createMany`)
-export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
-  private readonly logger = new Logger(CreatedByPreQueryHook.name);
+@WorkspaceQueryHook(`*.createOne`)
+export class CreatedByCreateOnePreQueryHook
+  implements WorkspaceQueryHookInstance
+{
+  private readonly logger = new Logger(CreatedByCreateOnePreQueryHook.name);
 
   constructor(
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
@@ -39,8 +41,8 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
   async execute(
     authContext: AuthContext,
     objectName: string,
-    payload: CreateManyResolverArgs<CustomWorkspaceItem>,
-  ): Promise<CreateManyResolverArgs<CustomWorkspaceItem>> {
+    payload: CreateOneResolverArgs<CustomWorkspaceItem>,
+  ): Promise<CreateOneResolverArgs<CustomWorkspaceItem>> {
     let createdBy: ActorMetadata | null = null;
 
     // TODO: Once all objects have it, we can remove this check
@@ -99,14 +101,15 @@ export class CreatedByPreQueryHook implements WorkspaceQueryHookInstance {
       };
     }
 
-    for (const datum of payload.data) {
-      // Front-end can fill the source field
-      if (createdBy && (!datum.createdBy || !datum.createdBy?.name)) {
-        datum.createdBy = {
-          ...createdBy,
-          source: datum.createdBy?.source ?? createdBy.source,
-        };
-      }
+    // Front-end can fill the source field
+    if (
+      createdBy &&
+      (!payload.data.createdBy || !payload.data.createdBy?.name)
+    ) {
+      payload.data.createdBy = {
+        ...createdBy,
+        source: payload.data.createdBy?.source ?? createdBy.source,
+      };
     }
 
     return payload;
