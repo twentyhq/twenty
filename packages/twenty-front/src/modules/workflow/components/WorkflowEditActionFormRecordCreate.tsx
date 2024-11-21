@@ -1,16 +1,20 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
+import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
+import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
+import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { WorkflowEditActionFormField } from '@/workflow/components/WorkflowEditActionFormField';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
 import { WorkflowRecordCreateAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import {
   HorizontalSeparator,
   IconAddressBook,
   isDefined,
   useIcons,
 } from 'twenty-ui';
+import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';
 
@@ -55,7 +59,7 @@ export const WorkflowEditActionFormRecordCreate = ({
 
   const handleFieldChange = (
     fieldName: keyof SendEmailFormData,
-    updatedValue: string,
+    updatedValue: JsonValue,
   ) => {
     const newFormData: SendEmailFormData = {
       ...formData,
@@ -164,20 +168,28 @@ export const WorkflowEditActionFormRecordCreate = ({
       <HorizontalSeparator noMargin />
 
       {editableFields.map((field) => (
-        <WorkflowEditActionFormField
-          key={field.id}
-          defaultValue={formData[field.name] as string}
-        />
-
-        // <FormFieldInput
-        //   key={field.id}
-        //   recordFieldInputdId={field.id}
-        //   label={field.label}
-        //   value={formData[field.name] as string}
-        //   onChange={(value) => {
-        //     handleFieldChange(field.name, value);
-        //   }}
-        // />
+        <Fragment key={field.id}>
+          {isFieldNumber(field) ? (
+            <FormNumberFieldInput
+              key={field.id}
+              defaultValue={formData[field.name] as string}
+              onPersist={(value) => {
+                handleFieldChange(field.name, value);
+              }}
+              placeholder="Fill with number"
+            />
+          ) : isFieldBoolean(field) ? (
+            <FormBooleanFieldInput
+              key={field.id}
+              defaultValue={
+                formData[field.name] as string | boolean | undefined
+              }
+              onPersist={(value) => {
+                handleFieldChange(field.name, value);
+              }}
+            />
+          ) : null}
+        </Fragment>
       ))}
     </WorkflowEditGenericFormBase>
   );
