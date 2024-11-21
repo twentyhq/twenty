@@ -13,6 +13,7 @@ const StyledDropdownMenuSearchInputContainer = styled.div`
   flex-direction: row;
   height: calc(36px - 2 * var(--vertical-padding));
   padding: var(--vertical-padding) 0;
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 
   width: 100%;
 `;
