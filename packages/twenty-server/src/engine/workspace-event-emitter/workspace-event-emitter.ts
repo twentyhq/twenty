@@ -16,13 +16,13 @@ type ActionEventMap<T> = {
   [DatabaseEventAction.DESTROYED]: ObjectRecordDestroyEvent<T>;
 };
 
-type GeneralEventName = `${string}_${string}`;
+type CustomEventName = `${string}_${string}`;
 
 @Injectable()
 export class WorkspaceEventEmitter {
   constructor(private readonly eventEmitter: EventEmitter2) {}
 
-  public emitWorkspaceEventBatch<T, A extends keyof ActionEventMap<T>>({
+  public emitDatabaseEvents<T, A extends keyof ActionEventMap<T>>({
     objectMetadataNameSingular,
     action,
     events,
@@ -46,7 +46,11 @@ export class WorkspaceEventEmitter {
     } satisfies WorkspaceEventBatch<ObjectRecordBaseEvent<T>>);
   }
 
-  public emit(eventName: GeneralEventName, events: any[], workspaceId: string) {
+  public emitCustomEvents(
+    eventName: CustomEventName,
+    events: any[],
+    workspaceId: string,
+  ) {
     if (!events.length) {
       return;
     }

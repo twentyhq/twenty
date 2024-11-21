@@ -114,7 +114,7 @@ export class UserService extends TypeOrmQueryService<User> {
       },
     });
 
-    this.workspaceEventEmitter.emitWorkspaceEventBatch({
+    this.workspaceEventEmitter.emitDatabaseEvents({
       objectMetadataNameSingular: 'workspaceMember',
       action: DatabaseEventAction.DELETED,
       events: [

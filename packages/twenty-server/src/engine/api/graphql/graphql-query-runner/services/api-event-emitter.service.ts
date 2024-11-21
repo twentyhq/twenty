@@ -17,7 +17,7 @@ export class ApiEventEmitterService {
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
-    this.workspaceEventEmitter.emitWorkspaceEventBatch({
+    this.workspaceEventEmitter.emitDatabaseEvents({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.CREATED,
       events: records.map((record) => ({
@@ -48,7 +48,7 @@ export class ApiEventEmitterService {
       {},
     );
 
-    this.workspaceEventEmitter.emitWorkspaceEventBatch({
+    this.workspaceEventEmitter.emitDatabaseEvents({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.UPDATED,
       events: records.map((record) => {
@@ -84,7 +84,7 @@ export class ApiEventEmitterService {
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
-    this.workspaceEventEmitter.emitWorkspaceEventBatch({
+    this.workspaceEventEmitter.emitDatabaseEvents({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.DELETED,
       events: records.map((record) => {
@@ -107,7 +107,7 @@ export class ApiEventEmitterService {
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
-    this.workspaceEventEmitter.emitWorkspaceEventBatch({
+    this.workspaceEventEmitter.emitDatabaseEvents({
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.DESTROYED,
       events: records.map((record) => {

@@ -367,7 +367,7 @@ export class WorkflowTriggerWorkspaceService {
       },
     });
 
-    this.workspaceEventEmitter.emitWorkspaceEventBatch({
+    this.workspaceEventEmitter.emitDatabaseEvents({
       objectMetadataNameSingular: 'workflowVersion',
       action: DatabaseEventAction.UPDATED,
       events: [
@@ -387,7 +387,7 @@ export class WorkflowTriggerWorkspaceService {
       workspaceId,
     });
 
-    this.workspaceEventEmitter.emit(
+    this.workspaceEventEmitter.emitCustomEvents(
       WORKFLOW_VERSION_STATUS_UPDATED,
       [
         {
