@@ -7,6 +7,10 @@ import {
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import {
   getRelationMetadata,
@@ -178,13 +182,23 @@ export class ProcessNestedRelationsHelper {
       joinField: `${inverseRelationName}Id`,
     });
 
+    const referenceObjectMetadataItemWithFieldsMaps =
+      getObjectMetadataMapItemByNameSingular(
+        objectMetadataMaps,
+        referenceObjectMetadata.nameSingular,
+      );
+
+    if (!referenceObjectMetadataItemWithFieldsMaps) {
+      throw new GraphqlQueryRunnerException(
+        `Object ${referenceObjectMetadata.nameSingular} not found`,
+        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
     if (Object.keys(nestedRelations).length > 0) {
       await this.processNestedRelations({
         objectMetadataMaps,
-        parentObjectMetadataItem: getObjectMetadataMapItemByNameSingular(
-          objectMetadataMaps,
-          referenceObjectMetadata.nameSingular,
-        ),
+        parentObjectMetadataItem: referenceObjectMetadataItemWithFieldsMaps,
         parentObjectRecords: relationResults as ObjectRecord[],
         parentObjectRecordsAggregatedValues: relationAggregatedFieldsResult,
         relations: nestedRelations as Record<
@@ -259,13 +273,23 @@ export class ProcessNestedRelationsHelper {
       relationName,
     });
 
+    const referenceObjectMetadataItemWithFieldsMaps =
+      getObjectMetadataMapItemByNameSingular(
+        objectMetadataMaps,
+        referenceObjectMetadata.nameSingular,
+      );
+
+    if (!referenceObjectMetadataItemWithFieldsMaps) {
+      throw new GraphqlQueryRunnerException(
+        `Object ${referenceObjectMetadata.nameSingular} not found`,
+        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
     if (Object.keys(nestedRelations).length > 0) {
       await this.processNestedRelations({
         objectMetadataMaps,
-        parentObjectMetadataItem: getObjectMetadataMapItemByNameSingular(
-          objectMetadataMaps,
-          referenceObjectMetadata.nameSingular,
-        ),
+        parentObjectMetadataItem: referenceObjectMetadataItemWithFieldsMaps,
         parentObjectRecords: relationResults as ObjectRecord[],
         parentObjectRecordsAggregatedValues: relationAggregatedFieldsResult,
         relations: nestedRelations as Record<
