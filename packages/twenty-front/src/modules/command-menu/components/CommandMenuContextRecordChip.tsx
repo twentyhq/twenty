@@ -22,6 +22,7 @@ const StyledChip = styled.div`
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  color: ${({ theme }) => theme.font.color.primary};
 `;
 
 const StyledAvatarWrapper = styled.div`
