@@ -37,7 +37,7 @@ export interface FindManyResolverArgs<
   orderBy?: OrderBy;
 }
 
-export interface FindOneResolverArgs<Filter = any> {
+export interface FindOneResolverArgs<Filter = ObjectRecordFilter> {
   filter?: Filter;
 }
 
@@ -93,6 +93,10 @@ export interface DeleteManyResolverArgs<Filter = any> {
   filter: Filter;
 }
 
+export interface RestoreOneResolverArgs {
+  id: string;
+}
+
 export interface RestoreManyResolverArgs<Filter = any> {
   filter: Filter;
 }
@@ -125,11 +129,12 @@ export type ResolverArgs =
   | CreateOneResolverArgs
   | DeleteManyResolverArgs
   | DeleteOneResolverArgs
+  | DestroyManyResolverArgs
+  | FindDuplicatesResolverArgs
   | FindManyResolverArgs
   | FindOneResolverArgs
-  | FindDuplicatesResolverArgs
-  | UpdateManyResolverArgs
-  | UpdateOneResolverArgs
-  | DestroyManyResolverArgs
   | RestoreManyResolverArgs
-  | SearchResolverArgs;
+  | RestoreOneResolverArgs
+  | SearchResolverArgs
+  | UpdateManyResolverArgs
+  | UpdateOneResolverArgs;

@@ -6,10 +6,10 @@ import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/typ
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
-import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { CallWebhookJobsJob } from 'src/modules/webhook/jobs/call-webhook-jobs.job';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
@@ -22,55 +22,49 @@ export class EntityEventsToDbListener {
     private readonly webhookQueueService: MessageQueueService,
   ) {}
 
-  @OnDatabaseEvent('*', DatabaseEventAction.CREATED)
-  async handleCreate(
-    payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
-  ) {
-    return this.handle(payload);
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
+  async handleCreate(batchEvent: WorkspaceEventBatch<ObjectRecordCreateEvent>) {
+    return this.handle(batchEvent);
   }
 
-  @OnDatabaseEvent('*', DatabaseEventAction.UPDATED)
-  async handleUpdate(
-    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
-  ) {
-    return this.handle(payload);
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
+  async handleUpdate(batchEvent: WorkspaceEventBatch<ObjectRecordUpdateEvent>) {
+    return this.handle(batchEvent);
   }
 
-  @OnDatabaseEvent('*', DatabaseEventAction.DELETED)
-  async handleDelete(
-    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
-  ) {
-    return this.handle(payload);
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
+  async handleDelete(batchEvent: WorkspaceEventBatch<ObjectRecordUpdateEvent>) {
+    return this.handle(batchEvent);
   }
 
-  @OnDatabaseEvent('*', DatabaseEventAction.DESTROYED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.DESTROYED)
   async handleDestroy(
-    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
+    batchEvent: WorkspaceEventBatch<ObjectRecordUpdateEvent>,
   ) {
-    return this.handle(payload);
+    return this.handle(batchEvent);
   }
 
-  private async handle(payload: WorkspaceEventBatch<ObjectRecordBaseEvent>) {
-    const filteredEvents = payload.events.filter(
+  private async handle(batchEvent: WorkspaceEventBatch<ObjectRecordBaseEvent>) {
+    const filteredEvents = batchEvent.events.filter(
       (event) => event.objectMetadata?.isAuditLogged,
     );
 
     await this.entityEventsToDbQueueService.add<
       WorkspaceEventBatch<ObjectRecordBaseEvent>
     >(CreateAuditLogFromInternalEvent.name, {
-      ...payload,
+      ...batchEvent,
       events: filteredEvents,
     });
 
     await this.entityEventsToDbQueueService.add<
       WorkspaceEventBatch<ObjectRecordBaseEvent>
     >(UpsertTimelineActivityFromInternalEvent.name, {
-      ...payload,
+      ...batchEvent,
       events: filteredEvents,
     });
 
     await this.webhookQueueService.add<
       WorkspaceEventBatch<ObjectRecordBaseEvent>
-    >(CallWebhookJobsJob.name, payload, { retryLimit: 3 });
+    >(CallWebhookJobsJob.name, batchEvent, { retryLimit: 3 });
   }
 }

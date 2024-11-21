@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { join } from 'path';
@@ -10,8 +9,9 @@ import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/cons
 import { SERVERLESS_FUNCTION_PUBLISHED } from 'src/engine/metadata-modules/serverless-function/constants/serverless-function-published';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
+import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
 
 @Injectable()
 export class ServerlessFunctionPublicationListener {
@@ -22,17 +22,17 @@ export class ServerlessFunctionPublicationListener {
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
 
-  @OnEvent(SERVERLESS_FUNCTION_PUBLISHED)
+  @OnCustomBatchEvent(SERVERLESS_FUNCTION_PUBLISHED)
   async handle(
-    payload: WorkspaceEventBatch<{
+    batchEvent: WorkspaceEventBatch<{
       serverlessFunctionId: string;
       serverlessFunctionVersion: string;
     }>,
   ): Promise<void> {
-    for (const event of payload.events) {
+    for (const event of batchEvent.events) {
       const sourceCode =
         await this.serverlessFunctionService.getServerlessFunctionSourceCode(
-          payload.workspaceId,
+          batchEvent.workspaceId,
           event.serverlessFunctionId,
           event.serverlessFunctionVersion,
         );

@@ -17,19 +17,20 @@ export class ApiEventEmitterService {
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.CREATED}`,
-      records.map((record) => ({
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.CREATED,
+      events: records.map((record) => ({
         userId: authContext.user?.id,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
         properties: {
           before: null,
-          after: this.removeGraphQLAndNestedProperties(record),
+          after: record,
         },
       })),
-      authContext.workspace.id,
-    );
+      workspaceId: authContext.workspace.id,
+    });
   }
 
   public emitUpdateEvents<T extends ObjectRecord>(
@@ -47,13 +48,12 @@ export class ApiEventEmitterService {
       {},
     );
 
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.UPDATED}`,
-      records.map((record) => {
-        const before = this.removeGraphQLAndNestedProperties(
-          mappedExistingRecords[record.id],
-        );
-        const after = this.removeGraphQLAndNestedProperties(record);
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.UPDATED,
+      events: records.map((record) => {
+        const before = mappedExistingRecords[record.id];
+        const after = record;
         const diff = objectRecordChangedValues(
           before,
           after,
@@ -73,8 +73,8 @@ export class ApiEventEmitterService {
           },
         };
       }),
-      authContext.workspace.id,
-    );
+      workspaceId: authContext.workspace.id,
+    });
   }
 
   public emitDeletedEvents<T extends ObjectRecord>(
@@ -82,21 +82,45 @@ export class ApiEventEmitterService {
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.DELETED}`,
-      records.map((record) => {
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.DELETED,
+      events: records.map((record) => {
         return {
           userId: authContext.user?.id,
           recordId: record.id,
           objectMetadata: objectMetadataItem,
           properties: {
-            before: this.removeGraphQLAndNestedProperties(record),
+            before: record,
             after: null,
           },
         };
       }),
-      authContext.workspace.id,
-    );
+      workspaceId: authContext.workspace.id,
+    });
+  }
+
+  public emitRestoreEvents<T extends ObjectRecord>(
+    records: T[],
+    authContext: AuthContext,
+    objectMetadataItem: ObjectMetadataInterface,
+  ): void {
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.RESTORED,
+      events: records.map((record) => {
+        return {
+          userId: authContext.user?.id,
+          recordId: record.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            before: null,
+            after: record,
+          },
+        };
+      }),
+      workspaceId: authContext.workspace.id,
+    });
   }
 
   public emitDestroyEvents<T extends ObjectRecord>(
@@ -104,42 +128,21 @@ export class ApiEventEmitterService {
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.DESTROYED}`,
-      records.map((record) => {
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.DESTROYED,
+      events: records.map((record) => {
         return {
           userId: authContext.user?.id,
           recordId: record.id,
           objectMetadata: objectMetadataItem,
           properties: {
-            before: this.removeGraphQLAndNestedProperties(record),
+            before: record,
             after: null,
           },
         };
       }),
-      authContext.workspace.id,
-    );
-  }
-
-  private removeGraphQLAndNestedProperties<T extends ObjectRecord>(record: T) {
-    if (!record) {
-      return {};
-    }
-
-    const sanitizedRecord = {};
-
-    for (const [key, value] of Object.entries(record)) {
-      if (value && typeof value === 'object' && value['edges']) {
-        continue;
-      }
-
-      if (key === '__typename') {
-        continue;
-      }
-
-      sanitizedRecord[key] = value;
-    }
-
-    return sanitizedRecord;
+      workspaceId: authContext.workspace.id,
+    });
   }
 }

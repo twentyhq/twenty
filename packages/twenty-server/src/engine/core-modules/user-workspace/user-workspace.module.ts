@@ -11,6 +11,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-inv
           [User, UserWorkspace, AppToken],
           'core',
         ),
+        NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
         TypeORMModule,
         DataSourceModule,
         WorkspaceDataSourceModule,

@@ -201,22 +201,31 @@ export class WorkspaceMigrationRunnerService {
     for (const index of indexes) {
       switch (index.action) {
         case WorkspaceMigrationIndexActionType.CREATE:
-          if (isDefined(index.type) && index.type !== IndexType.BTREE) {
-            const quotedColumns = index.columns.map((column) => `"${column}"`);
+          try {
+            if (isDefined(index.type) && index.type !== IndexType.BTREE) {
+              const quotedColumns = index.columns.map(
+                (column) => `"${column}"`,
+              );
 
-            await queryRunner.query(`
+              await queryRunner.query(`
               CREATE INDEX "${index.name}" ON "${schemaName}"."${tableName}" USING ${index.type} (${quotedColumns.join(', ')})
           `);
-          } else {
-            await queryRunner.createIndex(
-              `${schemaName}.${tableName}`,
-              new TableIndex({
-                name: index.name,
-                columnNames: index.columns,
-                isUnique: index.isUnique,
-                where: index.where ?? undefined,
-              }),
-            );
+            } else {
+              await queryRunner.createIndex(
+                `${schemaName}.${tableName}`,
+                new TableIndex({
+                  name: index.name,
+                  columnNames: index.columns,
+                  isUnique: index.isUnique,
+                  where: index.where ?? undefined,
+                }),
+              );
+            }
+          } catch (error) {
+            // Ignore error if index already exists
+            if (error.code === '42P07') {
+              continue;
+            }
           }
           break;
         case WorkspaceMigrationIndexActionType.DROP:
@@ -461,7 +470,10 @@ export class WorkspaceMigrationRunnerService {
         ),
         isArray: migrationColumn.currentColumnDefinition.isArray,
         isNullable: migrationColumn.currentColumnDefinition.isNullable,
-        isUnique: migrationColumn.currentColumnDefinition.isUnique,
+        /* For now unique constraints are created at a higher level
+        as we need to handle soft-delete and a bug on empty strings
+        */
+        // isUnique: migrationColumn.currentColumnDefinition.isUnique,
       }),
       new TableColumn({
         name: migrationColumn.alteredColumnDefinition.columnName,
@@ -474,7 +486,10 @@ export class WorkspaceMigrationRunnerService {
         isNullable: migrationColumn.alteredColumnDefinition.isNullable,
         asExpression: migrationColumn.alteredColumnDefinition.asExpression,
         generatedType: migrationColumn.alteredColumnDefinition.generatedType,
-        isUnique: migrationColumn.alteredColumnDefinition.isUnique,
+        /* For now unique constraints are created at a higher level
+        as we need to handle soft-delete and a bug on empty strings
+        */
+        // isUnique: migrationColumn.alteredColumnDefinition.isUnique,
       }),
     );
   }

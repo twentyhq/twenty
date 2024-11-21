@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common';
 import isEmpty from 'lodash.isempty';
 import { In } from 'typeorm';
 
-import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
+import {
+  GraphqlQueryBaseResolverService,
+  GraphqlQueryResolverExecutionArgs,
+} from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import {
   ObjectRecord,
   ObjectRecordFilter,
@@ -23,39 +26,25 @@ import { settings } from 'src/engine/constants/settings';
 import { DUPLICATE_CRITERIA_COLLECTION } from 'src/engine/core-modules/duplicate/constants/duplicate-criteria.constants';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
-export class GraphqlQueryFindDuplicatesResolverService
-  implements
-    ResolverService<FindDuplicatesResolverArgs, IConnection<ObjectRecord>[]>
-{
-  constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) {}
+export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseResolverService<
+  FindDuplicatesResolverArgs,
+  IConnection<ObjectRecord>[]
+> {
+  async resolve(
+    executionArgs: GraphqlQueryResolverExecutionArgs<FindDuplicatesResolverArgs>,
+  ): Promise<IConnection<ObjectRecord>[]> {
+    const { objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+      executionArgs.options;
 
-  async resolve<T extends ObjectRecord = ObjectRecord>(
-    args: FindDuplicatesResolverArgs<Partial<T>>,
-    options: WorkspaceQueryRunnerOptions,
-  ): Promise<IConnection<T>[]> {
-    const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
-      options;
-
-    const dataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-        authContext.workspace.id,
+    const existingRecordsQueryBuilder =
+      executionArgs.repository.createQueryBuilder(
+        objectMetadataItemWithFieldMaps.nameSingular,
       );
-    const repository = dataSource.getRepository(
-      objectMetadataItemWithFieldMaps.nameSingular,
-    );
-    const existingRecordsQueryBuilder = repository.createQueryBuilder(
-      objectMetadataItemWithFieldMaps.nameSingular,
-    );
-    const duplicateRecordsQueryBuilder = repository.createQueryBuilder(
-      objectMetadataItemWithFieldMaps.nameSingular,
-    );
 
     const objectMetadataItemWithFieldsMaps =
       getObjectMetadataMapItemByNameSingular(
@@ -78,23 +67,26 @@ export class GraphqlQueryFindDuplicatesResolverService
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    let objectRecords: Partial<T>[] = [];
+    let objectRecords: Partial<ObjectRecord>[] = [];
 
-    if (args.ids) {
+    if (executionArgs.args.ids) {
       const nonFormattedObjectRecords = (await existingRecordsQueryBuilder
-        .where({ id: In(args.ids) })
-        .getMany()) as T[];
+        .where({ id: In(executionArgs.args.ids) })
+        .getMany()) as ObjectRecord[];
 
       objectRecords = formatResult(
         nonFormattedObjectRecords,
         objectMetadataItemWithFieldMaps,
         objectMetadataMaps,
       );
-    } else if (args.data && !isEmpty(args.data)) {
-      objectRecords = formatData(args.data, objectMetadataItemWithFieldMaps);
+    } else if (executionArgs.args.data && !isEmpty(executionArgs.args.data)) {
+      objectRecords = formatData(
+        executionArgs.args.data,
+        objectMetadataItemWithFieldMaps,
+      );
     }
 
-    const duplicateConnections: IConnection<T>[] = await Promise.all(
+    const duplicateConnections: IConnection<ObjectRecord>[] = await Promise.all(
       objectRecords.map(async (record) => {
         const duplicateConditions = this.buildDuplicateConditions(
           objectMetadataItemWithFieldMaps,
@@ -114,16 +106,26 @@ export class GraphqlQueryFindDuplicatesResolverService
           });
         }
 
-        const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
-          duplicateRecordsQueryBuilder,
+        const duplicateRecordsQueryBuilder =
+          executionArgs.repository.createQueryBuilder(
+            objectMetadataItemWithFieldMaps.nameSingular,
+          );
+
+        const tableName = computeTableName(
           objectMetadataItemWithFieldMaps.nameSingular,
+          objectMetadataItemWithFieldMaps.isCustom,
+        );
+
+        graphqlQueryParser.applyFilterToBuilder(
+          duplicateRecordsQueryBuilder,
+          tableName,
           duplicateConditions,
         );
 
         const nonFormattedDuplicates =
-          (await withFilterQueryBuilder.getMany()) as T[];
+          (await duplicateRecordsQueryBuilder.getMany()) as ObjectRecord[];
 
-        const duplicates = formatResult(
+        const duplicates = formatResult<ObjectRecord[]>(
           nonFormattedDuplicates,
           objectMetadataItemWithFieldMaps,
           objectMetadataMaps,

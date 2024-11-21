@@ -10,7 +10,7 @@ export class AuditLogRepository {
 
   public async insert(
     name: string,
-    properties: string,
+    properties: object | null,
     workspaceMemberId: string | null,
     objectName: string,
     objectMetadataId: string,

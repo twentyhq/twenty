@@ -3,6 +3,7 @@ import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/inter
 
 export type QueryResultFieldValue =
   | IConnection<ObjectRecord>
+  | IConnection<ObjectRecord>[]
   | { records: ObjectRecord[] }
   | ObjectRecord
   | ObjectRecord[];

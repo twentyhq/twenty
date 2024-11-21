@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import graphqlFields from 'graphql-fields';
-
-import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
+import {
+  GraphqlQueryBaseResolverService,
+  GraphqlQueryResolverExecutionArgs,
+} from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import {
   ObjectRecord,
   ObjectRecordFilter,
@@ -18,8 +19,6 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { GraphqlQuerySelectedFieldsResult } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
@@ -30,86 +29,58 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
-export class GraphqlQueryFindManyResolverService
-  implements ResolverService<FindManyResolverArgs, IConnection<ObjectRecord>>
-{
-  constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-    private readonly featureFlagService: FeatureFlagService,
-  ) {}
+export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolverService<
+  FindManyResolverArgs,
+  IConnection<ObjectRecord>
+> {
+  constructor(private readonly featureFlagService: FeatureFlagService) {
+    super();
+  }
 
-  async resolve<
-    T extends ObjectRecord = ObjectRecord,
-    Filter extends ObjectRecordFilter = ObjectRecordFilter,
-    OrderBy extends ObjectRecordOrderBy = ObjectRecordOrderBy,
-  >(
-    args: FindManyResolverArgs<Filter, OrderBy>,
-    options: WorkspaceQueryRunnerOptions,
-  ): Promise<IConnection<T>> {
-    const {
-      authContext,
-      objectMetadataItemWithFieldMaps,
-      info,
-      objectMetadataMaps,
-    } = options;
+  async resolve(
+    executionArgs: GraphqlQueryResolverExecutionArgs<FindManyResolverArgs>,
+  ): Promise<IConnection<ObjectRecord>> {
+    const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+      executionArgs.options;
 
-    const dataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-        authContext.workspace.id,
-      );
-
-    const repository = dataSource.getRepository(
+    const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const queryBuilder = repository.createQueryBuilder(
+    const aggregateQueryBuilder = queryBuilder.clone();
+
+    let appliedFilters =
+      executionArgs.args.filter ?? ({} as ObjectRecordFilter);
+
+    const tableName = computeTableName(
       objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataItemWithFieldMaps.isCustom,
     );
 
-    const aggregateQueryBuilder = repository.createQueryBuilder(
-      objectMetadataItemWithFieldMaps.nameSingular,
+    executionArgs.graphqlQueryParser.applyFilterToBuilder(
+      aggregateQueryBuilder,
+      tableName,
+      appliedFilters,
     );
 
-    const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps.fieldsByName,
-      objectMetadataMaps,
+    executionArgs.graphqlQueryParser.applyDeletedAtToBuilder(
+      aggregateQueryBuilder,
+      appliedFilters,
     );
-
-    const withFilterAggregateQueryBuilder =
-      graphqlQueryParser.applyFilterToBuilder(
-        aggregateQueryBuilder,
-        objectMetadataItemWithFieldMaps.nameSingular,
-        args.filter ?? ({} as Filter),
-      );
-
-    const selectedFields = graphqlFields(info);
-
-    const graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult =
-      graphqlQueryParser.parseSelectedFields(
-        objectMetadataItemWithFieldMaps,
-        selectedFields,
-      );
-    const isForwardPagination = !isDefined(args.before);
-
-    const withDeletedAggregateQueryBuilder =
-      graphqlQueryParser.applyDeletedAtToBuilder(
-        withFilterAggregateQueryBuilder,
-        args.filter ?? ({} as Filter),
-      );
-
-    const cursor = getCursor(args);
-
-    let appliedFilters = args.filter ?? ({} as Filter);
 
     const orderByWithIdCondition = [
-      ...(args.orderBy ?? []),
+      ...(executionArgs.args.orderBy ?? []),
       { id: OrderByDirection.AscNullsFirst },
-    ] as OrderBy;
+    ] as ObjectRecordOrderBy;
+
+    const isForwardPagination = !isDefined(executionArgs.args.before);
+
+    const cursor = getCursor(executionArgs.args);
 
     if (cursor) {
       const cursorArgFilter = computeCursorArgFilter(
@@ -119,29 +90,29 @@ export class GraphqlQueryFindManyResolverService
         isForwardPagination,
       );
 
-      appliedFilters = (args.filter
+      appliedFilters = (executionArgs.args.filter
         ? {
-            and: [args.filter, { or: cursorArgFilter }],
+            and: [executionArgs.args.filter, { or: cursorArgFilter }],
           }
-        : { or: cursorArgFilter }) as unknown as Filter;
+        : { or: cursorArgFilter }) as unknown as ObjectRecordFilter;
     }
 
-    const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
+    executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      tableName,
       appliedFilters,
     );
 
-    const withOrderByQueryBuilder = graphqlQueryParser.applyOrderToBuilder(
-      withFilterQueryBuilder,
+    executionArgs.graphqlQueryParser.applyOrderToBuilder(
+      queryBuilder,
       orderByWithIdCondition,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      tableName,
       isForwardPagination,
     );
 
-    const withDeletedQueryBuilder = graphqlQueryParser.applyDeletedAtToBuilder(
-      withOrderByQueryBuilder,
-      args.filter ?? ({} as Filter),
+    executionArgs.graphqlQueryParser.applyDeletedAtToBuilder(
+      queryBuilder,
+      appliedFilters,
     );
 
     const isAggregationsEnabled =
@@ -151,25 +122,28 @@ export class GraphqlQueryFindManyResolverService
       );
 
     if (!isAggregationsEnabled) {
-      graphqlQuerySelectedFieldsResult.aggregate = {
-        totalCount: graphqlQuerySelectedFieldsResult.aggregate.totalCount,
+      executionArgs.graphqlQuerySelectedFieldsResult.aggregate = {
+        totalCount:
+          executionArgs.graphqlQuerySelectedFieldsResult.aggregate.totalCount,
       };
     }
 
     const processAggregateHelper = new ProcessAggregateHelper();
 
     processAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
-      selectedAggregatedFields: graphqlQuerySelectedFieldsResult.aggregate,
-      queryBuilder: withDeletedAggregateQueryBuilder,
+      selectedAggregatedFields:
+        executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
+      queryBuilder: aggregateQueryBuilder,
     });
 
-    const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
+    const limit =
+      executionArgs.args.first ?? executionArgs.args.last ?? QUERY_MAX_RECORDS;
 
-    const nonFormattedObjectRecords = await withDeletedQueryBuilder
+    const nonFormattedObjectRecords = await queryBuilder
       .take(limit + 1)
       .getMany();
 
-    const objectRecords = formatResult(
+    const objectRecords = formatResult<ObjectRecord[]>(
       nonFormattedObjectRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
@@ -186,21 +160,21 @@ export class GraphqlQueryFindManyResolverService
     }
 
     const parentObjectRecordsAggregatedValues =
-      await withDeletedAggregateQueryBuilder.getRawOne();
+      await aggregateQueryBuilder.getRawOne();
 
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
-    if (graphqlQuerySelectedFieldsResult.relations) {
+    if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: objectRecords,
         parentObjectRecordsAggregatedValues,
-        relations: graphqlQuerySelectedFieldsResult.relations,
-        aggregate: graphqlQuerySelectedFieldsResult.aggregate,
+        relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+        aggregate: executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
         limit,
         authContext,
-        dataSource,
+        dataSource: executionArgs.dataSource,
       });
     }
 
@@ -210,7 +184,8 @@ export class GraphqlQueryFindManyResolverService
     return typeORMObjectRecordsParser.createConnection({
       objectRecords,
       objectRecordsAggregatedValues: parentObjectRecordsAggregatedValues,
-      selectedAggregatedFields: graphqlQuerySelectedFieldsResult.aggregate,
+      selectedAggregatedFields:
+        executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
       objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: limit,
       totalCount: parentObjectRecordsAggregatedValues?.totalCount,
