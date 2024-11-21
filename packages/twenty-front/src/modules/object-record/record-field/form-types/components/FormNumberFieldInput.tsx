@@ -1,4 +1,4 @@
-import { FormFieldInput } from '@/object-record/record-field/form-types/components/FormFieldInput';
+import { FormFieldInput } from '@/object-record/record-field/form-types/components/FormFieldInputBase';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import styled from '@emotion/styled';
 import { useState } from 'react';

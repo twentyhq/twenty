@@ -1,7 +1,7 @@
 import {
   StyledInputContainer,
   StyledInputContainer2,
-} from '@/object-record/record-field/form-types/components/FormFieldInput';
+} from '@/object-record/record-field/form-types/components/FormFieldInputBase';
 import { TextVariableEditor } from '@/object-record/record-field/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
 import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';

@@ -1,4 +1,4 @@
-import { FormFieldInput } from '@/object-record/record-field/form-types/components/FormFieldInput';
+import { FormFieldInput } from '@/object-record/record-field/form-types/components/FormFieldInputBase';
 import { TextVariableEditor } from '@/object-record/record-field/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
 import { parseEditorContent } from '@/workflow/search-variables/utils/parseEditorContent';
