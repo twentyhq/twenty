@@ -1,11 +1,13 @@
 import { useContextStoreSelectedRecords } from '@/context-store/hooks/useContextStoreSelectedRecords';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Avatar } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
@@ -34,6 +36,9 @@ const StyledAvatarWrapper = styled.div`
   &:not(:first-of-type) {
     margin-left: -${({ theme }) => theme.spacing(1)};
   }
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const StyledAvatarContainer = styled.div`
@@ -52,15 +57,25 @@ const CommandMenuContextRecordChipAvatars = ({
     record,
   });
 
+  const { Icon, IconColor } = useGetStandardObjectIcon(
+    objectMetadataItem.nameSingular,
+  );
+
+  const theme = useTheme();
+
   return (
     <StyledAvatarWrapper>
-      <Avatar
-        avatarUrl={recordChipData.avatarUrl}
-        placeholderColorSeed={recordChipData.recordId}
-        placeholder={recordChipData.name}
-        size="sm"
-        type="squared"
-      />
+      {Icon ? (
+        <Icon color={IconColor} size={theme.icon.size.sm} />
+      ) : (
+        <Avatar
+          avatarUrl={recordChipData.avatarUrl}
+          placeholderColorSeed={recordChipData.recordId}
+          placeholder={recordChipData.name}
+          type={recordChipData.avatarType}
+          size="sm"
+        />
+      )}
     </StyledAvatarWrapper>
   );
 };
