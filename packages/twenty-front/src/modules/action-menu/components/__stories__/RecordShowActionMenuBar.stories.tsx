@@ -5,7 +5,11 @@ import { RecoilRoot } from 'recoil';
 import { RightDrawerActionMenuDropdown } from '@/action-menu/components/RightDrawerActionMenuDropdown';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
+import {
+  ActionMenuEntry,
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { userEvent, waitFor, within } from '@storybook/test';
@@ -54,8 +58,8 @@ const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
           );
 
           map.set('addToFavorites', {
-            type: 'standard',
-            scope: 'record-selection',
+            type: ActionMenuEntryType.Standard,
+            scope: ActionMenuEntryScope.RecordSelection,
             key: 'addToFavorites',
             label: 'Add to favorites',
             position: 0,
@@ -64,8 +68,8 @@ const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
           });
 
           map.set('export', {
-            type: 'standard',
-            scope: 'record-selection',
+            type: ActionMenuEntryType.Standard,
+            scope: ActionMenuEntryScope.RecordSelection,
             key: 'export',
             label: 'Export',
             position: 1,
@@ -74,8 +78,8 @@ const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
           });
 
           map.set('delete', {
-            type: 'standard',
-            scope: 'record-selection',
+            type: ActionMenuEntryType.Standard,
+            scope: ActionMenuEntryScope.RecordSelection,
             key: 'delete',
             label: 'Delete',
             position: 2,

@@ -9,8 +9,12 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { isDefined } from '~/utils/isDefined';
 
-import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { COMMAND_MENU_COMMANDS } from '@/command-menu/constants/CommandMenuCommands';
+import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { mainContextStoreComponentInstanceIdState } from '@/context-store/states/mainContextStoreComponentInstanceId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ALL_ICONS } from '@ui/display/icon/providers/internal/AllIcons';
@@ -34,42 +38,83 @@ export const useCommandMenu = () => {
   );
 
   const openCommandMenu = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       () => {
         if (isDefined(mainContextStoreComponentInstanceId)) {
-          const actionMenuEntries = snapshot.getLoadable(
-            actionMenuEntriesComponentSelector.selectorFamily({
-              instanceId: mainContextStoreComponentInstanceId,
+          const contextStoreCurrentObjectMetadataId = snapshot
+            .getLoadable(
+              contextStoreCurrentObjectMetadataIdComponentState.atomFamily({
+                instanceId: mainContextStoreComponentInstanceId,
+              }),
+            )
+            .getValue();
+
+          set(
+            contextStoreCurrentObjectMetadataIdComponentState.atomFamily({
+              instanceId: 'command-menu',
             }),
+            contextStoreCurrentObjectMetadataId,
           );
 
-          const commands = Object.values(COMMAND_MENU_COMMANDS);
-
-          const actionCommands = actionMenuEntries
-            .getValue()
-            ?.filter((actionMenuEntry) => actionMenuEntry.type === 'standard')
-            ?.map((actionMenuEntry) => ({
-              id: actionMenuEntry.key,
-              label: actionMenuEntry.label,
-              Icon: actionMenuEntry.Icon,
-              onCommandClick: actionMenuEntry.onClick,
-              type: CommandType.StandardAction,
-            }));
-
-          const workflowRunCommands = actionMenuEntries
-            .getValue()
-            ?.filter(
-              (actionMenuEntry) => actionMenuEntry.type === 'workflow-run',
+          const contextStoreTargetedRecordsRule = snapshot
+            .getLoadable(
+              contextStoreTargetedRecordsRuleComponentState.atomFamily({
+                instanceId: mainContextStoreComponentInstanceId,
+              }),
             )
-            ?.map((actionMenuEntry) => ({
-              id: actionMenuEntry.key,
-              label: actionMenuEntry.label,
-              Icon: actionMenuEntry.Icon,
-              onCommandClick: actionMenuEntry.onClick,
-              type: CommandType.WorkflowRun,
-            }));
+            .getValue();
 
-          setCommands([...commands, ...actionCommands, ...workflowRunCommands]);
+          set(
+            contextStoreTargetedRecordsRuleComponentState.atomFamily({
+              instanceId: 'command-menu',
+            }),
+            contextStoreTargetedRecordsRule,
+          );
+
+          const contextStoreNumberOfSelectedRecords = snapshot
+            .getLoadable(
+              contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+                instanceId: mainContextStoreComponentInstanceId,
+              }),
+            )
+            .getValue();
+
+          set(
+            contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+              instanceId: 'command-menu',
+            }),
+            contextStoreNumberOfSelectedRecords,
+          );
+
+          const contextStoreFilters = snapshot
+            .getLoadable(
+              contextStoreFiltersComponentState.atomFamily({
+                instanceId: mainContextStoreComponentInstanceId,
+              }),
+            )
+            .getValue();
+
+          set(
+            contextStoreFiltersComponentState.atomFamily({
+              instanceId: 'command-menu',
+            }),
+            contextStoreFilters,
+          );
+
+          const contextStoreCurrentViewId = snapshot
+            .getLoadable(
+              contextStoreCurrentViewIdComponentState.atomFamily({
+                instanceId: mainContextStoreComponentInstanceId,
+              }),
+            )
+            .getValue();
+
+          set(
+            contextStoreCurrentViewIdComponentState.atomFamily({
+              instanceId: 'command-menu',
+            }),
+            contextStoreCurrentViewId,
+          );
         }
 
         setIsCommandMenuOpened(true);
@@ -77,7 +122,6 @@ export const useCommandMenu = () => {
       },
     [
       mainContextStoreComponentInstanceId,
-      setCommands,
       setHotkeyScopeAndMemorizePreviousScope,
       setIsCommandMenuOpened,
     ],
@@ -92,17 +136,11 @@ export const useCommandMenu = () => {
 
         if (isCommandMenuOpened) {
           setIsCommandMenuOpened(false);
-          setCommands([]);
           resetSelectedItem();
           goBackToPreviousHotkeyScope();
         }
       },
-    [
-      goBackToPreviousHotkeyScope,
-      resetSelectedItem,
-      setCommands,
-      setIsCommandMenuOpened,
-    ],
+    [goBackToPreviousHotkeyScope, resetSelectedItem, setIsCommandMenuOpened],
   );
 
   const toggleCommandMenu = useRecoilCallback(
