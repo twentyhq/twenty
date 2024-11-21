@@ -1,8 +1,6 @@
 import { isDefined } from '~/utils/isDefined';
 
-export const twentyHostname = process.env.REACT_APP_BASE_URL
-  ? new URL(process.env.REACT_APP_BASE_URL).hostname
-  : 'twenty.com';
+export const twentyHostname = window.location.hostname;
 
 export const twentyHomePageHostname = `app.${twentyHostname}`;
 
