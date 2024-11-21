@@ -39,8 +39,8 @@ export class UpgradeTo0_33Command extends ActiveWorkspacesCommandRunner {
         ...options,
         company: true,
         person: true,
-        viewField: false,
-        viewSort: false,
+        viewField: true,
+        viewSort: true,
       },
       workspaceIds,
     );
