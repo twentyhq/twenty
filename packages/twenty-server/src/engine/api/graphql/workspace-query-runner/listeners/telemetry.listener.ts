@@ -7,6 +7,7 @@ import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.se
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TelemetryService } from 'src/engine/core-modules/telemetry/telemetry.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
+import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 
 @Injectable()
 export class TelemetryListener {
@@ -33,7 +34,7 @@ export class TelemetryListener {
     );
   }
 
-  @OnEvent('user.signup')
+  @OnEvent(USER_SIGNUP_EVENT_NAME)
   async handleUserSignup(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
   ) {
@@ -41,7 +42,7 @@ export class TelemetryListener {
       payload.events.map(async (eventPayload) => {
         this.analyticsService.create(
           {
-            action: 'user.signup',
+            action: USER_SIGNUP_EVENT_NAME,
             payload: {},
           },
           eventPayload.userId,
@@ -50,7 +51,7 @@ export class TelemetryListener {
 
         this.telemetryService.create(
           {
-            action: 'user.signup',
+            action: USER_SIGNUP_EVENT_NAME,
             payload: {
               payload,
               userId: undefined,

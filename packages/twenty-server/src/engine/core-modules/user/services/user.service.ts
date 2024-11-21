@@ -18,12 +18,15 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class UserService extends TypeOrmQueryService<User> {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
@@ -44,13 +47,11 @@ export class UserService extends TypeOrmQueryService<User> {
         'workspaceMember',
       );
 
-    const workspaceMember = await workspaceMemberRepository.findOne({
+    return await workspaceMemberRepository.findOne({
       where: {
         userId: user.id,
       },
     });
-
-    return workspaceMember;
   }
 
   async loadWorkspaceMembers(workspace: Workspace) {
@@ -107,13 +108,22 @@ export class UserService extends TypeOrmQueryService<User> {
     await workspaceDataSource?.query(
       `DELETE FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${userId}'`,
     );
-    const payload =
-      new ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>();
 
-    payload.properties = {
-      before: workspaceMember,
-    };
-    payload.recordId = workspaceMember.id;
+    const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
+      where: {
+        nameSingular: 'workspaceMember',
+      },
+    });
+
+    const payload = new ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>(
+      {
+        recordId: workspaceMember.id,
+        objectMetadata,
+        properties: {
+          before: workspaceMember,
+        },
+      },
+    );
 
     this.workspaceEventEmitter.emit(
       `workspaceMember.${DatabaseEventAction.DELETED}`,
