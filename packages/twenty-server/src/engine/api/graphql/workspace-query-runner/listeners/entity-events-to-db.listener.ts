@@ -50,29 +50,27 @@ export class EntityEventsToDbListener {
     return this.handle(payload);
   }
 
-  private async handle(
-    payload: WorkspaceEventBatch<ObjectRecordBaseEvent<any>>,
-  ) {
+  private async handle(payload: WorkspaceEventBatch<ObjectRecordBaseEvent>) {
     const filteredEvents = payload.events.filter(
       (event) => event.objectMetadata?.isAuditLogged,
     );
 
     await this.entityEventsToDbQueueService.add<
-      WorkspaceEventBatch<ObjectRecordBaseEvent<any>>
+      WorkspaceEventBatch<ObjectRecordBaseEvent>
     >(CreateAuditLogFromInternalEvent.name, {
       ...payload,
       events: filteredEvents,
     });
 
     await this.entityEventsToDbQueueService.add<
-      WorkspaceEventBatch<ObjectRecordBaseEvent<any>>
+      WorkspaceEventBatch<ObjectRecordBaseEvent>
     >(UpsertTimelineActivityFromInternalEvent.name, {
       ...payload,
       events: filteredEvents,
     });
 
     await this.webhookQueueService.add<
-      WorkspaceEventBatch<ObjectRecordBaseEvent<any>>
+      WorkspaceEventBatch<ObjectRecordBaseEvent>
     >(CallWebhookJobsJob.name, payload, { retryLimit: 3 });
   }
 }

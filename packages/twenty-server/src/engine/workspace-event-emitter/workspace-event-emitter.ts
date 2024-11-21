@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
-import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
@@ -39,11 +37,11 @@ export class WorkspaceEventEmitter {
 
     const eventName = `${objectMetadataNameSingular}.${action}`;
 
-    return this.eventEmitter.emit(eventName, {
+    this.eventEmitter.emit(eventName, {
       name: eventName,
       workspaceId,
       events,
-    } satisfies WorkspaceEventBatch<ObjectRecordBaseEvent<T>>);
+    });
   }
 
   public emitCustomEvents(
@@ -55,10 +53,10 @@ export class WorkspaceEventEmitter {
       return;
     }
 
-    return this.eventEmitter.emit(eventName, {
+    this.eventEmitter.emit(eventName, {
       name: eventName,
       workspaceId,
       events,
-    } satisfies WorkspaceEventBatch<any>);
+    });
   }
 }

@@ -11,7 +11,7 @@ type Properties<T> = {
   diff?: Partial<ObjectRecordDiff<T>>;
 };
 
-export class ObjectRecordBaseEvent<T> {
+export class ObjectRecordBaseEvent<T = object> {
   recordId: string;
   userId?: string;
   workspaceMemberId?: string;
