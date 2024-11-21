@@ -10,8 +10,6 @@ import { SimplifySearchVectorExpressionCommand } from 'src/database/commands/upg
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
-import { EnforceUniqueConstraintsCommand } from './0-32-enforce-unique-constraints.command';
-
 interface UpdateTo0_32CommandOptions {
   workspaceId?: string;
 }
@@ -25,7 +23,6 @@ export class UpgradeTo0_32Command extends ActiveWorkspacesCommandRunner {
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
-    private readonly enforceUniqueConstraintsCommand: EnforceUniqueConstraintsCommand,
     private readonly simplifySearchVectorExpressionCommand: SimplifySearchVectorExpressionCommand,
     private readonly copyWebhookOperationIntoOperationsCommand: CopyWebhookOperationIntoOperationsCommand,
     private readonly backfillViewGroupsCommand: BackfillViewGroupsCommand,
@@ -48,12 +45,6 @@ export class UpgradeTo0_32Command extends ActiveWorkspacesCommandRunner {
     );
 
     await this.simplifySearchVectorExpressionCommand.executeActiveWorkspacesCommand(
-      passedParam,
-      options,
-      workspaceIds,
-    );
-
-    await this.enforceUniqueConstraintsCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,

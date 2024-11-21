@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { EnforceUniqueConstraintsCommand } from 'src/database/commands/upgrade-version/0-32/0-32-enforce-unique-constraints.command';
+import { EnforceUniqueConstraintsCommand } from 'src/database/commands/upgrade-version/0-33/0-33-enforce-unique-constraints.command';
 import { UpdateRichTextSearchVectorCommand } from 'src/database/commands/upgrade-version/0-33/0-33-update-rich-text-search-vector-expression';
 import { UpgradeTo0_33Command } from 'src/database/commands/upgrade-version/0-33/0-33-upgrade-version.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
