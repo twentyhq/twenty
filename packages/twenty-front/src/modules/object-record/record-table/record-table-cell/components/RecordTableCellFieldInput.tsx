@@ -51,6 +51,8 @@ export const RecordTableCellFieldInput = () => {
   const handleClickOutside: FieldInputEvent = (persistField) => {
     setClickOutsideListenerIsActivated(false);
 
+    console.log('handleClickOutside');
+
     onUpsertRecord({
       persistField,
       recordId,

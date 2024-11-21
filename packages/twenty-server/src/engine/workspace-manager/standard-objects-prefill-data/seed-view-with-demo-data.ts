@@ -13,7 +13,7 @@ import { workflowRunsAllView } from 'src/engine/workspace-manager/standard-objec
 import { workflowVersionsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflow-versions-all.view';
 import { workflowsAllView } from 'src/engine/workspace-manager/standard-objects-prefill-data/views/workflows-all.view';
 
-export const viewPrefillData = async (
+export const seedViewWithDemoData = async (
   entityManager: EntityManager,
   schemaName: string,
   objectMetadataMap: Record<string, ObjectMetadataEntity>,

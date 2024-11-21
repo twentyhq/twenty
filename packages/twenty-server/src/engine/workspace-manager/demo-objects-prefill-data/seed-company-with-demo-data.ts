@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { companiesDemo } from 'src/engine/workspace-manager/demo-objects-prefill-data/companies-demo.json';
 
-export const companyPrefillDemoData = async (
+export const seedCompanyWithDemoData = async (
   entityManager: EntityManager,
   schemaName: string,
 ) => {
@@ -18,6 +18,20 @@ export const companyPrefillDemoData = async (
       'createdBySource',
       'createdByWorkspaceMemberId',
       'createdByName',
+      'demoUUID', 
+      'demoRichText',
+      'demoArray',
+      'demoRating',
+      'demoSelect',
+      'demoMultiSelect',
+      'demoRawJSON',
+      'demoEmailsPrimaryEmail',
+      'demoEmailsAdditionalEmails',
+      'demoPhonesPrimaryPhoneNumber',
+      'demoPhonesPrimaryPhoneCountryCode',
+      'demoPhonesAdditionalPhones',
+      'demoFullNameFirstName',
+      'demoFullNameLastName',
       'position'
     ])
     .orIgnore()

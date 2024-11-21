@@ -4,10 +4,10 @@ import { COLOR } from './Colors';
 export const ILLUSTRATION_ICON_DARK = {
   color: {
     blue: COLOR.blue50,
-    grey: GRAY_SCALE.gray50,
+    gray: GRAY_SCALE.gray50,
   },
   fill: {
     blue: COLOR.blue70,
-    grey: GRAY_SCALE.gray70,
+    gray: GRAY_SCALE.gray70,
   },
 };

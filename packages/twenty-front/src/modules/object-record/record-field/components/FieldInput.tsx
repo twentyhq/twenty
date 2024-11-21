@@ -156,7 +156,7 @@ export const FieldInput = ({
           onShiftTab={onShiftTab}
         />
       ) : isFieldRichText(fieldDefinition) ? (
-        <RichTextFieldInput />
+        <RichTextFieldInput onClickOutside={onClickOutside} />
       ) : isFieldArray(fieldDefinition) ? (
         <ArrayFieldInput onCancel={onCancel} />
       ) : (

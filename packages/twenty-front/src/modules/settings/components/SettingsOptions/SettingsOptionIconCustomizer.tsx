@@ -25,7 +25,7 @@ export const SettingsOptionIconCustomizer = ({
     <StyledIconCustomizer zoom={zoom} rotate={rotate}>
       <Icon
         size={theme.icon.size.xl}
-        color={theme.IllustrationIcon.color.grey}
+        color={theme.IllustrationIcon.color.gray}
         stroke={theme.icon.stroke.md}
       />
     </StyledIconCustomizer>

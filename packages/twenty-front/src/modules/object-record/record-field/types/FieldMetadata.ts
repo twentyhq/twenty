@@ -255,7 +255,7 @@ export type FieldRelationValue<
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
 
-export type FieldRichTextValue = Record<string, Json> | Json[] | null;
+export type FieldRichTextValue = null | string;
 
 export type FieldActorValue = {
   source: string;
