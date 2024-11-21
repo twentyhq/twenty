@@ -86,10 +86,6 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
 
       try {
         await this.enforceUniqueConstraintsForWorkspace(workspaceId, options);
-
-        await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
-          workspaceId,
-        );
       } catch (error) {
         this.logger.log(
           chalk.red(
