@@ -1,6 +1,7 @@
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
 import { extractVariableLabel } from '@/workflow/search-variables/utils/extractVariableLabel';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isString } from '@sniptt/guards';
 import { useId, useState } from 'react';
@@ -12,7 +13,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledInputContainer = styled.div<{
+export const StyledInputContainer = styled.div<{
   multiline?: boolean;
 }>`
   display: flex;
@@ -20,12 +21,12 @@ const StyledInputContainer = styled.div<{
   position: relative;
   line-height: ${({ multiline }) => (multiline ? `${LINE_HEIGHT}px` : 'auto')};
   min-height: ${({ multiline }) =>
-    multiline ? `${3 * LINE_HEIGHT}px` : 'auto'};
+    multiline ? `${3 * LINE_HEIGHT}px` : undefined};
   max-height: ${({ multiline }) =>
-    multiline ? `${5 * LINE_HEIGHT}px` : 'auto'};
+    multiline ? `${5 * LINE_HEIGHT}px` : undefined};
 `;
 
-const StyledInputContainer2 = styled.div<{
+export const StyledInputContainer2 = styled.div<{
   multiline?: boolean;
   readonly?: boolean;
 }>`
@@ -40,10 +41,7 @@ const StyledInputContainer2 = styled.div<{
     multiline ? theme.border.radius.sm : 'none'};
   box-sizing: border-box;
   display: flex;
-  height: ${({ multiline }) => (multiline ? 'auto' : `${1.5 * LINE_HEIGHT}px`)};
   overflow: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
-  /* padding-right: ${({ multiline, theme }) =>
-    multiline ? theme.spacing(6) : theme.spacing(2)}; */
   width: 100%;
 `;
 
@@ -62,26 +60,27 @@ const StyledSearchVariablesDropdownContainer = styled.div<{
 
   ${({ theme, readonly }) =>
     !readonly &&
-    `
+    css`
       :hover {
         background-color: ${theme.background.transparent.light};
-      }`}
+      }
+    `}
 
   ${({ theme, multiline }) =>
     multiline
-      ? `
-        position: absolute;
-        top: ${theme.spacing(0)};
-        right: ${theme.spacing(0)};
-        padding: ${theme.spacing(0.5)} ${theme.spacing(0)};
-        border-radius: ${theme.border.radius.sm};
-      `
-      : `
-        background-color: ${theme.background.transparent.lighter};
-        border-top-right-radius: ${theme.border.radius.sm};
-        border-bottom-right-radius: ${theme.border.radius.sm};
-        border: 1px solid ${theme.border.color.medium};
-      `}
+      ? css`
+          border-radius: ${theme.border.radius.sm};
+          padding: ${theme.spacing(0.5)} ${theme.spacing(0)};
+          position: absolute;
+          right: ${theme.spacing(0)};
+          top: ${theme.spacing(0)};
+        `
+      : css`
+          background-color: ${theme.background.transparent.lighter};
+          border-top-right-radius: ${theme.border.radius.sm};
+          border-bottom-right-radius: ${theme.border.radius.sm};
+          border: 1px solid ${theme.border.color.medium};
+        `}
 `;
 
 type EditingMode = 'input' | 'variable';
@@ -89,12 +88,23 @@ type EditingMode = 'input' | 'variable';
 type VariableMode = 'static-or-variable' | 'full-editor';
 
 type FormFieldInputProps<T> = {
-  draftValue: T;
   variableMode: VariableMode;
   onVariableTagInsert: (variable: string) => void;
-  onUnlinkVariable: () => void;
   Input: React.ReactNode;
-};
+  multiline?: boolean;
+  readonly?: boolean;
+} & (
+  | {
+      variableMode: 'static-or-variable';
+      draftValue: T;
+      onUnlinkVariable: () => void;
+    }
+  | {
+      variableMode: 'full-editor';
+      draftValue?: never;
+      onUnlinkVariable?: never;
+    }
+);
 
 export const FormFieldInput = ({
   variableMode,
@@ -102,6 +112,8 @@ export const FormFieldInput = ({
   onVariableTagInsert,
   onUnlinkVariable,
   Input,
+  multiline,
+  readonly,
 }: FormFieldInputProps<unknown>) => {
   const id = useId();
 
@@ -113,8 +125,8 @@ export const FormFieldInput = ({
 
   return (
     <StyledContainer>
-      <StyledInputContainer>
-        <StyledInputContainer2>
+      <StyledInputContainer multiline={multiline}>
+        <StyledInputContainer2 multiline={multiline}>
           {variableMode === 'full-editor' || editingMode === 'input' ? (
             Input
           ) : (
@@ -131,8 +143,8 @@ export const FormFieldInput = ({
         </StyledInputContainer2>
 
         <StyledSearchVariablesDropdownContainer
-          multiline={false}
-          readonly={false}
+          multiline={multiline}
+          readonly={readonly}
         >
           <SearchVariablesDropdown
             inputId={id}
@@ -140,7 +152,7 @@ export const FormFieldInput = ({
               setEditingMode('variable');
               onVariableTagInsert(variable);
             }}
-            disabled={false}
+            disabled={readonly}
           />
         </StyledSearchVariablesDropdownContainer>
       </StyledInputContainer>

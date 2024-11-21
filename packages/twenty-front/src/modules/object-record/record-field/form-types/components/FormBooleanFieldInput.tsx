@@ -10,11 +10,13 @@ const StyledBooleanInputContainer = styled.div`
 type FormBooleanFieldInputProps = {
   defaultValue: boolean | string | undefined;
   onPersist: (value: boolean | null | string) => void;
+  readonly?: boolean;
 };
 
 export const FormBooleanFieldInput = ({
   defaultValue,
   onPersist,
+  readonly,
 }: FormBooleanFieldInputProps) => {
   const [draftValue, setDraftValue] = useState(defaultValue ?? false);
 
@@ -31,6 +33,7 @@ export const FormBooleanFieldInput = ({
         <StyledBooleanInputContainer>
           <BooleanInput
             value={draftValue as boolean}
+            readonly={readonly}
             onToggle={(newValue) => {
               handleChange(newValue);
             }}
@@ -38,6 +41,7 @@ export const FormBooleanFieldInput = ({
         </StyledBooleanInputContainer>
       }
       draftValue={draftValue}
+      readonly={readonly}
       onUnlinkVariable={() => {
         setDraftValue(false);
         onPersist(false);
