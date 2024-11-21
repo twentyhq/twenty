@@ -1,3 +1,4 @@
+import { extractVariableLabel } from '@/workflow/search-variables/utils/extractVariableLabel';
 import { Node } from '@tiptap/core';
 import { mergeAttributes } from '@tiptap/react';
 
@@ -29,15 +30,6 @@ export const VariableTag = Node.create({
 
   renderHTML: ({ node, HTMLAttributes }) => {
     const variable = node.attrs.variable as string;
-    const variableWithoutBrackets = variable.replace(
-      /\{\{([^}]+)\}\}/g,
-      (_, variable) => {
-        return variable;
-      },
-    );
-
-    const parts = variableWithoutBrackets.split('.');
-    const displayText = parts[parts.length - 1];
 
     return [
       'span',
@@ -45,7 +37,7 @@ export const VariableTag = Node.create({
         'data-type': 'variableTag',
         class: 'variable-tag',
       }),
-      displayText,
+      extractVariableLabel(variable),
     ];
   },
 
