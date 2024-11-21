@@ -23,6 +23,7 @@ import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { WorkspaceEntitiesStorage } from 'src/engine/twenty-orm/storage/workspace-entities.storage';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -630,16 +631,20 @@ export class WorkspaceRepository<
       throw new Error('Object metadata name is missing');
     }
 
-    const objectMetadata =
-      this.internalContext.objectMetadataMaps.byNameSingular[
-        objectMetadataName
-      ];
+    const objectMetadata = getObjectMetadataMapItemByNameSingular(
+      this.internalContext.objectMetadataMaps,
+      objectMetadataName,
+    );
 
     if (!objectMetadata) {
       throw new Error(
         `Object metadata for object "${objectMetadataName}" is missing ` +
           `in workspace "${this.internalContext.workspaceId}" ` +
-          `with object metadata collection length: ${this.internalContext.objectMetadataMaps.byNameSingular.length}`,
+          `with object metadata collection length: ${
+            Object.keys(
+              this.internalContext.objectMetadataMaps.idByNameSingular,
+            ).length
+          }`,
       );
     }
 

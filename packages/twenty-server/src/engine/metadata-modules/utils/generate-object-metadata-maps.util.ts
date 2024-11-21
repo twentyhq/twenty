@@ -9,8 +9,7 @@ export const generateObjectMetadataMaps = (
 ): ObjectMetadataMaps => {
   const objectMetadataMaps: ObjectMetadataMaps = {
     byId: {},
-    byNameSingular: {},
-    byNamePlural: {},
+    idByNameSingular: {},
   };
 
   for (const objectMetadata of objectMetadataCollection) {
@@ -29,10 +28,8 @@ export const generateObjectMetadataMaps = (
     };
 
     objectMetadataMaps.byId[objectMetadata.id] = processedObjectMetadata;
-    objectMetadataMaps.byNameSingular[objectMetadata.nameSingular] =
-      processedObjectMetadata;
-    objectMetadataMaps.byNamePlural[objectMetadata.namePlural] =
-      processedObjectMetadata;
+    objectMetadataMaps.idByNameSingular[objectMetadata.nameSingular] =
+      objectMetadata.id;
   }
 
   return objectMetadataMaps;
