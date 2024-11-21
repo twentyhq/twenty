@@ -1,9 +1,9 @@
+import { TextInput } from '@/ui/field/input/components/TextInput';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
 import { extractVariableLabel } from '@/workflow/search-variables/utils/extractVariableLabel';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
-import { TEXT_INPUT_STYLE } from 'twenty-ui';
 import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,
@@ -51,11 +51,8 @@ const StyledInputContainer2 = styled.div<{
   width: 100%;
 `;
 
-const StyledInput = styled.input`
-  ${TEXT_INPUT_STYLE}
-
+const StyledInput = styled(TextInput)`
   padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
-  width: 100%;
 `;
 
 const StyledVariableContainer = styled.div`
@@ -137,11 +134,12 @@ export const FormNumberFieldInput = ({
         <StyledInputContainer2>
           {editingMode === 'input' ? (
             <StyledInput
-              type="text"
               placeholder={placeholder}
               value={draftValue}
-              onChange={(event) => {
-                handleChange(event.target.value);
+              copyButton={false}
+              hotkeyScope="record-create"
+              onChange={(value) => {
+                handleChange(value);
               }}
             />
           ) : (
