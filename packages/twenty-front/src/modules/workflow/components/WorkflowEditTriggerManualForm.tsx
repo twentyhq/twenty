@@ -44,10 +44,22 @@ export const WorkflowEditTriggerManualForm = ({
       ? 'WHEN_RECORD_SELECTED'
       : 'EVERYWHERE';
 
+  const headerTitle = isDefined(trigger.name) ? trigger.name : 'Manual Trigger';
+
   return (
     <WorkflowEditGenericFormBase
+      onTitleChange={(newName: string) => {
+        if (triggerOptions.readonly === true) {
+          return;
+        }
+
+        triggerOptions.onTriggerUpdate({
+          ...trigger,
+          name: newName,
+        });
+      }}
       HeaderIcon={<IconHandMove color={theme.font.color.tertiary} />}
-      headerTitle="Manual Trigger"
+      headerTitle={headerTitle}
       headerType="Trigger · Manual"
     >
       <Select

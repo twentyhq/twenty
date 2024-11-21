@@ -166,11 +166,23 @@ export const WorkflowEditActionFormSendEmail = ({
     }
   });
 
+  const headerTitle = isDefined(action.name) ? action.name : 'Send Email';
+
   return (
     !loading && (
       <WorkflowEditGenericFormBase
+        onTitleChange={(newName: string) => {
+          if (actionOptions.readonly === true) {
+            return;
+          }
+
+          actionOptions.onActionUpdate({
+            ...action,
+            name: newName,
+          });
+        }}
         HeaderIcon={<IconMail color={theme.color.blue} />}
-        headerTitle="Send Email"
+        headerTitle={headerTitle}
         headerType="Email"
       >
         <Controller

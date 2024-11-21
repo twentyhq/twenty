@@ -4,6 +4,7 @@ import { generateWorkflowDiagram } from '../generateWorkflowDiagram';
 describe('generateWorkflowDiagram', () => {
   it('should generate a single trigger node when no step is provided', () => {
     const trigger: WorkflowTrigger = {
+      name: 'Company created',
       type: 'DATABASE_EVENT',
       settings: {
         eventName: 'company.created',
@@ -27,6 +28,7 @@ describe('generateWorkflowDiagram', () => {
 
   it('should generate a diagram with nodes and edges corresponding to the steps', () => {
     const trigger: WorkflowTrigger = {
+      name: 'Company created',
       type: 'DATABASE_EVENT',
       settings: {
         eventName: 'company.created',
@@ -92,6 +94,7 @@ describe('generateWorkflowDiagram', () => {
 
   it('should correctly link nodes with edges', () => {
     const trigger: WorkflowTrigger = {
+      name: 'Company created',
       type: 'DATABASE_EVENT',
       settings: {
         eventName: 'company.created',

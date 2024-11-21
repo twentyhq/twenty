@@ -217,10 +217,24 @@ export const WorkflowEditActionFormServerlessFunctionInner = ({
     });
   };
 
+  const headerTitle = isDefined(action.name)
+    ? action.name
+    : 'Code - Serverless Function';
+
   return (
     <WorkflowEditGenericFormBase
+      onTitleChange={(newName: string) => {
+        if (actionOptions.readonly === true) {
+          return;
+        }
+
+        actionOptions?.onActionUpdate({
+          ...action,
+          name: newName,
+        });
+      }}
       HeaderIcon={<IconCode color={theme.color.orange} />}
-      headerTitle="Code - Serverless Function"
+      headerTitle={headerTitle}
       headerType="Code"
     >
       <Select

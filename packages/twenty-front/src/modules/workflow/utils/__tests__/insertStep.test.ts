@@ -11,6 +11,7 @@ describe('insertStep', () => {
       name: '',
       steps: [],
       trigger: {
+        name: 'Company created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
@@ -54,6 +55,7 @@ describe('insertStep', () => {
       name: '',
       steps: [],
       trigger: {
+        name: 'Company created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
@@ -135,6 +137,7 @@ describe('insertStep', () => {
         },
       ],
       trigger: {
+        name: 'Company created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
@@ -220,6 +223,7 @@ describe('insertStep', () => {
         },
       ],
       trigger: {
+        name: 'Company created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },

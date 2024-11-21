@@ -29,6 +29,7 @@ describe('replaceStep', () => {
       name: '',
       steps: [stepToBeReplaced],
       trigger: {
+        name: 'Company created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
@@ -123,6 +124,7 @@ describe('replaceStep', () => {
         },
       ],
       trigger: {
+        name: 'Company created',
         settings: {
           eventName: 'company.created',
           outputSchema: {},

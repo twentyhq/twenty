@@ -2,7 +2,7 @@ import { WorkflowDiagramStepNodeData } from '@/workflow/types/WorkflowDiagram';
 import styled from '@emotion/styled';
 import { Handle, Position } from '@xyflow/react';
 import React from 'react';
-import { isDefined } from 'twenty-ui';
+import { isDefined, OverflowingTextWithTooltip } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
 
 type Variant = 'placeholder';
@@ -68,6 +68,7 @@ const StyledStepNodeLabel = styled.div<{ variant?: Variant }>`
     variant === 'placeholder'
       ? theme.font.color.extraLight
       : theme.font.color.primary};
+  max-width: 200px;
 `;
 
 const StyledSourceHandle = styled(Handle)`
@@ -90,13 +91,13 @@ const StyledRightFloatingElementContainer = styled.div`
 
 export const WorkflowDiagramBaseStepNode = ({
   nodeType,
-  label,
+  name,
   variant,
   Icon,
   RightFloatingElement,
 }: {
   nodeType: WorkflowDiagramStepNodeData['nodeType'];
-  label: string;
+  name: string;
   variant?: Variant;
   Icon?: React.ReactNode;
   RightFloatingElement?: React.ReactNode;
@@ -113,7 +114,7 @@ export const WorkflowDiagramBaseStepNode = ({
         <StyledStepNodeLabel variant={variant}>
           {Icon}
 
-          {label}
+          <OverflowingTextWithTooltip text={name} />
         </StyledStepNodeLabel>
 
         {isDefined(RightFloatingElement) ? (

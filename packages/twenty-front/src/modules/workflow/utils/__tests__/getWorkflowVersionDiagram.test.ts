@@ -42,6 +42,7 @@ describe('getWorkflowVersionDiagram', () => {
       name: '',
       steps: null,
       trigger: {
+        name: 'Company created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
@@ -93,6 +94,7 @@ describe('getWorkflowVersionDiagram', () => {
         },
       ],
       trigger: {
+        name: 'Company created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
