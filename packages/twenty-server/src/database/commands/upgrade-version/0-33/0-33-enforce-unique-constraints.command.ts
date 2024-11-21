@@ -17,10 +17,11 @@ interface EnforceUniqueConstraintsCommandOptions
   company?: boolean;
   viewField?: boolean;
   viewSort?: boolean;
+  verbose?: boolean;
 }
 
 @Command({
-  name: 'upgrade-0.32:enforce-unique-constraints',
+  name: 'upgrade-0.33:enforce-unique-constraints',
   description:
     'Enforce unique constraints on company domainName, person emailsPrimaryEmail, ViewField, and ViewSort',
 })
@@ -38,6 +39,14 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
     description: 'Enforce unique constraints on person emailsPrimaryEmail',
   })
   parsePerson() {
+    return true;
+  }
+
+  @Option({
+    flags: '--verbose',
+    description: 'Verbose output',
+  })
+  parseVerbose() {
     return true;
   }
 
@@ -76,15 +85,7 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
       this.logger.log(`Running command for workspace ${workspaceId}`);
 
       try {
-        await this.enforceUniqueConstraintsForWorkspace(
-          workspaceId,
-          options.dryRun ?? false,
-          options,
-        );
-
-        await this.twentyORMGlobalManager.destroyDataSourceForWorkspace(
-          workspaceId,
-        );
+        await this.enforceUniqueConstraintsForWorkspace(workspaceId, options);
       } catch (error) {
         this.logger.log(
           chalk.red(
@@ -104,30 +105,31 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
 
   private async enforceUniqueConstraintsForWorkspace(
     workspaceId: string,
-    dryRun: boolean,
     options: EnforceUniqueConstraintsCommandOptions,
   ): Promise<void> {
-    await this.enforceUniquePersonEmail(workspaceId, dryRun);
-
+    if (options.person) {
+      await this.enforceUniquePersonEmail(workspaceId, options);
+    }
     if (options.company) {
-      await this.enforceUniqueCompanyDomainName(workspaceId, dryRun);
+      await this.enforceUniqueCompanyDomainName(workspaceId, options);
     }
     if (options.viewField) {
-      await this.enforceUniqueViewField(workspaceId, dryRun);
+      await this.enforceUniqueViewField(workspaceId, options);
     }
     if (options.viewSort) {
-      await this.enforceUniqueViewSort(workspaceId, dryRun);
+      await this.enforceUniqueViewSort(workspaceId, options);
     }
   }
 
   private async enforceUniqueCompanyDomainName(
     workspaceId: string,
-    dryRun: boolean,
+    options: EnforceUniqueConstraintsCommandOptions,
   ): Promise<void> {
     const companyRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'company',
+        false,
       );
 
     const duplicates = await companyRepository
@@ -156,28 +158,31 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
       for (let i = 1; i < companies.length; i++) {
         const newdomainNamePrimaryLinkUrl = `${company_domainNamePrimaryLinkUrl}${i}`;
 
-        if (!dryRun) {
+        if (!options.dryRun) {
           await companyRepository.update(companies[i].id, {
             domainNamePrimaryLinkUrl: newdomainNamePrimaryLinkUrl,
           });
         }
-        this.logger.log(
-          chalk.yellow(
-            `Updated company ${companies[i].id} domainName from ${company_domainNamePrimaryLinkUrl} to ${newdomainNamePrimaryLinkUrl}`,
-          ),
-        );
+        if (options.verbose) {
+          this.logger.log(
+            chalk.yellow(
+              `Updated company ${companies[i].id} domainName from ${company_domainNamePrimaryLinkUrl} to ${newdomainNamePrimaryLinkUrl}`,
+            ),
+          );
+        }
       }
     }
   }
 
   private async enforceUniquePersonEmail(
     workspaceId: string,
-    dryRun: boolean,
+    options: EnforceUniqueConstraintsCommandOptions,
   ): Promise<void> {
     const personRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'person',
+        false,
       );
 
     const duplicates = await personRepository
@@ -208,28 +213,31 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
           ? `${person_emailsPrimaryEmail.split('@')[0]}+${i}@${person_emailsPrimaryEmail.split('@')[1]}`
           : `${person_emailsPrimaryEmail}+${i}`;
 
-        if (!dryRun) {
+        if (!options.dryRun) {
           await personRepository.update(persons[i].id, {
             emailsPrimaryEmail: newEmail,
           });
         }
-        this.logger.log(
-          chalk.yellow(
-            `Updated person ${persons[i].id} emailsPrimaryEmail from ${person_emailsPrimaryEmail} to ${newEmail}`,
-          ),
-        );
+        if (options.verbose) {
+          this.logger.log(
+            chalk.yellow(
+              `Updated person ${persons[i].id} emailsPrimaryEmail from ${person_emailsPrimaryEmail} to ${newEmail}`,
+            ),
+          );
+        }
       }
     }
   }
 
   private async enforceUniqueViewField(
     workspaceId: string,
-    dryRun: boolean,
+    options: EnforceUniqueConstraintsCommandOptions,
   ): Promise<void> {
     const viewFieldRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'viewField',
+        false,
       );
 
     const duplicates = await viewFieldRepository
@@ -249,26 +257,29 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
       });
 
       for (let i = 1; i < viewFields.length; i++) {
-        if (!dryRun) {
+        if (!options.dryRun) {
           await viewFieldRepository.softDelete(viewFields[i].id);
         }
-        this.logger.log(
-          chalk.yellow(
-            `Soft deleted duplicate ViewField ${viewFields[i].id} for fieldMetadataId ${fieldMetadataId} and viewId ${viewId}`,
-          ),
-        );
+        if (options.verbose) {
+          this.logger.log(
+            chalk.yellow(
+              `Soft deleted duplicate ViewField ${viewFields[i].id} for fieldMetadataId ${fieldMetadataId} and viewId ${viewId}`,
+            ),
+          );
+        }
       }
     }
   }
 
   private async enforceUniqueViewSort(
     workspaceId: string,
-    dryRun: boolean,
+    options: EnforceUniqueConstraintsCommandOptions,
   ): Promise<void> {
     const viewSortRepository =
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'viewSort',
+        false,
       );
 
     const duplicates = await viewSortRepository
@@ -288,14 +299,16 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
       });
 
       for (let i = 1; i < viewSorts.length; i++) {
-        if (!dryRun) {
+        if (!options.dryRun) {
           await viewSortRepository.softDelete(viewSorts[i].id);
         }
-        this.logger.log(
-          chalk.yellow(
-            `Soft deleted duplicate ViewSort ${viewSorts[i].id} for fieldMetadataId ${fieldMetadataId} and viewId ${viewId}`,
-          ),
-        );
+        if (options.verbose) {
+          this.logger.log(
+            chalk.yellow(
+              `Soft deleted duplicate ViewSort ${viewSorts[i].id} for fieldMetadataId ${fieldMetadataId} and viewId ${viewId}`,
+            ),
+          );
+        }
       }
     }
   }

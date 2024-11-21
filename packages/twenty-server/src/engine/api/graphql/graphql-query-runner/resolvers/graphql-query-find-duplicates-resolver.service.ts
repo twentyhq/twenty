@@ -25,6 +25,7 @@ import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/g
 import { settings } from 'src/engine/constants/settings';
 import { DUPLICATE_CRITERIA_COLLECTION } from 'src/engine/core-modules/duplicate/constants/duplicate-criteria.constants';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { computeTableName } from 'src/engine/utils/compute-table-name.util';
@@ -45,10 +46,21 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
         objectMetadataItemWithFieldMaps.nameSingular,
       );
 
+    const objectMetadataItemWithFieldsMaps =
+      getObjectMetadataMapItemByNameSingular(
+        objectMetadataMaps,
+        objectMetadataItemWithFieldMaps.nameSingular,
+      );
+
+    if (!objectMetadataItemWithFieldsMaps) {
+      throw new GraphqlQueryRunnerException(
+        `Object ${objectMetadataItemWithFieldMaps.nameSingular} not found`,
+        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
     const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataMaps.byNameSingular[
-        objectMetadataItemWithFieldMaps.nameSingular
-      ].fieldsByName,
+      objectMetadataItemWithFieldsMaps?.fieldsByName,
       objectMetadataMaps,
     );
 

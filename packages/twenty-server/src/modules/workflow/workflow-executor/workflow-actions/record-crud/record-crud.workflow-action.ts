@@ -14,6 +14,7 @@ import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/c
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { ScopedWorkspaceContextFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-context.factory';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
@@ -179,7 +180,10 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
     }
 
     const objectMetadataItemWithFieldsMaps =
-      objectMetadataMaps.byNameSingular[workflowActionInput.objectName];
+      getObjectMetadataMapItemByNameSingular(
+        objectMetadataMaps,
+        workflowActionInput.objectName,
+      );
 
     if (!objectMetadataItemWithFieldsMaps) {
       throw new RecordCRUDActionException(
