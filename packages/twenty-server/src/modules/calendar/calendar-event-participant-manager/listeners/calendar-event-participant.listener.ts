@@ -22,7 +22,7 @@ export class CalendarEventParticipantListener {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
-  @OnEvent('calendarEventParticipant.matched')
+  @OnEvent('calendarEventParticipant_matched')
   public async handleCalendarEventParticipantMatchedEvent(
     payload: WorkspaceEventBatch<{
       workspaceMemberId: string;

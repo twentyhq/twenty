@@ -27,8 +27,8 @@ export class CallWebhookJobsJob {
   ) {}
 
   @Process(CallWebhookJobsJob.name)
-  async handle(
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordBaseEvent>,
+  async handle<T>(
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordBaseEvent<T>>,
   ): Promise<void> {
     // If you change that function, double check it does not break Zapier
     // trigger in packages/twenty-zapier/src/triggers/trigger_record.ts

@@ -9,14 +9,12 @@ import {
   AppToken,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -89,21 +87,21 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
         nameSingular: 'workspaceMember',
       },
     });
-    const payload = new ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>(
-      {
-        recordId: workspaceMember[0].id,
-        objectMetadata,
-        properties: {
-          after: workspaceMember[0],
-        },
-      },
-    );
 
-    this.workspaceEventEmitter.emit(
-      `workspaceMember.${DatabaseEventAction.CREATED}`,
-      [payload],
+    this.workspaceEventEmitter.emitWorkspaceEventBatch({
+      objectMetadataNameSingular: 'workspaceMember',
+      action: DatabaseEventAction.CREATED,
+      events: [
+        {
+          recordId: workspaceMember[0].id,
+          objectMetadata,
+          properties: {
+            after: workspaceMember[0],
+          },
+        },
+      ],
       workspaceId,
-    );
+    });
   }
 
   async addUserToWorkspace(user: User, workspace: Workspace) {

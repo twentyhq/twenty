@@ -22,7 +22,7 @@ export class MessageParticipantListener {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
-  @OnEvent('messageParticipant.matched')
+  @OnEvent('messageParticipant_matched')
   public async handleMessageParticipantMatched(
     payload: WorkspaceEventBatch<{
       workspaceMemberId: string;

@@ -1,11 +1,22 @@
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
-export class ObjectRecordBaseEvent {
+type Diff<T> = {
+  [K in keyof T]: { before: T[K]; after: T[K] };
+};
+
+type Properties<T> = {
+  updatedFields?: string[];
+  before?: T;
+  after?: T;
+  diff?: Partial<Diff<T>>;
+};
+
+export class ObjectRecordBaseEvent<T> {
   recordId: string;
   userId?: string;
   workspaceMemberId?: string;
   objectMetadata: ObjectMetadataInterface;
-  properties: any;
+  properties: Properties<T>;
 
   constructor({
     recordId,

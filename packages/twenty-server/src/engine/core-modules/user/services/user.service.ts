@@ -6,7 +6,6 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import {
@@ -115,21 +114,20 @@ export class UserService extends TypeOrmQueryService<User> {
       },
     });
 
-    const payload = new ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>(
-      {
-        recordId: workspaceMember.id,
-        objectMetadata,
-        properties: {
-          before: workspaceMember,
+    this.workspaceEventEmitter.emitWorkspaceEventBatch({
+      objectMetadataNameSingular: 'workspaceMember',
+      action: DatabaseEventAction.DELETED,
+      events: [
+        {
+          recordId: workspaceMember.id,
+          objectMetadata,
+          properties: {
+            before: workspaceMember,
+          },
         },
-      },
-    );
-
-    this.workspaceEventEmitter.emit(
-      `workspaceMember.${DatabaseEventAction.DELETED}`,
-      [payload],
+      ],
       workspaceId,
-    );
+    });
 
     return user;
   }

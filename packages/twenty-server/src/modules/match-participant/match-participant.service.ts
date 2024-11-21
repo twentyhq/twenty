@@ -120,7 +120,7 @@ export class MatchParticipantService<
     );
 
     this.workspaceEventEmitter.emit(
-      `${objectMetadataName}.matched`,
+      `${objectMetadataName}_matched`,
       [
         {
           workspaceMemberId: null,
@@ -175,11 +175,11 @@ export class MatchParticipantService<
       });
 
       this.workspaceEventEmitter.emit(
-        `${objectMetadataName}.matched`,
+        `${objectMetadataName}_matched`,
         [
           {
             workspaceId,
-            name: `${objectMetadataName}.matched`,
+            name: `${objectMetadataName}_matched`,
             workspaceMemberId: null,
             participants: updatedParticipants,
           },

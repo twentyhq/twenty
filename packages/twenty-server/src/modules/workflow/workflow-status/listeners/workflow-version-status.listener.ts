@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
@@ -18,6 +19,7 @@ import {
 } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
 import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { WORKFLOW_VERSION_STATUS_UPDATED } from 'src/modules/workflow/workflow-status/constants/workflow-version-status-updated.constants';
 
 @Injectable()
 export class WorkflowVersionStatusListener {
@@ -54,7 +56,7 @@ export class WorkflowVersionStatusListener {
     );
   }
 
-  @OnDatabaseEvent('workflowVersion', DatabaseEventAction.UPDATED)
+  @OnEvent(WORKFLOW_VERSION_STATUS_UPDATED)
   async handleWorkflowVersionUpdated(
     payload: WorkspaceEventBatch<WorkflowVersionStatusUpdate>,
   ): Promise<void> {
