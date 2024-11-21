@@ -18,7 +18,7 @@ export function createComponentFamilySelectorV2<
   key: string;
   get: SelectorGetter<ValueType, ComponentFamilyStateKeyV2<FamilyKey>>;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
-}): ComponentFamilySelectorV2<ValueType, FamilyKey>;
+}): ComponentFamilyReadOnlySelectorV2<ValueType, FamilyKey>;
 
 export function createComponentFamilySelectorV2<
   ValueType,
@@ -28,7 +28,7 @@ export function createComponentFamilySelectorV2<
   get: SelectorGetter<ValueType, ComponentFamilyStateKeyV2<FamilyKey>>;
   set: SelectorSetter<ValueType, ComponentFamilyStateKeyV2<FamilyKey>>;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
-}): ComponentFamilyReadOnlySelectorV2<ValueType, FamilyKey>;
+}): ComponentFamilySelectorV2<ValueType, FamilyKey>;
 
 export function createComponentFamilySelectorV2<
   ValueType,

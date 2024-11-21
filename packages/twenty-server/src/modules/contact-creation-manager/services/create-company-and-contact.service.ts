@@ -5,7 +5,6 @@ import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
 import { Any, EntityManager, Repository } from 'typeorm';
 
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -195,21 +194,19 @@ export class CreateCompanyAndContactService {
         source,
       );
 
-      this.workspaceEventEmitter.emit(
-        `person.${DatabaseEventAction.CREATED}`,
-        createdPeople.map(
-          (createdPerson) =>
-            ({
-              // FixMe: TypeORM typing issue... id is always returned when using save
-              recordId: createdPerson.id as string,
-              objectMetadata,
-              properties: {
-                after: createdPerson,
-              },
-            }) satisfies ObjectRecordCreateEvent<any>,
-        ),
+      this.workspaceEventEmitter.emitDatabaseBatchEvent({
+        objectMetadataNameSingular: 'person',
+        action: DatabaseEventAction.CREATED,
+        events: createdPeople.map((createdPerson) => ({
+          // Fix ' as string': TypeORM typing issue... id is always returned when using save
+          recordId: createdPerson.id as string,
+          objectMetadata,
+          properties: {
+            after: createdPerson,
+          },
+        })),
         workspaceId,
-      );
+      });
     }
   }
 }

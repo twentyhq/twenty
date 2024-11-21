@@ -17,9 +17,10 @@ export class ApiEventEmitterService {
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.CREATED}`,
-      records.map((record) => ({
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.CREATED,
+      events: records.map((record) => ({
         userId: authContext.user?.id,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
@@ -28,8 +29,8 @@ export class ApiEventEmitterService {
           after: this.removeGraphQLAndNestedProperties(record),
         },
       })),
-      authContext.workspace.id,
-    );
+      workspaceId: authContext.workspace.id,
+    });
   }
 
   public emitUpdateEvents<T extends ObjectRecord>(
@@ -47,9 +48,10 @@ export class ApiEventEmitterService {
       {},
     );
 
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.UPDATED}`,
-      records.map((record) => {
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.UPDATED,
+      events: records.map((record) => {
         const before = this.removeGraphQLAndNestedProperties(
           mappedExistingRecords[record.id],
         );
@@ -73,8 +75,8 @@ export class ApiEventEmitterService {
           },
         };
       }),
-      authContext.workspace.id,
-    );
+      workspaceId: authContext.workspace.id,
+    });
   }
 
   public emitDeletedEvents<T extends ObjectRecord>(
@@ -82,9 +84,10 @@ export class ApiEventEmitterService {
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.DELETED}`,
-      records.map((record) => {
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.DELETED,
+      events: records.map((record) => {
         return {
           userId: authContext.user?.id,
           recordId: record.id,
@@ -95,8 +98,8 @@ export class ApiEventEmitterService {
           },
         };
       }),
-      authContext.workspace.id,
-    );
+      workspaceId: authContext.workspace.id,
+    });
   }
 
   public emitDestroyEvents<T extends ObjectRecord>(
@@ -104,9 +107,10 @@ export class ApiEventEmitterService {
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.DESTROYED}`,
-      records.map((record) => {
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.DESTROYED,
+      events: records.map((record) => {
         return {
           userId: authContext.user?.id,
           recordId: record.id,
@@ -117,8 +121,8 @@ export class ApiEventEmitterService {
           },
         };
       }),
-      authContext.workspace.id,
-    );
+      workspaceId: authContext.workspace.id,
+    });
   }
 
   private removeGraphQLAndNestedProperties<T extends ObjectRecord>(record: T) {

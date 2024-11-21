@@ -48,13 +48,13 @@ const WorkflowVersionStatusOptions = [
     value: WorkflowVersionStatus.DEACTIVATED,
     label: 'Deactivated',
     position: 2,
-    color: 'red',
+    color: 'orange',
   },
   {
     value: WorkflowVersionStatus.ARCHIVED,
     label: 'Archived',
     position: 3,
-    color: 'grey',
+    color: 'gray',
   },
 ];
 

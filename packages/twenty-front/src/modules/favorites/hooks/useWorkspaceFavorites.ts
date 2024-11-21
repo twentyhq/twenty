@@ -52,5 +52,5 @@ export const useWorkspaceFavorites = () => {
     ],
   );
 
-  return sortedWorkspaceFavorites;
+  return { sortedWorkspaceFavorites };
 };

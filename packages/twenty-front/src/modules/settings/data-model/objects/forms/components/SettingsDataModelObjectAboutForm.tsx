@@ -43,8 +43,7 @@ type SettingsDataModelObjectAboutFormValues = z.infer<
 >;
 
 type SettingsDataModelObjectAboutFormProps = {
-  disabled?: boolean;
-  disableNameEdit?: boolean;
+  disableEdition?: boolean;
   objectMetadataItem?: ObjectMetadataItem;
   onBlur?: () => void;
 };
@@ -92,8 +91,7 @@ const infoCircleElementId = 'info-circle-id';
 export const IS_LABEL_SYNCED_WITH_NAME_LABEL = 'isLabelSyncedWithName';
 
 export const SettingsDataModelObjectAboutForm = ({
-  disabled,
-  disableNameEdit,
+  disableEdition,
   objectMetadataItem,
   onBlur,
 }: SettingsDataModelObjectAboutFormProps) => {
@@ -101,7 +99,11 @@ export const SettingsDataModelObjectAboutForm = ({
     useFormContext<SettingsDataModelObjectAboutFormValues>();
   const theme = useTheme();
 
-  const isLabelSyncedWithName = watch(IS_LABEL_SYNCED_WITH_NAME_LABEL);
+  const isLabelSyncedWithName =
+    watch(IS_LABEL_SYNCED_WITH_NAME_LABEL) ??
+    (isDefined(objectMetadataItem)
+      ? objectMetadataItem.isLabelSyncedWithName
+      : true);
   const labelSingular = watch('labelSingular');
   const labelPlural = watch('labelPlural');
   watch('nameSingular');
@@ -148,7 +150,7 @@ export const SettingsDataModelObjectAboutForm = ({
             defaultValue={objectMetadataItem?.icon ?? 'IconListNumbers'}
             render={({ field: { onChange, value } }) => (
               <IconPicker
-                disabled={disabled}
+                disabled={disableEdition}
                 selectedIconKey={value}
                 onChange={({ iconKey }) => onChange(iconKey)}
               />
@@ -173,7 +175,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 }
               }}
               onBlur={onBlur}
-              disabled={disabled || disableNameEdit}
+              disabled={disableEdition}
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
@@ -195,7 +197,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   fillNamePluralFromLabelPlural(value);
                 }
               }}
-              disabled={disabled || disableNameEdit}
+              disabled={disableEdition}
               fullWidth
               maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
             />
@@ -212,7 +214,7 @@ export const SettingsDataModelObjectAboutForm = ({
             minRows={4}
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
-            disabled={disabled}
+            disabled={disableEdition}
           />
         )}
       />
@@ -226,8 +228,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   fieldName: 'nameSingular' as const,
                   placeholder: 'listing',
                   defaultValue: objectMetadataItem?.nameSingular,
-                  disabled:
-                    disabled || disableNameEdit || isLabelSyncedWithName,
+                  disableEdition: disableEdition || isLabelSyncedWithName,
                   tooltip: apiNameTooltipText,
                 },
                 {
@@ -235,8 +236,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   fieldName: 'namePlural' as const,
                   placeholder: 'listings',
                   defaultValue: objectMetadataItem?.namePlural,
-                  disabled:
-                    disabled || disableNameEdit || isLabelSyncedWithName,
+                  disableEdition: disableEdition || isLabelSyncedWithName,
                   tooltip: apiNameTooltipText,
                 },
               ].map(
@@ -245,7 +245,7 @@ export const SettingsDataModelObjectAboutForm = ({
                   fieldName,
                   label,
                   placeholder,
-                  disabled,
+                  disableEdition,
                   tooltip,
                 }) => (
                   <StyledInputContainer key={`object-${fieldName}-text-input`}>
@@ -260,7 +260,7 @@ export const SettingsDataModelObjectAboutForm = ({
                             placeholder={placeholder}
                             value={value}
                             onChange={onChange}
-                            disabled={disabled}
+                            disabled={disableEdition}
                             fullWidth
                             maxLength={OBJECT_NAME_MAXIMUM_LENGTH}
                             onBlur={onBlur}
@@ -303,7 +303,10 @@ export const SettingsDataModelObjectAboutForm = ({
                       title="Synchronize Objects Labels and API Names"
                       description="Should changing an object's label also change the API?"
                       checked={value ?? true}
-                      disabled={!objectMetadataItem?.isCustom}
+                      disabled={
+                        isDefined(objectMetadataItem) &&
+                        !objectMetadataItem.isCustom
+                      }
                       advancedMode
                       onChange={(value) => {
                         onChange(value);
