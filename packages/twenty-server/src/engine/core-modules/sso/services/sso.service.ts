@@ -30,7 +30,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class SSOService {
-  private readonly featureLookUpKey = 'SSO' as BillingEntitlementKey;
+  private readonly featureLookUpKey = BillingEntitlementKey.SSO;
   constructor(
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
