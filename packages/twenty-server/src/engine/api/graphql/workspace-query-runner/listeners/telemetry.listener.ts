@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 
-import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TelemetryService } from 'src/engine/core-modules/telemetry/telemetry.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
+import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
 
 @Injectable()
 export class TelemetryListener {
@@ -32,7 +32,7 @@ export class TelemetryListener {
     );
   }
 
-  @OnEvent(USER_SIGNUP_EVENT_NAME)
+  @OnCustomBatchEvent(USER_SIGNUP_EVENT_NAME)
   async handleUserSignup(
     payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {

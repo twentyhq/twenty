@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { join } from 'path';
@@ -12,6 +11,7 @@ import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
 import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
+import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
 
 @Injectable()
 export class ServerlessFunctionPublicationListener {
@@ -22,7 +22,7 @@ export class ServerlessFunctionPublicationListener {
     private readonly serverlessFunctionRepository: Repository<ServerlessFunctionEntity>,
   ) {}
 
-  @OnEvent(SERVERLESS_FUNCTION_PUBLISHED)
+  @OnCustomBatchEvent(SERVERLESS_FUNCTION_PUBLISHED)
   async handle(
     batchEvent: WorkspaceEventBatch<{
       serverlessFunctionId: string;
