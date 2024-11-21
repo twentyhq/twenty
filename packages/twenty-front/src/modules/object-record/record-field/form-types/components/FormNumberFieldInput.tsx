@@ -1,5 +1,6 @@
 import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
 import { VARIABLE_TAG_STYLES } from '@/workflow/search-variables/components/VariableTagInput';
+import { extractVariableLabel } from '@/workflow/search-variables/utils/extractVariableLabel';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
@@ -153,7 +154,7 @@ export const FormNumberFieldInput = ({
             />
           ) : (
             <StyledVariableContainer>
-              {draftValue}
+              {extractVariableLabel(draftValue)}
 
               <button
                 style={{
