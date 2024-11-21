@@ -20,10 +20,6 @@ export const useIsFieldValueReadOnly = () => {
     objectNameSingular: metadata.objectMetadataNameSingular ?? '',
   });
 
-  if (!objectMetadataItem) {
-    throw new Error('Object metadata not found');
-  }
-
   return isFieldValueReadOnly({
     objectNameSingular: metadata.objectMetadataNameSingular,
     fieldName: metadata.fieldName,

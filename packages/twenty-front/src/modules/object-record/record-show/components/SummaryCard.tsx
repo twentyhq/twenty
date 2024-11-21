@@ -30,7 +30,6 @@ export const SummaryCard = ({
   const {
     recordFromStore,
     recordLoading,
-    objectMetadataItem,
     labelIdentifierFieldMetadataItem,
     isPrefetchLoading,
     recordIdentifier,
