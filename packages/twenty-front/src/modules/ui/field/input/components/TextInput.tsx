@@ -15,8 +15,8 @@ type TextInputProps = {
   placeholder?: string;
   autoFocus?: boolean;
   value: string;
-  onEnter: (newText: string) => void;
-  onEscape: (newText: string) => void;
+  onEnter?: (newText: string) => void;
+  onEscape?: (newText: string) => void;
   onTab?: (newText: string) => void;
   onShiftTab?: (newText: string) => void;
   onClickOutside?: (event: MouseEvent | TouchEvent, inputValue: string) => void;
