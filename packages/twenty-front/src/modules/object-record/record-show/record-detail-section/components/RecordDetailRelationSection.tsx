@@ -7,11 +7,11 @@ import { IconForbid, IconPencil, IconPlus, LightIconButton } from 'twenty-ui';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { RelationFromManyFieldInputMultiRecordsEffect } from '@/object-record/record-field/meta-types/input/components/RelationFromManyFieldInputMultiRecordsEffect';
 import { useUpdateRelationFromManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationFromManyFieldInput';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { isFieldMetadataReadOnly } from '@/object-record/record-field/utils/isFieldMetadataReadOnly';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
@@ -34,7 +34,6 @@ import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams
 import { View } from '@/views/types/View';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
-
 type RecordDetailRelationSectionProps = {
   loading: boolean;
 };
@@ -158,7 +157,7 @@ export const RecordDetailRelationSection = ({
       recordId,
     });
 
-  const canEdit = !isFieldMetadataReadOnly(fieldDefinition.metadata);
+  const isReadOnly = useIsFieldValueReadOnly();
 
   if (loading) return null;
 
@@ -180,7 +179,7 @@ export const RecordDetailRelationSection = ({
         hideRightAdornmentOnMouseLeave={!isDropdownOpen && !isMobile}
         areRecordsAvailable={relationRecords.length > 0}
         rightAdornment={
-          canEdit && (
+          !isReadOnly && (
             <DropdownScope dropdownScopeId={dropdownId}>
               <StyledAddDropdown
                 dropdownId={dropdownId}

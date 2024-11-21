@@ -84,7 +84,6 @@ export const FieldsCard = ({
           fieldMetadataItem.name === 'taskTargets')
       ),
   );
-  const isReadOnly = objectMetadataItem.isRemote;
 
   return (
     <>
@@ -149,10 +148,7 @@ export const FieldsCard = ({
                       hotkeyScope: InlineCellHotkeyScope.InlineCell,
                     }}
                   >
-                    <RecordInlineCell
-                      loading={recordLoading}
-                      readonly={isReadOnly}
-                    />
+                    <RecordInlineCell loading={recordLoading} />
                   </FieldContext.Provider>
                 ))}
               </>
