@@ -36,7 +36,11 @@ export class CreateManyResolverFactory
             internalContext.objectMetadataItemWithFieldMaps,
         };
 
-        return await this.graphqlQueryRunnerService.execute(args, options);
+        return await this.graphqlQueryRunnerService.execute(
+          args,
+          options,
+          CreateManyResolverFactory.methodName,
+        );
       } catch (error) {
         workspaceQueryRunnerGraphqlApiExceptionHandler(error, context);
       }

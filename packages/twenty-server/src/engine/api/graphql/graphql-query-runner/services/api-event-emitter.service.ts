@@ -97,6 +97,28 @@ export class ApiEventEmitterService {
     );
   }
 
+  public emitRestoreEvents<T extends ObjectRecord>(
+    records: T[],
+    authContext: AuthContext,
+    objectMetadataItem: ObjectMetadataInterface,
+  ): void {
+    this.workspaceEventEmitter.emit(
+      `${objectMetadataItem.nameSingular}.${DatabaseEventAction.RESTORED}`,
+      records.map((record) => {
+        return {
+          userId: authContext.user?.id,
+          recordId: record.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            before: null,
+            after: record,
+          },
+        };
+      }),
+      authContext.workspace.id,
+    );
+  }
+
   public emitDestroyEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,

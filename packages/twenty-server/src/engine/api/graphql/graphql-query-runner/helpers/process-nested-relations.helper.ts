@@ -378,7 +378,7 @@ export class ProcessNestedRelationsHelper {
       .take(limit)
       .getMany();
 
-    const relationResults = formatResult(
+    const relationResults = formatResult<ObjectRecord[]>(
       result,
       referenceObjectMetadata,
       objectMetadataMaps,

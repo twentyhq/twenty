@@ -4,26 +4,26 @@ import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-qu
 import { WorkspaceResolverBuilderFactoryInterface } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolver-builder-factory.interface';
 import {
   Resolver,
-  UpdateManyResolverArgs,
+  RestoreOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
-import { GraphqlQueryUpdateManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-update-many-resolver.service';
+import { GraphqlQueryRestoreOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-restore-one-resolver.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 
 @Injectable()
-export class UpdateManyResolverFactory
+export class RestoreOneResolverFactory
   implements WorkspaceResolverBuilderFactoryInterface
 {
-  public static methodName = 'updateMany' as const;
+  public static methodName = 'restoreOne' as const;
 
   constructor(
-    private readonly graphqlQueryRunnerService: GraphqlQueryUpdateManyResolverService,
+    private readonly graphqlQueryRunnerService: GraphqlQueryRestoreOneResolverService,
   ) {}
 
   create(
     context: WorkspaceSchemaBuilderContext,
-  ): Resolver<UpdateManyResolverArgs> {
+  ): Resolver<RestoreOneResolverArgs> {
     const internalContext = context;
 
     return async (_source, args, context, info) => {
@@ -39,7 +39,7 @@ export class UpdateManyResolverFactory
         return await this.graphqlQueryRunnerService.execute(
           args,
           options,
-          UpdateManyResolverFactory.methodName,
+          RestoreOneResolverFactory.methodName,
         );
       } catch (error) {
         workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);

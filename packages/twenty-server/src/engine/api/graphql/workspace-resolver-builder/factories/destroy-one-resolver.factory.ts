@@ -36,7 +36,11 @@ export class DestroyOneResolverFactory
             internalContext.objectMetadataItemWithFieldMaps,
         };
 
-        return await this.graphQLQueryRunnerService.execute(args, options);
+        return await this.graphQLQueryRunnerService.execute(
+          args,
+          options,
+          DestroyOneResolverFactory.methodName,
+        );
       } catch (error) {
         workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
       }

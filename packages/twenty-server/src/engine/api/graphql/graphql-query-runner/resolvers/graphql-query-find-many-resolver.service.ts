@@ -30,6 +30,7 @@ import {
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
@@ -39,7 +40,6 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
 > {
   constructor(private readonly featureFlagService: FeatureFlagService) {
     super();
-    this.operationName = 'findMany';
   }
 
   async resolve(
@@ -57,9 +57,14 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
     let appliedFilters =
       executionArgs.args.filter ?? ({} as ObjectRecordFilter);
 
+    const tableName = computeTableName(
+      objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataItemWithFieldMaps.isCustom,
+    );
+
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       aggregateQueryBuilder,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      tableName,
       appliedFilters,
     );
 
@@ -94,14 +99,14 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
 
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      tableName,
       appliedFilters,
     );
 
     executionArgs.graphqlQueryParser.applyOrderToBuilder(
       queryBuilder,
       orderByWithIdCondition,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      tableName,
       isForwardPagination,
     );
 
@@ -169,7 +174,7 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
         aggregate: executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
         limit,
         authContext,
-        dataSource: executionArgs.datasource,
+        dataSource: executionArgs.dataSource,
       });
     }
 

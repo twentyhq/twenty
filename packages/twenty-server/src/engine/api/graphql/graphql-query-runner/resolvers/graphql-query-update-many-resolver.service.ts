@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import graphqlFields from 'graphql-fields';
-
-import { GraphqlQueryBaseResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
+import {
+  GraphqlQueryBaseResolverService,
+  GraphqlQueryResolverExecutionArgs,
+} from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { UpdateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
@@ -22,44 +22,13 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
   UpdateManyResolverArgs,
   ObjectRecord[]
 > {
-  constructor() {
-    super();
-    this.operationName = 'updateMany';
-  }
-
   async resolve(
-    args: UpdateManyResolverArgs<Partial<ObjectRecord>>,
-    options: WorkspaceQueryRunnerOptions,
+    executionArgs: GraphqlQueryResolverExecutionArgs<UpdateManyResolverArgs>,
   ): Promise<ObjectRecord[]> {
-    const {
-      authContext,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-      info,
-    } = options;
+    const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+      executionArgs.options;
 
-    const dataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-        authContext.workspace.id,
-      );
-
-    const repository = dataSource.getRepository(
-      objectMetadataItemWithFieldMaps.nameSingular,
-    );
-
-    const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps.fieldsByName,
-      objectMetadataMaps,
-    );
-
-    const selectedFields = graphqlFields(info);
-
-    const { relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataItemWithFieldMaps,
-      selectedFields,
-    );
-
-    const queryBuilder = repository.createQueryBuilder(
+    const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
@@ -68,30 +37,33 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps.isCustom,
     );
 
-    const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
+    executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
       tableName,
-      args.filter,
+      executionArgs.args.filter,
     );
 
-    const existingRecordsBuilder = withFilterQueryBuilder.clone();
+    const existingRecordsBuilder = queryBuilder.clone();
 
     const existingRecords = await existingRecordsBuilder.getMany();
 
-    const formattedExistingRecords = formatResult(
+    const formattedExistingRecords = formatResult<ObjectRecord[]>(
       existingRecords,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     );
 
-    const data = formatData(args.data, objectMetadataItemWithFieldMaps);
+    const data = formatData(
+      executionArgs.args.data,
+      objectMetadataItemWithFieldMaps,
+    );
 
-    const nonFormattedUpdatedObjectRecords = await withFilterQueryBuilder
+    const nonFormattedUpdatedObjectRecords = await queryBuilder
       .update(data)
       .returning('*')
       .execute();
 
-    const formattedUpdatedRecords = formatResult(
+    const formattedUpdatedRecords = formatResult<ObjectRecord[]>(
       nonFormattedUpdatedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
@@ -100,22 +72,22 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
     this.apiEventEmitterService.emitUpdateEvents(
       formattedExistingRecords,
       formattedUpdatedRecords,
-      Object.keys(args.data),
-      options.authContext,
-      options.objectMetadataItemWithFieldMaps,
+      Object.keys(executionArgs.args.data),
+      authContext,
+      objectMetadataItemWithFieldMaps,
     );
 
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
-    if (relations) {
+    if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: formattedUpdatedRecords,
-        relations,
+        relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
-        dataSource,
+        dataSource: executionArgs.dataSource,
       });
     }
 

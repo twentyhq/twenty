@@ -26,7 +26,7 @@ import { capitalize } from 'src/utils/capitalize';
 export type GraphqlQueryResolverExecutionArgs<Input extends ResolverArgs> = {
   args: Input;
   options: WorkspaceQueryRunnerOptions;
-  datasource: DataSource;
+  dataSource: DataSource;
   repository: WorkspaceRepository<ObjectLiteral>;
   graphqlQueryParser: GraphqlQueryParser;
   graphqlQuerySelectedFieldsResult: GraphqlQuerySelectedFieldsResult;
@@ -52,16 +52,11 @@ export abstract class GraphqlQueryBaseResolverService<
   @Inject()
   protected readonly twentyORMGlobalManager: TwentyORMGlobalManager;
 
-  protected operationName: WorkspaceResolverBuilderMethodNames;
-
   public async execute(
     args: Input,
     options: WorkspaceQueryRunnerOptions,
+    operationName: WorkspaceResolverBuilderMethodNames,
   ): Promise<Response> {
-    if (!this.operationName) {
-      throw new Error('Operation name is not set');
-    }
-
     const { authContext, objectMetadataItemWithFieldMaps } = options;
 
     await this.validate(args, options);
@@ -70,23 +65,23 @@ export abstract class GraphqlQueryBaseResolverService<
       await this.workspaceQueryHookService.executePreQueryHooks(
         authContext,
         objectMetadataItemWithFieldMaps.nameSingular,
-        this.operationName,
+        operationName,
         args,
       );
 
     const computedArgs = (await this.queryRunnerArgsFactory.create(
       hookedArgs,
       options,
-      ResolverArgsType[capitalize(this.operationName)],
+      ResolverArgsType[capitalize(operationName)],
     )) as Input;
 
-    const datasource =
+    const dataSource =
       await this.twentyORMGlobalManager.getDataSourceForWorkspace(
         authContext.workspace.id,
       );
 
-    const repository = datasource.getRepository(
-      objectMetadataItemWithFieldMaps.namePlural,
+    const repository = dataSource.getRepository(
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
 
     const graphqlQueryParser = new GraphqlQueryParser(
@@ -105,7 +100,7 @@ export abstract class GraphqlQueryBaseResolverService<
     const graphqlQueryResolverExecutionArgs = {
       args: computedArgs,
       options,
-      datasource,
+      dataSource,
       repository,
       graphqlQueryParser,
       graphqlQuerySelectedFieldsResult,
@@ -127,7 +122,7 @@ export abstract class GraphqlQueryBaseResolverService<
     await this.workspaceQueryHookService.executePostQueryHooks(
       authContext,
       objectMetadataItemWithFieldMaps.nameSingular,
-      this.operationName,
+      operationName,
       resultWithGettersArray,
     );
 

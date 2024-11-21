@@ -22,11 +22,6 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
   CreateOneResolverArgs,
   ObjectRecord
 > {
-  constructor() {
-    super();
-    this.operationName = 'createOne';
-  }
-
   async resolve(
     executionArgs: GraphqlQueryResolverExecutionArgs<CreateOneResolverArgs>,
   ): Promise<ObjectRecord> {
@@ -73,7 +68,7 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
-        dataSource: executionArgs.datasource,
+        dataSource: executionArgs.dataSource,
       });
     }
 

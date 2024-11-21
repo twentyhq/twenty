@@ -36,7 +36,11 @@ export class FindDuplicatesResolverFactory
             internalContext.objectMetadataItemWithFieldMaps,
         };
 
-        return await this.graphqlQueryRunnerService.execute(args, options);
+        return await this.graphqlQueryRunnerService.execute(
+          args,
+          options,
+          FindDuplicatesResolverFactory.methodName,
+        );
       } catch (error) {
         workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
       }

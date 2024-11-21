@@ -36,7 +36,11 @@ export class CreateOneResolverFactory
             internalContext.objectMetadataItemWithFieldMaps,
         };
 
-        return await this.graphqlQueryRunnerService.execute(args, options);
+        return await this.graphqlQueryRunnerService.execute(
+          args,
+          options,
+          CreateOneResolverFactory.methodName,
+        );
       } catch (error) {
         workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
       }

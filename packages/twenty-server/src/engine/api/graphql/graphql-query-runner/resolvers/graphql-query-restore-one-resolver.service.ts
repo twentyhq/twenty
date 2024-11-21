@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { In, InsertResult } from 'typeorm';
-
 import {
   GraphqlQueryBaseResolverService,
   GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
-import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { RestoreOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
@@ -18,45 +20,46 @@ import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/obj
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
-export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResolverService<
-  CreateManyResolverArgs,
-  ObjectRecord[]
+export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResolverService<
+  RestoreOneResolverArgs,
+  ObjectRecord
 > {
   async resolve(
-    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
-  ): Promise<ObjectRecord[]> {
+    executionArgs: GraphqlQueryResolverExecutionArgs<RestoreOneResolverArgs>,
+  ): Promise<ObjectRecord> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
-
-    const objectRecords: InsertResult = !executionArgs.args.upsert
-      ? await executionArgs.repository.insert(executionArgs.args.data)
-      : await executionArgs.repository.upsert(executionArgs.args.data, {
-          conflictPaths: ['id'],
-          skipUpdateIfNoValuesChanged: true,
-        });
 
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const nonFormattedUpsertedRecords = await queryBuilder
-      .where({
-        id: In(objectRecords.generatedMaps.map((record) => record.id)),
-      })
-      .take(QUERY_MAX_RECORDS)
-      .getMany();
+    const nonFormattedRestoredObjectRecords = await queryBuilder
+      .where({ id: executionArgs.args.id })
+      .restore()
+      .returning('*')
+      .execute();
 
-    const upsertedRecords = formatResult<ObjectRecord[]>(
-      nonFormattedUpsertedRecords,
+    const formattedRestoredRecords = formatResult<ObjectRecord[]>(
+      nonFormattedRestoredObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     );
 
-    this.apiEventEmitterService.emitCreateEvents(
-      upsertedRecords,
+    this.apiEventEmitterService.emitRestoreEvents(
+      formattedRestoredRecords,
       authContext,
       objectMetadataItemWithFieldMaps,
     );
+
+    if (formattedRestoredRecords.length === 0) {
+      throw new GraphqlQueryRunnerException(
+        'Record not found',
+        GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND,
+      );
+    }
+
+    const restoredRecord = formattedRestoredRecords[0];
 
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
@@ -64,7 +67,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       await processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: upsertedRecords,
+        parentObjectRecords: [restoredRecord],
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
@@ -75,26 +78,19 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return upsertedRecords.map((record: ObjectRecord) =>
-      typeORMObjectRecordsParser.processRecord({
-        objectRecord: record,
-        objectName: objectMetadataItemWithFieldMaps.nameSingular,
-        take: 1,
-        totalCount: 1,
-      }),
-    );
+    return typeORMObjectRecordsParser.processRecord({
+      objectRecord: restoredRecord,
+      objectName: objectMetadataItemWithFieldMaps.nameSingular,
+      take: 1,
+      totalCount: 1,
+    });
   }
 
-  async validate<T extends ObjectRecord>(
-    args: CreateManyResolverArgs<Partial<T>>,
+  async validate(
+    args: RestoreOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataItemWithFieldMaps);
-
-    args.data.forEach((record) => {
-      if (record?.id) {
-        assertIsValidUuid(record.id);
-      }
-    });
+    assertIsValidUuid(args.id);
   }
 }

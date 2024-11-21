@@ -1,76 +1,51 @@
 import { Injectable } from '@nestjs/common';
 
-import graphqlFields from 'graphql-fields';
-
-import { GraphqlQueryBaseResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
+import {
+  GraphqlQueryBaseResolverService,
+  GraphqlQueryResolverExecutionArgs,
+} from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { DestroyManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
 export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseResolverService<
   DestroyManyResolverArgs,
   ObjectRecord[]
 > {
-  constructor() {
-    super();
-    this.operationName = 'destroyMany';
-  }
-
   async resolve(
-    args: DestroyManyResolverArgs,
-    options: WorkspaceQueryRunnerOptions,
+    executionArgs: GraphqlQueryResolverExecutionArgs<DestroyManyResolverArgs>,
   ): Promise<ObjectRecord[]> {
-    const {
-      authContext,
-      objectMetadataItemWithFieldMaps,
-      objectMetadataMaps,
-      info,
-    } = options;
+    const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+      executionArgs.options;
 
-    const dataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-        authContext.workspace.id,
-      );
-
-    const repository = dataSource.getRepository(
+    const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataItemWithFieldMaps.fieldsByName,
-      objectMetadataMaps,
-    );
-
-    const selectedFields = graphqlFields(info);
-
-    const { relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataItemWithFieldMaps,
-      selectedFields,
-    );
-
-    const queryBuilder = repository.createQueryBuilder(
+    const tableName = computeTableName(
       objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataItemWithFieldMaps.isCustom,
     );
 
-    const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
+    executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItemWithFieldMaps.nameSingular,
-      args.filter,
+      tableName,
+      executionArgs.args.filter,
     );
 
-    const nonFormattedDeletedObjectRecords = await withFilterQueryBuilder
+    const nonFormattedDeletedObjectRecords = await queryBuilder
       .delete()
       .returning('*')
       .execute();
 
-    const deletedRecords = formatResult(
+    const deletedRecords = formatResult<ObjectRecord[]>(
       nonFormattedDeletedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
@@ -78,21 +53,21 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
 
     this.apiEventEmitterService.emitDestroyEvents(
       deletedRecords,
-      options.authContext,
-      options.objectMetadataItemWithFieldMaps,
+      authContext,
+      objectMetadataItemWithFieldMaps,
     );
 
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
-    if (relations) {
+    if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
       await processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
         parentObjectRecords: deletedRecords,
-        relations,
+        relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
-        dataSource,
+        dataSource: executionArgs.dataSource,
       });
     }
 

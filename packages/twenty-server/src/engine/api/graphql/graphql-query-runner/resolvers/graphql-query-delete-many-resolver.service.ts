@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { In, InsertResult } from 'typeorm';
-
 import {
   GraphqlQueryBaseResolverService,
   GraphqlQueryResolverExecutionArgs,
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
-import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { DeleteManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
@@ -16,44 +14,47 @@ import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-que
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
-export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResolverService<
-  CreateManyResolverArgs,
+export class GraphqlQueryDeleteManyResolverService extends GraphqlQueryBaseResolverService<
+  DeleteManyResolverArgs,
   ObjectRecord[]
 > {
   async resolve(
-    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
+    executionArgs: GraphqlQueryResolverExecutionArgs<DeleteManyResolverArgs>,
   ): Promise<ObjectRecord[]> {
     const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
       executionArgs.options;
-
-    const objectRecords: InsertResult = !executionArgs.args.upsert
-      ? await executionArgs.repository.insert(executionArgs.args.data)
-      : await executionArgs.repository.upsert(executionArgs.args.data, {
-          conflictPaths: ['id'],
-          skipUpdateIfNoValuesChanged: true,
-        });
 
     const queryBuilder = executionArgs.repository.createQueryBuilder(
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const nonFormattedUpsertedRecords = await queryBuilder
-      .where({
-        id: In(objectRecords.generatedMaps.map((record) => record.id)),
-      })
-      .take(QUERY_MAX_RECORDS)
-      .getMany();
+    const tableName = computeTableName(
+      objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataItemWithFieldMaps.isCustom,
+    );
 
-    const upsertedRecords = formatResult<ObjectRecord[]>(
-      nonFormattedUpsertedRecords,
+    executionArgs.graphqlQueryParser.applyFilterToBuilder(
+      queryBuilder,
+      tableName,
+      executionArgs.args.filter,
+    );
+
+    const nonFormattedDeletedObjectRecords = await queryBuilder
+      .softDelete()
+      .returning('*')
+      .execute();
+
+    const formattedDeletedRecords = formatResult<ObjectRecord[]>(
+      nonFormattedDeletedObjectRecords.raw,
       objectMetadataItemWithFieldMaps,
       objectMetadataMaps,
     );
 
-    this.apiEventEmitterService.emitCreateEvents(
-      upsertedRecords,
+    this.apiEventEmitterService.emitDeletedEvents(
+      formattedDeletedRecords,
       authContext,
       objectMetadataItemWithFieldMaps,
     );
@@ -64,7 +65,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
       await processNestedRelationsHelper.processNestedRelations({
         objectMetadataMaps,
         parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
-        parentObjectRecords: upsertedRecords,
+        parentObjectRecords: formattedDeletedRecords,
         relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
         limit: QUERY_MAX_RECORDS,
         authContext,
@@ -75,7 +76,7 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return upsertedRecords.map((record: ObjectRecord) =>
+    return formattedDeletedRecords.map((record: ObjectRecord) =>
       typeORMObjectRecordsParser.processRecord({
         objectRecord: record,
         objectName: objectMetadataItemWithFieldMaps.nameSingular,
@@ -85,16 +86,15 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     );
   }
 
-  async validate<T extends ObjectRecord>(
-    args: CreateManyResolverArgs<Partial<T>>,
+  async validate(
+    args: DeleteManyResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataItemWithFieldMaps);
+    if (!args.filter) {
+      throw new Error('Filter is required');
+    }
 
-    args.data.forEach((record) => {
-      if (record?.id) {
-        assertIsValidUuid(record.id);
-      }
-    });
+    args.filter.id?.in?.forEach((id: string) => assertIsValidUuid(id));
   }
 }

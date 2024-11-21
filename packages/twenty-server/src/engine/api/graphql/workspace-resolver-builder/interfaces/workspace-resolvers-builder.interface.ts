@@ -1,9 +1,9 @@
 import { GraphQLFieldResolver } from 'graphql';
 
 import {
-    ObjectRecord,
-    ObjectRecordFilter,
-    ObjectRecordOrderBy,
+  ObjectRecord,
+  ObjectRecordFilter,
+  ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
@@ -93,6 +93,10 @@ export interface DeleteManyResolverArgs<Filter = any> {
   filter: Filter;
 }
 
+export interface RestoreOneResolverArgs {
+  id: string;
+}
+
 export interface RestoreManyResolverArgs<Filter = any> {
   filter: Filter;
 }
@@ -125,11 +129,12 @@ export type ResolverArgs =
   | CreateOneResolverArgs
   | DeleteManyResolverArgs
   | DeleteOneResolverArgs
+  | DestroyManyResolverArgs
+  | FindDuplicatesResolverArgs
   | FindManyResolverArgs
   | FindOneResolverArgs
-  | FindDuplicatesResolverArgs
-  | UpdateManyResolverArgs
-  | UpdateOneResolverArgs
-  | DestroyManyResolverArgs
   | RestoreManyResolverArgs
-  | SearchResolverArgs;
+  | RestoreOneResolverArgs
+  | SearchResolverArgs
+  | UpdateManyResolverArgs
+  | UpdateOneResolverArgs;
