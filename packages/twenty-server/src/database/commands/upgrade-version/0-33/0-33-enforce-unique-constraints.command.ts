@@ -129,6 +129,7 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'company',
+        false,
       );
 
     const duplicates = await companyRepository
@@ -181,6 +182,7 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'person',
+        false,
       );
 
     const duplicates = await personRepository
@@ -235,6 +237,7 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'viewField',
+        false,
       );
 
     const duplicates = await viewFieldRepository
@@ -276,6 +279,7 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
       await this.twentyORMGlobalManager.getRepositoryForWorkspace(
         workspaceId,
         'viewSort',
+        false,
       );
 
     const duplicates = await viewSortRepository
