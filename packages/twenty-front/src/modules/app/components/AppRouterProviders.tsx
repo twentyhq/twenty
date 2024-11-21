@@ -13,7 +13,7 @@ import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
-import { AppThemeProviderEffect } from '@/ui/theme/components/AppThemeProvider';
+import { UserThemeProviderEffect } from '@/ui/theme/components/AppThemeProvider';
 import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { UserProvider } from '@/users/components/UserProvider';
@@ -39,7 +39,7 @@ export const AppRouterProviders = () => {
                 <ApolloMetadataClientProvider>
                   <ObjectMetadataItemsProvider>
                     <PrefetchDataProvider>
-                      <AppThemeProviderEffect />
+                      <UserThemeProviderEffect />
                       <SnackBarProvider>
                         <DialogManagerScope dialogManagerScopeId="dialog-manager">
                           <DialogManager>

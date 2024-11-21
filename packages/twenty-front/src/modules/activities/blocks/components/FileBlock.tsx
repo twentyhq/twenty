@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ChangeEvent, useRef } from 'react';
 
-import { AppThemeProviderEffect } from '@/ui/theme/components/AppThemeProvider';
+import { UserThemeProviderEffect } from '@/ui/theme/components/AppThemeProvider';
 import { Button } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -92,7 +92,7 @@ export const FileBlock = createReactBlockSpec(
       if (isNonEmptyString(block.props.url)) {
         return (
           <BaseThemeProvider>
-            <AppThemeProviderEffect />
+            <UserThemeProviderEffect />
             <StyledFileLine>
               <AttachmentIcon
                 attachmentType={block.props.fileType as AttachmentType}
@@ -107,7 +107,7 @@ export const FileBlock = createReactBlockSpec(
 
       return (
         <BaseThemeProvider>
-          <AppThemeProviderEffect />
+          <UserThemeProviderEffect />
           <StyledUploadFileContainer>
             <StyledFileInput
               ref={inputFileRef}
