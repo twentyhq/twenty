@@ -1,6 +1,8 @@
 import { OnEvent } from '@nestjs/event-emitter';
 
-export function OnCustomBatchEvent(event: string): MethodDecorator {
+import { CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
+
+export function OnCustomBatchEvent(event: CustomEventName): MethodDecorator {
   return (
     target: object,
     propertyKey: string,

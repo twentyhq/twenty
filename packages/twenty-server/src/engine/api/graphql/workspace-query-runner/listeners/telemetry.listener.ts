@@ -5,7 +5,7 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { TelemetryService } from 'src/engine/core-modules/telemetry/telemetry.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
 

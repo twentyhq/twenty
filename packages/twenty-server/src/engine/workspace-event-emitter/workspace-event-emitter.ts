@@ -6,6 +6,7 @@ import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/t
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
 
 type ActionEventMap<T> = {
   [DatabaseEventAction.CREATED]: ObjectRecordCreateEvent<T>;
@@ -13,8 +14,6 @@ type ActionEventMap<T> = {
   [DatabaseEventAction.DELETED]: ObjectRecordDeleteEvent<T>;
   [DatabaseEventAction.DESTROYED]: ObjectRecordDestroyEvent<T>;
 };
-
-type CustomEventName = `${string}_${string}`;
 
 @Injectable()
 export class WorkspaceEventEmitter {
