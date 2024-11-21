@@ -1,3 +1,3 @@
 export enum BillingEntitlementKey {
-  SSO = 'sso_feat',
+  SSO = 'SSO',
 }
