@@ -1,4 +1,4 @@
-import { FormFieldInput } from '@/object-record/record-field/form-types/components/FormFieldInputBase';
+import { FormFieldInputBase } from '@/object-record/record-field/form-types/components/FormFieldInputBase';
 import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
 import styled from '@emotion/styled';
 import { useState } from 'react';
@@ -27,7 +27,7 @@ export const FormBooleanFieldInput = ({
   };
 
   return (
-    <FormFieldInput
+    <FormFieldInputBase
       Input={
         <StyledBooleanInputContainer>
           <BooleanInput

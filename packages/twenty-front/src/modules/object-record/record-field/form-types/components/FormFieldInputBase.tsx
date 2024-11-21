@@ -39,17 +39,17 @@ export const StyledInputContainer2 = styled.div<{
   width: 100%;
 `;
 
-type FormFieldInputProps<T> = {
+type FormFieldInputBaseProps<T> = {
   Input: React.ReactElement;
   RightElement?: React.ReactElement;
   multiline?: boolean;
 };
 
-export const FormFieldInput = ({
+export const FormFieldInputBase = ({
   Input,
   RightElement,
   multiline,
-}: FormFieldInputProps<unknown>) => {
+}: FormFieldInputBaseProps<unknown>) => {
   return (
     <StyledContainer>
       <StyledInputContainer multiline={multiline}>

@@ -1,4 +1,4 @@
-import { FormFieldInput } from '@/object-record/record-field/form-types/components/FormFieldInputBase';
+import { FormFieldInputBase } from '@/object-record/record-field/form-types/components/FormFieldInputBase';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
 import { extractVariableLabel } from '@/workflow/search-variables/utils/extractVariableLabel';
@@ -86,7 +86,7 @@ export const WorkflowFormFieldInput = ({
   });
 
   return (
-    <FormFieldInput
+    <FormFieldInputBase
       Input={
         variableMode === 'full-editor' || editingMode === 'input' ? (
           Input
