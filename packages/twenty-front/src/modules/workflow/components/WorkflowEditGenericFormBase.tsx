@@ -69,7 +69,7 @@ export const WorkflowEditGenericFormBase = ({
             onEnter={onTitleChange}
             onEscape={onTitleChange}
             onChange={debouncedOnTitleChange}
-            trimEnabled={false}
+            shouldTrim={false}
           />
         </StyledHeaderTitle>
 

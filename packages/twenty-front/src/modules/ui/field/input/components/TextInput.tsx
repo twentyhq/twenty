@@ -23,11 +23,11 @@ type TextInputProps = {
   hotkeyScope: string;
   onChange?: (newText: string) => void;
   copyButton?: boolean;
-  trimEnabled?: boolean;
+  shouldTrim?: boolean;
 };
 
-const getValue = (value: string, trimEnabled: boolean) => {
-  if (trimEnabled) {
+const getValue = (value: string, shouldTrim: boolean) => {
+  if (shouldTrim) {
     return value.trim();
   }
 
@@ -46,7 +46,7 @@ export const TextInput = ({
   onClickOutside,
   onChange,
   copyButton = true,
-  trimEnabled = true,
+  shouldTrim = true,
 }: TextInputProps) => {
   const [internalText, setInternalText] = useState(value);
 
@@ -54,12 +54,12 @@ export const TextInput = ({
   const copyRef = useRef<HTMLDivElement>(null);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInternalText(getValue(event.target.value, trimEnabled));
-    onChange?.(getValue(event.target.value, trimEnabled));
+    setInternalText(getValue(event.target.value, shouldTrim));
+    onChange?.(getValue(event.target.value, shouldTrim));
   };
   useEffect(() => {
-    setInternalText(getValue(value, trimEnabled));
-  }, [value, trimEnabled]);
+    setInternalText(getValue(value, shouldTrim));
+  }, [value, shouldTrim]);
 
   useRegisterInputEvents({
     inputRef: wrapperRef,
