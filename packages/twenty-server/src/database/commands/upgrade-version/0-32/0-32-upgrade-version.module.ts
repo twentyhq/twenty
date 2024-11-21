@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CopyWebhookOperationIntoOperationsCommand } from 'src/database/commands/upgrade-version/0-32/0-32-copy-webhook-operation-into-operations-command';
-import { EnforceUniqueConstraintsCommand } from 'src/database/commands/upgrade-version/0-32/0-32-enforce-unique-constraints.command';
 import { SimplifySearchVectorExpressionCommand } from 'src/database/commands/upgrade-version/0-32/0-32-simplify-search-vector-expression';
 import { UpgradeTo0_32Command } from 'src/database/commands/upgrade-version/0-32/0-32-upgrade-version.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -27,7 +26,6 @@ import { BackfillViewGroupsCommand } from './0-32-backfill-view-groups.command';
   ],
   providers: [
     UpgradeTo0_32Command,
-    EnforceUniqueConstraintsCommand,
     BackfillViewGroupsCommand,
     CopyWebhookOperationIntoOperationsCommand,
     SimplifySearchVectorExpressionCommand,
