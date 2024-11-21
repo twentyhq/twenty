@@ -7,6 +7,7 @@ import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspac
 import { TimelineActivityService } from 'src/modules/timeline/services/timeline-activity.service';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class UpsertTimelineActivityFromInternalEvent {
@@ -18,7 +19,9 @@ export class UpsertTimelineActivityFromInternalEvent {
 
   @Process(UpsertTimelineActivityFromInternalEvent.name)
   async handle(
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordBaseEvent>,
+    workspaceEventBatch: WorkspaceEventBatch<
+      ObjectRecordBaseEvent<TimelineActivityWorkspaceEntity>
+    >,
   ): Promise<void> {
     for (const eventData of workspaceEventBatch.events) {
       if (eventData.userId) {
