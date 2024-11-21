@@ -42,18 +42,18 @@ export const generateWorkflowDiagram = ({
       nodeActionType = step.type;
     }
 
-    const nodeLabel = step.name;
-    // if (step.type === 'RECORD_CRUD') {
-    //   // FIXME: use activeObjectMetadataItems to get labelSingular
-    //   nodeLabel = `${capitalize(step.settings.input.type.toLowerCase())} ${capitalize(step.settings.input.objectName)}`;
-    // }
+    let nodeLabel = step.name;
+    if (step.type === 'RECORD_CRUD') {
+      // FIXME: use activeObjectMetadataItems to get labelSingular
+      nodeLabel = `${capitalize(step.settings.input.type.toLowerCase())} ${capitalize(step.settings.input.objectName)}`;
+    }
 
     nodes.push({
       id: nodeId,
       data: {
         nodeType: 'action',
         actionType: nodeActionType,
-        name: nodeLabel,
+        name: isDefined(step.name) ? step.name : nodeLabel,
       },
       position: {
         x: xPos,
@@ -110,7 +110,7 @@ export const generateWorkflowDiagram = ({
       data: {
         nodeType: 'trigger',
         triggerType: trigger.type,
-        name: trigger.name || triggerLabel,
+        name: isDefined(trigger.name) ? trigger.name : triggerLabel,
       },
       position: {
         x: 0,

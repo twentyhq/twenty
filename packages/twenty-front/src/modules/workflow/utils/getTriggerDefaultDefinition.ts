@@ -8,11 +8,9 @@ import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getManualTriggerDefaultSettings } from '@/workflow/utils/getManualTriggerDefaultSettings';
 
 export const getTriggerDefaultDefinition = ({
-  name,
   type,
   activeObjectMetadataItems,
 }: {
-  name: string;
   type: WorkflowTriggerType;
   activeObjectMetadataItems: ObjectMetadataItem[];
 }): WorkflowTrigger => {
@@ -25,7 +23,6 @@ export const getTriggerDefaultDefinition = ({
   switch (type) {
     case 'DATABASE_EVENT': {
       return {
-        name,
         type,
         settings: {
           eventName: `${activeObjectMetadataItems[0].nameSingular}.${OBJECT_EVENT_TRIGGERS[0].value}`,
@@ -35,7 +32,6 @@ export const getTriggerDefaultDefinition = ({
     }
     case 'MANUAL': {
       return {
-        name,
         type,
         settings: getManualTriggerDefaultSettings({
           availability: 'WHEN_RECORD_SELECTED',

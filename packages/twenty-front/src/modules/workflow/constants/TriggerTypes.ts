@@ -7,7 +7,7 @@ export const TRIGGER_TYPES: Array<{
   icon: IconComponent;
 }> = [
   {
-    name: 'Database Event Trigger',
+    name: 'Database Event',
     type: 'DATABASE_EVENT',
     icon: IconSettingsAutomation,
   },

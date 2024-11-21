@@ -109,7 +109,7 @@ export type WorkflowActionType =
 export type WorkflowStepType = WorkflowActionType;
 
 type BaseTrigger = {
-  name: string;
+  name?: string;
   type: string;
 };
 

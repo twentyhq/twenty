@@ -119,7 +119,7 @@ export const WorkflowEditActionFormRecordCreate = ({
     };
   }, [saveAction]);
 
-  const headerTitle = isDefined(action.name) ? action.name : `Record Create`;
+  const headerTitle = isDefined(action.name) ? action.name : `Create Record`;
 
   return (
     <WorkflowEditGenericFormBase
