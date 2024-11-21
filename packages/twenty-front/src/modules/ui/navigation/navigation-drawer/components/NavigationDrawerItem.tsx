@@ -139,8 +139,8 @@ const StyledItemLabel = styled.span`
 `;
 
 const StyledItemObjectName = styled.span`
-  display: block
-  color: ${({ theme }) => theme.font.color.extraLight};
+  display: block;
+  color: ${({ theme }) => theme.font.color.light};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   overflow: hidden;
   text-overflow: ellipsis;
