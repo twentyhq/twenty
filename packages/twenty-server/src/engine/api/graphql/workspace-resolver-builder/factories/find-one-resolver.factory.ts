@@ -8,7 +8,7 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
-import { GraphqlQueryRunnerService } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-runner.service';
+import { GraphqlQueryFindOneResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-find-one-resolver.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class FindOneResolverFactory
   public static methodName = 'findOne' as const;
 
   constructor(
-    private readonly graphqlQueryRunnerService: GraphqlQueryRunnerService,
+    private readonly graphqlQueryRunnerService: GraphqlQueryFindOneResolverService,
   ) {}
 
   create(
@@ -36,7 +36,11 @@ export class FindOneResolverFactory
             internalContext.objectMetadataItemWithFieldMaps,
         };
 
-        return await this.graphqlQueryRunnerService.findOne(args, options);
+        return await this.graphqlQueryRunnerService.execute(
+          args,
+          options,
+          FindOneResolverFactory.methodName,
+        );
       } catch (error) {
         workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
       }

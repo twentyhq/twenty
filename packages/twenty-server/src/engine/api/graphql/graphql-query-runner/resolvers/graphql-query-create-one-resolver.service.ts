@@ -8,7 +8,7 @@ import {
 } from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
-import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { CreateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/constants/query-max-records.constant';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
@@ -18,14 +18,14 @@ import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/obj
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
-export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResolverService<
-  CreateManyResolverArgs,
-  ObjectRecord[]
+export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolverService<
+  CreateOneResolverArgs,
+  ObjectRecord
 > {
   async resolve(
-    executionArgs: GraphqlQueryResolverExecutionArgs<CreateManyResolverArgs>,
-  ): Promise<ObjectRecord[]> {
-    const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+    executionArgs: GraphqlQueryResolverExecutionArgs<CreateOneResolverArgs>,
+  ): Promise<ObjectRecord> {
+    const { authContext, objectMetadataMaps, objectMetadataItemWithFieldMaps } =
       executionArgs.options;
 
     const objectRecords: InsertResult = !executionArgs.args.upsert
@@ -75,26 +75,24 @@ export class GraphqlQueryCreateManyResolverService extends GraphqlQueryBaseResol
     const typeORMObjectRecordsParser =
       new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    return upsertedRecords.map((record: ObjectRecord) =>
-      typeORMObjectRecordsParser.processRecord({
-        objectRecord: record,
-        objectName: objectMetadataItemWithFieldMaps.nameSingular,
-        take: 1,
-        totalCount: 1,
-      }),
-    );
+    return typeORMObjectRecordsParser.processRecord({
+      objectRecord: upsertedRecords[0],
+      objectName: objectMetadataItemWithFieldMaps.nameSingular,
+      take: 1,
+      totalCount: 1,
+    });
   }
 
-  async validate<T extends ObjectRecord>(
-    args: CreateManyResolverArgs<Partial<T>>,
+  async;
+
+  async validate(
+    args: CreateOneResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     assertMutationNotOnRemoteObject(options.objectMetadataItemWithFieldMaps);
 
-    args.data.forEach((record) => {
-      if (record?.id) {
-        assertIsValidUuid(record.id);
-      }
-    });
+    if (args.data?.id) {
+      assertIsValidUuid(args.data.id);
+    }
   }
 }

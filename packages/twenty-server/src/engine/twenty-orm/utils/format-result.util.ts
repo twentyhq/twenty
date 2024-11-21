@@ -13,7 +13,7 @@ import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
 export function formatResult<T>(
-  data: T,
+  data: any,
   ObjectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
   objectMetadataMaps: ObjectMetadataMaps,
 ): T {

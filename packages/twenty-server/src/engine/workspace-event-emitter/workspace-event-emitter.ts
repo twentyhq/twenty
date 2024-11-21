@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
-import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { ObjectRecordDestroyEvent } from 'src/engine/core-modules/event-emitter/types/object-record-destroy.event';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { ObjectRecordRestoreEvent } from 'src/engine/core-modules/event-emitter/types/object-record-restore.event';
+import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
 import { CustomEventName } from 'src/engine/workspace-event-emitter/types/custom-event-name.type';
 
 type ActionEventMap<T> = {
@@ -13,6 +14,7 @@ type ActionEventMap<T> = {
   [DatabaseEventAction.UPDATED]: ObjectRecordUpdateEvent<T>;
   [DatabaseEventAction.DELETED]: ObjectRecordDeleteEvent<T>;
   [DatabaseEventAction.DESTROYED]: ObjectRecordDestroyEvent<T>;
+  [DatabaseEventAction.RESTORED]: ObjectRecordRestoreEvent<T>;
 };
 
 @Injectable()
