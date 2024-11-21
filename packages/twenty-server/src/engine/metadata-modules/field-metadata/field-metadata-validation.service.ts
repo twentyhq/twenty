@@ -5,7 +5,6 @@ import {
   IsEnum,
   IsInt,
   IsOptional,
-  IsString,
   Max,
   Min,
   validateOrReject,
@@ -43,12 +42,6 @@ class TextSettingsValidation {
   displayedMaxRows?: number;
 }
 
-class AddressSettingsValidation {
-  @IsOptional()
-  @IsString()
-  defaultCountry?: string;
-}
-
 @Injectable()
 export class FieldMetadataValidationService<
   T extends FieldMetadataType | 'default' = 'default',
@@ -68,9 +61,6 @@ export class FieldMetadataValidationService<
         break;
       case FieldMetadataType.TEXT:
         await this.validateSettings(TextSettingsValidation, settings);
-        break;
-      case FieldMetadataType.ADDRESS:
-        await this.validateSettings(AddressSettingsValidation, settings);
         break;
       default:
         break;

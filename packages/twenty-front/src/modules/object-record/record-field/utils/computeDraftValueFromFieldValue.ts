@@ -46,11 +46,11 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
   if (isFieldAddress(fieldDefinition)) {
     if (
       isFieldValueEmpty({ fieldValue, fieldDefinition }) &&
-      !!fieldDefinition.metadata.settings?.defaultCountry
+      !!fieldDefinition?.defaultValue?.addressCountry
     ) {
       return {
         ...fieldValue,
-        addressCountry: fieldDefinition.metadata.settings.defaultCountry,
+        addressCountry: fieldDefinition?.defaultValue?.addressCountry,
       } as unknown as FieldInputDraftValue<FieldValue>;
     }
 

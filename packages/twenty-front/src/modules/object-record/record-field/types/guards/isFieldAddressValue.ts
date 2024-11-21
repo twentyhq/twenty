@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { FieldAddressValue } from '../FieldMetadata';
 
-const addressSchema = z.object({
+export const addressSchema = z.object({
   addressStreet1: z.string(),
   addressStreet2: z.string().nullable(),
   addressCity: z.string().nullable(),

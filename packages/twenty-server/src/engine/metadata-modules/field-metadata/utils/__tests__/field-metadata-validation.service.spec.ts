@@ -56,26 +56,4 @@ describe('FieldMetadataValidationService', () => {
       }),
     ).rejects.toThrow(FieldMetadataException);
   });
-
-  it('should validate ADDRESS settings successfully', async () => {
-    const settings = { defaultCountry: 'France' } as FieldMetadataSettings;
-
-    await expect(
-      service.validateSettingsOrThrow({
-        fieldType: FieldMetadataType.ADDRESS,
-        settings,
-      }),
-    ).resolves.not.toThrow();
-  });
-
-  it('should throw an error for invalid ADDRESS settings', async () => {
-    const settings = { defaultCountry: 123 } as FieldMetadataSettings;
-
-    await expect(
-      service.validateSettingsOrThrow({
-        fieldType: FieldMetadataType.ADDRESS,
-        settings,
-      }),
-    ).rejects.toThrow(FieldMetadataException);
-  });
 });
