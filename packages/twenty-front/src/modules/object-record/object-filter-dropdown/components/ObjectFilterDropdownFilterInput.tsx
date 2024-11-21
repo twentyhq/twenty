@@ -84,6 +84,7 @@ export const ObjectFilterDropdownFilterInput = ({
           {filterDefinitionUsedInDropdown.type === 'RELATION' && (
             <>
               <ObjectFilterDropdownSearchInput />
+              <DropdownMenuSeparator />
               <ObjectFilterDropdownRecordSelect />
             </>
           )}
@@ -98,6 +99,7 @@ export const ObjectFilterDropdownFilterInput = ({
           ) && (
             <>
               <ObjectFilterDropdownSearchInput />
+              <DropdownMenuSeparator />
               <ObjectFilterDropdownOptionSelect />
             </>
           )}
