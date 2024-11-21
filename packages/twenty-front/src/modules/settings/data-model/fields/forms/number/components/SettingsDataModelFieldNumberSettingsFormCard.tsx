@@ -40,7 +40,7 @@ export const SettingsDataModelFieldNumberSettingsFormCard = ({
         <StyledFieldPreviewCard
           fieldMetadataItem={{
             ...fieldMetadataItem,
-            settings: settings || fieldMetadataItem.settings,
+            settings: settings ?? fieldMetadataItem.settings ?? { decimals: 0 },
           }}
           objectMetadataItem={objectMetadataItem}
         />

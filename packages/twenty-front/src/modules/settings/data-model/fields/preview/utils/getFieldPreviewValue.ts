@@ -3,12 +3,14 @@ import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+const DEFAULT_NUMBER_PREVIEW_VALUE = 2000;
+
 export const getFieldPreviewValue = ({
   fieldMetadataItem,
 }: {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'type' | 'defaultValue' | 'settings'
+    'type' | 'defaultValue'
   >;
 }) => {
   if (fieldMetadataItem.defaultValue !== undefined && fieldMetadataItem.defaultValue !== null) {
@@ -18,7 +20,7 @@ export const getFieldPreviewValue = ({
   const fieldTypeConfig = getSettingsFieldTypeConfig(fieldMetadataItem.type as SettingsFieldType);
   
   if (fieldMetadataItem.type === FieldMetadataType.Number) {
-    return fieldTypeConfig.exampleValue || 2000;
+    return fieldTypeConfig.exampleValue || DEFAULT_NUMBER_PREVIEW_VALUE;
   }
 
   return fieldTypeConfig.exampleValue ?? null;

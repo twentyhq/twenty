@@ -10,9 +10,10 @@ export const NumberFieldDisplay = () => {
   if (!fieldValue) return <NumberDisplay value={null} />;
   
   const numericValue = Number(fieldValue);
+  if (Number.isNaN(numericValue)) return <NumberDisplay value={null} />;
   
   const value = type === 'percentage'
-    ? `${formatNumber(numericValue, decimals)}%`
+    ? `${formatNumber(numericValue * 100, decimals)}%`
     : formatNumber(numericValue, decimals);
     
   return <NumberDisplay value={value} decimals={decimals} />;
