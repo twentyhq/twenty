@@ -39,7 +39,7 @@ export const seedWorkspaces = async (
       displayName: 'Acme',
       domainName: 'acme.dev',
       inviteHash: 'acme.dev-invite-hash',
-      logo: 'https://twentyhq.github.io/placeholder-images/workspaces/twenty-logo.png',
+      logo: 'https://logos-world.net/wp-content/uploads/2022/05/Acme-Logo-700x394.png',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
     },
   };
