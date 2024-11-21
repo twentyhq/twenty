@@ -20,7 +20,7 @@ export class CreateAuditLogFromInternalEvent {
 
   @Process(CreateAuditLogFromInternalEvent.name)
   async handle(
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordBaseEvent>,
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordBaseEvent<any>>,
   ): Promise<void> {
     for (const eventData of workspaceEventBatch.events) {
       let workspaceMemberId: string | null = null;

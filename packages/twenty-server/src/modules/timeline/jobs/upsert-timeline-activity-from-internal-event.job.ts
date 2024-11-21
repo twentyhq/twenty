@@ -18,7 +18,7 @@ export class UpsertTimelineActivityFromInternalEvent {
 
   @Process(UpsertTimelineActivityFromInternalEvent.name)
   async handle(
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordBaseEvent>,
+    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordBaseEvent<any>>,
   ): Promise<void> {
     for (const eventData of workspaceEventBatch.events) {
       if (eventData.userId) {
