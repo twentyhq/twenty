@@ -14,17 +14,22 @@ export const NavigationDrawerOpenedSection = () => {
 
   const loading = useIsPrefetchLoading();
 
-  const currentObjectNamePlural = useParams().objectNamePlural;
-
   const { activeObjectMetadataItems: workspaceFavoritesObjectMetadataItems } =
     useFilteredObjectMetadataItemsForWorkspaceFavorites();
 
-  if (!currentObjectNamePlural) {
+  const {
+    objectNamePlural: currentObjectNamePlural,
+    objectNameSingular: currentObjectNameSingular,
+  } = useParams();
+
+  if (!currentObjectNamePlural && !currentObjectNameSingular) {
     return;
   }
 
   const objectMetadataItem = filteredActiveObjectMetadataItems.find(
-    (item) => item.namePlural === currentObjectNamePlural,
+    (item) =>
+      item.namePlural === currentObjectNamePlural ||
+      item.nameSingular === currentObjectNameSingular,
   );
 
   if (!objectMetadataItem) {

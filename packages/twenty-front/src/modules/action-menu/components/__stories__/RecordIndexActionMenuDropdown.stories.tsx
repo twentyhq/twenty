@@ -42,6 +42,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
 
           map.set('delete', {
             type: 'standard',
+            scope: 'record-selection',
             key: 'delete',
             label: 'Delete',
             position: 0,
@@ -51,6 +52,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
 
           map.set('markAsDone', {
             type: 'standard',
+            scope: 'record-selection',
             key: 'markAsDone',
             label: 'Mark as done',
             position: 1,
@@ -60,6 +62,7 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
 
           map.set('addToFavorites', {
             type: 'standard',
+            scope: 'record-selection',
             key: 'addToFavorites',
             label: 'Add to favorites',
             position: 2,

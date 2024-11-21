@@ -208,17 +208,15 @@ export class SignInUpService {
       workspace,
     );
 
-    if (isNewUser) {
-      await this.activateOnboardingForNewUser(user, workspace, {
-        firstName,
-        lastName,
-      });
-    }
+    await this.activateOnboardingForUser(user, workspace, {
+      firstName,
+      lastName,
+    });
 
     return Object.assign(user, updatedUser);
   }
 
-  private async activateOnboardingForNewUser(
+  private async activateOnboardingForUser(
     user: User,
     workspace: Workspace,
     { firstName, lastName }: { firstName: string; lastName: string },
@@ -283,19 +281,10 @@ export class SignInUpService {
 
     await this.userWorkspaceService.create(user.id, workspace.id);
 
-    await this.onboardingService.setOnboardingConnectAccountPending({
-      userId: user.id,
-      workspaceId: workspace.id,
-      value: true,
+    await this.activateOnboardingForUser(user, workspace, {
+      firstName,
+      lastName,
     });
-
-    if (firstName === '' && lastName === '') {
-      await this.onboardingService.setOnboardingCreateProfilePending({
-        userId: user.id,
-        workspaceId: workspace.id,
-        value: true,
-      });
-    }
 
     await this.onboardingService.setOnboardingInviteTeamPending({
       workspaceId: workspace.id,

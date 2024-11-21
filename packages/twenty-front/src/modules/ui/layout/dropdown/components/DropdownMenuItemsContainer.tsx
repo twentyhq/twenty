@@ -11,7 +11,6 @@ const StyledDropdownMenuItemsExternalContainer = styled.div<{
   display: flex;
 
   flex-direction: column;
-  gap: 2px;
   max-height: ${({ hasMaxHeight }) => (hasMaxHeight ? '188px' : 'none')};
 
   padding: var(--padding);
@@ -24,7 +23,7 @@ const StyledScrollWrapper = styled(ScrollWrapper)`
 `;
 
 const StyledDropdownMenuItemsInternalContainer = styled.div`
-  align-items: flex-start;
+  align-items: stretch;
   display: flex;
 
   flex-direction: column;

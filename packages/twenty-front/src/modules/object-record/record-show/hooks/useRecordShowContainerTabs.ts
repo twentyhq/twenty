@@ -131,7 +131,7 @@ export const useRecordShowContainerTabs = (
     },
     [CoreObjectNameSingular.Workflow]: {
       workflow: {
-        title: 'Workflow',
+        title: 'Flow',
         position: 0,
         Icon: IconSettings,
         cards: [{ type: CardType.WorkflowCard }],
@@ -144,6 +144,7 @@ export const useRecordShowContainerTabs = (
           ifRelationsMissing: [],
         },
       },
+      timeline: null,
     },
     [CoreObjectNameSingular.WorkflowVersion]: {
       workflowVersion: {
@@ -160,6 +161,7 @@ export const useRecordShowContainerTabs = (
           ifRelationsMissing: [],
         },
       },
+      timeline: null,
     },
     [CoreObjectNameSingular.WorkflowRun]: {
       workflowRunOutput: {
@@ -190,6 +192,7 @@ export const useRecordShowContainerTabs = (
           ifRelationsMissing: [],
         },
       },
+      timeline: null,
     },
   };
 
