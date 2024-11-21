@@ -32,38 +32,38 @@ export class DatabaseEventTriggerListener {
 
   @OnDatabaseEvent('*', DatabaseEventAction.CREATED)
   async handleObjectRecordCreateEvent(
-    payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
+    payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
     await this.handleEvent(payload);
   }
 
   @OnDatabaseEvent('*', DatabaseEventAction.UPDATED)
   async handleObjectRecordUpdateEvent(
-    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
+    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent>,
   ) {
     await this.handleEvent(payload);
   }
 
   @OnDatabaseEvent('*', DatabaseEventAction.DELETED)
   async handleObjectRecordDeleteEvent(
-    payload: WorkspaceEventBatch<ObjectRecordDeleteEvent<any>>,
+    payload: WorkspaceEventBatch<ObjectRecordDeleteEvent>,
   ) {
     await this.handleEvent(payload);
   }
 
   @OnDatabaseEvent('*', DatabaseEventAction.DESTROYED)
   async handleObjectRecordDestroyEvent(
-    payload: WorkspaceEventBatch<ObjectRecordDestroyEvent<any>>,
+    payload: WorkspaceEventBatch<ObjectRecordDestroyEvent>,
   ) {
     await this.handleEvent(payload);
   }
 
   private async handleEvent(
     payload: WorkspaceEventBatch<
-      | ObjectRecordCreateEvent<any>
-      | ObjectRecordUpdateEvent<any>
-      | ObjectRecordDeleteEvent<any>
-      | ObjectRecordDestroyEvent<any>
+      | ObjectRecordCreateEvent
+      | ObjectRecordUpdateEvent
+      | ObjectRecordDeleteEvent
+      | ObjectRecordDestroyEvent
     >,
   ) {
     const workspaceId = payload.workspaceId;

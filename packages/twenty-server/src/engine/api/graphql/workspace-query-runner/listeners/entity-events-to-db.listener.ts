@@ -23,54 +23,48 @@ export class EntityEventsToDbListener {
   ) {}
 
   @OnDatabaseEvent('*', DatabaseEventAction.CREATED)
-  async handleCreate(
-    payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
-  ) {
-    return this.handle(payload);
+  async handleCreate(batchEvent: WorkspaceEventBatch<ObjectRecordCreateEvent>) {
+    return this.handle(batchEvent);
   }
 
   @OnDatabaseEvent('*', DatabaseEventAction.UPDATED)
-  async handleUpdate(
-    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
-  ) {
-    return this.handle(payload);
+  async handleUpdate(batchEvent: WorkspaceEventBatch<ObjectRecordUpdateEvent>) {
+    return this.handle(batchEvent);
   }
 
   @OnDatabaseEvent('*', DatabaseEventAction.DELETED)
-  async handleDelete(
-    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
-  ) {
-    return this.handle(payload);
+  async handleDelete(batchEvent: WorkspaceEventBatch<ObjectRecordUpdateEvent>) {
+    return this.handle(batchEvent);
   }
 
   @OnDatabaseEvent('*', DatabaseEventAction.DESTROYED)
   async handleDestroy(
-    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
+    batchEvent: WorkspaceEventBatch<ObjectRecordUpdateEvent>,
   ) {
-    return this.handle(payload);
+    return this.handle(batchEvent);
   }
 
-  private async handle(payload: WorkspaceEventBatch<ObjectRecordBaseEvent>) {
-    const filteredEvents = payload.events.filter(
+  private async handle(batchEvent: WorkspaceEventBatch<ObjectRecordBaseEvent>) {
+    const filteredEvents = batchEvent.events.filter(
       (event) => event.objectMetadata?.isAuditLogged,
     );
 
     await this.entityEventsToDbQueueService.add<
       WorkspaceEventBatch<ObjectRecordBaseEvent>
     >(CreateAuditLogFromInternalEvent.name, {
-      ...payload,
+      ...batchEvent,
       events: filteredEvents,
     });
 
     await this.entityEventsToDbQueueService.add<
       WorkspaceEventBatch<ObjectRecordBaseEvent>
     >(UpsertTimelineActivityFromInternalEvent.name, {
-      ...payload,
+      ...batchEvent,
       events: filteredEvents,
     });
 
     await this.webhookQueueService.add<
       WorkspaceEventBatch<ObjectRecordBaseEvent>
-    >(CallWebhookJobsJob.name, payload, { retryLimit: 3 });
+    >(CallWebhookJobsJob.name, batchEvent, { retryLimit: 3 });
   }
 }

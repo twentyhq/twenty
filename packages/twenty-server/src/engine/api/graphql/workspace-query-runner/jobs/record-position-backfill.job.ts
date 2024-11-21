@@ -16,6 +16,9 @@ export class RecordPositionBackfillJob {
 
   @Process(RecordPositionBackfillJob.name)
   async handle(data: RecordPositionBackfillJobData): Promise<void> {
-    this.recordPositionBackfillService.backfill(data.workspaceId, data.dryRun);
+    await this.recordPositionBackfillService.backfill(
+      data.workspaceId,
+      data.dryRun,
+    );
   }
 }

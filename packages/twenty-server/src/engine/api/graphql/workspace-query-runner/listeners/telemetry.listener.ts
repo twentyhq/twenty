@@ -17,9 +17,7 @@ export class TelemetryListener {
   ) {}
 
   @OnDatabaseEvent('*', DatabaseEventAction.CREATED)
-  async handleAllCreate(
-    payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
-  ) {
+  async handleAllCreate(payload: WorkspaceEventBatch<ObjectRecordCreateEvent>) {
     await Promise.all(
       payload.events.map((eventPayload) =>
         this.analyticsService.create(
@@ -36,7 +34,7 @@ export class TelemetryListener {
 
   @OnEvent(USER_SIGNUP_EVENT_NAME)
   async handleUserSignup(
-    payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
+    payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
     await Promise.all(
       payload.events.map(async (eventPayload) => {

@@ -24,15 +24,15 @@ export class ServerlessFunctionPublicationListener {
 
   @OnEvent(SERVERLESS_FUNCTION_PUBLISHED)
   async handle(
-    payload: WorkspaceEventBatch<{
+    batchEvent: WorkspaceEventBatch<{
       serverlessFunctionId: string;
       serverlessFunctionVersion: string;
     }>,
   ): Promise<void> {
-    for (const event of payload.events) {
+    for (const event of batchEvent.events) {
       const sourceCode =
         await this.serverlessFunctionService.getServerlessFunctionSourceCode(
-          payload.workspaceId,
+          batchEvent.workspaceId,
           event.serverlessFunctionId,
           event.serverlessFunctionVersion,
         );
