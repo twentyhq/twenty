@@ -52,6 +52,7 @@ export const ClientConfigProviderEffect = () => {
       setClientConfigApiStatus((currentStatus) => ({
         ...currentStatus,
         isErrored: true,
+        error,
       }));
       return;
     }
@@ -63,6 +64,7 @@ export const ClientConfigProviderEffect = () => {
     setClientConfigApiStatus((currentStatus) => ({
       ...currentStatus,
       isErrored: false,
+      error: undefined,
     }));
 
     setAuthProviders({

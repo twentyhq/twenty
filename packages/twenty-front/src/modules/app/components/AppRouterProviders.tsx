@@ -13,7 +13,8 @@ import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
-import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
+import { AppThemeProviderEffect } from '@/ui/theme/components/AppThemeProvider';
+import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
@@ -27,17 +28,18 @@ export const AppRouterProviders = () => {
 
   return (
     <ApolloProvider>
-      <ClientConfigProviderEffect />
-      <ApolloMetadataClientProvider>
-        <ObjectMetadataItemsProvider>
-          <AppThemeProvider>
-            <ClientConfigProvider>
-              <ChromeExtensionSidecarEffect />
-              <ChromeExtensionSidecarProvider>
-                <UserProviderEffect />
-                <UserProvider>
-                  <AuthProvider>
+      <BaseThemeProvider>
+        <ClientConfigProviderEffect />
+        <ClientConfigProvider>
+          <ChromeExtensionSidecarEffect />
+          <ChromeExtensionSidecarProvider>
+            <UserProviderEffect />
+            <UserProvider>
+              <AuthProvider>
+                <ApolloMetadataClientProvider>
+                  <ObjectMetadataItemsProvider>
                     <PrefetchDataProvider>
+                      <AppThemeProviderEffect />
                       <SnackBarProvider>
                         <DialogManagerScope dialogManagerScopeId="dialog-manager">
                           <DialogManager>
@@ -52,13 +54,13 @@ export const AppRouterProviders = () => {
                       </SnackBarProvider>
                     </PrefetchDataProvider>
                     <PageChangeEffect />
-                  </AuthProvider>
-                </UserProvider>
-              </ChromeExtensionSidecarProvider>
-            </ClientConfigProvider>
-          </AppThemeProvider>
-        </ObjectMetadataItemsProvider>
-      </ApolloMetadataClientProvider>
+                  </ObjectMetadataItemsProvider>
+                </ApolloMetadataClientProvider>
+              </AuthProvider>
+            </UserProvider>
+          </ChromeExtensionSidecarProvider>
+        </ClientConfigProvider>
+      </BaseThemeProvider>
     </ApolloProvider>
   );
 };

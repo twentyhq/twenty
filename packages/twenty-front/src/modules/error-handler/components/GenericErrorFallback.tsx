@@ -17,14 +17,14 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type GenericErrorFallbackProps = FallbackProps & {
   title?: string;
-  isInitialFetch?: boolean;
+  hidePageHeader?: boolean;
 };
 
 export const GenericErrorFallback = ({
   error,
   resetErrorBoundary,
-  title = 'Something went wrong',
-  isInitialFetch = false,
+  title = 'Sorry, something went wrong',
+  hidePageHeader = false,
 }: GenericErrorFallbackProps) => {
   const location = useLocation();
 
@@ -38,8 +38,7 @@ export const GenericErrorFallback = ({
 
   return (
     <PageContainer>
-      {/* no header for initial fetch failure */}
-      {!isInitialFetch && <PageHeader />}
+      {!hidePageHeader && <PageHeader />}
 
       <PageBody>
         <AnimatedPlaceholderEmptyContainer>
@@ -52,15 +51,12 @@ export const GenericErrorFallback = ({
               {error.message}
             </AnimatedPlaceholderEmptySubTitle>
           </AnimatedPlaceholderEmptyTextContainer>
-          {/* no refetch button for initial fetch failure, hard refresh is required */}
-          {!isInitialFetch && (
-            <Button
-              Icon={IconRefresh}
-              title="Reload"
-              variant={'secondary'}
-              onClick={() => resetErrorBoundary()}
-            />
-          )}
+          <Button
+            Icon={IconRefresh}
+            title="Reload"
+            variant={'secondary'}
+            onClick={resetErrorBoundary}
+          />
         </AnimatedPlaceholderEmptyContainer>
       </PageBody>
     </PageContainer>
