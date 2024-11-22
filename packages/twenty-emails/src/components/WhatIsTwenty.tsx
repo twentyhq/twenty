@@ -9,10 +9,7 @@ export const WhatIsTwenty = () => {
   return (
     <>
       <SubTitle value="What is Twenty?" />
-      <MainText>
-        A software to help businesses manage their customer data and
-        relationships efficiently.
-      </MainText>
+      <MainText>Twenty is a user friendly open source CRM.</MainText>
       <Row>
         <Column>
           <ShadowText>
@@ -36,11 +33,9 @@ export const WhatIsTwenty = () => {
         </Column>
       </Row>
       <ShadowText>
-        Twenty.com Public Benefit Corporation
+        Twenty PBC, 415 Mission Street
         <br />
-        2261 Market Street #5275
-        <br />
-        San Francisco, CA 94114
+        San Francisco, CA 94105
       </ShadowText>
     </>
   );
