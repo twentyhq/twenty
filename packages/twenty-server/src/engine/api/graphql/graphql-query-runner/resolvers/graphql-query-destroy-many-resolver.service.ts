@@ -12,6 +12,7 @@ import { QUERY_MAX_RECORDS } from 'src/engine/api/graphql/graphql-query-runner/c
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
 export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseResolverService<
@@ -28,9 +29,14 @@ export class GraphqlQueryDestroyManyResolverService extends GraphqlQueryBaseReso
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
+    const tableName = computeTableName(
+      objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataItemWithFieldMaps.isCustom,
+    );
+
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      tableName,
       executionArgs.args.filter,
     );
 
