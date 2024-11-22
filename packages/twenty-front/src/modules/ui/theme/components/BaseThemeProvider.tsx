@@ -14,7 +14,7 @@ type BaseThemeProviderProps = {
 };
 
 export const ThemeSchemeContext = createContext<(theme: ColorScheme) => void>(
-  () => void 0,
+  () => {},
 );
 
 export const BaseThemeProvider = ({ children }: BaseThemeProviderProps) => {
