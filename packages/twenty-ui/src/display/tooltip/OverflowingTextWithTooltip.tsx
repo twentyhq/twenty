@@ -13,6 +13,7 @@ const StyledOverflowingText = styled.div<{
   size: 'large' | 'small';
   displayedMaxRows?: number;
   isLabel: boolean;
+  wrap?: boolean;
 }>`
   cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'inherit')};
   font-family: inherit;
@@ -28,14 +29,16 @@ const StyledOverflowingText = styled.div<{
 
   height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
 
-  text-wrap-mode: ${({ isLabel, displayedMaxRows }) =>
-    isLabel === false && displayedMaxRows ? 'wrap' : 'nowrap'};
-  -webkit-line-clamp: ${({ isLabel, displayedMaxRows }) =>
-    isLabel === false && displayedMaxRows ? displayedMaxRows : 'inherit'};
-  display: ${({ isLabel, displayedMaxRows }) =>
-    isLabel === false && displayedMaxRows ? `-webkit-box` : 'block'};
-  -webkit-box-orient: ${({ isLabel, displayedMaxRows }) =>
-    isLabel === false && displayedMaxRows ? 'vertical' : 'inherit'};
+  text-wrap-mode: ${({ isLabel, displayedMaxRows, wrap = false }) =>
+    isLabel === false && displayedMaxRows && wrap ? 'wrap' : 'nowrap'};
+  -webkit-line-clamp: ${({ isLabel, displayedMaxRows, wrap = false }) =>
+    isLabel === false && displayedMaxRows && wrap
+      ? displayedMaxRows
+      : 'inherit'};
+  display: ${({ isLabel, displayedMaxRows, wrap = false }) =>
+    isLabel === false && displayedMaxRows && wrap ? `-webkit-box` : 'block'};
+  -webkit-box-orient: ${({ isLabel, displayedMaxRows, wrap = false }) =>
+    isLabel === false && displayedMaxRows && wrap ? 'vertical' : 'inherit'};
 
   & :hover {
     text-overflow: ${({ cursorPointer }) =>
@@ -51,12 +54,14 @@ export const OverflowingTextWithTooltip = ({
   isTooltipMultiline,
   displayedMaxRows,
   isLabel,
+  wrap,
 }: {
   size?: 'large' | 'small';
   text: string | null | undefined;
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
   isLabel?: boolean;
+  wrap?: boolean;
 }) => {
   const textElementId = `title-id-${+new Date()}`;
 
@@ -90,6 +95,7 @@ export const OverflowingTextWithTooltip = ({
         cursorPointer={isTitleOverflowing}
         size={size}
         displayedMaxRows={displayedMaxRows}
+        wrap={wrap}
         isLabel={isLabel ?? false}
         ref={textRef}
         id={textElementId}

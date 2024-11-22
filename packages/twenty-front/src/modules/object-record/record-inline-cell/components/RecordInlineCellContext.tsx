@@ -17,6 +17,7 @@ export type RecordInlineCellContextProps = {
   disableHoverEffect?: boolean;
   loading?: boolean;
   isCentered?: boolean;
+  wrap?: boolean;
 };
 
 const defaultRecordInlineCellContextProp: RecordInlineCellContextProps = {
@@ -34,6 +35,7 @@ const defaultRecordInlineCellContextProp: RecordInlineCellContextProps = {
   disableHoverEffect: false,
   loading: false,
   isCentered: false,
+  wrap: false,
 };
 
 export const RecordInlineCellContext =

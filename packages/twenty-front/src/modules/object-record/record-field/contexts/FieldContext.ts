@@ -31,6 +31,7 @@ export type GenericFieldContextType = {
   maxWidth?: number;
   isCentered?: boolean;
   overridenIsFieldEmpty?: boolean;
+  wrap?: boolean;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(
