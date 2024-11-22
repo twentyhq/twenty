@@ -6,7 +6,12 @@ target_version="0.32.4"
 
 # We moved the install script to a different location in v0.32.4
 if [[ -n "$BRANCH" ]] || [[ "$(printf '%s\n' "$target_version" "$version_num" | sort -V | head -n1)" != "$version_num" ]]; then
-  curl -sL "https://raw.githubusercontent.com/twentyhq/twenty/$pull_branch/packages/twenty-docker/scripts/install.sh" | bash -- "$VERSION" "$BRANCH"
+  curl -sL "https://raw.githubusercontent.com/twentyhq/twenty/$pull_branch/packages/twenty-docker/scripts/install.sh" -o twenty_install.sh
 else
-  curl -sL "https://raw.githubusercontent.com/twentyhq/twenty/$pull_branch/install.sh" | bash -- "$VERSION" "$BRANCH"
+  curl -sL "https://raw.githubusercontent.com/twentyhq/twenty/$pull_branch/install.sh" -o twenty_install.sh
 fi
+
+chmod +x twenty_install.sh
+VERSION="$VERSION" BRANCH="$BRANCH" ./twenty_install.sh
+
+rm twenty_install.sh
