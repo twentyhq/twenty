@@ -1,18 +1,18 @@
 import { isDefined } from '~/utils/isDefined';
 
-export const twentyHostname = window.location.hostname;
+export const twentyHostname = window.location.hostname
+  .split('.')
+  .slice(-2)
+  .join('.');
 
 export const twentyHomePageHostname = `app.${twentyHostname}`;
 
 export const twentyHomePageUrl = `${window.location.protocol}//${twentyHomePageHostname}`;
 
-export const isTwentyHosting =
-  window.location.hostname.endsWith(twentyHostname);
-
 export const isTwentyHomePage =
   window.location.hostname === twentyHomePageHostname;
 
-export const isTwentyWorkspaceSubdomain = isTwentyHosting && !isTwentyHomePage;
+export const isTwentyWorkspaceSubdomain = !isTwentyHomePage;
 
 export const getWorkspaceMainDomain = () => {
   return isTwentyHosting ? twentyHostname : window.location.hostname;

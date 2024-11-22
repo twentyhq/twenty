@@ -167,8 +167,8 @@ export const useAuth = () => {
       setCurrentWorkspace(workspace);
       if (isDefined(workspace) && isTwentyWorkspaceSubdomain) {
         setLastAuthenticateWorkspaceState({
-          id: workspace?.id,
-          subdomain: workspace?.subdomain,
+          id: workspace.id,
+          subdomain: workspace.subdomain,
         });
       }
 
