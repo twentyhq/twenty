@@ -97,8 +97,8 @@ const StyledButton = styled('button', { shouldForwardProp })<
     `;
   }}
 
-  ${({ theme, isActive }) =>
-    isActive &&
+  ${({ theme, disabled }) =>
+    !disabled &&
     css`
       &:hover {
         background: ${theme.background.transparent.lighter};

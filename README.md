@@ -58,7 +58,7 @@ We understand that the CRM landscape is vast. So why should you choose us?
 # What You Can Do With Twenty
 We're currently in the development phase of Twenty's alpha version.  
 
-Please feel free to flag any specific need you have need by creating an issue.   
+Please feel free to flag any specific needs you have by creating an issue.   
 
 Below are some features we have implemented to date:
 

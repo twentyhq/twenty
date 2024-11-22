@@ -5,7 +5,6 @@ import { useRecoilValue } from 'recoil';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
-import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { getSearchRecordsQueryResponseField } from '@/object-record/utils/getSearchRecordsQueryResponseField';
 import { isObjectMetadataItemSearchable } from '@/object-record/utils/isObjectMetadataItemSearchable';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
@@ -68,7 +67,7 @@ export const useGenerateCombinedSearchRecordsQuery = ({
     ) {
       ${filteredQueryKeyWithObjectMetadataItemArray
         .map(
-          ({ objectMetadataItem, fields }) =>
+          ({ objectMetadataItem }) =>
             `${getSearchRecordsQueryResponseField(objectMetadataItem.namePlural)}(filter: $filter${capitalize(
               objectMetadataItem.nameSingular,
             )},
@@ -79,11 +78,6 @@ export const useGenerateCombinedSearchRecordsQuery = ({
             node ${mapObjectMetadataToGraphQLQuery({
               objectMetadataItems: objectMetadataItems,
               objectMetadataItem,
-              recordGqlFields:
-                fields ??
-                generateDepthOneRecordGqlFields({
-                  objectMetadataItem,
-                }),
             })}
             cursor
           }

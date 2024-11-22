@@ -1,8 +1,6 @@
 import { advancedFilterViewFilterGroupIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterGroupIdComponentState';
 import { advancedFilterViewFilterIdComponentState } from '@/object-record/object-filter-dropdown/states/advancedFilterViewFilterIdComponentState';
 import { filterDefinitionUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/filterDefinitionUsedInDropdownComponentState';
-import { isObjectFilterDropdownOperandSelectUnfoldedComponentState } from '@/object-record/object-filter-dropdown/states/isObjectFilterDropdownOperandSelectUnfoldedComponentState';
-import { isObjectFilterDropdownUnfoldedComponentState } from '@/object-record/object-filter-dropdown/states/isObjectFilterDropdownUnfoldedComponentState';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { objectFilterDropdownSelectedOptionValuesComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedOptionValuesComponentState';
 import { objectFilterDropdownSelectedRecordIdsComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSelectedRecordIdsComponentState';
@@ -29,17 +27,6 @@ export const useFilterDropdownStates = (scopeId: string) => {
 
   const objectFilterDropdownSelectedOptionValuesState = extractComponentState(
     objectFilterDropdownSelectedOptionValuesComponentState,
-    scopeId,
-  );
-
-  const isObjectFilterDropdownOperandSelectUnfoldedState =
-    extractComponentState(
-      isObjectFilterDropdownOperandSelectUnfoldedComponentState,
-      scopeId,
-    );
-
-  const isObjectFilterDropdownUnfoldedState = extractComponentState(
-    isObjectFilterDropdownUnfoldedComponentState,
     scopeId,
   );
 
@@ -73,8 +60,6 @@ export const useFilterDropdownStates = (scopeId: string) => {
     objectFilterDropdownSearchInputState,
     objectFilterDropdownSelectedRecordIdsState,
     objectFilterDropdownSelectedOptionValuesState,
-    isObjectFilterDropdownOperandSelectUnfoldedState,
-    isObjectFilterDropdownUnfoldedState,
     selectedFilterState,
     selectedOperandInDropdownState,
     onFilterSelectState,

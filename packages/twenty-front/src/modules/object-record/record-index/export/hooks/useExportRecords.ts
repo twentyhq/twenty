@@ -1,13 +1,13 @@
 import { json2csv } from 'json-2-csv';
 import { useMemo } from 'react';
 
+import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
+import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import {
   UseRecordDataOptions,
   useExportFetchRecords,
 } from '@/object-record/record-index/export/hooks/useExportFetchRecords';
-import { useExportProcessRecordsForCSV } from '@/object-record/record-index/export/hooks/useExportProcessRecordsForCSV';
-import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/record-index/options/constants/ExportTableDataDefaultPageSize';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
@@ -107,12 +107,9 @@ const percentage = (part: number, whole: number): number => {
   return Math.round((part / whole) * 100);
 };
 
-export const displayedExportProgress = (
-  mode: 'all' | 'selection' = 'all',
-  progress?: ExportProgress,
-): string => {
+export const displayedExportProgress = (progress?: ExportProgress): string => {
   if (isUndefinedOrNull(progress?.exportedRecordCount)) {
-    return mode === 'all' ? 'Export View as CSV' : 'Export Selection as CSV';
+    return 'Export';
   }
 
   if (

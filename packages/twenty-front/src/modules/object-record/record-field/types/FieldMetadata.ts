@@ -23,7 +23,9 @@ export type FieldTextMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: {
+    displayedMaxRows?: number;
+  };
 };
 
 export type FieldDateTimeMetadata = {

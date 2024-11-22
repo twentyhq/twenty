@@ -11,9 +11,13 @@ export const PrefetchLoadedDecorator: Decorator = (Story) => {
   const setAreFavoritesPrefetched = useSetRecoilState(
     prefetchIsLoadedFamilyState(PrefetchKey.AllFavorites),
   );
+  const setAreFavoritesFoldersPrefetched = useSetRecoilState(
+    prefetchIsLoadedFamilyState(PrefetchKey.AllFavoritesFolders),
+  );
 
   setAreViewsPrefetched(true);
   setAreFavoritesPrefetched(true);
+  setAreFavoritesFoldersPrefetched(true);
 
   return <Story />;
 };

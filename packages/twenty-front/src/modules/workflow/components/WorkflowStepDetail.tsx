@@ -1,3 +1,4 @@
+import { WorkflowEditActionFormRecordCreate } from '@/workflow/components/WorkflowEditActionFormRecordCreate';
 import { WorkflowEditActionFormSendEmail } from '@/workflow/components/WorkflowEditActionFormSendEmail';
 import { WorkflowEditActionFormServerlessFunction } from '@/workflow/components/WorkflowEditActionFormServerlessFunction';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/components/WorkflowEditTriggerDatabaseEventForm';
@@ -9,6 +10,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { isWorkflowRecordCreateAction } from '@/workflow/utils/isWorkflowRecordCreateAction';
 import { isDefined } from 'twenty-ui';
 
 type WorkflowStepDetailProps =
@@ -53,8 +55,7 @@ export const WorkflowStepDetail = ({
           return (
             <WorkflowEditTriggerDatabaseEventForm
               trigger={stepDefinition.definition}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              triggerOptions={props}
             />
           );
         }
@@ -62,8 +63,7 @@ export const WorkflowStepDetail = ({
           return (
             <WorkflowEditTriggerManualForm
               trigger={stepDefinition.definition}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              triggerOptions={props}
             />
           );
         }
@@ -80,8 +80,7 @@ export const WorkflowStepDetail = ({
           return (
             <WorkflowEditActionFormServerlessFunction
               action={stepDefinition.definition}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              actionOptions={props}
             />
           );
         }
@@ -89,10 +88,21 @@ export const WorkflowStepDetail = ({
           return (
             <WorkflowEditActionFormSendEmail
               action={stepDefinition.definition}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              actionOptions={props}
             />
           );
+        }
+        case 'RECORD_CRUD': {
+          if (isWorkflowRecordCreateAction(stepDefinition.definition)) {
+            return (
+              <WorkflowEditActionFormRecordCreate
+                action={stepDefinition.definition}
+                actionOptions={props}
+              />
+            );
+          }
+
+          return null;
         }
       }
 

@@ -88,6 +88,7 @@ export const SECONDARY_COLORS = {
   gray60: GRAY_SCALE.gray55,
   gray50: GRAY_SCALE.gray40,
   gray40: GRAY_SCALE.gray25,
+  gray35: GRAY_SCALE.gray35,
   gray30: GRAY_SCALE.gray20,
   gray20: GRAY_SCALE.gray15,
   gray10: GRAY_SCALE.gray10,

@@ -5,6 +5,7 @@ import {
   IsEnum,
   IsInt,
   IsOptional,
+  Max,
   Min,
   validateOrReject,
 } from 'class-validator';
@@ -31,6 +32,12 @@ class SettingsValidation {
   @IsOptional()
   @IsEnum(ValueType)
   type?: 'percentage' | 'number';
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  @Max(100)
+  displayedMaxRows?: number;
 }
 
 @Injectable()
@@ -48,23 +55,26 @@ export class FieldMetadataValidationService<
   }) {
     switch (fieldType) {
       case FieldMetadataType.NUMBER:
-        await this.validateNumberSettings(settings);
+      case FieldMetadataType.TEXT:
+        await this.validateSettings(settings);
         break;
       default:
         break;
     }
   }
 
-  private async validateNumberSettings(settings: any) {
+  private async validateSettings(settings: any) {
     try {
       const settingsInstance = plainToInstance(SettingsValidation, settings);
 
       await validateOrReject(settingsInstance);
-    } catch (errors) {
-      const errorMessages = errors
-        .map((error: any) => Object.values(error.constraints))
-        .flat()
-        .join(', ');
+    } catch (error) {
+      const errorMessages = Array.isArray(error)
+        ? error
+            .map((err: any) => Object.values(err.constraints))
+            .flat()
+            .join(', ')
+        : error.message;
 
       throw new FieldMetadataException(
         `Value for settings is invalid: ${errorMessages}`,

@@ -10,6 +10,8 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
+import { isScrollEnabledForRecordTableState } from '@/object-record/record-table/states/isScrollEnabledForRecordTableState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
 import { useRecordTable } from '../hooks/useRecordTable';
 
@@ -46,6 +48,11 @@ export const RecordTableWithWrappers = ({
   recordTableId,
   viewBarId,
 }: RecordTableWithWrappersProps) => {
+  const isScrollEnabledForRecordTable = useRecoilComponentValueV2(
+    isScrollEnabledForRecordTableState,
+    recordTableId,
+  );
+
   const { resetTableRowSelection, selectAllRows } = useRecordTable({
     recordTableId,
   });
@@ -80,7 +87,11 @@ export const RecordTableWithWrappers = ({
 
   return (
     <EntityDeleteContext.Provider value={deleteOneRecord}>
-      <ScrollWrapper contextProviderName="recordTableWithWrappers">
+      <ScrollWrapper
+        enableXScroll={isScrollEnabledForRecordTable.enableXScroll}
+        enableYScroll={isScrollEnabledForRecordTable.enableYScroll}
+        contextProviderName="recordTableWithWrappers"
+      >
         <RecordUpdateContext.Provider value={updateRecordMutation}>
           <StyledTableWithHeader>
             <StyledTableContainer>

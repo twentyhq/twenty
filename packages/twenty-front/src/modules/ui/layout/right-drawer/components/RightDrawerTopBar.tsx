@@ -85,13 +85,14 @@ export const RightDrawerTopBar = () => {
 
   const ObjectIcon = getIcon(objectMetadataItem.icon);
 
-  const label =
-    rightDrawerPage === RightDrawerPages.ViewRecord
-      ? objectMetadataItem.labelSingular
-      : RIGHT_DRAWER_PAGE_TITLES[rightDrawerPage];
+  const isViewRecordRightDrawerPage =
+    rightDrawerPage === RightDrawerPages.ViewRecord;
 
-  const Icon =
-    rightDrawerPage === RightDrawerPages.ViewRecord ? ObjectIcon : PageIcon;
+  const label = isViewRecordRightDrawerPage
+    ? objectMetadataItem.labelSingular
+    : RIGHT_DRAWER_PAGE_TITLES[rightDrawerPage];
+
+  const Icon = isViewRecordRightDrawerPage ? ObjectIcon : PageIcon;
 
   return (
     <StyledRightDrawerTopBar
@@ -122,15 +123,18 @@ export const RightDrawerTopBar = () => {
           <RightDrawerTopBarMinimizeButton />
         )}
 
-        {!isMobile && !isRightDrawerMinimized && (
-          <RightDrawerTopBarExpandButton
-            to={
-              getBasePathToShowPage({
-                objectNameSingular: viewableRecordNameSingular ?? '',
-              }) + viewableRecordId
-            }
-          />
-        )}
+        {!isMobile &&
+          !isRightDrawerMinimized &&
+          isViewRecordRightDrawerPage && (
+            <RightDrawerTopBarExpandButton
+              to={
+                getBasePathToShowPage({
+                  objectNameSingular: viewableRecordNameSingular ?? '',
+                }) + viewableRecordId
+              }
+            />
+          )}
+
         <RightDrawerTopBarCloseButton />
       </StyledTopBarWrapper>
     </StyledRightDrawerTopBar>

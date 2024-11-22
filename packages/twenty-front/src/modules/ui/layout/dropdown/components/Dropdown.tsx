@@ -21,6 +21,7 @@ import { isDefined } from '~/utils/isDefined';
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
+import { DropdownUnmountEffect } from '@/ui/layout/dropdown/components/DropdownUnmountEffect';
 import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
@@ -126,7 +127,6 @@ export const Dropdown = ({
     listenerId: dropdownId,
     callback: () => {
       onClickOutside?.();
-
       if (isDropdownOpen) {
         closeDropdown();
       }
@@ -141,32 +141,47 @@ export const Dropdown = ({
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      closeDropdown();
+      if (isDropdownOpen) {
+        closeDropdown();
+      }
     },
     dropdownHotkeyScope.scope,
-    [closeDropdown],
+    [closeDropdown, isDropdownOpen],
   );
 
   return (
-    <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>
-      <div ref={containerRef} className={className}>
-        {clickableComponent && (
-          <div
-            ref={refs.setReference}
-            onClick={handleClickableComponentClick}
-            className={className}
-          >
-            {clickableComponent}
-          </div>
-        )}
-        {hotkey && (
-          <HotkeyEffect
-            hotkey={hotkey}
-            onHotkeyTriggered={handleHotkeyTriggered}
-          />
-        )}
-        {isDropdownOpen && usePortal && (
-          <FloatingPortal>
+    <>
+      <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>
+        <div ref={containerRef} className={className}>
+          {clickableComponent && (
+            <div
+              ref={refs.setReference}
+              onClick={handleClickableComponentClick}
+              className={className}
+            >
+              {clickableComponent}
+            </div>
+          )}
+          {hotkey && (
+            <HotkeyEffect
+              hotkey={hotkey}
+              onHotkeyTriggered={handleHotkeyTriggered}
+            />
+          )}
+          {isDropdownOpen && usePortal && (
+            <FloatingPortal>
+              <DropdownMenu
+                disableBlur={disableBlur}
+                width={dropdownMenuWidth ?? dropdownWidth}
+                data-select-disable
+                ref={refs.setFloating}
+                style={floatingStyles}
+              >
+                {dropdownComponents}
+              </DropdownMenu>
+            </FloatingPortal>
+          )}
+          {isDropdownOpen && !usePortal && (
             <DropdownMenu
               disableBlur={disableBlur}
               width={dropdownMenuWidth ?? dropdownWidth}
@@ -176,24 +191,14 @@ export const Dropdown = ({
             >
               {dropdownComponents}
             </DropdownMenu>
-          </FloatingPortal>
-        )}
-        {isDropdownOpen && !usePortal && (
-          <DropdownMenu
-            disableBlur={disableBlur}
-            width={dropdownMenuWidth ?? dropdownWidth}
-            data-select-disable
-            ref={refs.setFloating}
-            style={floatingStyles}
-          >
-            {dropdownComponents}
-          </DropdownMenu>
-        )}
-        <DropdownOnToggleEffect
-          onDropdownClose={onClose}
-          onDropdownOpen={onOpen}
-        />
-      </div>
-    </DropdownScope>
+          )}
+          <DropdownOnToggleEffect
+            onDropdownClose={onClose}
+            onDropdownOpen={onOpen}
+          />
+        </div>
+      </DropdownScope>
+      <DropdownUnmountEffect dropdownId={dropdownId} />
+    </>
   );
 };

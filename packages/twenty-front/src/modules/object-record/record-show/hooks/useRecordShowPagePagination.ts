@@ -141,7 +141,7 @@ export const useRecordShowPagePagination = (
 
   const rankFoundInFiew = rankInView > -1;
 
-  const objectLabel = capitalize(objectMetadataItem.namePlural);
+  const objectLabel = capitalize(objectMetadataItem.labelPlural);
 
   const totalCount = Math.max(1, totalCountBefore, totalCountAfter);
 

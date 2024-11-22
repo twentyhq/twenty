@@ -23,7 +23,7 @@ export const useRecordGroupReorder = ({
   );
 
   const { visibleRecordGroups } = useRecordGroups({
-    objectNameSingular,
+    objectNameSingular: objectNameSingular,
   });
 
   const { saveViewGroups } = useSaveCurrentViewGroups(viewBarId);

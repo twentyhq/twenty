@@ -51,6 +51,7 @@ export const SettingsOptionCardContentCounter = ({
         onChange={onChange}
         minValue={minValue}
         maxValue={maxValue}
+        disabled={disabled}
       />
     </StyledSettingsOptionCardContent>
   );

@@ -5,10 +5,17 @@ describe('checkUrlType', () => {
     expect(checkUrlType('https://www.linkedin.com/in/håkan-fisk')).toBe(
       'linkedin',
     );
+    expect(checkUrlType('http://www.linkedin.com/in/håkan-fisk')).toBe(
+      'linkedin',
+    );
+    expect(checkUrlType('https://linkedin.com/in/håkan-fisk')).toBe('linkedin');
+    expect(checkUrlType('http://linkedin.com/in/håkan-fisk')).toBe('linkedin');
+    expect(checkUrlType('linkedin.com/in/håkan-fisk')).toBe('linkedin');
   });
 
   it('should return "twitter", if twitter url', () => {
     expect(checkUrlType('https://www.twitter.com/john-doe')).toBe('twitter');
+    expect(checkUrlType('https://www.x.com/john-doe')).toBe('twitter');
   });
 
   it('should return "url", if neither linkedin nor twitter url', () => {

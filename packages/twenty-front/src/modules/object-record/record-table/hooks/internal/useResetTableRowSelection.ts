@@ -5,7 +5,7 @@ import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionM
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
+import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -18,8 +18,8 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const tableRowIdsState = useRecoilComponentCallbackStateV2(
-    tableRowIdsComponentState,
+  const tableAllRowIdsState = useRecoilComponentCallbackStateV2(
+    tableAllRowIdsComponentState,
     recordTableIdFromContext,
   );
 
@@ -41,9 +41,9 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
   );
 
   return useRecoilCallback(
-    ({ snapshot, set }) =>
+    ({ set, snapshot }) =>
       () => {
-        const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState);
+        const tableRowIds = getSnapshotValue(snapshot, tableAllRowIdsState);
 
         for (const rowId of tableRowIds) {
           set(isRowSelectedFamilyState(rowId), false);
@@ -54,7 +54,7 @@ export const useResetTableRowSelection = (recordTableId?: string) => {
         set(isActionMenuDropdownOpenState, false);
       },
     [
-      tableRowIdsState,
+      tableAllRowIdsState,
       hasUserSelectedAllRowsState,
       isActionMenuDropdownOpenState,
       isRowSelectedFamilyState,

@@ -95,13 +95,13 @@ const StyledHeaderIcon = styled.div`
 
 export const RecordTableHeaderCell = ({
   column,
-  objectMetadataNameSingular,
+  objectNameSingular,
 }: {
   column: ColumnDefinition<FieldMetadata>;
-  objectMetadataNameSingular: string;
+  objectNameSingular: string;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: objectMetadataNameSingular,
+    objectNameSingular,
   });
 
   const resizeFieldOffsetState = useRecoilComponentCallbackStateV2(

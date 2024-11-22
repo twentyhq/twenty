@@ -1,6 +1,7 @@
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { isFieldValueReadOnly } from '@/object-record/record-field/utils/isFieldValueReadOnly';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RightDrawerTitleRecordInlineCell } from '@/object-record/record-right-drawer/components/RightDrawerTitleRecordInlineCell';
@@ -29,7 +30,6 @@ export const SummaryCard = ({
   const {
     recordFromStore,
     recordLoading,
-    objectMetadataItem,
     labelIdentifierFieldMetadataItem,
     isPrefetchLoading,
     recordIdentifier,
@@ -47,7 +47,11 @@ export const SummaryCard = ({
 
   const { Icon, IconColor } = useGetStandardObjectIcon(objectNameSingular);
   const isMobile = useIsMobile() || isInRightDrawer;
-  const isReadOnly = objectMetadataItem.isRemote;
+
+  const isReadOnly = isFieldValueReadOnly({
+    objectNameSingular,
+    isRecordDeleted: recordFromStore?.isDeleted,
+  });
 
   if (isNewRightDrawerItemLoading || !isDefined(recordFromStore)) {
     return <ShowPageSummaryCardSkeletonLoader />;

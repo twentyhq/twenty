@@ -34,7 +34,7 @@ import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/com
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
+import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -143,7 +143,7 @@ export const SettingsNavigationDrawerItems = () => {
               path={navigationItem.path}
               Icon={navigationItem.Icon}
               indentationLevel={navigationItem.indentationLevel}
-              subItemState={getNavigationSubItemState({
+              subItemState={getNavigationSubItemLeftAdornment({
                 arrayLength: accountSubSettings.length,
                 index,
                 selectedIndex,
