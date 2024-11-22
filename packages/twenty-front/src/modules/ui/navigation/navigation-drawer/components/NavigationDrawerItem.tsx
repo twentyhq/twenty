@@ -130,12 +130,16 @@ const StyledLabelParent = styled.span`
   overflow: hidden;
 `;
 
-const StyledItemLabel = styled.span`
+const StyledItemLabel = styled.span<{ hasObjectName: boolean }>`
   font-weight: ${({ theme }) => theme.font.weight.medium};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 12ch;
+  ${({ hasObjectName }) =>
+    hasObjectName &&
+    `
+    max-width: 12ch;
+  `}
 `;
 
 const StyledItemObjectName = styled.span`
@@ -275,7 +279,9 @@ export const NavigationDrawerItem = ({
           )}
 
           <StyledLabelParent>
-            <StyledItemLabel>{label}</StyledItemLabel>
+            <StyledItemLabel hasObjectName={!!objectName}>
+              {label}
+            </StyledItemLabel>
             {objectName ? (
               <StyledItemObjectName>
                 {' · '}
