@@ -1,15 +1,16 @@
 import { Column, Row } from '@react-email/components';
-
 import { Link } from 'src/components/Link';
 import { MainText } from 'src/components/MainText';
 import { ShadowText } from 'src/components/ShadowText';
 import { SubTitle } from 'src/components/SubTitle';
-
 export const WhatIsTwenty = () => {
   return (
     <>
       <SubTitle value="What is Twenty?" />
-      <MainText>Twenty is a user friendly open source CRM.</MainText>
+      <MainText>
+        It's a CRM, a software to help businesses manage their customer data and
+        relationships efficiently.
+      </MainText>
       <Row>
         <Column>
           <ShadowText>
@@ -33,9 +34,11 @@ export const WhatIsTwenty = () => {
         </Column>
       </Row>
       <ShadowText>
-        Twenty PBC, 415 Mission Street
+        Twenty.com Public Benefit Corporation
         <br />
-        San Francisco, CA 94105
+        2261 Market Street #5275
+        <br />
+        San Francisco, CA 94114
       </ShadowText>
     </>
   );
