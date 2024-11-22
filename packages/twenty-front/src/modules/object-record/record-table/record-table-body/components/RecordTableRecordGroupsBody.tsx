@@ -36,6 +36,7 @@ export const RecordTableRecordGroupsBody = ({
         <RecordTablePendingRow />
         {visibleRecordGroups.map((recordGroupDefinition) => (
           <RecordGroupContext.Provider
+            key={recordGroupDefinition.id}
             value={{ recordGroupId: recordGroupDefinition.id }}
           >
             <RecordTableRecordGroupRows />

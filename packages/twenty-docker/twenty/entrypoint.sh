@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 # Check if the initialization has already been done and that we enabled automatic migration
 if [ "${ENABLE_DB_MIGRATIONS}" = "true" ] && [ ! -f /app/docker-data/db_status ]; then

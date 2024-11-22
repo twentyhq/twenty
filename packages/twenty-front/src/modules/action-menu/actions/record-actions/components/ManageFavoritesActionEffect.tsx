@@ -1,4 +1,8 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
+import {
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
@@ -23,11 +27,11 @@ export const ManageFavoritesActionEffect = ({
     contextStoreTargetedRecordsRuleComponentState,
   );
 
-  const favorites = useFavorites();
+  const { sortedFavorites: favorites } = useFavorites();
 
-  const createFavorite = useCreateFavorite();
+  const { createFavorite } = useCreateFavorite();
 
-  const deleteFavorite = useDeleteFavorite();
+  const { deleteFavorite } = useDeleteFavorite();
 
   const selectedRecordId =
     contextStoreTargetedRecordsRule.mode === 'selection'
@@ -50,7 +54,8 @@ export const ManageFavoritesActionEffect = ({
     }
 
     addActionMenuEntry({
-      type: 'standard',
+      type: ActionMenuEntryType.Standard,
+      scope: ActionMenuEntryScope.RecordSelection,
       key: 'manage-favorites',
       label: isFavorite ? 'Remove from favorites' : 'Add to favorites',
       position,

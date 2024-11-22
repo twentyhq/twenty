@@ -1,7 +1,5 @@
 import { OpenAPIV3_1 } from 'openapi-types';
 
-import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
-
 import {
   computeDepthParameters,
   computeEndingBeforeParameters,
@@ -11,7 +9,6 @@ import {
   computeOrderByParameters,
   computeStartingAfterParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
-import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
@@ -41,18 +38,8 @@ const isFieldAvailable = (field: FieldMetadataEntity, forResponse: boolean) => {
   }
 };
 
-const getFieldProperties = (
-  type: FieldMetadataType,
-  propertyName?: string,
-  options?: FieldMetadataOptions,
-): Property => {
+const getFieldProperties = (type: FieldMetadataType): Property => {
   switch (type) {
-    case FieldMetadataType.SELECT:
-    case FieldMetadataType.MULTI_SELECT:
-      return {
-        type: 'string',
-        enum: options?.map((option: { value: string }) => option.value),
-      };
     case FieldMetadataType.UUID:
       return { type: 'string', format: 'uuid' };
     case FieldMetadataType.TEXT:
@@ -64,31 +51,12 @@ const getFieldProperties = (
       return { type: 'string', format: 'date' };
     case FieldMetadataType.NUMBER:
       return { type: 'integer' };
-    case FieldMetadataType.RATING:
-      return {
-        type: 'string',
-        enum: options?.map((option: { value: string }) => option.value),
-      };
     case FieldMetadataType.NUMERIC:
     case FieldMetadataType.POSITION:
       return { type: 'number' };
     case FieldMetadataType.BOOLEAN:
       return { type: 'boolean' };
     case FieldMetadataType.RAW_JSON:
-      if (propertyName === 'secondaryLinks') {
-        return {
-          type: 'array',
-          items: {
-            type: 'object',
-            description: `A secondary link`,
-            properties: {
-              url: { type: 'string' },
-              label: { type: 'string' },
-            },
-          },
-        };
-      }
-
       return { type: 'object' };
 
     default:
@@ -147,32 +115,155 @@ const getSchemaComponentsProperties = ({
         };
         break;
       case FieldMetadataType.LINKS:
-      case FieldMetadataType.CURRENCY:
-      case FieldMetadataType.FULL_NAME:
-      case FieldMetadataType.ADDRESS:
-      case FieldMetadataType.ACTOR:
-      case FieldMetadataType.EMAILS:
-      case FieldMetadataType.PHONES:
         itemProperty = {
           type: 'object',
-          properties: compositeTypeDefinitions
-            .get(field.type)
-            ?.properties?.reduce((properties, property) => {
-              if (
-                property.hidden === true ||
-                (property.hidden === 'input' && !forResponse) ||
-                (property.hidden === 'output' && forResponse)
-              ) {
-                return properties;
-              }
-              properties[property.name] = getFieldProperties(
-                property.type,
-                property.name,
-                property.options,
-              );
-
-              return properties;
-            }, {} as Properties),
+          properties: {
+            primaryLinkLabel: {
+              type: 'string',
+            },
+            primaryLinkUrl: {
+              type: 'string',
+            },
+            secondaryLinks: {
+              type: 'array',
+              items: {
+                type: 'object',
+                description: 'A secondary link',
+                properties: {
+                  url: {
+                    type: 'string',
+                    format: 'uri',
+                  },
+                  label: {
+                    type: 'string',
+                  },
+                },
+              },
+            },
+          },
+        };
+        break;
+      case FieldMetadataType.CURRENCY:
+        itemProperty = {
+          type: 'object',
+          properties: {
+            amountMicros: {
+              type: 'number',
+            },
+            currencyCode: {
+              type: 'string',
+            },
+          },
+        };
+        break;
+      case FieldMetadataType.FULL_NAME:
+        itemProperty = {
+          type: 'object',
+          properties: {
+            firstName: {
+              type: 'string',
+            },
+            lastName: {
+              type: 'string',
+            },
+          },
+        };
+        break;
+      case FieldMetadataType.ADDRESS:
+        itemProperty = {
+          type: 'object',
+          properties: {
+            addressStreet1: {
+              type: 'string',
+            },
+            addressStreet2: {
+              type: 'string',
+            },
+            addressCity: {
+              type: 'string',
+            },
+            addressPostcode: {
+              type: 'string',
+            },
+            addressState: {
+              type: 'string',
+            },
+            addressCountry: {
+              type: 'string',
+            },
+            addressLat: {
+              type: 'number',
+            },
+            addressLng: {
+              type: 'number',
+            },
+          },
+        };
+        break;
+      case FieldMetadataType.ACTOR:
+        itemProperty = {
+          type: 'object',
+          properties: {
+            source: {
+              type: 'string',
+              enum: [
+                'EMAIL',
+                'CALENDAR',
+                'WORKFLOW',
+                'API',
+                'IMPORT',
+                'MANUAL',
+                'SYSTEM',
+              ],
+            },
+            ...(forResponse
+              ? {
+                  workspaceMemberId: {
+                    type: 'string',
+                    format: 'uuid',
+                  },
+                  name: {
+                    type: 'string',
+                  },
+                }
+              : {}),
+          },
+        };
+        break;
+      case FieldMetadataType.EMAILS:
+        itemProperty = {
+          type: 'object',
+          properties: {
+            primaryEmail: {
+              type: 'string',
+            },
+            additionalEmails: {
+              type: 'array',
+              items: {
+                type: 'string',
+                format: 'email',
+              },
+            },
+          },
+        };
+        break;
+      case FieldMetadataType.PHONES:
+        itemProperty = {
+          properties: {
+            additionalPhones: {
+              type: 'array',
+              items: {
+                type: 'string',
+              },
+            },
+            primaryPhoneCountryCode: {
+              type: 'string',
+            },
+            primaryPhoneNumber: {
+              type: 'string',
+            },
+          },
+          type: 'object',
         };
         break;
       default:
@@ -401,22 +492,59 @@ export const computeMetadataSchemaComponents = (
           return schemas;
         }
         case 'field': {
-          schemas[`${capitalize(item.nameSingular)}`] = {
+          const baseFieldProperties = ({
+            withImmutableFields,
+            withRequiredFields,
+          }: {
+            withImmutableFields: boolean;
+            withRequiredFields: boolean;
+          }): OpenAPIV3_1.SchemaObject => ({
             type: 'object',
             description: `A field`,
             properties: {
-              type: {
-                type: 'string',
-                enum: Object.keys(FieldMetadataType),
-              },
+              ...(withImmutableFields
+                ? {
+                    type: {
+                      type: 'string',
+                      enum: Object.keys(FieldMetadataType),
+                    },
+                    objectMetadataId: { type: 'string', format: 'uuid' },
+                  }
+                : {}),
               name: { type: 'string' },
               label: { type: 'string' },
               description: { type: 'string' },
               icon: { type: 'string' },
+              defaultValue: {},
               isNullable: { type: 'boolean' },
-              objectMetadataId: { type: 'string', format: 'uuid' },
+              settings: { type: 'object' },
+              options: {
+                type: 'array',
+                description: 'For enum field types like SELECT or MULTI_SELECT',
+                items: {
+                  type: 'object',
+                  properties: {
+                    color: { type: 'string' },
+                    label: { type: 'string' },
+                    value: {
+                      type: 'string',
+                      pattern: '^[A-Z0-9]+_[A-Z0-9]+$',
+                      example: 'OPTION_1',
+                    },
+                    position: { type: 'number' },
+                  },
+                },
+              },
             },
-          };
+            ...(withRequiredFields
+              ? { required: ['type', 'name', 'label', 'objectMetadataId'] }
+              : {}),
+          });
+
+          schemas[`${capitalize(item.nameSingular)}`] = baseFieldProperties({
+            withImmutableFields: true,
+            withRequiredFields: true,
+          });
           schemas[`${capitalize(item.namePlural)}`] = {
             type: 'array',
             description: `A list of ${item.namePlural}`,
@@ -424,38 +552,22 @@ export const computeMetadataSchemaComponents = (
               $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
             },
           };
-          schemas[`${capitalize(item.nameSingular)} for Update`] = {
-            type: 'object',
-            description: `An object`,
-            properties: {
-              description: { type: 'string' },
-              icon: { type: 'string' },
-              isActive: { type: 'boolean' },
-              isCustom: { type: 'boolean' },
-              isNullable: { type: 'boolean' },
-              isSystem: { type: 'boolean' },
-              label: { type: 'string' },
-              name: { type: 'string' },
-            },
-          };
+          schemas[`${capitalize(item.nameSingular)} for Update`] =
+            baseFieldProperties({
+              withImmutableFields: false,
+              withRequiredFields: false,
+            });
           schemas[`${capitalize(item.nameSingular)} for Response`] = {
-            ...schemas[`${capitalize(item.nameSingular)}`],
+            ...baseFieldProperties({
+              withImmutableFields: true,
+              withRequiredFields: false,
+            }),
             properties: {
-              type: {
-                type: 'string',
-                enum: Object.keys(FieldMetadataType),
-              },
-              name: { type: 'string' },
-              label: { type: 'string' },
-              description: { type: 'string' },
-              icon: { type: 'string' },
-              isNullable: { type: 'boolean' },
+              ...schemas[`${capitalize(item.nameSingular)}`].properties,
               id: { type: 'string', format: 'uuid' },
               isCustom: { type: 'boolean' },
               isActive: { type: 'boolean' },
               isSystem: { type: 'boolean' },
-              defaultValue: { type: 'object' },
-              options: { type: 'object' },
               createdAt: { type: 'string', format: 'date-time' },
               updatedAt: { type: 'string', format: 'date-time' },
               fromRelationMetadata: {

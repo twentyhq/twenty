@@ -4,8 +4,8 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   IconFolderPlus,
   IconHeartOff,
-  isDefined,
   LightIconButton,
+  isDefined,
 } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -32,9 +32,9 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const currentViewPath = useLocation().pathname + useLocation().search;
   const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-  const favorites = useFavorites();
-  const deleteFavorite = useDeleteFavorite();
-  const handleReorderFavorite = useReorderFavorite();
+  const { sortedFavorites: favorites } = useFavorites();
+  const { deleteFavorite } = useDeleteFavorite();
+  const { handleReorderFavorite } = useReorderFavorite();
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
     useRecoilState(isFavoriteFolderCreatingState);
 
@@ -50,24 +50,25 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const toggleNewFolder = () => {
     setIsFavoriteFolderCreating((current) => !current);
   };
+  const shouldDisplayFavoritesWithFeatureFlagEnabled = true;
+
+  //todo: remove this logic once feature flag gating is removed
+  const shouldDisplayFavoritesWithoutFeatureFlagEnabled =
+    favorites.length > 0 || isFavoriteFolderCreating;
+
+  const shouldDisplayFavorites = isFavoriteFolderEnabled
+    ? shouldDisplayFavoritesWithFeatureFlagEnabled
+    : shouldDisplayFavoritesWithoutFeatureFlagEnabled;
 
   if (loading && isDefined(currentWorkspaceMember)) {
     return <FavoritesSkeletonLoader />;
   }
 
-  const currentWorkspaceMemberFavorites = favorites.filter(
-    (favorite) => favorite.workspaceMemberId === currentWorkspaceMember?.id,
-  );
-
-  const orphanFavorites = currentWorkspaceMemberFavorites.filter(
+  const orphanFavorites = favorites.filter(
     (favorite) => !favorite.favoriteFolderId,
   );
 
-  if (
-    (!currentWorkspaceMemberFavorites ||
-      currentWorkspaceMemberFavorites.length === 0) &&
-    !isFavoriteFolderCreating
-  ) {
+  if (!shouldDisplayFavorites) {
     return null;
   }
 
@@ -104,6 +105,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
                   key={favorite.id}
                   draggableId={favorite.id}
                   index={index}
+                  isInsideScrollableContainer={true}
                   itemComponent={
                     <NavigationDrawerItem
                       key={favorite.id}

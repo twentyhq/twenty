@@ -30,7 +30,7 @@ export const RecordIndexBoardDataLoaderEffect = ({
     recordIndexFieldDefinitionsState,
   );
 
-  const recordIndexGroupDefinitions = useRecoilComponentValueV2(
+  const recordGroupDefinitions = useRecoilComponentValueV2(
     recordGroupDefinitionsComponentState,
   );
 
@@ -67,8 +67,8 @@ export const RecordIndexBoardDataLoaderEffect = ({
   }, [objectNameSingular, setObjectSingularName]);
 
   useEffect(() => {
-    setColumns(recordIndexGroupDefinitions);
-  }, [recordIndexGroupDefinitions, setColumns]);
+    setColumns(recordGroupDefinitions);
+  }, [recordGroupDefinitions, setColumns]);
 
   // TODO: Remove this duplicate useEffect by ensuring it's not here because
   // We want it to be triggered by a change of objectMetadataItem, which would be an anti-pattern

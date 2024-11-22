@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
+// TODO: Remove this component once we merge it with PrefetchRunQueriesEffect (once we remove feature flag)
 export const PrefetchFavoriteFoldersRunQueriesEffect = () => {
   const currentUser = useRecoilValue(currentUserState);
 
@@ -19,7 +20,6 @@ export const PrefetchFavoriteFoldersRunQueriesEffect = () => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  // Only include favorite folders operation
   const operationSignatures = Object.values(PREFETCH_CONFIG)
     .filter(({ objectNameSingular }) => objectNameSingular === 'favoriteFolder')
     .map(({ objectNameSingular, operationSignatureFactory }) => {

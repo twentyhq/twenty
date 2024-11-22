@@ -10,12 +10,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
-import {
-  useRecoilCallback,
-  useRecoilState,
-  useRecoilValue,
-  useSetRecoilState,
-} from 'recoil';
+import { useRecoilCallback, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { isDefined } from '~/utils/isDefined';
 
@@ -24,8 +19,8 @@ import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerHotkeyScope } from '../types/RightDrawerHotkeyScope';
 
-import { emitRightDrawerCloseEvent } from '@/ui/layout/right-drawer/utils/emitRightDrawerCloseEvent';
 import { RightDrawerRouter } from './RightDrawerRouter';
+import { workflowReactFlowRefState } from '@/workflow/states/workflowReactFlowRefState';
 
 const StyledContainer = styled(motion.div)<{ isRightDrawerMinimized: boolean }>`
   background: ${({ theme }) => theme.background.primary};
@@ -94,9 +89,7 @@ export const RightDrawer = () => {
 
   type RightDrawerAnimationVariant = keyof typeof animationVariants;
 
-  const [isRightDrawerOpen, setIsRightDrawerOpen] = useRecoilState(
-    isRightDrawerOpenState,
-  );
+  const isRightDrawerOpen = useRecoilValue(isRightDrawerOpenState);
 
   const isRightDrawerMinimized = useRecoilValue(isRightDrawerMinimizedState);
 
@@ -109,13 +102,17 @@ export const RightDrawer = () => {
   const { closeRightDrawer } = useRightDrawer();
 
   const rightDrawerRef = useRef<HTMLDivElement>(null);
+  const workflowReactFlowRef = useRecoilValue(workflowReactFlowRefState);
 
   const { useListenClickOutside } = useClickOutsideListener(
     RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
   );
 
   useListenClickOutside({
-    refs: [rightDrawerRef],
+    refs: [
+      rightDrawerRef,
+      ...(workflowReactFlowRef ? [workflowReactFlowRef] : []),
+    ],
     callback: useRecoilCallback(
       ({ snapshot, set }) =>
         (event) => {
@@ -128,7 +125,6 @@ export const RightDrawer = () => {
 
           if (isRightDrawerOpen && !isRightDrawerMinimized) {
             set(rightDrawerCloseEventState, event);
-            emitRightDrawerCloseEvent();
 
             closeRightDrawer();
           }
@@ -141,10 +137,12 @@ export const RightDrawer = () => {
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      closeRightDrawer();
+      if (isRightDrawerOpen && !isRightDrawerMinimized) {
+        closeRightDrawer();
+      }
     },
     RightDrawerHotkeyScope.RightDrawer,
-    [setIsRightDrawerOpen],
+    [isRightDrawerOpen, isRightDrawerMinimized],
   );
 
   const isMobile = useIsMobile();

@@ -28,12 +28,7 @@ export const ObjectFilterDropdownFilterInput = ({
   const {
     filterDefinitionUsedInDropdownState,
     selectedOperandInDropdownState,
-    isObjectFilterDropdownOperandSelectUnfoldedState,
   } = useFilterDropdown({ filterDropdownId });
-
-  const isObjectFilterDropdownOperandSelectUnfolded = useRecoilValue(
-    isObjectFilterDropdownOperandSelectUnfoldedState,
-  );
 
   const filterDefinitionUsedInDropdown = useRecoilValue(
     filterDefinitionUsedInDropdownState,
@@ -58,9 +53,7 @@ export const ObjectFilterDropdownFilterInput = ({
       ViewFilterOperand.IsRelative,
     ].includes(selectedOperandInDropdown);
 
-  const shouldHide = isObjectFilterDropdownOperandSelectUnfolded;
-
-  if (shouldHide || !isDefined(filterDefinitionUsedInDropdown)) {
+  if (!isDefined(filterDefinitionUsedInDropdown)) {
     return null;
   }
 
@@ -84,6 +77,7 @@ export const ObjectFilterDropdownFilterInput = ({
           {filterDefinitionUsedInDropdown.type === 'RELATION' && (
             <>
               <ObjectFilterDropdownSearchInput />
+              <DropdownMenuSeparator />
               <ObjectFilterDropdownRecordSelect />
             </>
           )}
@@ -98,6 +92,7 @@ export const ObjectFilterDropdownFilterInput = ({
           ) && (
             <>
               <ObjectFilterDropdownSearchInput />
+              <DropdownMenuSeparator />
               <ObjectFilterDropdownOptionSelect />
             </>
           )}

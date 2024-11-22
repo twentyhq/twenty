@@ -38,7 +38,7 @@ describe('useDeleteFavorite', () => {
       { wrapper: Wrapper },
     );
 
-    result.current(favoriteId);
+    result.current.deleteFavorite(favoriteId);
 
     await waitFor(() => {
       expect(mocks[1].result).toHaveBeenCalled();

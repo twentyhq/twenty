@@ -28,5 +28,5 @@ export const useCreateFavoriteFolder = () => {
     });
   };
 
-  return createNewFavoriteFolder;
+  return { createNewFavoriteFolder };
 };

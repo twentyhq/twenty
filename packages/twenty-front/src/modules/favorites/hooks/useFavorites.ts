@@ -52,5 +52,5 @@ export const useFavorites = () => {
     ],
   );
 
-  return sortedFavorites;
+  return { sortedFavorites };
 };

@@ -112,6 +112,21 @@ yarn command:prod upgrade-0.32
 The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
 The `yarn command:prod upgrade-0.32` takes care of the data migration of all workspaces.
 
+## v0.32.0 to v0.33.0
+
+Upgrade your Twenty instance to use v0.33.0 image
+
+**Schema and data migration**:
+```
+yarn command:prod cache:flush
+yarn database:migrate:prod
+yarn command:prod upgrade-0.33
+```
+
+The `yarn command:prod cache:flush` command will flush the Redis cache.
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.33` takes care of the data migration of all workspaces.
+
 ### Environment Variables
 
 We have updated the way we handle the Redis connection.

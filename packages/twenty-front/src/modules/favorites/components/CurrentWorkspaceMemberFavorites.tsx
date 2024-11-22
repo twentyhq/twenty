@@ -61,9 +61,9 @@ export const CurrentWorkspaceMemberFavorites = ({
   const selectedFavoriteIndex = folder.favorites.findIndex((favorite) =>
     isLocationMatchingFavorite(currentPath, currentViewPath, favorite),
   );
-  const handleReorderFavorite = useReorderFavorite();
+  const { handleReorderFavorite } = useReorderFavorite();
 
-  const deleteFavorite = useDeleteFavorite();
+  const { deleteFavorite } = useDeleteFavorite();
 
   const favoriteFolderContentLength = folder.favorites.length;
 
@@ -154,6 +154,7 @@ export const CurrentWorkspaceMemberFavorites = ({
                     key={favorite.id}
                     draggableId={favorite.id}
                     index={index}
+                    isInsideScrollableContainer
                     itemComponent={
                       <NavigationDrawerSubItem
                         key={favorite.id}
