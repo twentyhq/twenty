@@ -61,10 +61,7 @@ export class SwitchWorkspaceService {
       );
     }
 
-    await this.userRepository.save({
-      id: user.id,
-      defaultWorkspace: workspace,
-    });
+    await this.userService.saveDefaultWorkspace(user.id, workspace.id);
 
     return {
       id: workspace.id,

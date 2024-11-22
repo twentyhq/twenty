@@ -5,19 +5,16 @@ import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/avail
 @ObjectType()
 export class UserExists {
   @Field(() => Boolean)
-  exists: boolean;
+  exists: true;
 
-  @Field(() => [AvailableWorkspaceOutput], { nullable: true })
-  availableWorkspaces?: Array<AvailableWorkspaceOutput>;
+  @Field(() => [AvailableWorkspaceOutput])
+  availableWorkspaces: Array<AvailableWorkspaceOutput>;
 }
 
 @ObjectType()
-class UserNotExists {
+export class UserNotExists {
   @Field(() => Boolean)
-  exists: boolean;
-
-  @Field(() => [AvailableWorkspaceOutput], { nullable: true })
-  availableWorkspaces?: Array<AvailableWorkspaceOutput>;
+  exists: false;
 }
 
 export const UserExistsOutput = createUnionType({

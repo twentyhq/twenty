@@ -1,6 +1,10 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  IdentityProviderType,
+  SSOIdentityProviderStatus,
+} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 @ObjectType()
 export class SSOIdentityProvider {
@@ -10,11 +14,11 @@ export class SSOIdentityProvider {
   @Field(() => String)
   name: string;
 
-  @Field(() => String)
-  type: string;
+  @Field(() => IdentityProviderType)
+  type: IdentityProviderType;
 
-  @Field(() => String)
-  status: string;
+  @Field(() => SSOIdentityProviderStatus)
+  status: SSOIdentityProviderStatus;
 
   @Field(() => String)
   issuer: string;

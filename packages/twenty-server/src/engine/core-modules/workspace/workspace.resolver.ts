@@ -38,6 +38,7 @@ import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dto
 import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Resolver(() => Workspace)
 export class WorkspaceResolver {
@@ -156,12 +157,13 @@ export class WorkspaceResolver {
   async getPublicWorkspaceDataBySubdomain() {
     const workspace = await this.workspaceService.getWorkspaceByOrigin();
 
-    if (!workspace) {
-      return new WorkspaceException(
+    workspaceValidator.assertIsExist(
+      workspace,
+      new WorkspaceException(
         'Workspace not found',
         WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
+      ),
+    );
 
     return {
       id: workspace.id,

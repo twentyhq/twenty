@@ -18,6 +18,11 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class UserService extends TypeOrmQueryService<User> {
@@ -133,7 +138,7 @@ export class UserService extends TypeOrmQueryService<User> {
   }
 
   async saveDefaultWorkspace(userId: string, workspaceId: string) {
-    const exist = await this.userRepository.exists({
+    const user = await this.userRepository.findOne({
       where: {
         id: userId,
         workspaces: {
@@ -143,9 +148,13 @@ export class UserService extends TypeOrmQueryService<User> {
       relations: ['workspaces'],
     });
 
-    if (!exist) {
-      throw new Error('User does not have access to this workspace');
-    }
+    userValidator.assertIsExist(
+      user,
+      new AuthException(
+        'User does not have access to this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      ),
+    );
 
     return await this.userRepository.save({
       id: userId,

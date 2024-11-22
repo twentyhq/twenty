@@ -15,7 +15,7 @@ export const useWorkspaceSwitching = () => {
     if (currentWorkspace?.id === workspaceId) return;
 
     if (!isMultiWorkspaceEnabled) {
-      enqueueSnackBar(
+      return enqueueSnackBar(
         'Switching workspace is not available in single workspace mode',
         {
           variant: SnackBarVariant.Error,

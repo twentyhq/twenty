@@ -1,3 +1,5 @@
+import { isDefined } from 'src/utils/is-defined';
+
 export const buildWorkspaceURL = (
   baseUrl: string,
   subdomain: string | null,
@@ -11,7 +13,9 @@ export const buildWorkspaceURL = (
 ) => {
   const url = new URL(baseUrl);
 
-  url.hostname = subdomain ? `${subdomain}.${url.hostname}` : url.hostname;
+  if (subdomain && subdomain.length > 0) {
+    url.hostname = subdomain + '.' + url.hostname;
+  }
 
   if (withPathname) {
     url.pathname = withPathname;
@@ -19,7 +23,9 @@ export const buildWorkspaceURL = (
 
   if (withSearchParams) {
     Object.entries(withSearchParams).forEach(([key, value]) => {
-      url.searchParams.set(key, value.toString());
+      if (isDefined(value)) {
+        url.searchParams.set(key, value.toString());
+      }
     });
   }
 

@@ -47,18 +47,6 @@ const StyledForm = styled.form`
   width: 100%;
 `;
 
-export const validationSchema = z
-  .object({
-    exist: z.boolean(),
-    email: z.string().trim().email('Email must be a valid email'),
-    password: z
-      .string()
-      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters')
-      .optional(),
-    captchaToken: z.string().default(''),
-  })
-  .required();
-
 export const SignInUpGlobalScopeForm = () => {
   const theme = useTheme();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
@@ -98,6 +86,11 @@ export const SignInUpGlobalScopeForm = () => {
         email: form.getValues('email'),
         captchaToken: token,
       },
+      onError: (error) => {
+        enqueueSnackBar(`${error.message}`, {
+          variant: SnackBarVariant.Error,
+        });
+      },
       onCompleted: (data) => {
         requestFreshCaptchaToken();
         if (
@@ -117,7 +110,7 @@ export const SignInUpGlobalScopeForm = () => {
           }
         }
         if (
-          data?.checkUserExists.exists &&
+          isDefined(data?.checkUserExists.exists) &&
           data.checkUserExists.__typename === 'UserNotExists'
         ) {
           if (!isMultiWorkspaceEnabled) {

@@ -30,7 +30,11 @@ export const buildWorkspaceUrl = (
 ) => {
   const url = new URL(window.location.href);
 
-  if (isTwentyHosting && Boolean(withSubdomain)) {
+  if (
+    isTwentyHosting &&
+    isDefined(withSubdomain) &&
+    withSubdomain.length !== 0
+  ) {
     url.hostname = `${withSubdomain}.${twentyHostname}`;
   }
 

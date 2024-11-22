@@ -4,7 +4,7 @@ import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import styled from '@emotion/styled';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { ActionLink, HorizontalSeparator } from 'twenty-ui';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/SignInUpWithGoogle';
@@ -25,7 +25,7 @@ export const SignInUpWorkspaceScopeForm = () => {
 
   const { signInUpStep, continueWithEmail } = useSignInUp(form);
 
-  useCallback(() => {
+  const checkAuthProviders = useCallback(() => {
     if (
       signInUpStep === SignInUpStep.Init &&
       !authProviders.google &&
@@ -35,6 +35,10 @@ export const SignInUpWorkspaceScopeForm = () => {
       continueWithEmail();
     }
   }, [authProviders, continueWithEmail, signInUpStep]);
+
+  useEffect(() => {
+    checkAuthProviders();
+  }, [checkAuthProviders]);
 
   return (
     <>

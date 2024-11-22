@@ -33,6 +33,11 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SwitchWorkspaceInput } from 'src/engine/core-modules/auth/dto/switch-workspace.input';
 import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { ImpersonateInput } from './dto/impersonate.input';
@@ -67,21 +72,7 @@ export class AuthResolver {
   async checkUserExists(
     @Args() checkUserExistsInput: CheckUserExistsInput,
   ): Promise<typeof UserExistsOutput> {
-    const { exists } = await this.authService.checkUserExists(
-      checkUserExistsInput.email,
-    );
-
-    return {
-      exists,
-      ...(exists
-        ? {
-            availableWorkspaces:
-              await this.authService.findAvailableWorkspacesByEmail(
-                checkUserExistsInput.email,
-              ),
-          }
-        : {}),
-    };
+    return await this.authService.checkUserExists(checkUserExistsInput.email);
   }
 
   @Query(() => WorkspaceInviteHashValid)
@@ -119,6 +110,13 @@ export class AuthResolver {
     const user = await this.authService.signInUp({
       ...signUpInput,
       fromSSO: false,
+      isAuthEnabled: workspaceValidator.isAuthEnabled(
+        'password',
+        new AuthException(
+          'Password auth is not enabled for this workspace',
+          AuthExceptionCode.OAUTH_ACCESS_DENIED,
+        ),
+      ),
     });
 
     const loginToken = await this.loginTokenService.generateLoginToken(

@@ -53,15 +53,14 @@ export const SettingsSecurityOptionsList = () => {
       throw new Error('Invalid auth provider');
     }
 
-    if (
-      isDefined(SSOIdentitiesProviders) &&
-      SSOIdentitiesProviders.length === 0 &&
-      currentWorkspace[key] &&
-      Object.entries(currentWorkspace).filter(
-        ([key, value]) =>
-          key.startsWith('is') && key.endsWith('AuthEnabled') && value,
-      ).length <= 1
-    ) {
+    const allAuthProvidersEnabled = [
+      ...Object.entries(currentWorkspace).filter(
+        ([k, v]) => k.startsWith('is') && k.endsWith('AuthEnabled') && v,
+      ),
+      ...((SSOIdentitiesProviders?.length ?? 0) > 0 ? [{ sso: true }] : []),
+    ];
+
+    if (currentWorkspace[key] === true && allAuthProvidersEnabled.length <= 1) {
       return enqueueSnackBar(
         'At least one authentication method must be enabled',
         {
@@ -81,11 +80,14 @@ export const SettingsSecurityOptionsList = () => {
           [key]: !currentWorkspace[key],
         },
       },
-    }).catch(() => {
+    }).catch((err) => {
       // rollback optimistic update if err
       setCurrentWorkspace({
         ...currentWorkspace,
         [key]: !currentWorkspace[key],
+      });
+      enqueueSnackBar(err?.message, {
+        variant: SnackBarVariant.Error,
       });
     });
   };
@@ -122,7 +124,7 @@ export const SettingsSecurityOptionsList = () => {
               Icon={IconGoogle}
               title="Google"
               description="Allow logins through Google's single sign-on functionality."
-              checked={currentWorkspace?.isGoogleAuthEnabled}
+              checked={currentWorkspace.isGoogleAuthEnabled}
               advancedMode
               onChange={() => toggleAuthMethod('google')}
             />
@@ -130,7 +132,7 @@ export const SettingsSecurityOptionsList = () => {
               Icon={IconMicrosoft}
               title="Microsoft"
               description="Allow logins through Microsoft's single sign-on functionality."
-              checked={currentWorkspace?.isMicrosoftAuthEnabled}
+              checked={currentWorkspace.isMicrosoftAuthEnabled}
               advancedMode
               onChange={() => toggleAuthMethod('microsoft')}
             />
@@ -138,7 +140,7 @@ export const SettingsSecurityOptionsList = () => {
               Icon={IconPassword}
               title="Password"
               description="Allow users to sign in with an email and password."
-              checked={currentWorkspace?.isPasswordAuthEnabled}
+              checked={currentWorkspace.isPasswordAuthEnabled}
               advancedMode
               onChange={() => toggleAuthMethod('password')}
             />

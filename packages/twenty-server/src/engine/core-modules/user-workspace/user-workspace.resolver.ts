@@ -45,7 +45,6 @@ export class UserWorkspaceResolver {
     return await this.userWorkspaceService.addUserToWorkspace(user, workspace);
   }
 
-  // This mutation should be used only on a instance without subdomains
   @Mutation(() => User)
   async addUserToWorkspaceByInviteToken(
     @AuthUser() user: User,

@@ -26,6 +26,7 @@ export const SignInUpSSOIdentityProviderSelection = () => {
           authProviders?.sso.map((idp) => (
             <>
               <MainButton
+                key={idp.id}
                 title={idp.name}
                 onClick={() => redirectToSSOLoginPage(idp.id)}
                 Icon={guessSSOIdentityProviderIconByUrl(idp.issuer)}

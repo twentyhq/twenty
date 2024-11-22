@@ -104,7 +104,7 @@ export type AvailableWorkspaceOutput = {
   displayName?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   logo?: Maybe<Scalars['String']>;
-  sso?: Maybe<Array<SsoConnection>>;
+  sso: Array<SsoConnection>;
 };
 
 export type Billing = {
@@ -1261,7 +1261,7 @@ export type UserEdge = {
 
 export type UserExists = {
   __typename?: 'UserExists';
-  availableWorkspaces?: Maybe<Array<AvailableWorkspaceOutput>>;
+  availableWorkspaces: Array<AvailableWorkspaceOutput>;
   exists: Scalars['Boolean'];
 };
 
@@ -1274,7 +1274,6 @@ export type UserMappingOptionsUser = {
 
 export type UserNotExists = {
   __typename?: 'UserNotExists';
-  availableWorkspaces?: Maybe<Array<AvailableWorkspaceOutput>>;
   exists: Scalars['Boolean'];
 };
 
@@ -1763,7 +1762,7 @@ export type CheckUserExistsQueryVariables = Exact<{
 }>;
 
 
-export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename: 'UserExists', exists: boolean, availableWorkspaces?: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, logo?: string | null, sso?: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> | null }> | null } | { __typename: 'UserNotExists', exists: boolean } };
+export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename: 'UserExists', exists: boolean, availableWorkspaces: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, logo?: string | null, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } | { __typename: 'UserNotExists', exists: boolean } };
 
 export type GetPublicWorkspaceDataBySubdomainQueryVariables = Exact<{ [key: string]: never; }>;
 

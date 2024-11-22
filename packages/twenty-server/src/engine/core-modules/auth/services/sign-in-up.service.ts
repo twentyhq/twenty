@@ -28,7 +28,8 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -39,6 +40,7 @@ export type SignInUpServiceInput = {
   workspacePersonalInviteToken?: string | null;
   picture?: string | null;
   fromSSO: boolean;
+  isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
 };
 
 @Injectable()
@@ -48,8 +50,6 @@ export class SignInUpService {
     private readonly fileUploadService: FileUploadService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
-    @InjectRepository(AppToken, 'core')
-    private readonly appTokenRepository: Repository<AppToken>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     private readonly userWorkspaceService: UserWorkspaceService,
@@ -67,6 +67,7 @@ export class SignInUpService {
     lastName,
     picture,
     fromSSO,
+    isAuthEnabled,
   }: SignInUpServiceInput) {
     if (!firstName) firstName = '';
     if (!lastName) lastName = '';
@@ -122,6 +123,7 @@ export class SignInUpService {
         lastName,
         picture,
         existingUser,
+        isAuthEnabled,
       });
     }
     if (!existingUser) {
@@ -146,6 +148,7 @@ export class SignInUpService {
     lastName,
     picture,
     existingUser,
+    isAuthEnabled,
   }: {
     email: string;
     passwordHash: string | undefined;
@@ -155,6 +158,7 @@ export class SignInUpService {
     lastName: string;
     picture: SignInUpServiceInput['picture'];
     existingUser: User | null;
+    isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
   }) {
     const isNewUser = !isDefined(existingUser);
     let user = existingUser;
@@ -165,19 +169,24 @@ export class SignInUpService {
       email,
     });
 
-    if (!workspace) {
-      throw new AuthException(
+    workspaceValidator.assertIsExist(
+      workspace,
+      new AuthException(
         'Workspace not found',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
+      ),
+    );
 
-    if (!(workspace.activationStatus === WorkspaceActivationStatus.ACTIVE)) {
-      throw new AuthException(
+    workspaceValidator.assertIsActive(
+      workspace,
+      new AuthException(
         'Workspace is not ready to welcome new members',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
+      ),
+    );
+
+    if (isAuthEnabled)
+      workspaceValidator.validateAuth(isAuthEnabled, workspace);
 
     if (isNewUser) {
       const imagePath = await this.uploadPicture(picture, workspace.id);
@@ -195,12 +204,13 @@ export class SignInUpService {
       user = await this.userRepository.save(userToCreate);
     }
 
-    if (!user) {
-      throw new AuthException(
+    userValidator.assertIsExist(
+      user,
+      new AuthException(
         'User not found',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
+      ),
+    );
 
     const updatedUser = workspacePersonalInviteToken
       ? await this.userWorkspaceService.addUserToWorkspaceByInviteToken(
@@ -233,12 +243,13 @@ export class SignInUpService {
       inviteHash: workspaceInviteHash,
     });
 
-    if (!workspace) {
-      throw new AuthException(
+    workspaceValidator.assertIsExist(
+      workspace,
+      new AuthException(
         'Workspace not found',
         AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
+      ),
+    );
 
     if (!workspacePersonalInviteToken && !workspace.isPublicInviteLinkEnabled) {
       throw new AuthException(

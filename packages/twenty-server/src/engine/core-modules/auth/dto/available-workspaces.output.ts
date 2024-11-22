@@ -32,11 +32,11 @@ export class AvailableWorkspaceOutput {
   id: string;
 
   @Field(() => String, { nullable: true })
-  displayName?: string | null;
+  displayName?: string;
 
   @Field(() => String, { nullable: true })
   logo?: string;
 
-  @Field(() => [SSOConnection], { nullable: true })
+  @Field(() => [SSOConnection])
   sso: SSOConnection[];
 }
