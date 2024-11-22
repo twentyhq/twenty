@@ -15,7 +15,7 @@ export class StripeService {
 
   constructor(private readonly environmentService: EnvironmentService) {
     this.stripe = new Stripe(
-      this.environmentService.get('BILLING_STRIPE_API_KEY'),
+      this.environmentService.get('BILLING_STRIPE_API_KEY') ?? '',
       {},
     );
   }
