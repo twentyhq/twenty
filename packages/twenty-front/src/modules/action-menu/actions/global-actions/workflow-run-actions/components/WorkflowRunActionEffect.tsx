@@ -1,4 +1,8 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
+import {
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkflowVersions';
@@ -28,9 +32,9 @@ export const WorkflowRunActionEffect = () => {
       activeWorkflowVersion,
     ] of activeWorkflowVersions.entries()) {
       addActionMenuEntry({
-        type: 'workflow-run',
+        type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
-        scope: 'global',
+        scope: ActionMenuEntryScope.Global,
         label: capitalize(activeWorkflowVersion.workflow.name),
         position: index,
         Icon: IconSettingsAutomation,
