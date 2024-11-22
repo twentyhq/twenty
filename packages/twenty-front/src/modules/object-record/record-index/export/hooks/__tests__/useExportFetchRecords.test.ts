@@ -7,9 +7,9 @@ import {
 } from '../useExportFetchRecords';
 
 import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
+import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { recordBoardKanbanFieldMetadataNameComponentState } from '@/object-record/record-board/states/recordBoardKanbanFieldMetadataNameComponentState';
-import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { ViewType } from '@/views/types/ViewType';
 import { MockedResponse } from '@apollo/client/testing';
@@ -248,7 +248,7 @@ describe('useRecordData', () => {
             }),
             useRecordBoardHook: useRecordBoard(recordIndexId),
             kanbanFieldName: useRecoilValue(kanbanFieldNameState),
-            kanbanData: useRecordIndexOptionsForBoard({
+            kanbanData: useObjectOptionsForBoard({
               objectNameSingular: objectMetadataItem.nameSingular,
               recordBoardId: recordIndexId,
               viewBarId: recordIndexId,
@@ -338,7 +338,7 @@ describe('useRecordData', () => {
             }),
             setKanbanFieldName: useRecordBoard(recordIndexId),
             kanbanFieldName: useRecoilValue(kanbanFieldNameState),
-            kanbanData: useRecordIndexOptionsForBoard({
+            kanbanData: useObjectOptionsForBoard({
               objectNameSingular: objectMetadataItem.nameSingular,
               recordBoardId: recordIndexId,
               viewBarId: recordIndexId,

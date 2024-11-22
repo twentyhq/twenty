@@ -50,13 +50,13 @@ export const useLoadRecordIndexBoard = ({
     recordIndexViewFilterGroupsState,
   );
 
-  const recordIndexGroupDefinitions = useRecoilComponentValueV2(
+  const recordGroupDefinitions = useRecoilComponentValueV2(
     recordGroupDefinitionsComponentState,
   );
 
   useEffect(() => {
-    setColumns(recordIndexGroupDefinitions);
-  }, [recordIndexGroupDefinitions, setColumns]);
+    setColumns(recordGroupDefinitions);
+  }, [recordGroupDefinitions, setColumns]);
 
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
   const recordIndexSorts = useRecoilValue(recordIndexSortsState);

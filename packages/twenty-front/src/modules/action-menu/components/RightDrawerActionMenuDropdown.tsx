@@ -1,5 +1,6 @@
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { ActionMenuEntryScope } from '@/action-menu/types/ActionMenuEntry';
 import { RightDrawerActionMenuDropdownHotkeyScope } from '@/action-menu/types/RightDrawerActionMenuDropdownHotkeyScope';
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -65,21 +66,26 @@ export const RightDrawerActionMenuDropdown = () => {
       }}
       dropdownComponents={
         <DropdownMenuItemsContainer>
-          {actionMenuEntries.map((item, index) => (
-            <MenuItem
-              key={index}
-              LeftIcon={item.Icon}
-              onClick={() => {
-                closeDropdown(
-                  getRightDrawerActionMenuDropdownIdFromActionMenuId(
-                    actionMenuId,
-                  ),
-                );
-                item.onClick?.();
-              }}
-              text={item.label}
-            />
-          ))}
+          {actionMenuEntries
+            .filter(
+              (actionMenuEntry) =>
+                actionMenuEntry.scope === ActionMenuEntryScope.RecordSelection,
+            )
+            .map((actionMenuEntry, index) => (
+              <MenuItem
+                key={index}
+                LeftIcon={actionMenuEntry.Icon}
+                onClick={() => {
+                  closeDropdown(
+                    getRightDrawerActionMenuDropdownIdFromActionMenuId(
+                      actionMenuId,
+                    ),
+                  );
+                  actionMenuEntry.onClick?.();
+                }}
+                text={actionMenuEntry.label}
+              />
+            ))}
         </DropdownMenuItemsContainer>
       }
     />

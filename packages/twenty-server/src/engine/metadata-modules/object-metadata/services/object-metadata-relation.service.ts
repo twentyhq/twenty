@@ -10,6 +10,9 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { buildDescriptionForRelationFieldMetadataOnFromField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-from-field.util';
+import { buildDescriptionForRelationFieldMetadataOnToField } from 'src/engine/metadata-modules/object-metadata/utils/build-description-for-relation-field-on-to-field.util';
+import { buildNameLabelAndDescriptionForForeignKeyFieldMetadata } from 'src/engine/metadata-modules/object-metadata/utils/build-name-label-and-description-for-foreign-key-field-metadata.util';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
@@ -94,6 +97,13 @@ export class ObjectMetadataRelationService {
       );
     }
 
+    const { name, label, description } =
+      buildNameLabelAndDescriptionForForeignKeyFieldMetadata({
+        targetObjectNameSingular: createdObjectMetadata.nameSingular,
+        targetObjectLabelSingular: createdObjectMetadata.labelSingular,
+        relatedObjectLabelSingular: relatedObjectMetadata.labelSingular,
+      });
+
     await this.fieldMetadataRepository.save({
       standardId: createForeignKeyDeterministicUuid({
         objectId: createdObjectMetadata.id,
@@ -104,9 +114,9 @@ export class ObjectMetadataRelationService {
       isCustom: false,
       isActive: true,
       type: objectPrimaryKeyType,
-      name: `${createdObjectMetadata.nameSingular}Id`,
-      label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
-      description: `${relatedObjectMetadata.labelSingular} ${createdObjectMetadata.labelSingular} id foreign key`,
+      name,
+      label,
+      description,
       icon: undefined,
       isNullable: true,
       isSystem: true,
@@ -141,6 +151,13 @@ export class ObjectMetadataRelationService {
   ) {
     const relationObjectMetadataNamePlural = relatedObjectMetadata.namePlural;
 
+    const { description } = buildDescriptionForRelationFieldMetadataOnFromField(
+      {
+        relationObjectMetadataNamePlural,
+        targetObjectLabelSingular: createdObjectMetadata.labelSingular,
+      },
+    );
+
     return {
       standardId:
         CUSTOM_OBJECT_STANDARD_FIELD_IDS[relationObjectMetadataNamePlural],
@@ -152,7 +169,7 @@ export class ObjectMetadataRelationService {
       type: FieldMetadataType.RELATION,
       name: relatedObjectMetadata.namePlural,
       label: capitalize(relationObjectMetadataNamePlural),
-      description: `${capitalize(relationObjectMetadataNamePlural)} tied to the ${createdObjectMetadata.labelSingular}`,
+      description,
       icon:
         STANDARD_OBJECT_ICONS[relatedObjectMetadata.nameSingular] ||
         'IconBuildingSkyscraper',
@@ -174,6 +191,11 @@ export class ObjectMetadataRelationService {
       );
     }
 
+    const { description } = buildDescriptionForRelationFieldMetadataOnToField({
+      relationObjectMetadataNamePlural: relatedObjectMetadata.namePlural,
+      targetObjectLabelSingular: createdObjectMetadata.labelSingular,
+    });
+
     return {
       standardId: createRelationDeterministicUuid({
         objectId: createdObjectMetadata.id,
@@ -187,7 +209,7 @@ export class ObjectMetadataRelationService {
       type: FieldMetadataType.RELATION,
       name: createdObjectMetadata.nameSingular,
       label: createdObjectMetadata.labelSingular,
-      description: `${capitalize(relatedObjectMetadata.nameSingular)} ${createdObjectMetadata.labelSingular}`,
+      description,
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
     };

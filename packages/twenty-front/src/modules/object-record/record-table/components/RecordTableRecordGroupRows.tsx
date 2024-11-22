@@ -4,6 +4,7 @@ import { tableAllRowIdsComponentState } from '@/object-record/record-table/state
 import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useMemo } from 'react';
 
 export const RecordTableRecordGroupRows = () => {
   const recordGroupId = useCurrentRecordGroupId();
@@ -15,9 +16,17 @@ export const RecordTableRecordGroupRows = () => {
     recordGroupId,
   );
 
+  const rowIndexMap = useMemo(
+    () => new Map(allRowIds.map((id, index) => [id, index])),
+    [allRowIds],
+  );
+
   return recordGroupRowIds.map((recordId) => {
-    // Find the index of the recordId in allRowIds
-    const rowIndex = allRowIds.indexOf(recordId);
+    const rowIndex = rowIndexMap.get(recordId);
+
+    if (!rowIndex) {
+      throw new Error(`Row index for record id ${recordId} not found`);
+    }
 
     return (
       <RecordTableRow key={recordId} recordId={recordId} rowIndex={rowIndex} />

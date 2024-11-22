@@ -10,6 +10,7 @@ export const RecordTableRecordGroupBodyEffects = () => {
 
   return recordGroupDefinitions.map((recordGroupDefinition) => (
     <RecordGroupContext.Provider
+      key={recordGroupDefinition.id}
       value={{ recordGroupId: recordGroupDefinition.id }}
     >
       <RecordTableRecordGroupBodyEffect />

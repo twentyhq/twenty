@@ -7,6 +7,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
+import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewGroup } from '@/views/types/ViewGroup';
@@ -21,6 +22,10 @@ export const usePersistViewGroupRecords = () => {
   });
 
   const { updateOneRecordMutation } = useUpdateOneRecordMutation({
+    objectNameSingular: CoreObjectNameSingular.ViewGroup,
+  });
+
+  const { deleteOneRecordMutation } = useDeleteOneRecordMutation({
     objectNameSingular: CoreObjectNameSingular.ViewGroup,
   });
 
@@ -111,8 +116,42 @@ export const usePersistViewGroupRecords = () => {
     [apolloClient, updateOneRecordMutation],
   );
 
+  const deleteViewGroupRecords = useCallback(
+    async (viewGroupsToDelete: ViewGroup[]) => {
+      if (!viewGroupsToDelete.length) return;
+
+      const mutationPromises = viewGroupsToDelete.map((viewGroup) =>
+        apolloClient.mutate<{ deleteViewGroup: ViewGroup }>({
+          mutation: deleteOneRecordMutation,
+          variables: {
+            idToDelete: viewGroup.id,
+          },
+          // Avoid cache being updated with stale data
+          fetchPolicy: 'no-cache',
+        }),
+      );
+
+      const mutationResults = await Promise.all(mutationPromises);
+
+      mutationResults.forEach(({ data }) => {
+        const record = data?.['deleteViewGroup'];
+
+        if (!record) return;
+
+        apolloClient.cache.evict({
+          id: apolloClient.cache.identify({
+            __typename: 'ViewGroup',
+            id: record.id,
+          }),
+        });
+      });
+    },
+    [apolloClient, deleteOneRecordMutation],
+  );
+
   return {
     createViewGroupRecords,
     updateViewGroupRecords,
+    deleteViewGroupRecords,
   };
 };

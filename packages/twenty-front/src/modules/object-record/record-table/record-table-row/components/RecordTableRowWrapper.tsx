@@ -12,7 +12,7 @@ import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/
 import { tableCellWidthsComponentState } from '@/object-record/record-table/states/tableCellWidthsComponentState';
 import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 export const RecordTableRowWrapper = ({
   recordId,
@@ -48,7 +48,7 @@ export const RecordTableRowWrapper = ({
     rootMargin: '1000px',
   });
 
-  const [, setTableCellWidths] = useRecoilComponentStateV2(
+  const setTableCellWidths = useSetRecoilComponentStateV2(
     tableCellWidthsComponentState,
   );
 
@@ -108,7 +108,6 @@ export const RecordTableRowWrapper = ({
                 }) + recordId,
               objectNameSingular: objectMetadataItem.nameSingular,
               isSelected: currentRowSelected,
-              isReadOnly: objectMetadataItem.isRemote ?? false,
               isPendingRow,
               isDragging: draggableSnapshot.isDragging,
               dragHandleProps: draggableProvided.dragHandleProps,
