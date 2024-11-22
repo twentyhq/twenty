@@ -14,6 +14,7 @@ import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-que
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
 export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseResolverService<
@@ -30,9 +31,14 @@ export class GraphqlQueryRestoreManyResolverService extends GraphqlQueryBaseReso
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
+    const tableName = computeTableName(
+      objectMetadataItemWithFieldMaps.nameSingular,
+      objectMetadataItemWithFieldMaps.isCustom,
+    );
+
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataItemWithFieldMaps.nameSingular,
+      tableName,
       executionArgs.args.filter,
     );
 
