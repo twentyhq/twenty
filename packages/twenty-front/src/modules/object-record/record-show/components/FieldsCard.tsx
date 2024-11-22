@@ -146,6 +146,7 @@ export const FieldsCard = ({
                         }),
                       useUpdateRecord: useUpdateOneObjectRecordMutation,
                       hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                      allowDisplayWrap: true,
                     }}
                   >
                     <RecordInlineCell loading={recordLoading} />

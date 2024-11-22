@@ -2,13 +2,11 @@ import { useContext } from 'react';
 
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
-import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useTextFieldDisplay = () => {
   const { recordId, fieldDefinition, hotkeyScope, allowDisplayWrap } =
     useContext(FieldContext);
-  const inlineCellContext = useRecordInlineCellContext();
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
@@ -19,6 +17,6 @@ export const useTextFieldDisplay = () => {
     fieldDefinition,
     fieldValue,
     hotkeyScope,
-    allowDisplayWrap: inlineCellContext.allowDisplayWrap || allowDisplayWrap,
+    allowDisplayWrap: allowDisplayWrap,
   };
 };
