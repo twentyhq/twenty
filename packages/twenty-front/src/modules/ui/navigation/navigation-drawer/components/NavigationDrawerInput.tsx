@@ -44,7 +44,7 @@ const StyledItem = styled.div<{ isNavigationDrawerExpanded: boolean }>`
 
 const StyledItemElementsContainer = styled.span`
   align-items: center;
-
+  gap: ${({ theme }) => theme.spacing(2)};
   display: flex;
   width: 100%;
 `;
@@ -118,7 +118,6 @@ export const NavigationDrawerInput = ({
           <Icon
             style={{
               minWidth: theme.icon.size.md,
-              paddingRight: theme.spacing(2),
             }}
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.md}

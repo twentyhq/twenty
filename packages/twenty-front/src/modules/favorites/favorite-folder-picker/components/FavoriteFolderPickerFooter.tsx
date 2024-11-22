@@ -2,9 +2,10 @@ import { FAVORITE_FOLDER_PICKER_DROPDOWN_ID } from '@/favorites/favorite-folder-
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { IconPlus, MenuItem } from 'twenty-ui';
 
 const StyledFooter = styled.div`
@@ -18,6 +19,9 @@ export const FavoriteFolderPickerFooter = () => {
   const [, setIsFavoriteFolderCreating] = useRecoilState(
     isFavoriteFolderCreatingState,
   );
+  const setIsNavigationDrawerExpanded = useSetRecoilState(
+    isNavigationDrawerExpandedState,
+  );
   const theme = useTheme();
   const { closeDropdown } = useDropdown(FAVORITE_FOLDER_PICKER_DROPDOWN_ID);
 
@@ -27,6 +31,7 @@ export const FavoriteFolderPickerFooter = () => {
         <MenuItem
           className="add-folder"
           onClick={() => {
+            setIsNavigationDrawerExpanded(true);
             setIsFavoriteFolderCreating(true);
             closeDropdown();
           }}
