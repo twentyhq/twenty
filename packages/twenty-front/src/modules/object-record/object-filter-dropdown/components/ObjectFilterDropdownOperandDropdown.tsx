@@ -44,7 +44,7 @@ export const ObjectFilterDropdownOperandDropdown = ({
         scope: FiltersHotkeyScope.ObjectFilterDropdownOperandDropdown,
       }}
       dropdownOffset={{
-        x: parseInt(theme.spacing(2)),
+        x: parseInt(theme.spacing(2), 10),
       }}
     />
   );
