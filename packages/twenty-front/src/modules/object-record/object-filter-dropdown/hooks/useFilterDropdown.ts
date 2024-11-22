@@ -28,8 +28,6 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     objectFilterDropdownSearchInputState,
     objectFilterDropdownSelectedRecordIdsState,
     objectFilterDropdownSelectedOptionValuesState,
-    isObjectFilterDropdownOperandSelectUnfoldedState,
-    isObjectFilterDropdownUnfoldedState,
     selectedFilterState,
     selectedOperandInDropdownState,
     onFilterSelectState,
@@ -121,12 +119,7 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
   const setObjectFilterDropdownSelectedOptionValues = useSetRecoilState(
     objectFilterDropdownSelectedOptionValuesState,
   );
-  const setIsObjectFilterDropdownOperandSelectUnfolded = useSetRecoilState(
-    isObjectFilterDropdownOperandSelectUnfoldedState,
-  );
-  const setIsObjectFilterDropdownUnfolded = useSetRecoilState(
-    isObjectFilterDropdownUnfoldedState,
-  );
+
   const setOnFilterSelect = useSetRecoilState(onFilterSelectState);
   const setAdvancedFilterViewFilterGroupId = useSetRecoilState(
     advancedFilterViewFilterGroupIdState,
@@ -143,22 +136,16 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     setSelectedOperandInDropdown,
     setFilterDefinitionUsedInDropdown,
     setObjectFilterDropdownSearchInput,
-    // setObjectFilterDropdownSelectedEntityId,
     setObjectFilterDropdownSelectedRecordIds,
     setObjectFilterDropdownSelectedOptionValues,
-    setIsObjectFilterDropdownOperandSelectUnfolded,
-    setIsObjectFilterDropdownUnfolded,
     setOnFilterSelect,
     setAdvancedFilterViewFilterGroupId,
     setAdvancedFilterViewFilterId,
     emptyFilterButKeepDefinition,
     filterDefinitionUsedInDropdownState,
     objectFilterDropdownSearchInputState,
-    // objectFilterDropdownSelectedEntityIdState,
     objectFilterDropdownSelectedRecordIdsState,
     objectFilterDropdownSelectedOptionValuesState,
-    isObjectFilterDropdownOperandSelectUnfoldedState,
-    isObjectFilterDropdownUnfoldedState,
     selectedFilterState,
     selectedOperandInDropdownState,
     onFilterSelectState,
