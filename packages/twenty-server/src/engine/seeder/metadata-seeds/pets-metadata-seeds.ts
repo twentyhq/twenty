@@ -17,7 +17,7 @@ export const PETS_METADATA_SEEDS: ObjectSeed = {
     {
       type: FieldMetadataType.TEXT,
       label: 'Name',
-      name: 'name',
+      name: 'petsName',
     },
     {
       type: FieldMetadataType.SELECT,

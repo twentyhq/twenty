@@ -22,8 +22,8 @@ export const SURVEY_RESULTS_METADATA_SEEDS: ObjectSeed = {
   fields: [
     {
       type: FieldMetadataType.TEXT,
-      label: 'Name (No settings)',
-      name: 'name',
+      label: 'Description (No settings)',
+      name: 'description',
     },
     {
       type: FieldMetadataType.NUMBER,
