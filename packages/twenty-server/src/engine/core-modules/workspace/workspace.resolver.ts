@@ -34,11 +34,11 @@ import {
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Resolver(() => Workspace)
 export class WorkspaceResolver {
