@@ -119,15 +119,27 @@ export const WorkflowEditActionFormRecordCreate = ({
     };
   }, [saveAction]);
 
+  const headerTitle = isDefined(action.name) ? action.name : `Create Record`;
+
   return (
     <WorkflowEditGenericFormBase
+      onTitleChange={(newName: string) => {
+        if (actionOptions.readonly === true) {
+          return;
+        }
+
+        actionOptions.onActionUpdate({
+          ...action,
+          name: newName,
+        });
+      }}
       HeaderIcon={
         <IconAddressBook
           color={theme.font.color.tertiary}
           stroke={theme.icon.stroke.sm}
         />
       }
-      headerTitle="Record Create"
+      headerTitle={headerTitle}
       headerType="Action"
     >
       <Select

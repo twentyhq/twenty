@@ -23,7 +23,6 @@ import {
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
 export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolverService<
@@ -40,14 +39,9 @@ export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolver
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const tableName = computeTableName(
-      objectMetadataItemWithFieldMaps.nameSingular,
-      objectMetadataItemWithFieldMaps.isCustom,
-    );
-
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      tableName,
+      objectMetadataItemWithFieldMaps.nameSingular,
       executionArgs.args.filter ?? ({} as ObjectRecordFilter),
     );
 

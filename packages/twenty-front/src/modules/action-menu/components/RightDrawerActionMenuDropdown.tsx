@@ -62,7 +62,7 @@ export const RightDrawerActionMenuDropdown = () => {
       clickableComponent={<Button title="Actions" shortcut="⌘O" />}
       dropdownPlacement="top-end"
       dropdownOffset={{
-        y: parseInt(theme.spacing(2)),
+        y: parseInt(theme.spacing(2), 10),
       }}
       dropdownComponents={
         <DropdownMenuItemsContainer>

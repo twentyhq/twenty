@@ -15,7 +15,6 @@ import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
 export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResolverService<
@@ -32,14 +31,9 @@ export class GraphqlQueryUpdateManyResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const tableName = computeTableName(
-      objectMetadataItemWithFieldMaps.nameSingular,
-      objectMetadataItemWithFieldMaps.isCustom,
-    );
-
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      tableName,
+      objectMetadataItemWithFieldMaps.nameSingular,
       executionArgs.args.filter,
     );
 

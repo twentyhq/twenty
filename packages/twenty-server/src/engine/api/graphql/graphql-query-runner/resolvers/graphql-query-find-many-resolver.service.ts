@@ -30,7 +30,6 @@ import {
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
@@ -57,14 +56,9 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
     let appliedFilters =
       executionArgs.args.filter ?? ({} as ObjectRecordFilter);
 
-    const tableName = computeTableName(
-      objectMetadataItemWithFieldMaps.nameSingular,
-      objectMetadataItemWithFieldMaps.isCustom,
-    );
-
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       aggregateQueryBuilder,
-      tableName,
+      objectMetadataItemWithFieldMaps.nameSingular,
       appliedFilters,
     );
 
@@ -99,14 +93,14 @@ export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolve
 
     executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      tableName,
+      objectMetadataItemWithFieldMaps.nameSingular,
       appliedFilters,
     );
 
     executionArgs.graphqlQueryParser.applyOrderToBuilder(
       queryBuilder,
       orderByWithIdCondition,
-      tableName,
+      objectMetadataItemWithFieldMaps.nameSingular,
       isForwardPagination,
     );
 

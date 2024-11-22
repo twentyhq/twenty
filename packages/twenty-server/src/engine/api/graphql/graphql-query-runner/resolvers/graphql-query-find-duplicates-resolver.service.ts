@@ -28,7 +28,6 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
 export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseResolverService<
@@ -111,14 +110,9 @@ export class GraphqlQueryFindDuplicatesResolverService extends GraphqlQueryBaseR
             objectMetadataItemWithFieldMaps.nameSingular,
           );
 
-        const tableName = computeTableName(
-          objectMetadataItemWithFieldMaps.nameSingular,
-          objectMetadataItemWithFieldMaps.isCustom,
-        );
-
         graphqlQueryParser.applyFilterToBuilder(
           duplicateRecordsQueryBuilder,
-          tableName,
+          objectMetadataItemWithFieldMaps.nameSingular,
           duplicateConditions,
         );
 
