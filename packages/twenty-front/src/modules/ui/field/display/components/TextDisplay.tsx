@@ -3,17 +3,17 @@ import { OverflowingTextWithTooltip } from 'twenty-ui';
 type TextDisplayProps = {
   text: string;
   displayedMaxRows?: number;
-  wrap?: boolean;
+  allowDisplayWrap?: boolean;
 };
 
 export const TextDisplay = ({
   text,
   displayedMaxRows,
-  wrap,
+  allowDisplayWrap,
 }: TextDisplayProps) => (
   <OverflowingTextWithTooltip
     text={text}
     displayedMaxRows={displayedMaxRows}
-    wrap={wrap}
+    allowDisplayWrap={allowDisplayWrap}
   />
 );

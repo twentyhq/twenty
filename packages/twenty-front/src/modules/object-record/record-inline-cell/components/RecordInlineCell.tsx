@@ -104,7 +104,7 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     isDisplayModeFixHeight: undefined,
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
-    wrap: true,
+    allowDisplayWrap: true,
   };
 
   return (

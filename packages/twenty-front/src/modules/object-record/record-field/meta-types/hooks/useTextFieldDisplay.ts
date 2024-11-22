@@ -6,7 +6,7 @@ import { useRecordInlineCellContext } from '@/object-record/record-inline-cell/c
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useTextFieldDisplay = () => {
-  const { recordId, fieldDefinition, hotkeyScope, wrap } =
+  const { recordId, fieldDefinition, hotkeyScope, allowDisplayWrap } =
     useContext(FieldContext);
   const inlineCellContext = useRecordInlineCellContext();
 
@@ -19,6 +19,6 @@ export const useTextFieldDisplay = () => {
     fieldDefinition,
     fieldValue,
     hotkeyScope,
-    wrap: inlineCellContext.wrap || wrap,
+    allowDisplayWrap: inlineCellContext.allowDisplayWrap || allowDisplayWrap,
   };
 };

@@ -3,7 +3,8 @@ import { isFieldText } from '@/object-record/record-field/types/guards/isFieldTe
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
 
 export const TextFieldDisplay = () => {
-  const { fieldValue, fieldDefinition, wrap } = useTextFieldDisplay();
+  const { fieldValue, fieldDefinition, allowDisplayWrap } =
+    useTextFieldDisplay();
 
   const displayedMaxRows = isFieldText(fieldDefinition)
     ? fieldDefinition.metadata?.settings?.displayedMaxRows
@@ -13,7 +14,7 @@ export const TextFieldDisplay = () => {
     <TextDisplay
       text={fieldValue}
       displayedMaxRows={displayedMaxRows}
-      wrap={wrap}
+      allowDisplayWrap={allowDisplayWrap}
     />
   );
 };

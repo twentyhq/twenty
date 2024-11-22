@@ -13,7 +13,7 @@ const StyledOverflowingText = styled.div<{
   size: 'large' | 'small';
   displayedMaxRows?: number;
   isLabel: boolean;
-  wrap?: boolean;
+  allowDisplayWrap?: boolean;
 }>`
   cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'inherit')};
   font-family: inherit;
@@ -29,16 +29,34 @@ const StyledOverflowingText = styled.div<{
 
   height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
 
-  text-wrap-mode: ${({ isLabel, displayedMaxRows, wrap = false }) =>
-    isLabel === false && displayedMaxRows && wrap ? 'wrap' : 'nowrap'};
-  -webkit-line-clamp: ${({ isLabel, displayedMaxRows, wrap = false }) =>
-    isLabel === false && displayedMaxRows && wrap
+  text-wrap-mode: ${({
+    isLabel,
+    displayedMaxRows,
+    allowDisplayWrap = false,
+  }) =>
+    isLabel === false && displayedMaxRows && allowDisplayWrap
+      ? 'wrap'
+      : 'nowrap'};
+  -webkit-line-clamp: ${({
+    isLabel,
+    displayedMaxRows,
+    allowDisplayWrap = false,
+  }) =>
+    isLabel === false && displayedMaxRows && allowDisplayWrap
       ? displayedMaxRows
       : 'inherit'};
-  display: ${({ isLabel, displayedMaxRows, wrap = false }) =>
-    isLabel === false && displayedMaxRows && wrap ? `-webkit-box` : 'block'};
-  -webkit-box-orient: ${({ isLabel, displayedMaxRows, wrap = false }) =>
-    isLabel === false && displayedMaxRows && wrap ? 'vertical' : 'inherit'};
+  display: ${({ isLabel, displayedMaxRows, allowDisplayWrap = false }) =>
+    isLabel === false && displayedMaxRows && allowDisplayWrap
+      ? `-webkit-box`
+      : 'block'};
+  -webkit-box-orient: ${({
+    isLabel,
+    displayedMaxRows,
+    allowDisplayWrap = false,
+  }) =>
+    isLabel === false && displayedMaxRows && allowDisplayWrap
+      ? 'vertical'
+      : 'inherit'};
 
   & :hover {
     text-overflow: ${({ cursorPointer }) =>
@@ -54,14 +72,14 @@ export const OverflowingTextWithTooltip = ({
   isTooltipMultiline,
   displayedMaxRows,
   isLabel,
-  wrap,
+  allowDisplayWrap,
 }: {
   size?: 'large' | 'small';
   text: string | null | undefined;
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
   isLabel?: boolean;
-  wrap?: boolean;
+  allowDisplayWrap?: boolean;
 }) => {
   const textElementId = `title-id-${+new Date()}`;
 
@@ -95,7 +113,7 @@ export const OverflowingTextWithTooltip = ({
         cursorPointer={isTitleOverflowing}
         size={size}
         displayedMaxRows={displayedMaxRows}
-        wrap={wrap}
+        allowDisplayWrap={allowDisplayWrap}
         isLabel={isLabel ?? false}
         ref={textRef}
         id={textElementId}

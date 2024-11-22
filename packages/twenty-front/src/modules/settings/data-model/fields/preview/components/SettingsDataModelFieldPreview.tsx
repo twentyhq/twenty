@@ -140,7 +140,7 @@ export const SettingsDataModelFieldPreview = ({
               defaultValue: fieldMetadataItem.defaultValue,
             },
             hotkeyScope: 'field-preview',
-            wrap: true,
+            allowDisplayWrap: true,
           }}
         >
           {fieldMetadataItem.type === FieldMetadataType.Boolean ? (
