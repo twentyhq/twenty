@@ -10,7 +10,7 @@ const highlightedContainerStyle = {
   border: `1px solid ${emailTheme.border.color.highlighted}`,
   borderRadius: emailTheme.border.radius.md,
   padding: '24px 48px',
-} as const;
+} as React.CSSProperties;
 
 export const HighlightedContainer = ({
   children,
