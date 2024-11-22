@@ -10,7 +10,6 @@ import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
 type LinksDisplayProps = {
   value?: FieldLinksValue;
-  isFocused?: boolean;
 };
 
 export const LinksDisplay = ({ value }: LinksDisplayProps) => {
