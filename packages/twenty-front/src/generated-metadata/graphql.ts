@@ -168,7 +168,7 @@ export type ClientConfig = {
   debugMode: Scalars['Boolean']['output'];
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
-  signUpDisabled: Scalars['Boolean']['output'];
+  isMultiworkspaceEnabled: Scalars['Boolean']['output'];
   support: Support;
 };
 

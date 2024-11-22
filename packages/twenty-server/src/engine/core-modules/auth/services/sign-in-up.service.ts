@@ -28,6 +28,8 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { getImageBufferFromUrl } from 'src/utils/image';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 
 export type SignInUpServiceInput = {
@@ -39,6 +41,7 @@ export type SignInUpServiceInput = {
   workspacePersonalInviteToken?: string;
   picture?: string | null;
   fromSSO: boolean;
+  isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
 };
 
 @Injectable()
@@ -66,6 +69,7 @@ export class SignInUpService {
     lastName,
     picture,
     fromSSO,
+    isAuthEnabled,
   }: SignInUpServiceInput) {
     if (!firstName) firstName = '';
     if (!lastName) lastName = '';
@@ -130,6 +134,7 @@ export class SignInUpService {
         lastName,
         picture,
         existingUser,
+        isAuthEnabled,
       });
 
       await this.workspaceInvitationService.invalidateWorkspaceInvitation(
@@ -161,6 +166,7 @@ export class SignInUpService {
     lastName,
     picture,
     existingUser,
+    isAuthEnabled,
   }: {
     email: string;
     passwordHash: string | undefined;
@@ -169,16 +175,29 @@ export class SignInUpService {
     lastName: string;
     picture: SignInUpServiceInput['picture'];
     existingUser: User | null;
+    isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
   }) {
     const isNewUser = !isDefined(existingUser);
     let user = existingUser;
 
-    if (!(workspace.activationStatus === WorkspaceActivationStatus.ACTIVE)) {
-      throw new AuthException(
+    workspaceValidator.assertIsExist(
+      workspace,
+      new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      ),
+    );
+
+    workspaceValidator.assertIsActive(
+      workspace,
+      new AuthException(
         'Workspace is not ready to welcome new members',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
+      ),
+    );
+
+    if (isAuthEnabled)
+      workspaceValidator.validateAuth(isAuthEnabled, workspace);
 
     if (isNewUser) {
       const imagePath = await this.uploadPicture(picture, workspace.id);
@@ -196,12 +215,13 @@ export class SignInUpService {
       user = await this.userRepository.save(userToCreate);
     }
 
-    if (!user) {
-      throw new AuthException(
+    userValidator.assertIsExist(
+      user,
+      new AuthException(
         'User not found',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
+      ),
+    );
 
     const updatedUser = await this.userWorkspaceService.addUserToWorkspace(
       user,
@@ -249,11 +269,16 @@ export class SignInUpService {
     lastName: string;
     picture: SignInUpServiceInput['picture'];
   }) {
-    if (this.environmentService.get('IS_SIGN_UP_DISABLED')) {
-      throw new AuthException(
-        'Sign up is disabled',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
+    if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      const numberOfWorkspaces = await this.workspaceRepository.count();
+
+      // let the creation of the first workspace
+      if (numberOfWorkspaces > 0) {
+        throw new AuthException(
+          'New workspace setup is disabled',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
     }
 
     const workspaceToCreate = this.workspaceRepository.create({

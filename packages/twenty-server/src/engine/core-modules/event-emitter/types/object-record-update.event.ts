@@ -1,14 +1,13 @@
 import { ObjectRecordBaseEvent } from 'src/engine/core-modules/event-emitter/types/object-record.base.event';
+import { ObjectRecordDiff } from 'src/engine/core-modules/event-emitter/types/object-record-diff';
 
-type Diff<T> = {
-  [K in keyof T]: { before: T[K]; after: T[K] };
-};
-
-export class ObjectRecordUpdateEvent<T> extends ObjectRecordBaseEvent {
+export class ObjectRecordUpdateEvent<
+  T = object,
+> extends ObjectRecordBaseEvent<T> {
   properties: {
     updatedFields?: string[];
     before: T;
     after: T;
-    diff?: Partial<Diff<T>>;
+    diff?: Partial<ObjectRecordDiff<T>>;
   };
 }

@@ -19,6 +19,9 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
       hasValidEntrepriseKey: false,
       metadataVersion: 1,
       isPublicInviteLinkEnabled: false,
+      isGoogleAuthEnabled: true,
+      isMicrosoftAuthEnabled: false,
+      isPasswordAuthEnabled: true,
     });
   },
 });

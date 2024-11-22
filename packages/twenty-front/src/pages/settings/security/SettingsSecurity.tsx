@@ -9,6 +9,7 @@ import { SettingsSecurityOptionsList } from '@/settings/security/components/Sett
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -26,6 +27,8 @@ const StyledSSOSection = styled(Section)`
 `;
 
 export const SettingsSecurity = () => {
+  const isSSOEnabled = useIsFeatureEnabled('IS_SSO_ENABLED');
+
   return (
     <SubMenuTopBarContainer
       title="Security"
@@ -40,26 +43,28 @@ export const SettingsSecurity = () => {
     >
       <SettingsPageContainer>
         <StyledMainContent>
-          <StyledSSOSection>
-            <H2Title
-              title="SSO"
-              description="Configure an SSO connection"
-              adornment={
-                <Tag
-                  text={'Enterprise'}
-                  color={'transparent'}
-                  Icon={IconLock}
-                  variant={'border'}
-                />
-              }
-            />
-            <SettingsSSOIdentitiesProvidersListCard />
-          </StyledSSOSection>
+          {isSSOEnabled && (
+            <StyledSSOSection>
+              <H2Title
+                title="SSO"
+                description="Configure an SSO connection"
+                adornment={
+                  <Tag
+                    text={'Enterprise'}
+                    color={'transparent'}
+                    Icon={IconLock}
+                    variant={'border'}
+                  />
+                }
+              />
+              <SettingsSSOIdentitiesProvidersListCard />
+            </StyledSSOSection>
+          )}
           <Section>
             <AdvancedSettingsWrapper>
               <StyledContainer>
                 <H2Title
-                  title="Other"
+                  title="Authentication"
                   description="Customize your workspace security"
                 />
                 <SettingsSecurityOptionsList />

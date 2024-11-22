@@ -28,7 +28,10 @@ import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.ent
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
-import { UserExists } from 'src/engine/core-modules/auth/dto/user-exists.entity';
+import {
+  UserExists,
+  UserNotExists,
+} from 'src/engine/core-modules/auth/dto/user-exists.entity';
 import { Verify } from 'src/engine/core-modules/auth/dto/verify.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -38,6 +41,9 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { buildWorkspaceURL } from 'src/utils/workspace-url.utils';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
@@ -104,6 +110,7 @@ export class AuthService {
     lastName,
     picture,
     fromSSO,
+    isAuthEnabled,
   }: {
     email: string;
     password?: string;
@@ -113,6 +120,7 @@ export class AuthService {
     workspacePersonalInviteToken?: string;
     picture?: string | null;
     fromSSO: boolean;
+    isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
   }) {
     return await this.signInUpService.signInUp({
       email,
@@ -123,6 +131,7 @@ export class AuthService {
       workspacePersonalInviteToken,
       picture,
       fromSSO,
+      isAuthEnabled,
     });
   }
 
@@ -150,19 +159,18 @@ export class AuthService {
       user = await this.findOneWithWorkspacesByEmail(email);
     }
 
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.USER_NOT_FOUND,
-      );
-    }
+    userValidator.assertIsExist(
+      user,
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
 
-    if (!user.defaultWorkspace) {
-      throw new AuthException(
+    userValidator.assertHasDefaultWorkspace(
+      user,
+      new AuthException(
         'User has no default workspace',
         AuthExceptionCode.INVALID_DATA,
-      );
-    }
+      ),
+    );
 
     // passwordHash is hidden for security reasons
     user.passwordHash = '';
@@ -185,12 +193,19 @@ export class AuthService {
     };
   }
 
-  async checkUserExists(email: string): Promise<UserExists> {
+  async checkUserExists(email: string): Promise<UserExists | UserNotExists> {
     const user = await this.userRepository.findOneBy({
       email,
     });
 
-    return { exists: !!user };
+    if (userValidator.isExist(user)) {
+      return {
+        exists: true,
+        availableWorkspaces: await this.findAvailableWorkspacesByEmail(email),
+      };
+    }
+
+    return { exists: false };
   }
 
   async checkWorkspaceInviteHashIsValid(
@@ -414,10 +429,17 @@ export class AuthService {
     return workspace;
   }
 
-  computeRedirectURI(loginToken: string): string {
-    return `${this.environmentService.get(
-      'FRONT_BASE_URL',
-    )}/verify?loginToken=${loginToken}`;
+  computeRedirectURI(loginToken: string) {
+    const url = buildWorkspaceURL(
+      this.environmentService.get('FRONT_BASE_URL'),
+      null,
+      {
+        withPathname: '/verify',
+        withSearchParams: { loginToken },
+      },
+    );
+
+    return url.toString();
   }
 
   async findAvailableWorkspacesByEmail(email: string) {
@@ -432,12 +454,10 @@ export class AuthService {
       ],
     });
 
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.USER_NOT_FOUND,
-      );
-    }
+    userValidator.assertIsExist(
+      user,
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
 
     return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
       id: userWorkspace.workspaceId,
@@ -451,7 +471,7 @@ export class AuthService {
               : [
                   {
                     id: identityProvider.id,
-                    name: identityProvider.name ?? 'Unknown',
+                    name: identityProvider.name,
                     issuer: identityProvider.issuer,
                     type: identityProvider.type,
                     status: identityProvider.status,

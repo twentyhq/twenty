@@ -11,6 +11,7 @@ import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigat
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { isNonEmptyString } from '@sniptt/guards';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -60,7 +61,9 @@ export const NavigationDrawerHeader = ({
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
   const workspaces = useRecoilValue(workspacesState);
-  const isMultiWorkspace = workspaces !== null && workspaces.length > 1;
+  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const isMultiWorkspace =
+    workspaces !== null && workspaces.length > 1 && isMultiWorkspaceEnabled;
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );

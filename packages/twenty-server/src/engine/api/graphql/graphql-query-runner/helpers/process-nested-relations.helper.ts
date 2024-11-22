@@ -7,6 +7,10 @@ import {
 
 import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import {
+  GraphqlQueryRunnerException,
+  GraphqlQueryRunnerExceptionCode,
+} from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import {
   getRelationMetadata,
@@ -15,6 +19,7 @@ import {
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
+import { getObjectMetadataMapItemByNameSingular } from 'src/engine/metadata-modules/utils/get-object-metadata-map-item-by-name-singular.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { deduceRelationDirection } from 'src/engine/utils/deduce-relation-direction.util';
 
@@ -177,13 +182,23 @@ export class ProcessNestedRelationsHelper {
       joinField: `${inverseRelationName}Id`,
     });
 
+    const referenceObjectMetadataItemWithFieldsMaps =
+      getObjectMetadataMapItemByNameSingular(
+        objectMetadataMaps,
+        referenceObjectMetadata.nameSingular,
+      );
+
+    if (!referenceObjectMetadataItemWithFieldsMaps) {
+      throw new GraphqlQueryRunnerException(
+        `Object ${referenceObjectMetadata.nameSingular} not found`,
+        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
     if (Object.keys(nestedRelations).length > 0) {
       await this.processNestedRelations({
         objectMetadataMaps,
-        parentObjectMetadataItem:
-          objectMetadataMaps.byNameSingular[
-            referenceObjectMetadata.nameSingular
-          ],
+        parentObjectMetadataItem: referenceObjectMetadataItemWithFieldsMaps,
         parentObjectRecords: relationResults as ObjectRecord[],
         parentObjectRecordsAggregatedValues: relationAggregatedFieldsResult,
         relations: nestedRelations as Record<
@@ -258,13 +273,23 @@ export class ProcessNestedRelationsHelper {
       relationName,
     });
 
+    const referenceObjectMetadataItemWithFieldsMaps =
+      getObjectMetadataMapItemByNameSingular(
+        objectMetadataMaps,
+        referenceObjectMetadata.nameSingular,
+      );
+
+    if (!referenceObjectMetadataItemWithFieldsMaps) {
+      throw new GraphqlQueryRunnerException(
+        `Object ${referenceObjectMetadata.nameSingular} not found`,
+        GraphqlQueryRunnerExceptionCode.OBJECT_METADATA_NOT_FOUND,
+      );
+    }
+
     if (Object.keys(nestedRelations).length > 0) {
       await this.processNestedRelations({
         objectMetadataMaps,
-        parentObjectMetadataItem:
-          objectMetadataMaps.byNameSingular[
-            referenceObjectMetadata.nameSingular
-          ],
+        parentObjectMetadataItem: referenceObjectMetadataItemWithFieldsMaps,
         parentObjectRecords: relationResults as ObjectRecord[],
         parentObjectRecordsAggregatedValues: relationAggregatedFieldsResult,
         relations: nestedRelations as Record<

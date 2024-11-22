@@ -29,12 +29,17 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { assert } from 'src/utils/assert';
 import { isDefined } from 'src/utils/is-defined';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+} from 'src/engine/core-modules/workspace/workspace.exception';
+import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
 
 import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
-@UseGuards(WorkspaceAuthGuard)
 @Resolver(() => Workspace)
 export class WorkspaceResolver {
   constructor(
@@ -47,6 +52,7 @@ export class WorkspaceResolver {
   ) {}
 
   @Query(() => Workspace)
+  @UseGuards(WorkspaceAuthGuard)
   async currentWorkspace(@AuthWorkspace() { id }: Workspace) {
     const workspace = await this.workspaceService.findById(id);
 
@@ -65,6 +71,7 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => Workspace)
+  @UseGuards(WorkspaceAuthGuard)
   async updateWorkspace(
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: Workspace,
@@ -73,6 +80,7 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => String)
+  @UseGuards(WorkspaceAuthGuard)
   async uploadWorkspaceLogo(
     @AuthWorkspace() { id }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -101,8 +109,8 @@ export class WorkspaceResolver {
     return `${paths[0]}?token=${workspaceLogoToken}`;
   }
 
-  @UseGuards(DemoEnvGuard)
   @Mutation(() => Workspace)
+  @UseGuards(DemoEnvGuard, WorkspaceAuthGuard)
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
   }
@@ -143,5 +151,27 @@ export class WorkspaceResolver {
   @ResolveField(() => Boolean)
   hasValidEntrepriseKey(): boolean {
     return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
+  }
+
+  @Query(() => PublicWorkspaceDataOutput)
+  async getPublicWorkspaceDataBySubdomain() {
+    const workspace = await this.workspaceService.getWorkspaceByOrigin();
+
+    workspaceValidator.assertIsExist(
+      workspace,
+      new WorkspaceException(
+        'Workspace not found',
+        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
+    return {
+      id: workspace.id,
+      logo: workspace.logo,
+      displayName: workspace.displayName,
+      authProviders: await this.workspaceService.getAuthProvidersByWorkspaceId(
+        workspace.id,
+      ),
+    };
   }
 }
