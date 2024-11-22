@@ -14,8 +14,12 @@ export class StripeService {
   private readonly stripe: Stripe;
 
   constructor(private readonly environmentService: EnvironmentService) {
+    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+      return;
+    }
+
     this.stripe = new Stripe(
-      this.environmentService.get('BILLING_STRIPE_API_KEY') ?? '',
+      this.environmentService.get('BILLING_STRIPE_API_KEY'),
       {},
     );
   }
