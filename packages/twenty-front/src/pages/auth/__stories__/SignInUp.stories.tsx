@@ -12,7 +12,6 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { AppPath } from '@/types/AppPath';
 import { SignInUp } from '../SignInUp';
-import { GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataBySubdomain';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/SignInUp',
@@ -22,25 +21,6 @@ const meta: Meta<PageDecoratorArgs> = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query(
-          getOperationName(GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN) ?? '',
-          () => {
-            return HttpResponse.json({
-              data: {
-                id: 'id',
-                logo: 'logo',
-                displayName: 'displayName',
-                authProviders: {
-                  google: true,
-                  microsoft: false,
-                  password: true,
-                  magicLink: false,
-                  sso: [],
-                },
-              },
-            });
-          },
-        ),
         graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
           return HttpResponse.json({
             data: null,
