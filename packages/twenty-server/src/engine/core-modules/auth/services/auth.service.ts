@@ -155,7 +155,7 @@ export class AuthService {
     let user = await this.findOneWithWorkspacesByEmail(email);
 
     if (user && workspaceId && user.defaultWorkspaceId !== workspaceId) {
-      await this.userService.saveDefaultWorkspace(user, workspaceId);
+      await this.userService.saveDefaultWorkspace(user.id, workspaceId);
       user = await this.findOneWithWorkspacesByEmail(email);
     }
 
