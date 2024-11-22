@@ -10,7 +10,6 @@ import { useTheme } from '@emotion/react';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
 import { FormProvider } from 'react-hook-form';
-import { z } from 'zod';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -23,7 +22,6 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
-import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailField';
 import { SignInUpPasswordField } from '@/auth/sign-in-up/components/SignInUpPasswordField';
