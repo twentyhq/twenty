@@ -3,12 +3,10 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ChangeEvent, useRef } from 'react';
 
-import { UserThemeProviderEffect } from '@/ui/theme/components/AppThemeProvider';
 import { Button } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { AttachmentIcon } from '../../files/components/AttachmentIcon';
 import { AttachmentType } from '../../files/types/Attachment';
 import { getFileType } from '../../files/utils/getFileType';
@@ -91,35 +89,26 @@ export const FileBlock = createReactBlockSpec(
 
       if (isNonEmptyString(block.props.url)) {
         return (
-          <BaseThemeProvider>
-            <UserThemeProviderEffect />
-            <StyledFileLine>
-              <AttachmentIcon
-                attachmentType={block.props.fileType as AttachmentType}
-              ></AttachmentIcon>
-              <StyledLink href={block.props.url} target="__blank">
-                {block.props.name}
-              </StyledLink>
-            </StyledFileLine>
-          </BaseThemeProvider>
+          <StyledFileLine>
+            <AttachmentIcon
+              attachmentType={block.props.fileType as AttachmentType}
+            ></AttachmentIcon>
+            <StyledLink href={block.props.url} target="__blank">
+              {block.props.name}
+            </StyledLink>
+          </StyledFileLine>
         );
       }
 
       return (
-        <BaseThemeProvider>
-          <UserThemeProviderEffect />
-          <StyledUploadFileContainer>
-            <StyledFileInput
-              ref={inputFileRef}
-              onChange={handleFileChange}
-              type="file"
-            />
-            <Button
-              onClick={handleUploadFileClick}
-              title="Upload File"
-            ></Button>
-          </StyledUploadFileContainer>
-        </BaseThemeProvider>
+        <StyledUploadFileContainer>
+          <StyledFileInput
+            ref={inputFileRef}
+            onChange={handleFileChange}
+            type="file"
+          />
+          <Button onClick={handleUploadFileClick} title="Upload File"></Button>
+        </StyledUploadFileContainer>
       );
     },
   },
