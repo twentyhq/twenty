@@ -20,7 +20,6 @@ describe('generateWorkflowDiagram', () => {
 
     expect(result.nodes[0]).toMatchObject({
       data: {
-        label: 'Company is Created',
         nodeType: 'trigger',
       },
     });
@@ -87,7 +86,7 @@ describe('generateWorkflowDiagram', () => {
       expect(stepNodes[index].data).toEqual({
         nodeType: 'action',
         actionType: 'CODE',
-        label: step.name,
+        name: step.name,
       });
     }
   });

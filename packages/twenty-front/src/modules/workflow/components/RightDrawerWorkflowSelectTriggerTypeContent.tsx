@@ -43,7 +43,6 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
           onClick={async () => {
             await updateTrigger(
               getTriggerDefaultDefinition({
-                name: action.name,
                 type: action.type,
                 activeObjectMetadataItems,
               }),

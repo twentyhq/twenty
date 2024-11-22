@@ -54,7 +54,7 @@ describe('getWorkflowVersionDiagram', () => {
       nodes: [
         {
           data: {
-            label: 'Company is Created',
+            name: 'Company created',
             nodeType: 'trigger',
             triggerType: 'DATABASE_EVENT',
           },
