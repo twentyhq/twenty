@@ -1,15 +1,10 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
-import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
-import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
-import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
 import { WorkflowRecordCreateAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   HorizontalSeparator,
   IconAddressBook,
@@ -170,37 +165,17 @@ export const WorkflowEditActionFormRecordCreate = ({
       <HorizontalSeparator noMargin />
 
       {editableFields.map((field) => {
-        const currentValue = formData[field.name];
+        const currentValue = formData[field.name] as JsonValue;
 
         return (
-          <Fragment key={field.id}>
-            {isFieldNumber(field) ? (
-              <FormNumberFieldInput
-                key={field.id}
-                defaultValue={currentValue as string | number | undefined}
-                onPersist={(value) => {
-                  handleFieldChange(field.name, value);
-                }}
-                placeholder="Fill with number"
-              />
-            ) : isFieldBoolean(field) ? (
-              <FormBooleanFieldInput
-                key={field.id}
-                defaultValue={currentValue as string | boolean | undefined}
-                onPersist={(value) => {
-                  handleFieldChange(field.name, value);
-                }}
-              />
-            ) : isFieldText(field) ? (
-              <FormTextFieldInput
-                defaultValue={currentValue as string | undefined}
-                onPersist={(value) => {
-                  handleFieldChange(field.name, value);
-                }}
-                placeholder="Enter value tiptap"
-              />
-            ) : null}
-          </Fragment>
+          <FormFieldInput
+            key={field.id}
+            defaultValue={currentValue}
+            field={field}
+            onPersist={(value) => {
+              handleFieldChange(field.name, value);
+            }}
+          />
         );
       })}
     </WorkflowEditGenericFormBase>

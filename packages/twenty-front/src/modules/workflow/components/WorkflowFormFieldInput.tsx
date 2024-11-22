@@ -49,7 +49,7 @@ type VariableMode = 'static-or-variable' | 'full-editor';
 
 type EditingMode = 'input' | 'variable';
 
-type WorkflowFormFieldInputProps<T> = {
+type WorkflowFormFieldInputBaseProps<T> = {
   variableMode: VariableMode;
   onVariableTagInsert: (variable: string) => void;
   Input: React.ReactElement;
@@ -68,7 +68,7 @@ type WorkflowFormFieldInputProps<T> = {
     }
 );
 
-export const WorkflowFormFieldInput = ({
+export const WorkflowFormFieldInputBase = ({
   Input,
   onVariableTagInsert,
   variableMode,
@@ -76,7 +76,7 @@ export const WorkflowFormFieldInput = ({
   multiline,
   onUnlinkVariable,
   readonly,
-}: WorkflowFormFieldInputProps<unknown>) => {
+}: WorkflowFormFieldInputBaseProps<unknown>) => {
   const id = useId();
 
   const [editingMode, setEditingMode] = useState<EditingMode>(() => {
