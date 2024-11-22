@@ -26,7 +26,7 @@ export class ApiEventEmitterService {
         objectMetadata: objectMetadataItem,
         properties: {
           before: null,
-          after: this.removeGraphQLAndNestedProperties(record),
+          after: record,
         },
       })),
       workspaceId: authContext.workspace.id,
@@ -52,10 +52,8 @@ export class ApiEventEmitterService {
       objectMetadataNameSingular: objectMetadataItem.nameSingular,
       action: DatabaseEventAction.UPDATED,
       events: records.map((record) => {
-        const before = this.removeGraphQLAndNestedProperties(
-          mappedExistingRecords[record.id],
-        );
-        const after = this.removeGraphQLAndNestedProperties(record);
+        const before = mappedExistingRecords[record.id];
+        const after = record;
         const diff = objectRecordChangedValues(
           before,
           after,
@@ -93,8 +91,31 @@ export class ApiEventEmitterService {
           recordId: record.id,
           objectMetadata: objectMetadataItem,
           properties: {
-            before: this.removeGraphQLAndNestedProperties(record),
+            before: record,
             after: null,
+          },
+        };
+      }),
+      workspaceId: authContext.workspace.id,
+    });
+  }
+
+  public emitRestoreEvents<T extends ObjectRecord>(
+    records: T[],
+    authContext: AuthContext,
+    objectMetadataItem: ObjectMetadataInterface,
+  ): void {
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.RESTORED,
+      events: records.map((record) => {
+        return {
+          userId: authContext.user?.id,
+          recordId: record.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            before: null,
+            after: record,
           },
         };
       }),
@@ -116,34 +137,12 @@ export class ApiEventEmitterService {
           recordId: record.id,
           objectMetadata: objectMetadataItem,
           properties: {
-            before: this.removeGraphQLAndNestedProperties(record),
+            before: record,
             after: null,
           },
         };
       }),
       workspaceId: authContext.workspace.id,
     });
-  }
-
-  private removeGraphQLAndNestedProperties<T extends ObjectRecord>(record: T) {
-    if (!record) {
-      return {};
-    }
-
-    const sanitizedRecord = {};
-
-    for (const [key, value] of Object.entries(record)) {
-      if (value && typeof value === 'object' && value['edges']) {
-        continue;
-      }
-
-      if (key === '__typename') {
-        continue;
-      }
-
-      sanitizedRecord[key] = value;
-    }
-
-    return sanitizedRecord;
   }
 }
