@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@emotion/react';
-import { createContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useState } from 'react';
 import {
   ColorScheme,
   THEME_DARK,
@@ -19,18 +19,12 @@ export const ThemeSchemeContext = createContext<(theme: ColorScheme) => void>(
 
 export const BaseThemeProvider = ({ children }: BaseThemeProviderProps) => {
   const systemColorScheme = useSystemColorScheme();
-
   const [themeScheme, setThemeScheme] = useState(systemColorScheme);
 
-  useEffect(() => {
-    document.documentElement.className =
-      themeScheme === 'Dark' ? 'dark' : 'light';
-  }, [themeScheme]);
+  document.documentElement.className =
+    themeScheme === 'Dark' ? 'dark' : 'light';
 
-  const theme = useMemo(
-    () => (themeScheme === 'Dark' ? THEME_DARK : THEME_LIGHT),
-    [themeScheme],
-  );
+  const theme = themeScheme === 'Dark' ? THEME_DARK : THEME_LIGHT;
 
   return (
     <ThemeSchemeContext.Provider value={setThemeScheme}>
