@@ -1,17 +1,10 @@
 import { LinkType } from 'twenty-ui';
-import { isDefined } from './isDefined';
 
 export const checkUrlType = (url: string) => {
-  if (
-    /^(http|https):\/\/(?:www\.)?linkedin.com(\w+:{0,1}\w*@)?(\S+)(:([0-9])+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/.test(
-      url,
-    )
-  ) {
+  if (/^(https?:\/\/)?(www\.)?linkedin\.com(\/[\w\-\/?#:.%=&]*)?$/.test(url)) {
     return LinkType.LinkedIn;
   }
-  if (
-    isDefined(/^((http|https):\/\/)?(?:www\.)?twitter\.com\/(\w+)?/i.exec(url))
-  ) {
+  if (/^(https?:\/\/)?(www\.)?twitter\.com(\/[\w\-\/?#:.%=&]*)?$/.test(url)) {
     return LinkType.Twitter;
   }
 
