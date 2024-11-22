@@ -18,6 +18,7 @@ export type CurrentWorkspace = Pick<
   | 'isMicrosoftAuthEnabled'
   | 'isPasswordAuthEnabled'
   | 'hasValidEntrepriseKey'
+  | 'subdomain'
   | 'metadataVersion'
 >;
 

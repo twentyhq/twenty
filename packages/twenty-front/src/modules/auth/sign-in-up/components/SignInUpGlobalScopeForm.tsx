@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import {
-  HorizontalSeparator,
   IconGoogle,
   IconMicrosoft,
   Loader,
   MainButton,
+  HorizontalSeparator,
 } from 'twenty-ui';
 import { useTheme } from '@emotion/react';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
@@ -18,6 +18,7 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { redirectToWorkspace } from '~/utils/workspace-url.helper';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -91,26 +92,20 @@ export const SignInUpGlobalScopeForm = () => {
       },
       onCompleted: (data) => {
         requestFreshCaptchaToken();
-        if (
-          data?.checkUserExists.exists &&
-          data.checkUserExists.__typename === 'UserExists'
-        ) {
+        if (data.checkUserExists.__typename === 'UserExists') {
           if (
             isDefined(data?.checkUserExists.availableWorkspaces) &&
             data.checkUserExists.availableWorkspaces.length >= 1
           ) {
-            // return redirectToWorkspace(
-            //   data?.checkUserExists.availableWorkspaces[0].subdomain,
-            //   {
-            //     email: form.getValues('email'),
-            //   },
-            // );
+            return redirectToWorkspace(
+              data?.checkUserExists.availableWorkspaces[0].subdomain,
+              {
+                email: form.getValues('email'),
+              },
+            );
           }
         }
-        if (
-          isDefined(data?.checkUserExists.exists) &&
-          data.checkUserExists.__typename === 'UserNotExists'
-        ) {
+        if (data.checkUserExists.__typename === 'UserNotExists') {
           if (!isMultiWorkspaceEnabled) {
             return enqueueSnackBar('User not found', {
               variant: SnackBarVariant.Error,

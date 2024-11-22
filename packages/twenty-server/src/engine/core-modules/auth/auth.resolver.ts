@@ -32,12 +32,15 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SwitchWorkspaceInput } from 'src/engine/core-modules/auth/dto/switch-workspace.input';
 import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
-import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
+import { getWorkspaceSubdomainByOrigin } from 'src/engine/utils/get-workspace-subdomain-by-origin';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { ImpersonateInput } from './dto/impersonate.input';
@@ -60,11 +63,13 @@ export class AuthResolver {
     private renewTokenService: RenewTokenService,
     private userService: UserService,
     private apiKeyService: ApiKeyService,
+    private workspaceService: WorkspaceService,
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
     private switchWorkspaceService: SwitchWorkspaceService,
     private transientTokenService: TransientTokenService,
     private oauthService: OAuthService,
+    private environmentService: EnvironmentService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -95,8 +100,19 @@ export class AuthResolver {
 
   @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
-  async challenge(@Args() challengeInput: ChallengeInput): Promise<LoginToken> {
-    const user = await this.authService.challenge(challengeInput);
+  async challenge(
+    @Args() challengeInput: ChallengeInput,
+    @OriginHeader() origin: string,
+  ): Promise<LoginToken> {
+    const workspace = await this.workspaceService.getWorkspaceByOrigin(origin);
+
+    if (!workspace) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+    const user = await this.authService.challenge(challengeInput, workspace);
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
     );
@@ -106,9 +122,20 @@ export class AuthResolver {
 
   @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
-  async signUp(@Args() signUpInput: SignUpInput): Promise<LoginToken> {
+  async signUp(
+    @Args() signUpInput: SignUpInput,
+    @OriginHeader() origin: string,
+  ): Promise<LoginToken> {
     const user = await this.authService.signInUp({
       ...signUpInput,
+      targetWorkspaceSubdomain: this.environmentService.get(
+        'IS_MULTIWORKSPACE_ENABLED',
+      )
+        ? getWorkspaceSubdomainByOrigin(
+            origin,
+            this.environmentService.get('FRONT_BASE_URL'),
+          )
+        : undefined,
       fromSSO: false,
       isAuthEnabled: workspaceValidator.isAuthEnabled(
         'password',
@@ -160,14 +187,17 @@ export class AuthResolver {
   }
 
   @Mutation(() => Verify)
-  async verify(@Args() verifyInput: VerifyInput): Promise<Verify> {
-    const email = await this.loginTokenService.verifyLoginToken(
+  async verify(
+    @Args() verifyInput: VerifyInput,
+    @OriginHeader() origin: string,
+  ): Promise<Verify> {
+    const workspace = await this.workspaceService.getWorkspaceByOrigin(origin);
+
+    const { sub: email } = await this.loginTokenService.verifyLoginToken(
       verifyInput.loginToken,
     );
 
-    const result = await this.authService.verify(email);
-
-    return result;
+    return await this.authService.verify(email, workspace?.id);
   }
 
   @Mutation(() => AuthorizeApp)

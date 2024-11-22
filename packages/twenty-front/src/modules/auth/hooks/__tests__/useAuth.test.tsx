@@ -112,11 +112,11 @@ describe('useAuth', () => {
 
     expect(state.icons).toEqual({});
     expect(state.authProviders).toEqual({
-      google: true,
+      google: false,
       microsoft: false,
       magicLink: false,
-      password: true,
-      sso: [],
+      password: false,
+      sso: false,
     });
     expect(state.billing).toBeNull();
     expect(state.isSignInPrefilled).toBe(false);

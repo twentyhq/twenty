@@ -25,7 +25,6 @@ import { SAMLAuthGuard } from 'src/engine/core-modules/auth/guards/saml-auth.gua
 import { SSOProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/sso-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import {
   IdentityProviderType,
@@ -33,6 +32,7 @@ import {
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 @Controller('auth')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -41,8 +41,8 @@ export class SSOAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
-    private readonly environmentService: EnvironmentService,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly workspaceService: WorkspaceService,
     private readonly ssoService: SSOService,
     @InjectRepository(WorkspaceSSOIdentityProvider, 'core')
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
@@ -50,7 +50,7 @@ export class SSOAuthController {
 
   @Get('saml/metadata/:identityProviderId')
   @UseGuards(SSOProviderEnabledGuard)
-  async generateMetadata(@Req() req: any): Promise<string> {
+  async generateMetadata(@Req() req: any): Promise<string | void> {
     return generateServiceProviderMetadata({
       wantAssertionsSigned: false,
       issuer: this.ssoService.buildIssuerURL({
@@ -84,10 +84,12 @@ export class SSOAuthController {
       const loginToken = await this.generateLoginToken(req.user);
 
       return res.redirect(
-        this.authService.computeRedirectURI(loginToken.token),
+        await this.authService.computeRedirectURI(
+          loginToken.token,
+          req.user.defaultWorkspace.subdomain,
+        ),
       );
     } catch (err) {
-      // TODO: improve error management
       res.status(403).send(err.message);
     }
   }
@@ -99,12 +101,13 @@ export class SSOAuthController {
       const loginToken = await this.generateLoginToken(req.user);
 
       return res.redirect(
-        this.authService.computeRedirectURI(loginToken.token),
+        await this.authService.computeRedirectURI(
+          loginToken.token,
+          req.user.defaultWorkspace.subdomain,
+        ),
       );
     } catch (err) {
-      // TODO: improve error management
       res.status(403).send(err.message);
-      res.redirect(`${this.environmentService.get('FRONT_BASE_URL')}/verify`);
     }
   }
 

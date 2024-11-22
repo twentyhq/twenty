@@ -28,8 +28,6 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 
 export type SignInUpServiceInput = {
@@ -41,6 +39,7 @@ export type SignInUpServiceInput = {
   workspacePersonalInviteToken?: string;
   picture?: string | null;
   fromSSO: boolean;
+  targetWorkspaceSubdomain?: string;
   isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
 };
 
@@ -69,6 +68,7 @@ export class SignInUpService {
     lastName,
     picture,
     fromSSO,
+    targetWorkspaceSubdomain,
     isAuthEnabled,
   }: SignInUpServiceInput) {
     if (!firstName) firstName = '';
@@ -113,10 +113,23 @@ export class SignInUpService {
       }
     }
 
+    const maybeInvitation =
+      targetWorkspaceSubdomain &&
+      !workspacePersonalInviteToken &&
+      !workspaceInviteHash
+        ? await this.workspaceInvitationService.findInvitationByWorkspaceSubdomainAndUserEmail(
+            {
+              subdomain: targetWorkspaceSubdomain,
+              email,
+            },
+          )
+        : undefined;
+
     const invitationValidation =
-      workspacePersonalInviteToken || workspaceInviteHash
+      workspacePersonalInviteToken || workspaceInviteHash || maybeInvitation
         ? await this.workspaceInvitationService.validateInvitation({
-            workspacePersonalInviteToken: workspacePersonalInviteToken,
+            workspacePersonalInviteToken:
+              workspacePersonalInviteToken ?? maybeInvitation?.value,
             workspaceInviteHash,
             email,
           })
@@ -282,6 +295,7 @@ export class SignInUpService {
     }
 
     const workspaceToCreate = this.workspaceRepository.create({
+      subdomain: v4().replace(/-/g, ''),
       displayName: '',
       domainName: '',
       inviteHash: v4(),

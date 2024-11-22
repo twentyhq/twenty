@@ -19,7 +19,9 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { computeRedirectErrorUrl } from 'src/engine/core-modules/auth/utils/compute-redirect-error-url';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -27,6 +29,8 @@ export class MicrosoftAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
+    private readonly workspaceService: WorkspaceService,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   @Get()
@@ -42,36 +46,55 @@ export class MicrosoftAuthController {
     @Req() req: MicrosoftRequest,
     @Res() res: Response,
   ) {
-    const {
-      firstName,
-      lastName,
-      email,
-      picture,
-      workspaceInviteHash,
-      workspacePersonalInviteToken,
-    } = req.user;
+    try {
+      const {
+        firstName,
+        lastName,
+        email,
+        picture,
+        workspaceInviteHash,
+        workspacePersonalInviteToken,
+        targetWorkspaceSubdomain,
+      } = req.user;
 
-    const user = await this.authService.signInUp({
-      email,
-      firstName,
-      lastName,
-      picture,
-      workspaceInviteHash,
-      workspacePersonalInviteToken,
-      fromSSO: true,
-      isAuthEnabled: workspaceValidator.isAuthEnabled(
-        'microsoft',
-        new AuthException(
-          'Microsoft auth is not enabled for this workspace',
-          AuthExceptionCode.OAUTH_ACCESS_DENIED,
+      const user = await this.authService.signInUp({
+        email,
+        firstName,
+        lastName,
+        picture,
+        workspaceInviteHash,
+        workspacePersonalInviteToken,
+        targetWorkspaceSubdomain,
+        fromSSO: true,
+        isAuthEnabled: workspaceValidator.isAuthEnabled(
+          'microsoft',
+          new AuthException(
+            'Microsoft auth is not enabled for this workspace',
+            AuthExceptionCode.OAUTH_ACCESS_DENIED,
+          ),
         ),
-      ),
-    });
+      });
 
-    const loginToken = await this.loginTokenService.generateLoginToken(
-      user.email,
-    );
+      const loginToken = await this.loginTokenService.generateLoginToken(
+        user.email,
+      );
 
-    return res.redirect(this.authService.computeRedirectURI(loginToken.token));
+      return res.redirect(
+        await this.authService.computeRedirectURI(
+          loginToken.token,
+          user.defaultWorkspace.subdomain,
+        ),
+      );
+    } catch (err) {
+      return res.redirect(
+        computeRedirectErrorUrl({
+          frontBaseUrl: this.environmentService.get('FRONT_BASE_URL'),
+          subdomain: this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
+            ? 'app'
+            : null,
+          errorMessage: err.message,
+        }),
+      );
+    }
   }
 }

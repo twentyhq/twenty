@@ -112,7 +112,18 @@ export class AccessTokenService {
     };
   }
 
-  async validateToken(request: Request): Promise<AuthContext> {
+  async validateToken(token: string): Promise<AuthContext> {
+    await this.jwtWrapperService.verifyWorkspaceToken(token, 'ACCESS');
+
+    const decoded = await this.jwtWrapperService.decode(token);
+
+    const { user, apiKey, workspace, workspaceMemberId } =
+      await this.jwtStrategy.validate(decoded as JwtPayload);
+
+    return { user, apiKey, workspace, workspaceMemberId };
+  }
+
+  async validateTokenByRequest(request: Request): Promise<AuthContext> {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(request);
 
     if (!token) {
@@ -122,13 +133,6 @@ export class AccessTokenService {
       );
     }
 
-    await this.jwtWrapperService.verifyWorkspaceToken(token, 'ACCESS');
-
-    const decoded = await this.jwtWrapperService.decode(token);
-
-    const { user, apiKey, workspace, workspaceMemberId } =
-      await this.jwtStrategy.validate(decoded as JwtPayload);
-
-    return { user, apiKey, workspace, workspaceMemberId };
+    return this.validateToken(token);
   }
 }

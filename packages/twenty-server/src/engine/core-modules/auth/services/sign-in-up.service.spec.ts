@@ -100,7 +100,7 @@ describe('SignInUpService', () => {
   it('signInUp - sso - new user', async () => {
     const email = 'test@test.com';
 
-    UserFindOneMock.mockReturnValueOnce(null);
+    UserFindOneMock.mockReturnValueOnce(false);
     workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock.mockReturnValueOnce(
       undefined,
     );
@@ -112,6 +112,7 @@ describe('SignInUpService', () => {
     await service.signInUp({
       email: 'test@test.com',
       fromSSO: true,
+      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(spy).toHaveBeenCalledWith(
@@ -141,11 +142,12 @@ describe('SignInUpService', () => {
     const result = await service.signInUp({
       email,
       fromSSO: true,
+      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(result).toEqual(existingUser);
   });
-  it.skip('signInUp - sso - new user - existing invitation', async () => {
+  it('signInUp - sso - new user - existing invitation', async () => {
     const email = 'newuser@test.com';
     const workspaceId = 'workspace-id';
 
@@ -175,6 +177,7 @@ describe('SignInUpService', () => {
     await service.signInUp({
       email,
       fromSSO: true,
+      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(spySignInUpOnExistingWorkspace).toHaveBeenCalledWith(
@@ -194,7 +197,7 @@ describe('SignInUpService', () => {
       workspaceInvitationInvalidateWorkspaceInvitationMock,
     ).toHaveBeenCalledWith(workspaceId, email);
   });
-  it.skip('signInUp - sso - existing user - existing invitation', async () => {
+  it('signInUp - sso - existing user - existing invitation', async () => {
     const email = 'existinguser@test.com';
     const workspaceId = 'workspace-id';
     const existingUser = {
@@ -227,6 +230,7 @@ describe('SignInUpService', () => {
     const result = await service.signInUp({
       email,
       fromSSO: true,
+      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(result).toEqual(existingUser);
@@ -266,6 +270,7 @@ describe('SignInUpService', () => {
       email,
       fromSSO: true,
       workspacePersonalInviteToken,
+      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(spySignInUpOnExistingWorkspace).toHaveBeenCalledWith(
@@ -316,13 +321,14 @@ describe('SignInUpService', () => {
       email,
       fromSSO: true,
       workspacePersonalInviteToken,
+      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(
       workspaceInvitationInvalidateWorkspaceInvitationMock,
     ).toHaveBeenCalledWith(workspaceId, email);
   });
-  it.skip('signInUp - credentials - existing user - invitation', async () => {
+  it('signInUp - credentials - existing user - invitation', async () => {
     const email = 'existinguser@test.com';
     const password = 'validPassword123';
     const workspaceId = 'workspace-id';
@@ -357,13 +363,14 @@ describe('SignInUpService', () => {
       email,
       password,
       fromSSO: false,
+      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(
       workspaceInvitationInvalidateWorkspaceInvitationMock,
     ).toHaveBeenCalledWith(workspaceId, email);
   });
-  it.skip('signInUp - credentials - new user - invitation', async () => {
+  it('signInUp - credentials - new user - invitation', async () => {
     const email = 'newuser@test.com';
     const password = 'validPassword123';
     const workspaceId = 'workspace-id';
@@ -393,6 +400,7 @@ describe('SignInUpService', () => {
       email,
       password,
       fromSSO: false,
+      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(UserCreateMock).toHaveBeenCalledTimes(1);
@@ -429,6 +437,7 @@ describe('SignInUpService', () => {
       password,
       fromSSO: false,
       workspacePersonalInviteToken,
+      targetWorkspaceSubdomain: 'tartanpion',
     });
 
     expect(UserCreateMock).toHaveBeenCalledTimes(1);

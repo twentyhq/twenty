@@ -103,7 +103,7 @@ The `yarn command:prod upgrade-0.31` takes care of the data migration of all wor
 
 Upgrade your Twenty instance to use v0.32.0 image
 
-**Schema and data migration**: 
+**Schema and data migration**:
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.32
@@ -134,3 +134,16 @@ Update your `.env` file to use the new `APP_SECRET` variable instead of the indi
 If you are using connected account to synchronize your Google emails and calendars, you will need to activate the [People API](https://developers.google.com/people) on your Google Admin console.
 
 <ArticleEditContent></ArticleEditContent>
+
+# v0.32.0 to v0.33.0
+
+Upgrade your Twenty instance to use v0.33.0 image
+
+**Schema and data migration**:
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.33
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.33` takes care of the data migration of all workspaces.

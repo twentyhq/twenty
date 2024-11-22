@@ -50,7 +50,8 @@ export class CoreQueryBuilderFactory {
     objectMetadataItems: ObjectMetadataEntity[];
     objectMetadataItem: ObjectMetadataEntity;
   }> {
-    const { workspace } = await this.accessTokenService.validateToken(request);
+    const { workspace } =
+      await this.accessTokenService.validateTokenByRequest(request);
 
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspace.id);

@@ -34,6 +34,7 @@ import {
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
+import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 import { Workspace } from './workspace.entity';
@@ -154,8 +155,8 @@ export class WorkspaceResolver {
   }
 
   @Query(() => PublicWorkspaceDataOutput)
-  async getPublicWorkspaceDataBySubdomain() {
-    const workspace = await this.workspaceService.getWorkspaceByOrigin();
+  async getPublicWorkspaceDataBySubdomain(@OriginHeader() origin: string) {
+    const workspace = await this.workspaceService.getWorkspaceByOrigin(origin);
 
     workspaceValidator.assertIsExist(
       workspace,
@@ -169,6 +170,7 @@ export class WorkspaceResolver {
       id: workspace.id,
       logo: workspace.logo,
       displayName: workspace.displayName,
+      subdomain: workspace.subdomain,
       authProviders: await this.workspaceService.getAuthProvidersByWorkspaceId(
         workspace.id,
       ),

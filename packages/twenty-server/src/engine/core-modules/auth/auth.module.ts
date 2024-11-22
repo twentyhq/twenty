@@ -11,7 +11,6 @@ import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/g
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
-import { VerifyAuthController } from 'src/engine/core-modules/auth/controllers/verify-auth.controller';
 import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
@@ -42,6 +41,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
+import { SignUpAuthController } from 'src/engine/core-modules/auth/controllers/sign-up-auth.controller';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -68,12 +68,12 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       'core',
     ),
     HttpModule,
-    TokenModule,
     UserWorkspaceModule,
     WorkspaceModule,
     OnboardingModule,
     WorkspaceDataSourceModule,
-    WorkspaceInvitationModule,
+    forwardRef(() => TokenModule),
+    forwardRef(() => WorkspaceInvitationModule),
     ConnectedAccountModule,
     WorkspaceSSOModule,
     FeatureFlagModule,
@@ -83,8 +83,8 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MicrosoftAuthController,
     GoogleAPIsAuthController,
     MicrosoftAPIsAuthController,
-    VerifyAuthController,
     SSOAuthController,
+    SignUpAuthController,
   ],
   providers: [
     SignInUpService,

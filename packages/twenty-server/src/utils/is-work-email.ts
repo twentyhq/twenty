@@ -1,21 +1,29 @@
 import { emailProvidersSet } from 'src/utils/email-providers';
 
-export const isWorkEmail = (email: string) => {
+export const getDomainNameByEmail = (email: string) => {
   if (!email) {
-    return false;
+    throw new Error('Email is required');
   }
 
   const fields = email.split('@');
 
   if (fields.length !== 2) {
-    return false;
+    throw new Error('Invalid email format');
   }
 
   const domain = fields[1];
 
   if (!domain) {
-    return false;
+    throw new Error('Invalid email format');
   }
 
-  return !emailProvidersSet.has(domain);
+  return domain;
+};
+
+export const isWorkEmail = (email: string) => {
+  try {
+    return !emailProvidersSet.has(getDomainNameByEmail(email));
+  } catch (err) {
+    return false;
+  }
 };

@@ -25,7 +25,6 @@ import { ObjectMetadataItemsProvider } from '@/object-metadata/components/Object
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { IconsProvider } from 'twenty-ui';
 import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
-import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 
 export type PageDecoratorArgs = {
   routePath: string;
@@ -73,7 +72,6 @@ const Providers = () => {
           <ClientConfigProviderEffect />
           <ClientConfigProvider>
             <UserProviderEffect />
-            <WorkspaceProviderEffect />
             <UserProvider>
               <ApolloMetadataClientMockedProvider>
                 <ObjectMetadataItemsProvider>

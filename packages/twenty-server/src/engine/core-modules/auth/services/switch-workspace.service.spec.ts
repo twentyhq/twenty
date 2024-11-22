@@ -6,10 +6,9 @@ import { Repository } from 'typeorm';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
+import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 import { SwitchWorkspaceService } from './switch-workspace.service';
 
@@ -17,10 +16,9 @@ describe('SwitchWorkspaceService', () => {
   let service: SwitchWorkspaceService;
   let userRepository: Repository<User>;
   let workspaceRepository: Repository<Workspace>;
-  let userService: UserService;
+  let ssoService: SSOService;
   let accessTokenService: AccessTokenService;
   let refreshTokenService: RefreshTokenService;
-  let workspaceService: WorkspaceService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -35,6 +33,12 @@ describe('SwitchWorkspaceService', () => {
           useClass: Repository,
         },
         {
+          provide: SSOService,
+          useValue: {
+            listSSOIdentityProvidersByWorkspaceId: jest.fn(),
+          },
+        },
+        {
           provide: AccessTokenService,
           useValue: {
             generateAccessToken: jest.fn(),
@@ -44,18 +48,6 @@ describe('SwitchWorkspaceService', () => {
           provide: RefreshTokenService,
           useValue: {
             generateRefreshToken: jest.fn(),
-          },
-        },
-        {
-          provide: UserService,
-          useValue: {
-            saveDefaultWorkspace: jest.fn(),
-          },
-        },
-        {
-          provide: WorkspaceService,
-          useValue: {
-            getAuthProvidersByWorkspaceId: jest.fn(),
           },
         },
       ],
@@ -68,10 +60,9 @@ describe('SwitchWorkspaceService', () => {
     workspaceRepository = module.get<Repository<Workspace>>(
       getRepositoryToken(Workspace, 'core'),
     );
+    ssoService = module.get<SSOService>(SSOService);
     accessTokenService = module.get<AccessTokenService>(AccessTokenService);
     refreshTokenService = module.get<RefreshTokenService>(RefreshTokenService);
-    userService = module.get<UserService>(UserService);
-    workspaceService = module.get<WorkspaceService>(WorkspaceService);
   });
 
   it('should be defined', () => {
@@ -110,6 +101,7 @@ describe('SwitchWorkspaceService', () => {
       const mockWorkspace = {
         id: 'workspace-id',
         workspaceUsers: [{ userId: 'other-user-id' }],
+        workspaceSSOIdentityProviders: [],
       };
 
       jest
@@ -129,32 +121,19 @@ describe('SwitchWorkspaceService', () => {
       const mockWorkspace = {
         id: 'workspace-id',
         workspaceUsers: [{ userId: 'user-id' }],
-        logo: 'logo',
-        displayName: 'displayName',
+        workspaceSSOIdentityProviders: [{}],
       };
-
-      const mockAuthProviders = {
-        google: true,
-        magicLink: false,
-        password: true,
-        microsoft: false,
-        sso: [
-          {
-            id: 'sso-id',
-          },
-        ],
-      };
+      const mockSSOProviders = [{ id: 'sso-provider-id' }];
 
       jest
         .spyOn(userRepository, 'findBy')
         .mockResolvedValue([mockUser as User]);
-      jest.spyOn(userRepository, 'save').mockResolvedValue(mockUser as User);
       jest
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace as any);
       jest
-        .spyOn(workspaceService, 'getAuthProvidersByWorkspaceId')
-        .mockResolvedValue(mockAuthProviders as any);
+        .spyOn(ssoService, 'listSSOIdentityProvidersByWorkspaceId')
+        .mockResolvedValue(mockSSOProviders as any);
 
       const result = await service.switchWorkspace(
         mockUser as User,
@@ -162,10 +141,9 @@ describe('SwitchWorkspaceService', () => {
       );
 
       expect(result).toEqual({
-        id: mockWorkspace.id,
-        logo: expect.any(String),
-        displayName: expect.any(String),
-        authProviders: mockAuthProviders,
+        useSSOAuth: true,
+        workspace: mockWorkspace,
+        availableSSOIdentityProviders: mockSSOProviders,
       });
     });
 
@@ -175,16 +153,6 @@ describe('SwitchWorkspaceService', () => {
         id: 'workspace-id',
         workspaceUsers: [{ userId: 'user-id' }],
         workspaceSSOIdentityProviders: [],
-        logo: 'logo',
-        displayName: 'displayName',
-      };
-
-      const mockAuthProviders = {
-        google: true,
-        magicLink: false,
-        password: true,
-        microsoft: false,
-        sso: [],
       };
 
       jest
@@ -193,10 +161,6 @@ describe('SwitchWorkspaceService', () => {
       jest
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace as any);
-      jest.spyOn(userRepository, 'save').mockResolvedValue({} as User);
-      jest
-        .spyOn(workspaceService, 'getAuthProvidersByWorkspaceId')
-        .mockResolvedValue(mockAuthProviders);
 
       const result = await service.switchWorkspace(
         mockUser as User,
@@ -204,10 +168,8 @@ describe('SwitchWorkspaceService', () => {
       );
 
       expect(result).toEqual({
-        id: mockWorkspace.id,
-        logo: expect.any(String),
-        displayName: expect.any(String),
-        authProviders: mockAuthProviders,
+        useSSOAuth: false,
+        workspace: mockWorkspace,
       });
     });
   });
@@ -238,10 +200,10 @@ describe('SwitchWorkspaceService', () => {
           refreshToken: mockRefreshToken,
         },
       });
-      expect(userService.saveDefaultWorkspace).toHaveBeenCalledWith(
-        mockUser.id,
-        mockWorkspace.id,
-      );
+      expect(userRepository.save).toHaveBeenCalledWith({
+        id: mockUser.id,
+        defaultWorkspace: mockWorkspace,
+      });
       expect(accessTokenService.generateAccessToken).toHaveBeenCalledWith(
         mockUser.id,
         mockWorkspace.id,
