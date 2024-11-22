@@ -2,7 +2,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
-export function OnDatabaseEvent(
+export function OnDatabaseBatchEvent(
   object: string,
   action: DatabaseEventAction,
 ): MethodDecorator {
