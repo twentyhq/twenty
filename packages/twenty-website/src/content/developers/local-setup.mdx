@@ -2,10 +2,8 @@
 title: Local Setup
 icon: TbDeviceDesktop
 image: /images/user-guide/fields/field.png
-info: Mostly for contributors or curious developers
+info: The guide for contributors (or curious developers) who want to run Twenty on their laptops.
 ---
-
-Follow this guide if you would like to setup the project locally to contribute.
 
 ## Prerequisites
 
@@ -22,6 +20,11 @@ Before you can install and use Twenty, make sure you install the following on yo
 `npm` won't work, you should use `yarn` instead. Yarn is now shipped with Node.js, so you don't need to install it separately.
 You only have to run `corepack enable` to enable Yarn if you haven't done it yet.
 </ArticleWarning>
+
+<ArticleWarning>
+At Twenty, most of the team work on MacOS, so this configuration is the most tested. Linux and Windows work as well, but are more likely to get into issues.
+</ArticleWarning>
+
 
 </ArticleTab>
 
@@ -105,7 +108,6 @@ cd twenty
 You should run all commands in the following steps from the root of the project.
 
 ## Step 3: Set up a PostgreSQL Database
-You can access the database at [localhost:5432](localhost:5432), with user `twenty` and password `twenty` .
 
 <ArticleTabs label1="Linux" label2="Mac OS" label3="Windows (WSL)">
   <ArticleTab>
@@ -116,7 +118,7 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     ```
     Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
 
-    <b>Option 2:</b> If you have docker installed:
+    <b>Option 2 (preferred):</b> If you have docker installed:
     ```bash
       make postgres-on-docker
     ```
@@ -130,7 +132,7 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
       psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
     ```
 
-    <b>Option 2:</b> If you have docker installed:
+    <b>Option 2 (preferred):</b> If you have docker installed:
     ```bash
       make postgres-on-docker
     ```
@@ -154,6 +156,8 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
   </ArticleTab>
 </ArticleTabs>
 
+You can now access the database at [localhost:5432](localhost:5432), with user `twenty` and password `twenty` .
+
 ## Step 4: Set up a Redis Database (cache)
 Twenty requires a redis cache to provide the best performances
 
@@ -168,10 +172,12 @@ Twenty requires a redis cache to provide the best performances
     ```
   </ArticleTab>
   <ArticleTab>
-    <b>Option 1:</b> To provision your Redis locally with `brew`:
+    <b>Option 1 (preferred):</b> To provision your Redis locally with `brew`:
     ```bash
     brew install redis
     ```
+    Start your redis server:
+    ```brew services start redis```
 
     <b>Option 2:</b> If you have docker installed:
     ```bash
@@ -189,9 +195,11 @@ Twenty requires a redis cache to provide the best performances
   </ArticleTab>
 </ArticleTabs>
 
+If you need a Client GUI, we recommend [redis insight](https://redis.io/insight/) (free version available)
+
 ## Step 5: Setup environment variables
 
-Use environment variables or `.env` files to configure your project.
+Use environment variables or `.env` files to configure your project. More info [here](https://twenty.com/developers/section/self-hosting/self-hosting-var)
 
 Copy the `.env.example` files in `/front` and `/server`:
 ```bash
@@ -204,16 +212,17 @@ To build Twenty server and seed some data into your database, run the following 
 ```bash
 yarn
 ```
+Note that `npm` or `pnpm` won't work
 
 ## Step 7: Running the project
 
-Start your redis server:
 <ArticleTabs label1="Linux" label2="Mac OS" label3="Windows (WSL)">
   <ArticleTab>
     Depending on your Linux distribution, Redis server might be started automatically.
     If not, check the [Redis installation guide](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) for your distro.
   </ArticleTab>
   <ArticleTab>
+  Redis should already be running. If not, run:
     ```bash
     brew services start redis
     ```
@@ -242,9 +251,20 @@ Alternatively, you can start all services at once:
 npx nx start
 ```
 
-Twenty's server will be up and running at [http://localhost:3000](http://localhost:3000). The GraphQL API can be accessed at [http://localhost:3000/graphql](http://localhost:3000/graphql), and the REST API can be reached at [http://localhost:3000/rest](http://localhost:3000/rest).
+## Step 8: Use Twenty
 
-Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001). Just log in using the seeded demo account: `tim@apple.dev` (password: `Applecar2025`) to start using Twenty.
+**Frontend**  
+
+Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001).  
+You can log in using the default demo account: `tim@apple.dev` (password: `Applecar2025`)
+
+**Backend**  
+
+- Twenty's server will be up and running at [http://localhost:3000](http://localhost:3000) 
+- The GraphQL API can be accessed at [http://localhost:3000/graphql](http://localhost:3000/graphql)
+- The REST API can be reached at [http://localhost:3000/rest](http://localhost:3000/rest)
+
+
 
 
 ## Troubleshooting
@@ -287,6 +307,20 @@ In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true`
   "source.fixAll.eslint": "explicit"
 
 }
+```
+**If it does not work:**  
+Another thing you can try is to only run the services you need instead of `npx nx start`. For instance, if you work on the server, try to run only `npx nx worker twenty-server`
+
+**If it does not work:**  
+Well, you will need to investigate which process are taking you so much RAM on your machine. At twenty, we noticed that some VScode extensions were taking a lot of RAM so we temporarily disable them. 
+
+**If it does not work:**  
+A good laptop restart sometimes help cleanig ghost processes.
+
+#### No emails are sent
+Most of the time, it's because the  `worker` is not running in the background. Try to run 
+```
+npx nx worker twenty-server
 ```
 
 <ArticleEditContent></ArticleEditContent>
