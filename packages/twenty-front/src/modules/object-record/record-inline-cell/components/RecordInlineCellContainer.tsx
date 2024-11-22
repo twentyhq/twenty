@@ -134,7 +134,7 @@ export const RecordInlineCellContainer = () => {
               <OverflowingTextWithTooltip
                 text={label}
                 isLabel={true}
-                allowDisplayWrap={false}
+                displayedMaxRows={1}
               />
             </StyledLabelContainer>
           )}

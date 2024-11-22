@@ -25,38 +25,14 @@ const StyledOverflowingText = styled.div<{
   text-decoration: inherit;
 
   text-overflow: ellipsis;
-  white-space: nowrap;
 
   height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
 
-  text-wrap-mode: ${({
-    isLabel,
-    displayedMaxRows,
-    allowDisplayWrap = false,
-  }) =>
-    isLabel === false && displayedMaxRows && allowDisplayWrap
-      ? 'wrap'
-      : 'nowrap'};
-  -webkit-line-clamp: ${({
-    isLabel,
-    displayedMaxRows,
-    allowDisplayWrap = false,
-  }) =>
-    isLabel === false && displayedMaxRows && allowDisplayWrap
-      ? displayedMaxRows
-      : 'inherit'};
-  display: ${({ isLabel, displayedMaxRows, allowDisplayWrap = false }) =>
-    isLabel === false && displayedMaxRows && allowDisplayWrap
-      ? `-webkit-box`
-      : 'block'};
-  -webkit-box-orient: ${({
-    isLabel,
-    displayedMaxRows,
-    allowDisplayWrap = false,
-  }) =>
-    isLabel === false && displayedMaxRows && allowDisplayWrap
-      ? 'vertical'
-      : 'inherit'};
+  text-wrap: wrap;
+  -webkit-line-clamp: ${({ displayedMaxRows }) =>
+    displayedMaxRows ? displayedMaxRows : '1'};
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 
   & :hover {
     text-overflow: ${({ cursorPointer }) =>
