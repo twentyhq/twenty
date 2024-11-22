@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import { companiesDemo } from 'src/engine/workspace-manager/demo-objects-prefill-data/companies-demo.json';
+import { COMPANIES_DEMO } from 'src/engine/workspace-manager/demo-objects-prefill-data/companies-demo.json';
 
 export const seedCompanyWithDemoData = async (
   entityManager: EntityManager,
@@ -36,7 +36,7 @@ export const seedCompanyWithDemoData = async (
     ])
     .orIgnore()
     .values(
-      companiesDemo.map((company, index) => ({ ...company, position: index })),
+      COMPANIES_DEMO.map((company, index) => ({ ...company, position: index })),
     )
     .returning('*')
     .execute();

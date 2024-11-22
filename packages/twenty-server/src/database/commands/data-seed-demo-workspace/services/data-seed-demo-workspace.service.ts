@@ -3,10 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
-import {
-  deleteCoreSchema,
-  seedCoreSchema,
-} from 'src/database/typeorm-seeds/core/demo';
+import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
+import { deleteCoreSchema } from 'src/database/typeorm-seeds/core/demo';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
