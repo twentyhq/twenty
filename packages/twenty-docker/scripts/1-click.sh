@@ -12,6 +12,6 @@ else
 fi
 
 chmod +x twenty_install.sh
-./twenty_install.sh "$VERSION" "$BRANCH"
+VERSION="$VERSION" BRANCH="$BRANCH" ./twenty_install.sh
 
 rm twenty_install.sh
