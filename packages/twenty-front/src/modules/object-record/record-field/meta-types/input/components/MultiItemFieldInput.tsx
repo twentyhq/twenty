@@ -114,6 +114,9 @@ export const MultiItemFieldInput = <T,>({
         setInputValue(item.countryCode + item.number);
         break;
       case FieldMetadataType.Array:
+        item = items[index] as string;
+        setInputValue(item);
+        break;
       case FieldMetadataType.Emails:
         item = items[index] as string;
         setInputValue(item);
