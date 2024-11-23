@@ -34,6 +34,7 @@ const StyledIconCheckContainer = styled.div`
 
 export const ObjectFilterDropdownBooleanSelect = () => {
   const theme = useTheme();
+  const options = [true, false];
 
   const {
     filterDefinitionUsedInDropdownState,
@@ -81,31 +82,31 @@ export const ObjectFilterDropdownBooleanSelect = () => {
     setSelectedValue(value);
     closeDropdown();
   };
+
   return (
     <SelectableList
       selectableListId="boolean-select"
-      selectableItemIdArray={['true', 'false']}
+      selectableItemIdArray={options.map((option) => option.toString())}
       hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
       onEnter={(itemId) => {
         handleOptionSelect(itemId === 'true');
       }}
     >
       <DropdownMenuItemsContainer hasMaxHeight>
-        <StyledBooleanSelectContainer
-          onClick={() => handleOptionSelect(true)}
-          selected={selectedValue === true}
-        >
-          <BooleanDisplay value={true} />
-        </StyledBooleanSelectContainer>
-        <StyledBooleanSelectContainer
-          onClick={() => handleOptionSelect(false)}
-          selected={selectedValue === false}
-        >
-          <BooleanDisplay value={false} />
-          <StyledIconCheckContainer>
-            <IconCheck color={theme.grayScale.gray50} size={16} />
-          </StyledIconCheckContainer>
-        </StyledBooleanSelectContainer>
+        {options.map((option) => (
+          <StyledBooleanSelectContainer
+            key={String(option)}
+            onClick={() => handleOptionSelect(option)}
+            selected={selectedValue === option}
+          >
+            <BooleanDisplay value={option} />
+            {selectedFilter?.value === option.toString() && (
+              <StyledIconCheckContainer>
+                <IconCheck color={theme.grayScale.gray50} size={16} />
+              </StyledIconCheckContainer>
+            )}
+          </StyledBooleanSelectContainer>
+        ))}
       </DropdownMenuItemsContainer>
     </SelectableList>
   );
