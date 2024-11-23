@@ -117,6 +117,10 @@ export const MultiItemFieldInput = <T,>({
         item = items[index] as string;
         setInputValue(item);
         break;
+      case FieldMetadataType.Array:
+        item = items[index] as string;
+        setInputValue(item);
+        break;
       default:
         throw new Error(`Unsupported field type: ${fieldMetadataType}`);
     }
