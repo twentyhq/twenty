@@ -1,0 +1,51 @@
+services:
+  webhook:
+    container_name: "webhook-site"
+    image: "webhooksite/webhook.site"
+    command: php artisan queue:work --daemon --tries=3 --timeout=10
+    ports:
+      - "8084:80"
+    environment:
+      - APP_ENV=dev
+      - APP_DEBUG=true
+      - APP_URL=http://localhost:8084
+      - APP_LOG=errorlog
+      - DB_CONNECTION=sqlite
+      - REDIS_HOST=redis
+      - BROADCAST_DRIVER=redis
+      - CACHE_DRIVER=redis
+      - QUEUE_DRIVER=redis
+      - ECHO_HOST_MODE=path
+    depends_on:
+      - redis
+    networks:
+      - webhook
+
+  redis:
+    container_name: "webhook-redis"
+    image: "redis:alpine"
+    networks:
+      - webhook
+
+  laravel-echo-server:
+    container_name: "laravel-echo-server"
+    image: "webhooksite/laravel-echo-server"
+    environment:
+      - LARAVEL_ECHO_SERVER_AUTH_HOST=http://webhook
+      - LARAVEL_ECHO_SERVER_HOST=0.0.0.0
+      - LARAVEL_ECHO_SERVER_PORT=6001
+      - ECHO_REDIS_PORT=6379
+      - ECHO_REDIS_HOSTNAME=redis
+      - ECHO_PROTOCOL=http
+      - ECHO_ALLOW_CORS=true
+      - ECHO_ALLOW_ORIGIN=*
+      - ECHO_ALLOW_METHODS=*
+      - ECHO_ALLOW_HEADERS=*
+    depends_on:
+      - redis
+    networks:
+      - webhook
+
+networks:
+  webhook:
+    driver: bridge
