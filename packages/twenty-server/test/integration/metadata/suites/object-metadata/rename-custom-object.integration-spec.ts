@@ -2,17 +2,86 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { createOneObjectMetadataFactory } from 'test/integration/metadata/suites/utils/create-one-object-metadata-factory.util';
 import { createOneRelationMetadataFactory } from 'test/integration/metadata/suites/utils/create-one-relation-metadata-factory.util';
 import { deleteOneObjectMetadataItemFactory } from 'test/integration/metadata/suites/utils/delete-one-object-metadata-factory.util';
+import { deleteOneRelationMetadataItemFactory } from 'test/integration/metadata/suites/utils/delete-one-relation-metadata-factory.util';
+import { fieldsMetadataFactory } from 'test/integration/metadata/suites/utils/fields-metadata-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { objectsMetadataFactory } from 'test/integration/metadata/suites/utils/objects-metadata-factory.util';
 import { updateOneObjectMetadataItemFactory } from 'test/integration/metadata/suites/utils/update-one-object-metadata-factory.util';
 
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-
-let listingObjectId = '';
+const LISTING_NAME_SINGULAR = 'listing';
 
 describe('Custom object renaming', () => {
-  it('1. should create one custom object', async () => {
-    const LISTING_NAME_SINGULAR = 'listing';
+  let listingObjectId = '';
+  let customRelationId = '';
+
+  const STANDARD_OBJECT_RELATIONS = [
+    'noteTarget',
+    'attachment',
+    'favorite',
+    'taskTarget',
+    'timelineActivity',
+  ];
+
+  const standardObjectRelationsMap = STANDARD_OBJECT_RELATIONS.reduce(
+    (acc, relation) => ({
+      ...acc,
+      [relation]: {
+        objectMetadataId: '',
+        foreignKeyFieldMetadataId: '',
+        relationFieldMetadataId: '',
+      },
+    }),
+    {},
+  );
+
+  const standardObjectsGraphqlOperation = objectsMetadataFactory({
+    gqlFields: `
+    id
+    nameSingular
+  `,
+    input: {
+      filter: {
+        isCustom: { isNot: true },
+      },
+      paging: { first: 1000 },
+    },
+  });
+
+  const fieldsGraphqlOperation = fieldsMetadataFactory({
+    gqlFields: `
+        id
+        name
+        label
+        type
+        object {
+          id
+        }
+      `,
+    input: {
+      filter: {},
+      paging: { first: 1000 },
+    },
+  });
+
+  const fillStandardObjectRelationsMapObjectMetadataId = (standardObjects) => {
+    STANDARD_OBJECT_RELATIONS.forEach((relation) => {
+      standardObjectRelationsMap[relation].objectMetadataId =
+        standardObjects.body.data.objects.edges.find(
+          (object) => object.node.nameSingular === relation,
+        ).node.id;
+    });
+  };
+
+  it('1. should create one custom object with standard relations', async () => {
+    // Arrange
+    const standardObjects = await makeMetadataAPIRequest(
+      standardObjectsGraphqlOperation,
+    );
+
+    fillStandardObjectRelationsMapObjectMetadataId(standardObjects);
+
     const LISTING_OBJECT = {
       namePlural: 'listings',
       nameSingular: LISTING_NAME_SINGULAR,
@@ -22,6 +91,8 @@ describe('Custom object renaming', () => {
       icon: 'IconListNumbers',
       isLabelSyncedWithName: false,
     };
+
+    // Act
     const graphqlOperation = createOneObjectMetadataFactory({
       input: { object: LISTING_OBJECT },
       gqlFields: `
@@ -30,54 +101,78 @@ describe('Custom object renaming', () => {
       `,
     });
 
+    // Assert
     const response = await makeMetadataAPIRequest(graphqlOperation);
 
     expect(response.body.data.createOneObject.nameSingular).toBe(
       LISTING_NAME_SINGULAR,
     );
 
-    console.log(
-      '************setting listingObjectId',
-      response.body.data.createOneObject,
-      response.body.data.createOneObject.id,
-    );
     listingObjectId = response.body.data.createOneObject.id;
+
+    const fields = await makeMetadataAPIRequest(fieldsGraphqlOperation);
+
+    const foreignKeyFieldsMetadataForListing = fields.body.data.fields.edges
+      .filter((field) => field.node.name === `${LISTING_NAME_SINGULAR}Id`)
+      .map((field) => field.node);
+
+    const relationFieldsMetadataForListing = fields.body.data.fields.edges
+      .filter(
+        (field) =>
+          field.node.name === `${LISTING_NAME_SINGULAR}` &&
+          field.node.type === FieldMetadataType.RELATION,
+      )
+      .map((field) => field.node);
+
+    expect(foreignKeyFieldsMetadataForListing.length).toBe(5);
+
+    STANDARD_OBJECT_RELATIONS.forEach((relation) => {
+      // foreignKey field
+      const foreignKeyFieldMetadataId = foreignKeyFieldsMetadataForListing.find(
+        (field) =>
+          field.object.id ===
+          standardObjectRelationsMap[relation].objectMetadataId,
+      ).id;
+
+      expect(foreignKeyFieldMetadataId).not.toBeUndefined();
+
+      standardObjectRelationsMap[relation].foreignKeyFieldMetadataId =
+        foreignKeyFieldMetadataId;
+
+      // relation field
+      const relationFieldMetadataId = relationFieldsMetadataForListing.find(
+        (field) =>
+          field.object.id ===
+          standardObjectRelationsMap[relation].objectMetadataId,
+      ).id;
+
+      expect(relationFieldMetadataId).not.toBeUndefined();
+
+      standardObjectRelationsMap[relation].relationFieldMetadataId =
+        relationFieldMetadataId;
+    });
   });
 
-  it('5. should create custom relation', async () => {
-    // Fetching person object
-    const standardObjectsGraphqlOperation = objectsMetadataFactory({
-      gqlFields: `
-        id
-        nameSingular
-      `,
-      input: {
-        filter: {
-          isCustom: { isNot: true },
-        },
-        paging: { first: 1000 },
-      },
-    });
+  let relationFieldMetadataOnPersonId = '';
+  const RELATION_FROM_NAME = 'guest';
+
+  it('2. should create a custom relation with the custom object', async () => {
+    // Arrange
     const standardObjects = await makeMetadataAPIRequest(
       standardObjectsGraphqlOperation,
     );
-
     const personObjectId = standardObjects.body.data.objects.edges.find(
       (object) => object.node.nameSingular === 'person',
     ).node.id;
 
-    if (!personObjectId) {
-      throw new Error('Person object not found');
-    }
-
-    // Create relation from listing to person
+    // Act
     const createRelationGraphqlOperation = createOneRelationMetadataFactory({
       input: {
         relation: {
           fromDescription: '',
           fromIcon: 'IconRelationOneToMany',
-          fromLabel: 'Owner',
-          fromName: 'owner',
+          fromLabel: 'Guest',
+          fromName: RELATION_FROM_NAME,
           fromObjectMetadataId: listingObjectId,
           relationType: RelationMetadataType.ONE_TO_MANY,
           toDescription: undefined,
@@ -89,12 +184,27 @@ describe('Custom object renaming', () => {
       },
       gqlFields: `
         id
+        fromFieldMetadataId
       `,
     });
 
-    await makeMetadataAPIRequest(createRelationGraphqlOperation);
+    const relationResponse = await makeMetadataAPIRequest(
+      createRelationGraphqlOperation,
+    );
 
-    // Update listing name
+    // Assert
+    customRelationId = relationResponse.body.data.createOneRelation.id;
+
+    relationFieldMetadataOnPersonId =
+      relationResponse.body.data.createOneRelation.fromFieldMetadataId;
+  });
+
+  it('3. should rename custom object', async () => {
+    // Arrange
+    const HOUSE_NAME_SINGULAR = 'house';
+    const HOUSE_NAME_PLURAL = 'houses';
+    const HOUSE_LABEL_SINGULAR = 'House';
+    const HOUSE_LABEL_PLURAL = 'Houses';
     const updateListingNameGraphqlOperation =
       updateOneObjectMetadataItemFactory({
         gqlFields: `
@@ -106,213 +216,103 @@ describe('Custom object renaming', () => {
         input: {
           idToUpdate: listingObjectId,
           updatePayload: {
-            nameSingular: 'house',
-            namePlural: 'houses',
-            labelSingular: 'House',
-            labelPlural: 'Houses',
+            nameSingular: HOUSE_NAME_SINGULAR,
+            namePlural: HOUSE_NAME_PLURAL,
+            labelSingular: HOUSE_LABEL_SINGULAR,
+            labelPlural: HOUSE_LABEL_PLURAL,
           },
         },
       });
 
+    // Act
     const updateListingNameResponse = await makeMetadataAPIRequest(
       updateListingNameGraphqlOperation,
     );
 
+    // Assert
     expect(
       updateListingNameResponse.body.data.updateOneObject.nameSingular,
-    ).toBe('house');
+    ).toBe(HOUSE_NAME_SINGULAR);
     expect(updateListingNameResponse.body.data.updateOneObject.namePlural).toBe(
-      'houses',
+      HOUSE_NAME_PLURAL,
     );
     expect(
       updateListingNameResponse.body.data.updateOneObject.labelSingular,
-    ).toBe('House');
+    ).toBe(HOUSE_LABEL_SINGULAR);
     expect(
       updateListingNameResponse.body.data.updateOneObject.labelPlural,
-    ).toBe('Houses');
+    ).toBe(HOUSE_LABEL_PLURAL);
+
+    const fieldsResponse = await makeMetadataAPIRequest(fieldsGraphqlOperation);
+
+    const fieldsMetadata = fieldsResponse.body.data.fields.edges.map(
+      (field) => field.node,
+    );
+
+    expect(
+      fieldsMetadata.find(
+        (field) => field.name === `${LISTING_NAME_SINGULAR}Id`,
+      ),
+    ).toBeUndefined();
+
+    // standard relations have been updated
+    STANDARD_OBJECT_RELATIONS.map((relation) => {
+      // foreignKey field
+      const foreignKeyFieldMetadataId =
+        standardObjectRelationsMap[relation].foreignKeyFieldMetadataId;
+
+      const updatedForeignKeyFieldMetadata = fieldsMetadata.find(
+        (field) => field.id === foreignKeyFieldMetadataId,
+      );
+
+      expect(updatedForeignKeyFieldMetadata.name).toBe(
+        `${HOUSE_NAME_SINGULAR}Id`,
+      );
+      expect(updatedForeignKeyFieldMetadata.label).toBe(
+        'House ID (foreign key)',
+      );
+
+      // relation field
+      const relationFieldMetadataId =
+        standardObjectRelationsMap[relation].relationFieldMetadataId;
+
+      const updatedRelationFieldMetadataId = fieldsMetadata.find(
+        (field) => field.id === relationFieldMetadataId,
+      );
+
+      expect(updatedRelationFieldMetadataId.name).toBe(HOUSE_NAME_SINGULAR);
+      expect(updatedRelationFieldMetadataId.label).toBe(HOUSE_LABEL_SINGULAR);
+    });
+
+    // custom relation are unchanged
+    const updatedRelationFieldMetadata = fieldsMetadata.find(
+      (field) => field.id === relationFieldMetadataOnPersonId,
+    );
+
+    expect(updatedRelationFieldMetadata.name).toBe(RELATION_FROM_NAME);
   });
 
-  it('5b. should delete relation', async () => {
+  it('4. should delete custom relation', async () => {
+    const graphqlOperation = deleteOneRelationMetadataItemFactory({
+      idToDelete: customRelationId,
+    });
+
+    const response = await makeMetadataAPIRequest(graphqlOperation);
+
+    const deleteRelationResponse = response.body.data.deleteOneRelation;
+
+    expect(deleteRelationResponse.id).toBe(customRelationId);
+  });
+
+  it('5. should delete custom object', async () => {
     const graphqlOperation = deleteOneObjectMetadataItemFactory({
       idToDelete: listingObjectId,
     });
 
     const response = await makeGraphqlAPIRequest(graphqlOperation);
 
-    const deleteCar = response.body.data.deleteOneObject;
+    const deleteListingResponse = response.body.data.deleteOneObject;
 
-    expect(deleteCar.id).toBe(listingObjectId);
+    expect(deleteListingResponse.id).toBe(listingObjectId);
   });
-
-  it('5c. should delete object', async () => {
-    const graphqlOperation = deleteOneObjectMetadataItemFactory({
-      idToDelete: listingObjectId,
-    });
-
-    const response = await makeGraphqlAPIRequest(graphqlOperation);
-
-    const deleteCar = response.body.data.deleteOneObject;
-
-    expect(deleteCar.id).toBe(listingObjectId);
-  });
-
-  // it('5b. should delete one person', async () => {
-  //   const graphqlOperation = deleteOneOperationFactory({
-  //     objectMetadataSingularName: 'person',
-  //     gqlFields: PERSON_GQL_FIELDS,
-  //     recordId: PERSON_3_ID,
-  //   });
-
-  //   const response = await makeGraphqlAPIRequest(graphqlOperation);
-
-  //   expect(response.body.data.deletePerson.deletedAt).toBeTruthy();
-  // });
-
-  // it('6. should not find many people anymore', async () => {
-  //   const graphqlOperation = findManyOperationFactory({
-  //     objectMetadataSingularName: 'person',
-  //     objectMetadataPluralName: 'people',
-  //     gqlFields: PERSON_GQL_FIELDS,
-  //     filter: {
-  //       id: {
-  //         in: [PERSON_1_ID, PERSON_2_ID],
-  //       },
-  //     },
-  //   });
-
-  //   const findPeopleResponse = await makeGraphqlAPIRequest(graphqlOperation);
-
-  //   expect(findPeopleResponse.body.data.people.edges).toHaveLength(0);
-  // });
-
-  // it('6b. should not find one person anymore', async () => {
-  //   const graphqlOperation = findOneOperationFactory({
-  //     objectMetadataSingularName: 'person',
-  //     gqlFields: PERSON_GQL_FIELDS,
-  //     filter: {
-  //       id: {
-  //         eq: PERSON_3_ID,
-  //       },
-  //     },
-  //   });
-
-  //   const response = await makeGraphqlAPIRequest(graphqlOperation);
-
-  //   expect(response.body.data.person).toBeNull();
-  // });
-
-  // it('7. should find many deleted people with deletedAt filter', async () => {
-  //   const graphqlOperation = findManyOperationFactory({
-  //     objectMetadataSingularName: 'person',
-  //     objectMetadataPluralName: 'people',
-  //     gqlFields: PERSON_GQL_FIELDS,
-  //     filter: {
-  //       id: {
-  //         in: [PERSON_1_ID, PERSON_2_ID],
-  //       },
-  //       not: {
-  //         deletedAt: {
-  //           is: 'NULL',
-  //         },
-  //       },
-  //     },
-  //   });
-
-  //   const response = await makeGraphqlAPIRequest(graphqlOperation);
-
-  //   expect(response.body.data.people.edges).toHaveLength(2);
-  // });
-
-  // it('7b. should find one deleted person with deletedAt filter', async () => {
-  //   const graphqlOperation = findOneOperationFactory({
-  //     objectMetadataSingularName: 'person',
-  //     gqlFields: PERSON_GQL_FIELDS,
-  //     filter: {
-  //       id: {
-  //         eq: PERSON_3_ID,
-  //       },
-  //       not: {
-  //         deletedAt: {
-  //           is: 'NULL',
-  //         },
-  //       },
-  //     },
-  //   });
-
-  //   const response = await makeGraphqlAPIRequest(graphqlOperation);
-
-  //   expect(response.body.data.person.id).toEqual(PERSON_3_ID);
-  // });
-
-  // it('8. should destroy many people', async () => {
-  //   const graphqlOperation = destroyManyOperationFactory({
-  //     objectMetadataSingularName: 'person',
-  //     objectMetadataPluralName: 'people',
-  //     gqlFields: PERSON_GQL_FIELDS,
-  //     filter: {
-  //       id: {
-  //         in: [PERSON_1_ID, PERSON_2_ID],
-  //       },
-  //     },
-  //   });
-
-  //   const response = await makeGraphqlAPIRequest(graphqlOperation);
-
-  //   expect(response.body.data.destroyPeople).toHaveLength(2);
-  // });
-
-  // it('8b. should destroy one person', async () => {
-  //   const graphqlOperation = destroyOneOperationFactory({
-  //     objectMetadataSingularName: 'person',
-  //     gqlFields: PERSON_GQL_FIELDS,
-  //     recordId: PERSON_3_ID,
-  //   });
-
-  //   const destroyPeopleResponse = await makeGraphqlAPIRequest(graphqlOperation);
-
-  //   expect(destroyPeopleResponse.body.data.destroyPerson).toBeTruthy();
-  // });
-
-  // it('9. should not find many people anymore', async () => {
-  //   const graphqlOperation = findManyOperationFactory({
-  //     objectMetadataSingularName: 'person',
-  //     objectMetadataPluralName: 'people',
-  //     gqlFields: PERSON_GQL_FIELDS,
-  //     filter: {
-  //       id: {
-  //         in: [PERSON_1_ID, PERSON_2_ID],
-  //       },
-  //       not: {
-  //         deletedAt: {
-  //           is: 'NULL',
-  //         },
-  //       },
-  //     },
-  //   });
-
-  //   const response = await makeGraphqlAPIRequest(graphqlOperation);
-
-  //   expect(response.body.data.people.edges).toHaveLength(0);
-  // });
-
-  // it('9b. should not find one person anymore', async () => {
-  //   const graphqlOperation = findOneOperationFactory({
-  //     objectMetadataSingularName: 'person',
-  //     gqlFields: PERSON_GQL_FIELDS,
-  //     filter: {
-  //       id: {
-  //         eq: PERSON_3_ID,
-  //       },
-  //       not: {
-  //         deletedAt: {
-  //           is: 'NULL',
-  //         },
-  //       },
-  //     },
-  //   });
-
-  //   const response = await makeGraphqlAPIRequest(graphqlOperation);
-
-  //   expect(response.body.data.person).toBeNull();
-  // });
 });

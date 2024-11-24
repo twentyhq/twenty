@@ -22,6 +22,7 @@ export const updateOneObjectMetadataItemFactory = ({
     }
     `,
   variables: {
-    input,
+    idToUpdate: input.idToUpdate,
+    updatePayload: input.updatePayload,
   },
 });
