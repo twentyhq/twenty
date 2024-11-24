@@ -36,6 +36,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { isDefined } from 'src/utils/is-defined';
 
 import {
   RelationMetadataEntity,
@@ -439,6 +440,26 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       relationMetadata,
       objectTargetTable,
       columnName,
+    );
+
+    const deletedAtFieldMetadata = await this.fieldMetadataRepository.findOneBy(
+      {
+        objectMetadataId: relationMetadata.toObjectMetadataId,
+        name: 'deletedAt',
+      },
+    );
+
+    if (!isDefined(deletedAtFieldMetadata)) {
+      throw new RelationMetadataException(
+        `Deleted field metadata not found`,
+        RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
+      );
+    }
+
+    await this.indexMetadataService.deleteIndexMetadata(
+      workspaceId,
+      relationMetadata.toObjectMetadata,
+      [foreignKeyFieldMetadata, deletedAtFieldMetadata],
     );
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(

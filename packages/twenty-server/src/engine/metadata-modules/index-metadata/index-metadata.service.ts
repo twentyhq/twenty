@@ -98,6 +98,34 @@ export class IndexMetadataService {
     );
   }
 
+  async deleteIndexMetadata(
+    workspaceId: string,
+    objectMetadata: ObjectMetadataEntity,
+    fieldMetadataToIndex: Partial<FieldMetadataEntity>[],
+  ) {
+    const tableName = computeObjectTargetTable(objectMetadata);
+
+    const columnNames: string[] = fieldMetadataToIndex.map(
+      (fieldMetadata) => fieldMetadata.name as string,
+    );
+
+    const indexName = `IDX_${generateDeterministicIndexName([tableName, ...columnNames])}`;
+
+    const indexMetadata = await this.indexMetadataRepository.findOne({
+      where: {
+        name: indexName,
+        objectMetadataId: objectMetadata.id,
+        workspaceId,
+      },
+    });
+
+    if (!indexMetadata) {
+      throw new Error(`Index metadata with name ${indexName} not found`);
+    }
+
+    await this.indexMetadataRepository.delete(indexMetadata.id);
+  }
+
   async createIndexCreationMigration(
     workspaceId: string,
     objectMetadata: ObjectMetadataEntity,
