@@ -253,7 +253,7 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
       .take(workflowActionInput.limit ?? QUERY_MAX_RECORDS)
       .getMany();
 
-    return formatResult(
+    return formatResult<T[]>(
       nonFormattedObjectRecords,
       objectMetadataItemWithFieldsMaps,
       objectMetadataMaps,

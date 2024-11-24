@@ -12,13 +12,6 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
 
-export enum WebhookEvent {
-  CUSTOMER_SUBSCRIPTION_CREATED = 'customer.subscription.created',
-  CUSTOMER_SUBSCRIPTION_UPDATED = 'customer.subscription.updated',
-  CUSTOMER_SUBSCRIPTION_DELETED = 'customer.subscription.deleted',
-  SETUP_INTENT_SUCCEEDED = 'setup_intent.succeeded',
-}
-
 @Injectable()
 export class BillingPortalWorkspaceService {
   protected readonly logger = new Logger(BillingPortalWorkspaceService.name);

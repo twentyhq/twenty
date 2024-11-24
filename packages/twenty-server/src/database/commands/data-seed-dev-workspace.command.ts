@@ -6,7 +6,7 @@ import { EntityManager } from 'typeorm';
 import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import {
   SEED_APPLE_WORKSPACE_ID,
-  SEED_TWENTY_WORKSPACE_ID,
+  SEED_ACME_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
 import {
   getDevSeedCompanyCustomFields,
@@ -53,7 +53,7 @@ import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/works
     'Seed workspace with initial data. This command is intended for development only.',
 })
 export class DataSeedWorkspaceCommand extends CommandRunner {
-  workspaceIds = [SEED_APPLE_WORKSPACE_ID, SEED_TWENTY_WORKSPACE_ID];
+  workspaceIds = [SEED_APPLE_WORKSPACE_ID, SEED_ACME_WORKSPACE_ID];
   private readonly logger = new Logger(DataSeedWorkspaceCommand.name);
 
   constructor(

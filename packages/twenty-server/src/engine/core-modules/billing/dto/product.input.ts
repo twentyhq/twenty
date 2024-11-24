@@ -2,7 +2,7 @@ import { ArgsType, Field } from '@nestjs/graphql';
 
 import { IsNotEmpty, IsString } from 'class-validator';
 
-import { AvailableProduct } from 'src/engine/core-modules/billing/interfaces/available-product.interface';
+import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 
 @ArgsType()
 export class ProductInput {
