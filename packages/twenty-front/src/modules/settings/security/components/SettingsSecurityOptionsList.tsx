@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useRecoilState } from 'recoil';
@@ -44,12 +44,13 @@ export const SettingsSecurityOptionsList = () => {
   };
 
   return (
-    <Card>
-      <SettingsOptionCardContent
+    <Card rounded>
+      <SettingsOptionCardContentToggle
         Icon={IconLink}
         title="Invite by Link"
         description="Allow the invitation of new users by sharing an invite link."
         checked={currentWorkspace.isPublicInviteLinkEnabled}
+        advancedMode
         onChange={() =>
           handleChange(!currentWorkspace.isPublicInviteLinkEnabled)
         }

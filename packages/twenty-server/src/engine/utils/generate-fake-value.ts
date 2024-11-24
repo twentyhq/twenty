@@ -1,4 +1,12 @@
-export const generateFakeValue = (valueType: string): any => {
+type FakeValueTypes =
+  | string
+  | number
+  | boolean
+  | Date
+  | FakeValueTypes[]
+  | { [key: string]: FakeValueTypes };
+
+export const generateFakeValue = (valueType: string): FakeValueTypes => {
   if (valueType === 'string') {
     return 'generated-string-value';
   } else if (valueType === 'number') {

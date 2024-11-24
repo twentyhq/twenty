@@ -1,6 +1,6 @@
 import { settingsDataModelObjectAboutFormSchema } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import { CreateObjectInput } from '~/generated-metadata/graphql';
-import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 export const settingsCreateObjectInputSchema =
   settingsDataModelObjectAboutFormSchema.transform<CreateObjectInput>(
@@ -8,10 +8,9 @@ export const settingsCreateObjectInputSchema =
       ...values,
       nameSingular:
         values.nameSingular ??
-        computeMetadataNameFromLabelOrThrow(values.labelSingular),
+        computeMetadataNameFromLabel(values.labelSingular),
       namePlural:
-        values.namePlural ??
-        computeMetadataNameFromLabelOrThrow(values.labelPlural),
+        values.namePlural ?? computeMetadataNameFromLabel(values.labelPlural),
       isLabelSyncedWithName: values.isLabelSyncedWithName ?? true,
     }),
   );

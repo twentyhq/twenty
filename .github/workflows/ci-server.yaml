@@ -18,12 +18,19 @@ jobs:
       NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     services:
       postgres:
-        image: twentycrm/twenty-postgres
+        image: twentycrm/twenty-postgres-spilo
         env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
+          PGUSER_SUPERUSER: postgres
+          PGPASSWORD_SUPERUSER: twenty
+          ALLOW_NOSSL: "true"
+          SPILO_PROVIDER: "local"
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       redis:
         image: redis
         ports:
@@ -63,6 +70,11 @@ jobs:
       - name: Server / Write .env
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx reset:env twenty-server
+      - name: Server / Create DB
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+          PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
       - name: Worker / Run
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx run twenty-server:worker:ci
@@ -109,12 +121,19 @@ jobs:
     needs: server-setup
     services:
       postgres:
-        image: twentycrm/twenty-postgres
+        image: twentycrm/twenty-postgres-spilo
         env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
+          PGUSER_SUPERUSER: postgres
+          PGPASSWORD_SUPERUSER: twenty
+          ALLOW_NOSSL: "true"
+          SPILO_PROVIDER: "local"
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
       redis:
         image: redis
         ports:

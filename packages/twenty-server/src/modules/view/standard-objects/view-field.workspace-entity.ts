@@ -3,6 +3,7 @@ import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metad
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -23,12 +24,10 @@ import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.work
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-/*
-TODO: add soon once we've confirmed it's stabled
 @WorkspaceIndex(['fieldMetadataId', 'viewId'], {
   isUnique: true,
   indexWhereClause: '"deletedAt" IS NULL',
-})*/
+})
 export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.fieldMetadataId,

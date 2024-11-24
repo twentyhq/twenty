@@ -38,7 +38,7 @@ export function generateDefaultValue(
       return {
         primaryLinkLabel: "''",
         primaryLinkUrl: "''",
-        secondaryLinks: null,
+        secondaryLinks: "'[]'",
       };
     case FieldMetadataType.PHONES:
       return {

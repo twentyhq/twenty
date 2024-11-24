@@ -33,18 +33,28 @@ const StyledTextArea = styled(TextareaAutosize)`
   resize: none;
   max-height: 400px;
   width: calc(100% - ${({ theme }) => theme.spacing(7)});
+  background: transparent;
 `;
 
 const StyledTextAreaContainer = styled.div`
+  background: ${({ theme }) => theme.background.primary};
   border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
   position: relative;
   width: 100%;
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(0)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  background: ${({ theme }) => theme.background.primary};
+
+  @supports (
+    (backdrop-filter: blur(20px)) or (-webkit-backdrop-filter: blur(20px))
+  ) {
+    background: ${({ theme }) => theme.background.transparent.secondary};
+    backdrop-filter: ${({ theme }) => theme.blur.medium};
+    -webkit-backdrop-filter: ${({ theme }) => theme.blur.medium};
+  }
 `;
 
 const StyledLightIconButtonContainer = styled.div`
+  background: transparent;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);

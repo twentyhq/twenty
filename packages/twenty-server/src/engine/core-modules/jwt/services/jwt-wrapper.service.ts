@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService, JwtSignOptions, JwtVerifyOptions } from '@nestjs/jwt';
 
 import { createHash } from 'crypto';
@@ -10,6 +10,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { isDefined } from 'src/utils/is-defined';
 
 export type WorkspaceTokenType =
   | 'ACCESS'
@@ -53,9 +54,16 @@ export class JwtWrapperService {
       json: true,
     });
 
+    if (!isDefined(payload)) {
+      throw new AuthException('No payload', AuthExceptionCode.UNAUTHENTICATED);
+    }
+
     // TODO: check if this is really needed
     if (type !== 'FILE' && !payload.sub) {
-      throw new UnauthorizedException('No payload sub');
+      throw new AuthException(
+        'No payload sub',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
     }
 
     try {

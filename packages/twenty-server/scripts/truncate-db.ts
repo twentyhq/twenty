@@ -21,6 +21,14 @@ async function dropSchemasSequentially() {
     // Iterate over each schema and drop it
     // This is to avoid dropping all schemas at once, which would cause an out of shared memory error
     for (const schema of schemas) {
+      if (
+        schema.schema_name === 'metric_helpers' ||
+        schema.schema_name === 'user_management' ||
+        schema.schema_name === 'public'
+      ) {
+        continue;
+      }
+
       await performQuery(
         `
         DROP SCHEMA IF EXISTS "${schema.schema_name}" CASCADE;

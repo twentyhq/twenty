@@ -15,24 +15,32 @@ export const getResolverName = (
       return `${camelCase(objectMetadata.nameSingular)}`;
     case 'findDuplicates':
       return `${camelCase(objectMetadata.nameSingular)}Duplicates`;
-    case 'createMany':
-      return `create${pascalCase(objectMetadata.namePlural)}`;
+
     case 'createOne':
       return `create${pascalCase(objectMetadata.nameSingular)}`;
+    case 'createMany':
+      return `create${pascalCase(objectMetadata.namePlural)}`;
+
     case 'updateOne':
       return `update${pascalCase(objectMetadata.nameSingular)}`;
-    case 'deleteOne':
-      return `delete${pascalCase(objectMetadata.nameSingular)}`;
-    case 'destroyOne':
-      return `destroy${pascalCase(objectMetadata.nameSingular)}`;
     case 'updateMany':
       return `update${pascalCase(objectMetadata.namePlural)}`;
-    case 'restoreMany':
-      return `restore${pascalCase(objectMetadata.namePlural)}`;
+
+    case 'deleteOne':
+      return `delete${pascalCase(objectMetadata.nameSingular)}`;
     case 'deleteMany':
       return `delete${pascalCase(objectMetadata.namePlural)}`;
+
+    case 'destroyOne':
+      return `destroy${pascalCase(objectMetadata.nameSingular)}`;
     case 'destroyMany':
       return `destroy${pascalCase(objectMetadata.namePlural)}`;
+
+    case 'restoreOne':
+      return `restore${pascalCase(objectMetadata.nameSingular)}`;
+    case 'restoreMany':
+      return `restore${pascalCase(objectMetadata.namePlural)}`;
+
     case 'search':
       return `search${pascalCase(objectMetadata.namePlural)}`;
     default:

@@ -259,64 +259,6 @@ describe('useFilterDropdown', () => {
     });
   });
 
-  it('should set isObjectFilterDropdownOperandSelectUnfolded', async () => {
-    const { result } = renderHook(() => {
-      useFilterDropdown({ filterDropdownId });
-      const { isObjectFilterDropdownOperandSelectUnfoldedState } =
-        useFilterDropdownStates(filterDropdownId);
-
-      const [
-        isObjectFilterDropdownOperandSelectUnfolded,
-        setIsObjectFilterDropdownOperandSelectUnfolded,
-      ] = useRecoilState(isObjectFilterDropdownOperandSelectUnfoldedState);
-      return {
-        isObjectFilterDropdownOperandSelectUnfolded,
-        setIsObjectFilterDropdownOperandSelectUnfolded,
-      };
-    }, renderHookConfig);
-
-    expect(result.current.isObjectFilterDropdownOperandSelectUnfolded).toBe(
-      false,
-    );
-
-    act(() => {
-      result.current.setIsObjectFilterDropdownOperandSelectUnfolded(true);
-    });
-
-    await waitFor(() => {
-      expect(result.current.isObjectFilterDropdownOperandSelectUnfolded).toBe(
-        true,
-      );
-    });
-  });
-
-  it('should set isObjectFilterDropdownUnfolded', async () => {
-    const { result } = renderHook(() => {
-      useFilterDropdown({ filterDropdownId });
-      const { isObjectFilterDropdownUnfoldedState } =
-        useFilterDropdownStates(filterDropdownId);
-
-      const [
-        isObjectFilterDropdownUnfolded,
-        setIsObjectFilterDropdownUnfolded,
-      ] = useRecoilState(isObjectFilterDropdownUnfoldedState);
-      return {
-        isObjectFilterDropdownUnfolded,
-        setIsObjectFilterDropdownUnfolded,
-      };
-    }, renderHookConfig);
-
-    expect(result.current.isObjectFilterDropdownUnfolded).toBe(false);
-
-    act(() => {
-      result.current.setIsObjectFilterDropdownUnfolded(true);
-    });
-
-    await waitFor(() => {
-      expect(result.current.isObjectFilterDropdownUnfolded).toBe(true);
-    });
-  });
-
   it('should reset filter', async () => {
     const { result } = renderHook(() => {
       const { resetFilter, selectFilter } = useFilterDropdown({

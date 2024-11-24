@@ -410,7 +410,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       // We're running field update under a transaction, so we can rollback if migration fails
       await fieldMetadataRepository.update(id, fieldMetadataForUpdate);
 
-      const updatedFieldMetadata = await fieldMetadataRepository.findOne({
+      const [updatedFieldMetadata] = await fieldMetadataRepository.find({
         where: { id },
       });
 

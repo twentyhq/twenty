@@ -263,7 +263,7 @@ export const SettingsServerlessFunctionDetail = () => {
       >
         <SettingsPageContainer>
           <Section>
-            <TabList tabListId={TAB_LIST_COMPONENT_ID} tabs={tabs} />
+            <TabList tabListInstanceId={TAB_LIST_COMPONENT_ID} tabs={tabs} />
           </Section>
           {renderActiveTabContent()}
         </SettingsPageContainer>

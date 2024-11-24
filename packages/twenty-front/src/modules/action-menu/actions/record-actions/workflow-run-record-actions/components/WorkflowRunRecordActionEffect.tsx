@@ -1,4 +1,8 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
+import {
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -55,8 +59,9 @@ export const WorkflowRunRecordActionEffect = ({
       activeWorkflowVersion,
     ] of activeWorkflowVersions.entries()) {
       addActionMenuEntry({
-        type: 'workflow-run',
+        type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
+        scope: ActionMenuEntryScope.RecordSelection,
         label: capitalize(activeWorkflowVersion.workflow.name),
         position: index,
         Icon: IconSettingsAutomation,
@@ -65,7 +70,10 @@ export const WorkflowRunRecordActionEffect = ({
             return;
           }
 
-          await runWorkflowVersion(activeWorkflowVersion.id, selectedRecord);
+          await runWorkflowVersion({
+            workflowVersionId: activeWorkflowVersion.id,
+            payload: selectedRecord,
+          });
 
           enqueueSnackBar('', {
             variant: SnackBarVariant.Success,

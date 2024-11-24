@@ -14,6 +14,7 @@ import {
   Section,
   useIcons,
 } from 'twenty-ui';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { AnalyticsActivityGraph } from '@/analytics/components/AnalyticsActivityGraph';
 import { AnalyticsGraphEffect } from '@/analytics/components/AnalyticsGraphEffect';
@@ -41,10 +42,15 @@ import { WebhookOperationType } from '~/pages/settings/developers/webhooks/types
 
 const OBJECT_DROPDOWN_WIDTH = 340;
 const ACTION_DROPDOWN_WIDTH = 140;
+const OBJECT_MOBILE_WIDTH = 150;
+const ACTION_MOBILE_WIDTH = 140;
 
-const StyledFilterRow = styled.div`
+const StyledFilterRow = styled.div<{ isMobile: boolean }>`
   display: grid;
-  grid-template-columns: ${OBJECT_DROPDOWN_WIDTH}px ${ACTION_DROPDOWN_WIDTH}px auto;
+  grid-template-columns: ${({ isMobile }) =>
+    isMobile
+      ? `${OBJECT_MOBILE_WIDTH}px ${ACTION_MOBILE_WIDTH}px auto`
+      : `${OBJECT_DROPDOWN_WIDTH}px ${ACTION_DROPDOWN_WIDTH}px auto`};
   gap: ${({ theme }) => theme.spacing(2)};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
   align-items: center;
@@ -58,7 +64,7 @@ const StyledPlaceholder = styled.div`
 export const SettingsDevelopersWebhooksDetail = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
   const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
-
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { webhookId = '' } = useParams();
 
@@ -245,10 +251,12 @@ export const SettingsDevelopersWebhooksDetail = () => {
             description="Select the events you wish to send to this endpoint"
           />
           {operations.map((operation, index) => (
-            <StyledFilterRow key={index}>
+            <StyledFilterRow isMobile={isMobile} key={index}>
               <Select
                 withSearchInput
-                dropdownWidth={OBJECT_DROPDOWN_WIDTH}
+                dropdownWidth={
+                  isMobile ? OBJECT_MOBILE_WIDTH : OBJECT_DROPDOWN_WIDTH
+                }
                 dropdownId={`object-webhook-type-select-${index}`}
                 value={operation.object}
                 onChange={(object) => updateOperation(index, 'object', object)}
@@ -261,7 +269,9 @@ export const SettingsDevelopersWebhooksDetail = () => {
               />
 
               <Select
-                dropdownWidth={ACTION_DROPDOWN_WIDTH}
+                dropdownWidth={
+                  isMobile ? ACTION_MOBILE_WIDTH : ACTION_DROPDOWN_WIDTH
+                }
                 dropdownId={`operation-webhook-type-select-${index}`}
                 value={operation.action}
                 onChange={(action) => updateOperation(index, 'action', action)}

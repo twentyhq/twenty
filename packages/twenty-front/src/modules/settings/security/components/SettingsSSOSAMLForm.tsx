@@ -1,15 +1,7 @@
 /* @license Enterprise */
 
-import { HorizontalSeparator } from '@/auth/sign-in-up/components/HorizontalSeparator';
-import { parseSAMLMetadataFromXMLFile } from '@/settings/security/utils/parseSAMLMetadataFromXMLFile';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { TextInput } from '@/ui/input/components/TextInput';
-import { useTheme } from '@emotion/react';
-import styled from '@emotion/styled';
-import { ChangeEvent, useRef } from 'react';
-import { useFormContext } from 'react-hook-form';
 import {
+  HorizontalSeparator,
   Button,
   H2Title,
   IconCheck,
@@ -18,6 +10,14 @@ import {
   IconUpload,
   Section,
 } from 'twenty-ui';
+import { parseSAMLMetadataFromXMLFile } from '@/settings/security/utils/parseSAMLMetadataFromXMLFile';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { ChangeEvent, useRef } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { isDefined } from '~/utils/isDefined';
 

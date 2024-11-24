@@ -7,7 +7,7 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import { MouseEvent, ReactNode, useRef } from 'react';
+import { MouseEvent, ReactNode, useEffect, useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
 
@@ -21,6 +21,7 @@ import { isDefined } from '~/utils/isDefined';
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
+import { DropdownUnmountEffect } from '@/ui/layout/dropdown/components/DropdownUnmountEffect';
 import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
@@ -65,8 +66,13 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { isDropdownOpen, toggleDropdown, closeDropdown, dropdownWidth } =
-    useDropdown(dropdownId);
+  const {
+    isDropdownOpen,
+    toggleDropdown,
+    closeDropdown,
+    dropdownWidth,
+    setDropdownPlacement,
+  } = useDropdown(dropdownId);
 
   const offsetMiddlewares = [];
 
@@ -78,7 +84,7 @@ export const Dropdown = ({
     offsetMiddlewares.push(offset({ mainAxis: dropdownOffset.y }));
   }
 
-  const { refs, floatingStyles } = useFloating({
+  const { refs, floatingStyles, placement } = useFloating({
     placement: dropdownPlacement,
     middleware: [
       flip(),
@@ -100,6 +106,10 @@ export const Dropdown = ({
     strategy: dropdownStrategy,
   });
 
+  useEffect(() => {
+    setDropdownPlacement(placement);
+  }, [placement, setDropdownPlacement]);
+
   const handleHotkeyTriggered = () => {
     toggleDropdown();
   };
@@ -113,11 +123,10 @@ export const Dropdown = ({
   };
 
   useListenClickOutsideV2({
-    refs: [refs.floating],
+    refs: [refs.floating, refs.domReference],
     listenerId: dropdownId,
     callback: () => {
       onClickOutside?.();
-
       if (isDropdownOpen) {
         closeDropdown();
       }
@@ -132,32 +141,47 @@ export const Dropdown = ({
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      closeDropdown();
+      if (isDropdownOpen) {
+        closeDropdown();
+      }
     },
     dropdownHotkeyScope.scope,
-    [closeDropdown],
+    [closeDropdown, isDropdownOpen],
   );
 
   return (
-    <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>
-      <div ref={containerRef} className={className}>
-        {clickableComponent && (
-          <div
-            ref={refs.setReference}
-            onClick={handleClickableComponentClick}
-            className={className}
-          >
-            {clickableComponent}
-          </div>
-        )}
-        {hotkey && (
-          <HotkeyEffect
-            hotkey={hotkey}
-            onHotkeyTriggered={handleHotkeyTriggered}
-          />
-        )}
-        {isDropdownOpen && usePortal && (
-          <FloatingPortal>
+    <>
+      <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>
+        <div ref={containerRef} className={className}>
+          {clickableComponent && (
+            <div
+              ref={refs.setReference}
+              onClick={handleClickableComponentClick}
+              className={className}
+            >
+              {clickableComponent}
+            </div>
+          )}
+          {hotkey && (
+            <HotkeyEffect
+              hotkey={hotkey}
+              onHotkeyTriggered={handleHotkeyTriggered}
+            />
+          )}
+          {isDropdownOpen && usePortal && (
+            <FloatingPortal>
+              <DropdownMenu
+                disableBlur={disableBlur}
+                width={dropdownMenuWidth ?? dropdownWidth}
+                data-select-disable
+                ref={refs.setFloating}
+                style={floatingStyles}
+              >
+                {dropdownComponents}
+              </DropdownMenu>
+            </FloatingPortal>
+          )}
+          {isDropdownOpen && !usePortal && (
             <DropdownMenu
               disableBlur={disableBlur}
               width={dropdownMenuWidth ?? dropdownWidth}
@@ -167,24 +191,14 @@ export const Dropdown = ({
             >
               {dropdownComponents}
             </DropdownMenu>
-          </FloatingPortal>
-        )}
-        {isDropdownOpen && !usePortal && (
-          <DropdownMenu
-            disableBlur={disableBlur}
-            width={dropdownMenuWidth ?? dropdownWidth}
-            data-select-disable
-            ref={refs.setFloating}
-            style={floatingStyles}
-          >
-            {dropdownComponents}
-          </DropdownMenu>
-        )}
-        <DropdownOnToggleEffect
-          onDropdownClose={onClose}
-          onDropdownOpen={onOpen}
-        />
-      </div>
-    </DropdownScope>
+          )}
+          <DropdownOnToggleEffect
+            onDropdownClose={onClose}
+            onDropdownOpen={onOpen}
+          />
+        </div>
+      </DropdownScope>
+      <DropdownUnmountEffect dropdownId={dropdownId} />
+    </>
   );
 };

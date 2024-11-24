@@ -29,7 +29,7 @@ import isEmpty from 'lodash.isempty';
 import pick from 'lodash.pick';
 import { useSetRecoilState } from 'recoil';
 import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
-import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 const objectEditFormSchema = z
   .object({})
@@ -93,16 +93,14 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
         ...values,
         ...(values.labelSingular && dirtyFieldKeys.includes('labelSingular')
           ? {
-              nameSingular: computeMetadataNameFromLabelOrThrow(
+              nameSingular: computeMetadataNameFromLabel(
                 formValues.labelSingular,
               ),
             }
           : {}),
         ...(values.labelPlural && dirtyFieldKeys.includes('labelPlural')
           ? {
-              namePlural: computeMetadataNameFromLabelOrThrow(
-                formValues.labelPlural,
-              ),
+              namePlural: computeMetadataNameFromLabel(formValues.labelPlural),
             }
           : {}),
       };
@@ -188,8 +186,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
               description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
             />
             <SettingsDataModelObjectAboutForm
-              disabled={!objectMetadataItem.isCustom}
-              disableNameEdit={!objectMetadataItem.isCustom}
+              disableEdition={!objectMetadataItem.isCustom}
               objectMetadataItem={objectMetadataItem}
               onBlur={() => {
                 formConfig.handleSubmit(handleSave)();

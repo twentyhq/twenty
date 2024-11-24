@@ -128,7 +128,7 @@ export const buildRecordFromImportedStructuredRow = (
             primaryLinkUrl: castToString(
               importedStructuredRow[`${primaryLinkUrlLabel} (${field.name})`],
             ),
-            secondaryLinks: null,
+            secondaryLinks: [],
           } satisfies FieldLinksValue;
         }
         break;

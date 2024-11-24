@@ -83,6 +83,7 @@ export const MenuItemWithOptionDropdown = ({
             <LightIconButton
               Icon={RightIcon ?? IconDotsVertical}
               size="small"
+              accent="tertiary"
             />
           }
           dropdownComponents={dropdownContent}

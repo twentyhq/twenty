@@ -21,12 +21,14 @@ const StyledContainer = styled.div`
 
 const StyledLabel = styled.div`
   color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
+  font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledInputContainer = styled.div<{ multiline: boolean }>`
+const StyledInputContainer = styled.div<{
+  multiline?: boolean;
+}>`
   display: flex;
   flex-direction: row;
   position: relative;
@@ -37,26 +39,39 @@ const StyledInputContainer = styled.div<{ multiline: boolean }>`
     multiline ? `${5 * LINE_HEIGHT}px` : 'auto'};
 `;
 
-const StyledSearchVariablesDropdownOutsideContainer = styled.div`
+const StyledSearchVariablesDropdownContainer = styled.div<{
+  multiline?: boolean;
+  readonly?: boolean;
+}>`
+  align-items: center;
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
-  border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
+
+  ${({ theme, readonly }) =>
+    !readonly &&
+    `
+      :hover {
+        background-color: ${theme.background.transparent.light};
+      }`}
+
+  ${({ theme, multiline }) =>
+    multiline
+      ? `
+        position: absolute;
+        top: ${theme.spacing(0)};
+        right: ${theme.spacing(0)};
+        padding: ${theme.spacing(0.5)} ${theme.spacing(0)};
+        border-radius: ${theme.border.radius.sm};
+      `
+      : `
+        background-color: ${theme.background.transparent.lighter};
+        border-top-right-radius: ${theme.border.radius.sm};
+        border-bottom-right-radius: ${theme.border.radius.sm};
+        border: 1px solid ${theme.border.color.medium};
+      `}
 `;
 
-const StyledSearchVariablesDropdownInsideContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: absolute;
-  top: ${({ theme }) => theme.spacing(0.5)};
-  right: ${({ theme }) => theme.spacing(0.5)};
-`;
-
-const StyledEditor = styled.div<{ multiline: boolean }>`
+const StyledEditor = styled.div<{ multiline?: boolean; readonly?: boolean }>`
   display: flex;
   width: 100%;
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -82,7 +97,8 @@ const StyledEditor = styled.div<{ multiline: boolean }>`
   .tiptap {
     display: flex;
     height: 100%;
-    color: ${({ theme }) => theme.font.color.primary};
+    color: ${({ theme, readonly }) =>
+      readonly ? theme.font.color.light : theme.font.color.primary};
     font-family: ${({ theme }) => theme.font.family};
     font-weight: ${({ theme }) => theme.font.weight.regular};
     border: none !important;
@@ -122,6 +138,7 @@ interface VariableTagInputProps {
   placeholder?: string;
   multiline?: boolean;
   onChange?: (content: string) => void;
+  readonly?: boolean;
 }
 
 export const VariableTagInput = ({
@@ -131,11 +148,8 @@ export const VariableTagInput = ({
   placeholder,
   multiline,
   onChange,
+  readonly,
 }: VariableTagInputProps) => {
-  const StyledSearchVariablesDropdownContainer = multiline
-    ? StyledSearchVariablesDropdownInsideContainer
-    : StyledSearchVariablesDropdownOutsideContainer;
-
   const deboucedOnUpdate = useDebouncedCallback((editor) => {
     const jsonContent = editor.getJSON();
     const parsedContent = parseEditorContent(jsonContent);
@@ -159,7 +173,7 @@ export const VariableTagInput = ({
           ]
         : []),
     ],
-    editable: true,
+    editable: !readonly,
     onCreate: ({ editor }) => {
       if (isDefined(value)) {
         initializeEditorContent(editor, value);
@@ -200,12 +214,19 @@ export const VariableTagInput = ({
   return (
     <StyledContainer>
       {label && <StyledLabel>{label}</StyledLabel>}
-      <StyledInputContainer multiline={!!multiline}>
-        <StyledEditor multiline={!!multiline}>
+      <StyledInputContainer multiline={multiline}>
+        <StyledEditor multiline={multiline} readonly={readonly}>
           <EditorContent className="editor-content" editor={editor} />
         </StyledEditor>
-        <StyledSearchVariablesDropdownContainer>
-          <SearchVariablesDropdown inputId={inputId} editor={editor} />
+        <StyledSearchVariablesDropdownContainer
+          multiline={multiline}
+          readonly={readonly}
+        >
+          <SearchVariablesDropdown
+            inputId={inputId}
+            editor={editor}
+            disabled={readonly}
+          />
         </StyledSearchVariablesDropdownContainer>
       </StyledInputContainer>
     </StyledContainer>

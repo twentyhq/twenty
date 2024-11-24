@@ -3,9 +3,9 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Request } from 'express';
 
 import {
+  ObjectRecordOrderBy,
   OrderByDirection,
-  RecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { checkArrayFields } from 'src/engine/api/rest/core/query-builder/utils/check-order-by.utils';
 
@@ -13,7 +13,7 @@ export const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 
 @Injectable()
 export class OrderByInputFactory {
-  create(request: Request, objectMetadata): RecordOrderBy {
+  create(request: Request, objectMetadata): ObjectRecordOrderBy {
     const orderByQuery = request.query.order_by;
 
     if (typeof orderByQuery !== 'string') {

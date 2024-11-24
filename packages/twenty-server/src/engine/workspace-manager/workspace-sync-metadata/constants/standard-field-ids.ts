@@ -217,6 +217,13 @@ export const FAVORITE_STANDARD_FIELD_IDS = {
   note: '20202020-1f25-43fe-8b00-af212fdde824',
   view: '20202020-5a93-4fa9-acce-e73481a0bbdf',
   custom: '20202020-855a-4bc8-9861-79deef37011f',
+  favoriteFolder: '20202020-f658-4d12-8b4d-248356aa4bd9',
+};
+
+export const FAVORITE_FOLDER_STANDARD_FIELD_IDS = {
+  position: '20202020-5278-4bde-8909-2cec74d43744',
+  name: '20202020-82a3-4537-8ff0-dbce7eec35d6',
+  favorites: '20202020-b5e3-4b42-8af2-03cd4fd2e4d2',
 };
 
 export const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS = {
@@ -445,6 +452,7 @@ export const WORKFLOW_STANDARD_FIELD_IDS = {
   eventListeners: '20202020-0229-4c66-832e-035c67579a38',
   favorites: '20202020-c554-4c41-be7a-cf9cd4b0d512',
   timelineActivities: '20202020-906e-486a-a798-131a5f081faf',
+  createdBy: '20202020-6007-401a-8aa5-e6f48581a6f3',
 };
 
 export const WORKFLOW_RUN_STANDARD_FIELD_IDS = {

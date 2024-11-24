@@ -1,15 +1,21 @@
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useDeleteOneWorkflowVersion } from '@/workflow/hooks/useDeleteOneWorkflowVersion';
+import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { useTheme } from '@emotion/react';
 import {
   Button,
   IconPlayerPlay,
   IconPlayerStop,
   IconPower,
+  IconSettingsAutomation,
   IconTrash,
   isDefined,
 } from 'twenty-ui';
+import { capitalize } from '~/utils/string/capitalize';
 import { assertWorkflowWithCurrentVersionIsDefined } from '../utils/assertWorkflowWithCurrentVersionIsDefined';
 
 export const RecordShowPageWorkflowHeader = ({
@@ -26,6 +32,15 @@ export const RecordShowPageWorkflowHeader = ({
   const { activateWorkflowVersion } = useActivateWorkflowVersion();
   const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
   const { deleteOneWorkflowVersion } = useDeleteOneWorkflowVersion();
+  const { runWorkflowVersion } = useRunWorkflowVersion();
+
+  const { enqueueSnackBar } = useSnackBar();
+  const theme = useTheme();
+
+  const trigger = workflowWithCurrentVersion?.currentVersion.trigger;
+
+  const canWorkflowBeTested =
+    trigger?.type === 'MANUAL' && !trigger.settings.objectType;
 
   return (
     <>
@@ -34,7 +49,41 @@ export const RecordShowPageWorkflowHeader = ({
         variant="secondary"
         Icon={IconPlayerPlay}
         disabled={isWaitingForWorkflowWithCurrentVersion}
-        onClick={() => {}}
+        onClick={async () => {
+          assertWorkflowWithCurrentVersionIsDefined(workflowWithCurrentVersion);
+
+          if (!canWorkflowBeTested) {
+            enqueueSnackBar(
+              'Trigger type should be Manual - when no record(s) are selected',
+              {
+                variant: SnackBarVariant.Error,
+                title: 'Workflow cannot be tested',
+                icon: (
+                  <IconSettingsAutomation
+                    size={16}
+                    color={theme.snackBar.error.color}
+                  />
+                ),
+              },
+            );
+            return;
+          }
+
+          await runWorkflowVersion({
+            workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
+          });
+
+          enqueueSnackBar('', {
+            variant: SnackBarVariant.Success,
+            title: `${capitalize(workflowWithCurrentVersion.name)} starting...`,
+            icon: (
+              <IconSettingsAutomation
+                size={16}
+                color={theme.snackBar.success.color}
+              />
+            ),
+          });
+        }}
       />
 
       {workflowWithCurrentVersion?.currentVersion?.status === 'DRAFT' &&

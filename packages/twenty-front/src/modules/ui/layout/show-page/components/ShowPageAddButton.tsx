@@ -15,6 +15,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID } from '@/ui/layout/show-page/constants/ShowPageAddButtonDropdownId';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
 import { Dropdown } from '../../dropdown/components/Dropdown';
 import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
 
@@ -54,7 +55,8 @@ export const ShowPageAddButton = ({
     activityTargetObject.targetObjectNameSingular ===
       CoreObjectNameSingular.Task ||
     activityTargetObject.targetObjectNameSingular ===
-      CoreObjectNameSingular.Note
+      CoreObjectNameSingular.Note ||
+    isWorkflowSubObjectMetadata(activityTargetObject.targetObjectNameSingular)
   ) {
     return;
   }

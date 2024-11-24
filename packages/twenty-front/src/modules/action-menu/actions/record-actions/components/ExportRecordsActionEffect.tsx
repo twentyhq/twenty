@@ -1,13 +1,17 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import {
-  displayedExportProgress,
-  useExportRecordData,
-} from '@/action-menu/hooks/useExportRecordData';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { IconDatabaseExport } from 'twenty-ui';
 
+import {
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
+import {
+  displayedExportProgress,
+  useExportRecords,
+} from '@/object-record/record-index/export/hooks/useExportRecords';
 import { useEffect } from 'react';
 
 export const ExportRecordsActionEffect = ({
@@ -22,7 +26,7 @@ export const ExportRecordsActionEffect = ({
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
-  const { progress, download } = useExportRecordData({
+  const { progress, download } = useExportRecords({
     delayMs: 100,
     objectMetadataItem,
     recordIndexId: objectMetadataItem.namePlural,
@@ -31,13 +35,14 @@ export const ExportRecordsActionEffect = ({
 
   useEffect(() => {
     addActionMenuEntry({
-      type: 'standard',
+      type: ActionMenuEntryType.Standard,
+      scope:
+        contextStoreNumberOfSelectedRecords > 0
+          ? ActionMenuEntryScope.RecordSelection
+          : ActionMenuEntryScope.Global,
       key: 'export',
       position,
-      label: displayedExportProgress(
-        contextStoreNumberOfSelectedRecords > 0 ? 'selection' : 'all',
-        progress,
-      ),
+      label: displayedExportProgress(progress),
       Icon: IconDatabaseExport,
       accent: 'default',
       onClick: () => download(),

@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import graphqlFields from 'graphql-fields';
-
-import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import {
-  Record as IRecord,
-  RecordFilter,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+  GraphqlQueryBaseResolverService,
+  GraphqlQueryResolverExecutionArgs,
+} from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
+import {
+  ObjectRecord,
+  ObjectRecordFilter,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
@@ -15,76 +16,46 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import {
   WorkspaceQueryRunnerException,
   WorkspaceQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.exception';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 
 @Injectable()
-export class GraphqlQueryFindOneResolverService
-  implements ResolverService<FindOneResolverArgs, IRecord>
-{
-  constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) {}
-
-  async resolve<
-    ObjectRecord extends IRecord = IRecord,
-    Filter extends RecordFilter = RecordFilter,
-  >(
-    args: FindOneResolverArgs<Filter>,
-    options: WorkspaceQueryRunnerOptions,
+export class GraphqlQueryFindOneResolverService extends GraphqlQueryBaseResolverService<
+  FindOneResolverArgs,
+  ObjectRecord
+> {
+  async resolve(
+    executionArgs: GraphqlQueryResolverExecutionArgs<FindOneResolverArgs>,
   ): Promise<ObjectRecord> {
-    const { authContext, objectMetadataMapItem, info, objectMetadataMap } =
-      options;
+    const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+      executionArgs.options;
 
-    const dataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-        authContext.workspace.id,
-      );
-
-    const repository = dataSource.getRepository(
-      objectMetadataMapItem.nameSingular,
+    const queryBuilder = executionArgs.repository.createQueryBuilder(
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const queryBuilder = repository.createQueryBuilder(
-      objectMetadataMapItem.nameSingular,
-    );
-
-    const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataMapItem.fields,
-      objectMetadataMap,
-    );
-
-    const selectedFields = graphqlFields(info);
-
-    const { relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataMapItem,
-      selectedFields,
-    );
-
-    const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
+    executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataMapItem.nameSingular,
-      args.filter ?? ({} as Filter),
+      objectMetadataItemWithFieldMaps.nameSingular,
+      executionArgs.args.filter ?? ({} as ObjectRecordFilter),
     );
 
-    const withDeletedQueryBuilder = graphqlQueryParser.applyDeletedAtToBuilder(
-      withFilterQueryBuilder,
-      args.filter ?? ({} as Filter),
+    executionArgs.graphqlQueryParser.applyDeletedAtToBuilder(
+      queryBuilder,
+      executionArgs.args.filter ?? ({} as ObjectRecordFilter),
     );
 
-    const nonFormattedObjectRecord = await withDeletedQueryBuilder.getOne();
+    const nonFormattedObjectRecord = await queryBuilder.getOne();
 
-    const objectRecord = formatResult(
+    const objectRecord = formatResult<ObjectRecord>(
       nonFormattedObjectRecord,
-      objectMetadataMapItem,
-      objectMetadataMap,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     );
 
     if (!objectRecord) {
@@ -98,31 +69,31 @@ export class GraphqlQueryFindOneResolverService
 
     const objectRecords = [objectRecord];
 
-    if (relations) {
-      await processNestedRelationsHelper.processNestedRelations(
-        objectMetadataMap,
-        objectMetadataMapItem,
-        objectRecords,
-        relations,
-        QUERY_MAX_RECORDS,
+    if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
+      await processNestedRelationsHelper.processNestedRelations({
+        objectMetadataMaps,
+        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        parentObjectRecords: objectRecords,
+        relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+        limit: QUERY_MAX_RECORDS,
         authContext,
-        dataSource,
-      );
+        dataSource: executionArgs.dataSource,
+      });
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
     return typeORMObjectRecordsParser.processRecord({
       objectRecord: objectRecords[0],
-      objectName: objectMetadataMapItem.nameSingular,
+      objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: 1,
       totalCount: 1,
     }) as ObjectRecord;
   }
 
-  async validate<Filter extends RecordFilter>(
-    args: FindOneResolverArgs<Filter>,
+  async validate(
+    args: FindOneResolverArgs<ObjectRecordFilter>,
     _options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {
     if (!args.filter || Object.keys(args.filter).length === 0) {

@@ -8,7 +8,7 @@ concurrency:
 
 jobs:
   test:
-    timeout-minutes: 10
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
@@ -36,19 +36,41 @@ jobs:
 
         yq eval 'del(.services.db.image)' -i docker-compose.yml
         yq eval '.services.db.build.context = "../../"' -i docker-compose.yml
-        yq eval '.services.db.build.dockerfile = "./packages/twenty-docker/twenty-postgres/Dockerfile"' -i docker-compose.yml
+        yq eval '.services.db.build.dockerfile = "./packages/twenty-docker/twenty-postgres-spilo/Dockerfile"' -i docker-compose.yml
 
         echo "Setting up .env file..."
         cp .env.example .env
         echo "Generating secrets..."
         echo "# === Randomly generated secrets ===" >>.env
         echo "APP_SECRET=$(openssl rand -base64 32)" >>.env
-        echo "POSTGRES_ADMIN_PASSWORD=$(openssl rand -base64 32)" >>.env
+        echo "PGPASSWORD_SUPERUSER=$(openssl rand -base64 32)" >>.env
 
-        echo "Starting server..."
-        docker compose up -d
+        echo "Docker compose up..."
+        docker compose up -d || {
+            echo "Docker compose failed to start"
+            docker compose logs
+            exit 1
+        }
         docker compose logs db server -f &
         pid=$!
+
+        echo "Waiting for database to start..."
+        count=0
+        while [ ! $(docker inspect --format='{{.State.Health.Status}}' twenty-db-1) = "healthy" ]; do
+            sleep 1;
+            count=$((count+1));
+            if [ $(docker inspect --format='{{.State.Status}}' twenty-db-1) = "exited" ]; then
+                echo "Database exited"
+                docker compose logs db
+                exit 1
+            fi
+            if [ $count -gt 300 ]; then
+                echo "Failed to start database after 5 minutes"
+                docker compose logs db
+                exit 1
+            fi
+            echo "Still waiting for database... (${count}/60)"
+        done
 
         echo "Waiting for server to start..."
         count=0
@@ -57,11 +79,14 @@ jobs:
             count=$((count+1));
             if [ $(docker inspect --format='{{.State.Status}}' twenty-server-1) = "exited" ]; then
                 echo "Server exited"
+                docker compose logs server
                 exit 1
             fi
             if [ $count -gt 300 ]; then
-                echo "Failed to start server"
+                echo "Failed to start server after 5 minutes"
+                docker compose logs server
                 exit 1
             fi
+            echo "Still waiting for server... (${count}/300s)"
         done
       working-directory: ./packages/twenty-docker/

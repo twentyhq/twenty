@@ -31,22 +31,23 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       if (indexNameMatch) {
         const indexName = indexNameMatch[1];
 
-        const deletedAtFieldMetadata = context.objectMetadataItem.fields.find(
-          (field) => field.name === 'deletedAt',
-        );
+        const deletedAtFieldMetadata =
+          context.objectMetadataItemWithFieldMaps.fieldsByName['deletedAt'];
 
-        const affectedColumns = context.objectMetadataItem.indexMetadatas
-          .find((index) => index.name === indexName)
-          ?.indexFieldMetadatas?.filter(
-            (field) => field.fieldMetadataId !== deletedAtFieldMetadata?.id,
-          )
-          .map((indexField) => {
-            const fieldMetadata = context.objectMetadataItem.fields.find(
-              (objectField) => indexField.fieldMetadataId === objectField.id,
-            );
+        const affectedColumns =
+          context.objectMetadataItemWithFieldMaps.indexMetadatas
+            .find((index) => index.name === indexName)
+            ?.indexFieldMetadatas?.filter(
+              (field) => field.fieldMetadataId !== deletedAtFieldMetadata?.id,
+            )
+            .map((indexField) => {
+              const fieldMetadata =
+                context.objectMetadataItemWithFieldMaps.fieldsById[
+                  indexField.fieldMetadataId
+                ];
 
-            return fieldMetadata?.label;
-          });
+              return fieldMetadata?.label;
+            });
 
         const columnNames = affectedColumns?.join(', ');
 

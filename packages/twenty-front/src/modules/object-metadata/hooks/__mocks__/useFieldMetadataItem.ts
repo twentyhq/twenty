@@ -116,7 +116,7 @@ export const variables = {
         description: null,
         icon: undefined,
         label: 'fieldLabel',
-        name: 'fieldLabel',
+        name: 'fieldlabel',
         options: undefined,
         settings: undefined,
         objectMetadataId,

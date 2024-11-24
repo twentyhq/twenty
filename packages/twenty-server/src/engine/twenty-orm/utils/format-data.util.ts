@@ -3,26 +3,28 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataMapItem } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/types/object-metadata-item-with-field-maps';
 import { CompositeFieldMetadataType } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 import { capitalize } from 'src/utils/capitalize';
 
 export function formatData<T>(
   data: T,
-  objectMetadata: ObjectMetadataMapItem,
+  objectMetadataItemWithFieldMaps: ObjectMetadataItemWithFieldMaps,
 ): T {
   if (!data) {
     return data;
   }
 
   if (Array.isArray(data)) {
-    return data.map((item) => formatData(item, objectMetadata)) as T;
+    return data.map((item) =>
+      formatData(item, objectMetadataItemWithFieldMaps),
+    ) as T;
   }
 
   const newData: Record<string, any> = {};
 
   for (const [key, value] of Object.entries(data)) {
-    const fieldMetadata = objectMetadata.fields[key];
+    const fieldMetadata = objectMetadataItemWithFieldMaps.fieldsByName[key];
 
     if (!fieldMetadata) {
       throw new Error(

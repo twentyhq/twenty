@@ -1,6 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 
-import { Record } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -9,7 +9,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 
 export const checkArrayFields = (
   objectMetadata: ObjectMetadataInterface,
-  fields: Array<Partial<Record>>,
+  fields: Array<Partial<ObjectRecord>>,
 ): void => {
   const fieldMetadataNames = objectMetadata.fields
     .map((field) => {

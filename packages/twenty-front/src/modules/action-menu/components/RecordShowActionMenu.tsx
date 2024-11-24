@@ -11,16 +11,16 @@ import { RecordShowPageBaseHeader } from '~/pages/object-record/RecordShowPageBa
 
 export const RecordShowActionMenu = ({
   isFavorite,
-  handleFavoriteButtonClick,
   record,
   objectMetadataItem,
   objectNameSingular,
+  handleFavoriteButtonClick,
 }: {
   isFavorite: boolean;
-  handleFavoriteButtonClick: () => void;
   record: ObjectRecord | undefined;
   objectMetadataItem: ObjectMetadataItem;
   objectNameSingular: string;
+  handleFavoriteButtonClick: () => void;
 }) => {
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
@@ -40,10 +40,10 @@ export const RecordShowActionMenu = ({
           <RecordShowPageBaseHeader
             {...{
               isFavorite,
-              handleFavoriteButtonClick,
               record,
               objectMetadataItem,
               objectNameSingular,
+              handleFavoriteButtonClick,
             }}
           />
           <ActionMenuConfirmationModals />

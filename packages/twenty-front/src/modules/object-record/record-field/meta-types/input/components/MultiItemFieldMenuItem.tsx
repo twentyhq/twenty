@@ -64,7 +64,7 @@ export const MultiItemFieldMenuItem = <T,>({
       onMouseLeave={handleMouseLeave}
       text={<DisplayComponent value={value} />}
       isIconDisplayedOnHoverOnly={!isPrimary && !isDropdownOpen}
-      RightIcon={isHovered ? null : IconBookmark}
+      RightIcon={!isHovered && isPrimary ? IconBookmark : null}
       dropdownId={dropdownId}
       dropdownContent={
         <DropdownMenuItemsContainer>

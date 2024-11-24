@@ -30,9 +30,9 @@ export const RecordShowPage = () => {
     pageTitle,
     pageName,
     isFavorite,
-    handleFavoriteButtonClick,
     record,
     objectMetadataItem,
+    handleFavoriteButtonClick,
   } = useRecordShowPage(
     parameters.objectNameSingular ?? '',
     parameters.objectRecordId ?? '',
@@ -65,15 +65,17 @@ export const RecordShowPage = () => {
                     workflowVersionId={objectRecordId}
                   />
                 ) : (
-                  <RecordShowActionMenu
-                    {...{
-                      isFavorite,
-                      handleFavoriteButtonClick,
-                      record,
-                      objectMetadataItem,
-                      objectNameSingular,
-                    }}
-                  />
+                  <>
+                    <RecordShowActionMenu
+                      {...{
+                        isFavorite,
+                        record,
+                        handleFavoriteButtonClick,
+                        objectMetadataItem,
+                        objectNameSingular,
+                      }}
+                    />
+                  </>
                 )}
               </>
             </RecordShowPageHeader>

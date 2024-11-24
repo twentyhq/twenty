@@ -14,7 +14,6 @@ import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdent
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { UnwrapRecoilValue } from 'recoil';
@@ -77,29 +76,28 @@ export const SettingsSecuritySSORowDropdownMenu = ({
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }
+      dropdownMenuWidth={160}
       dropdownComponents={
-        <DropdownMenu>
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              accent="default"
-              LeftIcon={IconArchive}
-              text={SSOIdp.status === 'Active' ? 'Deactivate' : 'Activate'}
-              onClick={() => {
-                toggleSSOIdentityProviderStatus(SSOIdp.id);
-                closeDropdown();
-              }}
-            />
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text="Delete"
-              onClick={() => {
-                handleDeleteSSOIdentityProvider(SSOIdp.id);
-                closeDropdown();
-              }}
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
+        <DropdownMenuItemsContainer>
+          <MenuItem
+            accent="default"
+            LeftIcon={IconArchive}
+            text={SSOIdp.status === 'Active' ? 'Deactivate' : 'Activate'}
+            onClick={() => {
+              toggleSSOIdentityProviderStatus(SSOIdp.id);
+              closeDropdown();
+            }}
+          />
+          <MenuItem
+            accent="danger"
+            LeftIcon={IconTrash}
+            text="Delete"
+            onClick={() => {
+              handleDeleteSSOIdentityProvider(SSOIdp.id);
+              closeDropdown();
+            }}
+          />
+        </DropdownMenuItemsContainer>
       }
     />
   );

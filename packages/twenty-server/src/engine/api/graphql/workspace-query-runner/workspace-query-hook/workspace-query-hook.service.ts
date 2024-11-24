@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import merge from 'lodash.merge';
 
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
@@ -53,13 +53,13 @@ export class WorkspaceQueryHookService {
 
   public async executePostQueryHooks<
     T extends WorkspaceResolverBuilderMethodNames,
-    Record extends IRecord = IRecord,
+    U extends ObjectRecord = ObjectRecord,
   >(
     authContext: AuthContext,
     // TODO: We should allow wildcard for object name
     objectName: string,
     methodName: T,
-    payload: Record[],
+    payload: U[],
   ): Promise<void> {
     const key: WorkspaceQueryHookKey = `${objectName}.${methodName}`;
     const postHookInstances =

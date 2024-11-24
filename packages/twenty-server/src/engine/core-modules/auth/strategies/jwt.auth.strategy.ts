@@ -113,7 +113,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     if (!user) {
       throw new AuthException(
         'User not found',
-        AuthExceptionCode.INVALID_INPUT,
+        AuthExceptionCode.USER_NOT_FOUND,
       );
     }
 

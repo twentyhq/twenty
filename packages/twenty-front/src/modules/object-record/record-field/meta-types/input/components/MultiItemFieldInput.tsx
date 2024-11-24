@@ -19,8 +19,8 @@ import { toSpliced } from '~/utils/array/toSpliced';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 const StyledDropdownMenu = styled(DropdownMenu)`
-  margin-left: -1px;
-  margin-top: -1px;
+  margin: -1px;
+  position: relative;
 `;
 
 type MultiItemFieldInputProps<T> = {
@@ -64,8 +64,12 @@ export const MultiItemFieldInput = <T,>({
   };
 
   const handleDropdownCloseOutside = (event: MouseEvent | TouchEvent) => {
-    onCancel?.();
     event.stopImmediatePropagation();
+    if (inputValue?.trim().length > 0) {
+      handleSubmitInput();
+    } else {
+      onCancel?.();
+    }
   };
 
   useListenClickOutside({
@@ -110,6 +114,10 @@ export const MultiItemFieldInput = <T,>({
         setInputValue(item.countryCode + item.number);
         break;
       case FieldMetadataType.Emails:
+        item = items[index] as string;
+        setInputValue(item);
+        break;
+      case FieldMetadataType.Array:
         item = items[index] as string;
         setInputValue(item);
         break;
@@ -201,10 +209,12 @@ export const MultiItemFieldInput = <T,>({
           }
           onEnter={handleSubmitInput}
           rightComponent={
-            <LightIconButton
-              Icon={isAddingNewItem ? IconPlus : IconCheck}
-              onClick={handleSubmitInput}
-            />
+            items.length ? (
+              <LightIconButton
+                Icon={isAddingNewItem ? IconPlus : IconCheck}
+                onClick={handleSubmitInput}
+              />
+            ) : null
           }
         />
       ) : (

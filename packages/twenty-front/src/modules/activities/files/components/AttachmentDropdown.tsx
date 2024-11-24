@@ -8,7 +8,6 @@ import {
 } from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
@@ -50,27 +49,26 @@ export const AttachmentDropdown = ({
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }
+      dropdownMenuWidth={160}
       dropdownComponents={
-        <DropdownMenu width="160px">
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              text="Download"
-              LeftIcon={IconDownload}
-              onClick={handleDownload}
-            />
-            <MenuItem
-              text="Rename"
-              LeftIcon={IconPencil}
-              onClick={handleRename}
-            />
-            <MenuItem
-              text="Delete"
-              accent="danger"
-              LeftIcon={IconTrash}
-              onClick={handleDelete}
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
+        <DropdownMenuItemsContainer>
+          <MenuItem
+            text="Download"
+            LeftIcon={IconDownload}
+            onClick={handleDownload}
+          />
+          <MenuItem
+            text="Rename"
+            LeftIcon={IconPencil}
+            onClick={handleRename}
+          />
+          <MenuItem
+            text="Delete"
+            accent="danger"
+            LeftIcon={IconTrash}
+            onClick={handleDelete}
+          />
+        </DropdownMenuItemsContainer>
       }
       dropdownHotkeyScope={{
         scope: dropdownId,

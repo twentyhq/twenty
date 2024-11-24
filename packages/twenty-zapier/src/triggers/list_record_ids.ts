@@ -1,14 +1,4 @@
-import { Bundle, ZObject } from 'zapier-platform-core';
-
-import { ObjectData } from '../utils/data.types';
-import { listSample } from '../utils/triggers/triggers.utils';
-
-const listRecordIdsRequest = async (
-  z: ZObject,
-  bundle: Bundle,
-): Promise<ObjectData[]> => {
-  return listSample(z, bundle, true);
-};
+import { performList } from '../utils/triggers/triggers.utils';
 
 export const listRecordIdsKey = 'list_record_ids';
 
@@ -21,6 +11,6 @@ export default {
   key: listRecordIdsKey,
   noun: 'Object',
   operation: {
-    perform: listRecordIdsRequest,
+    perform: performList,
   },
 };

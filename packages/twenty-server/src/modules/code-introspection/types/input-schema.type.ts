@@ -1,10 +1,13 @@
-type InputSchemaPropertyType =
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+
+export type InputSchemaPropertyType =
   | 'string'
   | 'number'
   | 'boolean'
   | 'object'
   | 'array'
-  | 'unknown';
+  | 'unknown'
+  | FieldMetadataType;
 
 export type InputSchemaProperty = {
   type: InputSchemaPropertyType;

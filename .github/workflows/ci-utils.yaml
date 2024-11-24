@@ -15,7 +15,9 @@ permissions:
   statuses: write
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  # We don't cancel in-progress because this workflow is triggered on
+  # pull_request_target, which means the ref can be the same accross two PRs.
+  # cancel-in-progress: true
 
 jobs:
   danger-js:

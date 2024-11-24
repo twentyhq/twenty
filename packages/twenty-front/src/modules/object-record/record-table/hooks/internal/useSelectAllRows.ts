@@ -2,7 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
-import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
+import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 
@@ -11,12 +11,12 @@ export const useSelectAllRows = (recordTableId?: string) => {
     allRowsSelectedStatusComponentSelector,
     recordTableId,
   );
-  const tableRowIdsState = useRecoilComponentCallbackStateV2(
-    tableRowIdsComponentState,
-    recordTableId,
-  );
   const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
     isRowSelectedComponentFamilyState,
+    recordTableId,
+  );
+  const tableAllRowIdsState = useRecoilComponentCallbackStateV2(
+    tableAllRowIdsComponentState,
     recordTableId,
   );
 
@@ -28,7 +28,7 @@ export const useSelectAllRows = (recordTableId?: string) => {
           allRowsSelectedStatusSelector,
         );
 
-        const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState);
+        const tableRowIds = getSnapshotValue(snapshot, tableAllRowIdsState);
 
         if (
           allRowsSelectedStatus === 'none' ||
@@ -43,7 +43,11 @@ export const useSelectAllRows = (recordTableId?: string) => {
           }
         }
       },
-    [allRowsSelectedStatusSelector, tableRowIdsState, isRowSelectedFamilyState],
+    [
+      allRowsSelectedStatusSelector,
+      tableAllRowIdsState,
+      isRowSelectedFamilyState,
+    ],
   );
 
   return {

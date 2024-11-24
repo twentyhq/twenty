@@ -7,6 +7,7 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isDefined } from 'twenty-ui';
 
 const noSelectionRecordActionEffects = [ExportRecordsActionEffect];
 
@@ -21,25 +22,33 @@ const multipleRecordActionEffects = [
 ];
 
 export const RecordActionMenuEntriesSetter = () => {
-  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
-    contextStoreNumberOfSelectedRecordsComponentState,
-  );
-
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
   );
 
+  if (!isDefined(contextStoreCurrentObjectMetadataId)) {
+    return null;
+  }
+
+  return (
+    <ActionEffects objectMetadataItemId={contextStoreCurrentObjectMetadataId} />
+  );
+};
+
+const ActionEffects = ({
+  objectMetadataItemId,
+}: {
+  objectMetadataItemId: string;
+}) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: contextStoreCurrentObjectMetadataId ?? '',
+    objectId: objectMetadataItemId,
   });
 
-  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
+  );
 
-  if (!objectMetadataItem) {
-    throw new Error(
-      `Object metadata item not found for id ${contextStoreCurrentObjectMetadataId}`,
-    );
-  }
+  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
   const actions =
     contextStoreNumberOfSelectedRecords === 0

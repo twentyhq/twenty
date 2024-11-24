@@ -1,1 +1,1 @@
-export const OPTION_VALUE_VALID_PATTERN = /^[a-zA-Z0-9]+$/;
+export const OPTION_VALUE_VALID_PATTERN = /^[A-Z_][A-Z0-9_]*$/;

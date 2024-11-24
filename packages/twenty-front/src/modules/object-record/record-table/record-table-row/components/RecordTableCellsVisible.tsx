@@ -42,7 +42,7 @@ export const RecordTableCellsVisible = () => {
           <RecordTableTd
             isSelected={isSelected}
             isDragging={isDragging}
-            width={tableCellWidths[columnIndex + 3] - 1}
+            width={tableCellWidths[columnIndex + 3]}
           >
             <RecordTableCell />
           </RecordTableTd>

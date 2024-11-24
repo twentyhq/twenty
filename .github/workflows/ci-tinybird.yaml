@@ -3,8 +3,14 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'package.json'
+      - 'packages/twenty-tinybird/**'
 
   pull_request:
+    paths:
+      - 'package.json'
+      - 'packages/twenty-tinybird/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -12,24 +18,9 @@ concurrency:
 
 jobs:
   ci:
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check for changed files
-        id: changed-files
-        uses: tj-actions/changed-files@v11
-        with:
-          files: |
-            package.json
-            packages/twenty-tinybird/**
-
-      - name: Skip if no relevant changes
-        if: steps.changed-files.outputs.any_changed == 'false'
-        run: echo "No relevant changes. Skipping CI."
-
-      - name: Check twenty-tinybird package
-        uses: tinybirdco/ci/.github/workflows/ci.yml@main
-        with:
-          data_project_dir: packages/twenty-tinybird
-          tb_admin_token: ${{ secrets.TB_ADMIN_TOKEN }}
-          tb_host: https://api.eu-central-1.aws.tinybird.co
+    uses: tinybirdco/ci/.github/workflows/ci.yml@main
+    with:
+      data_project_dir: packages/twenty-tinybird
+    secrets:
+      tb_admin_token: ${{ secrets.TB_ADMIN_TOKEN }}
+      tb_host: https://api.eu-central-1.aws.tinybird.co
