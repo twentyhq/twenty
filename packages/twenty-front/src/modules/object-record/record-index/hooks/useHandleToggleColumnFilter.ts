@@ -7,9 +7,12 @@ import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldM
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
-import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { isDefined } from '~/utils/isDefined';
+import { useFilterDropdownWithUnknownScope } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdownWithUnknownScope';
+import { useRecoilCallback } from 'recoil';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 type UseHandleToggleColumnFilterProps = {
   objectNameSingular: string;
@@ -17,8 +20,8 @@ type UseHandleToggleColumnFilterProps = {
 };
 
 export const useHandleToggleColumnFilter = ({
-  viewBarId,
   objectNameSingular,
+  viewBarId,
 }: UseHandleToggleColumnFilterProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -28,7 +31,27 @@ export const useHandleToggleColumnFilter = ({
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters(viewBarId);
-  const { openDropdown } = useDropdownV2();
+
+  const openDropdown = useRecoilCallback(
+    ({ set }) => {
+      return (dropdownId: string) => {
+        const dropdownOpenState = extractComponentState(
+          isDropdownOpenComponentState,
+          dropdownId,
+        );
+
+        set(dropdownOpenState, true);
+      };
+    },
+    [isDropdownOpenComponentState],
+  );
+
+  /* const availableFilterDefinitions = useRecoilComponentValueV2(
+    availableFilterDefinitionsComponentState,
+  ); */
+
+  const { setFilterDefinitionUsedInDropdown } =
+    useFilterDropdownWithUnknownScope();
 
   const handleToggleColumnFilter = useCallback(
     (fieldMetadataId: string) => {
@@ -66,11 +89,19 @@ export const useHandleToggleColumnFilter = ({
 
       upsertCombinedViewFilter(newFilter);
 
-      openDropdown(newFilter.id, {
-        scope: newFilter.id,
-      });
+      setFilterDefinitionUsedInDropdown(newFilter.id, filterDefinition);
+
+      // TODO: Remove timeout
+      setTimeout(() => {
+        openDropdown(newFilter.id);
+      }, 1);
     },
-    [columnDefinitions, upsertCombinedViewFilter, openDropdown],
+    [
+      openDropdown,
+      columnDefinitions,
+      upsertCombinedViewFilter,
+      setFilterDefinitionUsedInDropdown,
+    ],
   );
 
   return handleToggleColumnFilter;
