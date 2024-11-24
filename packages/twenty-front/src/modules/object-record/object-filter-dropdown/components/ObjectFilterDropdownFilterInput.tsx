@@ -14,6 +14,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-ui';
 
+import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
@@ -95,6 +96,9 @@ export const ObjectFilterDropdownFilterInput = ({
               <DropdownMenuSeparator />
               <ObjectFilterDropdownOptionSelect />
             </>
+          )}
+          {filterDefinitionUsedInDropdown.type === 'BOOLEAN' && (
+            <ObjectFilterDropdownBooleanSelect />
           )}
         </>
       )}
