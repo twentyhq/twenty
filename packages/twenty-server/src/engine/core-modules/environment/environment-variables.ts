@@ -165,10 +165,6 @@ export class EnvironmentVariables {
   INVITATION_TOKEN_EXPIRES_IN = '30d';
 
   // Auth
-  @IsUrl({ require_tld: false, require_protocol: true })
-  @IsOptional()
-  FRONT_AUTH_CALLBACK_URL: string;
-
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
