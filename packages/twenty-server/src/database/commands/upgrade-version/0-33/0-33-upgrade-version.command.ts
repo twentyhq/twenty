@@ -4,6 +4,7 @@ import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
+import { DeleteViewFieldsWithoutViewsCommand } from 'src/database/commands/upgrade-version/0-33/0-33-delete-view-fields-without-views.command';
 import { EnforceUniqueConstraintsCommand } from 'src/database/commands/upgrade-version/0-33/0-33-enforce-unique-constraints.command';
 import { UpdateRichTextSearchVectorCommand } from 'src/database/commands/upgrade-version/0-33/0-33-update-rich-text-search-vector-expression';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -23,6 +24,7 @@ export class UpgradeTo0_33Command extends ActiveWorkspacesCommandRunner {
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly updateRichTextSearchVectorCommand: UpdateRichTextSearchVectorCommand,
     private readonly enforceUniqueConstraintsCommand: EnforceUniqueConstraintsCommand,
+    private readonly deleteViewFieldsWithoutViewsCommand: DeleteViewFieldsWithoutViewsCommand,
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
   ) {
     super(workspaceRepository);
@@ -33,6 +35,11 @@ export class UpgradeTo0_33Command extends ActiveWorkspacesCommandRunner {
     options: UpdateTo0_33CommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
+    await this.deleteViewFieldsWithoutViewsCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
     await this.enforceUniqueConstraintsCommand.executeActiveWorkspacesCommand(
       passedParam,
       {

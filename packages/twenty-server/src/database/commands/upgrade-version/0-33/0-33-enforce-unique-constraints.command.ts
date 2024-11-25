@@ -17,7 +17,6 @@ interface EnforceUniqueConstraintsCommandOptions
   company?: boolean;
   viewField?: boolean;
   viewSort?: boolean;
-  verbose?: boolean;
 }
 
 @Command({
@@ -39,14 +38,6 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
     description: 'Enforce unique constraints on person emailsPrimaryEmail',
   })
   parsePerson() {
-    return true;
-  }
-
-  @Option({
-    flags: '--verbose',
-    description: 'Verbose output',
-  })
-  parseVerbose() {
     return true;
   }
 
