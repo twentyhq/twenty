@@ -19,7 +19,6 @@ import './instrument';
 
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
-import { ServerUrl, ApiUrl } from './engine/utils/server-and-api-urls';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -27,10 +26,7 @@ const bootstrap = async () => {
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
     snapshot: process.env.DEBUG_MODE === 'true',
-    ...(process.env.SERVER_URL &&
-    process.env.SERVER_URL.startsWith('https') &&
-    process.env.SSL_KEY_PATH &&
-    process.env.SSL_CERT_PATH
+    ...(process.env.SSL_KEY_PATH && process.env.SSL_CERT_PATH
       ? {
           httpsOptions: {
             key: fs.readFileSync(process.env.SSL_KEY_PATH),
@@ -86,17 +82,7 @@ const bootstrap = async () => {
     app.use(session(getSessionStorageOptions(environmentService)));
   }
 
-  await app.listen(serverUrl.port, serverUrl.hostname);
-
-  const url = new URL(await app.getUrl());
-
-  // prevent ipv6 issue for redirectUri builder
-  url.hostname = url.hostname === '[::1]' ? 'localhost' : url.hostname;
-
-  ServerUrl.set(url.toString());
-  ApiUrl.set(environmentService.get('API_URL'));
-
-  logger.log(`Application is running on: ${url.toString()}`, 'Server Info');
+  await app.listen(environmentService.get('PORT'));
 };
 
 bootstrap();

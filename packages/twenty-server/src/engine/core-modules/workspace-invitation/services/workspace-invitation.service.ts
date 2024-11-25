@@ -28,7 +28,6 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { ApiUrl } from 'src/engine/utils/server-and-api-urls';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -235,7 +234,7 @@ export class WorkspaceInvitationService {
           link: link.toString(),
           workspace: { name: workspace.displayName, logo: workspace.logo },
           sender: { email: sender.email, firstName: sender.firstName },
-          serverUrl: ApiUrl.get(),
+          serverUrl: this.environmentService.get('SERVER_URL'),
         };
 
         const emailTemplate = SendInviteLinkEmail(emailData);

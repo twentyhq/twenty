@@ -130,17 +130,9 @@ export class EnvironmentVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   FRONT_BASE_URL: string;
 
-  // Server URL
-  // URL of the nodejs server
-  // use an SSL certificate to be compliant with security certifications
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
   SERVER_URL = 'http://localhost';
-
-  // URL of the API, differ from SERVER_URL if you use a proxy like a load balancer
-  @IsOptional()
-  @IsUrl({ require_tld: false, require_protocol: true })
-  API_URL: string;
 
   @IsString()
   APP_SECRET: string;
