@@ -50,7 +50,7 @@ export class WorkspaceMigrationEnumService {
         typeof enumValue !== 'string',
     );
 
-    const oldColumnName = `${columnDefinition.columnName}_old_${v4()}`;
+    const oldColumnName = `old_${v4()}`;
 
     // Rename old column
     await this.renameColumn(
