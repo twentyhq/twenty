@@ -1,7 +1,7 @@
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import { WorkflowFormFieldInputBase } from '@/workflow/components/WorkflowFormFieldInputBase';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import {
   canBeCastAsNumberOrNull,
   castAsNumberOrNull,
@@ -24,6 +24,8 @@ export const WorkflowFormNumberFieldInput = ({
   defaultValue,
   onPersist,
 }: WorkflowFormNumberFieldInputProps) => {
+  const inputId = useId();
+
   const [draftValue, setDraftValue] = useState(defaultValue ?? '');
 
   const persistNumber = (newValue: string) => {
@@ -44,10 +46,12 @@ export const WorkflowFormNumberFieldInput = ({
 
   return (
     <WorkflowFormFieldInputBase
+      inputId={inputId}
       label={label}
       variableMode="static-or-variable"
       Input={
         <StyledInput
+          inputId={inputId}
           placeholder={placeholder}
           value={String(draftValue)}
           copyButton={false}

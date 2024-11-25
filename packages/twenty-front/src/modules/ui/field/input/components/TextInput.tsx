@@ -12,6 +12,7 @@ export const StyledTextInput = styled.input`
 `;
 
 type TextInputProps = {
+  inputId?: string;
   placeholder?: string;
   autoFocus?: boolean;
   value: string;
@@ -35,6 +36,7 @@ const getValue = (value: string, shouldTrim: boolean) => {
 };
 
 export const TextInput = ({
+  inputId,
   placeholder,
   autoFocus,
   value,
@@ -76,6 +78,7 @@ export const TextInput = ({
   return (
     <>
       <StyledTextInput
+        id={inputId}
         autoComplete="off"
         ref={wrapperRef}
         placeholder={placeholder}

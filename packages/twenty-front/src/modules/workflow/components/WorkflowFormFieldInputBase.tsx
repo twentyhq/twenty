@@ -50,6 +50,7 @@ type VariableMode = 'static-or-variable' | 'full-editor';
 type EditingMode = 'input' | 'variable';
 
 type WorkflowFormFieldInputBaseProps<T> = {
+  inputId?: string;
   label?: string;
   variableMode: VariableMode;
   onVariableTagInsert: (variable: string) => void;
@@ -70,6 +71,7 @@ type WorkflowFormFieldInputBaseProps<T> = {
 );
 
 export const WorkflowFormFieldInputBase = ({
+  inputId,
   label,
   Input,
   onVariableTagInsert,
@@ -79,7 +81,7 @@ export const WorkflowFormFieldInputBase = ({
   onUnlinkVariable,
   readonly,
 }: WorkflowFormFieldInputBaseProps<unknown>) => {
-  const id = useId();
+  const variablesDropdownId = useId();
 
   const [editingMode, setEditingMode] = useState<EditingMode>(() => {
     return isString(draftValue) && draftValue.startsWith('{{')
@@ -89,7 +91,7 @@ export const WorkflowFormFieldInputBase = ({
 
   return (
     <FormFieldInputBase
-      inputId={id}
+      inputId={inputId}
       label={label}
       Input={
         variableMode === 'full-editor' || editingMode === 'input' ? (
@@ -112,7 +114,7 @@ export const WorkflowFormFieldInputBase = ({
           readonly={readonly}
         >
           <SearchVariablesDropdown
-            inputId={id}
+            inputId={variablesDropdownId}
             insertVariableTag={(variable) => {
               setEditingMode('variable');
               onVariableTagInsert(variable);
