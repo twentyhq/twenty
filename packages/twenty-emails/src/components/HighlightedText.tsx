@@ -1,5 +1,5 @@
-import React, { ReactNode } from 'react';
 import { Text } from '@react-email/text';
+import { ReactNode } from 'react';
 
 import { emailTheme } from 'src/common-style';
 
@@ -12,19 +12,11 @@ const highlightedStyle = {
   color: emailTheme.font.colors.highlighted,
 };
 
-const divStyle = {
-  display: 'flex',
-};
-
 type HighlightedTextProps = {
   value: ReactNode;
   centered?: boolean;
 };
 
 export const HighlightedText = ({ value }: HighlightedTextProps) => {
-  return (
-    <div style={divStyle}>
-      <Text style={highlightedStyle}>{value}</Text>
-    </div>
-  );
+  return <Text style={highlightedStyle}>{value}</Text>;
 };

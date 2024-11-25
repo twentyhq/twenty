@@ -16,12 +16,12 @@ export type WorkflowDiagramStepNodeData =
   | {
       nodeType: 'trigger';
       triggerType: WorkflowTriggerType;
-      label: string;
+      name: string;
     }
   | {
       nodeType: 'action';
       actionType: WorkflowActionType;
-      label: string;
+      name: string;
     };
 
 export type WorkflowDiagramCreateStepNodeData = {

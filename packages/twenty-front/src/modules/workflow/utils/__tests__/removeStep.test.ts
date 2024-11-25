@@ -28,6 +28,7 @@ it('returns a deep copy of the provided steps array instead of mutating it', () 
     name: '',
     steps: [stepToBeRemoved],
     trigger: {
+      name: 'Company created',
       settings: { eventName: 'company.created', outputSchema: {} },
       type: 'DATABASE_EVENT',
     },
@@ -108,6 +109,7 @@ it('removes a step in a non-empty steps array', () => {
       },
     ],
     trigger: {
+      name: 'Company created',
       settings: { eventName: 'company.created', outputSchema: {} },
       type: 'DATABASE_EVENT',
     },

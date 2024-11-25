@@ -49,7 +49,9 @@ export const useAvailableVariablesInWorkflowStep = (): StepOutputSchema[] => {
   ) {
     result.push({
       id: 'trigger',
-      name: getTriggerStepName(workflow.currentVersion.trigger),
+      name: isDefined(workflow.currentVersion.trigger.name)
+        ? workflow.currentVersion.trigger.name
+        : getTriggerStepName(workflow.currentVersion.trigger),
       outputSchema: workflow.currentVersion.trigger.settings.outputSchema,
     });
   }

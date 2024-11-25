@@ -1,8 +1,6 @@
 import { createState } from 'twenty-ui';
 
-export const mainContextStoreComponentInstanceIdState = createState<
-  string | null
->({
+export const mainContextStoreComponentInstanceIdState = createState<string>({
   key: 'mainContextStoreComponentInstanceIdState',
-  defaultValue: null,
+  defaultValue: 'app',
 });

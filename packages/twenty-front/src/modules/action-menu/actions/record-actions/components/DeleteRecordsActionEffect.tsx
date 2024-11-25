@@ -1,5 +1,9 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
+import {
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -105,8 +109,8 @@ export const DeleteRecordsActionEffect = ({
   useEffect(() => {
     if (canDelete) {
       addActionMenuEntry({
-        type: 'standard',
-        scope: 'record-selection',
+        type: ActionMenuEntryType.Standard,
+        scope: ActionMenuEntryScope.RecordSelection,
         key: 'delete',
         label: 'Delete',
         position,

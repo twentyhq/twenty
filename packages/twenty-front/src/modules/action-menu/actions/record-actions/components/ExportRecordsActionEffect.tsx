@@ -5,6 +5,10 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { IconDatabaseExport } from 'twenty-ui';
 
 import {
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
+import {
   displayedExportProgress,
   useExportRecords,
 } from '@/object-record/record-index/export/hooks/useExportRecords';
@@ -31,8 +35,11 @@ export const ExportRecordsActionEffect = ({
 
   useEffect(() => {
     addActionMenuEntry({
-      type: 'standard',
-      scope: 'record-selection',
+      type: ActionMenuEntryType.Standard,
+      scope:
+        contextStoreNumberOfSelectedRecords > 0
+          ? ActionMenuEntryScope.RecordSelection
+          : ActionMenuEntryScope.Global,
       key: 'export',
       position,
       label: displayedExportProgress(progress),

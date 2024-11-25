@@ -3,8 +3,8 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
+import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
-import { isClientConfigLoadedState } from '@/client-config/states/isClientConfigLoadedState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -29,8 +29,8 @@ export const ClientConfigProviderEffect = () => {
   const setSupportChat = useSetRecoilState(supportChatState);
 
   const setSentryConfig = useSetRecoilState(sentryConfigState);
-  const [isClientConfigLoaded, setIsClientConfigLoaded] = useRecoilState(
-    isClientConfigLoadedState,
+  const [clientConfigApiStatus, setClientConfigApiStatus] = useRecoilState(
+    clientConfigApiStatusState,
   );
 
   const setCaptchaProvider = useSetRecoilState(captchaProviderState);
@@ -39,42 +39,64 @@ export const ClientConfigProviderEffect = () => {
 
   const setApiConfig = useSetRecoilState(apiConfigState);
 
-  const { data, loading } = useGetClientConfigQuery({
-    skip: isClientConfigLoaded,
+  const { data, loading, error } = useGetClientConfigQuery({
+    skip: clientConfigApiStatus.isLoaded,
   });
 
   useEffect(() => {
-    if (!loading && isDefined(data?.clientConfig)) {
-      setIsClientConfigLoaded(true);
-      setAuthProviders({
-        google: data?.clientConfig.authProviders.google,
-        microsoft: data?.clientConfig.authProviders.microsoft,
-        password: data?.clientConfig.authProviders.password,
-        magicLink: false,
-        sso: data?.clientConfig.authProviders.sso,
-      });
-      setIsDebugMode(data?.clientConfig.debugMode);
-      setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
-      setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
-      setIsMultiWorkspaceEnabled(data?.clientConfig.isMultiWorkspaceEnabled);
+    if (loading) return;
+    setClientConfigApiStatus((currentStatus) => ({
+      ...currentStatus,
+      isLoaded: true,
+    }));
 
-      setBilling(data?.clientConfig.billing);
-      setSupportChat(data?.clientConfig.support);
-
-      setSentryConfig({
-        dsn: data?.clientConfig?.sentry?.dsn,
-        release: data?.clientConfig?.sentry?.release,
-        environment: data?.clientConfig?.sentry?.environment,
-      });
-
-      setCaptchaProvider({
-        provider: data?.clientConfig?.captcha?.provider,
-        siteKey: data?.clientConfig?.captcha?.siteKey,
-      });
-
-      setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
-      setApiConfig(data?.clientConfig?.api);
+    if (error instanceof Error) {
+      setClientConfigApiStatus((currentStatus) => ({
+        ...currentStatus,
+        isErrored: true,
+        error,
+      }));
+      return;
     }
+
+    if (!isDefined(data?.clientConfig)) {
+      return;
+    }
+
+    setClientConfigApiStatus((currentStatus) => ({
+      ...currentStatus,
+      isErrored: false,
+      error: undefined,
+    }));
+
+    setAuthProviders({
+      google: data?.clientConfig.authProviders.google,
+      microsoft: data?.clientConfig.authProviders.microsoft,
+      password: data?.clientConfig.authProviders.password,
+      magicLink: false,
+      sso: data?.clientConfig.authProviders.sso,
+    });
+    setIsDebugMode(data?.clientConfig.debugMode);
+    setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
+    setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
+    setIsMultiWorkspaceEnabled(data?.clientConfig.isMultiWorkspaceEnabled);
+
+    setBilling(data?.clientConfig.billing);
+    setSupportChat(data?.clientConfig.support);
+
+    setSentryConfig({
+      dsn: data?.clientConfig?.sentry?.dsn,
+      release: data?.clientConfig?.sentry?.release,
+      environment: data?.clientConfig?.sentry?.environment,
+    });
+
+    setCaptchaProvider({
+      provider: data?.clientConfig?.captcha?.provider,
+      siteKey: data?.clientConfig?.captcha?.siteKey,
+    });
+
+    setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
+    setApiConfig(data?.clientConfig?.api);
   }, [
     data,
     setAuthProviders,
@@ -85,11 +107,12 @@ export const ClientConfigProviderEffect = () => {
     setBilling,
     setSentryConfig,
     loading,
-    setIsClientConfigLoaded,
+    setClientConfigApiStatus,
     setCaptchaProvider,
     setChromeExtensionId,
     setApiConfig,
     setIsAnalyticsEnabled,
+    error,
   ]);
 
   return <></>;

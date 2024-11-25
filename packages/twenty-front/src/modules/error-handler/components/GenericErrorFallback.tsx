@@ -15,11 +15,16 @@ import {
 } from 'twenty-ui';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-type GenericErrorFallbackProps = FallbackProps;
+type GenericErrorFallbackProps = FallbackProps & {
+  title?: string;
+  hidePageHeader?: boolean;
+};
 
 export const GenericErrorFallback = ({
   error,
   resetErrorBoundary,
+  title = 'Sorry, something went wrong',
+  hidePageHeader = false,
 }: GenericErrorFallbackProps) => {
   const location = useLocation();
 
@@ -33,13 +38,14 @@ export const GenericErrorFallback = ({
 
   return (
     <PageContainer>
-      <PageHeader />
+      {!hidePageHeader && <PageHeader />}
+
       <PageBody>
         <AnimatedPlaceholderEmptyContainer>
           <AnimatedPlaceholder type="errorIndex" />
           <AnimatedPlaceholderEmptyTextContainer>
             <AnimatedPlaceholderEmptyTitle>
-              Server’s on a coffee break
+              {title}
             </AnimatedPlaceholderEmptyTitle>
             <AnimatedPlaceholderEmptySubTitle>
               {error.message}
@@ -49,7 +55,7 @@ export const GenericErrorFallback = ({
             Icon={IconRefresh}
             title="Reload"
             variant={'secondary'}
-            onClick={() => resetErrorBoundary()}
+            onClick={resetErrorBoundary}
           />
         </AnimatedPlaceholderEmptyContainer>
       </PageBody>

@@ -6,9 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Issuer } from 'openid-client';
 import { Repository } from 'typeorm';
 
-import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
-import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -30,8 +29,8 @@ import {
 import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class SSOService {
+  private readonly featureLookUpKey = BillingEntitlementKey.SSO;
   constructor(
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
@@ -40,8 +39,7 @@ export class SSOService {
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     private readonly environmentService: EnvironmentService,
-    @InjectCacheStorage(CacheStorageNamespace.EngineWorkspace)
-    private readonly cacheStorageService: CacheStorageService,
+    private readonly billingService: BillingService,
   ) {}
 
   private async isSSOEnabled(workspaceId: string) {
@@ -54,6 +52,18 @@ export class SSOService {
     if (!isSSOEnabledFeatureFlag?.value) {
       throw new SSOException(
         `${FeatureFlagKey.IsSSOEnabled} feature flag is disabled`,
+        SSOExceptionCode.SSO_DISABLE,
+      );
+    }
+    const isSSOBillingEnabled =
+      await this.billingService.verifyWorkspaceEntitlement(
+        workspaceId,
+        this.featureLookUpKey,
+      );
+
+    if (!isSSOBillingEnabled) {
+      throw new SSOException(
+        `${FeatureFlagKey.IsSSOEnabled} feature is enabled but no entitlement for this workspace`,
         SSOExceptionCode.SSO_DISABLE,
       );
     }
