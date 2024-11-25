@@ -13,6 +13,9 @@ import { useFilterDropdownWithUnknownScope } from '@/object-record/object-filter
 import { useRecoilCallback } from 'recoil';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 
 type UseHandleToggleColumnFilterProps = {
   objectNameSingular: string;
@@ -46,9 +49,11 @@ export const useHandleToggleColumnFilter = ({
     [isDropdownOpenComponentState],
   );
 
-  /* const availableFilterDefinitions = useRecoilComponentValueV2(
+  const availableFilterDefinitions = useRecoilComponentValueV2(
     availableFilterDefinitionsComponentState,
-  ); */
+  );
+
+  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const { setFilterDefinitionUsedInDropdown } =
     useFilterDropdownWithUnknownScope();
@@ -62,38 +67,47 @@ export const useHandleToggleColumnFilter = ({
 
       if (!isDefined(correspondingColumnDefinition)) return;
 
-      const filterType = getFilterTypeFromFieldType(
-        correspondingColumnDefinition?.type,
-      );
+      const newFilterId = v4();
 
-      const filterDefinition = {
-        label: correspondingColumnDefinition.label,
-        iconName: correspondingColumnDefinition.iconName,
-        fieldMetadataId,
-        type: filterType,
-      } satisfies FilterDefinition;
+      const existingViewFilter =
+        currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
+          (viewFilter) => viewFilter.fieldMetadataId === fieldMetadataId,
+        );
 
-      const availableOperandsForFilter =
-        getOperandsForFilterDefinition(filterDefinition);
+      if (!existingViewFilter) {
+        const filterType = getFilterTypeFromFieldType(
+          correspondingColumnDefinition?.type,
+        );
 
-      const defaultOperand = availableOperandsForFilter[0];
+        const filterDefinition = {
+          label: correspondingColumnDefinition.label,
+          iconName: correspondingColumnDefinition.iconName,
+          fieldMetadataId,
+          type: filterType,
+        } satisfies FilterDefinition;
 
-      const newFilter: Filter = {
-        id: v4(),
-        fieldMetadataId,
-        operand: defaultOperand,
-        displayValue: '',
-        definition: filterDefinition,
-        value: '',
-      };
+        const availableOperandsForFilter =
+          getOperandsForFilterDefinition(filterDefinition);
 
-      upsertCombinedViewFilter(newFilter);
+        const defaultOperand = availableOperandsForFilter[0];
 
-      setFilterDefinitionUsedInDropdown(newFilter.id, filterDefinition);
+        const newFilter: Filter = {
+          id: newFilterId,
+          fieldMetadataId,
+          operand: defaultOperand,
+          displayValue: '',
+          definition: filterDefinition,
+          value: '',
+        };
+
+        upsertCombinedViewFilter(newFilter);
+
+        setFilterDefinitionUsedInDropdown(newFilter.id, filterDefinition);
+      }
 
       // TODO: Remove timeout
       setTimeout(() => {
-        openDropdown(newFilter.id);
+        openDropdown(existingViewFilter?.id ?? newFilterId);
       }, 1);
     },
     [
