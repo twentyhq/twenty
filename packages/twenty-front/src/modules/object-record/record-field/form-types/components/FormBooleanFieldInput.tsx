@@ -8,12 +8,14 @@ const StyledBooleanInputContainer = styled.div`
 `;
 
 type FormBooleanFieldInputProps = {
+  label?: string;
   defaultValue: boolean | string | undefined;
   onPersist: (value: boolean | null | string) => void;
   readonly?: boolean;
 };
 
 export const FormBooleanFieldInput = ({
+  label,
   defaultValue,
   onPersist,
   readonly,
@@ -28,6 +30,7 @@ export const FormBooleanFieldInput = ({
 
   return (
     <FormFieldInputBase
+      label={label}
       Input={
         <StyledBooleanInputContainer>
           <BooleanInput

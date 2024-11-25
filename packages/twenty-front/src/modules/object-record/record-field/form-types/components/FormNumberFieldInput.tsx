@@ -12,12 +12,14 @@ const StyledInput = styled(TextInput)`
 `;
 
 type FormNumberFieldInputProps = {
+  label?: string;
   placeholder: string;
   defaultValue: number | string | undefined;
   onPersist: (value: number | null | string) => void;
 };
 
 export const FormNumberFieldInput = ({
+  label,
   placeholder,
   defaultValue,
   onPersist,
@@ -42,6 +44,7 @@ export const FormNumberFieldInput = ({
 
   return (
     <FormFieldInputBase
+      label={label}
       Input={
         <StyledInput
           placeholder={placeholder}

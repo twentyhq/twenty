@@ -1,10 +1,11 @@
 import { TextVariableEditor } from '@/object-record/record-field/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
-import { WorkflowFormFieldInput } from '@/workflow/components/WorkflowFormFieldInput';
+import { WorkflowFormFieldInputBase } from '@/workflow/components/WorkflowFormFieldInputBase';
 import { parseEditorContent } from '@/workflow/search-variables/utils/parseEditorContent';
 import { isDefined } from 'twenty-ui';
 
 type WorkflowFormTextFieldInputProps = {
+  label?: string;
   defaultValue: string | undefined;
   placeholder: string;
   onPersist: (value: null | string) => void;
@@ -13,6 +14,7 @@ type WorkflowFormTextFieldInputProps = {
 };
 
 export const WorkflowFormTextFieldInput = ({
+  label,
   defaultValue,
   placeholder,
   onPersist,
@@ -37,7 +39,8 @@ export const WorkflowFormTextFieldInput = ({
   }
 
   return (
-    <WorkflowFormFieldInput
+    <WorkflowFormFieldInputBase
+      label={label}
       variableMode="full-editor"
       readonly={readonly}
       Input={

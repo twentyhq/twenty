@@ -3,8 +3,6 @@ import styled from '@emotion/styled';
 import { Editor, EditorContent } from '@tiptap/react';
 import { ThemeType } from 'twenty-ui';
 
-const LINE_HEIGHT = 24;
-
 export const VARIABLE_TAG_STYLES = ({ theme }: { theme: ThemeType }) => css`
   background-color: ${theme.color.blue10};
   border-radius: ${theme.border.radius.sm};
@@ -16,7 +14,6 @@ const StyledEditor = styled.div<{ multiline?: boolean; readonly?: boolean }>`
   width: 100%;
   display: flex;
   box-sizing: border-box;
-  height: ${({ multiline }) => (multiline ? 'auto' : `${1.5 * LINE_HEIGHT}px`)};
   padding-right: ${({ multiline, theme }) =>
     multiline ? theme.spacing(4) : undefined};
 
@@ -41,6 +38,7 @@ const StyledEditor = styled.div<{ multiline?: boolean; readonly?: boolean }>`
     p.is-editor-empty:first-of-type::before {
       content: attr(data-placeholder);
       color: ${({ theme }) => theme.font.color.light};
+      font-weight: ${({ theme }) => theme.font.weight.medium};
       float: left;
       height: 0;
       pointer-events: none;

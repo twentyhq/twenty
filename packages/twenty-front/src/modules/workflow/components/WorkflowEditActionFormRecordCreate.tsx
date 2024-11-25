@@ -1,7 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
+import { WorkflowFormFieldInput } from '@/workflow/components/WorkflowFormFieldInput';
 import { WorkflowRecordCreateAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
@@ -168,7 +168,7 @@ export const WorkflowEditActionFormRecordCreate = ({
         const currentValue = formData[field.name] as JsonValue;
 
         return (
-          <FormFieldInput
+          <WorkflowFormFieldInput
             key={field.id}
             defaultValue={currentValue}
             field={field}

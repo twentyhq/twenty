@@ -5,6 +5,7 @@ import { parseEditorContent } from '@/workflow/search-variables/utils/parseEdito
 import { isDefined } from 'twenty-ui';
 
 type FormTextFieldInputProps = {
+  label?: string;
   defaultValue: string | undefined;
   placeholder: string;
   onPersist: (value: null | string) => void;
@@ -13,6 +14,7 @@ type FormTextFieldInputProps = {
 };
 
 export const FormTextFieldInput = ({
+  label,
   defaultValue,
   placeholder,
   onPersist,
@@ -39,6 +41,7 @@ export const FormTextFieldInput = ({
 
   return (
     <FormFieldInputBase
+      label={label}
       Input={
         <TextVariableEditor
           editor={editor}

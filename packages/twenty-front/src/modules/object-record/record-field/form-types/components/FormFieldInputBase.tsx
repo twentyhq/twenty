@@ -1,4 +1,7 @@
+import { InputLabel } from '@/ui/input/components/InputLabel';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isDefined } from 'twenty-ui';
 
 const LINE_HEIGHT = 24;
 
@@ -13,47 +16,72 @@ export const StyledInputContainer = styled.div<{
   display: flex;
   flex-direction: row;
   position: relative;
-  line-height: ${({ multiline }) => (multiline ? `${LINE_HEIGHT}px` : 'auto')};
-  min-height: ${({ multiline }) =>
-    multiline ? `${3 * LINE_HEIGHT}px` : undefined};
-  max-height: ${({ multiline }) =>
-    multiline ? `${5 * LINE_HEIGHT}px` : undefined};
+
+  ${({ multiline }) =>
+    multiline
+      ? css`
+          line-height: ${LINE_HEIGHT}px;
+          min-height: ${3 * LINE_HEIGHT}px;
+          max-height: ${5 * LINE_HEIGHT}px;
+        `
+      : css`
+          height: 32px;
+        `}
 `;
 
 export const StyledInputContainer2 = styled.div<{
+  hasRightElement: boolean;
   multiline?: boolean;
   readonly?: boolean;
 }>`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
-  border-bottom-right-radius: ${({ multiline, theme }) =>
-    multiline ? theme.border.radius.sm : 'none'};
-  border-right: ${({ multiline }) => (multiline ? 'auto' : 'none')};
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
-  border-top-right-radius: ${({ multiline, theme }) =>
-    multiline ? theme.border.radius.sm : 'none'};
+  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
+
+  ${({ multiline, hasRightElement, theme }) =>
+    multiline || !hasRightElement
+      ? css`
+          border-right: auto;
+          border-bottom-right-radius: ${theme.border.radius.sm};
+          border-top-right-radius: ${theme.border.radius.sm};
+        `
+      : css`
+          border-right: none;
+          border-bottom-right-radius: none;
+          border-top-right-radius: none;
+        `}
+
   box-sizing: border-box;
   display: flex;
   overflow: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
   width: 100%;
 `;
 
-type FormFieldInputBaseProps<T> = {
+type FormFieldInputBaseProps = {
+  inputId?: string;
+  label?: string;
   Input: React.ReactElement;
   RightElement?: React.ReactElement;
   multiline?: boolean;
 };
 
 export const FormFieldInputBase = ({
+  inputId,
+  label,
   Input,
   RightElement,
   multiline,
-}: FormFieldInputBaseProps<unknown>) => {
+}: FormFieldInputBaseProps) => {
   return (
     <StyledContainer>
+      {label ? <InputLabel htmlFor={inputId}>{label}</InputLabel> : null}
+
       <StyledInputContainer multiline={multiline}>
-        <StyledInputContainer2 multiline={multiline}>
+        <StyledInputContainer2
+          hasRightElement={isDefined(RightElement)}
+          multiline={multiline}
+        >
           {Input}
         </StyledInputContainer2>
 

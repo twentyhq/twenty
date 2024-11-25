@@ -1,5 +1,5 @@
 import { TextInput } from '@/ui/field/input/components/TextInput';
-import { WorkflowFormFieldInput } from '@/workflow/components/WorkflowFormFieldInput';
+import { WorkflowFormFieldInputBase } from '@/workflow/components/WorkflowFormFieldInputBase';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import {
@@ -12,12 +12,14 @@ const StyledInput = styled(TextInput)`
 `;
 
 type WorkflowFormNumberFieldInputProps = {
+  label?: string;
   placeholder: string;
   defaultValue: number | string | undefined;
   onPersist: (value: number | null | string) => void;
 };
 
 export const WorkflowFormNumberFieldInput = ({
+  label,
   placeholder,
   defaultValue,
   onPersist,
@@ -41,7 +43,8 @@ export const WorkflowFormNumberFieldInput = ({
   };
 
   return (
-    <WorkflowFormFieldInput
+    <WorkflowFormFieldInputBase
+      label={label}
       variableMode="static-or-variable"
       Input={
         <StyledInput

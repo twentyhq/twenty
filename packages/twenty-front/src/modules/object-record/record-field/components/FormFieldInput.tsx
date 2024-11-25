@@ -21,21 +21,24 @@ export const FormFieldInput = ({
   return isFieldNumber(field) ? (
     <FormNumberFieldInput
       key={field.id}
+      label={field.label}
       defaultValue={defaultValue as string | number | undefined}
       onPersist={onPersist}
-      placeholder="Fill with number"
+      placeholder={field.label}
     />
   ) : isFieldBoolean(field) ? (
     <FormBooleanFieldInput
       key={field.id}
+      label={field.label}
       defaultValue={defaultValue as string | boolean | undefined}
       onPersist={onPersist}
     />
   ) : isFieldText(field) ? (
     <FormTextFieldInput
+      label={field.label}
       defaultValue={defaultValue as string | undefined}
       onPersist={onPersist}
-      placeholder="Enter value tiptap"
+      placeholder={field.label}
     />
   ) : null;
 };

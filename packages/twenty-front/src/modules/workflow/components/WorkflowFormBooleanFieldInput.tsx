@@ -1,5 +1,5 @@
 import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
-import { WorkflowFormFieldInput } from '@/workflow/components/WorkflowFormFieldInput';
+import { WorkflowFormFieldInputBase } from '@/workflow/components/WorkflowFormFieldInputBase';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
@@ -8,12 +8,14 @@ const StyledBooleanInputContainer = styled.div`
 `;
 
 type WorkflowFormBooleanFieldInputProps = {
+  label?: string;
   defaultValue: boolean | string | undefined;
   onPersist: (value: boolean | null | string) => void;
   readonly?: boolean;
 };
 
 export const WorkflowFormBooleanFieldInput = ({
+  label,
   defaultValue,
   onPersist,
   readonly,
@@ -27,7 +29,8 @@ export const WorkflowFormBooleanFieldInput = ({
   };
 
   return (
-    <WorkflowFormFieldInput
+    <WorkflowFormFieldInputBase
+      label={label}
       variableMode="static-or-variable"
       Input={
         <StyledBooleanInputContainer>
