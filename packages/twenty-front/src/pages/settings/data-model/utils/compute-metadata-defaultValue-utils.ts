@@ -1,6 +1,6 @@
 export const computeMetadataDefaultValue = (input: any): any => {
   if (typeof input !== 'object') {
-    throw new Error('Input type for DefaultValue is not handled yet');
+    return input;
   }
   return addSingleQuotesToStrings(input);
 };
@@ -20,7 +20,7 @@ export const addSingleQuotesToStrings = (obj: any): any => {
       obj = obj.slice(1);
     }
     if (obj.endsWith("''") === true) {
-      obj = obj.slice(1);
+      obj = obj.slice(0, -1);
     }
     return obj;
   } else if (Array.isArray(obj)) {
