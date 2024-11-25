@@ -4,13 +4,13 @@ import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/t
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingCleanCacheJob,
   MessagingCleanCacheJobData,
 } from 'src/modules/messaging/message-import-manager/jobs/messaging-clean-cache';
-import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class MessagingMessageImportManagerMessageChannelListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnDatabaseEvent('messageChannel', DatabaseEventAction.DESTROYED)
+  @OnDatabaseBatchEvent('messageChannel', DatabaseEventAction.DESTROYED)
   async handleDestroyedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<MessageChannelWorkspaceEntity>

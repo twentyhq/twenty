@@ -11,10 +11,10 @@ export const MainContextStoreComponentInstanceIdSetterEffect = () => {
   const context = useContext(ContextStoreComponentInstanceContext);
 
   useEffect(() => {
-    setMainContextStoreComponentInstanceId(context?.instanceId ?? null);
+    setMainContextStoreComponentInstanceId(context?.instanceId ?? 'app');
 
     return () => {
-      setMainContextStoreComponentInstanceId(null);
+      setMainContextStoreComponentInstanceId('app');
     };
   }, [context, setMainContextStoreComponentInstanceId]);
 

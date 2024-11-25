@@ -36,6 +36,7 @@ export const useRecordBoardRecordGqlFields = ({
 
   const recordGqlFields: Record<string, any> = {
     id: true,
+    deletedAt: true,
     ...Object.fromEntries(
       visibleFieldDefinitions.map((visibleFieldDefinition) => [
         visibleFieldDefinition.metadata.fieldName,

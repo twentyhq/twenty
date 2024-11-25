@@ -5,25 +5,34 @@ import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-sto
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isDefined } from 'twenty-ui';
 
 export const RecordActionMenuEntriesSetter = () => {
-  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
-    contextStoreNumberOfSelectedRecordsComponentState,
-  );
-
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
   );
 
+  if (!isDefined(contextStoreCurrentObjectMetadataId)) {
+    return null;
+  }
+
+  return (
+    <ActionEffects objectMetadataItemId={contextStoreCurrentObjectMetadataId} />
+  );
+};
+
+const ActionEffects = ({
+  objectMetadataItemId,
+}: {
+  objectMetadataItemId: string;
+}) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: contextStoreCurrentObjectMetadataId ?? '',
+    objectId: objectMetadataItemId,
   });
 
-  if (!objectMetadataItem) {
-    throw new Error(
-      `Object metadata item not found for id ${contextStoreCurrentObjectMetadataId}`,
-    );
-  }
+  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
+  );
 
   return (
     <>

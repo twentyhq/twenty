@@ -43,7 +43,12 @@ export const RecordIndexActionMenuEffect = () => {
   const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
 
   useEffect(() => {
-    if (contextStoreNumberOfSelectedRecords > 0 && !isDropdownOpen) {
+    if (
+      contextStoreNumberOfSelectedRecords > 0 &&
+      !isDropdownOpen &&
+      !isRightDrawerOpen &&
+      !isCommandMenuOpened
+    ) {
       // We only handle opening the ActionMenuBar here, not the Dropdown.
       // The Dropdown is already managed by sync handlers for events like
       // right-click to open and click outside to close.
@@ -57,6 +62,8 @@ export const RecordIndexActionMenuEffect = () => {
     openActionBar,
     closeActionBar,
     isDropdownOpen,
+    isRightDrawerOpen,
+    isCommandMenuOpened,
   ]);
 
   useEffect(() => {
