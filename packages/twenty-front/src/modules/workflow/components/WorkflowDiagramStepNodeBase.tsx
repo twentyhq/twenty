@@ -100,8 +100,8 @@ export const WorkflowDiagramStepNodeBase = ({
 
   return (
     <WorkflowDiagramBaseStepNode
+      name={data.name}
       nodeType={data.nodeType}
-      label={data.label}
       Icon={renderStepIcon()}
       RightFloatingElement={RightFloatingElement}
     />

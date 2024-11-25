@@ -1,5 +1,4 @@
 import { IconComponent } from 'twenty-ui';
-
 export enum CommandType {
   Navigate = 'Navigate',
   Create = 'Create',
@@ -7,15 +6,17 @@ export enum CommandType {
   WorkflowRun = 'WorkflowRun',
 }
 
+export enum CommandScope {
+  Global = 'Global',
+  RecordSelection = 'RecordSelection',
+}
+
 export type Command = {
   id: string;
   to?: string;
   label: string;
-  type?:
-    | CommandType.Navigate
-    | CommandType.Create
-    | CommandType.StandardAction
-    | CommandType.WorkflowRun;
+  type?: CommandType;
+  scope?: CommandScope;
   Icon?: IconComponent;
   firstHotKey?: string;
   secondHotKey?: string;

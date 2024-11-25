@@ -2,10 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import Stripe from 'stripe';
 
-import { AvailableProduct } from 'src/engine/core-modules/billing/interfaces/available-product.interface';
-
 import { ProductPriceEntity } from 'src/engine/core-modules/billing/dto/product-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
@@ -17,8 +16,11 @@ export class StripeService {
 
   constructor(
     private readonly environmentService: EnvironmentService,
-    private urlManagerService: UrlManagerService,
+    private readonly urlManagerService: UrlManagerService,
   ) {
+    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+      return;
+    }
     this.stripe = new Stripe(
       this.environmentService.get('BILLING_STRIPE_API_KEY'),
       {},

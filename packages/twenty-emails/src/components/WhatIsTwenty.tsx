@@ -1,16 +1,14 @@
 import { Column, Row } from '@react-email/components';
-
 import { Link } from 'src/components/Link';
 import { MainText } from 'src/components/MainText';
 import { ShadowText } from 'src/components/ShadowText';
 import { SubTitle } from 'src/components/SubTitle';
-
 export const WhatIsTwenty = () => {
   return (
     <>
       <SubTitle value="What is Twenty?" />
       <MainText>
-        A software to help businesses manage their customer data and
+        It's a CRM, a software to help businesses manage their customer data and
         relationships efficiently.
       </MainText>
       <Row>

@@ -285,10 +285,10 @@ export class SignInUpService {
     picture: SignInUpServiceInput['picture'];
   }) {
     if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      const numberOfWorkspaces = await this.workspaceRepository.count();
+      const workspacesCount = await this.workspaceRepository.count();
 
       // let the creation of the first workspace
-      if (numberOfWorkspaces > 0) {
+      if (workspacesCount > 0) {
         throw new AuthException(
           'New workspace setup is disabled',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,

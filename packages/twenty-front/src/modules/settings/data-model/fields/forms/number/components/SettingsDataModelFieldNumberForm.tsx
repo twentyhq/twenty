@@ -69,7 +69,7 @@ export const SettingsDataModelFieldNumberForm = ({
             <SettingsOptionCardContentCounter
               Icon={IconDecimal}
               title="Number of decimals"
-              description={`Example: ${(1000).toFixed(count)}`}
+              description={`Example: ${(type === 'percentage' ? 99 : 1000).toFixed(count)} ${type === 'percentage' ? '%' : ''}`}
               value={count}
               onChange={(value) => onChange({ type: type, decimals: value })}
               disabled={disabled}

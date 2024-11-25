@@ -13,13 +13,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
 import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
-export enum WebhookEvent {
-  CUSTOMER_SUBSCRIPTION_CREATED = 'customer.subscription.created',
-  CUSTOMER_SUBSCRIPTION_UPDATED = 'customer.subscription.updated',
-  CUSTOMER_SUBSCRIPTION_DELETED = 'customer.subscription.deleted',
-  SETUP_INTENT_SUCCEEDED = 'setup_intent.succeeded',
-}
-
 @Injectable()
 export class BillingPortalWorkspaceService {
   protected readonly logger = new Logger(BillingPortalWorkspaceService.name);

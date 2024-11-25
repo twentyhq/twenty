@@ -14,13 +14,11 @@ type MultipleFiltersDropdownButtonProps = {
 export const MultipleFiltersDropdownButton = ({
   hotkeyScope,
 }: MultipleFiltersDropdownButtonProps) => {
-  const { resetFilter, setIsObjectFilterDropdownOperandSelectUnfolded } =
-    useFilterDropdown();
+  const { resetFilter } = useFilterDropdown();
 
   const handleDropdownClose = useCallback(() => {
     resetFilter();
-    setIsObjectFilterDropdownOperandSelectUnfolded(false);
-  }, [resetFilter, setIsObjectFilterDropdownOperandSelectUnfolded]);
+  }, [resetFilter]);
 
   return (
     <Dropdown

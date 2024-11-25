@@ -25,6 +25,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
 
     if (
       ![
+        FieldMetadataType.Boolean,
         FieldMetadataType.DateTime,
         FieldMetadataType.Date,
         FieldMetadataType.Text,
@@ -100,6 +101,8 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
       return 'ARRAY';
     case FieldMetadataType.RawJson:
       return 'RAW_JSON';
+    case FieldMetadataType.Boolean:
+      return 'BOOLEAN';
     default:
       return 'TEXT';
   }
