@@ -4,6 +4,7 @@ import {
   ActorFilter,
   AddressFilter,
   ArrayFilter,
+  BooleanFilter,
   CurrencyFilter,
   DateFilter,
   EmailsFilter,
@@ -854,6 +855,13 @@ const computeFilterRecordGqlOperationFilter = (
             `Unknown operand ${filter.operand} for ${filter.definition.type} filter`,
           );
       }
+    }
+    case 'BOOLEAN': {
+      return {
+        [correspondingField.name]: {
+          eq: filter.value === 'true',
+        } as BooleanFilter,
+      };
     }
     default:
       throw new Error('Unknown filter type');

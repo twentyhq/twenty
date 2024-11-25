@@ -13,7 +13,8 @@ import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider
 import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
 import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
-import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
+import { UserThemeProviderEffect } from '@/ui/theme/components/AppThemeProvider';
+import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
@@ -28,18 +29,19 @@ export const AppRouterProviders = () => {
 
   return (
     <ApolloProvider>
-      <ClientConfigProviderEffect />
-      <ClientConfigProvider>
-        <ChromeExtensionSidecarEffect />
-        <ChromeExtensionSidecarProvider>
-          <UserProviderEffect />
-          <WorkspaceProviderEffect />
-          <UserProvider>
-            <AuthProvider>
-              <ApolloMetadataClientProvider>
-                <ObjectMetadataItemsProvider>
-                  <PrefetchDataProvider>
-                    <AppThemeProvider>
+      <BaseThemeProvider>
+        <ClientConfigProviderEffect />
+        <ClientConfigProvider>
+          <ChromeExtensionSidecarEffect />
+          <ChromeExtensionSidecarProvider>
+            <UserProviderEffect />
+            <WorkspaceProviderEffect />
+            <UserProvider>
+              <AuthProvider>
+                <ApolloMetadataClientProvider>
+                  <ObjectMetadataItemsProvider>
+                    <PrefetchDataProvider>
+                      <UserThemeProviderEffect />
                       <SnackBarProvider>
                         <DialogManagerScope dialogManagerScopeId="dialog-manager">
                           <DialogManager>
@@ -52,15 +54,15 @@ export const AppRouterProviders = () => {
                           </DialogManager>
                         </DialogManagerScope>
                       </SnackBarProvider>
-                    </AppThemeProvider>
-                  </PrefetchDataProvider>
-                  <PageChangeEffect />
-                </ObjectMetadataItemsProvider>
-              </ApolloMetadataClientProvider>
-            </AuthProvider>
-          </UserProvider>
-        </ChromeExtensionSidecarProvider>
-      </ClientConfigProvider>
+                    </PrefetchDataProvider>
+                    <PageChangeEffect />
+                  </ObjectMetadataItemsProvider>
+                </ApolloMetadataClientProvider>
+              </AuthProvider>
+            </UserProvider>
+          </ChromeExtensionSidecarProvider>
+        </ClientConfigProvider>
+      </BaseThemeProvider>
     </ApolloProvider>
   );
 };

@@ -14,6 +14,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-ui';
 
+import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
@@ -28,12 +29,7 @@ export const ObjectFilterDropdownFilterInput = ({
   const {
     filterDefinitionUsedInDropdownState,
     selectedOperandInDropdownState,
-    isObjectFilterDropdownOperandSelectUnfoldedState,
   } = useFilterDropdown({ filterDropdownId });
-
-  const isObjectFilterDropdownOperandSelectUnfolded = useRecoilValue(
-    isObjectFilterDropdownOperandSelectUnfoldedState,
-  );
 
   const filterDefinitionUsedInDropdown = useRecoilValue(
     filterDefinitionUsedInDropdownState,
@@ -58,9 +54,7 @@ export const ObjectFilterDropdownFilterInput = ({
       ViewFilterOperand.IsRelative,
     ].includes(selectedOperandInDropdown);
 
-  const shouldHide = isObjectFilterDropdownOperandSelectUnfolded;
-
-  if (shouldHide || !isDefined(filterDefinitionUsedInDropdown)) {
+  if (!isDefined(filterDefinitionUsedInDropdown)) {
     return null;
   }
 
@@ -84,6 +78,7 @@ export const ObjectFilterDropdownFilterInput = ({
           {filterDefinitionUsedInDropdown.type === 'RELATION' && (
             <>
               <ObjectFilterDropdownSearchInput />
+              <DropdownMenuSeparator />
               <ObjectFilterDropdownRecordSelect />
             </>
           )}
@@ -98,8 +93,12 @@ export const ObjectFilterDropdownFilterInput = ({
           ) && (
             <>
               <ObjectFilterDropdownSearchInput />
+              <DropdownMenuSeparator />
               <ObjectFilterDropdownOptionSelect />
             </>
+          )}
+          {filterDefinitionUsedInDropdown.type === 'BOOLEAN' && (
+            <ObjectFilterDropdownBooleanSelect />
           )}
         </>
       )}

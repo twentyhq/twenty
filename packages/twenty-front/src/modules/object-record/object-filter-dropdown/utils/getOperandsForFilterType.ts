@@ -87,6 +87,8 @@ export const getOperandsForFilterDefinition = (
         ViewFilterOperand.DoesNotContain,
         ...emptyOperands,
       ];
+    case 'BOOLEAN':
+      return [ViewFilterOperand.Is];
     default:
       return [];
   }
