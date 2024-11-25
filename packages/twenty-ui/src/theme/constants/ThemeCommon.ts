@@ -5,7 +5,6 @@ import { GRAY_SCALE } from './GrayScale';
 import { ICON } from './Icon';
 import { MODAL } from './Modal';
 import { TEXT } from './Text';
-import { Spacing } from '@ui/theme';
 
 export const THEME_COMMON = {
   color: COLOR,
@@ -16,14 +15,14 @@ export const THEME_COMMON = {
   animation: ANIMATION,
   spacingMultiplicator: 4,
   spacing: (...args: number[]) =>
-    args.map((multiplicator) => `${multiplicator * 4}px`).join(' ') as Spacing,
-  betweenSiblingsGap: `2px` as Spacing,
+    args.map((multiplicator) => `${multiplicator * 4}px`).join(' '),
+  betweenSiblingsGap: `2px`,
   table: {
-    horizontalCellMargin: '8px' as Spacing,
-    checkboxColumnWidth: '32px' as Spacing,
-    horizontalCellPadding: '8px' as Spacing,
+    horizontalCellMargin: '8px',
+    checkboxColumnWidth: '32px',
+    horizontalCellPadding: '8px',
   },
-  rightDrawerWidth: '500px' as Spacing,
+  rightDrawerWidth: '500px',
   clickableElementBackgroundTransition: 'background 0.1s ease',
   lastLayerZIndex: 2147483647,
 };
