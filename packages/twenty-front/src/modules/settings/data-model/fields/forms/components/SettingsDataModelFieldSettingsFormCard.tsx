@@ -180,7 +180,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.Number) {
     return (
       <SettingsDataModelFieldNumberSettingsFormCard
-        disabled={fieldMetadataItem.isCustom === false}
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />

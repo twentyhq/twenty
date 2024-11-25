@@ -632,7 +632,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     fieldMetadataInput: UpdateFieldInput,
     existingFieldMetadata: FieldMetadataEntity,
   ) {
-    const defaultUpdatableStandardFieldInput: UpdateFieldInput = {
+    const updatableStandardFieldInput: UpdateFieldInput = {
       id: fieldMetadataInput.id,
       isActive: fieldMetadataInput.isActive,
       workspaceId: fieldMetadataInput.workspaceId,
@@ -645,12 +645,12 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       existingFieldMetadata.type === FieldMetadataType.MULTI_SELECT
     ) {
       return {
-        ...defaultUpdatableStandardFieldInput,
+        ...updatableStandardFieldInput,
         options: fieldMetadataInput.options,
       };
     }
 
-    return defaultUpdatableStandardFieldInput;
+    return updatableStandardFieldInput;
   }
 
   public async getRelationDefinitionFromRelationMetadata(
