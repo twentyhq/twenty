@@ -242,11 +242,18 @@ const SettingsSecuritySSOIdentifyProvider = lazy(() =>
   ),
 );
 
+const SettingsAdmin = lazy(() =>
+  import('~/pages/settings/admin/SettingsAdmin').then((module) => ({
+    default: module.SettingsAdmin,
+  })),
+);
+
 type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
   isCRMMigrationEnabled?: boolean;
   isServerlessFunctionSettingsEnabled?: boolean;
   isSSOEnabled?: boolean;
+  isAdminPageEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
@@ -254,6 +261,7 @@ export const SettingsRoutes = ({
   isCRMMigrationEnabled,
   isServerlessFunctionSettingsEnabled,
   isSSOEnabled,
+  isAdminPageEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
@@ -374,6 +382,9 @@ export const SettingsRoutes = ({
             element={<SettingsSecuritySSOIdentifyProvider />}
           />
         </>
+      )}
+      {isAdminPageEnabled && (
+        <Route path={SettingsPath.Admin} element={<SettingsAdmin />} />
       )}
     </Routes>
   </Suspense>

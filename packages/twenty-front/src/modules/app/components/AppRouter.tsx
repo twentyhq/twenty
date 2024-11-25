@@ -1,4 +1,5 @@
 import { useCreateAppRouter } from '@/app/hooks/useCreateAppRouter';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { RouterProvider } from 'react-router-dom';
@@ -16,6 +17,10 @@ export const AppRouter = () => {
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
 
+  const currentUser = useRecoilValue(currentUserState);
+
+  const isAdminPageEnabled = currentUser?.canImpersonate;
+
   return (
     <RouterProvider
       router={useCreateAppRouter(
@@ -23,6 +28,7 @@ export const AppRouter = () => {
         isCRMMigrationEnabled,
         isServerlessFunctionSettingsEnabled,
         isSSOEnabled,
+        isAdminPageEnabled,
       )}
     />
   );

@@ -35,4 +35,5 @@ export enum SettingsPath {
   DevelopersNewWebhook = 'webhooks/new',
   DevelopersNewWebhookDetail = 'webhooks/:webhookId',
   Releases = 'releases',
+  Admin = 'admin',
 }
