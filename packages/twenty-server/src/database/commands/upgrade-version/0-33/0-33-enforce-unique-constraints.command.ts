@@ -241,9 +241,16 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
       .getRawMany();
 
     for (const duplicate of duplicates) {
-      const { fieldMetadataId, viewId } = duplicate;
+      const {
+        viewField_fieldMetadataId: fieldMetadataId,
+        viewField_viewId: viewId,
+      } = duplicate;
       const viewFields = await viewFieldRepository.find({
-        where: { fieldMetadataId, viewId, deletedAt: IsNull() },
+        where: {
+          fieldMetadataId,
+          viewId,
+          deletedAt: IsNull(),
+        },
         order: { createdAt: 'DESC' },
       });
 
@@ -283,9 +290,16 @@ export class EnforceUniqueConstraintsCommand extends ActiveWorkspacesCommandRunn
       .getRawMany();
 
     for (const duplicate of duplicates) {
-      const { fieldMetadataId, viewId } = duplicate;
+      const {
+        viewSort_fieldMetadataId: fieldMetadataId,
+        viewSort_viewId: viewId,
+      } = duplicate;
       const viewSorts = await viewSortRepository.find({
-        where: { fieldMetadataId, viewId, deletedAt: IsNull() },
+        where: {
+          fieldMetadataId,
+          viewId,
+          deletedAt: IsNull(),
+        },
         order: { createdAt: 'DESC' },
       });
 
