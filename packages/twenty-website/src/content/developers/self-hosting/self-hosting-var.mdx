@@ -101,6 +101,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
   <ArticleTab>
 
   You will need to provision an [App Password](https://support.google.com/accounts/answer/185833).
+  - EMAIL_DRIVER=smtp
   - EMAIL_SMTP_HOST=smtp.gmail.com
   - EMAIL_SMTP_PORT=465
   - EMAIL_SMTP_USER=gmail_email_address
@@ -111,6 +112,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
   <ArticleTab>
 
     Keep in mind that if you have 2FA enabled, you will need to provision an [App Password](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
+    - EMAIL_DRIVER=smtp
     - EMAIL_SMTP_HOST=smtp.office365.com
     - EMAIL_SMTP_PORT=587
     - EMAIL_SMTP_USER=office365_email_address
@@ -124,6 +126,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
     - Run the smtp4dev image: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
     - Access the smtp4dev ui here: [http://localhost:8090](http://localhost:8090)
     - Set the following env variables:
+      - EMAIL_DRIVER=smtp
       - EMAIL_SMTP_HOST=localhost
       - EMAIL_SMTP_PORT=2525
 
