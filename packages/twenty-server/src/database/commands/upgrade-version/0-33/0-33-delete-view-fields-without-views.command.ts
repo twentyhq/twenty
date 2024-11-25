@@ -87,7 +87,7 @@ export class DeleteViewFieldsWithoutViewsCommand extends ActiveWorkspacesCommand
     if (options.verbose) {
       this.logger.log(
         chalk.yellow(
-          `Soft deleted ${viewFieldsWithoutViews.length} ViewFields that do not have a View`,
+          `Deleted ${viewFieldsWithoutViews.length} ViewFields that do not have a View`,
         ),
       );
     }
