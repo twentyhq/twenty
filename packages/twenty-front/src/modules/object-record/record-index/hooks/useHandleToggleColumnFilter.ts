@@ -59,7 +59,7 @@ export const useHandleToggleColumnFilter = ({
     useFilterDropdownWithUnknownScope();
 
   const handleToggleColumnFilter = useCallback(
-    (fieldMetadataId: string) => {
+    async (fieldMetadataId: string) => {
       const correspondingColumnDefinition = columnDefinitions.find(
         (columnDefinition) =>
           columnDefinition.fieldMetadataId === fieldMetadataId,
@@ -100,15 +100,12 @@ export const useHandleToggleColumnFilter = ({
           value: '',
         };
 
-        upsertCombinedViewFilter(newFilter);
+        await upsertCombinedViewFilter(newFilter);
 
         setFilterDefinitionUsedInDropdown(newFilter.id, filterDefinition);
       }
 
-      // TODO: Remove timeout
-      setTimeout(() => {
-        openDropdown(existingViewFilter?.id ?? newFilterId);
-      }, 1);
+      openDropdown(existingViewFilter?.id ?? newFilterId);
     },
     [
       openDropdown,
