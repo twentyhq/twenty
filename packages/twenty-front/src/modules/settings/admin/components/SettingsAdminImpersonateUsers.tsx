@@ -38,7 +38,7 @@ export const SettingsAdminImpersonateUsers = () => {
 
   return (
     <Section>
-      <H2Title title="Impersonate" description="Impersonate an user." />
+      <H2Title title="Impersonate" description="Impersonate a user." />
       <StyledContainer>
         <StyledLinkContainer>
           <TextInput
