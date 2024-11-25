@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
+import { ObjectSeed } from 'src/engine/seeder/interfaces/object-seed';
+
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { ObjectSeed } from 'src/engine/workspace-manager/demo-objects-prefill-data/custom-object-seeds.backup';
 import { capitalize } from 'src/utils/capitalize';
 import { isDefined } from 'src/utils/is-defined';
 

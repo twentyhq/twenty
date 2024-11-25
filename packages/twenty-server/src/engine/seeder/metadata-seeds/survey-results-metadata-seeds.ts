@@ -3,15 +3,9 @@ import {
   FieldMetadataTextSettings,
   NumberDataType,
 } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import { ObjectSeed } from 'src/engine/seeder/interfaces/object-seed';
 
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
-
-export type ObjectSeed = Omit<
-  CreateObjectInput,
-  'workspaceId' | 'dataSourceId'
-> & { fields: Omit<CreateFieldInput, 'objectMetadataId' | 'workspaceId'>[] };
 
 export const SURVEY_RESULTS_METADATA_SEEDS: ObjectSeed = {
   labelPlural: 'Survey results',

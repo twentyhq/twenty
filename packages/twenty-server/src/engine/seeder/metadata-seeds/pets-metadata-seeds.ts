@@ -1,11 +1,6 @@
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
+import { ObjectSeed } from 'src/engine/seeder/interfaces/object-seed';
 
-export type ObjectSeed = Omit<
-  CreateObjectInput,
-  'workspaceId' | 'dataSourceId'
-> & { fields: Omit<CreateFieldInput, 'objectMetadataId' | 'workspaceId'>[] };
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export const PETS_METADATA_SEEDS: ObjectSeed = {
   labelPlural: 'Pets',
