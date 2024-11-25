@@ -4,11 +4,12 @@ icon: TbCloud
 image: /images/user-guide/notes/notes_header.png
 ---
 
+
 ## General guidelines 
 
-Always make sure to backup your database before starting the upgrade process.
+Always make sure to back up your database before starting the upgrade process.
 
-## If you used Docker Compose
+If you used Docker Compose, follow these steps:
 
 1. In a terminal, on the host where Twenty is running, turn off Twenty: `docker compose down`
 
@@ -16,55 +17,72 @@ Always make sure to backup your database before starting the upgrade process.
 
 3. Bring Twenty back online with `docker-compose up -d`
  
-## Data Migration
 
-Migrating a CRM is a bit trickier than migrating a traditional software, because the data model of Standard Object has to evolve smoothly along your custom objects.
+## Version-specific upgrade steps
 
-## v0.21.0 to v0.22.0
+### v0.32.0 to v0.33.0
 
-Upgrade your Twenty instance to use v0.22.0 image
-
-Run the following commands:
+Upgrade your Twenty instance to use v0.33.0 image
 
 ```
-yarn database:migrate:prod 
-yarn command:prod workspace:sync-metadata -f 
-yarn command:prod upgrade-0.22
+yarn command:prod cache:flush
+yarn database:migrate:prod
+yarn command:prod upgrade-0.33
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the Database.  
-The `yarn command:prod workspace:sync-metadata -f` command will sync the definition of standard objects to the metadata tables and apply to required migrations to existing workspaces.  
-The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.
+The `yarn command:prod cache:flush` command will flush the Redis cache.
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.33` takes care of the data migration of all workspaces.
 
-## v0.22.0 to v0.23.0
 
-Upgrade your Twenty instance to use v0.23.0 image
+### v0.31.0 to v0.32.0
 
-Run the following commands:
+Upgrade your Twenty instance to use v0.32.0 image
 
-```
-yarn database:migrate:prod 
-yarn command:prod upgrade-0.23
-```
-
-The `yarn database:migrate:prod` command will apply the migrations to the Database.  
-The `yarn command:prod upgrade-0.23` takes care of the data migration, including transferring activities to tasks/notes.
-
-## v0.23.0 to v0.24.0
-
-Upgrade your Twenty instance to use v0.24.0 image
-
-Run the following commands:
-
+**Schema and data migration** 
 ```
 yarn database:migrate:prod
-yarn command:prod upgrade-0.24
+yarn command:prod upgrade-0.32
 ```
 
 The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.24` takes care of the data migration of all workspaces.
+The `yarn command:prod upgrade-0.32` takes care of the data migration of all workspaces.
 
-## v0.24.0 to v0.30.0
+**Environment Variables**
+
+We have updated the way we handle the Redis connection.
+
+- Removed: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
+- Added: `REDIS_URL`
+
+Update your `.env` file to use the new `REDIS_URL` variable instead of the individual Redis connection parameters.
+
+We have also simplified the way we handle the JWT tokens.
+
+- Removed: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
+- Added: `APP_SECRET`
+
+Update your `.env` file to use the new `APP_SECRET` variable instead of the individual tokens secrets (you can use the same secret as before or generate a new random string)
+
+**Connected Account**
+
+If you are using connected account to synchronize your Google emails and calendars, you will need to activate the [People API](https://developers.google.com/people) on your Google Admin console.
+
+
+### v0.30.0 to v0.31.0
+
+Upgrade your Twenty instance to use v0.31.0 image
+
+**Schema and data migration**: 
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.31
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.31` takes care of the data migration of all workspaces.
+
+### v0.24.0 to v0.30.0
 
 Upgrade your Twenty instance to use v0.30.0 image
 
@@ -86,66 +104,51 @@ yarn command:prod upgrade-0.30
 The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
 The `yarn command:prod upgrade-0.30` takes care of the data migration of all workspaces.
 
-## v0.30.0 to v0.31.0
+### v0.23.0 to v0.24.0
 
-Upgrade your Twenty instance to use v0.31.0 image
+Upgrade your Twenty instance to use v0.24.0 image
 
-**Schema and data migration**: 
+Run the following commands:
+
 ```
 yarn database:migrate:prod
-yarn command:prod upgrade-0.31
+yarn command:prod upgrade-0.24
 ```
 
 The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.31` takes care of the data migration of all workspaces.
+The `yarn command:prod upgrade-0.24` takes care of the data migration of all workspaces.
 
-## v0.31.0 to v0.32.0
+### v0.22.0 to v0.23.0
 
-Upgrade your Twenty instance to use v0.32.0 image
+Upgrade your Twenty instance to use v0.23.0 image
 
-**Schema and data migration**: 
+Run the following commands:
+
 ```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.32
-```
-
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.32` takes care of the data migration of all workspaces.
-
-## v0.32.0 to v0.33.0
-
-Upgrade your Twenty instance to use v0.33.0 image
-
-**Schema and data migration**:
-```
-yarn command:prod cache:flush
-yarn database:migrate:prod
-yarn command:prod upgrade-0.33
+yarn database:migrate:prod 
+yarn command:prod upgrade-0.23
 ```
 
-The `yarn command:prod cache:flush` command will flush the Redis cache.
-The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
-The `yarn command:prod upgrade-0.33` takes care of the data migration of all workspaces.
+The `yarn database:migrate:prod` command will apply the migrations to the Database.  
+The `yarn command:prod upgrade-0.23` takes care of the data migration, including transferring activities to tasks/notes.
 
-### Environment Variables
+### v0.21.0 to v0.22.0
 
-We have updated the way we handle the Redis connection.
+Upgrade your Twenty instance to use v0.22.0 image
 
-- Removed: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
-- Added: `REDIS_URL`
+Run the following commands:
 
-Update your `.env` file to use the new `REDIS_URL` variable instead of the individual Redis connection parameters.
+```
+yarn database:migrate:prod 
+yarn command:prod workspace:sync-metadata -f 
+yarn command:prod upgrade-0.22
+```
 
-We have also simplifed the way we handle the JWT tokens.
+The `yarn database:migrate:prod` command will apply the migrations to the Database.  
+The `yarn command:prod workspace:sync-metadata -f` command will sync the definition of standard objects to the metadata tables and apply to required migrations to existing workspaces.  
+The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.
 
-- Removed: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
-- Added: `APP_SECRET`
 
-Update your `.env` file to use the new `APP_SECRET` variable instead of the individual tokens secrets (you can use the same secret as before or generate a new random string)
-*Note*: Keep the `ACCESS_TOKEN_SECRET` variable to keep the backward compatibility with the previous API tokens.
 
-### Connected Account
-
-If you are using connected account to synchronize your Google emails and calendars, you will need to activate the [People API](https://developers.google.com/people) on your Google Admin console.
 
 <ArticleEditContent></ArticleEditContent>
