@@ -44,7 +44,7 @@ export const SettingsAdminImpersonateUsers = () => {
           <TextInput
             value={userId}
             onChange={setUserId}
-            placeholder="User ID"
+            placeholder="User ID or email"
             fullWidth
             disabled={isLoading}
             dataTestId="impersonate-input"
