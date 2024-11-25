@@ -26,16 +26,17 @@ export const RecordTableHeaderCheckboxColumn = () => {
   );
   const { selectAllRows, resetTableRowSelection, setHasUserSelectedAllRows } =
     useRecordTable();
-  const checked = allRowsSelectedStatus === 'all';
+  const checked =
+    allRowsSelectedStatus === 'all' || allRowsSelectedStatus === 'some';
   const indeterminate = allRowsSelectedStatus === 'some';
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      setHasUserSelectedAllRows(true);
-      selectAllRows();
-    } else {
+  const onChange = () => {
+    if (checked) {
       setHasUserSelectedAllRows(false);
       resetTableRowSelection();
+    } else {
+      setHasUserSelectedAllRows(true);
+      selectAllRows();
     }
   };
 

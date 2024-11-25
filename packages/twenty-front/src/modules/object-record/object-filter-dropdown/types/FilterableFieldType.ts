@@ -20,4 +20,5 @@ export type FilterableFieldType = PickLiteral<
   | 'ACTOR'
   | 'ARRAY'
   | 'RAW_JSON'
+  | 'BOOLEAN'
 >;
