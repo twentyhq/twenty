@@ -1,14 +1,5 @@
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Editor, EditorContent } from '@tiptap/react';
-import { ThemeType } from 'twenty-ui';
-
-export const VARIABLE_TAG_STYLES = ({ theme }: { theme: ThemeType }) => css`
-  background-color: ${theme.color.blue10};
-  border-radius: ${theme.border.radius.sm};
-  color: ${theme.color.blue};
-  padding: ${theme.spacing(1)};
-`;
 
 const StyledEditor = styled.div<{ multiline?: boolean; readonly?: boolean }>`
   width: 100%;
@@ -49,7 +40,10 @@ const StyledEditor = styled.div<{ multiline?: boolean; readonly?: boolean }>`
     }
 
     .variable-tag {
-      ${VARIABLE_TAG_STYLES}
+      background-color: ${({ theme }) => theme.color.blue10};
+      border-radius: ${({ theme }) => theme.border.radius.sm};
+      color: ${({ theme }) => theme.color.blue};
+      padding: ${({ theme }) => theme.spacing(1)};
     }
   }
 
