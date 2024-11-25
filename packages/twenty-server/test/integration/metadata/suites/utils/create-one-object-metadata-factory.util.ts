@@ -13,8 +13,8 @@ export const createOneObjectMetadataFactory = ({
 }: CreateOneObjectFactoryParams) => ({
   query: gql`
       mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {
-      createOneObject(input: $input) {
-        ${gqlFields}
+        createOneObject(input: $input) {
+          ${gqlFields}
       }
     }
     `,

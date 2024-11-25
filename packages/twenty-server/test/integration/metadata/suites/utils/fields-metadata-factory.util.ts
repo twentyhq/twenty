@@ -2,9 +2,9 @@ import gql from 'graphql-tag';
 
 type FieldsFactoryParams = {
   gqlFields: string;
-  input?: {
-    filter?: any;
-    paging?: any;
+  input: {
+    filter: object;
+    paging: object;
   };
 };
 
@@ -24,7 +24,7 @@ export const fieldsMetadataFactory = ({
       }
     `,
   variables: {
-    filter: input?.filter,
-    paging: input?.paging,
+    filter: input.filter,
+    paging: input.paging,
   },
 });

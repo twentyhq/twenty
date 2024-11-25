@@ -19,7 +19,7 @@ export const updateOneObjectMetadataItemFactory = ({
         updateOneObject(input: {id: $idToUpdate, update: $updatePayload}) {
           ${gqlFields}
         }
-    }
+      }
     `,
   variables: {
     idToUpdate: input.idToUpdate,

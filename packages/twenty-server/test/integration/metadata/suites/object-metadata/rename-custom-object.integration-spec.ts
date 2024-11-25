@@ -256,7 +256,7 @@ describe('Custom object renaming', () => {
     ).toBeUndefined();
 
     // standard relations have been updated
-    STANDARD_OBJECT_RELATIONS.map((relation) => {
+    STANDARD_OBJECT_RELATIONS.forEach((relation) => {
       // foreignKey field
       const foreignKeyFieldMetadataId =
         standardObjectRelationsMap[relation].foreignKeyFieldMetadataId;

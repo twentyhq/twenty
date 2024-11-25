@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'class-validator';
+import isEmpty from 'lodash.isempty';
 import { Repository } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -19,6 +19,7 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class IndexMetadataService {
@@ -42,6 +43,10 @@ export class IndexMetadataService {
     const columnNames: string[] = fieldMetadataToIndex.map(
       (fieldMetadata) => fieldMetadata.name as string,
     );
+
+    if (isEmpty(columnNames)) {
+      throw new Error('Column names must not be empty');
+    }
 
     const indexName = `IDX_${generateDeterministicIndexName([tableName, ...columnNames])}`;
 
@@ -109,6 +114,10 @@ export class IndexMetadataService {
       (fieldMetadata) => fieldMetadata.name as string,
     );
 
+    if (isEmpty(columnNames)) {
+      throw new Error('Column names must not be empty');
+    }
+
     const indexName = `IDX_${generateDeterministicIndexName([tableName, ...columnNames])}`;
 
     const indexMetadata = await this.indexMetadataRepository.findOne({
@@ -123,7 +132,13 @@ export class IndexMetadataService {
       throw new Error(`Index metadata with name ${indexName} not found`);
     }
 
-    await this.indexMetadataRepository.delete(indexMetadata.id);
+    try {
+      await this.indexMetadataRepository.delete(indexMetadata.id);
+    } catch (error) {
+      throw new Error(
+        `Failed to delete index metadata with name ${indexName} (error: ${error.message})`,
+      );
+    }
   }
 
   async createIndexCreationMigration(
