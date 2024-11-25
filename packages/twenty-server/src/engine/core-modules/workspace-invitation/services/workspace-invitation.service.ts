@@ -67,32 +67,11 @@ export class WorkspaceInvitationService {
     };
   }
 
-  private getInvitationByType({
-    workspacePersonalInviteToken,
-    workspaceInviteHash,
-  }) {
-    if (workspacePersonalInviteToken) {
-      return {
-        type: 'PERSONAL_INVITATION' as const,
-        workspacePersonalInviteToken,
-        workspaceInviteHash,
-      };
-    }
-
-    if (workspaceInviteHash) {
-      return { type: 'PUBLIC_INVITATION' as const, workspaceInviteHash };
-    }
-
-    return { type: 'INVALID_INVITATION' };
-  }
-
   // VALIDATIONS METHODS
-  private async validatePublicInvitation(
-    invitationByType: ReturnType<typeof this.getInvitationByType>,
-  ) {
+  private async validatePublicInvitation(workspaceInviteHash: string) {
     const workspace = await this.workspaceRepository.findOne({
       where: {
-        inviteHash: invitationByType.workspaceInviteHash,
+        inviteHash: workspaceInviteHash,
       },
     });
 
@@ -113,14 +92,17 @@ export class WorkspaceInvitationService {
     return { isValid: true, workspace };
   }
 
-  private async validatePersonalInvitation(
-    invitationByType: ReturnType<typeof this.getInvitationByType>,
-    email: string,
-  ) {
+  private async validatePersonalInvitation({
+    workspacePersonalInviteToken,
+    email,
+  }: {
+    workspacePersonalInviteToken?: string;
+    email: string;
+  }) {
     try {
       const appToken = await this.appTokenRepository.findOne({
         where: {
-          value: invitationByType.workspacePersonalInviteToken,
+          value: workspacePersonalInviteToken,
           type: AppTokenType.InvitationToken,
         },
         relations: ['workspace'],
@@ -156,17 +138,15 @@ export class WorkspaceInvitationService {
     workspaceInviteHash?: string;
     email: string;
   }) {
-    const invitationByType = this.getInvitationByType({
-      workspacePersonalInviteToken,
-      workspaceInviteHash,
-    });
-
-    if (invitationByType.type === 'PUBLIC_INVITATION') {
-      return await this.validatePublicInvitation(invitationByType);
+    if (workspacePersonalInviteToken) {
+      return await this.validatePersonalInvitation({
+        workspacePersonalInviteToken,
+        email,
+      });
     }
 
-    if (invitationByType.type === 'PERSONAL_INVITATION') {
-      return await this.validatePersonalInvitation(invitationByType, email);
+    if (workspaceInviteHash) {
+      return await this.validatePublicInvitation(workspaceInviteHash);
     }
 
     throw new AuthException(

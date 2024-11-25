@@ -113,36 +113,36 @@ export class SignInUpService {
       }
     }
 
-    const invitationValidation =
-      workspacePersonalInviteToken || workspaceInviteHash
-        ? await this.workspaceInvitationService.validateInvitation({
-            workspacePersonalInviteToken: workspacePersonalInviteToken,
-            workspaceInviteHash,
-            email,
-          })
-        : null;
+    if (workspacePersonalInviteToken || workspaceInviteHash) {
+      const invitationValidation =
+        await this.workspaceInvitationService.validateInvitation({
+          workspacePersonalInviteToken: workspacePersonalInviteToken,
+          workspaceInviteHash,
+          email,
+        });
 
-    if (
-      invitationValidation?.isValid === true &&
-      invitationValidation.workspace
-    ) {
-      const updatedUser = await this.signInUpOnExistingWorkspace({
-        email,
-        passwordHash,
-        workspace: invitationValidation.workspace,
-        firstName,
-        lastName,
-        picture,
-        existingUser,
-        isAuthEnabled,
-      });
+      if (
+        invitationValidation?.isValid === true &&
+        invitationValidation.workspace
+      ) {
+        const updatedUser = await this.signInUpOnExistingWorkspace({
+          email,
+          passwordHash,
+          workspace: invitationValidation.workspace,
+          firstName,
+          lastName,
+          picture,
+          existingUser,
+          isAuthEnabled,
+        });
 
-      await this.workspaceInvitationService.invalidateWorkspaceInvitation(
-        invitationValidation.workspace.id,
-        email,
-      );
+        await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+          invitationValidation.workspace.id,
+          email,
+        );
 
-      return updatedUser;
+        return updatedUser;
+      }
     }
 
     if (!existingUser) {
