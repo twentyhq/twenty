@@ -2,6 +2,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRelationFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useRelationFieldPreviewValue';
+import { getAddressFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getAddressFieldPreviewValue';
 import { getCurrencyFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getCurrencyFieldPreviewValue';
 import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getFieldPreviewValue';
 import { getMultiSelectFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getMultiSelectFieldPreviewValue';
@@ -45,6 +46,8 @@ export const useFieldPreviewValue = ({
       return getSelectFieldPreviewValue({ fieldMetadataItem });
     case FieldMetadataType.MultiSelect:
       return getMultiSelectFieldPreviewValue({ fieldMetadataItem });
+    case FieldMetadataType.Address:
+      return getAddressFieldPreviewValue({ fieldMetadataItem });
     default:
       return getFieldPreviewValue({ fieldMetadataItem });
   }
