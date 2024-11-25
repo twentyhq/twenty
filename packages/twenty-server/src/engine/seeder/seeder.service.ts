@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { inspect } from 'util';
+
 import { ObjectSeed } from 'src/engine/seeder/interfaces/object-seed';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -24,28 +27,45 @@ export class SeederService {
     metadataSeeds: ObjectSeed,
     dataSeeds: Record<string, any>[],
   ): Promise<void> {
-    const objectMetadata = await this.objectMetadataService.createOne({
+    const createdObjectMetadata = await this.objectMetadataService.createOne({
       ...metadataSeeds,
       dataSourceId,
       workspaceId,
     });
 
-    // const objectMetadata =
-    //   await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
-    //     where: { nameSingular: metadataSeeds.nameSingular },
-    //   });
-
-    if (!objectMetadata) {
-      throw new Error('Object metadata not found');
+    if (!createdObjectMetadata) {
+      throw new Error("Object metadata couldn't be created");
     }
 
     for (const customField of metadataSeeds.fields) {
       await this.fieldMetadataService.createOne({
         ...customField,
-        objectMetadataId: objectMetadata.id,
+        objectMetadataId: createdObjectMetadata.id,
         workspaceId,
       });
     }
+
+    const objectMetadataAfterFieldCreation =
+      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: { nameSingular: metadataSeeds.nameSingular },
+      });
+
+    if (!objectMetadataAfterFieldCreation) {
+      throw new Error(
+        "Object metadata couldn't be found after field creation.",
+      );
+    }
+
+    // await this.objectMetadataService.updateOneObject(
+    //   {
+    //     id: objectMetadataAfterFieldCreation.id,
+    //     update: {
+    //       labelIdentifierFieldMetadataId:
+    //         objectMetadataAfterFieldCreation.fields[0].id,
+    //     },
+    //   },
+    //   workspaceId,
+    // );
 
     const schemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
@@ -58,8 +78,20 @@ export class SeederService {
     const entityManager = workspaceDataSource.createEntityManager();
 
     const filteredFields = metadataSeeds.fields.filter((field) =>
-      objectMetadata.fields.some((f) => f.name === field.name),
+      objectMetadataAfterFieldCreation.fields.some(
+        (f) => f.name === field.name || f.name === `name`,
+      ),
     );
+
+    if (filteredFields.length === 0) {
+      throw new Error('No fields found for seeding, check metadata');
+    }
+
+    filteredFields.unshift({
+      name: 'name',
+      type: FieldMetadataType.TEXT,
+      label: 'Name',
+    });
 
     const fieldMetadataMap = filteredFields
       .map((field) => {
@@ -112,7 +144,7 @@ export class SeederService {
 
           for (const subFieldName of fieldNames) {
             flattenedSeed[`${field.name}${capitalize(subFieldName)}`] =
-              seed[field.name][subFieldName];
+              seed?.[field.name]?.[subFieldName];
           }
         } else {
           flattenedSeed[field.name] = seed[field.name];
@@ -122,10 +154,19 @@ export class SeederService {
       return flattenedSeed;
     });
 
+    console.log({
+      objectMetadata: inspect(objectMetadataAfterFieldCreation, { depth: 5 }),
+      metadataSeeds: inspect(metadataSeeds, { depth: 5 }),
+      filteredFields,
+      dataSeeds: dataSeeds[0],
+      flattenedSeeds: flattenedSeeds[0],
+      fieldMetadataMap,
+    });
+
     await entityManager
       .createQueryBuilder()
       .insert()
-      .into(`${schemaName}._${objectMetadata.nameSingular}`, [
+      .into(`${schemaName}._${objectMetadataAfterFieldCreation.nameSingular}`, [
         ...fieldMetadataMap,
         'position',
       ])

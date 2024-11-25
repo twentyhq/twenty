@@ -10,11 +10,6 @@ export const PETS_METADATA_SEEDS: ObjectSeed = {
   icon: 'IconCat',
   fields: [
     {
-      type: FieldMetadataType.TEXT,
-      label: 'Name',
-      name: 'petsName',
-    },
-    {
       type: FieldMetadataType.SELECT,
       label: 'Species',
       name: 'species',

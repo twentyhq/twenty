@@ -15,11 +15,6 @@ export const SURVEY_RESULTS_METADATA_SEEDS: ObjectSeed = {
   icon: 'IconRulerMeasure',
   fields: [
     {
-      type: FieldMetadataType.TEXT,
-      label: 'Description (No settings)',
-      name: 'description',
-    },
-    {
       type: FieldMetadataType.NUMBER,
       label: 'Score (Float 3 decimals)',
       name: 'score',

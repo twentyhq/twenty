@@ -1,6 +1,6 @@
 export const SURVEY_RESULTS_DATA_SEEDS = [
   {
-    description: 'amplexus ver',
+    name: 'amplexus ver',
     score: 0.26022134837694466,
     percentageOfCompletion: 76.3561814092,
     participants: 599,
@@ -11,7 +11,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'verto ascit iure tribuo vulnero',
   },
   {
-    description: 'vinitor uxor',
+    name: 'vinitor uxor',
     score: 0.07128839939832687,
     percentageOfCompletion: 61.6284981836,
     participants: 575,
@@ -22,7 +22,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'tres tantillus vado aequus ago',
   },
   {
-    description: 'adduco sublime',
+    name: 'adduco sublime',
     score: 0.1480973360594362,
     percentageOfCompletion: 72.4289541366,
     participants: 590,
@@ -33,7 +33,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'aeneus armarium conventus curto rerum',
   },
   {
-    description: 'desipio defleo',
+    name: 'desipio defleo',
     score: 0.22768959729000926,
     percentageOfCompletion: 16.0642067203,
     participants: 904,
@@ -44,7 +44,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'abundans ambitus solutio vergo tui',
   },
   {
-    description: 'concedo accusantium',
+    name: 'concedo accusantium',
     score: 0.27254394674673676,
     percentageOfCompletion: 42.6491689635,
     participants: 828,
@@ -55,7 +55,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'ad pecco depromo expedita varietas',
   },
   {
-    description: 'uredo sumptus',
+    name: 'uredo sumptus',
     score: 0.47361992788501084,
     percentageOfCompletion: 55.7808061829,
     participants: 458,
@@ -66,7 +66,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'cedo argumentum voluptatem vulgivagus solum',
   },
   {
-    description: 'cetera tersus',
+    name: 'cetera tersus',
     score: 0.9773464379832147,
     percentageOfCompletion: 74.9796813354,
     participants: 212,
@@ -77,7 +77,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'tersus quaerat cibus comis comedo',
   },
   {
-    description: 'aperio debitis',
+    name: 'aperio debitis',
     score: 0.6420312551781535,
     percentageOfCompletion: 14.3893469358,
     participants: 109,
@@ -88,7 +88,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'adhuc advenio stipes totam auctor',
   },
   {
-    description: 'subvenio alii',
+    name: 'subvenio alii',
     score: 0.3176943399012089,
     percentageOfCompletion: 6.4317575423,
     participants: 369,
@@ -99,7 +99,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'catena tego neque thesaurus arbor',
   },
   {
-    description: 'officia triduana',
+    name: 'officia triduana',
     score: 0.44415580062195653,
     percentageOfCompletion: 36.8148372508,
     participants: 561,
@@ -110,7 +110,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'chirographum cotidie artificiose alius tyrannus',
   },
   {
-    description: 'verumtamen amor',
+    name: 'verumtamen amor',
     score: 0.8717908274848014,
     percentageOfCompletion: 6.010210677,
     participants: 486,
@@ -121,7 +121,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'aperiam cum desidero valde pecco',
   },
   {
-    description: 'dolore abeo',
+    name: 'dolore abeo',
     score: 0.7679936683271079,
     percentageOfCompletion: 51.0412576143,
     participants: 890,
@@ -132,7 +132,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'patior comitatus comedo iure sollers',
   },
   {
-    description: 'apud comminor',
+    name: 'apud comminor',
     score: 0.23965132376179096,
     percentageOfCompletion: 32.0414848625,
     participants: 842,
@@ -143,7 +143,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'constans adopto umbra sum adstringo',
   },
   {
-    description: 'coadunatio fugiat',
+    name: 'coadunatio fugiat',
     score: 0.4967585804406554,
     percentageOfCompletion: 48.2342705829,
     participants: 756,
@@ -154,7 +154,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'comptus ustilo vilitas cuppedia sono',
   },
   {
-    description: 'pariatur taedium',
+    name: 'pariatur taedium',
     score: 0.5275436178781092,
     percentageOfCompletion: 84.2801345047,
     participants: 871,
@@ -165,7 +165,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'absum vinculum soluta deprimo distinctio',
   },
   {
-    description: 'coadunatio tripudio',
+    name: 'coadunatio tripudio',
     score: 0.01539944065734744,
     percentageOfCompletion: 77.6625608094,
     participants: 316,
@@ -176,7 +176,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'eligendi despecto utrimque decimus crinis',
   },
   {
-    description: 'custodia cetera',
+    name: 'custodia cetera',
     score: 0.166217221878469,
     percentageOfCompletion: 48.2680598041,
     participants: 719,
@@ -187,7 +187,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'autem vulgus torrens depopulo bibo',
   },
   {
-    description: 'ipsum consequuntur',
+    name: 'ipsum consequuntur',
     score: 0.058997177984565496,
     percentageOfCompletion: 61.1798846163,
     participants: 523,
@@ -198,7 +198,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'ver vae celo suscipio cupressus',
   },
   {
-    description: 'caste asporto',
+    name: 'caste asporto',
     score: 0.8147226755972952,
     percentageOfCompletion: 58.4728290793,
     participants: 497,
@@ -209,7 +209,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'praesentium tristis cicuta mollitia defessus',
   },
   {
-    description: 'vomica audentia',
+    name: 'vomica audentia',
     score: 0.9233506887685509,
     percentageOfCompletion: 26.1885775253,
     participants: 756,
@@ -220,7 +220,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'timor occaecati convoco tredecim vesica',
   },
   {
-    description: 'culpa sollicito',
+    name: 'culpa sollicito',
     score: 0.036635332740843296,
     percentageOfCompletion: 39.1668946482,
     participants: 291,
@@ -231,7 +231,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'voluptatem quidem sublime coma crinis',
   },
   {
-    description: 'aetas celer',
+    name: 'aetas celer',
     score: 0.2996611043345183,
     percentageOfCompletion: 49.0060556214,
     participants: 427,
@@ -242,7 +242,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'arma video decimus ratione pel',
   },
   {
-    description: 'vinum ipsam',
+    name: 'vinum ipsam',
     score: 0.4406596675980836,
     percentageOfCompletion: 92.8802626208,
     participants: 494,
@@ -253,7 +253,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'voluptatum curriculum ante spargo auditor',
   },
   {
-    description: 'defleo adaugeo',
+    name: 'defleo adaugeo',
     score: 0.05721718305721878,
     percentageOfCompletion: 83.3221885143,
     participants: 38,
@@ -264,7 +264,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'compello suppono contra terreo turba',
   },
   {
-    description: 'tutis tum',
+    name: 'tutis tum',
     score: 0.6074605828616768,
     percentageOfCompletion: 8.9132391382,
     participants: 56,
@@ -275,7 +275,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'rem utrum vigor cura arguo',
   },
   {
-    description: 'aperio acceptus',
+    name: 'aperio acceptus',
     score: 0.893520318903029,
     percentageOfCompletion: 36.9484183611,
     participants: 51,
@@ -286,7 +286,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'sono victus suffoco nisi ambitus',
   },
   {
-    description: 'caute dolore',
+    name: 'caute dolore',
     score: 0.06754710618406534,
     percentageOfCompletion: 99.6499919799,
     participants: 850,
@@ -297,7 +297,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'calamitas coruscus aeternus cursim sollicito',
   },
   {
-    description: 'audax aeneus',
+    name: 'audax aeneus',
     score: 0.9961661016568542,
     percentageOfCompletion: 15.3142261551,
     participants: 194,
@@ -308,7 +308,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'civis veritatis callide verbum viriliter',
   },
   {
-    description: 'defaeco deporto',
+    name: 'defaeco deporto',
     score: 0.5374128196854144,
     percentageOfCompletion: 6.7208974389,
     participants: 831,
@@ -319,7 +319,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'caute aggredior utrimque delibero thymbra',
   },
   {
-    description: 'amo adversus',
+    name: 'amo adversus',
     score: 0.2868807113263756,
     percentageOfCompletion: 27.4043646641,
     participants: 762,
@@ -330,7 +330,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'adstringo amoveo solitudo blandior unus',
   },
   {
-    description: 'territo apparatus',
+    name: 'territo apparatus',
     score: 0.28740485943853855,
     percentageOfCompletion: 75.8718660102,
     participants: 910,
@@ -341,7 +341,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'veritas consectetur aegrus acsi universe',
   },
   {
-    description: 'argumentum deficio',
+    name: 'argumentum deficio',
     score: 0.853465585038066,
     percentageOfCompletion: 80.0262322184,
     participants: 872,
@@ -352,7 +352,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'vigilo callide cras audentia crinis',
   },
   {
-    description: 'cometes validus',
+    name: 'cometes validus',
     score: 0.40313188452273613,
     percentageOfCompletion: 40.4752414906,
     participants: 139,
@@ -363,7 +363,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'cado creptio tener tempore blanditiis',
   },
   {
-    description: 'doloremque dignissimos',
+    name: 'doloremque dignissimos',
     score: 0.8883803957141937,
     percentageOfCompletion: 67.131749983,
     participants: 116,
@@ -374,7 +374,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'aurum vorax temeritas perferendis pel',
   },
   {
-    description: 'termes sapiente',
+    name: 'termes sapiente',
     score: 0.469715692801401,
     percentageOfCompletion: 3.4287041053,
     participants: 220,
@@ -385,7 +385,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'cuppedia tergo cultellus sed vomica',
   },
   {
-    description: 'quasi cibus',
+    name: 'quasi cibus',
     score: 0.6557187605649233,
     percentageOfCompletion: 46.2207723642,
     participants: 515,
@@ -396,7 +396,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'capillus aegrus et vesper uter',
   },
   {
-    description: 'stella qui',
+    name: 'stella qui',
     score: 0.8261301722377539,
     percentageOfCompletion: 28.4272035816,
     participants: 897,
@@ -407,7 +407,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'exercitationem decor testimonium adiuvo arma',
   },
   {
-    description: 'creber sophismata',
+    name: 'creber sophismata',
     score: 0.6308083701878786,
     percentageOfCompletion: 91.0957356217,
     participants: 863,
@@ -418,7 +418,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'tremo quod cursus deserunt vis',
   },
   {
-    description: 'tabesco tutamen',
+    name: 'tabesco tutamen',
     score: 0.4735765114892274,
     percentageOfCompletion: 64.223368722,
     participants: 937,
@@ -429,7 +429,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'arcesso deputo complectus cernuus vulnero',
   },
   {
-    description: 'terror admitto',
+    name: 'terror admitto',
     score: 0.012825320009142159,
     percentageOfCompletion: 59.5848059747,
     participants: 141,
@@ -440,7 +440,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'administratio natus adeptio aggero suggero',
   },
   {
-    description: 'iste atrox',
+    name: 'iste atrox',
     score: 0.8518206882290542,
     percentageOfCompletion: 23.8643927267,
     participants: 337,
@@ -451,7 +451,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'aequitas adversus venia territo facere',
   },
   {
-    description: 'demulceo taedium',
+    name: 'demulceo taedium',
     score: 0.45074522215873003,
     percentageOfCompletion: 50.2526396187,
     participants: 474,
@@ -462,7 +462,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'strenuus adhaero creator quam cimentarius',
   },
   {
-    description: 'aut aveho',
+    name: 'aut aveho',
     score: 0.6861802111379802,
     percentageOfCompletion: 4.0936801582,
     participants: 408,
@@ -473,7 +473,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'magnam corporis desparatus sapiente corroboro',
   },
   {
-    description: 'textus sint',
+    name: 'textus sint',
     score: 0.13258640514686704,
     percentageOfCompletion: 85.3314679116,
     participants: 752,
@@ -484,7 +484,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'nisi spiritus carbo clementia at',
   },
   {
-    description: 'iure thesaurus',
+    name: 'iure thesaurus',
     score: 0.6890303746331483,
     percentageOfCompletion: 53.8477557246,
     participants: 444,
@@ -495,7 +495,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'crinis stillicidium cimentarius certus color',
   },
   {
-    description: 'aperte delego',
+    name: 'aperte delego',
     score: 0.4908659481443465,
     percentageOfCompletion: 95.004244987,
     participants: 594,
@@ -506,7 +506,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'angustus tendo torrens vinculum comis',
   },
   {
-    description: 'vis necessitatibus',
+    name: 'vis necessitatibus',
     score: 0.7026640120893717,
     percentageOfCompletion: 16.7778974864,
     participants: 746,
@@ -517,7 +517,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'aro abundans magni convoco perferendis',
   },
   {
-    description: 'tendo trucido',
+    name: 'tendo trucido',
     score: 0.2280425764620304,
     percentageOfCompletion: 55.0214180723,
     participants: 566,
@@ -528,7 +528,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'vulnus contra vitiosus reiciendis arceo',
   },
   {
-    description: 'adduco tepidus',
+    name: 'adduco tepidus',
     score: 0.3754633136559278,
     percentageOfCompletion: 34.7700446611,
     participants: 566,
@@ -539,7 +539,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'conscendo vindico amaritudo candidus umquam',
   },
   {
-    description: 'pariatur debilito',
+    name: 'pariatur debilito',
     score: 0.34698102017864585,
     percentageOfCompletion: 56.7755300319,
     participants: 123,
@@ -550,7 +550,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'titulus aranea cubo videlicet spectaculum',
   },
   {
-    description: 'thesaurus canto',
+    name: 'thesaurus canto',
     score: 0.3046765117906034,
     percentageOfCompletion: 9.4078153371,
     participants: 530,
@@ -561,7 +561,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'censura sponte amplus temporibus comes',
   },
   {
-    description: 'adhuc thesis',
+    name: 'adhuc thesis',
     score: 0.868543303804472,
     percentageOfCompletion: 5.3536540363,
     participants: 10,
@@ -572,7 +572,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'illo volup via atrox harum',
   },
   {
-    description: 'nisi cursim',
+    name: 'nisi cursim',
     score: 0.2781989211216569,
     percentageOfCompletion: 97.3880619044,
     participants: 47,
@@ -583,7 +583,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'stillicidium deporto curtus aperiam tantum',
   },
   {
-    description: 'iste vulgaris',
+    name: 'iste vulgaris',
     score: 0.10954859899356961,
     percentageOfCompletion: 29.9703601049,
     participants: 761,
@@ -594,7 +594,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'uterque tego turpis voluptatibus vinco',
   },
   {
-    description: 'vinitor vehemens',
+    name: 'vinitor vehemens',
     score: 0.13510871003381908,
     percentageOfCompletion: 75.1787900226,
     participants: 120,
@@ -605,7 +605,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'vita pecto abduco capillus statim',
   },
   {
-    description: 'casso caute',
+    name: 'casso caute',
     score: 0.1844061966985464,
     percentageOfCompletion: 47.6204317994,
     participants: 299,
@@ -616,7 +616,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'tabgo absconditus deludo vulpes vorago',
   },
   {
-    description: 'numquam spiritus',
+    name: 'numquam spiritus',
     score: 0.40135560859926045,
     percentageOfCompletion: 82.2076450568,
     participants: 291,
@@ -627,7 +627,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'subseco textor decipio ago adficio',
   },
   {
-    description: 'voro patria',
+    name: 'voro patria',
     score: 0.8103928547352554,
     percentageOfCompletion: 37.614821922,
     participants: 883,
@@ -638,7 +638,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'condico conduco ad cur attero',
   },
   {
-    description: 'laudantium ultio',
+    name: 'laudantium ultio',
     score: 0.021412700647488236,
     percentageOfCompletion: 23.9829838974,
     participants: 878,
@@ -649,7 +649,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'caecus arx chirographum spoliatio adipisci',
   },
   {
-    description: 'occaecati voveo',
+    name: 'occaecati voveo',
     score: 0.16896782768890262,
     percentageOfCompletion: 40.1180424495,
     participants: 600,
@@ -660,7 +660,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'vomer cupressus abduco aiunt campana',
   },
   {
-    description: 'eos contego',
+    name: 'eos contego',
     score: 0.795067466562614,
     percentageOfCompletion: 55.1518265158,
     participants: 484,
@@ -671,7 +671,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'ambitus ascisco commemoro curatio desidero',
   },
   {
-    description: 'adsidue adfectus',
+    name: 'adsidue adfectus',
     score: 0.7559359497390687,
     percentageOfCompletion: 32.2959498968,
     participants: 589,
@@ -682,7 +682,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'ventito aestivus acervus aegrotatio comedo',
   },
   {
-    description: 'copia adinventitias',
+    name: 'copia adinventitias',
     score: 0.7592867666389793,
     percentageOfCompletion: 82.7909538988,
     participants: 273,
@@ -693,7 +693,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'spes error tergum delego vorax',
   },
   {
-    description: 'ab benevolentia',
+    name: 'ab benevolentia',
     score: 0.6690537892282009,
     percentageOfCompletion: 77.8147239238,
     participants: 935,
@@ -704,7 +704,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'considero venia thesaurus blanditiis callide',
   },
   {
-    description: 'voluntarius thorax',
+    name: 'voluntarius thorax',
     score: 0.35474097868427634,
     percentageOfCompletion: 29.6442892635,
     participants: 953,
@@ -715,7 +715,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'armarium vespillo supellex at tendo',
   },
   {
-    description: 'spiritus condico',
+    name: 'spiritus condico',
     score: 0.6718177441507578,
     percentageOfCompletion: 11.5613268455,
     participants: 209,
@@ -726,7 +726,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'omnis amita caterva asperiores terreo',
   },
   {
-    description: 'copia torqueo',
+    name: 'copia torqueo',
     score: 0.6049345887731761,
     percentageOfCompletion: 61.8127436843,
     participants: 838,
@@ -737,7 +737,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'sequi voluptate vigor calcar depopulo',
   },
   {
-    description: 'similique casus',
+    name: 'similique casus',
     score: 0.8796351226046681,
     percentageOfCompletion: 64.2897022423,
     participants: 477,
@@ -748,7 +748,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'derelinquo tripudio concedo adamo vicissitudo',
   },
   {
-    description: 'ipsum arx',
+    name: 'ipsum arx',
     score: 0.508079051040113,
     percentageOfCompletion: 5.0876372493,
     participants: 628,
@@ -759,7 +759,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'theca explicabo victus supra auctus',
   },
   {
-    description: 'tolero contabesco',
+    name: 'tolero contabesco',
     score: 0.7033574541565031,
     percentageOfCompletion: 45.203644759,
     participants: 75,
@@ -770,7 +770,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'ullam villa est sordeo aufero',
   },
   {
-    description: 'celo tristis',
+    name: 'celo tristis',
     score: 0.3677082920912653,
     percentageOfCompletion: 34.6788960276,
     participants: 763,
@@ -781,7 +781,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'praesentium corporis thermae culpo umbra',
   },
   {
-    description: 'tenetur tamdiu',
+    name: 'tenetur tamdiu',
     score: 0.6619037142954767,
     percentageOfCompletion: 88.3759791265,
     participants: 257,
@@ -792,7 +792,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'caelestis acquiro pax defluo pauci',
   },
   {
-    description: 'autem defaeco',
+    name: 'autem defaeco',
     score: 0.18651628843508664,
     percentageOfCompletion: 66.0999972839,
     participants: 572,
@@ -803,7 +803,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'ambulo aestivus crepusculum vociferor absens',
   },
   {
-    description: 'cum video',
+    name: 'cum video',
     score: 0.6484751508105546,
     percentageOfCompletion: 59.6184924943,
     participants: 513,
@@ -814,7 +814,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'suffoco una ventosus atavus ratione',
   },
   {
-    description: 'tero maiores',
+    name: 'tero maiores',
     score: 0.7942556673660874,
     percentageOfCompletion: 51.6133618075,
     participants: 815,
@@ -825,7 +825,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'contigo distinctio sumo calco acsi',
   },
   {
-    description: 'sperno voluptate',
+    name: 'sperno voluptate',
     score: 0.35329189454205334,
     percentageOfCompletion: 86.0343269771,
     participants: 926,
@@ -836,7 +836,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'aperiam tendo volaticus sperno in',
   },
   {
-    description: 'natus cicuta',
+    name: 'natus cicuta',
     score: 0.22537984745576978,
     percentageOfCompletion: 5.9824104188,
     participants: 654,
@@ -847,7 +847,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'creptio correptius caput vilicus suggero',
   },
   {
-    description: 'videlicet tertius',
+    name: 'videlicet tertius',
     score: 0.47187584661878645,
     percentageOfCompletion: 91.7262414704,
     participants: 310,
@@ -858,7 +858,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'voro supellex ceno ventito ventito',
   },
   {
-    description: 'nihil auctor',
+    name: 'nihil auctor',
     score: 0.30428123055025935,
     percentageOfCompletion: 79.1575196665,
     participants: 153,
@@ -869,7 +869,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'volo vesco valeo cura subiungo',
   },
   {
-    description: 'succurro consectetur',
+    name: 'succurro consectetur',
     score: 0.3766240936238318,
     percentageOfCompletion: 49.5500217425,
     participants: 293,
@@ -880,7 +880,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'odio comburo odio asperiores praesentium',
   },
   {
-    description: 'utrimque cunabula',
+    name: 'utrimque cunabula',
     score: 0.44751133024692535,
     percentageOfCompletion: 17.2982896911,
     participants: 654,
@@ -891,7 +891,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'in tenax apud reprehenderit thema',
   },
   {
-    description: 'spiculum curiositas',
+    name: 'spiculum curiositas',
     score: 0.27753114723600447,
     percentageOfCompletion: 20.6252028467,
     participants: 536,
@@ -902,7 +902,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'ex valde derelinquo viduo copia',
   },
   {
-    description: 'vigor adipiscor',
+    name: 'vigor adipiscor',
     score: 0.3642763951793313,
     percentageOfCompletion: 17.4170631682,
     participants: 972,
@@ -913,7 +913,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'cuppedia dignissimos volva conscendo optio',
   },
   {
-    description: 'agnitio harum',
+    name: 'agnitio harum',
     score: 0.5119623686186969,
     percentageOfCompletion: 29.4070921838,
     participants: 202,
@@ -924,7 +924,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'atrox atrocitas dedecor adeptio denuo',
   },
   {
-    description: 'avarus demonstro',
+    name: 'avarus demonstro',
     score: 0.8892975172493607,
     percentageOfCompletion: 25.7205122616,
     participants: 658,
@@ -935,7 +935,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'damnatio velum victus centum venia',
   },
   {
-    description: 'defendo quaerat',
+    name: 'defendo quaerat',
     score: 0.845277136657387,
     percentageOfCompletion: 21.4792450191,
     participants: 912,
@@ -946,7 +946,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'audentia sponte eaque arma summa',
   },
   {
-    description: 'agnitio recusandae',
+    name: 'agnitio recusandae',
     score: 0.5404541655443609,
     percentageOfCompletion: 51.7820327776,
     participants: 661,
@@ -957,7 +957,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'vinitor verto deleniti enim vestrum',
   },
   {
-    description: 'teneo numquam',
+    name: 'teneo numquam',
     score: 0.15777699602767825,
     percentageOfCompletion: 87.5000017928,
     participants: 837,
@@ -968,7 +968,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'dedecor cavus paens administratio color',
   },
   {
-    description: 'audentia cura',
+    name: 'audentia cura',
     score: 0.6382412291131914,
     percentageOfCompletion: 25.4967568442,
     participants: 834,
@@ -979,7 +979,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'possimus molestiae conitor vesica depulso',
   },
   {
-    description: 'suppellex contabesco',
+    name: 'suppellex contabesco',
     score: 0.2506515709683299,
     percentageOfCompletion: 69.5026692003,
     participants: 293,
@@ -990,7 +990,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'desidero viridis illo stillicidium debitis',
   },
   {
-    description: 'annus usque',
+    name: 'annus usque',
     score: 0.45427318289875984,
     percentageOfCompletion: 12.9088992718,
     participants: 535,
@@ -1001,7 +1001,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'denego decumbo vae carcer careo',
   },
   {
-    description: 'capto aestus',
+    name: 'capto aestus',
     score: 0.9869381249882281,
     percentageOfCompletion: 18.4948077658,
     participants: 919,
@@ -1012,7 +1012,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'cauda caelestis calamitas consectetur viridis',
   },
   {
-    description: 'tamen vigilo',
+    name: 'tamen vigilo',
     score: 0.41595504409633577,
     percentageOfCompletion: 49.5649548713,
     participants: 220,
@@ -1023,7 +1023,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'sponte adicio aveho dolores aspernatur',
   },
   {
-    description: 'patior auxilium',
+    name: 'patior auxilium',
     score: 0.1976937185972929,
     percentageOfCompletion: 64.326785272,
     participants: 735,
@@ -1034,7 +1034,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'commodo totus maiores corporis ceno',
   },
   {
-    description: 'comes summa',
+    name: 'comes summa',
     score: 0.9226651852950454,
     percentageOfCompletion: 35.0951060187,
     participants: 40,
@@ -1045,7 +1045,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'omnis sequi tribuo illum odit',
   },
   {
-    description: 'appositus tandem',
+    name: 'appositus tandem',
     score: 0.8545637675561011,
     percentageOfCompletion: 82.939093397,
     participants: 496,
@@ -1056,7 +1056,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'creptio cupio accusamus credo comitatus',
   },
   {
-    description: 'tutis ventito',
+    name: 'tutis ventito',
     score: 0.03653094219043851,
     percentageOfCompletion: 38.9373274287,
     participants: 602,
@@ -1067,7 +1067,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'succurro statim commemoro tamisium deputo',
   },
   {
-    description: 'corroboro custodia',
+    name: 'corroboro custodia',
     score: 0.4444026453420519,
     percentageOfCompletion: 1.8935396568,
     participants: 464,
@@ -1078,7 +1078,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'delectus teneo somniculosus antiquus repudiandae',
   },
   {
-    description: 'acervus demergo',
+    name: 'acervus demergo',
     score: 0.4624081912916154,
     percentageOfCompletion: 59.8595020361,
     participants: 780,
@@ -1089,7 +1089,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'tamdiu theologus curvo volutabrum cito',
   },
   {
-    description: 'turbo odio',
+    name: 'turbo odio',
     score: 0.7518119167070836,
     percentageOfCompletion: 8.3521681837,
     participants: 681,
@@ -1100,7 +1100,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'aspernatur ademptio cervus cibo tam',
   },
   {
-    description: 'ab unde',
+    name: 'ab unde',
     score: 0.07923998730257154,
     percentageOfCompletion: 90.1037007105,
     participants: 722,
@@ -1111,7 +1111,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'adficio derideo carpo statim desino',
   },
   {
-    description: 'audio amicitia',
+    name: 'audio amicitia',
     score: 0.466399781871587,
     percentageOfCompletion: 33.8092623511,
     participants: 668,
@@ -1122,7 +1122,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'caritas compello veritatis beatae cultellus',
   },
   {
-    description: 'tristis trado',
+    name: 'tristis trado',
     score: 0.40001093829050666,
     percentageOfCompletion: 84.7271354404,
     participants: 384,
@@ -1133,7 +1133,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'fuga communis arceo vulpes verus',
   },
   {
-    description: 'vos summisse',
+    name: 'vos summisse',
     score: 0.8296835464425385,
     percentageOfCompletion: 19.2687206668,
     participants: 599,
@@ -1144,7 +1144,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'aestas curriculum vulnero ulterius vergo',
   },
   {
-    description: 'administratio reiciendis',
+    name: 'administratio reiciendis',
     score: 0.9662480344995856,
     percentageOfCompletion: 24.184589833,
     participants: 865,
@@ -1155,7 +1155,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'accusantium facilis apud placeat socius',
   },
   {
-    description: 'subvenio delibero',
+    name: 'subvenio delibero',
     score: 0.35767954238690436,
     percentageOfCompletion: 88.3631810313,
     participants: 504,
@@ -1166,7 +1166,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'demoror eos tolero centum tergum',
   },
   {
-    description: 'quae cupressus',
+    name: 'quae cupressus',
     score: 0.7159754720050842,
     percentageOfCompletion: 56.7547529703,
     participants: 446,
@@ -1177,7 +1177,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'natus degenero apparatus eveniet totam',
   },
   {
-    description: 'vitae tibi',
+    name: 'vitae tibi',
     score: 0.4762217025272549,
     percentageOfCompletion: 73.7586225383,
     participants: 70,
@@ -1188,7 +1188,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'virgo virgo dolore comburo cogito',
   },
   {
-    description: 'voluptatem nisi',
+    name: 'voluptatem nisi',
     score: 0.1435454529710114,
     percentageOfCompletion: 71.1928173434,
     participants: 603,
@@ -1199,7 +1199,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'tempus sordeo tracto tutamen deorsum',
   },
   {
-    description: 'curtus cado',
+    name: 'curtus cado',
     score: 0.911247052019462,
     percentageOfCompletion: 1.9776875153,
     participants: 900,
@@ -1210,7 +1210,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'demo caste aeneus patruus vociferor',
   },
   {
-    description: 'tui suscipio',
+    name: 'tui suscipio',
     score: 0.11000215471722184,
     percentageOfCompletion: 34.5191159053,
     participants: 156,
@@ -1221,7 +1221,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'velociter explicabo consequuntur vesco adicio',
   },
   {
-    description: 'patruus barba',
+    name: 'patruus barba',
     score: 0.8858597355429083,
     percentageOfCompletion: 63.8054108014,
     participants: 238,
@@ -1232,7 +1232,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'depromo tollo vulgus victoria solium',
   },
   {
-    description: 'vespillo pauci',
+    name: 'vespillo pauci',
     score: 0.20730615849606693,
     percentageOfCompletion: 80.1065254491,
     participants: 276,
@@ -1243,7 +1243,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'colligo templum cibus custodia dens',
   },
   {
-    description: 'consectetur charisma',
+    name: 'consectetur charisma',
     score: 0.42864128923974937,
     percentageOfCompletion: 19.5024785353,
     participants: 62,
@@ -1254,7 +1254,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'tantillus sperno subvenio aestus torrens',
   },
   {
-    description: 'adfero urbs',
+    name: 'adfero urbs',
     score: 0.9506118604913354,
     percentageOfCompletion: 80.1293535624,
     participants: 590,
@@ -1265,7 +1265,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'voluptatibus veritatis tergo substantia absum',
   },
   {
-    description: 'corporis aperio',
+    name: 'corporis aperio',
     score: 0.29463889077305794,
     percentageOfCompletion: 21.5206114808,
     participants: 442,
@@ -1276,7 +1276,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'ascit corrumpo vinitor mollitia voro',
   },
   {
-    description: 'convoco vesica',
+    name: 'convoco vesica',
     score: 0.14041491993702948,
     percentageOfCompletion: 17.6885998575,
     participants: 761,
@@ -1287,7 +1287,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'carmen curis nisi tunc advenio',
   },
   {
-    description: 'annus tempore',
+    name: 'annus tempore',
     score: 0.8413813596125692,
     percentageOfCompletion: 5.4666217649,
     participants: 427,
@@ -1298,7 +1298,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'trans casus explicabo tutis non',
   },
   {
-    description: 'clarus carcer',
+    name: 'clarus carcer',
     score: 0.16862645675428212,
     percentageOfCompletion: 92.6489325474,
     participants: 637,
@@ -1309,7 +1309,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'aegrotatio crinis suffragium suffoco thymbra',
   },
   {
-    description: 'depereo ipsam',
+    name: 'depereo ipsam',
     score: 0.07041665981523693,
     percentageOfCompletion: 17.1374044148,
     participants: 758,
@@ -1320,7 +1320,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'delego aedificium clamo aegre arbor',
   },
   {
-    description: 'deduco video',
+    name: 'deduco video',
     score: 0.9066933223512023,
     percentageOfCompletion: 56.0967366444,
     participants: 535,
@@ -1331,7 +1331,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'corona minus delectus quisquam vesica',
   },
   {
-    description: 'trucido copiose',
+    name: 'trucido copiose',
     score: 0.4483626193832606,
     percentageOfCompletion: 35.3333273437,
     participants: 118,
@@ -1342,7 +1342,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'inventore turba decretum curo somnus',
   },
   {
-    description: 'tres contabesco',
+    name: 'tres contabesco',
     score: 0.7060707870405167,
     percentageOfCompletion: 97.1396650654,
     participants: 926,
@@ -1353,7 +1353,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'advoco conor nesciunt termes verecundia',
   },
   {
-    description: 'sub vobis',
+    name: 'sub vobis',
     score: 0.28768756543286145,
     percentageOfCompletion: 59.9856012734,
     participants: 384,
@@ -1364,7 +1364,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'exercitationem commemoro triumphus vesper thorax',
   },
   {
-    description: 'error curriculum',
+    name: 'error curriculum',
     score: 0.6655041121412069,
     percentageOfCompletion: 20.9926338633,
     participants: 605,
@@ -1375,7 +1375,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'sufficio eveniet tandem uter torqueo',
   },
   {
-    description: 'derideo laboriosam',
+    name: 'derideo laboriosam',
     score: 0.6023926991038024,
     percentageOfCompletion: 7.5641446746,
     participants: 344,
@@ -1386,7 +1386,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'celebrer arguo sopor via laudantium',
   },
   {
-    description: 'adduco amitto',
+    name: 'adduco amitto',
     score: 0.6032481444999576,
     percentageOfCompletion: 17.9830545094,
     participants: 753,
@@ -1397,7 +1397,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'sortitus vesper vesper crastinus maxime',
   },
   {
-    description: 'cumque cunae',
+    name: 'cumque cunae',
     score: 0.8272821356076748,
     percentageOfCompletion: 96.6075264616,
     participants: 229,
@@ -1408,7 +1408,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'currus adicio trucido cado ventosus',
   },
   {
-    description: 'trado ancilla',
+    name: 'trado ancilla',
     score: 0.20488945487886667,
     percentageOfCompletion: 24.4370591128,
     participants: 987,
@@ -1419,7 +1419,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'accommodo fuga collum occaecati cupressus',
   },
   {
-    description: 'cervus corona',
+    name: 'cervus corona',
     score: 0.534737408393994,
     percentageOfCompletion: 6.9546662038,
     participants: 408,
@@ -1430,7 +1430,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'titulus utroque libero sustineo textus',
   },
   {
-    description: 'turbo cinis',
+    name: 'turbo cinis',
     score: 0.6099114182870835,
     percentageOfCompletion: 0.2418401418,
     participants: 193,
@@ -1441,7 +1441,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'non artificiose subiungo teneo a',
   },
   {
-    description: 'conicio suasoria',
+    name: 'conicio suasoria',
     score: 0.7938816624227911,
     percentageOfCompletion: 93.907790212,
     participants: 898,
@@ -1452,7 +1452,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'adduco convoco tonsor ante aut',
   },
   {
-    description: 'timidus soleo',
+    name: 'timidus soleo',
     score: 0.9572365314234048,
     percentageOfCompletion: 9.5255489461,
     participants: 370,
@@ -1463,7 +1463,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'absens ipsa caput contabesco paulatim',
   },
   {
-    description: 'cupiditate quasi',
+    name: 'cupiditate quasi',
     score: 0.9080800698138773,
     percentageOfCompletion: 52.6360359974,
     participants: 440,
@@ -1474,7 +1474,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'universe textus adficio cupiditate valeo',
   },
   {
-    description: 'attollo desolo',
+    name: 'attollo desolo',
     score: 0.5221289389301091,
     percentageOfCompletion: 11.1856221221,
     participants: 593,
@@ -1485,7 +1485,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'sui brevis ea blanditiis toties',
   },
   {
-    description: 'sit audio',
+    name: 'sit audio',
     score: 0.8075034555513412,
     percentageOfCompletion: 80.9208797291,
     participants: 838,
@@ -1496,7 +1496,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'vilicus verumtamen vaco copia vapulus',
   },
   {
-    description: 'copia expedita',
+    name: 'copia expedita',
     score: 0.9282529342453927,
     percentageOfCompletion: 31.7290872335,
     participants: 469,
@@ -1507,7 +1507,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'inflammatio cervus reiciendis esse alienus',
   },
   {
-    description: 'vita deleniti',
+    name: 'vita deleniti',
     score: 0.3731196231674403,
     percentageOfCompletion: 36.9498117128,
     participants: 140,
@@ -1518,7 +1518,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'conicio quos temptatio tracto sollicito',
   },
   {
-    description: 'amaritudo aegre',
+    name: 'amaritudo aegre',
     score: 0.8602677534800023,
     percentageOfCompletion: 0.6418616976,
     participants: 182,
@@ -1529,7 +1529,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'voluntarius comitatus alias usque corrumpo',
   },
   {
-    description: 'amicitia denuo',
+    name: 'amicitia denuo',
     score: 0.7020096245687455,
     percentageOfCompletion: 86.6825972684,
     participants: 864,
@@ -1540,7 +1540,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'peccatus voluptate totam studio cicuta',
   },
   {
-    description: 'annus iste',
+    name: 'annus iste',
     score: 0.20766101125627756,
     percentageOfCompletion: 0.1484758919,
     participants: 587,
@@ -1551,7 +1551,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'aer deripio ventosus uterque sortitus',
   },
   {
-    description: 'debitis comparo',
+    name: 'debitis comparo',
     score: 0.8250269421841949,
     percentageOfCompletion: 13.4398952825,
     participants: 149,
@@ -1562,7 +1562,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'peccatus acidus conatus animus vociferor',
   },
   {
-    description: 'stabilis caute',
+    name: 'stabilis caute',
     score: 0.1509660524316132,
     percentageOfCompletion: 2.7878072345,
     participants: 267,
@@ -1573,7 +1573,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'audacia summopere alo trucido cohors',
   },
   {
-    description: 'carbo cruentus',
+    name: 'carbo cruentus',
     score: 0.003344677854329348,
     percentageOfCompletion: 58.6242425488,
     participants: 814,
@@ -1584,7 +1584,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'audio censura curso solium optio',
   },
   {
-    description: 'ocer velociter',
+    name: 'ocer velociter',
     score: 0.4440747750923038,
     percentageOfCompletion: 18.7602333259,
     participants: 7,
@@ -1595,7 +1595,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'cognomen sint thalassinus comminor tendo',
   },
   {
-    description: 'clam tricesimus',
+    name: 'clam tricesimus',
     score: 0.40855857636779547,
     percentageOfCompletion: 16.188787017,
     participants: 359,
@@ -1606,7 +1606,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'bellicus truculenter curia balbus vetus',
   },
   {
-    description: 'sufficio argumentum',
+    name: 'sufficio argumentum',
     score: 0.19547943910583854,
     percentageOfCompletion: 38.4556881618,
     participants: 482,
@@ -1617,7 +1617,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'cultellus unde voco sto sophismata',
   },
   {
-    description: 'alter tenetur',
+    name: 'alter tenetur',
     score: 0.04823173023760319,
     percentageOfCompletion: 68.8414828619,
     participants: 534,
@@ -1628,7 +1628,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'alienus antepono atavus casso curo',
   },
   {
-    description: 'valde peior',
+    name: 'valde peior',
     score: 0.6768084010109305,
     percentageOfCompletion: 68.2482313365,
     participants: 736,
@@ -1639,7 +1639,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'patior curo tempus aperio corrumpo',
   },
   {
-    description: 'acceptus ex',
+    name: 'acceptus ex',
     score: 0.8352298734243959,
     percentageOfCompletion: 63.8333197683,
     participants: 19,
@@ -1650,7 +1650,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'accedo cilicium astrum contra valeo',
   },
   {
-    description: 'cicuta ait',
+    name: 'cicuta ait',
     score: 0.7425827365368605,
     percentageOfCompletion: 90.6279347837,
     participants: 483,
@@ -1661,7 +1661,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'caute compono tempus tamdiu arbitro',
   },
   {
-    description: 'theologus advoco',
+    name: 'theologus advoco',
     score: 0.9312835766468197,
     percentageOfCompletion: 46.8044352485,
     participants: 389,
@@ -1672,7 +1672,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'quos aegrotatio approbo vehemens ancilla',
   },
   {
-    description: 'crinis adficio',
+    name: 'crinis adficio',
     score: 0.7516741026192904,
     percentageOfCompletion: 79.3669865234,
     participants: 673,
@@ -1683,7 +1683,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'cura totam vomito averto suscipio',
   },
   {
-    description: 'aptus textor',
+    name: 'aptus textor',
     score: 0.38287940761074424,
     percentageOfCompletion: 36.8788739201,
     participants: 606,
@@ -1694,7 +1694,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'convoco stella quo tenetur tego',
   },
   {
-    description: 'varietas ciminatio',
+    name: 'varietas ciminatio',
     score: 0.9844331180211158,
     percentageOfCompletion: 81.5853831824,
     participants: 871,
@@ -1705,7 +1705,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'bonus deputo totam blanditiis spiritus',
   },
   {
-    description: 'tardus votum',
+    name: 'tardus votum',
     score: 0.5138747554738075,
     percentageOfCompletion: 97.7557403269,
     participants: 788,
@@ -1716,7 +1716,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'varietas antiquus ustilo tego anser',
   },
   {
-    description: 'derelinquo rerum',
+    name: 'derelinquo rerum',
     score: 0.0402312558144331,
     percentageOfCompletion: 44.7865786031,
     participants: 658,
@@ -1727,7 +1727,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'sopor non attonbitus velut enim',
   },
   {
-    description: 'utrimque adsidue',
+    name: 'utrimque adsidue',
     score: 0.33219648199155927,
     percentageOfCompletion: 80.2331404994,
     participants: 503,
@@ -1738,7 +1738,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'arto color ipsum turpis adversus',
   },
   {
-    description: 'triumphus stella',
+    name: 'triumphus stella',
     score: 0.9665679894387722,
     percentageOfCompletion: 92.9789199494,
     participants: 901,
@@ -1749,7 +1749,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'collum tonsor attero pauci vado',
   },
   {
-    description: 'somniculosus suscipio',
+    name: 'somniculosus suscipio',
     score: 0.8394617887679487,
     percentageOfCompletion: 83.1135775661,
     participants: 279,
@@ -1760,7 +1760,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'cubicularis adhuc accusamus sonitus xiphias',
   },
   {
-    description: 'aro cibus',
+    name: 'aro cibus',
     score: 0.8922839576844126,
     percentageOfCompletion: 63.4706909768,
     participants: 309,
@@ -1771,7 +1771,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'distinctio ambitus laudantium adimpleo sapiente',
   },
   {
-    description: 'aptus tamen',
+    name: 'aptus tamen',
     score: 0.33262536535039544,
     percentageOfCompletion: 49.0236381302,
     participants: 379,
@@ -1782,7 +1782,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'dicta autus patior adficio solio',
   },
   {
-    description: 'odio studio',
+    name: 'odio studio',
     score: 0.297769779805094,
     percentageOfCompletion: 93.3714965592,
     participants: 649,
@@ -1793,7 +1793,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'auctor adopto suppono degusto delectatio',
   },
   {
-    description: 'vita casus',
+    name: 'vita casus',
     score: 0.4866543598473072,
     percentageOfCompletion: 42.8696245421,
     participants: 401,
@@ -1804,7 +1804,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'charisma eaque sonitus inventore astrum',
   },
   {
-    description: 'exercitationem paulatim',
+    name: 'exercitationem paulatim',
     score: 0.19673213292844594,
     percentageOfCompletion: 44.264945318,
     participants: 832,
@@ -1815,7 +1815,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'tondeo pecco defaeco suggero caste',
   },
   {
-    description: 'commemoro paens',
+    name: 'commemoro paens',
     score: 0.27237141178920865,
     percentageOfCompletion: 27.463877527,
     participants: 443,
@@ -1826,7 +1826,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'defero caelestis defero sordeo ago',
   },
   {
-    description: 'aufero arcesso',
+    name: 'aufero arcesso',
     score: 0.2805318091996014,
     percentageOfCompletion: 77.0300114528,
     participants: 603,
@@ -1837,7 +1837,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'statua copiose quibusdam curia dolores',
   },
   {
-    description: 'abstergo amaritudo',
+    name: 'abstergo amaritudo',
     score: 0.3062806916423142,
     percentageOfCompletion: 75.4812124651,
     participants: 17,
@@ -1848,7 +1848,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'voluptatem cena acsi campana termes',
   },
   {
-    description: 'dolore cauda',
+    name: 'dolore cauda',
     score: 0.11524364026263355,
     percentageOfCompletion: 46.6008714633,
     participants: 132,
@@ -1859,7 +1859,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'absens crapula voluntarius crinis inventore',
   },
   {
-    description: 'allatus utilis',
+    name: 'allatus utilis',
     score: 0.5238780579529703,
     percentageOfCompletion: 36.6072904784,
     participants: 798,
@@ -1870,7 +1870,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'deficio valetudo demitto corrigo traho',
   },
   {
-    description: 'testimonium casso',
+    name: 'testimonium casso',
     score: 0.5402728696353734,
     percentageOfCompletion: 88.4912097361,
     participants: 639,
@@ -1881,7 +1881,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'comminor vitium natus porro victoria',
   },
   {
-    description: 'copiose victoria',
+    name: 'copiose victoria',
     score: 0.9032618794590235,
     percentageOfCompletion: 41.6736198356,
     participants: 13,
@@ -1892,7 +1892,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'curriculum atqui beatae pel communis',
   },
   {
-    description: 'vae despecto',
+    name: 'vae despecto',
     score: 0.8548716981895268,
     percentageOfCompletion: 32.1952087804,
     participants: 30,
@@ -1903,7 +1903,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'uxor via tenetur sol vorago',
   },
   {
-    description: 'tremo unde',
+    name: 'tremo unde',
     score: 0.3470151722431183,
     percentageOfCompletion: 26.2246905826,
     participants: 571,
@@ -1914,7 +1914,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'optio sollers adimpleo cogito exercitationem',
   },
   {
-    description: 'bestia vito',
+    name: 'bestia vito',
     score: 0.6888535146135837,
     percentageOfCompletion: 4.1310437955,
     participants: 472,
@@ -1925,7 +1925,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'spiritus bonus dignissimos ter libero',
   },
   {
-    description: 'caecus tepesco',
+    name: 'caecus tepesco',
     score: 0.11806653742678462,
     percentageOfCompletion: 79.5604209416,
     participants: 291,
@@ -1936,7 +1936,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'apostolus titulus vicissitudo degero celo',
   },
   {
-    description: 'comburo assumenda',
+    name: 'comburo assumenda',
     score: 0.4708528427872806,
     percentageOfCompletion: 25.8032555226,
     participants: 991,
@@ -1947,7 +1947,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'amplus sint quasi arguo beatus',
   },
   {
-    description: 'cunabula cicuta',
+    name: 'cunabula cicuta',
     score: 0.2138687358237803,
     percentageOfCompletion: 92.4985400169,
     participants: 61,
@@ -1958,7 +1958,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'deleo conitor abscido placeat vesica',
   },
   {
-    description: 'voluptas eius',
+    name: 'voluptas eius',
     score: 0.3054397120140493,
     percentageOfCompletion: 97.3491225392,
     participants: 137,
@@ -1969,7 +1969,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'saepe itaque cultellus cimentarius articulus',
   },
   {
-    description: 'venio cogito',
+    name: 'venio cogito',
     score: 0.5992803070694208,
     percentageOfCompletion: 64.8238908034,
     participants: 656,
@@ -1980,7 +1980,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'architecto audacia truculenter aeger alias',
   },
   {
-    description: 'ad curis',
+    name: 'ad curis',
     score: 0.4582449966110289,
     percentageOfCompletion: 39.5558524644,
     participants: 513,
@@ -1991,7 +1991,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'verbera aggredior ut acies cruciamentum',
   },
   {
-    description: 'summa cohors',
+    name: 'summa cohors',
     score: 0.6025604172609746,
     percentageOfCompletion: 14.2191107385,
     participants: 165,
@@ -2002,7 +2002,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'ulterius voco vaco esse temptatio',
   },
   {
-    description: 'accusantium vulticulus',
+    name: 'accusantium vulticulus',
     score: 0.7154767294414341,
     percentageOfCompletion: 41.0061534028,
     participants: 241,
@@ -2013,7 +2013,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'adstringo clam quisquam velit quas',
   },
   {
-    description: 'adnuo crux',
+    name: 'adnuo crux',
     score: 0.26252718223258853,
     percentageOfCompletion: 2.7062653331,
     participants: 858,
@@ -2024,7 +2024,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'advenio arca supellex vorago cognomen',
   },
   {
-    description: 'ater verbera',
+    name: 'ater verbera',
     score: 0.8983334000222385,
     percentageOfCompletion: 47.8645966155,
     participants: 92,
@@ -2035,7 +2035,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'versus ater comptus civitas tui',
   },
   {
-    description: 'vilitas arma',
+    name: 'vilitas arma',
     score: 0.9126494445372373,
     percentageOfCompletion: 10.0731656421,
     participants: 201,
@@ -2046,7 +2046,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'pel custodia magni pauci sublime',
   },
   {
-    description: 'summisse repellendus',
+    name: 'summisse repellendus',
     score: 0.8953381779137998,
     percentageOfCompletion: 61.0917063663,
     participants: 691,
@@ -2057,7 +2057,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'sub aegrus adaugeo tepidus apud',
   },
   {
-    description: 'adficio casso',
+    name: 'adficio casso',
     score: 0.5032283358741552,
     percentageOfCompletion: 5.1931668771,
     participants: 36,
@@ -2068,7 +2068,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'abundans ara suppono somniculosus adsum',
   },
   {
-    description: 'correptius vesco',
+    name: 'correptius vesco',
     score: 0.23918629623949528,
     percentageOfCompletion: 98.4589690576,
     participants: 868,
@@ -2079,7 +2079,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'utilis auxilium praesentium cubo centum',
   },
   {
-    description: 'a cui',
+    name: 'a cui',
     score: 0.34549954743124545,
     percentageOfCompletion: 56.0890766792,
     participants: 974,
@@ -2090,7 +2090,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'abundans tondeo denego ambulo video',
   },
   {
-    description: 'creo varietas',
+    name: 'creo varietas',
     score: 0.47843084461055696,
     percentageOfCompletion: 37.122147833,
     participants: 977,
@@ -2101,7 +2101,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'conqueror sulum terreo adflicto cubo',
   },
   {
-    description: 'vitiosus strues',
+    name: 'vitiosus strues',
     score: 0.8493464251514524,
     percentageOfCompletion: 85.7594836504,
     participants: 952,
@@ -2112,7 +2112,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'vos timidus tabella ambitus aeternus',
   },
   {
-    description: 'dicta vilicus',
+    name: 'dicta vilicus',
     score: 0.2736517577432096,
     percentageOfCompletion: 41.9037631014,
     participants: 472,
@@ -2123,7 +2123,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'adipisci sperno temeritas adversus arto',
   },
   {
-    description: 'agnitio amet',
+    name: 'agnitio amet',
     score: 0.6411119925323874,
     percentageOfCompletion: 75.6202641176,
     participants: 281,
@@ -2134,7 +2134,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'magni deprecator vespillo damno spes',
   },
   {
-    description: 'corrumpo aureus',
+    name: 'corrumpo aureus',
     score: 0.9752384435851127,
     percentageOfCompletion: 9.5039213076,
     participants: 766,
@@ -2145,7 +2145,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'stillicidium bellum vindico velociter assumenda',
   },
   {
-    description: 'adulescens absque',
+    name: 'adulescens absque',
     score: 0.1018188875168562,
     percentageOfCompletion: 45.7709346199,
     participants: 379,
@@ -2156,7 +2156,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'ventosus denego at alveus tremo',
   },
   {
-    description: 'vester creptio',
+    name: 'vester creptio',
     score: 0.6799589889124036,
     percentageOfCompletion: 52.9562876094,
     participants: 32,
@@ -2167,7 +2167,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'vel eligendi substantia vomica a',
   },
   {
-    description: 'deleo calamitas',
+    name: 'deleo calamitas',
     score: 0.11221893201582134,
     percentageOfCompletion: 89.7988098441,
     participants: 555,
@@ -2178,7 +2178,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'acsi adaugeo confero cursim quis',
   },
   {
-    description: 'conor creator',
+    name: 'conor creator',
     score: 0.39116429653950036,
     percentageOfCompletion: 54.4387456728,
     participants: 939,
@@ -2189,7 +2189,7 @@ export const SURVEY_RESULTS_DATA_SEEDS = [
     shortNotes: 'clarus dolor aliqua tristis copiose',
   },
   {
-    description: 'conventus theca',
+    name: 'conventus theca',
     score: 0.8433096432127057,
     percentageOfCompletion: 58.2892513834,
     participants: 561,

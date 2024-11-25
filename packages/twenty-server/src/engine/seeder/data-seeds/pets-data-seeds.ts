@@ -1,6 +1,6 @@
 export const PETS_DATA_SEEDS = [
   {
-    petsName: 'Toby',
+    name: 'Toby',
     species: 'bird',
     comments:
       'Aperio blandior crudelis tyrannus alius comitatus iste animus ullus.',
@@ -15,7 +15,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Luke',
+    name: 'Luke',
     species: 'bird',
     comments: 'Porro autem calamitas in communis.',
     age: 3,
@@ -29,7 +29,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Luke',
+    name: 'Luke',
     species: 'dog',
     comments: 'Spoliatio suggero comprehendo volup ademptio titulus accusamus.',
     age: 7,
@@ -43,7 +43,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucky',
+    name: 'Lucky',
     species: 'cat',
     comments: 'Coniuratio architecto vulariter verbera substantia thymbra.',
     age: 9,
@@ -57,7 +57,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Spot',
+    name: 'Spot',
     species: 'bird',
     comments: 'Culpa tenuis decumbo.',
     age: 20,
@@ -71,7 +71,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Finn',
+    name: 'Finn',
     species: 'cat',
     comments: 'Charisma ancilla velociter sonitus.',
     age: 13,
@@ -85,7 +85,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Spot',
+    name: 'Spot',
     species: 'rabbit',
     comments: 'Vitiosus iure attollo balbus valde.',
     age: 15,
@@ -99,7 +99,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Louie',
+    name: 'Louie',
     species: 'bird',
     comments: 'Ea veritas alveus.',
     age: 14,
@@ -113,7 +113,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Oliver',
+    name: 'Oliver',
     species: 'rabbit',
     comments: 'Delectatio voco ullus subiungo clarus quos.',
     age: 1,
@@ -127,7 +127,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Mickey',
+    name: 'Mickey',
     species: 'fish',
     comments: 'Substantia laudantium maiores cras ea verus accusantium.',
     age: 7,
@@ -141,7 +141,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Daisy',
+    name: 'Daisy',
     species: 'bird',
     comments:
       'Harum terga umerus tempus civis titulus apostolus claro teres videlicet.',
@@ -156,7 +156,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Murphy',
+    name: 'Murphy',
     species: 'bird',
     comments: 'Strues conservo tum sint eius coadunatio ipsa.',
     age: 3,
@@ -170,7 +170,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Sammy',
+    name: 'Sammy',
     species: 'fish',
     comments:
       'Averto vivo curto cariosus similique turpis deporto solio balbus.',
@@ -185,7 +185,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Duke',
+    name: 'Duke',
     species: 'dog',
     comments: 'Versus attollo infit.',
     age: 1,
@@ -199,7 +199,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Ziggy',
+    name: 'Ziggy',
     species: 'hamster',
     comments: 'Textus attollo tabella asperiores.',
     age: 9,
@@ -213,7 +213,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Buster',
+    name: 'Buster',
     species: 'hamster',
     comments: 'Quasi tergiversatio dens.',
     age: 1,
@@ -227,7 +227,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Rusty',
+    name: 'Rusty',
     species: 'bird',
     comments:
       'Beneficium dolorum eaque stipes absorbeo desino causa veritas a.',
@@ -242,7 +242,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Barkley',
+    name: 'Barkley',
     species: 'hamster',
     comments: 'Tam atque casso fugit ventosus vox subseco altus.',
     age: 10,
@@ -256,7 +256,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Champ',
+    name: 'Champ',
     species: 'bird',
     comments:
       'Creo vomito utrum crux utor consequuntur accusator usus cotidie.',
@@ -271,7 +271,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Scooter',
+    name: 'Scooter',
     species: 'hamster',
     comments: 'Conatus suadeo vel cum.',
     age: 9,
@@ -285,7 +285,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Milo',
+    name: 'Milo',
     species: 'bird',
     comments: 'Suffragium provident quam degenero curvo undique.',
     age: 1,
@@ -299,7 +299,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Winston',
+    name: 'Winston',
     species: 'dog',
     comments:
       'Adhaero cupiditate carus atque viscus vesco abbas adeo celebrer amor.',
@@ -314,7 +314,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Sadie',
+    name: 'Sadie',
     species: 'bird',
     comments: 'Tergo nostrum vestrum vitium absum aggero vomito.',
     age: 6,
@@ -328,7 +328,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Sammy',
+    name: 'Sammy',
     species: 'bird',
     comments: 'Constans in dicta spiculum coepi adstringo.',
     age: 6,
@@ -342,7 +342,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Oscar',
+    name: 'Oscar',
     species: 'fish',
     comments: 'Supplanto thesaurus aspernatur suppono verbum textilis corrigo.',
     age: 15,
@@ -356,7 +356,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Joey',
+    name: 'Joey',
     species: 'dog',
     comments: 'Alter timidus color peccatus sublime usus ultra consuasor.',
     age: 8,
@@ -370,7 +370,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Chloe',
+    name: 'Chloe',
     species: 'dog',
     comments:
       'Animus victoria decumbo est vobis assentator adimpleo turbo varietas.',
@@ -385,7 +385,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Shadow',
+    name: 'Shadow',
     species: 'rabbit',
     comments: 'Sub voluptate crudelis creta subvenio asporto toties.',
     age: 2,
@@ -399,7 +399,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Marley',
+    name: 'Marley',
     species: 'fish',
     comments: 'Pel avarus impedit ratione carmen curatio valetudo eos.',
     age: 4,
@@ -413,7 +413,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Biscuit',
+    name: 'Biscuit',
     species: 'bird',
     comments: 'Velum crastinus ut verto sequi necessitatibus.',
     age: 4,
@@ -427,7 +427,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Dexter',
+    name: 'Dexter',
     species: 'hamster',
     comments:
       'Magni cena theologus praesentium ubi commodo sopor corona comis curo.',
@@ -442,7 +442,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Harley',
+    name: 'Harley',
     species: 'fish',
     comments:
       'Venustas abutor vulnus sono paulatim tener sordeo cubo ipsa tam.',
@@ -457,7 +457,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Zorro',
+    name: 'Zorro',
     species: 'cat',
     comments: 'Auctus bis certus cohaero.',
     age: 19,
@@ -471,7 +471,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Mittens',
+    name: 'Mittens',
     species: 'fish',
     comments: 'Adhuc decretum aiunt comparo conduco ver autem itaque deprimo.',
     age: 1,
@@ -485,7 +485,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Charlie',
+    name: 'Charlie',
     species: 'rabbit',
     comments:
       'Incidunt comburo trepide animadverto infit coma solutio derelinquo.',
@@ -500,7 +500,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Scooter',
+    name: 'Scooter',
     species: 'fish',
     comments:
       'Consuasor suspendo sit thermae ultra paulatim dolorem suspendo cenaculum.',
@@ -515,7 +515,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Murphy',
+    name: 'Murphy',
     species: 'fish',
     comments: 'Valens vulgo video arbitro distinctio adflicto clamo.',
     age: 13,
@@ -529,7 +529,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Louie',
+    name: 'Louie',
     species: 'dog',
     comments:
       'Viridis adversus thorax verecundia aiunt suppellex thorax corrumpo volaticus succedo.',
@@ -544,7 +544,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Winston',
+    name: 'Winston',
     species: 'dog',
     comments: 'Acer depraedor averto atque clibanus argumentum.',
     age: 12,
@@ -558,7 +558,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Scout',
+    name: 'Scout',
     species: 'hamster',
     comments:
       'Tametsi dens vae deprimo thalassinus temporibus adinventitias adnuo tenus.',
@@ -573,7 +573,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Duke',
+    name: 'Duke',
     species: 'bird',
     comments:
       'Bonus caritas facere aestivus amo admoveo officia sordeo urbanus torrens.',
@@ -588,7 +588,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Chloe',
+    name: 'Chloe',
     species: 'bird',
     comments:
       'Stillicidium ea vado voluptatibus brevis cinis tactus temeritas.',
@@ -603,7 +603,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Jack',
+    name: 'Jack',
     species: 'hamster',
     comments: 'Demoror nesciunt ubi non color vesper comptus curis.',
     age: 10,
@@ -617,7 +617,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Winston',
+    name: 'Winston',
     species: 'dog',
     comments: 'Corrupti cogito harum tametsi colo.',
     age: 10,
@@ -631,7 +631,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Sammy',
+    name: 'Sammy',
     species: 'hamster',
     comments:
       'Allatus infit utrum suffoco trepide ait villa decumbo thermae decretum.',
@@ -646,7 +646,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Fluffy',
+    name: 'Fluffy',
     species: 'dog',
     comments: 'Patruus audio chirographum.',
     age: 18,
@@ -660,7 +660,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Louie',
+    name: 'Louie',
     species: 'dog',
     comments: 'Temperantia comes damnatio.',
     age: 18,
@@ -674,7 +674,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Marley',
+    name: 'Marley',
     species: 'rabbit',
     comments: 'Aperiam conor ater vos.',
     age: 17,
@@ -688,7 +688,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucky',
+    name: 'Lucky',
     species: 'hamster',
     comments: 'Brevis aggredior vos valens aegrotatio vespillo.',
     age: 6,
@@ -702,7 +702,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Milo',
+    name: 'Milo',
     species: 'bird',
     comments:
       'Valetudo vado adstringo video patruus vel earum carbo absconditus speculum.',
@@ -717,7 +717,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucky',
+    name: 'Lucky',
     species: 'fish',
     comments:
       'Tenax theca aro cruentus comptus barba est cupressus caveo demitto.',
@@ -732,7 +732,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Buster',
+    name: 'Buster',
     species: 'cat',
     comments:
       'Velit debeo volup alter quaerat subiungo id libero sursum teneo.',
@@ -747,7 +747,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Jasper',
+    name: 'Jasper',
     species: 'hamster',
     comments: 'Tibi totidem coniuratio tergiversatio causa auctor spoliatio.',
     age: 10,
@@ -761,7 +761,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Ziggy',
+    name: 'Ziggy',
     species: 'cat',
     comments: 'Contego cuius conspergo necessitatibus.',
     age: 7,
@@ -775,7 +775,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Milo',
+    name: 'Milo',
     species: 'bird',
     comments: 'Bonus coma vester annus explicabo.',
     age: 7,
@@ -789,7 +789,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucy',
+    name: 'Lucy',
     species: 'hamster',
     comments: 'Patior vilicus vulgivagus vilicus depraedor.',
     age: 17,
@@ -803,7 +803,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Joey',
+    name: 'Joey',
     species: 'cat',
     comments: 'Aequitas atrocitas admiratio volutabrum.',
     age: 17,
@@ -817,7 +817,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Oliver',
+    name: 'Oliver',
     species: 'bird',
     comments:
       'Cavus talis ulciscor adulescens tantillus cibo careo abscido bonus absum.',
@@ -832,7 +832,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bailey',
+    name: 'Bailey',
     species: 'fish',
     comments:
       'Ciminatio utor ascit ventus tepesco cursus asporto artificiose adnuo aperte.',
@@ -847,7 +847,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Milo',
+    name: 'Milo',
     species: 'bird',
     comments: 'Acervus conforto conicio demulceo creo aro carcer.',
     age: 10,
@@ -861,7 +861,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Tucker',
+    name: 'Tucker',
     species: 'fish',
     comments: 'Vilis talio ipsa audacia aureus animi corrigo quia.',
     age: 17,
@@ -875,7 +875,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Buster',
+    name: 'Buster',
     species: 'cat',
     comments:
       'Tego temperantia sperno amissio possimus umerus viscus armarium tum.',
@@ -890,7 +890,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Toby',
+    name: 'Toby',
     species: 'bird',
     comments: 'Denuo comminor architecto debilito.',
     age: 14,
@@ -904,7 +904,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Gus',
+    name: 'Gus',
     species: 'rabbit',
     comments: 'Magni vilis coma tres contabesco.',
     age: 16,
@@ -918,7 +918,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Sparky',
+    name: 'Sparky',
     species: 'hamster',
     comments:
       'Strenuus corrigo exercitationem vinum vere speculum concido abbas tubineus cruentus.',
@@ -933,7 +933,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Marley',
+    name: 'Marley',
     species: 'rabbit',
     comments:
       'Benigne tener crustulum tactus turba solitudo sophismata defendo verecundia.',
@@ -948,7 +948,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Harley',
+    name: 'Harley',
     species: 'rabbit',
     comments: 'Maiores tepidus volutabrum vel cupressus clarus sint sopor.',
     age: 7,
@@ -962,7 +962,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Jack',
+    name: 'Jack',
     species: 'cat',
     comments: 'Defleo defaeco deludo natus aspicio adimpleo.',
     age: 17,
@@ -976,7 +976,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Buddy',
+    name: 'Buddy',
     species: 'bird',
     comments: 'Pecto damno clibanus utroque.',
     age: 11,
@@ -990,7 +990,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Molly',
+    name: 'Molly',
     species: 'fish',
     comments: 'Earum atrox despecto crinis consequatur cimentarius tibi.',
     age: 7,
@@ -1004,7 +1004,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bones',
+    name: 'Bones',
     species: 'fish',
     comments: 'Fugiat venustas veniam defaeco vitiosus abutor carpo.',
     age: 3,
@@ -1018,7 +1018,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bailey',
+    name: 'Bailey',
     species: 'rabbit',
     comments: 'Confido alveus certus delectatio.',
     age: 8,
@@ -1032,7 +1032,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Peanut',
+    name: 'Peanut',
     species: 'fish',
     comments: 'Creo vigor vado cogo sto.',
     age: 20,
@@ -1046,7 +1046,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Barkley',
+    name: 'Barkley',
     species: 'rabbit',
     comments:
       'Arbustum subvenio taceo reiciendis versus speciosus curto vester adficio alius.',
@@ -1061,7 +1061,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Zeus',
+    name: 'Zeus',
     species: 'hamster',
     comments: 'Urbanus aliquam catena.',
     age: 4,
@@ -1075,7 +1075,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Gus',
+    name: 'Gus',
     species: 'rabbit',
     comments: 'Libero suffoco laboriosam.',
     age: 7,
@@ -1089,7 +1089,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Zorro',
+    name: 'Zorro',
     species: 'hamster',
     comments:
       'Cursim artificiose aduro dolorum aequus ambitus tres tricesimus.',
@@ -1104,7 +1104,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Sophie',
+    name: 'Sophie',
     species: 'hamster',
     comments: 'Sonitus aeternus stips constans arbor coadunatio.',
     age: 20,
@@ -1118,7 +1118,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Winston',
+    name: 'Winston',
     species: 'rabbit',
     comments: 'Tribuo basium coniecto coruscus abeo.',
     age: 19,
@@ -1132,7 +1132,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Rex',
+    name: 'Rex',
     species: 'dog',
     comments: 'Theca ea non reprehenderit uterque.',
     age: 19,
@@ -1146,7 +1146,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Barkley',
+    name: 'Barkley',
     species: 'bird',
     comments: 'Abutor cui acquiro apud tertius tersus adfectus.',
     age: 15,
@@ -1160,7 +1160,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bailey',
+    name: 'Bailey',
     species: 'rabbit',
     comments: 'Arbustum voveo patrocinor deserunt amissio dedico.',
     age: 2,
@@ -1174,7 +1174,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Jack',
+    name: 'Jack',
     species: 'hamster',
     comments:
       'Conventus temporibus surculus conduco voluptates atrox conqueror victus.',
@@ -1189,7 +1189,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Whiskers',
+    name: 'Whiskers',
     species: 'bird',
     comments:
       'Argumentum tergo viridis curtus crapula cohibeo cupiditas truculenter cubicularis amitto.',
@@ -1204,7 +1204,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Rusty',
+    name: 'Rusty',
     species: 'rabbit',
     comments: 'Creator voluntarius suppellex curtus.',
     age: 9,
@@ -1218,7 +1218,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Sparky',
+    name: 'Sparky',
     species: 'dog',
     comments: 'Aqua solutio cerno coepi ratione timor soluta qui cognomen.',
     age: 13,
@@ -1232,7 +1232,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Scout',
+    name: 'Scout',
     species: 'bird',
     comments:
       'Aeneus studio tergo nemo ara pauper speciosus arbitro votum tonsor.',
@@ -1247,7 +1247,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucky',
+    name: 'Lucky',
     species: 'cat',
     comments:
       'Vitiosus somniculosus decumbo verbera tempus molestias dolores cupressus aliquid terebro.',
@@ -1262,7 +1262,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Tucker',
+    name: 'Tucker',
     species: 'cat',
     comments: 'Adamo contabesco acidus ascisco eum comedo.',
     age: 17,
@@ -1276,7 +1276,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Duke',
+    name: 'Duke',
     species: 'cat',
     comments: 'Deprecator causa claudeo.',
     age: 17,
@@ -1290,7 +1290,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Mickey',
+    name: 'Mickey',
     species: 'cat',
     comments:
       'Demum comedo absens pectus vetus libero accusantium consequuntur arca arceo.',
@@ -1305,7 +1305,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Rex',
+    name: 'Rex',
     species: 'dog',
     comments: 'Validus vestigium tempore vulnero.',
     age: 7,
@@ -1319,7 +1319,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Duke',
+    name: 'Duke',
     species: 'hamster',
     comments:
       'Conventus delibero solutio ante deprimo repudiandae desparatus dedico asper curo.',
@@ -1334,7 +1334,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Duke',
+    name: 'Duke',
     species: 'cat',
     comments:
       'Curis antepono truculenter colligo cultellus abutor taceo acies.',
@@ -1349,7 +1349,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Leo',
+    name: 'Leo',
     species: 'rabbit',
     comments:
       'Compello usitas concedo creptio iste perspiciatis argentum crustulum defendo corona.',
@@ -1364,7 +1364,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Louie',
+    name: 'Louie',
     species: 'fish',
     comments: 'Stultus utrimque vito amita.',
     age: 17,
@@ -1378,7 +1378,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Marley',
+    name: 'Marley',
     species: 'fish',
     comments: 'Clamo territo nisi cultura vociferor adfectus campana socius.',
     age: 19,
@@ -1392,7 +1392,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Champ',
+    name: 'Champ',
     species: 'hamster',
     comments:
       'Tersus defendo deorsum recusandae alter crur curvo tyrannus audacia adstringo.',
@@ -1407,7 +1407,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Rex',
+    name: 'Rex',
     species: 'bird',
     comments: 'Triduana quibusdam caelum verbum caecus iusto.',
     age: 14,
@@ -1421,7 +1421,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Molly',
+    name: 'Molly',
     species: 'hamster',
     comments: 'Fuga aetas curso confero eaque delinquo.',
     age: 4,
@@ -1435,7 +1435,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Luke',
+    name: 'Luke',
     species: 'cat',
     comments:
       'Recusandae tabernus statim averto cibus vel statua sumo vespillo.',
@@ -1450,7 +1450,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucky',
+    name: 'Lucky',
     species: 'fish',
     comments: 'Studio demum debilito depraedor suspendo tamisium.',
     age: 9,
@@ -1464,7 +1464,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucy',
+    name: 'Lucy',
     species: 'bird',
     comments: 'Strues vulgo ullus vado non aer.',
     age: 13,
@@ -1478,7 +1478,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Joey',
+    name: 'Joey',
     species: 'hamster',
     comments: 'Armarium maiores attonbitus iste decumbo solitudo.',
     age: 17,
@@ -1492,7 +1492,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Champ',
+    name: 'Champ',
     species: 'cat',
     comments: 'Denique delibero constans delicate summisse eveniet.',
     age: 13,
@@ -1506,7 +1506,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Fluffy',
+    name: 'Fluffy',
     species: 'fish',
     comments: 'Id crur spiritus expedita pecto dapifer.',
     age: 3,
@@ -1520,7 +1520,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Mickey',
+    name: 'Mickey',
     species: 'hamster',
     comments: 'Cursus arbustum bellicus uxor bos patria.',
     age: 6,
@@ -1534,7 +1534,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Rusty',
+    name: 'Rusty',
     species: 'fish',
     comments: 'Tenus vociferor accusamus vespillo cribro carus cohaero.',
     age: 18,
@@ -1548,7 +1548,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Murphy',
+    name: 'Murphy',
     species: 'cat',
     comments: 'Ventus vinco admoneo clementia vesco.',
     age: 17,
@@ -1562,7 +1562,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Ziggy',
+    name: 'Ziggy',
     species: 'hamster',
     comments: 'Totidem ipsam cetera textor vilitas at alienus sto.',
     age: 4,
@@ -1576,7 +1576,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Gus',
+    name: 'Gus',
     species: 'hamster',
     comments: 'Adsuesco circumvenio varius aufero quam coadunatio vulgus.',
     age: 10,
@@ -1590,7 +1590,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Chase',
+    name: 'Chase',
     species: 'cat',
     comments: 'Voco laborum enim carmen talis colo.',
     age: 7,
@@ -1604,7 +1604,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Jasper',
+    name: 'Jasper',
     species: 'rabbit',
     comments:
       'Adsuesco acies appositus caveo ulterius argentum appositus creptio sperno.',
@@ -1619,7 +1619,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Luke',
+    name: 'Luke',
     species: 'fish',
     comments: 'Vigilo tergeo casso vilis spectaculum stultus theatrum acquiro.',
     age: 8,
@@ -1633,7 +1633,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Duke',
+    name: 'Duke',
     species: 'bird',
     comments: 'Quibusdam crebro timor minima cursus spero acer id nisi vesco.',
     age: 16,
@@ -1647,7 +1647,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Toby',
+    name: 'Toby',
     species: 'hamster',
     comments:
       'Adaugeo assentator ager videlicet neque repellendus viscus accommodo bos.',
@@ -1662,7 +1662,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Dexter',
+    name: 'Dexter',
     species: 'hamster',
     comments: 'Despecto magni colo terra uredo vito deinde venia.',
     age: 13,
@@ -1676,7 +1676,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Buster',
+    name: 'Buster',
     species: 'rabbit',
     comments:
       'Auctus volutabrum utique autem quis non acies eveniet depromo pax.',
@@ -1691,7 +1691,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Woof',
+    name: 'Woof',
     species: 'cat',
     comments: 'Carbo supra consequatur via cum.',
     age: 19,
@@ -1705,7 +1705,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Scout',
+    name: 'Scout',
     species: 'hamster',
     comments:
       'Maiores occaecati consuasor avaritia reiciendis sophismata talus.',
@@ -1720,7 +1720,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Rex',
+    name: 'Rex',
     species: 'cat',
     comments: 'Advoco tamisium sperno impedit solvo clementia tergum.',
     age: 5,
@@ -1734,7 +1734,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Barkley',
+    name: 'Barkley',
     species: 'fish',
     comments: 'Corrigo quibusdam amor.',
     age: 4,
@@ -1748,7 +1748,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Charlie',
+    name: 'Charlie',
     species: 'fish',
     comments: 'Terror verbera celebrer.',
     age: 15,
@@ -1762,7 +1762,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucky',
+    name: 'Lucky',
     species: 'rabbit',
     comments: 'Tristis clibanus adipiscor dens arca brevis aegre.',
     age: 4,
@@ -1776,7 +1776,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Buddy',
+    name: 'Buddy',
     species: 'cat',
     comments:
       'Maiores uter agnosco conspergo adstringo tergo suscipit aliquid vapulus.',
@@ -1791,7 +1791,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Jasper',
+    name: 'Jasper',
     species: 'bird',
     comments: 'Vitae quo crapula caput aranea.',
     age: 1,
@@ -1805,7 +1805,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Sparky',
+    name: 'Sparky',
     species: 'cat',
     comments: 'Arbor crebro colligo.',
     age: 3,
@@ -1819,7 +1819,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Leo',
+    name: 'Leo',
     species: 'rabbit',
     comments: 'Doloremque ceno trepide acerbitas minus vorago aperte.',
     age: 7,
@@ -1833,7 +1833,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Sammy',
+    name: 'Sammy',
     species: 'cat',
     comments: 'Attero cresco defungo.',
     age: 14,
@@ -1847,7 +1847,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Sammy',
+    name: 'Sammy',
     species: 'rabbit',
     comments:
       'Cubicularis despecto crudelis nihil cunae ulciscor corroboro defluo campana textor.',
@@ -1862,7 +1862,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Scooter',
+    name: 'Scooter',
     species: 'hamster',
     comments:
       'Terreo solvo tonsor balbus ipsum tremo civis vallum maiores cupressus.',
@@ -1877,7 +1877,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Gus',
+    name: 'Gus',
     species: 'fish',
     comments: 'Attollo tergiversatio creber conspergo.',
     age: 18,
@@ -1891,7 +1891,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Leo',
+    name: 'Leo',
     species: 'hamster',
     comments:
       'Vespillo aliquam bardus demens perspiciatis argumentum cornu spectaculum.',
@@ -1906,7 +1906,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Winston',
+    name: 'Winston',
     species: 'fish',
     comments: 'Cicuta caste et.',
     age: 13,
@@ -1920,7 +1920,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Murphy',
+    name: 'Murphy',
     species: 'rabbit',
     comments:
       'Et statua alias desino adinventitias tolero molestias ager ancilla.',
@@ -1935,7 +1935,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Barkley',
+    name: 'Barkley',
     species: 'cat',
     comments: 'Admoveo quis suscipit teres tabgo curiositas dolore.',
     age: 13,
@@ -1949,7 +1949,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bones',
+    name: 'Bones',
     species: 'hamster',
     comments: 'Absorbeo casso confugo denego.',
     age: 7,
@@ -1963,7 +1963,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bailey',
+    name: 'Bailey',
     species: 'cat',
     comments: 'Subiungo quam nisi.',
     age: 5,
@@ -1977,7 +1977,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bones',
+    name: 'Bones',
     species: 'cat',
     comments: 'Aptus conduco vomer adnuo congregatio vito deprecator tumultus.',
     age: 8,
@@ -1991,7 +1991,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Fluffy',
+    name: 'Fluffy',
     species: 'hamster',
     comments: 'Veritatis tondeo confido sui.',
     age: 18,
@@ -2005,7 +2005,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Peanut',
+    name: 'Peanut',
     species: 'rabbit',
     comments: 'Absum ceno tardus degero catena tergiversatio arguo.',
     age: 6,
@@ -2019,7 +2019,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bailey',
+    name: 'Bailey',
     species: 'bird',
     comments:
       'Fuga conduco arto tenus cursim sortitus delibero optio cruciamentum tutamen.',
@@ -2034,7 +2034,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucky',
+    name: 'Lucky',
     species: 'cat',
     comments: 'Absorbeo cunabula voluntarius ademptio trucido denique vetus.',
     age: 14,
@@ -2048,7 +2048,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Leo',
+    name: 'Leo',
     species: 'fish',
     comments: 'Solitudo attollo itaque apud cur quas tergo tertius.',
     age: 3,
@@ -2062,7 +2062,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bones',
+    name: 'Bones',
     species: 'rabbit',
     comments: 'Acies vicinus vacuus delicate facere.',
     age: 15,
@@ -2076,7 +2076,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Sammy',
+    name: 'Sammy',
     species: 'dog',
     comments: 'Ante incidunt adstringo amoveo verumtamen.',
     age: 17,
@@ -2090,7 +2090,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Molly',
+    name: 'Molly',
     species: 'hamster',
     comments: 'Via eos color congregatio adnuo.',
     age: 16,
@@ -2104,7 +2104,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bear',
+    name: 'Bear',
     species: 'hamster',
     comments: 'Amoveo advenio accusantium bibo vere.',
     age: 15,
@@ -2118,7 +2118,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucky',
+    name: 'Lucky',
     species: 'dog',
     comments: 'Arbitro creta tolero.',
     age: 18,
@@ -2132,7 +2132,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucky',
+    name: 'Lucky',
     species: 'hamster',
     comments: 'Terreo compello carbo terreo caries ex totam utrimque quas.',
     age: 13,
@@ -2146,7 +2146,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Charlie',
+    name: 'Charlie',
     species: 'dog',
     comments: 'Cura clam templum sint summa appello cruciamentum.',
     age: 14,
@@ -2160,7 +2160,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Mickey',
+    name: 'Mickey',
     species: 'rabbit',
     comments: 'Congregatio dolorum cernuus decretum congregatio animi id.',
     age: 19,
@@ -2174,7 +2174,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Jack',
+    name: 'Jack',
     species: 'bird',
     comments: 'Officia asperiores video natus antepono viridis.',
     age: 16,
@@ -2188,7 +2188,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bailey',
+    name: 'Bailey',
     species: 'dog',
     comments: 'Utique vicissitudo spargo admitto.',
     age: 2,
@@ -2202,7 +2202,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Jack',
+    name: 'Jack',
     species: 'cat',
     comments: 'Anser turpis vetus stillicidium vesco.',
     age: 2,
@@ -2216,7 +2216,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bella',
+    name: 'Bella',
     species: 'cat',
     comments: 'Termes cras thema vos charisma molestiae crustulum quod vobis.',
     age: 18,
@@ -2230,7 +2230,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Molly',
+    name: 'Molly',
     species: 'dog',
     comments: 'Cultura stillicidium undique animadverto temptatio.',
     age: 12,
@@ -2244,7 +2244,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Joey',
+    name: 'Joey',
     species: 'dog',
     comments: 'Animi aequitas conatus.',
     age: 11,
@@ -2258,7 +2258,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bailey',
+    name: 'Bailey',
     species: 'fish',
     comments: 'Corrigo clam sordeo coepi vulticulus virtus ratione curriculum.',
     age: 15,
@@ -2272,7 +2272,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Champ',
+    name: 'Champ',
     species: 'fish',
     comments: 'Angelus suus error.',
     age: 9,
@@ -2286,7 +2286,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Cooper',
+    name: 'Cooper',
     species: 'fish',
     comments: 'Reiciendis audentia universe colligo triumphus tam.',
     age: 10,
@@ -2300,7 +2300,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucy',
+    name: 'Lucy',
     species: 'cat',
     comments: 'Decimus admoveo sollers demoror beatus cunabula.',
     age: 5,
@@ -2314,7 +2314,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Rusty',
+    name: 'Rusty',
     species: 'fish',
     comments: 'Baiulus aveho thalassinus sollers.',
     age: 15,
@@ -2328,7 +2328,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Milo',
+    name: 'Milo',
     species: 'rabbit',
     comments: 'Quia viscus sequi theologus ipsum autem thesis magnam tenax.',
     age: 9,
@@ -2342,7 +2342,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Duke',
+    name: 'Duke',
     species: 'dog',
     comments: 'Tyrannus sperno voluntarius vos tabella.',
     age: 10,
@@ -2356,7 +2356,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Buddy',
+    name: 'Buddy',
     species: 'fish',
     comments: 'Coadunatio nemo unde ceno vilis timor cilicium textus.',
     age: 14,
@@ -2370,7 +2370,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Rocky',
+    name: 'Rocky',
     species: 'hamster',
     comments: 'Fuga arbitro vinum deleniti.',
     age: 8,
@@ -2384,7 +2384,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Spot',
+    name: 'Spot',
     species: 'fish',
     comments: 'Aperio deorsum blandior quia triduana eum officia et demonstro.',
     age: 2,
@@ -2398,7 +2398,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bear',
+    name: 'Bear',
     species: 'cat',
     comments: 'Dolorum approbo alter.',
     age: 14,
@@ -2412,7 +2412,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Winston',
+    name: 'Winston',
     species: 'bird',
     comments: 'Articulus rem adnuo nemo celer contego trepide unde suppellex.',
     age: 13,
@@ -2426,7 +2426,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Rusty',
+    name: 'Rusty',
     species: 'dog',
     comments: 'Coma arx statua voro causa virga.',
     age: 6,
@@ -2440,7 +2440,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Harley',
+    name: 'Harley',
     species: 'cat',
     comments:
       'Itaque ultra cito colligo adimpleo confido tot accendo suscipio tot.',
@@ -2455,7 +2455,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Zeus',
+    name: 'Zeus',
     species: 'fish',
     comments: 'Tempore corrumpo ulterius.',
     age: 15,
@@ -2469,7 +2469,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Jack',
+    name: 'Jack',
     species: 'dog',
     comments: 'Traho aggredior damno.',
     age: 16,
@@ -2483,7 +2483,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Charlie',
+    name: 'Charlie',
     species: 'rabbit',
     comments: 'Vere calco succurro cernuus cresco.',
     age: 5,
@@ -2497,7 +2497,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Buster',
+    name: 'Buster',
     species: 'fish',
     comments: 'Peccatus decumbo culpo paens coruscus.',
     age: 19,
@@ -2511,7 +2511,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Louie',
+    name: 'Louie',
     species: 'hamster',
     comments: 'Cresco commemoro suspendo creta ager aiunt demum.',
     age: 5,
@@ -2525,7 +2525,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Charlie',
+    name: 'Charlie',
     species: 'hamster',
     comments:
       'Demoror decretum quo vester animadverto aestivus adinventitias comes venio.',
@@ -2540,7 +2540,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bailey',
+    name: 'Bailey',
     species: 'dog',
     comments: 'Verumtamen victoria causa una.',
     age: 4,
@@ -2554,7 +2554,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bones',
+    name: 'Bones',
     species: 'hamster',
     comments: 'Defessus aro tempora blandior.',
     age: 20,
@@ -2568,7 +2568,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Sadie',
+    name: 'Sadie',
     species: 'dog',
     comments: 'Tergiversatio benigne calamitas vix tempora desidero acies.',
     age: 5,
@@ -2582,7 +2582,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Winston',
+    name: 'Winston',
     species: 'cat',
     comments: 'Aurum admiratio alii.',
     age: 1,
@@ -2596,7 +2596,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Jake',
+    name: 'Jake',
     species: 'rabbit',
     comments: 'Amita caries acervus porro synagoga xiphias eveniet.',
     age: 13,
@@ -2610,7 +2610,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Shadow',
+    name: 'Shadow',
     species: 'cat',
     comments: 'Alienus molestias abstergo alveus aestivus cubitum.',
     age: 16,
@@ -2624,7 +2624,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Sparky',
+    name: 'Sparky',
     species: 'cat',
     comments: 'Deleniti ipsa acerbitas compello admoveo subnecto stella.',
     age: 11,
@@ -2638,7 +2638,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bella',
+    name: 'Bella',
     species: 'rabbit',
     comments: 'Quibusdam ante defleo sumo.',
     age: 4,
@@ -2652,7 +2652,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Gus',
+    name: 'Gus',
     species: 'dog',
     comments: 'Ad maxime comprehendo sulum.',
     age: 17,
@@ -2666,7 +2666,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Barkley',
+    name: 'Barkley',
     species: 'hamster',
     comments: 'Bellum sui subnecto tabula carmen defluo ambulo.',
     age: 9,
@@ -2680,7 +2680,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Biscuit',
+    name: 'Biscuit',
     species: 'fish',
     comments: 'Consequatur torqueo solus cenaculum earum.',
     age: 19,
@@ -2694,7 +2694,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Murphy',
+    name: 'Murphy',
     species: 'hamster',
     comments: 'Aliquid vulgaris vomito.',
     age: 15,
@@ -2708,7 +2708,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Bear',
+    name: 'Bear',
     species: 'hamster',
     comments: 'Comedo cohaero vigilo.',
     age: 3,
@@ -2722,7 +2722,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Riley',
+    name: 'Riley',
     species: 'bird',
     comments: 'Angustus ulterius est ciminatio.',
     age: 6,
@@ -2736,7 +2736,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Joey',
+    name: 'Joey',
     species: 'rabbit',
     comments: 'Spes tandem tres tollo pecto enim sollers corrumpo.',
     age: 10,
@@ -2750,7 +2750,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucy',
+    name: 'Lucy',
     species: 'cat',
     comments:
       'Viriliter reiciendis vinum nemo harum strenuus sopor fuga victus.',
@@ -2765,7 +2765,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Murphy',
+    name: 'Murphy',
     species: 'cat',
     comments: 'Abstergo adipiscor incidunt.',
     age: 8,
@@ -2779,7 +2779,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucy',
+    name: 'Lucy',
     species: 'dog',
     comments: 'Arto astrum angulus voluptatum alii pecus demitto adeo aequus.',
     age: 20,
@@ -2793,7 +2793,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Joey',
+    name: 'Joey',
     species: 'dog',
     comments: 'Corroboro curis tumultus.',
     age: 12,
@@ -2807,7 +2807,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Lucky',
+    name: 'Lucky',
     species: 'cat',
     comments: 'Varietas approbo baiulus.',
     age: 9,
@@ -2821,7 +2821,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Champ',
+    name: 'Champ',
     species: 'rabbit',
     comments:
       'Aperiam excepturi sint tamquam certe volubilis degero pecco quasi.',
@@ -2836,7 +2836,7 @@ export const PETS_DATA_SEEDS = [
     },
   },
   {
-    petsName: 'Biscuit',
+    name: 'Biscuit',
     species: 'bird',
     comments: 'Ventito congregatio coniuratio.',
     age: 9,
