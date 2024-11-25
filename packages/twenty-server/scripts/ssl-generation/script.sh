@@ -10,7 +10,7 @@ fi
 # Default values
 DOMAIN=${1:-localhost.com}
 ROOT_CERT_NAME=${2:-myRootCertificate}
-VALIDITY_DAYS=${3:-825} # Default is 825 days
+VALIDITY_DAYS=${3:-398} # Default is 825 days
 
 CERTS_DIR=~/certs/$DOMAIN
 
@@ -19,7 +19,7 @@ mkdir -p $CERTS_DIR
 cd $CERTS_DIR
 
 # Generate the private key for the Certificate Authority (CA)
-openssl genrsa -des3 -out ${ROOT_CERT_NAME}.key 2048
+openssl genrsa -aes256 -out ${ROOT_CERT_NAME}.key 2048
 
 # Generate the root certificate for the CA
 openssl req -x509 -new -nodes -key ${ROOT_CERT_NAME}.key -sha256 -days $VALIDITY_DAYS -out ${ROOT_CERT_NAME}.pem \

@@ -25,7 +25,7 @@ To generate certificates using the default values:
 
 1. **Domain Name**: Specify the domain name for the certificate. Default is `localhost.com`.
 2. **Root Certificate Name**: Specify a name for the root certificate. Default is `myRootCertificate`.
-3. **Validity Days**: Specify the number of days the certificate is valid for. Default is `825` days.
+3. **Validity Days**: Specify the number of days the certificate is valid for. Default is `398` days.
 
 #### Examples:
 
@@ -46,7 +46,7 @@ To generate certificates using the default values:
 
 4. **Custom Domain Name, Root Certificate Name, and Validity Days**:
     ```sh
-    ./script.sh example.com customRootCertificate 1095
+    ./script.sh example.com customRootCertificate 398
     ```
 
 ## Script Details
@@ -72,7 +72,3 @@ The generated files are stored in `~/certs/{domain}`:
 
 - If running on non-macOS systems, you'll need to manually add the root certificate to your trusted certificate store.
 - Ensure that OpenSSL is installed and available in your PATH.
-
-## License
-
-This script is licensed under the [MIT License](LICENSE).
