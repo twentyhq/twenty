@@ -138,22 +138,20 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       );
     }
 
-    const deletedFieldMetadata = toObjectMetadata.fields.find(
+    const deletedAtFieldMetadata = toObjectMetadata.fields.find(
       (fieldMetadata) =>
         fieldMetadata.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
     );
 
-    if (!deletedFieldMetadata) {
-      throw new RelationMetadataException(
-        `Deleted field metadata not found`,
-        RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
-      );
-    }
+    this.throwIfDeletedAtFieldMetadataNotFound(deletedAtFieldMetadata);
 
     await this.indexMetadataService.createIndexMetadata(
       relationMetadataInput.workspaceId,
       toObjectMetadata,
-      [foreignKeyFieldMetadata, deletedFieldMetadata],
+      [
+        foreignKeyFieldMetadata,
+        deletedAtFieldMetadata as FieldMetadataEntity<'default'>,
+      ],
       false,
       false,
     );
@@ -449,17 +447,15 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       },
     );
 
-    if (!isDefined(deletedAtFieldMetadata)) {
-      throw new RelationMetadataException(
-        `Deleted field metadata not found`,
-        RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
-      );
-    }
+    this.throwIfDeletedAtFieldMetadataNotFound(deletedAtFieldMetadata);
 
     await this.indexMetadataService.deleteIndexMetadata(
       workspaceId,
       relationMetadata.toObjectMetadata,
-      [foreignKeyFieldMetadata, deletedAtFieldMetadata],
+      [
+        foreignKeyFieldMetadata,
+        deletedAtFieldMetadata as FieldMetadataEntity<'default'>,
+      ],
     );
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
@@ -574,5 +570,16 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         },
       ],
     );
+  }
+
+  private throwIfDeletedAtFieldMetadataNotFound(
+    deletedAtFieldMetadata?: FieldMetadataEntity<'default'> | null,
+  ) {
+    if (!isDefined(deletedAtFieldMetadata)) {
+      throw new RelationMetadataException(
+        `Deleted field metadata not found`,
+        RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
+      );
+    }
   }
 }
