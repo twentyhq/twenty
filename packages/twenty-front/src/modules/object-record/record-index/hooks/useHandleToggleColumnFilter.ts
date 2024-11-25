@@ -8,13 +8,13 @@ import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { isDefined } from '~/utils/isDefined';
-import { useFilterDropdownWithUnknownScope } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdownWithUnknownScope';
 import { useRecoilCallback } from 'recoil';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useSetFilterDefinitionUsedInDropdownInScope } from '@/object-record/object-filter-dropdown/hooks/useSetFilterDefinitionUsedInDropdownInScope';
 
 type UseHandleToggleColumnFilterProps = {
   objectNameSingular: string;
@@ -54,8 +54,8 @@ export const useHandleToggleColumnFilter = ({
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const { setFilterDefinitionUsedInDropdown } =
-    useFilterDropdownWithUnknownScope();
+  const { setFilterDefinitionUsedInDropdownInScope } =
+    useSetFilterDefinitionUsedInDropdownInScope();
 
   const handleToggleColumnFilter = useCallback(
     async (fieldMetadataId: string) => {
@@ -102,7 +102,10 @@ export const useHandleToggleColumnFilter = ({
 
         await upsertCombinedViewFilter(newFilter);
 
-        setFilterDefinitionUsedInDropdown(newFilter.id, filterDefinition);
+        setFilterDefinitionUsedInDropdownInScope(
+          newFilter.id,
+          filterDefinition,
+        );
       }
 
       openDropdown(existingViewFilter?.id ?? newFilterId);
@@ -111,7 +114,7 @@ export const useHandleToggleColumnFilter = ({
       openDropdown,
       columnDefinitions,
       upsertCombinedViewFilter,
-      setFilterDefinitionUsedInDropdown,
+      setFilterDefinitionUsedInDropdownInScope,
     ],
   );
 

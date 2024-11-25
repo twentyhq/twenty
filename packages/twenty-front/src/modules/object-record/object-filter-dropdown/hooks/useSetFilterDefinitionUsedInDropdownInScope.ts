@@ -3,10 +3,8 @@ import { filterDefinitionUsedInDropdownComponentState } from '../states/filterDe
 import { FilterDefinition } from '../types/FilterDefinition';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
-// Merge with useFilterDropdown?
-export const useFilterDropdownWithUnknownScope = () => {
-  // Use this to implement useFilterDropdown's setFilterDefinitionUsedInDropdown?
-  const setFilterDefinitionUsedInDropdown = useRecoilCallback(
+export const useSetFilterDefinitionUsedInDropdownInScope = () => {
+  const setFilterDefinitionUsedInDropdownInScope = useRecoilCallback(
     ({ set }) =>
       (scopeId: string, filterDefinition: FilterDefinition | null) => {
         const filterDefinitionUsedInDropdownState = extractComponentState(
@@ -19,6 +17,6 @@ export const useFilterDropdownWithUnknownScope = () => {
   );
 
   return {
-    setFilterDefinitionUsedInDropdown,
+    setFilterDefinitionUsedInDropdownInScope,
   };
 };
