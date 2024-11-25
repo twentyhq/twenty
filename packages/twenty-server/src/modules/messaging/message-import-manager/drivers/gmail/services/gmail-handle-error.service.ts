@@ -20,14 +20,13 @@ export class GmailHandleErrorService {
     ) {
       throw parseGaxiosError(error);
     }
-    if (error.response?.status !== 410) {
-      const gmailError = {
-        code: error.response?.status,
-        reason: `${error.response?.data?.error?.errors?.[0].reason || error.response?.data?.error || ''}`,
-        message: `${error.response?.data?.error?.errors?.[0].message || error.response?.data?.error_description || ''}${messageExternalId ? ` for message with externalId: ${messageExternalId}` : ''}`,
-      };
 
-      throw parseGmailError(gmailError);
-    }
+    const gmailError = {
+      code: error.code,
+      reason: `${error.errors[0].reason}`,
+      message: `${error.errors[0].message}${messageExternalId ? ` for message with externalId: ${messageExternalId}` : ''}`,
+    };
+
+    throw parseGmailError(gmailError);
   }
 }

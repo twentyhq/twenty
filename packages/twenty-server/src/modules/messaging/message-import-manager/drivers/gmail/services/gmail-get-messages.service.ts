@@ -77,7 +77,7 @@ export class GmailGetMessagesService {
 
     const messages = parsedResponses.map((response, index) => {
       if ('error' in response) {
-        if (response.error.code === 404) {
+        if (response.error.code === 404 || response.error.code === 410) {
           return null;
         }
 
