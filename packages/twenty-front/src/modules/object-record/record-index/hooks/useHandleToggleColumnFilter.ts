@@ -5,7 +5,6 @@ import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/u
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
 import { isDefined } from '~/utils/isDefined';
@@ -79,12 +78,13 @@ export const useHandleToggleColumnFilter = ({
           correspondingColumnDefinition?.type,
         );
 
-        const filterDefinition = {
-          label: correspondingColumnDefinition.label,
-          iconName: correspondingColumnDefinition.iconName,
-          fieldMetadataId,
-          type: filterType,
-        } satisfies FilterDefinition;
+        const filterDefinition = availableFilterDefinitions.find(
+          (fd) => fd.fieldMetadataId === fieldMetadataId,
+        );
+
+        if (!isDefined(filterDefinition)) {
+          throw new Error('Filter definition not found');
+        }
 
         const availableOperandsForFilter =
           getOperandsForFilterDefinition(filterDefinition);
