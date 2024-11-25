@@ -28,6 +28,7 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { castAppTokenToWorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/utils/cast-appToken-to-workspaceInvitation';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -43,29 +44,6 @@ export class WorkspaceInvitationService {
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
   ) {}
-
-  // UTILS METHODS
-  castAppTokenToWorkspaceInvitation(appToken: AppToken) {
-    if (appToken.type !== AppTokenType.InvitationToken) {
-      throw new WorkspaceInvitationException(
-        `Token type must be "${AppTokenType.InvitationToken}"`,
-        WorkspaceInvitationExceptionCode.INVALID_APP_TOKEN_TYPE,
-      );
-    }
-
-    if (!appToken.context?.email) {
-      throw new WorkspaceInvitationException(
-        `Invitation corrupted: Missing email in context`,
-        WorkspaceInvitationExceptionCode.INVITATION_CORRUPTED,
-      );
-    }
-
-    return {
-      id: appToken.id,
-      email: appToken.context.email,
-      expiresAt: appToken.expiresAt,
-    };
-  }
 
   // VALIDATIONS METHODS
   private async validatePublicInvitation(workspaceInviteHash: string) {
@@ -200,7 +178,7 @@ export class WorkspaceInvitationService {
       },
     });
 
-    return appTokens.map(this.castAppTokenToWorkspaceInvitation);
+    return appTokens.map(castAppTokenToWorkspaceInvitation);
   }
 
   // MUTATIONS METHODS
@@ -392,9 +370,7 @@ export class WorkspaceInvitationService {
         } else {
           acc.result.push(
             invitation.value.isPersonalInvitation
-              ? this.castAppTokenToWorkspaceInvitation(
-                  invitation.value.appToken,
-                )
+              ? castAppTokenToWorkspaceInvitation(invitation.value.appToken)
               : { email: invitation.value.email },
           );
         }
