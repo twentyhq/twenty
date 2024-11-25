@@ -21,8 +21,8 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { computeRedirectErrorUrl } from 'src/engine/core-modules/auth/utils/compute-redirect-error-url';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -30,7 +30,7 @@ export class GoogleAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
-    private readonly workspaceService: WorkspaceService,
+    private readonly urlManagerService: UrlManagerService,
     private readonly environmentService: EnvironmentService,
   ) {}
 
@@ -87,11 +87,8 @@ export class GoogleAuthController {
     } catch (err) {
       if (err instanceof AuthException) {
         return res.redirect(
-          computeRedirectErrorUrl({
-            frontBaseUrl: this.environmentService.get('FRONT_BASE_URL'),
-            subdomain: this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
-              ? 'app'
-              : null,
+          this.urlManagerService.computeRedirectErrorUrl({
+            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
             errorMessage: err.message,
           }),
         );

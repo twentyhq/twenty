@@ -23,9 +23,11 @@ import {
   WorkspaceException,
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { getWorkspaceSubdomainByOrigin } from 'src/engine/utils/get-workspace-subdomain-by-origin';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { getDomainNameByEmail, isWorkEmail } from 'src/utils/is-work-email';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { isDefined } from 'src/utils/is-defined';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
@@ -41,6 +43,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly featureFlagService: FeatureFlagService,
     private readonly environmentService: EnvironmentService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly urlManagerService: UrlManagerService,
     private moduleRef: ModuleRef,
   ) {
     super(workspaceRepository);
@@ -314,14 +317,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     };
   }
 
-  getSubdomainIfMultiworkspaceEnabled(workspace: Pick<Workspace, 'subdomain'>) {
-    if (this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      return workspace.subdomain;
-    }
-
-    return null;
-  }
-
   async getWorkspaceByOrigin(origin: string) {
     try {
       if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
@@ -341,12 +336,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         return workspaces[0];
       }
 
-      const subdomain = getWorkspaceSubdomainByOrigin(
-        origin,
-        this.environmentService.get('FRONT_BASE_URL'),
-      );
+      const subdomain =
+        this.urlManagerService.getWorkspaceSubdomainByOrigin(origin);
 
-      if (!subdomain) return;
+      if (!isDefined(subdomain)) return;
 
       return this.workspaceRepository.findOneBy({ subdomain });
     } catch (e) {

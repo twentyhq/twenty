@@ -24,11 +24,13 @@ import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/val
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 @Injectable()
 export class ResetPasswordService {
   constructor(
     private readonly environmentService: EnvironmentService,
+    private readonly urlManagerService: UrlManagerService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     @InjectRepository(AppToken, 'core')
@@ -116,11 +118,12 @@ export class ResetPasswordService {
       );
     }
 
-    const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
-    const resetLink = `${frontBaseURL}/reset-password/${resetToken.passwordResetToken}`;
+    const frontBaseURL = this.urlManagerService.getBaseUrl();
+
+    frontBaseURL.pathname = `/reset-password/${resetToken.passwordResetToken}`;
 
     const emailData = {
-      link: resetLink,
+      link: frontBaseURL.toString(),
       duration: ms(
         differenceInMilliseconds(
           resetToken.passwordResetTokenExpiresAt,

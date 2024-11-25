@@ -38,9 +38,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
-import { getWorkspaceSubdomainByOrigin } from 'src/engine/utils/get-workspace-subdomain-by-origin';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { ImpersonateInput } from './dto/impersonate.input';
@@ -69,7 +69,7 @@ export class AuthResolver {
     private switchWorkspaceService: SwitchWorkspaceService,
     private transientTokenService: TransientTokenService,
     private oauthService: OAuthService,
-    private environmentService: EnvironmentService,
+    private urlManagementService: UrlManagerService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -128,14 +128,8 @@ export class AuthResolver {
   ): Promise<LoginToken> {
     const user = await this.authService.signInUp({
       ...signUpInput,
-      targetWorkspaceSubdomain: this.environmentService.get(
-        'IS_MULTIWORKSPACE_ENABLED',
-      )
-        ? getWorkspaceSubdomainByOrigin(
-            origin,
-            this.environmentService.get('FRONT_BASE_URL'),
-          )
-        : undefined,
+      targetWorkspaceSubdomain:
+        this.urlManagementService.getWorkspaceSubdomainByOrigin(origin),
       fromSSO: false,
       isAuthEnabled: workspaceValidator.isAuthEnabled(
         'password',

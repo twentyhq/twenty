@@ -8,21 +8,19 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { buildWorkspaceURL } from 'src/utils/workspace-url.utils';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { isDefined } from 'src/utils/is-defined';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import ServerUrl from 'src/engine/utils/serverUrl';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 @Controller('auth/redirect')
 @UseFilters(AuthRestApiExceptionFilter)
 export class SignUpAuthController {
   constructor(
     private readonly accessTokenService: AccessTokenService,
-    private readonly authService: AuthService,
-    private readonly workspaceService: WorkspaceService,
     private readonly environmentService: EnvironmentService,
+    private readonly authService: AuthService,
+    private readonly urlManagerService: UrlManagerService,
   ) {}
 
   @Get()
@@ -50,12 +48,9 @@ export class SignUpAuthController {
 
     const { tokens } = await this.authService.verify(user.email, workspace.id);
 
-    const redirectUrl = buildWorkspaceURL(
-      this.environmentService.get('FRONT_BASE_URL'),
-      this.workspaceService.getSubdomainIfMultiworkspaceEnabled(
-        user.defaultWorkspace,
-      ),
-    );
+    const redirectUrl = this.urlManagerService.buildWorkspaceURL({
+      subdomain: workspace.subdomain,
+    });
 
     res.cookie(
       `${workspace.subdomain ?? 'twentyRoot'}TokenPair`,
@@ -63,7 +58,7 @@ export class SignUpAuthController {
       {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // 1 week
         domain: `.${redirectUrl.hostname}`,
-        secure: new URL(ServerUrl.get()).protocol === 'https:',
+        secure: this.environmentService.get('FRONT_PROTOCOL') === 'https',
       },
     );
 

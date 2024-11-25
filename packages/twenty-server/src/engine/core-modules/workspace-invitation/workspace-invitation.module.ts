@@ -8,9 +8,11 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceInvitationResolver } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.resolver';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UrlManagerModule } from 'src/engine/core-modules/url-manager/url-manager.module';
 
 @Module({
   imports: [
+    UrlManagerModule,
     NestjsQueryTypeOrmModule.forFeature(
       [AppToken, UserWorkspace, Workspace],
       'core',

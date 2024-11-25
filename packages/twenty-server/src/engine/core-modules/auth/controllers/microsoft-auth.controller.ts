@@ -19,9 +19,9 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { computeRedirectErrorUrl } from 'src/engine/core-modules/auth/utils/compute-redirect-error-url';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -29,7 +29,7 @@ export class MicrosoftAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
-    private readonly workspaceService: WorkspaceService,
+    private readonly urlManagerService: UrlManagerService,
     private readonly environmentService: EnvironmentService,
   ) {}
 
@@ -86,15 +86,15 @@ export class MicrosoftAuthController {
         ),
       );
     } catch (err) {
-      return res.redirect(
-        computeRedirectErrorUrl({
-          frontBaseUrl: this.environmentService.get('FRONT_BASE_URL'),
-          subdomain: this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
-            ? 'app'
-            : null,
-          errorMessage: err.message,
-        }),
-      );
+      if (err instanceof AuthException) {
+        return res.redirect(
+          this.urlManagerService.computeRedirectErrorUrl({
+            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+            errorMessage: err.message,
+          }),
+        );
+      }
+      throw err;
     }
   }
 }

@@ -28,7 +28,10 @@ import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.ent
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
-import { UserExists } from 'src/engine/core-modules/auth/dto/user-exists.entity';
+import {
+  UserExists,
+  UserNotExists,
+} from 'src/engine/core-modules/auth/dto/user-exists.entity';
 import { Verify } from 'src/engine/core-modules/auth/dto/verify.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -38,17 +41,20 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { buildWorkspaceURL } from 'src/utils/workspace-url.utils';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
+    private readonly urlManagerService: UrlManagerService,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceService: WorkspaceService,
@@ -437,7 +443,7 @@ export class AuthService {
     const emailTemplate = PasswordUpdateNotifyEmail({
       userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
-      link: this.environmentService.get('FRONT_BASE_URL'),
+      link: this.urlManagerService.getBaseUrl().toString(),
     });
 
     const html = render(emailTemplate, {
@@ -478,14 +484,11 @@ export class AuthService {
   }
 
   async computeRedirectURI(loginToken: string, subdomain: string) {
-    const url = buildWorkspaceURL(
-      this.environmentService.get('FRONT_BASE_URL'),
-      this.workspaceService.getSubdomainIfMultiworkspaceEnabled({ subdomain }),
-      {
-        withPathname: '/verify',
-        withSearchParams: { loginToken },
-      },
-    );
+    const url = this.urlManagerService.buildWorkspaceURL({
+      subdomain,
+      pathname: '/verify',
+      searchParams: { loginToken },
+    });
 
     return url.toString();
   }

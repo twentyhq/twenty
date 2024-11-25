@@ -19,6 +19,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
+import { UrlManagerModule } from 'src/engine/core-modules/url-manager/url-manager.module';
 
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
 import { Workspace } from './workspace.entity';
@@ -30,6 +31,7 @@ import { WorkspaceService } from './services/workspace.service';
     TypeORMModule,
     NestjsQueryGraphQLModule.forFeature({
       imports: [
+        UrlManagerModule,
         BillingModule,
         FileModule,
         FileUploadModule,

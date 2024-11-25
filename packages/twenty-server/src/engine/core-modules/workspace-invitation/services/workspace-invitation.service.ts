@@ -1,4 +1,4 @@
-import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -28,8 +28,7 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { buildWorkspaceURL } from 'src/utils/workspace-url.utils';
-import ServerUrl from 'src/engine/utils/serverUrl';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -44,6 +43,7 @@ export class WorkspaceInvitationService {
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
+    private readonly urlManagerService: UrlManagerService,
   ) {}
 
   // UTILS METHODS
@@ -370,26 +370,23 @@ export class WorkspaceInvitationService {
       }),
     );
 
-    const link = buildWorkspaceURL(
-      this.environmentService.get('FRONT_BASE_URL'),
-      this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
-        ? workspace.subdomain
-        : null,
-    );
-
     for (const invitation of invitationsPr) {
       if (invitation.status === 'fulfilled') {
-        link.pathname = `/invite/${workspace?.inviteHash}`;
-
-        if (invitation.value.isPersonalInvitation) {
-          link.searchParams.set('inviteToken', invitation.value.appToken.value);
-        }
+        const link = this.urlManagerService.buildWorkspaceURL({
+          subdomain: workspace.subdomain,
+          pathname: `invite/${workspace?.inviteHash}`,
+          searchParams: invitation.value.isPersonalInvitation
+            ? {
+                inviteToken: invitation.value.appToken.value,
+              }
+            : {},
+        });
 
         const emailData = {
           link: link.toString(),
           workspace: { name: workspace.displayName, logo: workspace.logo },
           sender: { email: sender.email, firstName: sender.firstName },
-          serverUrl: ServerUrl.get(),
+          serverUrl: this.environmentService.get('SERVER_URL'),
         };
 
         const emailTemplate = SendInviteLinkEmail(emailData);

@@ -29,6 +29,8 @@ import {
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 export type SignInUpServiceInput = {
   email: string;

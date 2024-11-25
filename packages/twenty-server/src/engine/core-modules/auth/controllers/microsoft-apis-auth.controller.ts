@@ -23,9 +23,9 @@ import { TransientTokenService } from 'src/engine/core-modules/auth/token/servic
 import { MicrosoftAPIsRequest } from 'src/engine/core-modules/auth/types/microsoft-api-request.type';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
-import { buildWorkspaceURL } from 'src/utils/workspace-url.utils';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 @Controller('auth/microsoft-apis')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -35,6 +35,7 @@ export class MicrosoftAPIsAuthController {
     private readonly transientTokenService: TransientTokenService,
     private readonly environmentService: EnvironmentService,
     private readonly workspaceService: WorkspaceService,
+    private readonly urlManagerService: UrlManagerService,
     private readonly onboardingService: OnboardingService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -116,11 +117,12 @@ export class MicrosoftAPIsAuthController {
     }
 
     return res.redirect(
-      buildWorkspaceURL(
-        this.environmentService.get('FRONT_BASE_URL'),
-        this.workspaceService.getSubdomainIfMultiworkspaceEnabled(workspace),
-        { withPathname: redirectLocation || '/settings/accounts' },
-      ).toString(),
+      this.urlManagerService
+        .buildWorkspaceURL({
+          subdomain: workspace.subdomain,
+          pathname: redirectLocation || '/settings/accounts',
+        })
+        .toString(),
     );
   }
 }
