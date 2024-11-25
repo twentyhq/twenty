@@ -102,7 +102,7 @@ describe('Custom object renaming', () => {
     });
 
     const response = await makeMetadataAPIRequest(graphqlOperation);
-    
+
     // Assert
     expect(response.body.data.createOneObject.nameSingular).toBe(
       LISTING_NAME_SINGULAR,
