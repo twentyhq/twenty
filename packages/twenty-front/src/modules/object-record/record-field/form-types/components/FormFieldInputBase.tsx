@@ -10,7 +10,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
-export const StyledInputContainer = styled.div<{
+const StyledRowContainer = styled.div<{
   multiline?: boolean;
 }>`
   display: flex;
@@ -29,7 +29,7 @@ export const StyledInputContainer = styled.div<{
         `}
 `;
 
-export const StyledInputContainer2 = styled.div<{
+const StyledInputContainer = styled.div<{
   hasRightElement: boolean;
   multiline?: boolean;
   readonly?: boolean;
@@ -77,16 +77,16 @@ export const FormFieldInputBase = ({
     <StyledContainer>
       {label ? <InputLabel htmlFor={inputId}>{label}</InputLabel> : null}
 
-      <StyledInputContainer multiline={multiline}>
-        <StyledInputContainer2
+      <StyledRowContainer multiline={multiline}>
+        <StyledInputContainer
           hasRightElement={isDefined(RightElement)}
           multiline={multiline}
         >
           {Input}
-        </StyledInputContainer2>
+        </StyledInputContainer>
 
         {RightElement}
-      </StyledInputContainer>
+      </StyledRowContainer>
     </StyledContainer>
   );
 };
