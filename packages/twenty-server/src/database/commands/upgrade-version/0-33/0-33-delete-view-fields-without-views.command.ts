@@ -81,7 +81,7 @@ export class DeleteViewFieldsWithoutViewsCommand extends ActiveWorkspacesCommand
     const viewFieldIds = viewFieldsWithoutViews.map((vf) => vf.id);
 
     if (!options.dryRun && viewFieldIds.length > 0) {
-      await viewFieldRepository.softDelete(viewFieldIds);
+      await viewFieldRepository.delete(viewFieldIds);
     }
 
     if (options.verbose) {
