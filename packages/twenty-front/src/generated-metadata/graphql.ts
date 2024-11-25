@@ -161,14 +161,13 @@ export type ClientConfig = {
   __typename?: 'ClientConfig';
   analyticsEnabled: Scalars['Boolean']['output'];
   api: ApiConfig;
-  authProviders: AuthProviders;
   billing: Billing;
   captcha: Captcha;
   chromeExtensionId?: Maybe<Scalars['String']['output']>;
   debugMode: Scalars['Boolean']['output'];
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
-  isMultiworkspaceEnabled: Scalars['Boolean']['output'];
+  isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
   support: Support;
 };
 
