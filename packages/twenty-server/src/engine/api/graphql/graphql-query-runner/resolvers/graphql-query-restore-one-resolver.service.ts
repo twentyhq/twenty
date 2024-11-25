@@ -35,8 +35,8 @@ export class GraphqlQueryRestoreOneResolverService extends GraphqlQueryBaseResol
     );
 
     const nonFormattedRestoredObjectRecords = await queryBuilder
-      .where({ id: executionArgs.args.id })
       .restore()
+      .where({ id: executionArgs.args.id })
       .returning('*')
       .execute();
 
