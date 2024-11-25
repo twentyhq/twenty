@@ -5,7 +5,11 @@ import { RecoilRoot } from 'recoil';
 import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexActionMenuBar';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
-import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
+import {
+  ActionMenuEntry,
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
 import { getActionBarIdFromActionMenuId } from '@/action-menu/utils/getActionBarIdFromActionMenuId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -48,8 +52,8 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
 
             map.set('delete', {
               isPinned: true,
-              scope: 'record-selection',
-              type: 'standard',
+              scope: ActionMenuEntryScope.RecordSelection,
+              type: ActionMenuEntryType.Standard,
               key: 'delete',
               label: 'Delete',
               position: 0,

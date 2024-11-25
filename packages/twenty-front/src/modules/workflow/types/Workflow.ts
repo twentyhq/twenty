@@ -109,8 +109,8 @@ export type WorkflowActionType =
 export type WorkflowStepType = WorkflowActionType;
 
 type BaseTrigger = {
+  name?: string;
   type: string;
-  input?: object;
 };
 
 export type WorkflowDatabaseEventTrigger = BaseTrigger & {

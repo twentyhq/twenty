@@ -1,5 +1,5 @@
 import { action } from '@storybook/addon-actions';
-import { Meta, StoryObj } from '@storybook/react';
+import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -20,12 +20,31 @@ import {
 } from '~/testing/mock-data/users';
 import { sleep } from '~/utils/sleep';
 
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { CommandMenu } from '../CommandMenu';
 
 const companiesMock = getCompaniesMock();
 
 const openTimeout = 50;
+
+const ContextStoreDecorator: Decorator = (Story) => {
+  return (
+    <ContextStoreComponentInstanceContext.Provider
+      value={{ instanceId: 'command-menu' }}
+    >
+      <ActionMenuComponentInstanceContext.Provider
+        value={{ instanceId: 'command-menu' }}
+      >
+        <JestContextStoreSetter contextStoreCurrentObjectMetadataNameSingular="company">
+          <Story />
+        </JestContextStoreSetter>
+      </ActionMenuComponentInstanceContext.Provider>
+    </ContextStoreComponentInstanceContext.Provider>
+  );
+};
 
 const meta: Meta<typeof CommandMenu> = {
   title: 'Modules/CommandMenu/CommandMenu',
@@ -79,6 +98,7 @@ const meta: Meta<typeof CommandMenu> = {
 
       return <Story />;
     },
+    ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
     ComponentWithRouterDecorator,
@@ -109,7 +129,7 @@ export const DefaultWithoutSearch: Story = {
 export const MatchingPersonCompanyActivityCreateNavigate: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByPlaceholderText('Search');
+    const searchInput = await canvas.findByPlaceholderText('Type anything');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'n');
     expect(await canvas.findByText('Linkedin')).toBeInTheDocument();
@@ -122,7 +142,7 @@ export const MatchingPersonCompanyActivityCreateNavigate: Story = {
 export const OnlyMatchingCreateAndNavigate: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByPlaceholderText('Search');
+    const searchInput = await canvas.findByPlaceholderText('Type anything');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'ta');
     expect(await canvas.findByText('Create Task')).toBeInTheDocument();
@@ -133,7 +153,7 @@ export const OnlyMatchingCreateAndNavigate: Story = {
 export const AtleastMatchingOnePerson: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const searchInput = await canvas.findByPlaceholderText('Search');
+    const searchInput = await canvas.findByPlaceholderText('Type anything');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'alex');
     expect(await canvas.findByText('Sylvie Palmer')).toBeInTheDocument();

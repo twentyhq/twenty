@@ -21,7 +21,6 @@ export const ObjectFilterDropdownDateInput = () => {
     filterDefinitionUsedInDropdownState,
     selectedOperandInDropdownState,
     selectedFilterState,
-    setIsObjectFilterDropdownUnfolded,
     selectFilter,
   } = useFilterDropdown();
 
@@ -65,8 +64,6 @@ export const ObjectFilterDropdownDateInput = () => {
       definition: filterDefinitionUsedInDropdown,
       viewFilterGroupId: selectedFilter?.viewFilterGroupId,
     });
-
-    setIsObjectFilterDropdownUnfolded(false);
   };
 
   const handleRelativeDateChange = (
@@ -95,8 +92,6 @@ export const ObjectFilterDropdownDateInput = () => {
       definition: filterDefinitionUsedInDropdown,
       viewFilterGroupId: selectedFilter?.viewFilterGroupId,
     });
-
-    setIsObjectFilterDropdownUnfolded(false);
   };
 
   const isRelativeOperand =

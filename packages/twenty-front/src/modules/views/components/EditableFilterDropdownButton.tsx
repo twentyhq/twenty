@@ -30,7 +30,6 @@ export const EditableFilterDropdownButton = ({
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setSelectedFilter,
-    setIsObjectFilterDropdownOperandSelectUnfolded,
   } = useFilterDropdown({
     filterDropdownId: viewFilterDropdownId,
   });
@@ -87,10 +86,6 @@ export const EditableFilterDropdownButton = ({
     }
   }, [viewFilter, deleteCombinedViewFilter]);
 
-  const handleDropdownClose = useCallback(() => {
-    setIsObjectFilterDropdownOperandSelectUnfolded(false);
-  }, [setIsObjectFilterDropdownOperandSelectUnfolded]);
-
   return (
     <Dropdown
       dropdownId={viewFilterDropdownId}
@@ -106,7 +101,6 @@ export const EditableFilterDropdownButton = ({
       dropdownOffset={{ y: 8, x: 0 }}
       dropdownPlacement="bottom-start"
       onClickOutside={handleDropdownClickOutside}
-      onClose={handleDropdownClose}
     />
   );
 };

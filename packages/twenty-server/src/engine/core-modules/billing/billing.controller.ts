@@ -10,19 +10,22 @@ import {
 
 import { Response } from 'express';
 
-import { WebhookEvent } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
+import { WebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingWebhookService } from 'src/engine/core-modules/billing/services/billing-webhook.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
-
 @Controller('billing')
 export class BillingController {
   protected readonly logger = new Logger(BillingController.name);
 
   constructor(
     private readonly stripeService: StripeService,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingWehbookService: BillingWebhookService,
+    private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
 
   @Post('/webhooks')
@@ -62,6 +65,22 @@ export class BillingController {
         workspaceId,
         event.data,
       );
+    }
+    if (
+      event.type === WebhookEvent.CUSTOMER_ACTIVE_ENTITLEMENT_SUMMARY_UPDATED
+    ) {
+      try {
+        await this.billingWehbookService.processCustomerActiveEntitlement(
+          event.data,
+        );
+      } catch (error) {
+        if (
+          error instanceof BillingException &&
+          error.code === BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND
+        ) {
+          res.status(404).end();
+        }
+      }
     }
     res.status(200).end();
   }

@@ -25,7 +25,9 @@ export function WorkspaceIndex(
     );
 
     metadataArgsStorage.addIndexes({
-      name: `IDX_${generateDeterministicIndexName([
+      name: `IDX_${
+        options?.isUnique ? 'UNIQUE_' : ''
+      }${generateDeterministicIndexName([
         convertClassNameToObjectMetadataName(target.name),
         ...columns,
       ])}`,

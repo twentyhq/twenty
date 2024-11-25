@@ -24,7 +24,7 @@ const StyledScrollWrapper = styled.div`
 `;
 
 const StyledInnerContainer = styled.div`
-  flex: 1;
+  height: 100%;
 `;
 
 export type ScrollWrapperProps = {

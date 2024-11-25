@@ -2,7 +2,7 @@ import { DataSource } from 'typeorm';
 
 import {
   SEED_APPLE_WORKSPACE_ID,
-  SEED_TWENTY_WORKSPACE_ID,
+  SEED_ACME_WORKSPACE_ID,
 } from 'src/database/typeorm-seeds/core/workspaces';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
@@ -33,7 +33,7 @@ export const seedUserWorkspaces = async (
     ];
   }
 
-  if (workspaceId === SEED_TWENTY_WORKSPACE_ID) {
+  if (workspaceId === SEED_ACME_WORKSPACE_ID) {
     userWorkspaces = [
       {
         userId: DEV_SEED_USER_IDS.TIM,

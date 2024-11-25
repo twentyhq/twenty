@@ -194,7 +194,7 @@ export class ServerlessFunctionService {
       },
     );
 
-    this.workspaceEventEmitter.emit(
+    this.workspaceEventEmitter.emitCustomBatchEvent(
       SERVERLESS_FUNCTION_PUBLISHED,
       [
         {

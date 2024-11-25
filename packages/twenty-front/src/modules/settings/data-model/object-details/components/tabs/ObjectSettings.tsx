@@ -186,8 +186,7 @@ export const ObjectSettings = ({ objectMetadataItem }: ObjectSettingsProps) => {
               description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
             />
             <SettingsDataModelObjectAboutForm
-              disabled={!objectMetadataItem.isCustom}
-              disableNameEdit={!objectMetadataItem.isCustom}
+              disableEdition={!objectMetadataItem.isCustom}
               objectMetadataItem={objectMetadataItem}
               onBlur={() => {
                 formConfig.handleSubmit(handleSave)();

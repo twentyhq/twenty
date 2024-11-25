@@ -7,7 +7,11 @@ import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIn
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
-import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
+import {
+  ActionMenuEntry,
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { IconCheckbox, IconHeart, IconTrash } from 'twenty-ui';
@@ -41,8 +45,8 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
           );
 
           map.set('delete', {
-            type: 'standard',
-            scope: 'record-selection',
+            type: ActionMenuEntryType.Standard,
+            scope: ActionMenuEntryScope.RecordSelection,
             key: 'delete',
             label: 'Delete',
             position: 0,
@@ -51,8 +55,8 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
           });
 
           map.set('markAsDone', {
-            type: 'standard',
-            scope: 'record-selection',
+            type: ActionMenuEntryType.Standard,
+            scope: ActionMenuEntryScope.RecordSelection,
             key: 'markAsDone',
             label: 'Mark as done',
             position: 1,
@@ -61,8 +65,8 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
           });
 
           map.set('addToFavorites', {
-            type: 'standard',
-            scope: 'record-selection',
+            type: ActionMenuEntryType.Standard,
+            scope: ActionMenuEntryScope.RecordSelection,
             key: 'addToFavorites',
             label: 'Add to favorites',
             position: 2,

@@ -37,12 +37,17 @@ const StyledDropdownMenuItemsInternalContainer = styled.div`
 export const DropdownMenuItemsContainer = ({
   children,
   hasMaxHeight,
+  className,
 }: {
   children: React.ReactNode;
   hasMaxHeight?: boolean;
+  className?: string;
 }) => {
   return (
-    <StyledDropdownMenuItemsExternalContainer hasMaxHeight={hasMaxHeight}>
+    <StyledDropdownMenuItemsExternalContainer
+      hasMaxHeight={hasMaxHeight}
+      className={className}
+    >
       {hasMaxHeight ? (
         <StyledScrollWrapper contextProviderName="dropdownMenuItemsContainer">
           <StyledDropdownMenuItemsInternalContainer>
