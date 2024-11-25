@@ -1,57 +1,10 @@
-import {
-  StyledInputContainer,
-  StyledInputContainer2,
-} from '@/object-record/record-field/form-types/components/FormFieldInputBase';
+import { FormFieldInputBase } from '@/object-record/record-field/form-types/components/FormFieldInputBase';
 import { TextVariableEditor } from '@/object-record/record-field/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
+import { StyledSearchVariablesDropdownContainer } from '@/workflow/components/WorkflowFormFieldInputBase';
 import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
 import { parseEditorContent } from '@/workflow/search-variables/utils/parseEditorContent';
-import styled from '@emotion/styled';
 import { useDebouncedCallback } from 'use-debounce';
-
-const StyledContainer = styled.div`
-  display: inline-flex;
-  flex-direction: column;
-`;
-
-const StyledLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledSearchVariablesDropdownContainer = styled.div<{
-  multiline?: boolean;
-  readonly?: boolean;
-}>`
-  align-items: center;
-  display: flex;
-  justify-content: center;
-
-  ${({ theme, readonly }) =>
-    !readonly &&
-    `
-      :hover {
-        background-color: ${theme.background.transparent.light};
-      }`}
-
-  ${({ theme, multiline }) =>
-    multiline
-      ? `
-        position: absolute;
-        top: ${theme.spacing(0)};
-        right: ${theme.spacing(0)};
-        padding: ${theme.spacing(0.5)} ${theme.spacing(0)};
-        border-radius: ${theme.border.radius.sm};
-      `
-      : `
-        background-color: ${theme.background.transparent.lighter};
-        border-top-right-radius: ${theme.border.radius.sm};
-        border-bottom-right-radius: ${theme.border.radius.sm};
-        border: 1px solid ${theme.border.color.medium};
-      `}
-`;
 
 interface VariableTagInputProps {
   inputId: string;
@@ -91,17 +44,16 @@ export const VariableTagInput = ({
   }
 
   return (
-    <StyledContainer>
-      {label && <StyledLabel>{label}</StyledLabel>}
-      <StyledInputContainer multiline={multiline}>
-        <StyledInputContainer2 multiline={multiline} readonly={readonly}>
-          <TextVariableEditor
-            editor={editor}
-            multiline={multiline}
-            readonly={readonly}
-          />
-        </StyledInputContainer2>
-
+    <FormFieldInputBase
+      label={label}
+      Input={
+        <TextVariableEditor
+          editor={editor}
+          multiline={multiline}
+          readonly={readonly}
+        />
+      }
+      RightElement={
         <StyledSearchVariablesDropdownContainer
           multiline={multiline}
           readonly={readonly}
@@ -114,8 +66,9 @@ export const VariableTagInput = ({
             disabled={readonly}
           />
         </StyledSearchVariablesDropdownContainer>
-      </StyledInputContainer>
-    </StyledContainer>
+      }
+      multiline={multiline}
+    />
   );
 };
 

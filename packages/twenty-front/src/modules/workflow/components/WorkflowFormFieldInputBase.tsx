@@ -12,7 +12,7 @@ const StyledVariableContainer = styled.div`
   display: flex;
 `;
 
-const StyledSearchVariablesDropdownContainer = styled.div<{
+export const StyledSearchVariablesDropdownContainer = styled.div<{
   multiline?: boolean;
   readonly?: boolean;
 }>`
