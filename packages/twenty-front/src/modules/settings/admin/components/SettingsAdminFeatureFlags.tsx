@@ -26,7 +26,7 @@ export const SettingsAdminFeatureFlags = () => {
 
   return (
     <Section>
-      <H2Title title="Feature Flags" description="Manage feature flags." />
+      <H2Title title="Feature Flags" description="All feature flags." />
 
       <Table>
         <StyledTableHeaderRow>
@@ -38,18 +38,22 @@ export const SettingsAdminFeatureFlags = () => {
             <TableHeader>Value</TableHeader>
           </TableRow>
         </StyledTableHeaderRow>
-        {currentWorkspace?.featureFlags?.map((flag) => (
-          <StyledTable key={flag.key}>
+        {currentWorkspace?.featureFlags?.map((featureFlag) => (
+          <StyledTable key={featureFlag.key}>
             <TableRow
               gridAutoColumns="1fr 100px"
               mobileGridAutoColumns="1fr 80px"
             >
               <TableCell>
-                <StyledTextContainerWithEllipsis id={`hover-text-${flag.key}`}>
-                  {flag.key}
+                <StyledTextContainerWithEllipsis
+                  id={`hover-text-${featureFlag.key}`}
+                >
+                  {featureFlag.key}
                 </StyledTextContainerWithEllipsis>
               </TableCell>
-              <TableCell>{flag.value ? 'Enabled' : 'Disabled'}</TableCell>
+              <TableCell>
+                {featureFlag.value ? 'Enabled' : 'Disabled'}
+              </TableCell>
             </TableRow>
           </StyledTable>
         ))}
