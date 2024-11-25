@@ -74,10 +74,6 @@ export const useHandleToggleColumnFilter = ({
         );
 
       if (!existingViewFilter) {
-        const filterType = getFilterTypeFromFieldType(
-          correspondingColumnDefinition?.type,
-        );
-
         const filterDefinition = availableFilterDefinitions.find(
           (fd) => fd.fieldMetadataId === fieldMetadataId,
         );
