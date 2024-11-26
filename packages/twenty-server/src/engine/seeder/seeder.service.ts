@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { inspect } from 'util';
-
 import { ObjectMetadataSeed } from 'src/engine/seeder/interfaces/object-metadata-seed';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
@@ -55,17 +53,6 @@ export class SeederService {
         "Object metadata couldn't be found after field creation.",
       );
     }
-
-    // await this.objectMetadataService.updateOneObject(
-    //   {
-    //     id: objectMetadataAfterFieldCreation.id,
-    //     update: {
-    //       labelIdentifierFieldMetadataId:
-    //         objectMetadataAfterFieldCreation.fields[0].id,
-    //     },
-    //   },
-    //   workspaceId,
-    // );
 
     const schemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
@@ -152,15 +139,6 @@ export class SeederService {
       }
 
       return flattenedSeed;
-    });
-
-    console.log({
-      objectMetadata: inspect(objectMetadataAfterFieldCreation, { depth: 5 }),
-      metadataSeeds: inspect(metadataSeeds, { depth: 5 }),
-      filteredFields,
-      dataSeeds: dataSeeds[0],
-      flattenedSeeds: flattenedSeeds[0],
-      fieldMetadataMap,
     });
 
     await entityManager
