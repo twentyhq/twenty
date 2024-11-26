@@ -51,6 +51,7 @@ export class TimelineMessagingService {
         },
         skip: offset,
         take: pageSize,
+        relations: ['messages'],
       });
 
     const messageThreads = await messageThreadRepository.find({
