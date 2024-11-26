@@ -4,7 +4,6 @@ import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMen
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
-import { CommandMenuCommandsEffect } from '@/command-menu/components/CommandMenuCommandsEffect';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
@@ -95,7 +94,6 @@ export const DefaultLayout = () => {
             <RecordActionMenuEntriesSetter />
             <GlobalActionMenuEntriesSetterEffect />
             <ActionMenuConfirmationModals />
-            <CommandMenuCommandsEffect />
             <CommandMenu />
           </ActionMenuComponentInstanceContext.Provider>
         </ContextStoreComponentInstanceContext.Provider>

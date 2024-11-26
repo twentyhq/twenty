@@ -9,7 +9,7 @@ import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuCommandsState } from '@/command-menu/states/commandMenuCommandsState';
+import { commandMenuCommandsSelector } from '@/command-menu/states/commandMenuCommandsSelector';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import {
@@ -128,7 +128,6 @@ export const CommandMenu = () => {
     commandMenuSearchState,
   );
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300); // 200ms - 500ms
-  const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
   const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
@@ -140,6 +139,8 @@ export const CommandMenu = () => {
   );
 
   const isMobile = useIsMobile();
+
+  const commandMenuCommands = useRecoilValue(commandMenuCommandsSelector);
 
   useScopedHotkeys(
     'ctrl+k,meta+k',

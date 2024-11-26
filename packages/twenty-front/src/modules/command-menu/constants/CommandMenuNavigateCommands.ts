@@ -8,7 +8,7 @@ import {
 
 import { Command, CommandType } from '../types/Command';
 
-export const COMMAND_MENU_COMMANDS: { [key: string]: Command } = {
+export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
   people: {
     id: 'go-to-people',
     to: '/objects/people',

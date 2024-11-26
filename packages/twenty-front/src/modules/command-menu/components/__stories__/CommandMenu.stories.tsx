@@ -1,14 +1,9 @@
-import { action } from '@storybook/addon-actions';
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
-import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { IconCheckbox, IconNotes } from 'twenty-ui';
+import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CommandType } from '@/command-menu/types/Command';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -22,7 +17,6 @@ import { sleep } from '~/utils/sleep';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { CommandMenu } from '../CommandMenu';
 
@@ -55,46 +49,9 @@ const meta: Meta<typeof CommandMenu> = {
       const setCurrentWorkspaceMember = useSetRecoilState(
         currentWorkspaceMemberState,
       );
-      const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-
-      const { addToCommandMenu, setObjectsInCommandMenu, openCommandMenu } =
-        useCommandMenu();
 
       setCurrentWorkspace(mockDefaultWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
-
-      useEffect(() => {
-        const nonSystemActiveObjects = objectMetadataItems.filter(
-          (object) => !object.isSystem && object.isActive,
-        );
-
-        setObjectsInCommandMenu(nonSystemActiveObjects);
-
-        addToCommandMenu([
-          {
-            id: 'create-task',
-            to: '',
-            label: 'Create Task',
-            type: CommandType.Create,
-            Icon: IconCheckbox,
-            onCommandClick: action('create task click'),
-          },
-          {
-            id: 'create-note',
-            to: '',
-            label: 'Create Note',
-            type: CommandType.Create,
-            Icon: IconNotes,
-            onCommandClick: action('create note click'),
-          },
-        ]);
-        openCommandMenu();
-      }, [
-        addToCommandMenu,
-        setObjectsInCommandMenu,
-        openCommandMenu,
-        objectMetadataItems,
-      ]);
 
       return <Story />;
     },

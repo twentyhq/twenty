@@ -2,25 +2,18 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import {
   setSessionId,
   useEventTracker,
 } from '@/analytics/hooks/useEventTracker';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
-import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { CommandType } from '@/command-menu/types/Command';
-import { useNonSystemActiveObjectMetadataItems } from '@/object-metadata/hooks/useNonSystemActiveObjectMetadataItems';
-import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { IconCheckbox } from 'twenty-ui';
 import { useCleanRecoilState } from '~/hooks/useCleanRecoilState';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
@@ -44,14 +37,6 @@ export const PageChangeEffect = () => {
   const { cleanRecoilState } = useCleanRecoilState();
 
   const eventTracker = useEventTracker();
-
-  const { addToCommandMenu, setObjectsInCommandMenu } = useCommandMenu();
-
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-
-  const openCreateActivity = useOpenCreateActivityDrawer({
-    activityObjectNameSingular: CoreObjectNameSingular.Task,
-  });
 
   useEffect(() => {
     cleanRecoilState();
@@ -149,33 +134,6 @@ export const PageChangeEffect = () => {
       }
     }
   }, [isMatchingLocation, setHotkeyScope]);
-
-  const { nonSystemActiveObjectMetadataItems } =
-    useNonSystemActiveObjectMetadataItems();
-
-  useEffect(() => {
-    setObjectsInCommandMenu(nonSystemActiveObjectMetadataItems);
-
-    addToCommandMenu([
-      {
-        id: 'create-task',
-        to: '',
-        label: 'Create Task',
-        type: CommandType.Create,
-        Icon: IconCheckbox,
-        onCommandClick: () =>
-          openCreateActivity({
-            targetableObjects: [],
-          }),
-      },
-    ]);
-  }, [
-    nonSystemActiveObjectMetadataItems,
-    addToCommandMenu,
-    setObjectsInCommandMenu,
-    openCreateActivity,
-    objectMetadataItems,
-  ]);
 
   useEffect(() => {
     setTimeout(() => {
