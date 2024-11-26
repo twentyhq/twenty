@@ -5,7 +5,6 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
-import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { ViewType } from '@/views/types/ViewType';
@@ -81,17 +80,15 @@ export const useRecordGroupActions = ({
             navigateToSelectSettings();
           },
         },
-        recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-          ? {
-              id: 'hide',
-              label: 'Hide',
-              icon: IconEyeOff,
-              position: 1,
-              callback: () => {
-                handleRecordGroupVisibilityChange(recordGroupDefinition);
-              },
-            }
-          : undefined,
+        {
+          id: 'hide',
+          label: 'Hide',
+          icon: IconEyeOff,
+          position: 1,
+          callback: () => {
+            handleRecordGroupVisibilityChange(recordGroupDefinition);
+          },
+        },
       ].filter(isDefined),
     [
       handleRecordGroupVisibilityChange,

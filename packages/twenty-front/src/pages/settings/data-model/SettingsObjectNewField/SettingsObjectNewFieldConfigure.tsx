@@ -209,7 +209,6 @@ export const SettingsObjectNewFieldConfigure = () => {
             <Section>
               <H2Title title="Values" description="The values of this field" />
               <SettingsDataModelFieldSettingsFormCard
-                isCreatingField
                 fieldMetadataItem={{
                   icon: formConfig.watch('icon'),
                   label: formConfig.watch('label') || 'New Field',

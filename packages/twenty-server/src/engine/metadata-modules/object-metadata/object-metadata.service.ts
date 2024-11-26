@@ -31,6 +31,7 @@ import { SearchService } from 'src/engine/metadata-modules/search/search.service
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -116,6 +117,21 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       fields: objectMetadataInput.isRemote
         ? []
         : buildDefaultFieldsForCustomObject(objectMetadataInput.workspaceId),
+    });
+
+    const labelIdentifierFieldMetadata = createdObjectMetadata.fields.find(
+      (field) => field.standardId === CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
+    );
+
+    if (!labelIdentifierFieldMetadata) {
+      throw new ObjectMetadataException(
+        'Label identifier field metadata not created properly',
+        ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD,
+      );
+    }
+
+    await this.objectMetadataRepository.update(createdObjectMetadata.id, {
+      labelIdentifierFieldMetadataId: labelIdentifierFieldMetadata.id,
     });
 
     if (objectMetadataInput.isRemote) {

@@ -209,7 +209,11 @@ export class SSOService {
   buildIssuerURL(
     identityProvider: Pick<WorkspaceSSOIdentityProvider, 'id' | 'type'>,
   ) {
-    return `${this.environmentService.get('SERVER_URL')}/auth/${identityProvider.type.toLowerCase()}/login/${identityProvider.id}`;
+    const authorizationUrl = new URL(this.environmentService.get('SERVER_URL'));
+
+    authorizationUrl.pathname = `/auth/${identityProvider.type.toLowerCase()}/login/${identityProvider.id}`;
+
+    return authorizationUrl.toString();
   }
 
   private isOIDCIdentityProvider(
