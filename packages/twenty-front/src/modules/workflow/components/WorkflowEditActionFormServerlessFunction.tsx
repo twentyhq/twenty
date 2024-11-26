@@ -236,7 +236,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
         headerType="Code"
       >
         <CodeEditor
-          height={450}
+          height={340}
           value={formValues.code?.[INDEX_FILE_PATH]}
           language={'typescript'}
           onChange={onCodeChange}

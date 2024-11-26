@@ -1,4 +1,3 @@
-import { SettingsServerlessFunctionCodeEditorContainer } from '@/settings/serverless-functions/components/SettingsServerlessFunctionCodeEditorContainer';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { EditorProps, Monaco } from '@monaco-editor/react';
 import dotenv from 'dotenv';
@@ -120,17 +119,16 @@ export const SettingsServerlessFunctionCodeEditor = ({
   return (
     isDefined(currentFile) &&
     isDefined(availablePackages) && (
-      <SettingsServerlessFunctionCodeEditorContainer>
-        <CodeEditor
-          height={height}
-          value={currentFile.content}
-          language={currentFile.language}
-          onMount={handleEditorDidMount}
-          onChange={onChange}
-          onValidate={handleEditorValidation}
-          options={options}
-        />
-      </SettingsServerlessFunctionCodeEditorContainer>
+      <CodeEditor
+        height={height}
+        value={currentFile.content}
+        language={currentFile.language}
+        onMount={handleEditorDidMount}
+        onChange={onChange}
+        onValidate={handleEditorValidation}
+        options={options}
+        withHeader
+      />
     )
   );
 };
