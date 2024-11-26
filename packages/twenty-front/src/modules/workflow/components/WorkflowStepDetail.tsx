@@ -1,6 +1,6 @@
 import { WorkflowEditActionFormRecordCreate } from '@/workflow/components/WorkflowEditActionFormRecordCreate';
 import { WorkflowEditActionFormSendEmail } from '@/workflow/components/WorkflowEditActionFormSendEmail';
-import { WorkflowEditActionFormServerlessFunction } from '@/workflow/components/WorkflowEditActionFormServerlessFunction';
+
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/components/WorkflowEditTriggerManualForm';
 import {
@@ -11,6 +11,7 @@ import {
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { isWorkflowRecordCreateAction } from '@/workflow/utils/isWorkflowRecordCreateAction';
+import { WorkflowEditActionFormServerlessFunction } from '@/workflow/components/WorkflowEditActionFormServerlessFunctionInner';
 import { isDefined } from 'twenty-ui';
 
 type WorkflowStepDetailProps =

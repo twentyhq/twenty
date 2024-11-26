@@ -1,5 +1,3 @@
-import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
-import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
 import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
@@ -12,6 +10,7 @@ import styled from '@emotion/styled';
 import { Fragment, ReactNode, useState } from 'react';
 import { HorizontalSeparator, IconCode, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
+import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunction';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -37,7 +36,7 @@ const StyledInputContainer = styled.div`
   position: relative;
 `;
 
-type WorkflowEditActionFormServerlessFunctionInnerProps = {
+type WorkflowEditActionFormServerlessFunctionProps = {
   action: WorkflowCodeAction;
   actionOptions:
     | {
@@ -53,37 +52,25 @@ type ServerlessFunctionInputFormData = {
   [field: string]: string | ServerlessFunctionInputFormData;
 };
 
-export const WorkflowEditActionFormServerlessFunctionInner = ({
+export const WorkflowEditActionFormServerlessFunction = ({
   action,
   actionOptions,
-}: WorkflowEditActionFormServerlessFunctionInnerProps) => {
+}: WorkflowEditActionFormServerlessFunctionProps) => {
   const theme = useTheme();
 
-  const { serverlessFunctions } = useGetManyServerlessFunctions();
+  const { serverlessFunction } = useGetOneServerlessFunction({
+    id: action.settings.input.serverlessFunctionId,
+  });
 
-  const getFunctionInput = (serverlessFunctionId: string) => {
-    if (!serverlessFunctionId) {
-      return {};
-    }
-
-    const serverlessFunction = serverlessFunctions.find(
-      (f) => f.id === serverlessFunctionId,
-    );
+  const getFunctionInput = () => {
     const inputSchema = serverlessFunction?.latestVersionInputSchema;
-    const defaultFunctionInput =
-      getDefaultFunctionInputFromInputSchema(inputSchema);
-
-    return defaultFunctionInput;
+    return getDefaultFunctionInputFromInputSchema(inputSchema);
   };
-
-  const [selectedFunctionId, setSelectedFunctionId] = useState(
-    action.settings.input.serverlessFunctionId,
-  );
 
   const [functionInput, setFunctionInput] =
     useState<ServerlessFunctionInputFormData>(
       mergeDefaultFunctionInputAndFunctionInput({
-        defaultFunctionInput: getFunctionInput(selectedFunctionId),
+        defaultFunctionInput: getFunctionInput(),
         functionInput: action.settings.input.serverlessFunctionInput,
       }),
     );
@@ -114,51 +101,6 @@ export const WorkflowEditActionFormServerlessFunctionInner = ({
     setFunctionInput(updatedFunctionInput);
 
     updateFunctionInput(updatedFunctionInput);
-  };
-
-  const availableFunctions: Array<SelectOption<string>> = [
-    ...serverlessFunctions
-      .filter((serverlessFunction) =>
-        isDefined(serverlessFunction.latestVersion),
-      )
-      .map((serverlessFunction) => ({
-        label: serverlessFunction.name,
-        value: serverlessFunction.id,
-        latestVersionInputSchema: serverlessFunction.latestVersionInputSchema,
-      })),
-  ];
-
-  const handleFunctionChange = (newServerlessFunctionId: string) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
-
-    updateFunctionInput.cancel();
-
-    setSelectedFunctionId(newServerlessFunctionId);
-
-    const serverlessFunction = serverlessFunctions.find(
-      (f) => f.id === newServerlessFunctionId,
-    );
-
-    const newFunctionInput = getFunctionInput(newServerlessFunctionId);
-
-    const newProps = {
-      ...action,
-      settings: {
-        ...action.settings,
-        input: {
-          serverlessFunctionId: newServerlessFunctionId,
-          serverlessFunctionVersion:
-            serverlessFunction?.latestVersion || 'latest',
-          serverlessFunctionInput: newFunctionInput,
-        },
-      },
-    };
-
-    setFunctionInput(newFunctionInput);
-
-    actionOptions.onActionUpdate(newProps);
   };
 
   const renderFields = (
@@ -222,32 +164,24 @@ export const WorkflowEditActionFormServerlessFunctionInner = ({
     : 'Code - Serverless Function';
 
   return (
-    <WorkflowEditGenericFormBase
-      onTitleChange={(newName: string) => {
-        if (actionOptions.readonly === true) {
-          return;
-        }
+    serverlessFunction && (
+      <WorkflowEditGenericFormBase
+        onTitleChange={(newName: string) => {
+          if (actionOptions.readonly === true) {
+            return;
+          }
 
-        actionOptions?.onActionUpdate({
-          ...action,
-          name: newName,
-        });
-      }}
-      HeaderIcon={<IconCode color={theme.color.orange} />}
-      headerTitle={headerTitle}
-      headerType="Code"
-    >
-      <Select
-        dropdownId="select-serverless-function-id"
-        label="Function"
-        fullWidth
-        value={selectedFunctionId}
-        options={availableFunctions}
-        emptyOption={{ label: 'None', value: '' }}
-        disabled={actionOptions.readonly}
-        onChange={handleFunctionChange}
-      />
-      {renderFields(functionInput)}
-    </WorkflowEditGenericFormBase>
+          actionOptions?.onActionUpdate({
+            ...action,
+            name: newName,
+          });
+        }}
+        HeaderIcon={<IconCode color={theme.color.orange} />}
+        headerTitle={headerTitle}
+        headerType="Code"
+      >
+        {renderFields(functionInput)}
+      </WorkflowEditGenericFormBase>
+    )
   );
 };
