@@ -44,7 +44,10 @@ describe('useCreateFavorite', () => {
       { wrapper: Wrapper },
     );
 
-    result.current(favoriteTargetObjectRecord, CoreObjectNameSingular.Person);
+    result.current.createFavorite(
+      favoriteTargetObjectRecord,
+      CoreObjectNameSingular.Person,
+    );
 
     await waitFor(() => {
       expect(mocks[0].result).toHaveBeenCalled();

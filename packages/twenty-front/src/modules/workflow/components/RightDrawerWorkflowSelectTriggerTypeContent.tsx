@@ -39,7 +39,7 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
         <MenuItem
           key={action.type}
           LeftIcon={action.icon}
-          text={action.label}
+          text={action.name}
           onClick={async () => {
             await updateTrigger(
               getTriggerDefaultDefinition({

@@ -30,7 +30,7 @@ export const FavoriteFolderPickerEffect = ({
 
   const { favoriteFolders } = usePrefetchedFavoritesFoldersData();
 
-  const favorites = useFavorites();
+  const { sortedFavorites: favorites } = useFavorites();
   const setCheckedState = useSetRecoilComponentStateV2(
     favoriteFolderPickerCheckedComponentState,
   );

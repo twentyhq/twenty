@@ -2,31 +2,33 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import styled from '@emotion/styled';
 import { MenuItem } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
-
-import { getInitialFilterValue } from '@/object-record/object-filter-dropdown/utils/getInitialFilterValue';
 import { getOperandLabel } from '../utils/getOperandLabel';
 import { getOperandsForFilterDefinition } from '../utils/getOperandsForFilterType';
+
+const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
+  background-color: ${({ theme }) => theme.background.primary};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+`;
 
 export const ObjectFilterDropdownOperandSelect = () => {
   const {
     filterDefinitionUsedInDropdownState,
     setSelectedOperandInDropdown,
-    isObjectFilterDropdownOperandSelectUnfoldedState,
-    setIsObjectFilterDropdownOperandSelectUnfolded,
     selectedFilterState,
     selectFilter,
   } = useFilterDropdown();
 
+  const { closeDropdown } = useDropdown();
+
   const filterDefinitionUsedInDropdown = useRecoilValue(
     filterDefinitionUsedInDropdownState,
-  );
-
-  const isObjectFilterDropdownOperandSelectUnfolded = useRecoilValue(
-    isObjectFilterDropdownOperandSelectUnfoldedState,
   );
 
   const selectedFilter = useRecoilValue(selectedFilterState);
@@ -45,7 +47,6 @@ export const ObjectFilterDropdownOperandSelect = () => {
     ].includes(newOperand);
 
     setSelectedOperandInDropdown(newOperand);
-    setIsObjectFilterDropdownOperandSelectUnfolded(false);
 
     if (isValuelessOperand && isDefined(filterDefinitionUsedInDropdown)) {
       selectFilter?.({
@@ -81,21 +82,18 @@ export const ObjectFilterDropdownOperandSelect = () => {
     }
   };
 
-  if (!isObjectFilterDropdownOperandSelectUnfolded) {
-    return <></>;
-  }
-
   return (
-    <DropdownMenuItemsContainer>
+    <StyledDropdownMenuItemsContainer>
       {operandsForFilterType.map((filterOperand, index) => (
         <MenuItem
           key={`select-filter-operand-${index}`}
           onClick={() => {
             handleOperandChange(filterOperand);
+            closeDropdown();
           }}
           text={getOperandLabel(filterOperand)}
         />
       ))}
-    </DropdownMenuItemsContainer>
+    </StyledDropdownMenuItemsContainer>
   );
 };

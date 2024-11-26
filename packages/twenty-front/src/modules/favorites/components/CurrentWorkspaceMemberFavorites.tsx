@@ -17,6 +17,7 @@ import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navig
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { IconFolder, IconHeartOff, LightIconButton } from 'twenty-ui';
@@ -61,9 +62,9 @@ export const CurrentWorkspaceMemberFavorites = ({
   const selectedFavoriteIndex = folder.favorites.findIndex((favorite) =>
     isLocationMatchingFavorite(currentPath, currentViewPath, favorite),
   );
-  const handleReorderFavorite = useReorderFavorite();
+  const { handleReorderFavorite } = useReorderFavorite();
 
-  const deleteFavorite = useDeleteFavorite();
+  const { deleteFavorite } = useDeleteFavorite();
 
   const favoriteFolderContentLength = folder.favorites.length;
 
@@ -154,6 +155,7 @@ export const CurrentWorkspaceMemberFavorites = ({
                     key={favorite.id}
                     draggableId={favorite.id}
                     index={index}
+                    isInsideScrollableContainer
                     itemComponent={
                       <NavigationDrawerSubItem
                         key={favorite.id}
@@ -184,14 +186,17 @@ export const CurrentWorkspaceMemberFavorites = ({
         )}
       </NavigationDrawerItemsCollapsableContainer>
 
-      <ConfirmationModal
-        isOpen={isDeleteModalOpen}
-        setIsOpen={setIsDeleteModalOpen}
-        title={`Remove ${folder.favorites.length} ${folder.favorites.length > 1 ? 'favorites' : 'favorite'}?`}
-        subtitle={`This action will delete this favorite folder ${folder.favorites.length > 1 ? `and all ${folder.favorites.length} favorites` : 'and the favorite'} inside. Do you want to continue?`}
-        onConfirmClick={handleConfirmDelete}
-        deleteButtonText="Delete Folder"
-      />
+      {createPortal(
+        <ConfirmationModal
+          isOpen={isDeleteModalOpen}
+          setIsOpen={setIsDeleteModalOpen}
+          title={`Remove ${folder.favorites.length} ${folder.favorites.length > 1 ? 'favorites' : 'favorite'}?`}
+          subtitle={`This action will delete this favorite folder ${folder.favorites.length > 1 ? `and all ${folder.favorites.length} favorites` : 'and the favorite'} inside. Do you want to continue?`}
+          onConfirmClick={handleConfirmDelete}
+          deleteButtonText="Delete Folder"
+        />,
+        document.body,
+      )}
     </>
   );
 };

@@ -7,7 +7,8 @@ import { View } from '@/views/types/View';
 export const useFilteredObjectMetadataItemsForWorkspaceFavorites = () => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
-  const workspaceFavorites = useWorkspaceFavorites();
+  const { sortedWorkspaceFavorites: workspaceFavorites } =
+    useWorkspaceFavorites();
 
   const workspaceFavoriteIds = new Set(
     workspaceFavorites.map((favorite) => favorite.recordId),

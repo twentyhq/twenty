@@ -34,5 +34,5 @@ export const useCreateFavorite = () => {
     });
   };
 
-  return createFavorite;
+  return { createFavorite };
 };

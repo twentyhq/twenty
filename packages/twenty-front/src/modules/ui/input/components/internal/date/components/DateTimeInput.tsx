@@ -13,6 +13,8 @@ import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate'
 
 const StyledInputContainer = styled.div`
   align-items: center;
+  background-color: ${({ theme }) => theme.background.transparent.secondary};
+  backdrop-filter: ${({ theme }) => theme.blur.medium};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-top-left-radius: ${({ theme }) => theme.border.radius.md};
   border-top-right-radius: ${({ theme }) => theme.border.radius.md};
@@ -22,7 +24,7 @@ const StyledInputContainer = styled.div`
 `;
 
 const StyledInput = styled.input<{ hasError?: boolean }>`
-  background: ${({ theme }) => theme.background.secondary};
+  background: transparent;
   border: none;
   color: ${({ theme }) => theme.font.color.primary};
   outline: none;

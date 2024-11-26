@@ -54,7 +54,10 @@ describe('useReorderFavorite', () => {
         announce: () => {},
       };
 
-      result.current(dragAndDropResult, responderProvided);
+      result.current.handleReorderFavorite(
+        dragAndDropResult,
+        responderProvided,
+      );
     });
 
     await waitFor(() => {

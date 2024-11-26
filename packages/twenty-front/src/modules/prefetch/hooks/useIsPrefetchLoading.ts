@@ -2,13 +2,14 @@ import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedF
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
-import { useIsFavoriteFoldersPrefetchLoading } from './useIsFavoriteFoldersPrefetchLoading';
 
 export const useIsPrefetchLoading = () => {
   const isFavoriteFolderEnabled = useIsFeatureEnabled(
     'IS_FAVORITE_FOLDER_ENABLED',
   );
-  const isFavoriteFoldersLoading = useIsFavoriteFoldersPrefetchLoading();
+  const isFavoriteFoldersPrefetched = useRecoilValue(
+    prefetchIsLoadedFamilyState(PrefetchKey.AllFavoritesFolders),
+  );
 
   const areViewsPrefetched = useRecoilValue(
     prefetchIsLoadedFamilyState(PrefetchKey.AllViews),
@@ -20,6 +21,6 @@ export const useIsPrefetchLoading = () => {
   return (
     !areViewsPrefetched ||
     !areFavoritesPrefetched ||
-    (isFavoriteFolderEnabled && isFavoriteFoldersLoading)
+    (isFavoriteFolderEnabled && !isFavoriteFoldersPrefetched)
   );
 };

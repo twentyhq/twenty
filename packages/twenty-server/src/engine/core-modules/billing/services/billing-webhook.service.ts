@@ -4,11 +4,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import Stripe from 'stripe';
 import { Repository } from 'typeorm';
 
-import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import {
-  BillingSubscription,
-  SubscriptionStatus,
-} from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
+import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import {
   Workspace,
   WorkspaceActivationStatus,
@@ -20,6 +24,8 @@ export class BillingWebhookService {
   constructor(
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
+    @InjectRepository(BillingEntitlement, 'core')
+    private readonly billingEntitlementRepository: Repository<BillingEntitlement>,
     @InjectRepository(BillingSubscriptionItem, 'core')
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItem>,
     @InjectRepository(Workspace, 'core')
@@ -43,7 +49,7 @@ export class BillingWebhookService {
 
     await this.billingSubscriptionRepository.upsert(
       {
-        workspaceId: workspaceId,
+        workspaceId,
         stripeCustomerId: data.object.customer as string,
         stripeSubscriptionId: data.object.id,
         status: data.object.status as SubscriptionStatus,
@@ -95,5 +101,43 @@ export class BillingWebhookService {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       });
     }
+  }
+
+  async processCustomerActiveEntitlement(
+    data: Stripe.EntitlementsActiveEntitlementSummaryUpdatedEvent.Data,
+  ) {
+    const billingSubscription =
+      await this.billingSubscriptionRepository.findOne({
+        where: { stripeCustomerId: data.object.customer },
+      });
+
+    if (!billingSubscription) {
+      throw new BillingException(
+        'Billing customer not found',
+        BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND,
+      );
+    }
+
+    const workspaceId = billingSubscription.workspaceId;
+    const stripeCustomerId = data.object.customer;
+
+    const activeEntitlementsKeys = data.object.entitlements.data.map(
+      (entitlement) => entitlement.lookup_key,
+    );
+
+    await this.billingEntitlementRepository.upsert(
+      Object.values(BillingEntitlementKey).map((key) => {
+        return {
+          workspaceId,
+          key,
+          value: activeEntitlementsKeys.includes(key),
+          stripeCustomerId,
+        };
+      }),
+      {
+        conflictPaths: ['workspaceId', 'key'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
   }
 }

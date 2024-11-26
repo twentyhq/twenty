@@ -18,8 +18,8 @@ export const FavoriteFolders = ({
 }: FavoriteFoldersProps) => {
   const [newFolderName, setNewFolderName] = useState('');
 
-  const favoritesByFolder = useFavoritesByFolder();
-  const createFavoriteFolder = useCreateFavoriteFolder();
+  const { favoritesByFolder } = useFavoritesByFolder();
+  const { createNewFavoriteFolder } = useCreateFavoriteFolder();
 
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
     useRecoilState(isFavoriteFolderCreatingState);
@@ -33,12 +33,12 @@ export const FavoriteFolders = ({
 
     setIsFavoriteFolderCreating(false);
     setNewFolderName('');
-    await createFavoriteFolder(value);
+    await createNewFavoriteFolder(value);
     return true;
   };
 
   const handleClickOutside = async (
-    event: MouseEvent | TouchEvent,
+    _event: MouseEvent | TouchEvent,
     value: string,
   ) => {
     if (!value) {
@@ -48,7 +48,7 @@ export const FavoriteFolders = ({
 
     setIsFavoriteFolderCreating(false);
     setNewFolderName('');
-    await createFavoriteFolder(value);
+    await createNewFavoriteFolder(value);
   };
 
   const handleCancelFavoriteFolderCreation = () => {

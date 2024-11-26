@@ -9,14 +9,10 @@ import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
 import { usePrefetchRunQuery } from '@/prefetch/hooks/internal/usePrefetchRunQuery';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { View } from '@/views/types/View';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from '~/utils/isDefined';
 
 export const PrefetchRunQueriesEffect = () => {
   const currentUser = useRecoilValue(currentUserState);
-  const isFavoriteFolderEnabled = useIsFeatureEnabled(
-    'IS_FAVORITE_FOLDER_ENABLED',
-  );
 
   const { upsertRecordsInCache: upsertViewsInCache } =
     usePrefetchRunQuery<View>({
@@ -33,7 +29,7 @@ export const PrefetchRunQueriesEffect = () => {
   const operationSignatures = Object.values(PREFETCH_CONFIG)
     .filter(
       ({ objectNameSingular }) =>
-        // Exclude favorite folders as they're handled separately
+        // TODO: Remove this filter once we merge PrefetchFavortiteFoldersRunQueriesEffect with this component
         objectNameSingular !== 'favoriteFolder',
     )
     .map(({ objectNameSingular, operationSignatureFactory }) => {
@@ -57,12 +53,7 @@ export const PrefetchRunQueriesEffect = () => {
     if (isDefined(result.favorites)) {
       upsertFavoritesInCache(result.favorites as Favorite[]);
     }
-  }, [
-    result,
-    upsertViewsInCache,
-    upsertFavoritesInCache,
-    isFavoriteFolderEnabled,
-  ]);
+  }, [result, upsertViewsInCache, upsertFavoritesInCache]);
 
   return <></>;
 };

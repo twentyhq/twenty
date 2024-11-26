@@ -39,7 +39,10 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     viewId ? `?view=${viewId}` : ''
   }`;
 
-  const isActive = currentPath === `/objects/${objectMetadataItem.namePlural}`;
+  const isActive =
+    currentPath === `/objects/${objectMetadataItem.namePlural}` ||
+    currentPath.includes(`object/${objectMetadataItem.nameSingular}/`);
+
   const shouldSubItemsBeDisplayed = isActive && objectMetadataViews.length > 1;
 
   const sortedObjectMetadataViews = [...objectMetadataViews].sort(

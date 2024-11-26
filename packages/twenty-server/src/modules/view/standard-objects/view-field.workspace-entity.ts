@@ -1,11 +1,14 @@
 import { registerEnumType } from '@nestjs/graphql';
 
+import { Relation } from 'typeorm';
+
 import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIndex } from 'src/engine/twenty-orm/decorators/workspace-index.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -30,12 +33,10 @@ registerEnumType(AGGREGATE_OPERATIONS, {
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-/*
-TODO: add soon once we've confirmed it's stabled
 @WorkspaceIndex(['fieldMetadataId', 'viewId'], {
   isUnique: true,
   indexWhereClause: '"deletedAt" IS NULL',
-})*/
+})
 export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.fieldMetadataId,
@@ -85,8 +86,7 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewFields',
   })
-  @WorkspaceIsNullable()
-  view?: ViewWorkspaceEntity | null;
+  view: Relation<ViewWorkspaceEntity>;
 
   @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.aggregateOperation,
@@ -132,5 +132,5 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   aggregateOperation?: AGGREGATE_OPERATIONS | null;
 
   @WorkspaceJoinColumn('view')
-  viewId: string | null;
+  viewId: string;
 }

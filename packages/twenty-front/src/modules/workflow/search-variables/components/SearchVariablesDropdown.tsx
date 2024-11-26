@@ -15,21 +15,26 @@ import { IconVariablePlus } from 'twenty-ui';
 
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
-)<{ transparentBackground?: boolean }>`
+)<{ transparentBackground?: boolean; disabled?: boolean }>`
   background-color: ${({ theme, transparentBackground }) =>
     transparentBackground
       ? 'transparent'
       : theme.background.transparent.lighter};
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: ${({ theme }) => theme.spacing(2)};
+  :hover {
+    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  }
 `;
 
 const SearchVariablesDropdown = ({
   inputId,
   editor,
+  disabled,
 }: {
   inputId: string;
   editor: Editor;
+  disabled?: boolean;
 }) => {
   const theme = useTheme();
 
@@ -38,9 +43,14 @@ const SearchVariablesDropdown = ({
   const availableVariablesInWorkflowStep =
     useAvailableVariablesInWorkflowStep();
 
+  const initialStep =
+    availableVariablesInWorkflowStep.length === 1
+      ? availableVariablesInWorkflowStep[0]
+      : undefined;
+
   const [selectedStep, setSelectedStep] = useState<
     StepOutputSchema | undefined
-  >(undefined);
+  >(initialStep);
 
   const insertVariableTag = (variable: string) => {
     editor.commands.insertVariableTag(variable);
@@ -60,6 +70,21 @@ const SearchVariablesDropdown = ({
     setSelectedStep(undefined);
   };
 
+  if (disabled === true) {
+    return (
+      <StyledDropdownVariableButtonContainer
+        isUnfolded={isDropdownOpen}
+        disabled={disabled}
+        transparentBackground
+      >
+        <IconVariablePlus
+          size={theme.icon.size.sm}
+          color={theme.font.color.light}
+        />
+      </StyledDropdownVariableButtonContainer>
+    );
+  }
+
   return (
     <Dropdown
       dropdownMenuWidth={320}
@@ -70,6 +95,7 @@ const SearchVariablesDropdown = ({
       clickableComponent={
         <StyledDropdownVariableButtonContainer
           isUnfolded={isDropdownOpen}
+          disabled={disabled}
           transparentBackground
         >
           <IconVariablePlus size={theme.icon.size.sm} />

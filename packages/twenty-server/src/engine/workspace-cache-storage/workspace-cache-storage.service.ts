@@ -34,6 +34,7 @@ export class WorkspaceCacheStorageService {
     return this.cacheStorageService.set<EntitySchemaOptions<any>[]>(
       `${WorkspaceCacheKeys.ORMEntitySchemas}:${workspaceId}:${metadataVersion}`,
       entitySchemas,
+      TTL_INFINITE,
     );
   }
 
@@ -70,6 +71,7 @@ export class WorkspaceCacheStorageService {
     return this.cacheStorageService.set<boolean>(
       `${WorkspaceCacheKeys.MetadataObjectMetadataOngoingCachingLock}:${workspaceId}:${metadataVersion}`,
       true,
+      TTL_INFINITE,
     );
   }
 
@@ -99,6 +101,7 @@ export class WorkspaceCacheStorageService {
     return this.cacheStorageService.set<ObjectMetadataMaps>(
       `${WorkspaceCacheKeys.MetadataObjectMetadataMaps}:${workspaceId}:${metadataVersion}`,
       objectMetadataMaps,
+      TTL_INFINITE,
     );
   }
 
@@ -119,6 +122,7 @@ export class WorkspaceCacheStorageService {
     return this.cacheStorageService.set<string>(
       `${WorkspaceCacheKeys.GraphQLTypeDefs}:${workspaceId}:${metadataVersion}`,
       typeDefs,
+      TTL_INFINITE,
     );
   }
 
@@ -139,6 +143,7 @@ export class WorkspaceCacheStorageService {
     return this.cacheStorageService.set<string[]>(
       `${WorkspaceCacheKeys.GraphQLUsedScalarNames}:${workspaceId}:${metadataVersion}`,
       usedScalarNames,
+      TTL_INFINITE,
     );
   }
 
