@@ -1,7 +1,15 @@
+import {
+  StyledContainer,
+  StyledInputContainer,
+  StyledRowContainer,
+} from '@/object-record/record-field/form-types/components/FormFieldInputBase';
 import { TextVariableEditor } from '@/object-record/record-field/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
-import { WorkflowFormFieldInputBase } from '@/workflow/components/WorkflowFormFieldInputBase';
+import { InputLabel } from '@/ui/input/components/InputLabel';
+import { StyledSearchVariablesDropdownContainer } from '@/workflow/components/WorkflowFormFieldInputBase';
+import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
 import { parseEditorContent } from '@/workflow/search-variables/utils/parseEditorContent';
+import { useId } from 'react';
 import { isDefined } from 'twenty-ui';
 
 type WorkflowFormTextFieldInputProps = {
@@ -21,6 +29,8 @@ export const WorkflowFormTextFieldInput = ({
   multiline,
   readonly,
 }: WorkflowFormTextFieldInputProps) => {
+  const variablesDropdownId = useId();
+
   const editor = useTextVariableEditor({
     placeholder,
     multiline,
@@ -49,19 +59,29 @@ export const WorkflowFormTextFieldInput = ({
   }
 
   return (
-    <WorkflowFormFieldInputBase
-      label={label}
-      variableMode="full-editor"
-      readonly={readonly}
-      Input={
-        <TextVariableEditor
-          editor={editor}
+    <StyledContainer>
+      {label ? <InputLabel>{label}</InputLabel> : null}
+
+      <StyledRowContainer multiline={multiline}>
+        <StyledInputContainer hasRightElement multiline={multiline}>
+          <TextVariableEditor
+            editor={editor}
+            multiline={multiline}
+            readonly={readonly}
+          />
+        </StyledInputContainer>
+
+        <StyledSearchVariablesDropdownContainer
           multiline={multiline}
           readonly={readonly}
-        />
-      }
-      multiline={multiline}
-      onVariableTagInsert={onVariableTagInsert}
-    />
+        >
+          <SearchVariablesDropdown
+            inputId={variablesDropdownId}
+            onVariableSelect={onVariableTagInsert}
+            disabled={readonly}
+          />
+        </StyledSearchVariablesDropdownContainer>
+      </StyledRowContainer>
+    </StyledContainer>
   );
 };

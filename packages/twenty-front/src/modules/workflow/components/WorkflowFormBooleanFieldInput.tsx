@@ -1,11 +1,26 @@
+import {
+  StyledContainer,
+  StyledInputContainer,
+  StyledRowContainer,
+} from '@/object-record/record-field/form-types/components/FormFieldInputBase';
 import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
-import { WorkflowFormFieldInputBase } from '@/workflow/components/WorkflowFormFieldInputBase';
+import { InputLabel } from '@/ui/input/components/InputLabel';
+import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
+import {
+  StyledSearchVariablesDropdownContainer,
+  StyledVariableContainer,
+} from '@/workflow/components/WorkflowFormFieldInputBase';
+import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
+import { extractVariableLabel } from '@/workflow/search-variables/utils/extractVariableLabel';
 import styled from '@emotion/styled';
-import { useState } from 'react';
+import { isString } from '@sniptt/guards';
+import { useId, useState } from 'react';
 
 const StyledBooleanInputContainer = styled.div`
   padding-inline: ${({ theme }) => theme.spacing(2)};
 `;
+
+type EditingMode = 'input' | 'variable';
 
 type WorkflowFormBooleanFieldInputProps = {
   label?: string;
@@ -20,6 +35,15 @@ export const WorkflowFormBooleanFieldInput = ({
   onPersist,
   readonly,
 }: WorkflowFormBooleanFieldInputProps) => {
+  const variablesDropdownId = useId();
+
+  const defaultEditingMode =
+    isString(defaultValue) && defaultValue.startsWith('{{')
+      ? 'variable'
+      : 'input';
+  const [editingMode, setEditingMode] =
+    useState<EditingMode>(defaultEditingMode);
+
   const [draftValue, setDraftValue] = useState(defaultValue ?? false);
 
   const handleChange = (newValue: boolean) => {
@@ -29,34 +53,51 @@ export const WorkflowFormBooleanFieldInput = ({
   };
 
   const handleVariableTagInsert = (variable: string) => {
+    setEditingMode('variable');
     setDraftValue(variable);
 
     onPersist(variable);
   };
 
   const handleUnlinkVariable = () => {
+    setEditingMode('input');
     setDraftValue(false);
 
     onPersist(false);
   };
 
   return (
-    <WorkflowFormFieldInputBase
-      label={label}
-      variableMode="static-or-variable"
-      Input={
-        <StyledBooleanInputContainer>
-          <BooleanInput
-            value={draftValue as boolean}
-            readonly={readonly}
-            onToggle={handleChange}
+    <StyledContainer>
+      {label ? <InputLabel>{label}</InputLabel> : null}
+
+      <StyledRowContainer>
+        <StyledInputContainer hasRightElement>
+          {editingMode === 'input' ? (
+            <StyledBooleanInputContainer>
+              <BooleanInput
+                value={draftValue as boolean}
+                readonly={readonly}
+                onToggle={handleChange}
+              />
+            </StyledBooleanInputContainer>
+          ) : (
+            <StyledVariableContainer>
+              <SortOrFilterChip
+                labelValue={extractVariableLabel(draftValue as string)}
+                onRemove={handleUnlinkVariable}
+              />
+            </StyledVariableContainer>
+          )}
+        </StyledInputContainer>
+
+        <StyledSearchVariablesDropdownContainer readonly={readonly}>
+          <SearchVariablesDropdown
+            inputId={variablesDropdownId}
+            onVariableSelect={handleVariableTagInsert}
+            disabled={readonly}
           />
-        </StyledBooleanInputContainer>
-      }
-      draftValue={draftValue}
-      readonly={readonly}
-      onUnlinkVariable={handleUnlinkVariable}
-      onVariableTagInsert={handleVariableTagInsert}
-    />
+        </StyledSearchVariablesDropdownContainer>
+      </StyledRowContainer>
+    </StyledContainer>
   );
 };

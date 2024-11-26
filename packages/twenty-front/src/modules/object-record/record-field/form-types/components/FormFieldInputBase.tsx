@@ -3,14 +3,14 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isDefined } from 'twenty-ui';
 
-const LINE_HEIGHT = 24;
+export const LINE_HEIGHT = 24;
 
-const StyledContainer = styled.div`
+export const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
-const StyledRowContainer = styled.div<{
+export const StyledRowContainer = styled.div<{
   multiline?: boolean;
 }>`
   display: flex;
@@ -29,7 +29,7 @@ const StyledRowContainer = styled.div<{
         `}
 `;
 
-const StyledInputContainer = styled.div<{
+export const StyledInputContainer = styled.div<{
   hasRightElement: boolean;
   multiline?: boolean;
   readonly?: boolean;

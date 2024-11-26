@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 import { isString } from '@sniptt/guards';
 import { useId, useState } from 'react';
 
-const StyledVariableContainer = styled.div`
+export const StyledVariableContainer = styled.div`
   align-items: center;
   display: flex;
 `;
