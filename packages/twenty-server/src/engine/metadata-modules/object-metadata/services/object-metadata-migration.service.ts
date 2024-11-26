@@ -165,12 +165,11 @@ export class ObjectMetadataMigrationService {
                 });
 
               if (relatedObject) {
-                // 1. Update to and from relation fieldMetadata)
+                // 1. Update to and from relation fieldMetadata
                 const toFieldRelationFieldMetadataId =
                   await this.fieldMetadataRepository
                     .findOneByOrFail({
                       name: existingObjectMetadata.nameSingular,
-                      label: existingObjectMetadata.labelSingular,
                       objectMetadataId: relatedObject.id,
                       workspaceId: workspaceId,
                     })

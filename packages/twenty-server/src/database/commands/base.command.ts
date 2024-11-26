@@ -6,6 +6,7 @@ import { CommandRunner, Option } from 'nest-commander';
 export type BaseCommandOptions = {
   workspaceId?: string;
   dryRun?: boolean;
+  verbose?: boolean;
 };
 
 export abstract class BaseCommandRunner extends CommandRunner {
@@ -22,6 +23,14 @@ export abstract class BaseCommandRunner extends CommandRunner {
     required: false,
   })
   parseDryRun(): boolean {
+    return true;
+  }
+
+  @Option({
+    flags: '--verbose',
+    description: 'Verbose output',
+  })
+  parseVerbose() {
     return true;
   }
 

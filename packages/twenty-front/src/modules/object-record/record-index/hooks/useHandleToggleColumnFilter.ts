@@ -3,12 +3,16 @@ import { v4 } from 'uuid';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { useSetFilterDefinitionUsedInDropdownInScope } from '@/object-record/object-filter-dropdown/hooks/useSetFilterDefinitionUsedInDropdownInScope';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
-import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
-import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
 type UseHandleToggleColumnFilterProps = {
@@ -17,8 +21,8 @@ type UseHandleToggleColumnFilterProps = {
 };
 
 export const useHandleToggleColumnFilter = ({
-  viewBarId,
   objectNameSingular,
+  viewBarId,
 }: UseHandleToggleColumnFilterProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -28,10 +32,29 @@ export const useHandleToggleColumnFilter = ({
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters(viewBarId);
-  const { openDropdown } = useDropdownV2();
+
+  const openDropdown = useRecoilCallback(({ set }) => {
+    return (dropdownId: string) => {
+      const dropdownOpenState = extractComponentState(
+        isDropdownOpenComponentState,
+        dropdownId,
+      );
+
+      set(dropdownOpenState, true);
+    };
+  }, []);
+
+  const availableFilterDefinitions = useRecoilComponentValueV2(
+    availableFilterDefinitionsComponentState,
+  );
+
+  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
+
+  const { setFilterDefinitionUsedInDropdownInScope } =
+    useSetFilterDefinitionUsedInDropdownInScope();
 
   const handleToggleColumnFilter = useCallback(
-    (fieldMetadataId: string) => {
+    async (fieldMetadataId: string) => {
       const correspondingColumnDefinition = columnDefinitions.find(
         (columnDefinition) =>
           columnDefinition.fieldMetadataId === fieldMetadataId,
@@ -39,38 +62,54 @@ export const useHandleToggleColumnFilter = ({
 
       if (!isDefined(correspondingColumnDefinition)) return;
 
-      const filterType = getFilterTypeFromFieldType(
-        correspondingColumnDefinition?.type,
-      );
+      const newFilterId = v4();
 
-      const filterDefinition = {
-        label: correspondingColumnDefinition.label,
-        iconName: correspondingColumnDefinition.iconName,
-        fieldMetadataId,
-        type: filterType,
-      } satisfies FilterDefinition;
+      const existingViewFilter =
+        currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
+          (viewFilter) => viewFilter.fieldMetadataId === fieldMetadataId,
+        );
 
-      const availableOperandsForFilter =
-        getOperandsForFilterDefinition(filterDefinition);
+      if (!existingViewFilter) {
+        const filterDefinition = availableFilterDefinitions.find(
+          (fd) => fd.fieldMetadataId === fieldMetadataId,
+        );
 
-      const defaultOperand = availableOperandsForFilter[0];
+        if (!isDefined(filterDefinition)) {
+          throw new Error('Filter definition not found');
+        }
 
-      const newFilter: Filter = {
-        id: v4(),
-        fieldMetadataId,
-        operand: defaultOperand,
-        displayValue: '',
-        definition: filterDefinition,
-        value: '',
-      };
+        const availableOperandsForFilter =
+          getOperandsForFilterDefinition(filterDefinition);
 
-      upsertCombinedViewFilter(newFilter);
+        const defaultOperand = availableOperandsForFilter[0];
 
-      openDropdown(newFilter.id, {
-        scope: newFilter.id,
-      });
+        const newFilter: Filter = {
+          id: newFilterId,
+          fieldMetadataId,
+          operand: defaultOperand,
+          displayValue: '',
+          definition: filterDefinition,
+          value: '',
+        };
+
+        await upsertCombinedViewFilter(newFilter);
+
+        setFilterDefinitionUsedInDropdownInScope(
+          newFilter.id,
+          filterDefinition,
+        );
+      }
+
+      openDropdown(existingViewFilter?.id ?? newFilterId);
     },
-    [columnDefinitions, upsertCombinedViewFilter, openDropdown],
+    [
+      openDropdown,
+      columnDefinitions,
+      upsertCombinedViewFilter,
+      setFilterDefinitionUsedInDropdownInScope,
+      currentViewWithCombinedFiltersAndSorts,
+      availableFilterDefinitions,
+    ],
   );
 
   return handleToggleColumnFilter;

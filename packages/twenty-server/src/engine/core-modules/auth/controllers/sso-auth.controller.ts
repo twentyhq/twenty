@@ -103,8 +103,9 @@ export class SSOAuthController {
       );
     } catch (err) {
       // TODO: improve error management
-      res.status(403).send(err.message);
-      res.redirect(`${this.environmentService.get('FRONT_BASE_URL')}/verify`);
+      res
+        .status(403)
+        .redirect(`${this.environmentService.get('FRONT_BASE_URL')}/verify`);
     }
   }
 

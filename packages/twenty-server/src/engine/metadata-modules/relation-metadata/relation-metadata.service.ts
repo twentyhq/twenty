@@ -36,6 +36,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { isDefined } from 'src/utils/is-defined';
 
 import {
   RelationMetadataEntity,
@@ -137,22 +138,20 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       );
     }
 
-    const deletedFieldMetadata = toObjectMetadata.fields.find(
+    const deletedAtFieldMetadata = toObjectMetadata.fields.find(
       (fieldMetadata) =>
         fieldMetadata.standardId === BASE_OBJECT_STANDARD_FIELD_IDS.deletedAt,
     );
 
-    if (!deletedFieldMetadata) {
-      throw new RelationMetadataException(
-        `Deleted field metadata not found`,
-        RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
-      );
-    }
+    this.throwIfDeletedAtFieldMetadataNotFound(deletedAtFieldMetadata);
 
     await this.indexMetadataService.createIndexMetadata(
       relationMetadataInput.workspaceId,
       toObjectMetadata,
-      [foreignKeyFieldMetadata, deletedFieldMetadata],
+      [
+        foreignKeyFieldMetadata,
+        deletedAtFieldMetadata as FieldMetadataEntity<'default'>,
+      ],
       false,
       false,
     );
@@ -441,6 +440,24 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       columnName,
     );
 
+    const deletedAtFieldMetadata = await this.fieldMetadataRepository.findOneBy(
+      {
+        objectMetadataId: relationMetadata.toObjectMetadataId,
+        name: 'deletedAt',
+      },
+    );
+
+    this.throwIfDeletedAtFieldMetadataNotFound(deletedAtFieldMetadata);
+
+    await this.indexMetadataService.deleteIndexMetadata(
+      workspaceId,
+      relationMetadata.toObjectMetadata,
+      [
+        foreignKeyFieldMetadata,
+        deletedAtFieldMetadata as FieldMetadataEntity<'default'>,
+      ],
+    );
+
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       relationMetadata.workspaceId,
     );
@@ -553,5 +570,16 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         },
       ],
     );
+  }
+
+  private throwIfDeletedAtFieldMetadataNotFound(
+    deletedAtFieldMetadata?: FieldMetadataEntity<'default'> | null,
+  ) {
+    if (!isDefined(deletedAtFieldMetadata)) {
+      throw new RelationMetadataException(
+        `Deleted field metadata not found`,
+        RelationMetadataExceptionCode.RELATION_METADATA_NOT_FOUND,
+      );
+    }
   }
 }

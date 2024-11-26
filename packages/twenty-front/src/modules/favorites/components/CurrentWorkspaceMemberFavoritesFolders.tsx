@@ -43,11 +43,15 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   );
   const loading = useIsPrefetchLoading();
 
-  const { toggleNavigationSection, isNavigationSectionOpenState } =
-    useNavigationSection('Favorites');
+  const {
+    toggleNavigationSection,
+    isNavigationSectionOpenState,
+    openNavigationSection,
+  } = useNavigationSection('Favorites');
   const isNavigationSectionOpen = useRecoilValue(isNavigationSectionOpenState);
 
   const toggleNewFolder = () => {
+    openNavigationSection();
     setIsFavoriteFolderCreating((current) => !current);
   };
   const shouldDisplayFavoritesWithFeatureFlagEnabled = true;
