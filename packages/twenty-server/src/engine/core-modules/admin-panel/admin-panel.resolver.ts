@@ -3,6 +3,7 @@ import { Args, Mutation, Resolver } from '@nestjs/graphql';
 
 import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
 import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.input';
+import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
 import { Verify } from 'src/engine/core-modules/auth/dto/verify.entity';
@@ -36,5 +37,21 @@ export class AdminPanelResolver {
       userLookupInput.userIdentifier,
       user,
     );
+  }
+
+  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
+  @Mutation(() => Boolean)
+  async updateWorkspaceFeatureFlag(
+    @Args() updateFlagInput: UpdateWorkspaceFeatureFlagInput,
+    @AuthUser() user: User,
+  ): Promise<boolean> {
+    await this.adminService.updateWorkspaceFeatureFlags(
+      updateFlagInput.workspaceId,
+      updateFlagInput.featureFlag,
+      user,
+      updateFlagInput.value,
+    );
+
+    return true;
   }
 }

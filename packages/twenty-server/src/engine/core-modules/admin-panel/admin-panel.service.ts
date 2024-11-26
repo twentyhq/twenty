@@ -95,6 +95,7 @@ export class AdminPanelService {
         'workspaces.workspace',
         'workspaces.workspace.workspaceUsers',
         'workspaces.workspace.workspaceUsers.user',
+        'workspaces.workspace.featureFlags',
       ],
     });
 
@@ -124,16 +125,13 @@ export class AdminPanelService {
           firstName: workspaceUser.user.firstName,
           lastName: workspaceUser.user.lastName,
         })),
-        featureFlags: allFeatureFlagKeys.map(
-          (key) =>
-            ({
-              key,
-              value:
-                userWorkspace.workspace.featureFlags?.some(
-                  (flag) => flag.key === key,
-                ) ?? false,
-            }) as FeatureFlagEntity,
-        ),
+        featureFlags: allFeatureFlagKeys.map((key) => ({
+          key,
+          value:
+            userWorkspace.workspace.featureFlags?.find(
+              (flag) => flag.key === key,
+            )?.value ?? false,
+        })) as FeatureFlagEntity[],
       })),
     };
   }

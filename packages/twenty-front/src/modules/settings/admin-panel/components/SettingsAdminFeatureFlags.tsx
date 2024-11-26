@@ -1,63 +1,143 @@
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useFeatureFlagsManagement } from '@/settings/admin-panel/hooks/useFeatureFlagsManagement';
+import { TextInput } from '@/ui/input/components/TextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
-import { H2Title, Section } from 'twenty-ui';
+import { useState } from 'react';
+import { Button, H2Title, IconSearch, Section, Toggle } from 'twenty-ui';
+
+const StyledLinkContainer = styled.div`
+  margin-right: ${({ theme }) => theme.spacing(2)};
+  width: 100%;
+`;
+
+const StyledContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+`;
+
+const StyledErrorSection = styled.div`
+  color: ${({ theme }) => theme.font.color.danger};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledWorkspaceSection = styled.div`
+  margin-top: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledUserInfo = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+`;
 
 const StyledTable = styled(Table)`
   margin-top: ${({ theme }) => theme.spacing(0.5)};
 `;
 
-const StyledTableHeaderRow = styled(Table)`
-  margin-bottom: ${({ theme }) => theme.spacing(1.5)};
-`;
-
-const StyledTextContainerWithEllipsis = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 export const SettingsAdminFeatureFlags = () => {
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const [userIdentifier, setUserIdentifier] = useState('');
+
+  const {
+    userLookupResult,
+    handleUserLookup,
+    handleFeatureFlagUpdate,
+    isLoading,
+    error,
+  } = useFeatureFlagsManagement();
+
+  const handleSearch = async () => {
+    await handleUserLookup(userIdentifier);
+  };
 
   return (
-    <Section>
-      <H2Title title="Feature Flags" description="All feature flags." />
+    <>
+      <Section>
+        <H2Title
+          title="Feature Flags Management"
+          description="Look up users and manage their workspace feature flags."
+        />
 
-      <Table>
-        <StyledTableHeaderRow>
-          <TableRow
-            gridAutoColumns="1fr 100px"
-            mobileGridAutoColumns="1fr 80px"
-          >
-            <TableHeader>Feature Flag</TableHeader>
-            <TableHeader>Value</TableHeader>
-          </TableRow>
-        </StyledTableHeaderRow>
-        {currentWorkspace?.featureFlags?.map((featureFlag) => (
-          <StyledTable key={featureFlag.key}>
-            <TableRow
-              gridAutoColumns="1fr 100px"
-              mobileGridAutoColumns="1fr 80px"
-            >
-              <TableCell>
-                <StyledTextContainerWithEllipsis
-                  id={`hover-text-${featureFlag.key}`}
-                >
-                  {featureFlag.key}
-                </StyledTextContainerWithEllipsis>
-              </TableCell>
-              <TableCell>
-                {featureFlag.value ? 'Enabled' : 'Disabled'}
-              </TableCell>
-            </TableRow>
-          </StyledTable>
-        ))}
-      </Table>
-    </Section>
+        <StyledContainer>
+          <StyledLinkContainer>
+            <TextInput
+              value={userIdentifier}
+              onChange={setUserIdentifier}
+              placeholder="Enter user ID or email"
+              fullWidth
+              disabled={isLoading}
+            />
+          </StyledLinkContainer>
+          <Button
+            Icon={IconSearch}
+            variant="primary"
+            accent="blue"
+            title="Search"
+            onClick={handleSearch}
+            disabled={!userIdentifier.trim() || isLoading}
+          />
+        </StyledContainer>
+
+        {error && <StyledErrorSection>{error}</StyledErrorSection>}
+      </Section>
+      <Section>
+        {userLookupResult && (
+          <>
+            <StyledUserInfo>
+              <H2Title
+                title={userLookupResult.user.email}
+                description={`${userLookupResult.user.firstName || ''} ${userLookupResult.user.lastName || ''}`.trim()}
+              />
+            </StyledUserInfo>
+
+            {userLookupResult.workspaces.map((workspace) => (
+              <StyledWorkspaceSection key={workspace.id}>
+                <H2Title
+                  title={workspace.name}
+                  description={'Workspace Name'}
+                />
+                <H2Title
+                  title={`${workspace.totalUsers} users`}
+                  description={'Total Users'}
+                />
+
+                <StyledTable>
+                  <TableRow
+                    gridAutoColumns="1fr 100px"
+                    mobileGridAutoColumns="1fr 80px"
+                  >
+                    <TableHeader>Feature Flag</TableHeader>
+                    <TableHeader align="right">Status</TableHeader>
+                  </TableRow>
+
+                  {workspace.featureFlags.map((flag) => (
+                    <TableRow
+                      gridAutoColumns="1fr 100px"
+                      mobileGridAutoColumns="1fr 80px"
+                      key={flag.key}
+                    >
+                      <TableCell>{flag.key}</TableCell>
+                      <TableCell align="right">
+                        <Toggle
+                          value={flag.value}
+                          onChange={(newValue) =>
+                            handleFeatureFlagUpdate(
+                              workspace.id,
+                              flag.key,
+                              newValue,
+                            )
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </StyledTable>
+              </StyledWorkspaceSection>
+            ))}
+          </>
+        )}
+      </Section>
+    </>
   );
 };
