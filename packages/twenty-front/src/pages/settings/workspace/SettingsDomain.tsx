@@ -8,17 +8,16 @@ import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import styled from '@emotion/styled';
-import {
-  buildWorkspaceUrl,
-  twentyHostname,
-} from '~/utils/workspace-url.helper';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useNavigate } from 'react-router-dom';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
+import { urlManagerState } from '@/url-manager/state/url-manager.state';
+import { isDefined } from '~/utils/isDefined';
 
 const validationSchema = z
   .object({
@@ -46,8 +45,11 @@ const StyledDomain = styled.h2`
 export const SettingsDomain = () => {
   const navigate = useNavigate();
 
+  const urlManager = useRecoilValue(urlManagerState);
+
   const { enqueueSnackBar } = useSnackBar();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
+  const { buildWorkspaceUrl } = useUrlManager();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -140,7 +142,9 @@ export const SettingsDomain = () => {
                   />
                 )}
               />
-              <StyledDomain>.{twentyHostname}</StyledDomain>
+              {isDefined(urlManager) && isDefined(urlManager.frontDomain) && (
+                <StyledDomain>.{urlManager.frontDomain}</StyledDomain>
+              )}
             </StyledDomainFromWrapper>
           )}
         </Section>

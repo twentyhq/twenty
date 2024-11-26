@@ -1,0 +1,99 @@
+import { useMemo } from 'react';
+
+import { isDefined } from '~/utils/isDefined';
+import { urlManagerState } from '@/url-manager/state/url-manager.state';
+import { useRecoilValue } from 'recoil';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+
+export const useUrlManager = () => {
+  const urlManager = useRecoilValue(urlManagerState);
+  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+
+  const homePageDomain = useMemo(() => {
+    return isMultiWorkspaceEnabled
+      ? `${urlManager.defaultSubdomain}.${urlManager.frontDomain}`
+      : urlManager.frontDomain;
+  }, [
+    isMultiWorkspaceEnabled,
+    urlManager.defaultSubdomain,
+    urlManager.frontDomain,
+  ]);
+
+  const isTwentyHomePage = useMemo(() => {
+    if (!isMultiWorkspaceEnabled) return true;
+    return window.location.hostname === homePageDomain;
+  }, [homePageDomain, isMultiWorkspaceEnabled]);
+
+  const isTwentyWorkspaceSubdomain = useMemo(() => {
+    if (!isMultiWorkspaceEnabled) return false;
+
+    if (
+      !isDefined(urlManager.frontDomain) ||
+      !isDefined(urlManager.defaultSubdomain)
+    ) {
+      throw new Error('frontDomain and defaultSubdomain are required');
+    }
+
+    return window.location.hostname !== homePageDomain;
+  }, [
+    homePageDomain,
+    isMultiWorkspaceEnabled,
+    urlManager.defaultSubdomain,
+    urlManager.frontDomain,
+  ]);
+
+  const getWorkspaceSubdomain = useMemo(() => {
+    if (!isDefined(urlManager.frontDomain)) {
+      throw new Error('frontDomain is not defined');
+    }
+
+    return isTwentyWorkspaceSubdomain
+      ? window.location.hostname.replace(`.${urlManager.frontDomain}`, '')
+      : null;
+  }, [isTwentyWorkspaceSubdomain, urlManager.frontDomain]);
+
+  const buildWorkspaceUrl = (
+    subdomain?: string,
+    searchParams?: Record<string, string>,
+  ) => {
+    const url = new URL(window.location.href);
+
+    if (isDefined(subdomain) && subdomain.length !== 0) {
+      url.hostname = `${subdomain}.${urlManager.frontDomain}`;
+    }
+
+    if (isDefined(searchParams)) {
+      Object.entries(searchParams).forEach(([key, value]) =>
+        url.searchParams.set(key, value),
+      );
+    }
+    return url.toString();
+  };
+
+  const redirectToWorkspace = (
+    subdomain: string,
+    searchParams?: Record<string, string>,
+  ) => {
+    if (!isMultiWorkspaceEnabled) return;
+    window.location.href = buildWorkspaceUrl(subdomain, searchParams);
+  };
+
+  const redirectToHome = () => {
+    if (!isMultiWorkspaceEnabled) return;
+    const url = new URL(window.location.href);
+    if (url.hostname !== homePageDomain) {
+      url.hostname = homePageDomain;
+      window.location.href = url.toString();
+    }
+  };
+
+  return {
+    redirectToHome,
+    redirectToWorkspace,
+    homePageDomain,
+    isTwentyHomePage,
+    buildWorkspaceUrl,
+    isTwentyWorkspaceSubdomain,
+    getWorkspaceSubdomain,
+  };
+};

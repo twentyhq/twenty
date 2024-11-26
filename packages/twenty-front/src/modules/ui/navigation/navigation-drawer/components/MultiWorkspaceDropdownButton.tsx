@@ -15,8 +15,8 @@ import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconChevronDown, MenuItemSelectAvatar } from 'twenty-ui';
 import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
-import { buildWorkspaceUrl } from '~/utils/workspace-url.helper';
 import { Link } from 'react-router-dom';
+import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
 
 const StyledLink = styled(Link)`
   text-decoration: none;
@@ -79,6 +79,7 @@ export const MultiWorkspaceDropdownButton = ({
     useState(false);
 
   const { switchWorkspace } = useWorkspaceSwitching();
+  const { buildWorkspaceUrl } = useUrlManager();
 
   const { closeDropdown } = useDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
 
@@ -103,9 +104,11 @@ export const MultiWorkspaceDropdownButton = ({
           isNavigationDrawerExpanded={isNavigationDrawerExpanded}
         >
           <StyledLogo
-            logo={getImageAbsoluteURI(
-              currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
-            )}
+            logo={
+              getImageAbsoluteURI(
+                currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
+              )!
+            }
           />
           <NavigationDrawerAnimatedCollapseWrapper>
             <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
@@ -129,14 +132,16 @@ export const MultiWorkspaceDropdownButton = ({
                 text={workspace.displayName ?? ''}
                 avatar={
                   <StyledLogo
-                    logo={getImageAbsoluteURI(
-                      workspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-                    )}
+                    logo={
+                      getImageAbsoluteURI(
+                        workspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                      )!
+                    }
                   />
                 }
                 selected={currentWorkspace?.id === workspace.id}
                 onClick={(event) => {
-                  event.preventDefault();
+                  event?.preventDefault();
                   handleChange(workspace.id);
                 }}
               />

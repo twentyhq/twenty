@@ -13,10 +13,12 @@ import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { urlManagerState } from '@/url-manager/state/url-manager.state';
 
 export const ClientConfigProviderEffect = () => {
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
+  const setUrlManager = useSetRecoilState(urlManagerState);
 
   const setIsSignInPrefilled = useSetRecoilState(isSignInPrefilledState);
   const setIsMultiWorkspaceEnabled = useSetRecoilState(
@@ -88,6 +90,10 @@ export const ClientConfigProviderEffect = () => {
 
     setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
     setApiConfig(data?.clientConfig?.api);
+    setUrlManager({
+      defaultSubdomain: data?.clientConfig?.defaultSubdomain,
+      frontDomain: data?.clientConfig?.frontDomain,
+    });
   }, [
     data,
     setIsDebugMode,

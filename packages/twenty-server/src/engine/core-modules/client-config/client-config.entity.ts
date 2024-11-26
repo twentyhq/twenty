@@ -61,6 +61,12 @@ export class ClientConfig {
   @Field(() => Boolean)
   isMultiWorkspaceEnabled: boolean;
 
+  @Field(() => String, { nullable: true })
+  defaultSubdomain: string;
+
+  @Field(() => String)
+  frontDomain: string;
+
   @Field(() => Boolean)
   debugMode: boolean;
 

@@ -1,18 +1,14 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useGetPublicWorkspaceDataBySubdomainQuery } from '~/generated/graphql';
-import {
-  getWorkspaceSubdomain,
-  isTwentyHomePage,
-  redirectToHome,
-  redirectToWorkspace,
-} from '~/utils/workspace-url.helper';
+
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { useEffect } from 'react';
 import { isDefined } from '~/utils/isDefined';
 import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
 
 export const WorkspaceProviderEffect = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
@@ -23,11 +19,18 @@ export const WorkspaceProviderEffect = () => {
   );
 
   const setLastAuthenticateWorkspaceState = useSetRecoilState(
-    lastAuthenticateWorkspaceState,
+    lastAuthenticateWorkspaceState(),
   );
   const lastAuthenticateWorkspace = useRecoilValue(
-    lastAuthenticateWorkspaceState,
+    lastAuthenticateWorkspaceState(),
   );
+
+  const {
+    redirectToHome,
+    getWorkspaceSubdomain,
+    redirectToWorkspace,
+    isTwentyHomePage,
+  } = useUrlManager();
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
@@ -48,11 +51,16 @@ export const WorkspaceProviderEffect = () => {
     if (
       isMultiWorkspaceEnabled &&
       isDefined(workspacePublicData?.subdomain) &&
-      workspacePublicData.subdomain !== getWorkspaceSubdomain()
+      workspacePublicData.subdomain !== getWorkspaceSubdomain
     ) {
       redirectToWorkspace(workspacePublicData.subdomain);
     }
-  }, [workspacePublicData]);
+  }, [
+    getWorkspaceSubdomain,
+    isMultiWorkspaceEnabled,
+    redirectToWorkspace,
+    workspacePublicData,
+  ]);
 
   useEffect(() => {
     if (
@@ -62,7 +70,12 @@ export const WorkspaceProviderEffect = () => {
     ) {
       redirectToWorkspace(lastAuthenticateWorkspace.subdomain);
     }
-  }, [lastAuthenticateWorkspace]);
+  }, [
+    isMultiWorkspaceEnabled,
+    isTwentyHomePage,
+    lastAuthenticateWorkspace,
+    redirectToWorkspace,
+  ]);
 
   useEffect(() => {
     try {

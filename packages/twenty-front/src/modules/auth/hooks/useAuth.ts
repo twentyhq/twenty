@@ -5,6 +5,7 @@ import {
   useGotoRecoilSnapshot,
   useRecoilCallback,
   useRecoilState,
+  useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
 import { iconsState } from 'twenty-ui';
@@ -43,16 +44,16 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
-import {
-  getWorkspaceSubdomain,
-  isTwentyWorkspaceSubdomain,
-} from '~/utils/workspace-url.helper';
+
+import { urlManagerState } from '@/url-manager/state/url-manager.state';
+import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
 
 export const useAuth = () => {
   const [, setTokenPair] = useRecoilState(tokenPairState);
   const setCurrentUser = useSetRecoilState(currentUserState);
+  const urlManager = useRecoilValue(urlManagerState);
   const setLastAuthenticateWorkspaceState = useSetRecoilState(
-    lastAuthenticateWorkspaceState,
+    lastAuthenticateWorkspaceState(`.${urlManager.frontDomain}`),
   );
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
@@ -68,6 +69,7 @@ export const useAuth = () => {
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
   const [verify] = useVerifyMutation();
+  const { isTwentyWorkspaceSubdomain, getWorkspaceSubdomain } = useUrlManager();
   const [checkUserExistsQuery, { data: checkUserExistsData }] =
     useCheckUserExistsLazyQuery();
 
@@ -326,7 +328,7 @@ export const useAuth = () => {
     if (isDefined(params.workspacePersonalInviteToken)) {
       url.searchParams.set('inviteToken', params.workspacePersonalInviteToken);
     }
-    const subdomain = getWorkspaceSubdomain();
+    const subdomain = getWorkspaceSubdomain;
 
     if (isDefined(subdomain)) {
       url.searchParams.set('workspaceSubdomain', subdomain);
@@ -342,7 +344,7 @@ export const useAuth = () => {
     }) => {
       window.location.href = buildRedirectUrl('/auth/google', params);
     },
-    [],
+    [buildRedirectUrl],
   );
 
   const handleMicrosoftLogin = useCallback(
@@ -352,7 +354,7 @@ export const useAuth = () => {
     }) => {
       window.location.href = buildRedirectUrl('/auth/microsoft', params);
     },
-    [],
+    [buildRedirectUrl],
   );
 
   return {

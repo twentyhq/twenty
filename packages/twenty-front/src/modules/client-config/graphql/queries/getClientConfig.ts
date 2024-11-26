@@ -10,6 +10,8 @@ export const GET_CLIENT_CONFIG = gql`
       }
       signInPrefilled
       isMultiWorkspaceEnabled
+      defaultSubdomain
+      frontDomain
       debugMode
       analyticsEnabled
       support {

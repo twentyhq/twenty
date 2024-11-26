@@ -23,6 +23,8 @@ export class ClientConfigResolver {
       isMultiWorkspaceEnabled: this.environmentService.get(
         'IS_MULTIWORKSPACE_ENABLED',
       ),
+      defaultSubdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+      frontDomain: this.environmentService.get('FRONT_DOMAIN'),
       debugMode: this.environmentService.get('DEBUG_MODE'),
       support: {
         supportDriver: this.environmentService.get('SUPPORT_DRIVER'),

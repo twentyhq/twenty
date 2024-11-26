@@ -18,7 +18,6 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { redirectToWorkspace } from '~/utils/workspace-url.helper';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -33,6 +32,7 @@ import {
   signInUpModeState,
 } from '@/auth/states/signInUpModeState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -55,6 +55,7 @@ export const SignInUpGlobalScopeForm = () => {
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
   const { checkUserExists } = useAuth();
   const { readCaptchaToken } = useReadCaptchaToken();
+  const { redirectToWorkspace } = useUrlManager();
 
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
