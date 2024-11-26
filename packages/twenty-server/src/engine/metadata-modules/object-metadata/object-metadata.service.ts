@@ -126,7 +126,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     if (!labelIdentifierFieldMetadata) {
       throw new ObjectMetadataException(
         'Label identifier field metadata not created properly',
-        ObjectMetadataExceptionCode.INVALID_LABEL_IDENTIFIER,
+        ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD,
       );
     }
 
