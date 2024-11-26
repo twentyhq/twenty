@@ -1,5 +1,9 @@
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
+import {
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
@@ -81,8 +85,8 @@ export const useDeleteSingleRecordAction = ({
     }
 
     addActionMenuEntry({
-      type: 'standard',
-      scope: 'record-selection',
+      type: ActionMenuEntryType.Standard,
+      scope: ActionMenuEntryScope.RecordSelection,
       key: 'delete-single-record',
       label: 'Delete',
       position,
