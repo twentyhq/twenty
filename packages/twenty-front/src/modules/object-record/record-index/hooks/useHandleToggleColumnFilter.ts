@@ -3,17 +3,17 @@ import { v4 } from 'uuid';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useSetFilterDefinitionUsedInDropdownInScope } from '@/object-record/object-filter-dropdown/hooks/useSetFilterDefinitionUsedInDropdownInScope';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
-import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
-import { isDefined } from '~/utils/isDefined';
-import { useRecoilCallback } from 'recoil';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
-import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useSetFilterDefinitionUsedInDropdownInScope } from '@/object-record/object-filter-dropdown/hooks/useSetFilterDefinitionUsedInDropdownInScope';
+import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
+import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
+import { useRecoilCallback } from 'recoil';
+import { isDefined } from '~/utils/isDefined';
 
 type UseHandleToggleColumnFilterProps = {
   objectNameSingular: string;
@@ -33,19 +33,16 @@ export const useHandleToggleColumnFilter = ({
 
   const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters(viewBarId);
 
-  const openDropdown = useRecoilCallback(
-    ({ set }) => {
-      return (dropdownId: string) => {
-        const dropdownOpenState = extractComponentState(
-          isDropdownOpenComponentState,
-          dropdownId,
-        );
+  const openDropdown = useRecoilCallback(({ set }) => {
+    return (dropdownId: string) => {
+      const dropdownOpenState = extractComponentState(
+        isDropdownOpenComponentState,
+        dropdownId,
+      );
 
-        set(dropdownOpenState, true);
-      };
-    },
-    [isDropdownOpenComponentState],
-  );
+      set(dropdownOpenState, true);
+    };
+  }, []);
 
   const availableFilterDefinitions = useRecoilComponentValueV2(
     availableFilterDefinitionsComponentState,
@@ -110,7 +107,8 @@ export const useHandleToggleColumnFilter = ({
       columnDefinitions,
       upsertCombinedViewFilter,
       setFilterDefinitionUsedInDropdownInScope,
-      currentViewWithCombinedFiltersAndSorts
+      currentViewWithCombinedFiltersAndSorts,
+      availableFilterDefinitions,
     ],
   );
 
