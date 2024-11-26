@@ -28,11 +28,11 @@ const StyledDropdownVariableButtonContainer = styled(
 
 const SearchVariablesDropdown = ({
   inputId,
-  insertVariableTag,
+  onVariableSelect,
   disabled,
 }: {
   inputId: string;
-  insertVariableTag: (variable: string) => void;
+  onVariableSelect: (variable: string) => void;
   disabled?: boolean;
 }) => {
   const theme = useTheme();
@@ -58,7 +58,7 @@ const SearchVariablesDropdown = ({
   };
 
   const handleSubItemSelect = (subItem: string) => {
-    insertVariableTag(subItem);
+    onVariableSelect(subItem);
   };
 
   const handleBack = () => {

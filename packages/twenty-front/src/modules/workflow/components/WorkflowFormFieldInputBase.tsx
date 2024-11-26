@@ -115,7 +115,7 @@ export const WorkflowFormFieldInputBase = ({
         >
           <SearchVariablesDropdown
             inputId={variablesDropdownId}
-            insertVariableTag={(variable) => {
+            onVariableSelect={(variable) => {
               setEditingMode('variable');
               onVariableTagInsert(variable);
             }}

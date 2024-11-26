@@ -60,7 +60,7 @@ export const VariableTagInput = ({
         >
           <SearchVariablesDropdown
             inputId={inputId}
-            insertVariableTag={(variable) => {
+            onVariableSelect={(variable) => {
               editor.commands.insertVariableTag(variable);
             }}
             disabled={readonly}
