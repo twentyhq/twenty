@@ -9,6 +9,7 @@ import { workflowCreateStepFromParentStepIdState } from '@/workflow/states/workf
 import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/states/workflowDiagramTriggerNodeSelectionState';
 import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
 import {
+  WorkflowAction,
   WorkflowStep,
   WorkflowStepType,
   WorkflowVersion,
@@ -18,6 +19,7 @@ import { getStepDefaultDefinition } from '@/workflow/utils/getStepDefaultDefinit
 import { insertStep } from '@/workflow/utils/insertStep';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
+import { useCreateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useCreateOneServerlessFunction';
 
 export const useCreateStep = ({
   workflow,
@@ -41,6 +43,8 @@ export const useCreateStep = ({
     });
 
   const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
+
+  const { createOneServerlessFunction } = useCreateOneServerlessFunction();
 
   const { computeStepOutputSchema } = useComputeStepOutputSchema();
 
@@ -84,15 +88,27 @@ export const useCreateStep = ({
     });
   };
 
-  const createStep = async (newStepType: WorkflowStepType) => {
-    if (!isDefined(workflowCreateStepFromParentStepId)) {
-      throw new Error('Select a step to create a new step from first.');
-    }
+  const enrichStepSettings = async (
+    step: WorkflowAction,
+  ): Promise<WorkflowAction> => {
+    const newStep = { ...step };
+    if (newStep.type === 'CODE') {
+      const newServerlessFunction = await createOneServerlessFunction({
+        name: 'A Serverless Function Code Workflow Step',
+        description: '',
+      });
 
-    const newStep = getStepDefaultDefinition({
-      type: newStepType,
-      activeObjectMetadataItems,
-    });
+      if (!isDefined(newServerlessFunction?.data)) {
+        throw new Error('Fail to create Code Step');
+      }
+
+      newStep.settings.input = {
+        serverlessFunctionId:
+          newServerlessFunction?.data.createOneServerlessFunction.id,
+        serverlessFunctionVersion: '',
+        serverlessFunctionInput: {},
+      };
+    }
 
     const outputSchema = (
       await computeStepOutputSchema({
@@ -105,12 +121,26 @@ export const useCreateStep = ({
       outputSchema: outputSchema || {},
     };
 
+    return newStep;
+  };
+
+  const createStep = async (newStepType: WorkflowStepType) => {
+    if (!isDefined(workflowCreateStepFromParentStepId)) {
+      throw new Error('Select a step to create a new step from first.');
+    }
+
+    const newStep = getStepDefaultDefinition({
+      type: newStepType,
+      activeObjectMetadataItems,
+    });
+    const enrichedStep = await enrichStepSettings(newStep);
+
     await insertNodeAndSave({
       parentNodeId: workflowCreateStepFromParentStepId,
-      nodeToAdd: newStep,
+      nodeToAdd: enrichedStep,
     });
 
-    setWorkflowSelectedNode(newStep.id);
+    setWorkflowSelectedNode(enrichedStep.id);
     openRightDrawer(RightDrawerPages.WorkflowStepEdit);
 
     /**
@@ -120,7 +150,7 @@ export const useCreateStep = ({
      *
      * Selecting the node will cause a right drawer to open in order to edit the step.
      */
-    setWorkflowDiagramTriggerNodeSelection(newStep.id);
+    setWorkflowDiagramTriggerNodeSelection(enrichedStep.id);
   };
 
   return {

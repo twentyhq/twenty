@@ -1,6 +1,6 @@
-import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
 import { WorkflowEditActionFormServerlessFunctionInner } from '@/workflow/components/WorkflowEditActionFormServerlessFunctionInner';
 import { WorkflowCodeAction } from '@/workflow/types/Workflow';
+import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
 
 type WorkflowEditActionFormServerlessFunctionProps = {
   action: WorkflowCodeAction;
