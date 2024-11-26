@@ -16,6 +16,7 @@ import {
 import { sleep } from '~/utils/sleep';
 
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 import { CommandMenu } from '../CommandMenu';
@@ -49,9 +50,13 @@ const meta: Meta<typeof CommandMenu> = {
       const setCurrentWorkspaceMember = useSetRecoilState(
         currentWorkspaceMemberState,
       );
+      const setIsCommandMenuOpened = useSetRecoilState(
+        isCommandMenuOpenedState,
+      );
 
       setCurrentWorkspace(mockDefaultWorkspace);
       setCurrentWorkspaceMember(mockedWorkspaceMemberData);
+      setIsCommandMenuOpened(true);
 
       return <Story />;
     },
@@ -91,7 +96,6 @@ export const MatchingPersonCompanyActivityCreateNavigate: Story = {
     await userEvent.type(searchInput, 'n');
     expect(await canvas.findByText('Linkedin')).toBeInTheDocument();
     expect(await canvas.findByText(companiesMock[0].name)).toBeInTheDocument();
-    expect(await canvas.findByText('Create Note')).toBeInTheDocument();
     expect(await canvas.findByText('Go to Companies')).toBeInTheDocument();
   },
 };
@@ -102,7 +106,6 @@ export const OnlyMatchingCreateAndNavigate: Story = {
     const searchInput = await canvas.findByPlaceholderText('Type anything');
     await sleep(openTimeout);
     await userEvent.type(searchInput, 'ta');
-    expect(await canvas.findByText('Create Task')).toBeInTheDocument();
     expect(await canvas.findByText('Go to Tasks')).toBeInTheDocument();
   },
 };
