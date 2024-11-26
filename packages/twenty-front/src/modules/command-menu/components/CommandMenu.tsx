@@ -67,6 +67,8 @@ type CommandGroupConfig = {
     to?: string;
     onClick?: () => void;
     key?: string;
+    firstHotKey?: string;
+    secondHotKey?: string;
   };
 };
 
@@ -479,6 +481,8 @@ export const CommandMenu = () => {
         label: command.label,
         to: command.to,
         onClick: command.onCommandClick,
+        firstHotKey: command.firstHotKey,
+        secondHotKey: command.secondHotKey,
       }),
     },
     {
@@ -490,6 +494,8 @@ export const CommandMenu = () => {
         label: command.label,
         to: command.to,
         onClick: command.onCommandClick,
+        firstHotKey: command.firstHotKey,
+        secondHotKey: command.secondHotKey,
       }),
     },
     {
@@ -507,6 +513,8 @@ export const CommandMenu = () => {
             placeholder={`${person.name.firstName} ${person.name.lastName}`}
           />
         ),
+        firstHotKey: person.firstHotKey,
+        secondHotKey: person.secondHotKey,
       }),
     },
     {
@@ -525,6 +533,8 @@ export const CommandMenu = () => {
             )}
           />
         ),
+        firstHotKey: company.firstHotKey,
+        secondHotKey: company.secondHotKey,
       }),
     },
     {
@@ -629,6 +639,8 @@ export const CommandMenu = () => {
                               : ''
                           }`}
                           onClick={copilotCommand.onCommandClick}
+                          firstHotKey={copilotCommand.firstHotKey}
+                          secondHotKey={copilotCommand.secondHotKey}
                         />
                       </SelectableItem>
                     </CommandGroup>
@@ -647,6 +659,12 @@ export const CommandMenu = () => {
                             onClick={
                               standardActionrecordSelectionCommand.onCommandClick
                             }
+                            firstHotKey={
+                              standardActionrecordSelectionCommand.firstHotKey
+                            }
+                            secondHotKey={
+                              standardActionrecordSelectionCommand.secondHotKey
+                            }
                           />
                         </SelectableItem>
                       ),
@@ -663,6 +681,12 @@ export const CommandMenu = () => {
                             Icon={workflowRunRecordSelectionCommand.Icon}
                             onClick={
                               workflowRunRecordSelectionCommand.onCommandClick
+                            }
+                            firstHotKey={
+                              workflowRunRecordSelectionCommand.firstHotKey
+                            }
+                            secondHotKey={
+                              workflowRunRecordSelectionCommand.secondHotKey
                             }
                           />
                         </SelectableItem>
@@ -684,6 +708,12 @@ export const CommandMenu = () => {
                               onClick={
                                 standardActionGlobalCommand.onCommandClick
                               }
+                              firstHotKey={
+                                standardActionGlobalCommand.firstHotKey
+                              }
+                              secondHotKey={
+                                standardActionGlobalCommand.secondHotKey
+                              }
                             />
                           </SelectableItem>
                         ),
@@ -703,6 +733,10 @@ export const CommandMenu = () => {
                               label={workflowRunGlobalCommand.label}
                               Icon={workflowRunGlobalCommand.Icon}
                               onClick={workflowRunGlobalCommand.onCommandClick}
+                              firstHotKey={workflowRunGlobalCommand.firstHotKey}
+                              secondHotKey={
+                                workflowRunGlobalCommand.secondHotKey
+                              }
                             />
                           </SelectableItem>
                         ),
@@ -714,8 +748,16 @@ export const CommandMenu = () => {
                     items?.length ? (
                       <CommandGroup heading={heading} key={heading}>
                         {items.map((item) => {
-                          const { id, Icon, label, to, onClick, key } =
-                            renderItem(item);
+                          const {
+                            id,
+                            Icon,
+                            label,
+                            to,
+                            onClick,
+                            key,
+                            firstHotKey,
+                            secondHotKey,
+                          } = renderItem(item);
                           return (
                             <SelectableItem itemId={id} key={id}>
                               <CommandMenuItem
@@ -725,6 +767,8 @@ export const CommandMenu = () => {
                                 label={label}
                                 to={to}
                                 onClick={onClick}
+                                firstHotKey={firstHotKey}
+                                secondHotKey={secondHotKey}
                               />
                             </SelectableItem>
                           );
