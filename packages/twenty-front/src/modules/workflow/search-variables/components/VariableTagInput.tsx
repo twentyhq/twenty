@@ -4,6 +4,7 @@ import { useTextVariableEditor } from '@/object-record/record-field/form-types/h
 import { StyledSearchVariablesDropdownContainer } from '@/workflow/components/WorkflowFormFieldInputBase';
 import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
 import { parseEditorContent } from '@/workflow/search-variables/utils/parseEditorContent';
+import { isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 
 interface VariableTagInputProps {
@@ -39,6 +40,16 @@ export const VariableTagInput = ({
     onUpdate: deboucedOnUpdate,
   });
 
+  const onVariableSelect = (variable: string) => {
+    if (!isDefined(editor)) {
+      throw new Error(
+        'Expected the editor to be defined when a variable is selected',
+      );
+    }
+
+    editor.commands.insertVariableTag(variable);
+  };
+
   if (!editor) {
     return null;
   }
@@ -60,9 +71,7 @@ export const VariableTagInput = ({
         >
           <SearchVariablesDropdown
             inputId={inputId}
-            onVariableSelect={(variable) => {
-              editor.commands.insertVariableTag(variable);
-            }}
+            onVariableSelect={onVariableSelect}
             disabled={readonly}
           />
         </StyledSearchVariablesDropdownContainer>

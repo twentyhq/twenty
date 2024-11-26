@@ -44,6 +44,18 @@ export const WorkflowFormNumberFieldInput = ({
     persistNumber(newText.trim());
   };
 
+  const handleUnlinkVariable = () => {
+    setDraftValue('');
+
+    onPersist(null);
+  };
+
+  const handleVariableTagInsert = (variable: string) => {
+    setDraftValue(variable);
+
+    onPersist(variable);
+  };
+
   return (
     <WorkflowFormFieldInputBase
       inputId={inputId}
@@ -56,20 +68,12 @@ export const WorkflowFormNumberFieldInput = ({
           value={String(draftValue)}
           copyButton={false}
           hotkeyScope="record-create"
-          onChange={(value) => {
-            handleChange(value);
-          }}
+          onChange={handleChange}
         />
       }
       draftValue={draftValue}
-      onUnlinkVariable={() => {
-        setDraftValue('');
-        onPersist(null);
-      }}
-      onVariableTagInsert={(variable) => {
-        setDraftValue(variable);
-        onPersist(variable);
-      }}
+      onUnlinkVariable={handleUnlinkVariable}
+      onVariableTagInsert={handleVariableTagInsert}
     />
   );
 };

@@ -89,6 +89,16 @@ export const WorkflowFormFieldInputBase = ({
       : 'input';
   });
 
+  const handleVariableChipRemove = () => {
+    setEditingMode('input');
+    onUnlinkVariable?.();
+  };
+
+  const handleVariableSelect = (variable: string) => {
+    setEditingMode('variable');
+    onVariableTagInsert(variable);
+  };
+
   return (
     <FormFieldInputBase
       inputId={inputId}
@@ -100,10 +110,7 @@ export const WorkflowFormFieldInputBase = ({
           <StyledVariableContainer>
             <SortOrFilterChip
               labelValue={extractVariableLabel(draftValue as string)}
-              onRemove={() => {
-                setEditingMode('input');
-                onUnlinkVariable();
-              }}
+              onRemove={handleVariableChipRemove}
             />
           </StyledVariableContainer>
         )
@@ -115,10 +122,7 @@ export const WorkflowFormFieldInputBase = ({
         >
           <SearchVariablesDropdown
             inputId={variablesDropdownId}
-            onVariableSelect={(variable) => {
-              setEditingMode('variable');
-              onVariableTagInsert(variable);
-            }}
+            onVariableSelect={handleVariableSelect}
             disabled={readonly}
           />
         </StyledSearchVariablesDropdownContainer>

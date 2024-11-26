@@ -34,6 +34,16 @@ export const WorkflowFormTextFieldInput = ({
     },
   });
 
+  const onVariableTagInsert = (variable: string) => {
+    if (!isDefined(editor)) {
+      throw new Error(
+        'Expected the editor to be defined when a variable is selected',
+      );
+    }
+
+    editor.commands.insertVariableTag(variable);
+  };
+
   if (!isDefined(editor)) {
     return null;
   }
@@ -51,9 +61,7 @@ export const WorkflowFormTextFieldInput = ({
         />
       }
       multiline={multiline}
-      onVariableTagInsert={(variable) => {
-        editor.commands.insertVariableTag(variable);
-      }}
+      onVariableTagInsert={onVariableTagInsert}
     />
   );
 };

@@ -28,6 +28,18 @@ export const WorkflowFormBooleanFieldInput = ({
     onPersist(newValue);
   };
 
+  const handleVariableTagInsert = (variable: string) => {
+    setDraftValue(variable);
+
+    onPersist(variable);
+  };
+
+  const handleUnlinkVariable = () => {
+    setDraftValue(false);
+
+    onPersist(false);
+  };
+
   return (
     <WorkflowFormFieldInputBase
       label={label}
@@ -37,22 +49,14 @@ export const WorkflowFormBooleanFieldInput = ({
           <BooleanInput
             value={draftValue as boolean}
             readonly={readonly}
-            onToggle={(newValue) => {
-              handleChange(newValue);
-            }}
+            onToggle={handleChange}
           />
         </StyledBooleanInputContainer>
       }
       draftValue={draftValue}
       readonly={readonly}
-      onUnlinkVariable={() => {
-        setDraftValue(false);
-        onPersist(false);
-      }}
-      onVariableTagInsert={(variable) => {
-        setDraftValue(variable);
-        onPersist(variable);
-      }}
+      onUnlinkVariable={handleUnlinkVariable}
+      onVariableTagInsert={handleVariableTagInsert}
     />
   );
 };
