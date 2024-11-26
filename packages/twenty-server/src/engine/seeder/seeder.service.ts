@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { inspect } from 'util';
 
-import { ObjectSeed } from 'src/engine/seeder/interfaces/object-seed';
+import { ObjectMetadataSeed } from 'src/engine/seeder/interfaces/object-metadata-seed';
 
 import { compositeTypeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -24,7 +24,7 @@ export class SeederService {
   public async seedCustomObjects(
     dataSourceId: string,
     workspaceId: string,
-    metadataSeeds: ObjectSeed,
+    metadataSeeds: ObjectMetadataSeed,
     dataSeeds: Record<string, any>[],
   ): Promise<void> {
     const createdObjectMetadata = await this.objectMetadataService.createOne({

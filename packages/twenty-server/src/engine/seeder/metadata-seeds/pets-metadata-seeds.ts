@@ -1,4 +1,4 @@
-import { ObjectMetadataSeed } from 'src/engine/seeder/interfaces/object-seed';
+import { ObjectMetadataSeed } from 'src/engine/seeder/interfaces/object-metadata-seed';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
