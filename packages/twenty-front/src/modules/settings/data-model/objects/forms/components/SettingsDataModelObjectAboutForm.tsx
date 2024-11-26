@@ -152,7 +152,10 @@ export const SettingsDataModelObjectAboutForm = ({
               <IconPicker
                 disabled={disableEdition}
                 selectedIconKey={value}
-                onChange={({ iconKey }) => onChange(iconKey)}
+                onChange={({ iconKey }) => {
+                  onChange(iconKey);
+                  onBlur?.();
+                }}
               />
             )}
           />
