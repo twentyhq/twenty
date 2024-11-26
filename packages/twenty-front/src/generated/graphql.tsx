@@ -839,6 +839,11 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 };
 
 
+export type QueryGetAvailablePackagesArgs = {
+  input: ServerlessFunctionIdInput;
+};
+
+
 export type QueryGetProductPricesArgs = {
   product: Scalars['String'];
 };
@@ -1285,6 +1290,7 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
   allowImpersonation: Scalars['Boolean'];
+  billingEntitlements?: Maybe<Array<BillingEntitlement>>;
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
@@ -1302,6 +1308,12 @@ export type Workspace = {
   metadataVersion: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
   workspaceMembersCount?: Maybe<Scalars['Float']>;
+};
+
+
+export type WorkspaceBillingEntitlementsArgs = {
+  filter?: BillingEntitlementFilter;
+  sorting?: Array<BillingEntitlementSort>;
 };
 
 
@@ -1375,6 +1387,30 @@ export type WorkspaceNameAndId = {
   displayName?: Maybe<Scalars['String']>;
   id: Scalars['String'];
 };
+
+export type BillingEntitlement = {
+  __typename?: 'billingEntitlement';
+  id: Scalars['UUID'];
+  key: Scalars['String'];
+  value: Scalars['Boolean'];
+  workspaceId: Scalars['String'];
+};
+
+export type BillingEntitlementFilter = {
+  and?: InputMaybe<Array<BillingEntitlementFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  or?: InputMaybe<Array<BillingEntitlementFilter>>;
+};
+
+export type BillingEntitlementSort = {
+  direction: SortDirection;
+  field: BillingEntitlementSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum BillingEntitlementSortFields {
+  Id = 'id'
+}
 
 export type Field = {
   __typename?: 'field';

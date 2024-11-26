@@ -73,8 +73,10 @@ export const WorkflowEditActionFormServerlessFunction = ({
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
-  const { availablePackages } = useGetAvailablePackages();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
+  const { availablePackages } = useGetAvailablePackages({
+    id: serverlessFunctionId,
+  });
 
   const { formValues, setFormValues, loading } =
     useServerlessFunctionUpdateFormState(serverlessFunctionId);
