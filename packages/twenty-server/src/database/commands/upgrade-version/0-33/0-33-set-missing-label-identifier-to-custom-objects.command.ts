@@ -76,6 +76,7 @@ export class SetMissingLabelIdentifierToCustomObjectsCommand extends ActiveWorks
       where: {
         workspaceId,
         labelIdentifierFieldMetadataId: IsNull(),
+        isCustom: true,
       },
     });
 
