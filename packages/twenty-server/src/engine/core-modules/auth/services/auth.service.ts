@@ -45,19 +45,18 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 @Injectable()
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly urlManagerService: UrlManagerService,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly workspaceService: WorkspaceService,
     private readonly userService: UserService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly signInUpService: SignInUpService,

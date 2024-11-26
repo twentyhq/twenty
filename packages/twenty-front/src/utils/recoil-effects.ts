@@ -1,4 +1,5 @@
 import { AtomEffect } from 'recoil';
+import omit from 'lodash.omit';
 
 import { cookieStorage } from '~/utils/cookie-storage';
 
@@ -38,16 +39,32 @@ export const cookieStorageEffect =
       setSelf(JSON.parse(savedValue));
     }
 
+    const defaultAttributes = {
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      ...(attributes ?? {}),
+    };
+
     onSet((newValue, _, isReset) => {
       if (!newValue) {
-        cookieStorage.removeItem(key, attributes);
+        cookieStorage.removeItem(key, defaultAttributes);
         return;
       }
+
+      const cookieAttributes = {
+        ...defaultAttributes,
+        ...(typeof newValue === 'object' &&
+        'cookieAttributes' in newValue &&
+        typeof newValue.cookieAttributes === 'object'
+          ? newValue.cookieAttributes
+          : {}),
+      };
+
       isReset
-        ? cookieStorage.removeItem(key, attributes)
-        : cookieStorage.setItem(key, JSON.stringify(newValue), {
-            expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-            ...attributes,
-          });
+        ? cookieStorage.removeItem(key, defaultAttributes)
+        : cookieStorage.setItem(
+            key,
+            JSON.stringify(omit(newValue, ['cookieAttributes'])),
+            cookieAttributes,
+          );
     });
   };

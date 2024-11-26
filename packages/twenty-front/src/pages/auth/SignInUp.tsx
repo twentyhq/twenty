@@ -32,7 +32,7 @@ export const SignInUp = () => {
       <Title animate>
         {`Welcome to ${workspacePublicData?.displayName ?? DEFAULT_WORKSPACE_NAME}`}
       </Title>
-      {isTwentyHomePage || isMultiWorkspaceEnabled ? (
+      {isTwentyHomePage && isMultiWorkspaceEnabled ? (
         <SignInUpGlobalScopeForm />
       ) : (!isMultiWorkspaceEnabled ||
           (isMultiWorkspaceEnabled && isTwentyWorkspaceSubdomain)) &&
@@ -42,7 +42,7 @@ export const SignInUp = () => {
         (!isMultiWorkspaceEnabled || isTwentyWorkspaceSubdomain) ? (
         <SignInUpWorkspaceScopeForm />
       ) : null}
-      <FooterNote />
+      {signInUpStep !== SignInUpStep.Password && <FooterNote />}
     </>
   );
 };

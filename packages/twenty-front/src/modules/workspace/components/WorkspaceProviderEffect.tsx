@@ -1,4 +1,4 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
 
 import { useGetPublicWorkspaceDataBySubdomainQuery } from '~/generated/graphql';
 
@@ -18,12 +18,8 @@ export const WorkspaceProviderEffect = () => {
     workspacePublicDataState,
   );
 
-  const setLastAuthenticateWorkspaceState = useSetRecoilState(
-    lastAuthenticateWorkspaceState(),
-  );
-  const lastAuthenticateWorkspace = useRecoilValue(
-    lastAuthenticateWorkspaceState(),
-  );
+  const [lastAuthenticateWorkspace, setLastAuthenticateWorkspace] =
+    useRecoilState(lastAuthenticateWorkspaceState);
 
   const {
     redirectToHome,
@@ -42,7 +38,7 @@ export const WorkspaceProviderEffect = () => {
     onError: (error) => {
       // eslint-disable-next-line no-console
       console.error(error);
-      setLastAuthenticateWorkspaceState(null);
+      setLastAuthenticateWorkspace(null);
       redirectToHome();
     },
   });

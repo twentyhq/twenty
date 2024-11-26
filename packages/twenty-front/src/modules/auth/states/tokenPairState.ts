@@ -6,9 +6,13 @@ export const tokenPairState = createState<AuthTokenPair | null>({
   key: 'tokenPairState',
   defaultValue: null,
   effects: [
-    cookieStorageEffect('tokenPair', {
-      validateInitFn: (payload: AuthTokenPair) =>
-        Boolean(payload['accessToken']),
-    }),
+    cookieStorageEffect(
+      'tokenPair',
+      {},
+      {
+        validateInitFn: (payload: AuthTokenPair) =>
+          Boolean(payload['accessToken']),
+      },
+    ),
   ],
 });

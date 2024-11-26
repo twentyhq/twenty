@@ -53,7 +53,7 @@ export const useAuth = () => {
   const setCurrentUser = useSetRecoilState(currentUserState);
   const urlManager = useRecoilValue(urlManagerState);
   const setLastAuthenticateWorkspaceState = useSetRecoilState(
-    lastAuthenticateWorkspaceState(`.${urlManager.frontDomain}`),
+    lastAuthenticateWorkspaceState,
   );
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
@@ -171,6 +171,9 @@ export const useAuth = () => {
         setLastAuthenticateWorkspaceState({
           id: workspace.id,
           subdomain: workspace.subdomain,
+          cookieAttributes: {
+            domain: `.${urlManager.frontDomain}`,
+          },
         });
       }
 
@@ -314,28 +317,34 @@ export const useAuth = () => {
     [setIsVerifyPendingState, signUp, handleVerify],
   );
 
-  const buildRedirectUrl = (
-    path: string,
-    params: {
-      workspacePersonalInviteToken?: string;
-      workspaceInviteHash?: string;
+  const buildRedirectUrl = useCallback(
+    (
+      path: string,
+      params: {
+        workspacePersonalInviteToken?: string;
+        workspaceInviteHash?: string;
+      },
+    ) => {
+      const url = new URL(`${REACT_APP_SERVER_BASE_URL}${path}`);
+      if (isDefined(params.workspaceInviteHash)) {
+        url.searchParams.set('inviteHash', params.workspaceInviteHash);
+      }
+      if (isDefined(params.workspacePersonalInviteToken)) {
+        url.searchParams.set(
+          'inviteToken',
+          params.workspacePersonalInviteToken,
+        );
+      }
+      const subdomain = getWorkspaceSubdomain;
+
+      if (isDefined(subdomain)) {
+        url.searchParams.set('workspaceSubdomain', subdomain);
+      }
+
+      return url.toString();
     },
-  ) => {
-    const url = new URL(`${REACT_APP_SERVER_BASE_URL}${path}`);
-    if (isDefined(params.workspaceInviteHash)) {
-      url.searchParams.set('inviteHash', params.workspaceInviteHash);
-    }
-    if (isDefined(params.workspacePersonalInviteToken)) {
-      url.searchParams.set('inviteToken', params.workspacePersonalInviteToken);
-    }
-    const subdomain = getWorkspaceSubdomain;
-
-    if (isDefined(subdomain)) {
-      url.searchParams.set('workspaceSubdomain', subdomain);
-    }
-
-    return url.toString();
-  };
+    [getWorkspaceSubdomain],
+  );
 
   const handleGoogleLogin = useCallback(
     (params: {

@@ -41,7 +41,6 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
-import { SignUpAuthController } from 'src/engine/core-modules/auth/controllers/sign-up-auth.controller';
 import { UrlManagerModule } from 'src/engine/core-modules/url-manager/url-manager.module';
 
 import { AuthResolver } from './auth.resolver';
@@ -86,7 +85,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     GoogleAPIsAuthController,
     MicrosoftAPIsAuthController,
     SSOAuthController,
-    SignUpAuthController,
   ],
   providers: [
     SignInUpService,
