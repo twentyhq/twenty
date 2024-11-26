@@ -1,4 +1,4 @@
-import { useImpersonate } from '@/settings/admin/hooks/useImpersonate';
+import { useImpersonate } from '@/settings/admin-panel/hooks/useImpersonate';
 import { TextInput } from '@/ui/input/components/TextInput';
 import styled from '@emotion/styled';
 import { useState } from 'react';

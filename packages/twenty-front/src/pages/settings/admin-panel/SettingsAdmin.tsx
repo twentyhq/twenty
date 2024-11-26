@@ -1,5 +1,5 @@
-import { SettingsAdminFeatureFlags } from '@/settings/admin/components/SettingsAdminFeatureFlags';
-import { SettingsAdminImpersonateUsers } from '@/settings/admin/components/SettingsAdminImpersonateUsers';
+import { SettingsAdminFeatureFlags } from '@/settings/admin-panel/components/SettingsAdminFeatureFlags';
+import { SettingsAdminImpersonateUsers } from '@/settings/admin-panel/components/SettingsAdminImpersonateUsers';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 

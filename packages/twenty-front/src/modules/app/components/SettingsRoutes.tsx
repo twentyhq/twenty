@@ -243,7 +243,7 @@ const SettingsSecuritySSOIdentifyProvider = lazy(() =>
 );
 
 const SettingsAdmin = lazy(() =>
-  import('~/pages/settings/admin/SettingsAdmin').then((module) => ({
+  import('~/pages/settings/admin-panel/SettingsAdmin').then((module) => ({
     default: module.SettingsAdmin,
   })),
 );
