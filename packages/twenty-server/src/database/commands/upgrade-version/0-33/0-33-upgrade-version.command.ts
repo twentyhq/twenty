@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { DeleteViewFieldsWithoutViewsCommand } from 'src/database/commands/upgrade-version/0-33/0-33-delete-view-fields-without-views.command';
 import { EnforceUniqueConstraintsCommand } from 'src/database/commands/upgrade-version/0-33/0-33-enforce-unique-constraints.command';
+import { SetMissingLabelIdentifierToCustomObjectsCommand } from 'src/database/commands/upgrade-version/0-33/0-33-set-missing-label-identifier-to-custom-objects.command';
 import { UpdateRichTextSearchVectorCommand } from 'src/database/commands/upgrade-version/0-33/0-33-update-rich-text-search-vector-expression';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
@@ -26,6 +27,7 @@ export class UpgradeTo0_33Command extends ActiveWorkspacesCommandRunner {
     private readonly enforceUniqueConstraintsCommand: EnforceUniqueConstraintsCommand,
     private readonly deleteViewFieldsWithoutViewsCommand: DeleteViewFieldsWithoutViewsCommand,
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
+    private readonly setMissingLabelIdentifierToCustomObjectsCommand: SetMissingLabelIdentifierToCustomObjectsCommand,
   ) {
     super(workspaceRepository);
   }
@@ -60,6 +62,11 @@ export class UpgradeTo0_33Command extends ActiveWorkspacesCommandRunner {
       workspaceIds,
     );
     await this.updateRichTextSearchVectorCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
+    await this.setMissingLabelIdentifierToCustomObjectsCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,
