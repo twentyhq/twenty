@@ -1,8 +1,8 @@
-import { ObjectSeed } from 'src/engine/seeder/interfaces/object-seed';
+import { ObjectMetadataSeed } from 'src/engine/seeder/interfaces/object-seed';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-export const PETS_METADATA_SEEDS: ObjectSeed = {
+export const PETS_METADATA_SEEDS: ObjectMetadataSeed = {
   labelPlural: 'Pets',
   labelSingular: 'Pet',
   namePlural: 'pets',
