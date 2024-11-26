@@ -27,11 +27,9 @@ import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailFi
 import { SignInUpPasswordField } from '@/auth/sign-in-up/components/SignInUpPasswordField';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import {
-  SignInUpMode,
-  signInUpModeState,
-} from '@/auth/states/signInUpModeState';
+import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { SignInUpMode } from '@/auth/types/signInUpMode.type';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};

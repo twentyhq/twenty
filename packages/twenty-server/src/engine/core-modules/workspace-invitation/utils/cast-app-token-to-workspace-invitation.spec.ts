@@ -7,7 +7,7 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 
-import { castAppTokenToWorkspaceInvitation } from './cast-appToken-to-workspaceInvitation';
+import { castAppTokenToWorkspaceInvitationUtil } from './cast-app-token-to-workspace-invitation.util';
 
 describe('castAppTokenToWorkspaceInvitation', () => {
   it('should throw an error if token type is not InvitationToken', () => {
@@ -18,7 +18,7 @@ describe('castAppTokenToWorkspaceInvitation', () => {
       expiresAt: new Date(),
     } as AppToken;
 
-    expect(() => castAppTokenToWorkspaceInvitation(appToken)).toThrowError(
+    expect(() => castAppTokenToWorkspaceInvitationUtil(appToken)).toThrowError(
       new WorkspaceInvitationException(
         `Token type must be "${AppTokenType.InvitationToken}"`,
         WorkspaceInvitationExceptionCode.INVALID_APP_TOKEN_TYPE,
@@ -34,7 +34,7 @@ describe('castAppTokenToWorkspaceInvitation', () => {
       expiresAt: new Date(),
     } as AppToken;
 
-    expect(() => castAppTokenToWorkspaceInvitation(appToken)).toThrowError(
+    expect(() => castAppTokenToWorkspaceInvitationUtil(appToken)).toThrowError(
       new WorkspaceInvitationException(
         `Invitation corrupted: Missing email in context`,
         WorkspaceInvitationExceptionCode.INVITATION_CORRUPTED,
@@ -50,7 +50,7 @@ describe('castAppTokenToWorkspaceInvitation', () => {
       expiresAt: new Date(),
     } as AppToken;
 
-    const invitation = castAppTokenToWorkspaceInvitation(appToken);
+    const invitation = castAppTokenToWorkspaceInvitationUtil(appToken);
 
     expect(invitation).toEqual({
       id: '1',

@@ -41,7 +41,7 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { buildWorkspaceURL } from 'src/utils/workspace-url.utils';
+import { buildWorkspaceURL } from 'src/utils/workspace-url.util';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';

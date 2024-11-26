@@ -28,7 +28,7 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { castAppTokenToWorkspaceInvitation } from 'src/engine/core-modules/workspace-invitation/utils/cast-appToken-to-workspaceInvitation';
+import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -178,7 +178,7 @@ export class WorkspaceInvitationService {
       },
     });
 
-    return appTokens.map(castAppTokenToWorkspaceInvitation);
+    return appTokens.map(castAppTokenToWorkspaceInvitationUtil);
   }
 
   // MUTATIONS METHODS
@@ -370,7 +370,7 @@ export class WorkspaceInvitationService {
         } else {
           acc.result.push(
             invitation.value.isPersonalInvitation
-              ? castAppTokenToWorkspaceInvitation(invitation.value.appToken)
+              ? castAppTokenToWorkspaceInvitationUtil(invitation.value.appToken)
               : { email: invitation.value.email },
           );
         }

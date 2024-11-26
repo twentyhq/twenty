@@ -1,3 +1,5 @@
+// THIS FILE WILL BE REMOVED IN THIS PR:
+// https://github.com/twentyhq/twenty/pull/8680
 import { isDefined } from '~/utils/isDefined';
 
 export const twentyHostname = window.location.hostname;

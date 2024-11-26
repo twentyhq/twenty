@@ -17,7 +17,7 @@ import { useState, useMemo } from 'react';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { FormProvider } from 'react-hook-form';
-import { SignInUpMode } from '@/auth/states/signInUpModeState';
+import { SignInUpMode } from '@/auth/types/signInUpMode.type';
 
 const StyledForm = styled.form`
   align-items: center;

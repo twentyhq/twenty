@@ -7,7 +7,7 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 
-export const castAppTokenToWorkspaceInvitation = (appToken: AppToken) => {
+export const castAppTokenToWorkspaceInvitationUtil = (appToken: AppToken) => {
   if (appToken.type !== AppTokenType.InvitationToken) {
     throw new WorkspaceInvitationException(
       `Token type must be "${AppTokenType.InvitationToken}"`,
