@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -7,10 +6,11 @@ import { Repository } from 'typeorm';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
 
 @Injectable()
 export class MessageParticipantListener {
@@ -22,28 +22,28 @@ export class MessageParticipantListener {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
-  @OnEvent('messageParticipant.matched')
+  @OnCustomBatchEvent('messageParticipant_matched')
   public async handleMessageParticipantMatched(
-    payload: WorkspaceEventBatch<{
+    batchEvent: WorkspaceEventBatch<{
       workspaceMemberId: string;
       participants: MessageParticipantWorkspaceEntity[];
     }>,
   ): Promise<void> {
     // TODO: Refactor to insertTimelineActivitiesForObject once
-    for (const eventPayload of payload.events) {
+    for (const eventPayload of batchEvent.events) {
       const messageParticipants = eventPayload.participants ?? [];
 
       // TODO: move to a job?
 
       const dataSourceSchema = this.workspaceDataSourceService.getSchemaName(
-        payload.workspaceId,
+        batchEvent.workspaceId,
       );
 
       const messageObjectMetadata =
         await this.objectMetadataRepository.findOneOrFail({
           where: {
             nameSingular: 'message',
-            workspaceId: payload.workspaceId,
+            workspaceId: batchEvent.workspaceId,
           },
         });
 
@@ -64,12 +64,12 @@ export class MessageParticipantListener {
           objectName: 'message',
           recordId: participant.personId,
           workspaceMemberId: eventPayload.workspaceMemberId,
-          workspaceId: payload.workspaceId,
+          workspaceId: batchEvent.workspaceId,
           linkedObjectMetadataId: messageObjectMetadata.id,
           linkedRecordId: participant.messageId,
           linkedRecordCachedName: '',
         })),
-        payload.workspaceId,
+        batchEvent.workspaceId,
       );
     }
   }

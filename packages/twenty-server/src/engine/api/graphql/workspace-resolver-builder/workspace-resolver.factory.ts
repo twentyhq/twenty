@@ -6,6 +6,7 @@ import { DeleteManyResolverFactory } from 'src/engine/api/graphql/workspace-reso
 import { DestroyManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-many-resolver.factory';
 import { DestroyOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/destroy-one-resolver.factory';
 import { RestoreManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-many-resolver.factory';
+import { RestoreOneResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/restore-one-resolver.factory';
 import { SearchResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/search-resolver-factory';
 import { UpdateManyResolverFactory } from 'src/engine/api/graphql/workspace-resolver-builder/factories/update-many-resolver.factory';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
@@ -40,6 +41,7 @@ export class WorkspaceResolverFactory {
     private readonly destroyOneResolverFactory: DestroyOneResolverFactory,
     private readonly updateManyResolverFactory: UpdateManyResolverFactory,
     private readonly deleteManyResolverFactory: DeleteManyResolverFactory,
+    private readonly restoreOneResolverFactory: RestoreOneResolverFactory,
     private readonly restoreManyResolverFactory: RestoreManyResolverFactory,
     private readonly destroyManyResolverFactory: DestroyManyResolverFactory,
     private readonly searchResolverFactory: SearchResolverFactory,
@@ -54,19 +56,20 @@ export class WorkspaceResolverFactory {
       WorkspaceResolverBuilderMethodNames,
       WorkspaceResolverBuilderFactoryInterface
     >([
-      ['findMany', this.findManyResolverFactory],
-      ['findOne', this.findOneResolverFactory],
-      ['findDuplicates', this.findDuplicatesResolverFactory],
       ['createMany', this.createManyResolverFactory],
       ['createOne', this.createOneResolverFactory],
-      ['updateOne', this.updateOneResolverFactory],
-      ['deleteOne', this.deleteOneResolverFactory],
-      ['destroyOne', this.destroyOneResolverFactory],
-      ['updateMany', this.updateManyResolverFactory],
       ['deleteMany', this.deleteManyResolverFactory],
-      ['restoreMany', this.restoreManyResolverFactory],
+      ['deleteOne', this.deleteOneResolverFactory],
       ['destroyMany', this.destroyManyResolverFactory],
+      ['destroyOne', this.destroyOneResolverFactory],
+      ['findDuplicates', this.findDuplicatesResolverFactory],
+      ['findMany', this.findManyResolverFactory],
+      ['findOne', this.findOneResolverFactory],
+      ['restoreMany', this.restoreManyResolverFactory],
+      ['restoreOne', this.restoreOneResolverFactory],
       ['search', this.searchResolverFactory],
+      ['updateMany', this.updateManyResolverFactory],
+      ['updateOne', this.updateOneResolverFactory],
     ]);
     const resolvers: IResolvers = {
       Query: {},

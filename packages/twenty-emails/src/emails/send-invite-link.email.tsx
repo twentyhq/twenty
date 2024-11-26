@@ -1,4 +1,5 @@
 import { Img } from '@react-email/components';
+import { emailTheme } from 'src/common-style';
 
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
@@ -33,8 +34,12 @@ export const SendInviteLinkEmail = ({
       <Title value="Join your team on Twenty" />
       <MainText>
         {capitalize(sender.firstName)} (
-        <Link href={sender.email} value={sender.email} />) has invited you to
-        join a workspace called <b>{workspace.name}</b>
+        <Link
+          href={sender.email}
+          value={sender.email}
+          color={emailTheme.font.colors.blue}
+        />
+        ) has invited you to join a workspace called <b>{workspace.name}</b>
         <br />
       </MainText>
       <HighlightedContainer>

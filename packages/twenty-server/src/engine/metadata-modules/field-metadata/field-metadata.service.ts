@@ -632,23 +632,25 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     fieldMetadataInput: UpdateFieldInput,
     existingFieldMetadata: FieldMetadataEntity,
   ) {
-    let fieldMetadataInputOverrided = {};
-
-    fieldMetadataInputOverrided = {
+    const updatableStandardFieldInput: UpdateFieldInput = {
       id: fieldMetadataInput.id,
       isActive: fieldMetadataInput.isActive,
       workspaceId: fieldMetadataInput.workspaceId,
       defaultValue: fieldMetadataInput.defaultValue,
+      settings: fieldMetadataInput.settings,
     };
 
-    if (existingFieldMetadata.type === FieldMetadataType.SELECT) {
-      fieldMetadataInputOverrided = {
-        ...fieldMetadataInputOverrided,
+    if (
+      existingFieldMetadata.type === FieldMetadataType.SELECT ||
+      existingFieldMetadata.type === FieldMetadataType.MULTI_SELECT
+    ) {
+      return {
+        ...updatableStandardFieldInput,
         options: fieldMetadataInput.options,
       };
     }
 
-    return fieldMetadataInputOverrided as UpdateFieldInput;
+    return updatableStandardFieldInput;
   }
 
   public async getRelationDefinitionFromRelationMetadata(

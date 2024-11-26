@@ -1,5 +1,7 @@
+import { TextInput } from '@/ui/field/input/components/TextInput';
 import styled from '@emotion/styled';
 import React from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 
 const StyledHeader = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -40,22 +42,36 @@ const StyledContentContainer = styled.div`
 `;
 
 export const WorkflowEditGenericFormBase = ({
+  onTitleChange,
   HeaderIcon,
   headerTitle,
   headerType,
   children,
 }: {
+  onTitleChange: (newTitle: string) => void;
   HeaderIcon: React.ReactNode;
   headerTitle: string;
   headerType: string;
   children: React.ReactNode;
 }) => {
+  const debouncedOnTitleChange = useDebouncedCallback(onTitleChange, 100);
+
   return (
     <>
       <StyledHeader>
         <StyledHeaderIconContainer>{HeaderIcon}</StyledHeaderIconContainer>
 
-        <StyledHeaderTitle>{headerTitle}</StyledHeaderTitle>
+        <StyledHeaderTitle>
+          <TextInput
+            value={headerTitle}
+            copyButton={false}
+            hotkeyScope="workflow-step-title"
+            onEnter={onTitleChange}
+            onEscape={onTitleChange}
+            onChange={debouncedOnTitleChange}
+            shouldTrim={false}
+          />
+        </StyledHeaderTitle>
 
         <StyledHeaderType>{headerType}</StyledHeaderType>
       </StyledHeader>

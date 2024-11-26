@@ -10,13 +10,13 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import {
   WorkflowEventTriggerJob,
   WorkflowEventTriggerJobData,
 } from 'src/modules/workflow/workflow-trigger/jobs/workflow-event-trigger.job';
-import { OnDatabaseEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-event.decorator';
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
@@ -30,40 +30,40 @@ export class DatabaseEventTriggerListener {
     private readonly isFeatureFlagEnabledService: FeatureFlagService,
   ) {}
 
-  @OnDatabaseEvent('*', DatabaseEventAction.CREATED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
   async handleObjectRecordCreateEvent(
-    payload: WorkspaceEventBatch<ObjectRecordCreateEvent<any>>,
+    payload: WorkspaceEventBatch<ObjectRecordCreateEvent>,
   ) {
     await this.handleEvent(payload);
   }
 
-  @OnDatabaseEvent('*', DatabaseEventAction.UPDATED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.UPDATED)
   async handleObjectRecordUpdateEvent(
-    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent<any>>,
+    payload: WorkspaceEventBatch<ObjectRecordUpdateEvent>,
   ) {
     await this.handleEvent(payload);
   }
 
-  @OnDatabaseEvent('*', DatabaseEventAction.DELETED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.DELETED)
   async handleObjectRecordDeleteEvent(
-    payload: WorkspaceEventBatch<ObjectRecordDeleteEvent<any>>,
+    payload: WorkspaceEventBatch<ObjectRecordDeleteEvent>,
   ) {
     await this.handleEvent(payload);
   }
 
-  @OnDatabaseEvent('*', DatabaseEventAction.DESTROYED)
+  @OnDatabaseBatchEvent('*', DatabaseEventAction.DESTROYED)
   async handleObjectRecordDestroyEvent(
-    payload: WorkspaceEventBatch<ObjectRecordDestroyEvent<any>>,
+    payload: WorkspaceEventBatch<ObjectRecordDestroyEvent>,
   ) {
     await this.handleEvent(payload);
   }
 
   private async handleEvent(
     payload: WorkspaceEventBatch<
-      | ObjectRecordCreateEvent<any>
-      | ObjectRecordUpdateEvent<any>
-      | ObjectRecordDeleteEvent<any>
-      | ObjectRecordDestroyEvent<any>
+      | ObjectRecordCreateEvent
+      | ObjectRecordUpdateEvent
+      | ObjectRecordDeleteEvent
+      | ObjectRecordDestroyEvent
     >,
   ) {
     const workspaceId = payload.workspaceId;

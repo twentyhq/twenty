@@ -9,16 +9,16 @@ import {
   AppToken,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -28,6 +28,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly userRepository: Repository<User>,
     @InjectRepository(AppToken, 'core')
     private readonly appTokenRepository: Repository<AppToken>,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceInvitationService: WorkspaceInvitationService,
@@ -42,11 +44,11 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       workspaceId,
     });
 
-    const payload = new ObjectRecordCreateEvent<UserWorkspace>();
-
-    payload.userId = userId;
-
-    this.workspaceEventEmitter.emit('user.signup', [payload], workspaceId);
+    this.workspaceEventEmitter.emitCustomBatchEvent(
+      USER_SIGNUP_EVENT_NAME,
+      [{ userId }],
+      workspaceId,
+    );
 
     return this.userWorkspaceRepository.save(userWorkspace);
   }
@@ -80,19 +82,26 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       workspaceMember.length === 1,
       `Error while creating workspace member ${user.email} on workspace ${workspaceId}`,
     );
-    const payload =
-      new ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>();
+    const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
+      where: {
+        nameSingular: 'workspaceMember',
+      },
+    });
 
-    payload.properties = {
-      after: workspaceMember[0],
-    };
-    payload.recordId = workspaceMember[0].id;
-
-    this.workspaceEventEmitter.emit(
-      `workspaceMember.${DatabaseEventAction.CREATED}`,
-      [payload],
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: 'workspaceMember',
+      action: DatabaseEventAction.CREATED,
+      events: [
+        {
+          recordId: workspaceMember[0].id,
+          objectMetadata,
+          properties: {
+            after: workspaceMember[0],
+          },
+        },
+      ],
       workspaceId,
-    );
+    });
   }
 
   async addUserToWorkspace(user: User, workspace: Workspace) {
