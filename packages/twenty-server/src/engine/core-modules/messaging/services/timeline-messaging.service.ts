@@ -44,6 +44,11 @@ export class TimelineMessagingService {
             },
           },
         },
+        order: {
+          messages: {
+            receivedAt: 'DESC',
+          },
+        },
         skip: offset,
         take: pageSize,
       });
