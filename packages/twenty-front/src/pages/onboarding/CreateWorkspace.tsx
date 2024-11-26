@@ -92,7 +92,7 @@ export const CreateWorkspace = () => {
         }
 
         if (isMultiWorkspaceEnabled) {
-          window.location.href = `${REACT_APP_SERVER_BASE_URL}/auth/redirect?accessToken=${tokenPair?.accessToken.token}`;
+          // TODO AMOREAUX: Generate a login token and redirect to workspace
         }
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
