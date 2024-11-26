@@ -17,6 +17,8 @@ import { settingsDataModelFieldDateFormSchema } from '@/settings/data-model/fiel
 import { SettingsDataModelFieldDateSettingsFormCard } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateSettingsFormCard';
 import { settingsDataModelFieldNumberFormSchema } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
 import { SettingsDataModelFieldNumberSettingsFormCard } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberSettingsFormCard';
+import { settingsDataModelFieldPhonesFormSchema } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
+import { SettingsDataModelFieldPhonesSettingsFormCard } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesSettingsFormCard';
 import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
 import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationSettingsFormCard';
 import {
@@ -70,6 +72,10 @@ const addressFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.Address) })
   .merge(settingsDataModelFieldAddressFormSchema);
 
+const phonesFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.Phones) })
+  .merge(settingsDataModelFieldPhonesFormSchema);
+
 const otherFieldsFormSchema = z.object({
   type: z.enum(
     Object.keys(
@@ -83,6 +89,7 @@ const otherFieldsFormSchema = z.object({
         FieldMetadataType.DateTime,
         FieldMetadataType.Number,
         FieldMetadataType.Address,
+        FieldMetadataType.Phones,
         FieldMetadataType.Text,
       ]),
     ) as [FieldMetadataType, ...FieldMetadataType[]],
@@ -102,6 +109,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     numberFieldFormSchema,
     textFieldFormSchema,
     addressFieldFormSchema,
+    phonesFieldFormSchema,
     otherFieldsFormSchema,
   ],
 );
@@ -211,6 +219,15 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.Address) {
     return (
       <SettingsDataModelFieldAddressSettingsFormCard
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
+  if (fieldMetadataItem.type === FieldMetadataType.Phones) {
+    return (
+      <SettingsDataModelFieldPhonesSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
