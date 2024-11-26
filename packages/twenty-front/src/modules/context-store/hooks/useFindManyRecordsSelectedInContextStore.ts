@@ -6,7 +6,7 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-export const useContextStoreSelectedRecords = ({
+export const useFindManyRecordsSelectedInContextStore = ({
   instanceId,
   limit = 3,
 }: {

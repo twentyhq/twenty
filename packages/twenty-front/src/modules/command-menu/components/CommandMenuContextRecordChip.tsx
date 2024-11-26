@@ -1,4 +1,4 @@
-import { useContextStoreSelectedRecords } from '@/context-store/hooks/useContextStoreSelectedRecords';
+import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
@@ -89,9 +89,10 @@ export const CommandMenuContextRecordChip = () => {
     objectId: contextStoreCurrentObjectMetadataId ?? '',
   });
 
-  const { records, loading, totalCount } = useContextStoreSelectedRecords({
-    limit: 3,
-  });
+  const { records, loading, totalCount } =
+    useFindManyRecordsSelectedInContextStore({
+      limit: 3,
+    });
 
   if (loading || !totalCount) {
     return null;
