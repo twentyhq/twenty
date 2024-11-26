@@ -1,6 +1,6 @@
 {
   "name": "twenty-front",
-  "version": "0.33.3",
+  "version": "0.33.4",
   "private": true,
   "type": "module",
   "scripts": {
