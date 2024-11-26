@@ -1,9 +1,7 @@
 import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
 import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -27,13 +25,13 @@ const StyledAvatarContainer = styled.div`
   display: flex;
 `;
 
-export const CommandMenuContextRecordChip = () => {
-  const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
-  );
-
+export const CommandMenuContextRecordChip = ({
+  objectMetadataItemId,
+}: {
+  objectMetadataItemId: string;
+}) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: contextStoreCurrentObjectMetadataId ?? '',
+    objectId: objectMetadataItemId,
   });
 
   const { records, loading, totalCount } =
