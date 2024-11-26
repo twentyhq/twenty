@@ -132,7 +132,7 @@ export class EnvironmentVariables {
 
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
-  SERVER_URL = 'http://localhost';
+  SERVER_URL = 'http://localhost:3000';
 
   @IsString()
   APP_SECRET: string;
