@@ -69,9 +69,7 @@ export class UserService extends TypeOrmQueryService<User> {
         'workspaceMember',
       );
 
-    const workspaceMembers = workspaceMemberRepository.find();
-
-    return workspaceMembers;
+    return workspaceMemberRepository.find();
   }
 
   async deleteUser(userId: string): Promise<User> {

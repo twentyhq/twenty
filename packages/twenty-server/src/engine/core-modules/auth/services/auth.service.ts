@@ -42,15 +42,17 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { buildWorkspaceURL } from 'src/utils/workspace-url.utils';
-import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly refreshTokenService: RefreshTokenService,
+    private readonly userService: UserService,
     private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -63,8 +65,10 @@ export class AuthService {
   ) {}
 
   async challenge(challengeInput: ChallengeInput) {
-    const user = await this.userRepository.findOneBy({
-      email: challengeInput.email,
+    const user = await this.userRepository.findOne({
+      where: {
+        email: challengeInput.email,
+      },
     });
 
     if (!user) {
@@ -111,8 +115,8 @@ export class AuthService {
     password?: string;
     firstName?: string | null;
     lastName?: string | null;
-    workspaceInviteHash?: string | null;
-    workspacePersonalInviteToken?: string | null;
+    workspaceInviteHash?: string;
+    workspacePersonalInviteToken?: string;
     picture?: string | null;
     fromSSO: boolean;
     isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
@@ -130,11 +134,31 @@ export class AuthService {
     });
   }
 
-  async verify(email: string): Promise<Verify> {
+  async verify(email: string, workspaceId?: string): Promise<Verify> {
     if (!email) {
       throw new AuthException(
         'Email is required',
         AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const userWithIdAndDefaultWorkspaceId = await this.userRepository.findOne({
+      select: ['defaultWorkspaceId', 'id'],
+      where: { email },
+    });
+
+    userValidator.assertIsExist(
+      userWithIdAndDefaultWorkspaceId,
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
+
+    if (
+      workspaceId &&
+      userWithIdAndDefaultWorkspaceId.defaultWorkspaceId !== workspaceId
+    ) {
+      await this.userService.saveDefaultWorkspace(
+        userWithIdAndDefaultWorkspaceId.id,
+        workspaceId,
       );
     }
 
@@ -148,14 +172,6 @@ export class AuthService {
     userValidator.assertIsExist(
       user,
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
-    );
-
-    userValidator.assertHasDefaultWorkspace(
-      user,
-      new AuthException(
-        'User has no default workspace',
-        AuthExceptionCode.INVALID_DATA,
-      ),
     );
 
     // passwordHash is hidden for security reasons
@@ -440,12 +456,10 @@ export class AuthService {
       ],
     });
 
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.USER_NOT_FOUND,
-      );
-    }
+    userValidator.assertIsExist(
+      user,
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
 
     return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
       id: userWorkspace.workspaceId,

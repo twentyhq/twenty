@@ -24,6 +24,7 @@ import {
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
@@ -88,12 +89,15 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       user.defaultWorkspaceId,
       user,
     );
+
     await this.workspaceRepository.update(user.defaultWorkspaceId, {
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
 
-    return existingWorkspace;
+    return await this.workspaceRepository.findOneBy({
+      id: user.defaultWorkspaceId,
+    });
   }
 
   async softDeleteWorkspace(id: string) {
@@ -175,12 +179,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       relations: ['workspaceSSOIdentityProviders'],
     });
 
-    if (!workspace) {
-      throw new WorkspaceException(
+    workspaceValidator.assertIsExist(
+      workspace,
+      new WorkspaceException(
         'Workspace not found',
         WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
+      ),
+    );
 
     return {
       google: workspace.isGoogleAuthEnabled,
