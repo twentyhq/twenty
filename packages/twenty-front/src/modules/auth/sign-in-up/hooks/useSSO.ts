@@ -3,9 +3,7 @@
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
-  FindAvailableSsoIdentityProvidersMutationVariables,
   GetAuthorizationUrlMutationVariables,
-  useFindAvailableSsoIdentityProvidersMutation,
   useGetAuthorizationUrlMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -13,19 +11,7 @@ import { isDefined } from '~/utils/isDefined';
 export const useSSO = () => {
   const { enqueueSnackBar } = useSnackBar();
 
-  const [findAvailableSSOProviderByEmailMutation] =
-    useFindAvailableSsoIdentityProvidersMutation();
   const [getAuthorizationUrlMutation] = useGetAuthorizationUrlMutation();
-
-  const findAvailableSSOProviderByEmail = async ({
-    email,
-  }: FindAvailableSsoIdentityProvidersMutationVariables['input']) => {
-    return await findAvailableSSOProviderByEmailMutation({
-      variables: {
-        input: { email },
-      },
-    });
-  };
 
   const getAuthorizationUrlForSSO = async ({
     identityProviderId,
@@ -63,6 +49,5 @@ export const useSSO = () => {
   return {
     redirectToSSOLoginPage,
     getAuthorizationUrlForSSO,
-    findAvailableSSOProviderByEmail,
   };
 };

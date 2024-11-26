@@ -14,9 +14,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
-  PASSWORD_REGEX,
   compareHash,
   hashPassword,
+  PASSWORD_REGEX,
 } from 'src/engine/core-modules/auth/auth.util';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -28,28 +28,32 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 
 export type SignInUpServiceInput = {
   email: string;
   password?: string;
   firstName?: string | null;
   lastName?: string | null;
-  workspaceInviteHash?: string | null;
-  workspacePersonalInviteToken?: string | null;
+  workspaceInviteHash?: string;
+  workspacePersonalInviteToken?: string;
   picture?: string | null;
   fromSSO: boolean;
+  isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
 };
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class SignInUpService {
   constructor(
-    private readonly fileUploadService: FileUploadService,
-    @InjectRepository(Workspace, 'core')
-    private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
+    private readonly fileUploadService: FileUploadService,
+    private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly onboardingService: OnboardingService,
     private readonly httpService: HttpService,
@@ -58,13 +62,14 @@ export class SignInUpService {
 
   async signInUp({
     email,
-    workspaceInviteHash,
     workspacePersonalInviteToken,
+    workspaceInviteHash,
     password,
     firstName,
     lastName,
     picture,
     fromSSO,
+    isAuthEnabled,
   }: SignInUpServiceInput) {
     if (!firstName) firstName = '';
     if (!lastName) lastName = '';
@@ -90,9 +95,7 @@ export class SignInUpService {
     const passwordHash = password ? await hashPassword(password) : undefined;
 
     const existingUser = await this.userRepository.findOne({
-      where: {
-        email: email,
-      },
+      where: { email },
       relations: ['defaultWorkspace'],
     });
 
@@ -110,18 +113,38 @@ export class SignInUpService {
       }
     }
 
-    if (workspaceInviteHash) {
-      return await this.signInUpOnExistingWorkspace({
-        email,
-        passwordHash,
-        workspaceInviteHash,
-        workspacePersonalInviteToken,
-        firstName,
-        lastName,
-        picture,
-        existingUser,
-      });
+    if (workspacePersonalInviteToken || workspaceInviteHash) {
+      const invitationValidation =
+        await this.workspaceInvitationService.validateInvitation({
+          workspacePersonalInviteToken: workspacePersonalInviteToken,
+          workspaceInviteHash,
+          email,
+        });
+
+      if (
+        invitationValidation?.isValid === true &&
+        invitationValidation.workspace
+      ) {
+        const updatedUser = await this.signInUpOnExistingWorkspace({
+          email,
+          passwordHash,
+          workspace: invitationValidation.workspace,
+          firstName,
+          lastName,
+          picture,
+          existingUser,
+          isAuthEnabled,
+        });
+
+        await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+          invitationValidation.workspace.id,
+          email,
+        );
+
+        return updatedUser;
+      }
     }
+
     if (!existingUser) {
       return await this.signUpOnNewWorkspace({
         email,
@@ -135,47 +158,46 @@ export class SignInUpService {
     return existingUser;
   }
 
-  private async signInUpOnExistingWorkspace({
+  async signInUpOnExistingWorkspace({
     email,
     passwordHash,
-    workspaceInviteHash,
-    workspacePersonalInviteToken,
+    workspace,
     firstName,
     lastName,
     picture,
     existingUser,
+    isAuthEnabled,
   }: {
     email: string;
     passwordHash: string | undefined;
-    workspaceInviteHash: string | null;
-    workspacePersonalInviteToken: string | null | undefined;
+    workspace: Workspace;
     firstName: string;
     lastName: string;
     picture: SignInUpServiceInput['picture'];
     existingUser: User | null;
+    isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
   }) {
     const isNewUser = !isDefined(existingUser);
     let user = existingUser;
 
-    const workspace = await this.findWorkspaceAndValidateInvitation({
-      workspacePersonalInviteToken,
-      workspaceInviteHash,
-      email,
-    });
-
-    if (!workspace) {
-      throw new AuthException(
+    workspaceValidator.assertIsExist(
+      workspace,
+      new AuthException(
         'Workspace not found',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
+      ),
+    );
 
-    if (!(workspace.activationStatus === WorkspaceActivationStatus.ACTIVE)) {
-      throw new AuthException(
+    workspaceValidator.assertIsActive(
+      workspace,
+      new AuthException(
         'Workspace is not ready to welcome new members',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
+      ),
+    );
+
+    if (isAuthEnabled)
+      workspaceValidator.validateAuth(isAuthEnabled, workspace);
 
     if (isNewUser) {
       const imagePath = await this.uploadPicture(picture, workspace.id);
@@ -193,19 +215,18 @@ export class SignInUpService {
       user = await this.userRepository.save(userToCreate);
     }
 
-    if (!user) {
-      throw new AuthException(
+    userValidator.assertIsExist(
+      user,
+      new AuthException(
         'User not found',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
+      ),
+    );
 
-    const updatedUser = workspacePersonalInviteToken
-      ? await this.userWorkspaceService.addUserToWorkspaceByInviteToken(
-          workspacePersonalInviteToken,
-          user,
-        )
-      : await this.userWorkspaceService.addUserToWorkspace(user, workspace);
+    const updatedUser = await this.userWorkspaceService.addUserToWorkspace(
+      user,
+      workspace,
+    );
 
     await this.activateOnboardingForUser(user, workspace, {
       firstName,
@@ -213,53 +234,6 @@ export class SignInUpService {
     });
 
     return Object.assign(user, updatedUser);
-  }
-
-  private async findWorkspaceAndValidateInvitation({
-    workspacePersonalInviteToken,
-    workspaceInviteHash,
-    email,
-  }) {
-    if (!workspacePersonalInviteToken && !workspaceInviteHash) {
-      throw new AuthException(
-        'No invite token or hash provided',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    const workspace = await this.workspaceRepository.findOneBy({
-      inviteHash: workspaceInviteHash,
-    });
-
-    if (!workspace) {
-      throw new AuthException(
-        'Workspace not found',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
-
-    if (!workspacePersonalInviteToken && !workspace.isPublicInviteLinkEnabled) {
-      throw new AuthException(
-        'Workspace does not allow public invites',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    if (workspacePersonalInviteToken && workspace.isPublicInviteLinkEnabled) {
-      try {
-        await this.userWorkspaceService.validateInvitation(
-          workspacePersonalInviteToken,
-          email,
-        );
-      } catch (err) {
-        throw new AuthException(
-          err.message,
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        );
-      }
-    }
-
-    return workspace;
   }
 
   private async activateOnboardingForUser(
@@ -282,7 +256,7 @@ export class SignInUpService {
     }
   }
 
-  private async signUpOnNewWorkspace({
+  async signUpOnNewWorkspace({
     email,
     passwordHash,
     firstName,

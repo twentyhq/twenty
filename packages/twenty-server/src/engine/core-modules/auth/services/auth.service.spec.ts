@@ -9,6 +9,7 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 import { AuthService } from './auth.service';
 
@@ -33,6 +34,10 @@ describe('AuthService', () => {
         },
         {
           provide: SignInUpService,
+          useValue: {},
+        },
+        {
+          provide: UserService,
           useValue: {},
         },
         {

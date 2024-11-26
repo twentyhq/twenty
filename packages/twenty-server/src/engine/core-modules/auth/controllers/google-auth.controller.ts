@@ -16,6 +16,11 @@ import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Controller('auth/google')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -53,6 +58,13 @@ export class GoogleAuthController {
       workspaceInviteHash,
       workspacePersonalInviteToken,
       fromSSO: true,
+      isAuthEnabled: workspaceValidator.isAuthEnabled(
+        'google',
+        new AuthException(
+          'Google auth is not enabled for this workspace',
+          AuthExceptionCode.OAUTH_ACCESS_DENIED,
+        ),
+      ),
     });
 
     const loginToken = await this.loginTokenService.generateLoginToken(

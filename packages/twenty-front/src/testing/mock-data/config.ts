@@ -3,18 +3,10 @@ import { CaptchaDriverType } from '~/generated/graphql';
 
 export const mockedClientConfig: ClientConfig = {
   signInPrefilled: true,
-  signUpDisabled: false,
+  isMultiWorkspaceEnabled: false,
   chromeExtensionId: 'MOCKED_EXTENSION_ID',
   debugMode: false,
   analyticsEnabled: true,
-  authProviders: {
-    sso: false,
-    google: true,
-    password: true,
-    magicLink: false,
-    microsoft: false,
-    __typename: 'AuthProviders',
-  },
   support: {
     supportDriver: 'front',
     supportFrontChatId: null,

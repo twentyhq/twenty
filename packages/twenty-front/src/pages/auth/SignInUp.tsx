@@ -1,58 +1,49 @@
-import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
+import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { SignInUpStep } from '@/auth/states/signInUpStepState';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import {
+  isTwentyHomePage,
+  isTwentyWorkspaceSubdomain,
+} from '~/utils/workspace-url.helper';
+import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
+import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
+import { AnimatedEaseIn } from 'twenty-ui';
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
-import { SignInUpForm } from '@/auth/sign-in-up/components/SignInUpForm';
-import { SignInUpMode, useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
-import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SignInUpStep } from '@/auth/states/signInUpStepState';
-import { IconLockCustom } from '@ui/display/icon/components/IconLock';
-import { AnimatedEaseIn } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
-import { SSOWorkspaceSelection } from './SSOWorkspaceSelection';
+import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
+import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
+import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/SignInUpSSOIdentityProviderSelection';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 
 export const SignInUp = () => {
   const { form } = useSignInUpForm();
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const { signInUpStep } = useSignInUp(form);
 
-  const { signInUpStep, signInUpMode } = useSignInUp(form);
-
-  const title = useMemo(() => {
-    if (
-      signInUpStep === SignInUpStep.Init ||
-      signInUpStep === SignInUpStep.Email
-    ) {
-      return 'Welcome to Twenty';
-    }
-    if (signInUpStep === SignInUpStep.SSOWorkspaceSelection) {
-      return 'Choose SSO connection';
-    }
-    return signInUpMode === SignInUpMode.SignIn
-      ? 'Sign in to Twenty'
-      : 'Sign up to Twenty';
-  }, [signInUpMode, signInUpStep]);
-
-  if (isDefined(currentWorkspace)) {
-    return <></>;
-  }
+  const workspacePublicData = useRecoilValue(workspacePublicDataState);
+  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   return (
     <>
       <AnimatedEaseIn>
-        {signInUpStep === SignInUpStep.SSOWorkspaceSelection ? (
-          <IconLockCustom size={40} />
-        ) : (
-          <Logo />
-        )}
+        <Logo workspaceLogo={workspacePublicData?.logo} />
       </AnimatedEaseIn>
-      <Title animate>{title}</Title>
-      {signInUpStep === SignInUpStep.SSOWorkspaceSelection ? (
-        <SSOWorkspaceSelection />
-      ) : (
-        <SignInUpForm />
-      )}
+      <Title animate>
+        {`Welcome to ${workspacePublicData?.displayName ?? DEFAULT_WORKSPACE_NAME}`}
+      </Title>
+      {isTwentyHomePage || isMultiWorkspaceEnabled ? (
+        <SignInUpGlobalScopeForm />
+      ) : (!isMultiWorkspaceEnabled ||
+          (isMultiWorkspaceEnabled && isTwentyWorkspaceSubdomain)) &&
+        signInUpStep === SignInUpStep.SSOIdentityProviderSelection ? (
+        <SignInUpSSOIdentityProviderSelection />
+      ) : workspacePublicData &&
+        (!isMultiWorkspaceEnabled || isTwentyWorkspaceSubdomain) ? (
+        <SignInUpWorkspaceScopeForm />
+      ) : null}
+      <FooterNote />
     </>
   );
 };

@@ -115,6 +115,13 @@ export class SSOAuthController {
     identityProviderId?: string;
     user: { email: string } & Record<string, string>;
   }) {
+    if (!identityProviderId) {
+      throw new AuthException(
+        'Identity provider ID is required',
+        AuthExceptionCode.INVALID_DATA,
+      );
+    }
+
     const identityProvider =
       await this.workspaceSSOIdentityProviderRepository.findOne({
         where: { id: identityProviderId },
