@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 
 import { isDefined } from '~/utils/isDefined';
 import { urlManagerState } from '@/url-manager/state/url-manager.state';
@@ -52,40 +52,40 @@ export const useUrlManager = () => {
       : null;
   }, [isTwentyWorkspaceSubdomain, urlManager.frontDomain]);
 
-  const buildWorkspaceUrl = (
-    subdomain?: string,
-    searchParams?: Record<string, string>,
-  ) => {
-    const url = new URL(window.location.href);
+  const buildWorkspaceUrl = useCallback(
+    (subdomain?: string, searchParams?: Record<string, string>) => {
+      const url = new URL(window.location.href);
 
-    if (isDefined(subdomain) && subdomain.length !== 0) {
-      url.hostname = `${subdomain}.${urlManager.frontDomain}`;
-    }
+      if (isDefined(subdomain) && subdomain.length !== 0) {
+        url.hostname = `${subdomain}.${urlManager.frontDomain}`;
+      }
 
-    if (isDefined(searchParams)) {
-      Object.entries(searchParams).forEach(([key, value]) =>
-        url.searchParams.set(key, value),
-      );
-    }
-    return url.toString();
-  };
+      if (isDefined(searchParams)) {
+        Object.entries(searchParams).forEach(([key, value]) =>
+          url.searchParams.set(key, value),
+        );
+      }
+      return url.toString();
+    },
+    [urlManager.frontDomain],
+  );
 
-  const redirectToWorkspace = (
-    subdomain: string,
-    searchParams?: Record<string, string>,
-  ) => {
-    if (!isMultiWorkspaceEnabled) return;
-    window.location.href = buildWorkspaceUrl(subdomain, searchParams);
-  };
+  const redirectToWorkspace = useCallback(
+    (subdomain: string, searchParams?: Record<string, string>) => {
+      if (!isMultiWorkspaceEnabled) return;
+      window.location.href = buildWorkspaceUrl(subdomain, searchParams);
+    },
+    [buildWorkspaceUrl, isMultiWorkspaceEnabled],
+  );
 
-  const redirectToHome = () => {
+  const redirectToHome = useCallback(() => {
     if (!isMultiWorkspaceEnabled) return;
     const url = new URL(window.location.href);
     if (url.hostname !== homePageDomain) {
       url.hostname = homePageDomain;
       window.location.href = url.toString();
     }
-  };
+  }, [homePageDomain, isMultiWorkspaceEnabled]);
 
   return {
     redirectToHome,

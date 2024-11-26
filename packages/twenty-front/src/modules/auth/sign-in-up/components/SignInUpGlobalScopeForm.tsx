@@ -66,7 +66,6 @@ export const SignInUpGlobalScopeForm = () => {
   const [showErrors, setShowErrors] = useState(false);
 
   const { form } = useSignInUpForm();
-
   const { submitCredentials } = useSignInUp(form);
 
   const handleSubmit = async () => {

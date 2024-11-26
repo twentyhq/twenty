@@ -73,9 +73,11 @@ export class UrlManagerService {
 
   getWorkspaceSubdomainByOrigin = (origin: string) => {
     const { hostname: originHostname } = new URL(origin);
-    const { hostname: frontBaseHostname } = this.getBaseUrl();
 
-    const subdomain = originHostname.replace(`.${frontBaseHostname}`, '');
+    const subdomain = originHostname.replace(
+      `.${this.environmentService.get('FRONT_DOMAIN')}`,
+      '',
+    );
 
     if (this.isDefaultSubdomain(subdomain)) {
       return;
