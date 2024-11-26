@@ -11,7 +11,7 @@ import {
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { isWorkflowRecordCreateAction } from '@/workflow/utils/isWorkflowRecordCreateAction';
-import { WorkflowEditActionFormServerlessFunction } from '@/workflow/components/WorkflowEditActionFormServerlessFunctionInner';
+import { WorkflowEditActionFormServerlessFunction } from '@/workflow/components/WorkflowEditActionFormServerlessFunction';
 import { isDefined } from 'twenty-ui';
 
 type WorkflowStepDetailProps =

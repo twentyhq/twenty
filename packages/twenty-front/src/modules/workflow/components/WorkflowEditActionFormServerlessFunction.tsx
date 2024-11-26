@@ -2,15 +2,27 @@ import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditG
 import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
 import { WorkflowCodeAction } from '@/workflow/types/Workflow';
-import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { setNestedValue } from '@/workflow/utils/setNestedValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Fragment, ReactNode, useState } from 'react';
-import { HorizontalSeparator, IconCode, isDefined } from 'twenty-ui';
+import {
+  CodeEditor,
+  HorizontalSeparator,
+  IconCode,
+  isDefined,
+} from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunction';
+import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
+import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
+import { AutoTypings } from 'monaco-editor-auto-typings';
+import { editor } from 'monaco-editor';
+import { Monaco } from '@monaco-editor/react';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -52,25 +64,53 @@ type ServerlessFunctionInputFormData = {
   [field: string]: string | ServerlessFunctionInputFormData;
 };
 
+const INDEX_FILE_PATH = 'src/index.ts';
+
 export const WorkflowEditActionFormServerlessFunction = ({
   action,
   actionOptions,
 }: WorkflowEditActionFormServerlessFunctionProps) => {
   const theme = useTheme();
+  const { enqueueSnackBar } = useSnackBar();
+  const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
+  const { availablePackages } = useGetAvailablePackages();
+  const serverlessFunctionId = action.settings.input.serverlessFunctionId;
 
-  const { serverlessFunction } = useGetOneServerlessFunction({
-    id: action.settings.input.serverlessFunctionId,
-  });
+  const { formValues, setFormValues, loading } =
+    useServerlessFunctionUpdateFormState(serverlessFunctionId);
 
-  const getFunctionInput = () => {
-    const inputSchema = serverlessFunction?.latestVersionInputSchema;
-    return getDefaultFunctionInputFromInputSchema(inputSchema);
+  const save = async () => {
+    try {
+      await updateOneServerlessFunction({
+        id: serverlessFunctionId,
+        name: formValues.name,
+        description: formValues.description,
+        code: formValues.code,
+      });
+    } catch (err) {
+      enqueueSnackBar(
+        (err as Error)?.message || 'An error occurred while updating function',
+        {
+          variant: SnackBarVariant.Error,
+        },
+      );
+    }
+  };
+
+  const handleSave = usePreventOverlapCallback(save, 1000);
+
+  const onCodeChange = async (value: string) => {
+    setFormValues((prevState) => ({
+      ...prevState,
+      code: { ...prevState.code, [INDEX_FILE_PATH]: value },
+    }));
+    await handleSave();
   };
 
   const [functionInput, setFunctionInput] =
     useState<ServerlessFunctionInputFormData>(
       mergeDefaultFunctionInputAndFunctionInput({
-        defaultFunctionInput: getFunctionInput(),
+        defaultFunctionInput: {},
         functionInput: action.settings.input.serverlessFunctionInput,
       }),
     );
@@ -95,12 +135,12 @@ export const WorkflowEditActionFormServerlessFunction = ({
     1_000,
   );
 
-  const handleInputChange = (value: any, path: string[]) => {
+  const handleInputChange = async (value: any, path: string[]) => {
     const updatedFunctionInput = setNestedValue(functionInput, path, value);
 
     setFunctionInput(updatedFunctionInput);
 
-    updateFunctionInput(updatedFunctionInput);
+    await updateFunctionInput(updatedFunctionInput);
   };
 
   const renderFields = (
@@ -163,8 +203,21 @@ export const WorkflowEditActionFormServerlessFunction = ({
     ? action.name
     : 'Code - Serverless Function';
 
+  const handleEditorDidMount = async (
+    editor: editor.IStandaloneCodeEditor,
+    monaco: Monaco,
+  ) => {
+    await AutoTypings.create(editor, {
+      monaco,
+      preloadPackages: true,
+      onlySpecifiedPackages: true,
+      versions: availablePackages,
+      debounceDuration: 0,
+    });
+  };
+
   return (
-    serverlessFunction && (
+    !loading && (
       <WorkflowEditGenericFormBase
         onTitleChange={(newName: string) => {
           if (actionOptions.readonly === true) {
@@ -180,6 +233,13 @@ export const WorkflowEditActionFormServerlessFunction = ({
         headerTitle={headerTitle}
         headerType="Code"
       >
+        <CodeEditor
+          height={450}
+          value={formValues.code?.[INDEX_FILE_PATH]}
+          language={'typescript'}
+          onChange={onCodeChange}
+          onMount={handleEditorDidMount}
+        />
         {renderFields(functionInput)}
       </WorkflowEditGenericFormBase>
     )

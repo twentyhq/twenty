@@ -3,10 +3,6 @@ import Editor, { EditorProps } from '@monaco-editor/react';
 import { codeEditorTheme } from '@ui/input';
 import { isDefined } from '@ui/utilities';
 
-export type CodeEditorPackage = {
-  [packageName: string]: string;
-};
-
 type CodeEditorProps = Omit<EditorProps, 'onChange'> & {
   onChange?: (value: string) => void;
 };
