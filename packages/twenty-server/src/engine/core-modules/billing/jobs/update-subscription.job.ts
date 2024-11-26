@@ -2,10 +2,10 @@ import { Logger, Scope } from '@nestjs/common';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 export type UpdateSubscriptionJobData = { workspaceId: string };
 
 @Processor({

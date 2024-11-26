@@ -15,6 +15,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -75,4 +76,13 @@ export class BillingSubscription {
     (billingSubscriptionItem) => billingSubscriptionItem.billingSubscription,
   )
   billingSubscriptionItems: Relation<BillingSubscriptionItem[]>;
+
+  @ManyToOne(
+    () => BillingCustomer,
+    (billingCustomer) => billingCustomer.billingSubscriptions,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  billingCustomer: Relation<BillingCustomer>;
 }

@@ -3,7 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BillingController } from 'src/engine/core-modules/billing/billing.controller';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
@@ -25,6 +28,9 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
       [
         BillingSubscription,
         BillingSubscriptionItem,
+        BillingCustomer,
+        BillingProduct,
+        BillingPrice,
         BillingEntitlement,
         Workspace,
         UserWorkspace,
