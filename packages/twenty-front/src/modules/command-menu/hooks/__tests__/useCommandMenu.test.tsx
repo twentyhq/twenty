@@ -26,6 +26,7 @@ const renderHooks = () => {
       const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
       const commandMenuCommands = useRecoilComponentValueV2(
         commandMenuCommandsComponentSelector,
+        'command-menu',
       );
 
       return {
