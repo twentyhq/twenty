@@ -11,6 +11,8 @@ import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/SignInUpWithGoo
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/SignInUpWithMicrosoft';
 import { SignInUpWithSSO } from '@/auth/sign-in-up/components/SignInUpWithSSO';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/SignInUpWithCredentials';
+import { useLocation } from 'react-router-dom';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -23,7 +25,9 @@ export const SignInUpWorkspaceScopeForm = () => {
   const { form } = useSignInUpForm();
   const { handleResetPassword } = useHandleResetPassword();
 
-  const { signInUpStep, continueWithEmail } = useSignInUp(form);
+  const { signInUpStep, continueWithEmail, continueWithCredentials } =
+    useSignInUp(form);
+  const location = useLocation();
 
   const checkAuthProviders = useCallback(() => {
     if (
@@ -32,9 +36,23 @@ export const SignInUpWorkspaceScopeForm = () => {
       !authProviders.microsoft &&
       !authProviders.sso
     ) {
-      continueWithEmail();
+      return continueWithEmail();
     }
-  }, [authProviders, continueWithEmail, signInUpStep]);
+    const searchParams = new URLSearchParams(location.search);
+    const email = searchParams.get('email');
+    if (isDefined(email) && authProviders.password) {
+      return continueWithCredentials();
+    }
+  }, [
+    authProviders.google,
+    authProviders.microsoft,
+    authProviders.password,
+    authProviders.sso,
+    continueWithCredentials,
+    continueWithEmail,
+    location.search,
+    signInUpStep,
+  ]);
 
   useEffect(() => {
     checkAuthProviders();

@@ -56,6 +56,11 @@ export const useSignInUpForm = () => {
       form.setValue('email', email);
     } else if (isSignInPrefilled === true) {
       form.setValue('email', 'tim@apple.dev');
+    }
+    if (
+      isSignInPrefilled === true &&
+      form.getValues('email') === 'tim@apple.dev'
+    ) {
       form.setValue('password', 'Applecar2025');
     }
   }, [form, isSignInPrefilled, location.search]);
