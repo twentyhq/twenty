@@ -31,7 +31,9 @@ export const WorkspaceProviderEffect = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   useGetPublicWorkspaceDataBySubdomainQuery({
-    skip: isMultiWorkspaceEnabled && isTwentyHomePage,
+    skip:
+      (isMultiWorkspaceEnabled && isTwentyHomePage) ||
+      isDefined(workspacePublicData),
     onCompleted: (data) => {
       setAuthProviders(data.getPublicWorkspaceDataBySubdomain.authProviders);
       setWorkspacePublicDataState(data.getPublicWorkspaceDataBySubdomain);
