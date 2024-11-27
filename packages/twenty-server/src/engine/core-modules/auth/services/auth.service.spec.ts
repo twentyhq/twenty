@@ -17,6 +17,7 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 
 import { AuthService } from './auth.service';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 jest.mock('bcrypt');
 
@@ -55,6 +56,10 @@ describe('AuthService', () => {
         },
         {
           provide: EnvironmentService,
+          useValue: {},
+        },
+        {
+          provide: UrlManagerService,
           useValue: {},
         },
         {
@@ -100,7 +105,7 @@ describe('AuthService', () => {
   });
 
   it('challenge - user already member of workspace', async () => {
-    const workspace = {} as Workspace;
+    const workspace = { isPasswordAuthEnabled: true } as Workspace;
     const user = {
       email: 'email',
       password: 'password',
@@ -161,7 +166,9 @@ describe('AuthService', () => {
         password: 'password',
         captchaToken: 'captchaToken',
       },
-      {} as Workspace,
+      {
+        isPasswordAuthEnabled: true,
+      } as Workspace,
     );
 
     expect(response).toStrictEqual({

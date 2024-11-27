@@ -15,6 +15,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { ResetPasswordService } from './reset-password.service';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 describe('ResetPasswordService', () => {
   let service: ResetPasswordService;
@@ -43,6 +44,14 @@ describe('ResetPasswordService', () => {
           provide: EmailService,
           useValue: {
             send: jest.fn().mockResolvedValue({ success: true }),
+          },
+        },
+        {
+          provide: UrlManagerService,
+          useValue: {
+            getBaseUrl: jest
+              .fn()
+              .mockResolvedValue(new URL('http://localhost:3001')),
           },
         },
         {

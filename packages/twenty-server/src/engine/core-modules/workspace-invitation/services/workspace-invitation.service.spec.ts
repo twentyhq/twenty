@@ -16,6 +16,7 @@ import { WorkspaceInvitationException } from 'src/engine/core-modules/workspace-
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { WorkspaceInvitationService } from './workspace-invitation.service';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 describe('WorkspaceInvitationService', () => {
   let service: WorkspaceInvitationService;
@@ -40,6 +41,14 @@ describe('WorkspaceInvitationService', () => {
         {
           provide: getRepositoryToken(Workspace, 'core'),
           useClass: Repository,
+        },
+        {
+          provide: UrlManagerService,
+          useValue: {
+            buildWorkspaceUrl: jest
+              .fn()
+              .mockResolvedValue(new URL('http://localhost:3001')),
+          },
         },
         {
           provide: EnvironmentService,

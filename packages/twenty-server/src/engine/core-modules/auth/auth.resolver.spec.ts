@@ -7,6 +7,8 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -41,6 +43,18 @@ describe('AuthResolver', () => {
         },
         {
           provide: UserService,
+          useValue: {},
+        },
+        {
+          provide: UrlManagerService,
+          useValue: {
+            buildWorkspaceURL: jest
+              .fn()
+              .mockResolvedValue(new URL('http://localhost:3001')),
+          },
+        },
+        {
+          provide: WorkspaceService,
           useValue: {},
         },
         {

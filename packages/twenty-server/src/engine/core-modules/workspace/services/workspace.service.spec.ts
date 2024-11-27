@@ -15,6 +15,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 
 import { WorkspaceService } from './workspace.service';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 describe('WorkspaceService', () => {
   let service: WorkspaceService;
@@ -45,6 +46,10 @@ describe('WorkspaceService', () => {
         },
         {
           provide: UserService,
+          useValue: {},
+        },
+        {
+          provide: UrlManagerService,
           useValue: {},
         },
         {
