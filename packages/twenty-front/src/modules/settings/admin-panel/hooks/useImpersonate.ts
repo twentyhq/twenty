@@ -46,7 +46,6 @@ export const useImpersonate = () => {
       await sleep(0);
       window.location.href = AppPath.Index;
     } catch (error) {
-      console.error('Impersonation failed:', error);
       setError('Failed to impersonate user. Please try again.');
       setIsLoading(false);
     }

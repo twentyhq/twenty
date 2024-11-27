@@ -26,25 +26,18 @@ export const useFeatureFlagsManagement = () => {
     },
   });
 
-  const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation({
-    onError: (error) => {
-      setError(error.message);
-    },
-  });
+  const [updateFeatureFlag] = useUpdateWorkspaceFeatureFlagMutation();
 
   const handleUserLookup = async (userIdentifier: string) => {
     setError(null);
     setIsLoading(true);
+    setUserLookupResult(null);
 
-    try {
-      const response = await userLookup({
-        variables: { userIdentifier },
-      });
+    const response = await userLookup({
+      variables: { userIdentifier },
+    });
 
-      return response.data?.userLookupAdminPanel;
-    } catch {
-      return null;
-    }
+    return response.data?.userLookupAdminPanel;
   };
 
   const handleFeatureFlagUpdate = async (
@@ -53,41 +46,39 @@ export const useFeatureFlagsManagement = () => {
     value: boolean,
   ) => {
     setError(null);
-
     const previousState = userLookupResult;
 
-    try {
-      if (isDefined(userLookupResult)) {
-        setUserLookupResult({
-          ...userLookupResult,
-          workspaces: userLookupResult.workspaces.map((workspace) =>
-            workspace.id === workspaceId
-              ? {
-                  ...workspace,
-                  featureFlags: workspace.featureFlags.map((flag) =>
-                    flag.key === featureFlag ? { ...flag, value } : flag,
-                  ),
-                }
-              : workspace,
-          ),
-        });
-      }
-
-      await updateFeatureFlag({
-        variables: {
-          workspaceId,
-          featureFlag,
-          value,
-        },
+    if (isDefined(userLookupResult)) {
+      setUserLookupResult({
+        ...userLookupResult,
+        workspaces: userLookupResult.workspaces.map((workspace) =>
+          workspace.id === workspaceId
+            ? {
+                ...workspace,
+                featureFlags: workspace.featureFlags.map((flag) =>
+                  flag.key === featureFlag ? { ...flag, value } : flag,
+                ),
+              }
+            : workspace,
+        ),
       });
-
-      return true;
-    } catch (err) {
-      if (isDefined(previousState)) {
-        setUserLookupResult(previousState);
-      }
-      return false;
     }
+
+    const response = await updateFeatureFlag({
+      variables: {
+        workspaceId,
+        featureFlag,
+        value,
+      },
+      onError: (error) => {
+        if (isDefined(previousState)) {
+          setUserLookupResult(previousState);
+        }
+        setError(error.message);
+      },
+    });
+
+    return !!response.data;
   };
 
   return {
