@@ -1,5 +1,5 @@
-import { GlobalActionMenuEntriesSetterEffect } from '@/action-menu/actions/global-actions/components/GlobalActionMenuEntriesSetterEffect';
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
+import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 
@@ -48,7 +48,7 @@ export const RecordShowActionMenu = ({
           />
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />
-          <GlobalActionMenuEntriesSetterEffect />
+          <RecordAgnosticActionsSetterEffect />
         </ActionMenuContext.Provider>
       )}
     </>

@@ -1,23 +1,23 @@
-import { useWorkflowRunActions } from '@/action-menu/actions/global-actions/workflow-run-actions/hooks/useWorkflowRunActions';
+import { useWorkflowRunActions } from '@/action-menu/actions/record-agnostic-actions/workflow-run-actions/hooks/useWorkflowRunActions';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-export const useGlobalActions = () => {
+export const useRecordAgnosticActions = () => {
   const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
   const { addWorkflowRunActions, removeWorkflowRunActions } =
     useWorkflowRunActions();
 
-  const registerGlobalActions = () => {
+  const registerRecordAgnosticActions = () => {
     if (isWorkflowEnabled) {
       addWorkflowRunActions();
     }
   };
 
-  const unregisterGlobalActions = () => {
+  const unregisterRecordAgnosticActions = () => {
     if (isWorkflowEnabled) {
       removeWorkflowRunActions();
     }
   };
 
-  return { registerGlobalActions, unregisterGlobalActions };
+  return { registerRecordAgnosticActions, unregisterRecordAgnosticActions };
 };
