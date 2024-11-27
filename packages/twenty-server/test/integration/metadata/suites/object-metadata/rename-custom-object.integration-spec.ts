@@ -6,6 +6,10 @@ import { deleteOneRelationMetadataItemFactory } from 'test/integration/metadata/
 import { fieldsMetadataFactory } from 'test/integration/metadata/suites/utils/fields-metadata-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { objectsMetadataFactory } from 'test/integration/metadata/suites/utils/objects-metadata-factory.util';
+import {
+  checkTableDoesNotExist,
+  checkTableExists,
+} from 'test/integration/metadata/suites/utils/raw-database-queries.util';
 import { updateOneObjectMetadataItemFactory } from 'test/integration/metadata/suites/utils/update-one-object-metadata-factory.util';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -23,6 +27,8 @@ describe('Custom object renaming', () => {
     'taskTarget',
     'timelineActivity',
   ];
+
+  const WORKSPACE_SCHEMA = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
   const standardObjectRelationsMap = STANDARD_OBJECT_RELATIONS.reduce(
     (acc, relation) => ({
@@ -74,6 +80,8 @@ describe('Custom object renaming', () => {
     });
   };
 
+  const rawDataSource = global.rawDataSourceConnection;
+
   it('1. should create one custom object with standard relations', async () => {
     // Arrange
     const standardObjects = await makeMetadataAPIRequest(
@@ -104,6 +112,12 @@ describe('Custom object renaming', () => {
     const response = await makeMetadataAPIRequest(graphqlOperation);
 
     // Assert
+    await checkTableExists({
+      dataSource: rawDataSource,
+      workspaceSchema: WORKSPACE_SCHEMA,
+      tableName: '_listing',
+    });
+
     expect(response.body.data.createOneObject.nameSingular).toBe(
       LISTING_NAME_SINGULAR,
     );
@@ -290,6 +304,19 @@ describe('Custom object renaming', () => {
     );
 
     expect(updatedRelationFieldMetadata.name).toBe(RELATION_FROM_NAME);
+
+    // check actual db state
+    await checkTableExists({
+      dataSource: rawDataSource,
+      workspaceSchema: WORKSPACE_SCHEMA,
+      tableName: '_house',
+    });
+
+    await checkTableDoesNotExist({
+      dataSource: rawDataSource,
+      workspaceSchema: WORKSPACE_SCHEMA,
+      tableName: '_listing',
+    });
   });
 
   it('4. should delete custom relation', async () => {
