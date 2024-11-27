@@ -1,7 +1,14 @@
-import { FormFieldInputBase } from '@/object-record/record-field/form-types/components/FormFieldInputBase';
+import {
+  StyledContainer,
+  StyledInputContainer,
+  StyledRowContainer,
+} from '@/object-record/record-field/form-types/components/FormFieldInputBase';
 import { TextVariableEditor } from '@/object-record/record-field/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
+import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { InputLabel } from '@/ui/input/components/InputLabel';
 import { parseEditorContent } from '@/workflow/search-variables/utils/parseEditorContent';
+import { useId } from 'react';
 import { isDefined } from 'twenty-ui';
 
 type FormTextFieldInputProps = {
@@ -11,6 +18,7 @@ type FormTextFieldInputProps = {
   onPersist: (value: null | string) => void;
   multiline?: boolean;
   readonly?: boolean;
+  VariablePicker?: VariablePickerComponent;
 };
 
 export const FormTextFieldInput = ({
@@ -20,8 +28,10 @@ export const FormTextFieldInput = ({
   onPersist,
   multiline,
   readonly,
+  VariablePicker,
 }: FormTextFieldInputProps) => {
-  // TODO: Might use a specific editor that doesn't know about variables (more lightweight)
+  const inputId = useId();
+
   const editor = useTextVariableEditor({
     placeholder,
     multiline,
@@ -35,21 +45,44 @@ export const FormTextFieldInput = ({
     },
   });
 
+  const handleVariableTagInsert = (variable: string) => {
+    if (!isDefined(editor)) {
+      throw new Error(
+        'Expected the editor to be defined when a variable is selected',
+      );
+    }
+
+    editor.commands.insertVariableTag(variable);
+  };
+
   if (!isDefined(editor)) {
     return null;
   }
 
   return (
-    <FormFieldInputBase
-      label={label}
-      Input={
-        <TextVariableEditor
-          editor={editor}
+    <StyledContainer>
+      {label ? <InputLabel>{label}</InputLabel> : null}
+
+      <StyledRowContainer multiline={multiline}>
+        <StyledInputContainer
+          hasRightElement={isDefined(VariablePicker)}
           multiline={multiline}
-          readonly={readonly}
-        />
-      }
-      multiline={multiline}
-    />
+        >
+          <TextVariableEditor
+            editor={editor}
+            multiline={multiline}
+            readonly={readonly}
+          />
+        </StyledInputContainer>
+
+        {VariablePicker ? (
+          <VariablePicker
+            inputId={inputId}
+            multiline={multiline}
+            onVariableSelect={handleVariableTagInsert}
+          />
+        ) : null}
+      </StyledRowContainer>
+    </StyledContainer>
   );
 };
