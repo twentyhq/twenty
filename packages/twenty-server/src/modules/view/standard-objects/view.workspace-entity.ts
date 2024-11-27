@@ -219,4 +219,14 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   kanbanAggregateOperation?: AGGREGATE_OPERATIONS | null;
+
+  @WorkspaceField({
+    standardId: VIEW_STANDARD_FIELD_IDS.kanbanAggregateOperationFieldMetadataId,
+    type: FieldMetadataType.TEXT,
+    label: 'Field metadata used for aggregate operation',
+    description: 'Field metadata used for aggregate operation',
+    defaultValue: null,
+  })
+  @WorkspaceIsNullable()
+  kanbanAggregateOperationFieldMetadataId?: string | null;
 }

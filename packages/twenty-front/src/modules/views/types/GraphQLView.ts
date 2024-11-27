@@ -14,6 +14,7 @@ export type GraphQLView = {
   key: ViewKey | null;
   kanbanFieldMetadataId: string;
   kanbanAggregateOperation: AGGREGATE_OPERATIONS;
+  kanbanAggregateOperationFieldMetadataId: string;
   objectMetadataId: string;
   isCompact: boolean;
   viewFields: ViewField[];

@@ -18,6 +18,8 @@ export const getObjectMetadataItemViews = (
       objectMetadataId: view.objectMetadataId,
       kanbanFieldMetadataId: view.kanbanFieldMetadataId,
       kanbanAggregateOperation: view.kanbanAggregateOperation,
+      kanbanAggregateOperationFieldMetadataId:
+        view.kanbanAggregateOperationFieldMetadataId,
       icon: view.icon,
     }));
 };

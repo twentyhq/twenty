@@ -422,6 +422,8 @@ export const VIEW_STANDARD_FIELD_IDS = {
   icon: '20202020-1f08-4fd9-929b-cbc07f317166',
   kanbanFieldMetadataId: '20202020-d09b-4f65-ac42-06a2f20ba0e8',
   kanbanAggregateOperation: '4add0d0e-8da2-45de-a731-61bed84b17a8',
+  kanbanAggregateOperationFieldMetadataId:
+    '555a4ff7-b1b3-4bf3-85e4-dc7d58aa9b02',
   position: '20202020-e9db-4303-b271-e8250c450172',
   isCompact: '20202020-674e-4314-994d-05754ea7b22b',
   viewFields: '20202020-542b-4bdc-b177-b63175d48edf',

@@ -21,6 +21,7 @@ export type View = {
   viewSorts: ViewSort[];
   kanbanFieldMetadataId: string;
   kanbanAggregateOperation: AGGREGATE_OPERATIONS;
+  kanbanAggregateOperationFieldMetadataId: string;
   position: number;
   icon: string;
   __typename: 'View';
