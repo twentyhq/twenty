@@ -14,6 +14,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Entity({ name: 'billingEntitlement', schema: 'core' })
@@ -53,4 +54,13 @@ export class BillingEntitlement {
 
   @Column({ nullable: true, type: 'timestamptz' })
   deletedAt?: Date;
+
+  @ManyToOne(
+    () => BillingCustomer,
+    (billingCustomer) => billingCustomer.billingEntitlements,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  billingCustomer: Relation<BillingCustomer>;
 }

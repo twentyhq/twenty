@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -45,4 +46,10 @@ export class BillingCustomer {
     (billingSubscription) => billingSubscription.billingCustomer,
   )
   billingSubscriptions: Relation<BillingSubscription[]>;
+
+  @OneToMany(
+    () => BillingEntitlement,
+    (billingEntitlement) => billingEntitlement.billingCustomer,
+  )
+  billingEntitlements: Relation<BillingEntitlement[]>;
 }
