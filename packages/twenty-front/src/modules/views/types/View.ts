@@ -1,3 +1,4 @@
+import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
@@ -19,6 +20,7 @@ export type View = {
   viewFilterGroups?: ViewFilterGroup[];
   viewSorts: ViewSort[];
   kanbanFieldMetadataId: string;
+  kanbanAggregateOperation: AGGREGATE_OPERATIONS;
   position: number;
   icon: string;
   __typename: 'View';

@@ -1,5 +1,6 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -175,4 +176,47 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   favorites: Relation<FavoriteWorkspaceEntity[]>;
+
+  @WorkspaceField({
+    standardId: VIEW_STANDARD_FIELD_IDS.kanbanAggregateOperation,
+    type: FieldMetadataType.SELECT,
+    label: 'Aggregate operation',
+    description: 'Optional aggregate operation',
+    icon: 'IconCalculator',
+    options: [
+      {
+        value: AGGREGATE_OPERATIONS.avg,
+        label: 'Average',
+        position: 0,
+        color: 'red',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.count,
+        label: 'Count',
+        position: 1,
+        color: 'purple',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.max,
+        label: 'Maximum',
+        position: 2,
+        color: 'sky',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.min,
+        label: 'Minimum',
+        position: 3,
+        color: 'turquoise',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.sum,
+        label: 'Sum',
+        position: 4,
+        color: 'yellow',
+      },
+    ],
+    defaultValue: `'${AGGREGATE_OPERATIONS.count}'`,
+  })
+  @WorkspaceIsNullable()
+  kanbanAggregateOperation?: AGGREGATE_OPERATIONS | null;
 }
