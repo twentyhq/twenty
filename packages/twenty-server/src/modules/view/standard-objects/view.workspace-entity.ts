@@ -111,7 +111,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'View Fields',
     icon: 'IconTag',
     inverseSideTarget: () => ViewFieldWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.SET_NULL,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   viewFields: Relation<ViewFieldWorkspaceEntity[]>;

@@ -2,8 +2,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
@@ -133,7 +133,7 @@ export default defineConfig(({ command, mode }) => {
     ],
 
     optimizeDeps: {
-      exclude: ['node_modules/.vite', 'node_modules/.cache'],
+      exclude: ['../../node_modules/.vite', '../../node_modules/.cache'],
     },
 
     build: {
