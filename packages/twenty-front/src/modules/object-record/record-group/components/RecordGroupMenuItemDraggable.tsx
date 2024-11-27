@@ -56,10 +56,9 @@ export const RecordGroupMenuItemDraggable = ({
         />
       }
       accent={isNoValue || showDragGrip ? 'placeholder' : 'default'}
-      iconButtons={!isNoValue ? getIconButtons(recordGroup) : undefined}
+      iconButtons={getIconButtons(recordGroup)}
       showGrip={isNoValue ? true : showDragGrip}
-      isDragDisabled={isNoValue ? true : !isDraggable}
-      isHoverDisabled={isNoValue}
+      isDragDisabled={!isDraggable}
     />
   );
 };
