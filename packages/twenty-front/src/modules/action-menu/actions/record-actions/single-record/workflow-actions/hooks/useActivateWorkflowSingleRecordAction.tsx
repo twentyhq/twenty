@@ -10,7 +10,7 @@ import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflow
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useRecoilValue } from 'recoil';
-import { IconPower, isDefined } from 'twenty-ui';
+import { IconPlayerPause, IconPower, isDefined } from 'twenty-ui';
 
 export const useActivateWorkflowSingleRecordAction = ({
   position,
@@ -55,7 +55,7 @@ export const useActivateWorkflowSingleRecordAction = ({
       key: 'activate-workflow',
       label: isWorkflowActive ? 'Deactivate' : 'Activate',
       position,
-      Icon: IconPower,
+      Icon: isWorkflowActive ? IconPlayerPause : IconPower,
       type: ActionMenuEntryType.Standard,
       scope: ActionMenuEntryScope.RecordSelection,
       onClick: () => {
