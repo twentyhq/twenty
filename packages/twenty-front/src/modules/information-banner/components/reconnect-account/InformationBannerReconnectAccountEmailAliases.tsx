@@ -1,7 +1,7 @@
 import { InformationBanner } from '@/information-banner/components/InformationBanner';
 import { useAccountToReconnect } from '@/information-banner/hooks/useAccountToReconnect';
 import { InformationBannerKeys } from '@/information-banner/types/InformationBannerKeys';
-import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
+import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { IconRefresh } from 'twenty-ui';
 
 export const InformationBannerReconnectAccountEmailAliases = () => {
@@ -9,7 +9,7 @@ export const InformationBannerReconnectAccountEmailAliases = () => {
     InformationBannerKeys.ACCOUNTS_TO_RECONNECT_EMAIL_ALIASES,
   );
 
-  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
+  const { triggerApisOAuth } = useTriggerApisOAuth();
 
   if (!accountToReconnect) {
     return null;
@@ -20,7 +20,7 @@ export const InformationBannerReconnectAccountEmailAliases = () => {
       message={`Please reconnect your mailbox ${accountToReconnect?.handle} to update your email aliases:`}
       buttonTitle="Reconnect"
       buttonIcon={IconRefresh}
-      buttonOnClick={() => triggerGoogleApisOAuth()}
+      buttonOnClick={() => triggerApisOAuth(accountToReconnect.provider)}
     />
   );
 };

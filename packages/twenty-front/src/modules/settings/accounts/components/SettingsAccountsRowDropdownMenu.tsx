@@ -6,17 +6,16 @@ import {
   IconRefresh,
   IconTrash,
   LightIconButton,
+  MenuItem,
 } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
-import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
+import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
@@ -35,8 +34,7 @@ export const SettingsAccountsRowDropdownMenu = ({
   const { destroyOneRecord } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
   });
-
-  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
+  const { triggerApisOAuth } = useTriggerApisOAuth();
 
   return (
     <Dropdown
@@ -47,46 +45,45 @@ export const SettingsAccountsRowDropdownMenu = ({
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }
+      dropdownMenuWidth={160}
       dropdownComponents={
-        <DropdownMenu>
-          <DropdownMenuItemsContainer>
+        <DropdownMenuItemsContainer>
+          <MenuItem
+            LeftIcon={IconMail}
+            text="Emails settings"
+            onClick={() => {
+              navigate(`/settings/accounts/emails`);
+              closeDropdown();
+            }}
+          />
+          <MenuItem
+            LeftIcon={IconCalendarEvent}
+            text="Calendar settings"
+            onClick={() => {
+              navigate(`/settings/accounts/calendars`);
+              closeDropdown();
+            }}
+          />
+          {account.authFailedAt && (
             <MenuItem
-              LeftIcon={IconMail}
-              text="Emails settings"
+              LeftIcon={IconRefresh}
+              text="Reconnect"
               onClick={() => {
-                navigate(`/settings/accounts/emails`);
+                triggerApisOAuth(account.provider);
                 closeDropdown();
               }}
             />
-            <MenuItem
-              LeftIcon={IconCalendarEvent}
-              text="Calendar settings"
-              onClick={() => {
-                navigate(`/settings/accounts/calendars`);
-                closeDropdown();
-              }}
-            />
-            {account.authFailedAt && (
-              <MenuItem
-                LeftIcon={IconRefresh}
-                text="Reconnect"
-                onClick={() => {
-                  triggerGoogleApisOAuth();
-                  closeDropdown();
-                }}
-              />
-            )}
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text="Remove account"
-              onClick={() => {
-                destroyOneRecord(account.id);
-                closeDropdown();
-              }}
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
+          )}
+          <MenuItem
+            accent="danger"
+            LeftIcon={IconTrash}
+            text="Remove account"
+            onClick={() => {
+              destroyOneRecord(account.id);
+              closeDropdown();
+            }}
+          />
+        </DropdownMenuItemsContainer>
       }
     />
   );

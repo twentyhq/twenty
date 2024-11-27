@@ -1,7 +1,7 @@
 import {
-  Record as IRecord,
-  RecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+  ObjectRecord,
+  ObjectRecordOrderBy,
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
@@ -24,9 +24,9 @@ export const decodeCursor = (cursor: string): CursorData => {
   }
 };
 
-export const encodeCursor = <ObjectRecord extends IRecord = IRecord>(
-  objectRecord: ObjectRecord,
-  order: RecordOrderBy | undefined,
+export const encodeCursor = <T extends ObjectRecord = ObjectRecord>(
+  objectRecord: T,
+  order: ObjectRecordOrderBy | undefined,
 ): string => {
   const orderByValues: Record<string, any> = {};
 

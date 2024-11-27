@@ -7,6 +7,11 @@ import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIn
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
+import {
+  ActionMenuEntry,
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { IconCheckbox, IconHeart, IconTrash } from 'twenty-ui';
@@ -29,43 +34,46 @@ const meta: Meta<typeof RecordIndexActionMenuDropdown> = {
             ),
             { x: 10, y: 10 },
           );
+
+          const map = new Map<string, ActionMenuEntry>();
+
           set(
             actionMenuEntriesComponentState.atomFamily({
               instanceId: 'story-action-menu',
             }),
-            new Map([
-              [
-                'delete',
-                {
-                  key: 'delete',
-                  label: 'Delete',
-                  position: 0,
-                  Icon: IconTrash,
-                  onClick: deleteMock,
-                },
-              ],
-              [
-                'markAsDone',
-                {
-                  key: 'markAsDone',
-                  label: 'Mark as done',
-                  position: 1,
-                  Icon: IconCheckbox,
-                  onClick: markAsDoneMock,
-                },
-              ],
-              [
-                'addToFavorites',
-                {
-                  key: 'addToFavorites',
-                  label: 'Add to favorites',
-                  position: 2,
-                  Icon: IconHeart,
-                  onClick: addToFavoritesMock,
-                },
-              ],
-            ]),
+            map,
           );
+
+          map.set('delete', {
+            type: ActionMenuEntryType.Standard,
+            scope: ActionMenuEntryScope.RecordSelection,
+            key: 'delete',
+            label: 'Delete',
+            position: 0,
+            Icon: IconTrash,
+            onClick: deleteMock,
+          });
+
+          map.set('markAsDone', {
+            type: ActionMenuEntryType.Standard,
+            scope: ActionMenuEntryScope.RecordSelection,
+            key: 'markAsDone',
+            label: 'Mark as done',
+            position: 1,
+            Icon: IconCheckbox,
+            onClick: markAsDoneMock,
+          });
+
+          map.set('addToFavorites', {
+            type: ActionMenuEntryType.Standard,
+            scope: ActionMenuEntryScope.RecordSelection,
+            key: 'addToFavorites',
+            label: 'Add to favorites',
+            position: 2,
+            Icon: IconHeart,
+            onClick: addToFavoritesMock,
+          });
+
           set(
             extractComponentState(
               isDropdownOpenComponentState,

@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
-import { ComponentDecorator, IconCheckbox } from 'twenty-ui';
+import { ComponentWithRouterDecorator, IconCheckbox } from 'twenty-ui';
 
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
 
@@ -39,7 +39,7 @@ const meta: Meta<typeof TabList> = {
   title: 'UI/Layout/Tab/TabList',
   component: TabList,
   args: {
-    tabListId: 'tab-list-id',
+    tabListInstanceId: 'tab-list-id',
     tabs: tabs,
   },
   decorators: [
@@ -48,7 +48,7 @@ const meta: Meta<typeof TabList> = {
         <Story />
       </RecoilScope>
     ),
-    ComponentDecorator,
+    ComponentWithRouterDecorator,
   ],
 };
 

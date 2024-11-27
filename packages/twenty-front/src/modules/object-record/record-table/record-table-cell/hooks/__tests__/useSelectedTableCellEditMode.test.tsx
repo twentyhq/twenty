@@ -48,14 +48,14 @@ describe('useSelectedTableCellEditMode', () => {
 
     expect(mockCallbackInterface.set).toHaveBeenCalledWith(
       {
-        key: 'isTableCellInEditModeComponentFamilyState__{"familyKey":{"column":0,"row":0},"scopeId":"yourScopeId"}',
+        key: 'isTableCellInEditModeComponentFamilyState__{"familyKey":{"column":0,"row":0},"instanceId":"yourScopeId"}',
       },
       false,
     );
 
     expect(mockCallbackInterface.set).toHaveBeenCalledWith(
       {
-        key: 'isTableCellInEditModeComponentFamilyState__{"familyKey":{"column":5,"row":1},"scopeId":"yourScopeId"}',
+        key: 'isTableCellInEditModeComponentFamilyState__{"familyKey":{"column":5,"row":1},"instanceId":"yourScopeId"}',
       },
       true,
     );

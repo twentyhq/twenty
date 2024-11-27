@@ -7,6 +7,8 @@ import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/componen
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { settingsDataModelFieldBooleanFormSchema } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
 import { SettingsDataModelFieldBooleanSettingsFormCard } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanSettingsFormCard';
+import { settingsDataModelFieldtextFormSchema } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm';
+import { SettingsDataModelFieldTextSettingsFormCard } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextSettingsFormCard';
 import { settingsDataModelFieldCurrencyFormSchema } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
 import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencySettingsFormCard';
 import { settingsDataModelFieldDateFormSchema } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateForm';
@@ -58,6 +60,10 @@ const numberFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.Number) })
   .merge(settingsDataModelFieldNumberFormSchema);
 
+const textFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.Text) })
+  .merge(settingsDataModelFieldtextFormSchema);
+
 const otherFieldsFormSchema = z.object({
   type: z.enum(
     Object.keys(
@@ -70,6 +76,7 @@ const otherFieldsFormSchema = z.object({
         FieldMetadataType.Date,
         FieldMetadataType.DateTime,
         FieldMetadataType.Number,
+        FieldMetadataType.Text,
       ]),
     ) as [FieldMetadataType, ...FieldMetadataType[]],
   ),
@@ -86,12 +93,12 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     selectFieldFormSchema,
     multiSelectFieldFormSchema,
     numberFieldFormSchema,
+    textFieldFormSchema,
     otherFieldsFormSchema,
   ],
 );
 
 type SettingsDataModelFieldSettingsFormCardProps = {
-  isCreatingField?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
     'icon' | 'label' | 'type' | 'isCustom'
@@ -100,7 +107,6 @@ type SettingsDataModelFieldSettingsFormCardProps = {
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
-  display: grid;
   flex: 1 1 100%;
 `;
 
@@ -125,7 +131,6 @@ const previewableTypes = [
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({
-  isCreatingField,
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
@@ -145,7 +150,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.Currency) {
     return (
       <SettingsDataModelFieldCurrencySettingsFormCard
-        disabled={!isCreatingField}
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
@@ -158,7 +162,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   ) {
     return (
       <SettingsDataModelFieldDateSettingsFormCard
-        disabled={!isCreatingField}
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
@@ -177,7 +180,15 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.Number) {
     return (
       <SettingsDataModelFieldNumberSettingsFormCard
-        disabled={fieldMetadataItem.isCustom === false}
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
+  if (fieldMetadataItem.type === FieldMetadataType.Text) {
+    return (
+      <SettingsDataModelFieldTextSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />

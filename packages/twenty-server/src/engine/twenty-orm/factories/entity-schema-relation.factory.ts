@@ -2,10 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { EntitySchemaRelationOptions } from 'typeorm';
 
-import {
-  FieldMetadataMap,
-  ObjectMetadataMap,
-} from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import { determineRelationDetails } from 'src/engine/twenty-orm/utils/determine-relation-details.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
@@ -18,12 +16,12 @@ export class EntitySchemaRelationFactory {
   constructor() {}
 
   async create(
-    fieldMetadataMap: FieldMetadataMap,
-    objectMetadataMap: ObjectMetadataMap,
+    fieldMetadataMapByName: FieldMetadataMap,
+    objectMetadataMaps: ObjectMetadataMaps,
   ): Promise<EntitySchemaRelationMap> {
     const entitySchemaRelationMap: EntitySchemaRelationMap = {};
 
-    const fieldMetadataCollection = Object.values(fieldMetadataMap);
+    const fieldMetadataCollection = Object.values(fieldMetadataMapByName);
 
     for (const fieldMetadata of fieldMetadataCollection) {
       if (!isRelationFieldMetadataType(fieldMetadata.type)) {
@@ -42,7 +40,7 @@ export class EntitySchemaRelationFactory {
       const relationDetails = await determineRelationDetails(
         fieldMetadata,
         relationMetadata,
-        objectMetadataMap,
+        objectMetadataMaps,
       );
 
       entitySchemaRelationMap[fieldMetadata.name] = {

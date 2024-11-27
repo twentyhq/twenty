@@ -1,10 +1,16 @@
 import { useRecoilCallback } from 'recoil';
 
+import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
+import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
+import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isDefined } from '~/utils/isDefined';
 
 type useSetRecordTableDataProps = {
   recordTableId?: string;
@@ -15,17 +21,39 @@ export const useSetRecordTableData = ({
   recordTableId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const {
-    tableRowIdsState,
-    numberOfTableRowsState,
-    isRowSelectedFamilyState,
-    hasUserSelectedAllRowsState,
-  } = useRecordTableStates(recordTableId);
+  const tableRowIdsByGroupFamilyState = useRecoilComponentCallbackStateV2(
+    tableRowIdsByGroupComponentFamilyState,
+    recordTableId,
+  );
+  const tableAllRowIdsState = useRecoilComponentCallbackStateV2(
+    tableAllRowIdsComponentState,
+    recordTableId,
+  );
+  const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
+    isRowSelectedComponentFamilyState,
+    recordTableId,
+  );
+  const hasUserSelectedAllRowsState = useRecoilComponentCallbackStateV2(
+    hasUserSelectedAllRowsComponentState,
+    recordTableId,
+  );
+  const recordGroupDefinitionsState = useRecoilComponentCallbackStateV2(
+    recordGroupDefinitionsComponentState,
+    recordTableId,
+  );
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends ObjectRecord>(newRecords: T[], totalCount?: number) => {
-        for (const record of newRecords) {
+      <T extends ObjectRecord>({
+        records,
+        recordGroupId,
+        totalCount,
+      }: {
+        records: T[];
+        recordGroupId?: string;
+        totalCount?: number;
+      }) => {
+        for (const record of records) {
           // TODO: refactor with scoped state later
           const currentRecord = snapshot
             .getLoadable(recordStoreFamilyState(record.id))
@@ -36,14 +64,24 @@ export const useSetRecordTableData = ({
           }
         }
 
-        const currentRowIds = getSnapshotValue(snapshot, tableRowIdsState);
+        const currentRowIds = getSnapshotValue(
+          snapshot,
+          recordGroupId
+            ? tableRowIdsByGroupFamilyState(recordGroupId)
+            : tableAllRowIdsState,
+        );
 
         const hasUserSelectedAllRows = getSnapshotValue(
           snapshot,
           hasUserSelectedAllRowsState,
         );
 
-        const recordIds = newRecords.map((record) => record.id);
+        const recordGroupDefinitions = getSnapshotValue(
+          snapshot,
+          recordGroupDefinitionsState,
+        );
+
+        const recordIds = records.map((record) => record.id);
 
         if (!isDeeplyEqual(currentRowIds, recordIds)) {
           if (hasUserSelectedAllRows) {
@@ -52,14 +90,36 @@ export const useSetRecordTableData = ({
             }
           }
 
-          set(tableRowIdsState, recordIds);
-          set(numberOfTableRowsState, totalCount ?? 0);
+          if (isDefined(recordGroupId)) {
+            // TODO: Hack to store all ids in the same order as the record group definitions
+            // Should be replaced by something more efficient
+            const allRowIds: string[] = [];
+
+            set(tableRowIdsByGroupFamilyState(recordGroupId), recordIds);
+
+            for (const recordGroupDefinition of recordGroupDefinitions) {
+              const tableRowIdsByGroup =
+                recordGroupDefinition.id !== recordGroupId
+                  ? getSnapshotValue(
+                      snapshot,
+                      tableRowIdsByGroupFamilyState(recordGroupDefinition.id),
+                    )
+                  : recordIds;
+
+              allRowIds.push(...tableRowIdsByGroup);
+            }
+            set(tableAllRowIdsState, allRowIds);
+          } else {
+            set(tableAllRowIdsState, recordIds);
+          }
+
           onEntityCountChange(totalCount);
         }
       },
     [
-      numberOfTableRowsState,
-      tableRowIdsState,
+      tableRowIdsByGroupFamilyState,
+      tableAllRowIdsState,
+      recordGroupDefinitionsState,
       onEntityCountChange,
       isRowSelectedFamilyState,
       hasUserSelectedAllRowsState,

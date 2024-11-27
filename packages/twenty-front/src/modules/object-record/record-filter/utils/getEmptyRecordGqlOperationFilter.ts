@@ -6,12 +6,14 @@ import {
   DateFilter,
   EmailsFilter,
   FloatFilter,
+  MultiSelectFilter,
+  RatingFilter,
   RawJsonFilter,
   RecordGqlOperationFilter,
   RelationFilter,
+  SelectFilter,
   StringFilter,
   URLFilter,
-  UUIDFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -255,7 +257,7 @@ export const getEmptyRecordGqlOperationFilter = (
       break;
     case 'RATING':
       emptyRecordFilter = {
-        [correspondingField.name]: { is: 'NULL' } as StringFilter,
+        [correspondingField.name]: { is: 'NULL' } as RatingFilter,
       };
       break;
     case 'DATE':
@@ -266,7 +268,21 @@ export const getEmptyRecordGqlOperationFilter = (
       break;
     case 'SELECT':
       emptyRecordFilter = {
-        [correspondingField.name]: { is: 'NULL' } as UUIDFilter,
+        [correspondingField.name]: { is: 'NULL' } as SelectFilter,
+      };
+      break;
+    case 'MULTI_SELECT':
+      emptyRecordFilter = {
+        or: [
+          {
+            [correspondingField.name]: { is: 'NULL' } as MultiSelectFilter,
+          },
+          {
+            [correspondingField.name]: {
+              isEmptyArray: true,
+            } as MultiSelectFilter,
+          },
+        ],
       };
       break;
     case 'RELATION':
@@ -295,6 +311,9 @@ export const getEmptyRecordGqlOperationFilter = (
         or: [
           {
             [correspondingField.name]: { is: 'NULL' } as ArrayFilter,
+          },
+          {
+            [correspondingField.name]: { isEmptyArray: true } as ArrayFilter,
           },
         ],
       };

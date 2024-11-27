@@ -1,4 +1,4 @@
-import { ApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
 import { DELETE_ONE_RELATION_METADATA_ITEM } from '@/object-metadata/graphql/mutations';
@@ -18,7 +18,7 @@ export const useDeleteOneRelationMetadataItem = () => {
     DeleteOneRelationMetadataItemMutation,
     DeleteOneRelationMetadataItemMutationVariables
   >(DELETE_ONE_RELATION_METADATA_ITEM, {
-    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient,
   });
 
   const deleteOneRelationMetadataItem = async (

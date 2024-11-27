@@ -1,7 +1,4 @@
 import { test, expect } from '../lib/fixtures/screenshot';
-import { config } from 'dotenv';
-import path = require('path');
-config({ path: path.resolve(__dirname, '..', '.env') });
 
 test.describe('Basic check', () => {
   test('Checking if table in Companies is visible', async ({ page }) => {

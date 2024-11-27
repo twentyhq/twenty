@@ -1,8 +1,7 @@
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { useRecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/hooks/useRecordIndexPageKanbanAddMenuItem';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import styled from '@emotion/styled';
-import { Tag } from 'twenty-ui';
+import { MenuItem, Tag } from 'twenty-ui';
 
 const StyledMenuItem = styled(MenuItem)`
   width: calc(100% - 2 * var(--horizontal-padding));

@@ -6,18 +6,14 @@ SQL >
     %
     WITH
         toStartOfDay(
-            toDateTime64({{ DateTime64(start, '2024-10-16 00:00:00.000') }}, 3),
-            {{ String(timezone, 'UTC') }}
+            parseDateTime64BestEffort({{ String(start, '2024-11-01T00:00:00.000Z') }}, 3)
         ) AS start,
-        toStartOfDay(
-            toDateTime64({{ DateTime64(end, '2024-10-23 00:00:00.000') }}, 3),
-            {{ String(timezone, 'UTC') }}
-        ) AS
+        toStartOfDay(parseDateTime64BestEffort({{ String(end, '2024-11-02T00:00:00.000Z') }}, 3)) AS
     end
     SELECT
         arrayJoin(
             arrayMap(
-                x -> toDateTime64(toStartOfDay(toDateTime64(x, 3), {{ String(timezone, 'UTC') }}), 3),
+                x -> toDateTime64(toStartOfDay(toDateTime64(x, 3)), 3),
                 range(toUInt32(start + 86400), toUInt32(end + 86400),
                 86400
             )
@@ -29,13 +25,9 @@ SQL >
     %
     WITH
         toStartOfHour(
-            toDateTime64({{ DateTime64(start, '2024-10-22 00:00:00.000') }}, 3),
-            {{ String(timezone, 'UTC') }}
+            parseDateTime64BestEffort({{ String(start, '2024-11-01T00:00:00.000Z') }}, 3)
         ) AS start,
-        toStartOfHour(
-            toDateTime64({{ DateTime64(end, '2024-10-23 00:00:00.000') }}, 3),
-            {{ String(timezone, 'UTC') }}
-        ) AS
+        toStartOfHour(parseDateTime64BestEffort({{ String(end, '2024-11-02T00:00:00.000Z') }}, 3)) AS
     end
     SELECT
         arrayJoin(
@@ -43,45 +35,7 @@ SQL >
         )
     ) as interval
 
-NODE customIntervals
-SQL >
-    %
-    WITH
-        time_series AS (
-            SELECT
-                toDateTime64(
-                    toDateTime(
-                        toStartOfInterval(
-                            toDateTime64({{ DateTime64(start, '2024-10-22 00:00:00.000') }}, 3),
-                            INTERVAL {{ Int32(tickIntervalInMinutes, 420) }} MINUTE
-                        )
-                    )
-                    + INTERVAL number * {{ Int32(tickIntervalInMinutes, 420) }} MINUTE,
-                    3
-                ) AS interval
-            FROM
-                numbers(
-                    0,
-                    1 + intDiv(
-                        dateDiff(
-                            'minute',
-                            toDateTime64({{ DateTime64(start, '2024-10-22 00:00:00.000') }}, 3),
-                            toDateTime64({{ DateTime64(end, '2024-10-23 00:00:00.000') }}, 3)
-                        ),
-                        {{ Int32(tickIntervalInMinutes, 420) }}
-                    )
-                )
-            WHERE interval <= toDateTime64({{ DateTime64(end, '2024-10-23 00:00:00.000') }}, 3)
-        )
-    SELECT interval
-    FROM time_series
-
 NODE selectIntervalByGranularity
 SQL >
     %
-    SELECT *
-    FROM
-        {% if granularity == "custom" %} customIntervals
-        {% elif granularity == "hour" %} hourIntervals
-        {% else %} dayIntervals
-        {% end %}
+    SELECT * FROM {% if granularity == "hour" %} hourIntervals {% else %} dayIntervals {% end %}

@@ -13,7 +13,7 @@ export const executePartialSync = async () => {
     return new Error('No GitHub token provided');
   }
 
-  console.log('Synching data..');
+  console.log('Syncing data... (partial sync)');
 
   const query = graphql.defaults({
     headers: {

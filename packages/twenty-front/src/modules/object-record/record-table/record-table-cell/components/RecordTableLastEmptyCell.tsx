@@ -6,5 +6,10 @@ import { RecordTableTd } from '@/object-record/record-table/record-table-cell/co
 export const RecordTableLastEmptyCell = () => {
   const { isSelected } = useContext(RecordTableRowContext);
 
-  return <RecordTableTd isSelected={isSelected} hasRightBorder={false} />;
+  return (
+    <>
+      <RecordTableTd isSelected={isSelected} hasRightBorder={false} />
+      <RecordTableTd isSelected={isSelected} hasRightBorder={false} />
+    </>
+  );
 };

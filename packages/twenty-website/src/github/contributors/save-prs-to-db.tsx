@@ -85,12 +85,18 @@ export async function savePRsToDB(
           },
         },
       );
-      await insertMany(pullRequestLabelModel, [
+      await insertMany(
+        pullRequestLabelModel,
+        [
+          {
+            pullRequestId: pr.id,
+            labelId: label.id,
+          },
+        ],
         {
-          pullRequestId: pr.id,
-          labelId: label.id,
+          onConflictDoNothing: true,
         },
-      ]);
+      );
     }
   }
 }

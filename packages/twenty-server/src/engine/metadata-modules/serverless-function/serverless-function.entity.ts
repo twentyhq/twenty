@@ -6,6 +6,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { InputSchema } from 'src/modules/code-introspection/types/input-schema.type';
+
 export enum ServerlessFunctionSyncStatus {
   NOT_READY = 'NOT_READY',
   READY = 'READY',
@@ -31,6 +33,9 @@ export class ServerlessFunctionEntity {
 
   @Column({ nullable: false, type: 'jsonb', default: [] })
   publishedVersions: string[];
+
+  @Column({ nullable: true, type: 'jsonb' })
+  latestVersionInputSchema: InputSchema;
 
   @Column({ nullable: false, default: ServerlessFunctionRuntime.NODE18 })
   runtime: ServerlessFunctionRuntime;

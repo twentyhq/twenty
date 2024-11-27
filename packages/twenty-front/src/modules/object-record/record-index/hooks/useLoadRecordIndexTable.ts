@@ -6,11 +6,17 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/hooks/useCurrentRecordGroupDefinition';
 import { useRecordTableRecordGqlFields } from '@/object-record/record-index/hooks/useRecordTableRecordGqlFields';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { tableFiltersComponentState } from '@/object-record/record-table/states/tableFiltersComponentState';
+import { tableSortsComponentState } from '@/object-record/record-table/states/tableSortsComponentState';
+import { tableViewFilterGroupsComponentState } from '@/object-record/record-table/states/tableViewFilterGroupsComponentState';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isNull } from '@sniptt/guards';
+import { useMemo } from 'react';
+import { isDefined } from 'twenty-ui';
 import { WorkspaceActivationStatus } from '~/generated/graphql';
 
 export const useFindManyParams = (
@@ -21,22 +27,63 @@ export const useFindManyParams = (
     objectNameSingular,
   });
 
-  const { tableFiltersState, tableSortsState, tableViewFilterGroupsState } =
-    useRecordTableStates(recordTableId);
+  const currentRecordGroupDefinition =
+    useCurrentRecordGroupDefinition(recordTableId);
 
-  const tableViewFilterGroups = useRecoilValue(tableViewFilterGroupsState);
-  const tableFilters = useRecoilValue(tableFiltersState);
-  const tableSorts = useRecoilValue(tableSortsState);
+  const tableViewFilterGroups = useRecoilComponentValueV2(
+    tableViewFilterGroupsComponentState,
+    recordTableId,
+  );
+  const tableFilters = useRecoilComponentValueV2(
+    tableFiltersComponentState,
+    recordTableId,
+  );
+  const tableSorts = useRecoilComponentValueV2(
+    tableSortsComponentState,
+    recordTableId,
+  );
 
-  const filter = computeViewRecordGqlOperationFilter(
+  const stateFilter = computeViewRecordGqlOperationFilter(
     tableFilters,
     objectMetadataItem?.fields ?? [],
     tableViewFilterGroups,
   );
 
+  const recordGroupFilter = useMemo(() => {
+    if (isDefined(currentRecordGroupDefinition)) {
+      const fieldMetadataItem = objectMetadataItem?.fields.find(
+        (fieldMetadataItem) =>
+          fieldMetadataItem.id === currentRecordGroupDefinition.fieldMetadataId,
+      );
+
+      if (!fieldMetadataItem) {
+        throw new Error(
+          `Field metadata item with id ${currentRecordGroupDefinition.fieldMetadataId} not found`,
+        );
+      }
+
+      return {
+        [fieldMetadataItem.name]: {
+          eq: currentRecordGroupDefinition.value,
+        },
+      };
+    }
+
+    // TODO: Handle case when value is nullable
+
+    return {};
+  }, [objectMetadataItem.fields, currentRecordGroupDefinition]);
+
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, tableSorts);
 
-  return { objectNameSingular, filter, orderBy };
+  return {
+    objectNameSingular,
+    filter: {
+      ...stateFilter,
+      ...recordGroupFilter,
+    },
+    orderBy,
+  };
 };
 
 export const useLoadRecordIndexTable = (objectNameSingular: string) => {

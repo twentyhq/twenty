@@ -94,9 +94,9 @@ export class LocalDriver implements ServerlessDriver {
     process.env = ${JSON.stringify(envVariables)}
     
     process.on('message', async (message) => {
-      const { event, context } = message;
+      const { params } = message;
       try {
-        const result = await index_1.handler(event, context);
+        const result = await index_1.main(params);
         process.send(result);
       } catch (error) {
         process.send({
@@ -245,7 +245,7 @@ export class LocalDriver implements ServerlessDriver {
           }
         });
 
-        child.send({ event: payload });
+        child.send({ params: payload });
       });
     } catch (error) {
       return {

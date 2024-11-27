@@ -10,17 +10,22 @@ import { CurrencyCode } from './CurrencyCode';
 export type FieldUuidMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldBooleanMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldTextMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: {
+    displayedMaxRows?: number;
+  };
 };
 
 export type FieldDateTimeMetadata = {
@@ -46,17 +51,23 @@ export type FieldNumberMetadata = {
   fieldName: string;
   placeHolder: string;
   isPositive?: boolean;
+  settings?: {
+    decimals?: number;
+    type?: 'percentage' | 'number';
+  };
 };
 
 export type FieldLinkMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldLinksMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldCurrencyMetadata = {
@@ -64,56 +75,66 @@ export type FieldCurrencyMetadata = {
   fieldName: string;
   placeHolder: string;
   isPositive?: boolean;
+  settings?: Record<string, never>;
 };
 
 export type FieldFullNameMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldEmailMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldEmailsMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldPhoneMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldRatingMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldAddressMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldRawJsonMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
   placeHolder: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldRichTextMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldPositionMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldRelationMetadata = {
@@ -125,6 +146,7 @@ export type FieldRelationMetadata = {
   relationType?: RelationDefinitionType;
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
+  settings?: Record<string, never>;
 };
 
 export type FieldSelectMetadata = {
@@ -132,33 +154,39 @@ export type FieldSelectMetadata = {
   fieldName: string;
   options: { label: string; color: ThemeColor; value: string }[];
   isNullable: boolean;
+  settings?: Record<string, never>;
 };
 
 export type FieldMultiSelectMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
   options: { label: string; color: ThemeColor; value: string }[];
+  settings?: Record<string, never>;
 };
 
 export type FieldActorMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldArrayMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
   values: { label: string; value: string }[];
+  settings?: Record<string, never>;
 };
 
 export type FieldPhonesMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldTsVectorMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: Record<string, never>;
 };
 
 export type FieldMetadata =

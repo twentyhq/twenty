@@ -7,7 +7,6 @@ import { WorkspaceQueryPostHookInstance } from 'src/engine/api/graphql/workspace
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -16,6 +15,7 @@ import {
   WorkflowVersionWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @WorkspaceQueryHook({
   key: `workflow.createMany`,
@@ -61,9 +61,10 @@ export class WorkflowCreateManyPostQueryHook
       },
     });
 
-    this.workspaceEventEmitter.emit(
-      `workflowVersion.created`,
-      workflowVersionsToCreate.map((workflowVersionToCreate) => {
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: 'workflowVersion',
+      action: DatabaseEventAction.CREATED,
+      events: workflowVersionsToCreate.map((workflowVersionToCreate) => {
         return {
           userId: authContext.user?.id,
           recordId: workflowVersionToCreate.id,
@@ -71,9 +72,9 @@ export class WorkflowCreateManyPostQueryHook
           properties: {
             after: workflowVersionToCreate,
           },
-        } satisfies ObjectRecordCreateEvent<any>;
+        };
       }),
-      authContext.workspace.id,
-    );
+      workspaceId: authContext.workspace.id,
+    });
   }
 }

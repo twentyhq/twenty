@@ -38,6 +38,10 @@ const StyledYear = styled.span`
   color: ${({ theme }) => theme.font.color.light};
 `;
 
+const StyledTitleContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+`;
+
 export const Calendar = ({
   targetableObject,
 }: {
@@ -131,14 +135,16 @@ export const Calendar = ({
 
           return (
             <Section key={monthTime}>
-              <H3Title
-                title={
-                  <>
-                    {monthLabel}
-                    {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
-                  </>
-                }
-              />
+              <StyledTitleContainer>
+                <H3Title
+                  title={
+                    <>
+                      {monthLabel}
+                      {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
+                    </>
+                  }
+                />
+              </StyledTitleContainer>
               <CalendarMonthCard dayTimes={monthDayTimes} />
             </Section>
           );

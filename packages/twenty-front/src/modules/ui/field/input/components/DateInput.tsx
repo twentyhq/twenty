@@ -12,7 +12,8 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 
 const StyledCalendarContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
+  background: ${({ theme }) => theme.background.transparent.secondary};
+  backdrop-filter: ${({ theme }) => theme.blur.medium};
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};

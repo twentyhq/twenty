@@ -2,31 +2,24 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
 import { ActionMenuEntry } from '@/action-menu/types/ActionMenuEntry';
-import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 
 type RecordIndexActionMenuBarEntryProps = {
   entry: ActionMenuEntry;
 };
 
-const StyledButton = styled.div<{ accent: MenuItemAccent }>`
+const StyledButton = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${(props) =>
-    props.accent === 'danger'
-      ? props.theme.color.red
-      : props.theme.font.color.secondary};
+  color: ${({ theme }) => theme.font.color.secondary};
   cursor: pointer;
   display: flex;
   justify-content: center;
 
   padding: ${({ theme }) => theme.spacing(2)};
-  transition: background 0.1s ease;
+  transition: background ${({ theme }) => theme.animation.duration.fast} ease;
   user-select: none;
 
   &:hover {
-    background: ${({ theme, accent }) =>
-      accent === 'danger'
-        ? theme.background.danger
-        : theme.background.tertiary};
+    background: ${({ theme }) => theme.background.tertiary};
   }
 `;
 
@@ -40,10 +33,7 @@ export const RecordIndexActionMenuBarEntry = ({
 }: RecordIndexActionMenuBarEntryProps) => {
   const theme = useTheme();
   return (
-    <StyledButton
-      accent={entry.accent ?? 'default'}
-      onClick={() => entry.onClick?.()}
-    >
+    <StyledButton onClick={() => entry.onClick?.()}>
       {entry.Icon && <entry.Icon size={theme.icon.size.md} />}
       <StyledButtonLabel>{entry.label}</StyledButtonLabel>
     </StyledButton>

@@ -14,6 +14,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from 'twenty-ui';
 
+import { ObjectFilterDropdownBooleanSelect } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect';
 import { DATE_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/DateFilterTypes';
 import { NUMBER_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/NumberFilterTypes';
 import { TEXT_FILTER_TYPES } from '@/object-record/object-filter-dropdown/constants/TextFilterTypes';
@@ -77,6 +78,7 @@ export const ObjectFilterDropdownFilterInput = ({
           {filterDefinitionUsedInDropdown.type === 'RELATION' && (
             <>
               <ObjectFilterDropdownSearchInput />
+              <DropdownMenuSeparator />
               <ObjectFilterDropdownRecordSelect />
             </>
           )}
@@ -86,11 +88,17 @@ export const ObjectFilterDropdownFilterInput = ({
               <ObjectFilterDropdownSourceSelect />
             </>
           )}
-          {filterDefinitionUsedInDropdown.type === 'SELECT' && (
+          {['SELECT', 'MULTI_SELECT'].includes(
+            filterDefinitionUsedInDropdown.type,
+          ) && (
             <>
               <ObjectFilterDropdownSearchInput />
+              <DropdownMenuSeparator />
               <ObjectFilterDropdownOptionSelect />
             </>
+          )}
+          {filterDefinitionUsedInDropdown.type === 'BOOLEAN' && (
+            <ObjectFilterDropdownBooleanSelect />
           )}
         </>
       )}

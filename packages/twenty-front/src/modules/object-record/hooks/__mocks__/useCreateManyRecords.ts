@@ -26,7 +26,7 @@ export const responseData = {
   xLink: {
     primaryLinkUrl: '',
     primaryLinkLabel: '',
-    secondaryLinks: null,
+    secondaryLinks: [],
   },
   createdAt: '',
   city: '',
@@ -43,7 +43,7 @@ export const responseData = {
   linkedinLink: {
     primaryLinkUrl: '',
     primaryLinkLabel: '',
-    secondaryLinks: null,
+    secondaryLinks: [],
   },
   updatedAt: '',
   avatarUrl: '',

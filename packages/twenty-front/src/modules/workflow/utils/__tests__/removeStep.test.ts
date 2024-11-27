@@ -13,6 +13,7 @@ it('returns a deep copy of the provided steps array instead of mutating it', () 
       input: {
         serverlessFunctionId: 'first',
         serverlessFunctionVersion: '1',
+        serverlessFunctionInput: {},
       },
       outputSchema: {},
     },
@@ -27,6 +28,7 @@ it('returns a deep copy of the provided steps array instead of mutating it', () 
     name: '',
     steps: [stepToBeRemoved],
     trigger: {
+      name: 'Company created',
       settings: { eventName: 'company.created', outputSchema: {} },
       type: 'DATABASE_EVENT',
     },
@@ -54,6 +56,7 @@ it('removes a step in a non-empty steps array', () => {
       input: {
         serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
         serverlessFunctionVersion: '1',
+        serverlessFunctionInput: {},
       },
       outputSchema: {},
     },
@@ -78,6 +81,7 @@ it('removes a step in a non-empty steps array', () => {
           input: {
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
             serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -96,6 +100,7 @@ it('removes a step in a non-empty steps array', () => {
           input: {
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
             serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -104,6 +109,7 @@ it('removes a step in a non-empty steps array', () => {
       },
     ],
     trigger: {
+      name: 'Company created',
       settings: { eventName: 'company.created', outputSchema: {} },
       type: 'DATABASE_EVENT',
     },

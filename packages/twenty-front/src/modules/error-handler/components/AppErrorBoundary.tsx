@@ -1,6 +1,6 @@
+import * as Sentry from '@sentry/react';
 import { ErrorInfo, ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import * as Sentry from '@sentry/react';
 
 import { GenericErrorFallback } from '@/error-handler/components/GenericErrorFallback';
 
@@ -12,10 +12,16 @@ export const AppErrorBoundary = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  // TODO: Implement a better reset strategy, hard reload for now
+  const handleReset = () => {
+    window.location.reload();
+  };
+
   return (
     <ErrorBoundary
       FallbackComponent={GenericErrorFallback}
       onError={handleError}
+      onReset={handleReset}
     >
       {children}
     </ErrorBoundary>

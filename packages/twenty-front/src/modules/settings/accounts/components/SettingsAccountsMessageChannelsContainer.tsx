@@ -63,7 +63,9 @@ export const SettingsAccountsMessageChannelsContainer = () => {
       {tabs.length > 1 && (
         <StyledMessageContainer>
           <TabList
-            tabListId={SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID}
+            tabListInstanceId={
+              SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID
+            }
             tabs={tabs}
           />
         </StyledMessageContainer>

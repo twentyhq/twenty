@@ -1,3 +1,5 @@
+import { getActionBarIdFromActionMenuId } from '@/action-menu/utils/getActionBarIdFromActionMenuId';
+import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { useActionMenu } from '../useActionMenu';
@@ -23,6 +25,9 @@ jest.mock('@/ui/layout/dropdown/hooks/useDropdownV2', () => ({
 
 describe('useActionMenu', () => {
   const actionMenuId = 'test-action-menu';
+  const actionBarId = getActionBarIdFromActionMenuId(actionMenuId);
+  const actionMenuDropdownId =
+    getActionMenuDropdownIdFromActionMenuId(actionMenuId);
 
   it('should return the correct functions', () => {
     const { result } = renderHook(() => useActionMenu(actionMenuId));
@@ -40,10 +45,8 @@ describe('useActionMenu', () => {
       result.current.openActionMenuDropdown();
     });
 
-    expect(closeBottomBar).toHaveBeenCalledWith(`action-bar-${actionMenuId}`);
-    expect(openDropdown).toHaveBeenCalledWith(
-      `action-menu-dropdown-${actionMenuId}`,
-    );
+    expect(closeBottomBar).toHaveBeenCalledWith(actionBarId);
+    expect(openDropdown).toHaveBeenCalledWith(actionMenuDropdownId);
   });
 
   it('should call the correct functions when opening action bar', () => {
@@ -53,10 +56,8 @@ describe('useActionMenu', () => {
       result.current.openActionBar();
     });
 
-    expect(closeDropdown).toHaveBeenCalledWith(
-      `action-menu-dropdown-${actionMenuId}`,
-    );
-    expect(openBottomBar).toHaveBeenCalledWith(`action-bar-${actionMenuId}`);
+    expect(closeDropdown).toHaveBeenCalledWith(actionMenuDropdownId);
+    expect(openBottomBar).toHaveBeenCalledWith(actionBarId);
   });
 
   it('should call the correct function when closing action menu dropdown', () => {
@@ -66,9 +67,7 @@ describe('useActionMenu', () => {
       result.current.closeActionMenuDropdown();
     });
 
-    expect(closeDropdown).toHaveBeenCalledWith(
-      `action-menu-dropdown-${actionMenuId}`,
-    );
+    expect(closeDropdown).toHaveBeenCalledWith(actionMenuDropdownId);
   });
 
   it('should call the correct function when closing action bar', () => {
@@ -78,6 +77,6 @@ describe('useActionMenu', () => {
       result.current.closeActionBar();
     });
 
-    expect(closeBottomBar).toHaveBeenCalledWith(`action-bar-${actionMenuId}`);
+    expect(closeBottomBar).toHaveBeenCalledWith(actionBarId);
   });
 });

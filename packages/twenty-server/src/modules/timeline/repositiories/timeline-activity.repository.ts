@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
-import { Record } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
 export class TimelineActivityRepository {
@@ -15,7 +15,7 @@ export class TimelineActivityRepository {
 
   async upsertOne(
     name: string,
-    properties: Partial<Record>,
+    properties: Partial<ObjectRecord>,
     objectName: string,
     recordId: string,
     workspaceId: string,
@@ -105,7 +105,7 @@ export class TimelineActivityRepository {
   private async updateTimelineActivity(
     dataSourceSchema: string,
     id: string,
-    properties: Partial<Record>,
+    properties: Partial<ObjectRecord>,
     workspaceMemberId: string | undefined,
     workspaceId: string,
   ) {
@@ -121,7 +121,7 @@ export class TimelineActivityRepository {
   private async insertTimelineActivity(
     dataSourceSchema: string,
     name: string,
-    properties: Partial<Record>,
+    properties: Partial<ObjectRecord>,
     objectName: string,
     recordId: string,
     workspaceMemberId: string | undefined,
@@ -151,7 +151,7 @@ export class TimelineActivityRepository {
     objectName: string,
     activities: {
       name: string;
-      properties: Partial<Record> | null;
+      properties: Partial<ObjectRecord> | null;
       workspaceMemberId: string | undefined;
       recordId: string | null;
       linkedRecordCachedName: string;

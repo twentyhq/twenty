@@ -13,6 +13,11 @@ type FieldMetadataDefaultSettings = {
 type FieldMetadataNumberSettings = {
   dataType: NumberDataType;
   decimals?: number;
+  type?: string;
+};
+
+type FieldMetadataTextSettings = {
+  displayedMaxRows?: number;
 };
 
 type FieldMetadataDateSettings = {
@@ -27,6 +32,7 @@ type FieldMetadataSettingsMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings;
   [FieldMetadataType.DATE]: FieldMetadataDateSettings;
   [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings;
+  [FieldMetadataType.TEXT]: FieldMetadataTextSettings;
 };
 
 type SettingsByFieldMetadata<T extends FieldMetadataType | 'default'> =

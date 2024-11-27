@@ -5,20 +5,26 @@ import { RecoilRoot } from 'recoil';
 import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexActionMenuBar';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import {
+  ActionMenuEntry,
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
+import { getActionBarIdFromActionMenuId } from '@/action-menu/utils/getActionBarIdFromActionMenuId';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
 import { userEvent, waitFor, within } from '@storybook/test';
-import { IconCheckbox, IconTrash } from 'twenty-ui';
+import { IconTrash, RouterDecorator } from 'twenty-ui';
 
 const deleteMock = jest.fn();
-const markAsDoneMock = jest.fn();
 
 const meta: Meta<typeof RecordIndexActionMenuBar> = {
   title: 'Modules/ActionMenu/RecordIndexActionMenuBar',
   component: RecordIndexActionMenuBar,
   decorators: [
+    RouterDecorator,
     (Story) => (
       <ContextStoreComponentInstanceContext.Provider
         value={{ instanceId: 'story-action-menu' }}
@@ -34,42 +40,37 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
                 selectedRecordIds: ['1', '2', '3'],
               },
             );
+
             set(
               contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
                 instanceId: 'story-action-menu',
               }),
               3,
             );
+
+            const map = new Map<string, ActionMenuEntry>();
+
+            map.set('delete', {
+              isPinned: true,
+              scope: ActionMenuEntryScope.RecordSelection,
+              type: ActionMenuEntryType.Standard,
+              key: 'delete',
+              label: 'Delete',
+              position: 0,
+              Icon: IconTrash,
+              onClick: deleteMock,
+            });
+
             set(
               actionMenuEntriesComponentState.atomFamily({
                 instanceId: 'story-action-menu',
               }),
-              new Map([
-                [
-                  'delete',
-                  {
-                    key: 'delete',
-                    label: 'Delete',
-                    position: 0,
-                    Icon: IconTrash,
-                    onClick: deleteMock,
-                  },
-                ],
-                [
-                  'markAsDone',
-                  {
-                    key: 'markAsDone',
-                    label: 'Mark as done',
-                    position: 1,
-                    Icon: IconCheckbox,
-                    onClick: markAsDoneMock,
-                  },
-                ],
-              ]),
+              map,
             );
+
             set(
               isBottomBarOpenedComponentState.atomFamily({
-                instanceId: 'action-bar-story-action-menu',
+                instanceId: getActionBarIdFromActionMenuId('story-action-menu'),
               }),
               true,
             );
@@ -120,12 +121,8 @@ export const WithButtonClicks: Story = {
     const deleteButton = await canvas.findByText('Delete');
     await userEvent.click(deleteButton);
 
-    const markAsDoneButton = await canvas.findByText('Mark as done');
-    await userEvent.click(markAsDoneButton);
-
     await waitFor(() => {
       expect(deleteMock).toHaveBeenCalled();
-      expect(markAsDoneMock).toHaveBeenCalled();
     });
   },
 };

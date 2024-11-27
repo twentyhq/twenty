@@ -1,28 +1,27 @@
-import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, Repository } from 'typeorm';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
-import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import {
   FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { createForeignKeyDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { createRelationForeignKeyFieldMetadataName } from 'src/engine/metadata-modules/relation-metadata/utils/create-relation-foreign-key-field-metadata-name.util';
+import { buildMigrationsToCreateRemoteTableRelations } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/utils/build-migrations-to-create-remote-table-relations.util';
+import { buildMigrationsToRemoveRemoteTableRelations } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/utils/build-migrations-to-remove-remote-table-relations.util';
+import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
+import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
+import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import {
-  ACTIVITY_TARGET_STANDARD_FIELD_IDS,
   ATTACHMENT_STANDARD_FIELD_IDS,
   FAVORITE_STANDARD_FIELD_IDS,
   TIMELINE_ACTIVITY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { buildMigrationsToCreateRemoteTableRelations } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/utils/build-migrations-to-create-remote-table-relations.util';
-import { buildMigrationsToRemoveRemoteTableRelations } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/utils/build-migrations-to-remove-remote-table-relations.util';
-import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
-import { createRelationForeignKeyFieldMetadataName } from 'src/engine/metadata-modules/relation-metadata/utils/create-relation-foreign-key-field-metadata-name.util';
+import { createForeignKeyDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 @Injectable()
 export class RemoteTableRelationsService {
@@ -54,14 +53,6 @@ export class RemoteTableRelationsService {
       objectPrimaryKeyFieldSettings,
     );
 
-    const activityTargetObjectMetadata =
-      await this.createActivityTargetRelation(
-        workspaceId,
-        remoteObjectMetadata,
-        objectPrimaryKeyFieldType,
-        objectPrimaryKeyFieldSettings,
-      );
-
     const attachmentObjectMetadata = await this.createAttachmentRelation(
       workspaceId,
       remoteObjectMetadata,
@@ -87,7 +78,6 @@ export class RemoteTableRelationsService {
         remoteObjectMetadata.nameSingular,
         [
           favoriteObjectMetadata,
-          activityTargetObjectMetadata,
           attachmentObjectMetadata,
           timelineActivityObjectMetadata,
         ],
@@ -104,12 +94,6 @@ export class RemoteTableRelationsService {
     const favoriteObjectMetadata =
       await this.objectMetadataRepository.findOneByOrFail({
         nameSingular: 'favorite',
-        workspaceId: workspaceId,
-      });
-
-    const activityTargetObjectMetadata =
-      await this.objectMetadataRepository.findOneByOrFail({
-        nameSingular: 'activityTarget',
         workspaceId: workspaceId,
       });
 
@@ -136,7 +120,6 @@ export class RemoteTableRelationsService {
         name: targetColumnName,
         objectMetadataId: In([
           favoriteObjectMetadata.id,
-          activityTargetObjectMetadata.id,
           attachmentObjectMetadata.id,
           timelineActivityObjectMetadata.id,
         ]),
@@ -158,51 +141,10 @@ export class RemoteTableRelationsService {
       workspaceId,
       buildMigrationsToRemoveRemoteTableRelations(targetColumnName, [
         favoriteObjectMetadata,
-        activityTargetObjectMetadata,
         attachmentObjectMetadata,
         timelineActivityObjectMetadata,
       ]),
     );
-  }
-
-  private async createActivityTargetRelation(
-    workspaceId: string,
-    createdObjectMetadata: ObjectMetadataEntity,
-    objectPrimaryKeyType: FieldMetadataType,
-    objectPrimaryKeyFieldSettings:
-      | FieldMetadataSettings<FieldMetadataType | 'default'>
-      | undefined,
-  ) {
-    const activityTargetObjectMetadata =
-      await this.objectMetadataRepository.findOneByOrFail({
-        nameSingular: 'activityTarget',
-        workspaceId: workspaceId,
-      });
-
-    await this.fieldMetadataRepository.save(
-      // Foreign key
-      {
-        standardId: createForeignKeyDeterministicUuid({
-          objectId: createdObjectMetadata.id,
-          standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.custom,
-        }),
-        objectMetadataId: activityTargetObjectMetadata.id,
-        workspaceId: workspaceId,
-        isCustom: false,
-        isActive: true,
-        type: objectPrimaryKeyType,
-        name: `${createdObjectMetadata.nameSingular}Id`,
-        label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
-        description: `ActivityTarget ${createdObjectMetadata.labelSingular} id foreign key`,
-        icon: undefined,
-        isNullable: true,
-        isSystem: true,
-        defaultValue: undefined,
-        settings: { ...objectPrimaryKeyFieldSettings, isForeignKey: true },
-      },
-    );
-
-    return activityTargetObjectMetadata;
   }
 
   private async createAttachmentRelation(

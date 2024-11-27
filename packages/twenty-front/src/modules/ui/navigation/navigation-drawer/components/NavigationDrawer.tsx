@@ -22,9 +22,9 @@ export type NavigationDrawerProps = {
   title?: string;
 };
 
-const StyledAnimatedContainer = styled(motion.div)`
+const StyledAnimatedContainer = styled(motion.div)<{ isSettings?: boolean }>`
   max-height: 100vh;
-  overflow: hidden;
+  overflow: ${({ isSettings }) => (isSettings ? 'visible' : 'hidden')};
 `;
 
 const StyledContainer = styled.div<{
@@ -50,11 +50,12 @@ const StyledContainer = styled.div<{
     padding-right: 20px;
   }
 `;
-const StyledItemsContainer = styled.div`
+
+const StyledItemsContainer = styled.div<{ isSettings?: boolean }>`
   display: flex;
   flex-direction: column;
   margin-bottom: auto;
-  overflow: hidden;
+  overflow: ${({ isSettings }) => (isSettings ? 'visible' : 'hidden')};
   flex: 1;
 `;
 
@@ -102,6 +103,7 @@ export const NavigationDrawer = ({
       transition={{
         duration: theme.animation.duration.normal,
       }}
+      isSettings={isSettingsDrawer}
     >
       <StyledContainer
         isSettings={isSettingsDrawer}
@@ -118,7 +120,9 @@ export const NavigationDrawer = ({
             showCollapseButton={isHovered}
           />
         )}
-        <StyledItemsContainer>{children}</StyledItemsContainer>
+        <StyledItemsContainer isSettings={isSettingsDrawer}>
+          {children}
+        </StyledItemsContainer>
         {footer}
       </StyledContainer>
     </StyledAnimatedContainer>

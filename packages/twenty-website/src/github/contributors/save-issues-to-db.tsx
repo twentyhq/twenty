@@ -82,12 +82,18 @@ export async function saveIssuesToDB(
           },
         },
       );
-      await insertMany(issueLabelModel, [
+      await insertMany(
+        issueLabelModel,
+        [
+          {
+            issueId: issue.id,
+            labelId: label.id,
+          },
+        ],
         {
-          pullRequestId: issue.id,
-          labelId: label.id,
+          onConflictDoNothing: true,
         },
-      ]);
+      );
     }
   }
 }

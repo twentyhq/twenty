@@ -5,6 +5,7 @@ import { addCreateStepNodes } from '../addCreateStepNodes';
 describe('addCreateStepNodes', () => {
   it("adds a create step node to the end of a single-branch flow and doesn't change the shape of other nodes", () => {
     const trigger: WorkflowTrigger = {
+      name: 'Company created',
       type: 'DATABASE_EVENT',
       settings: {
         eventName: 'company.created',
@@ -25,6 +26,7 @@ describe('addCreateStepNodes', () => {
           input: {
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
             serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -42,6 +44,7 @@ describe('addCreateStepNodes', () => {
           input: {
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
             serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
           outputSchema: {},
         },

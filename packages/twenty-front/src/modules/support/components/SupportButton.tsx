@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
-import { Button, IconHelpCircle } from 'twenty-ui';
+import { Button, IconHelpCircle, LightIconButton } from 'twenty-ui';
 
 import { SupportButtonSkeletonLoader } from '@/support/components/SupportButtonSkeletonLoader';
 import { useSupportChat } from '@/support/hooks/useSupportChat';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { useRecoilValue } from 'recoil';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -11,11 +13,18 @@ const StyledButtonContainer = styled.div`
 export const SupportButton = () => {
   const { loading, isFrontChatLoaded } = useSupportChat();
 
+  const isNavigationDrawerExpanded = useRecoilValue(
+    isNavigationDrawerExpandedState,
+  );
   if (loading) {
     return <SupportButtonSkeletonLoader />;
   }
 
-  return isFrontChatLoaded ? (
+  if (!isFrontChatLoaded) {
+    return;
+  }
+
+  return isNavigationDrawerExpanded ? (
     <StyledButtonContainer>
       <Button
         variant="tertiary"
@@ -24,5 +33,7 @@ export const SupportButton = () => {
         Icon={IconHelpCircle}
       />
     </StyledButtonContainer>
-  ) : null;
+  ) : (
+    <LightIconButton Icon={IconHelpCircle} />
+  );
 };

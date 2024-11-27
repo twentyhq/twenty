@@ -8,7 +8,7 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
-import { GraphqlQueryRunnerService } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-runner.service';
+import { GraphqlQueryDeleteManyResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-delete-many-resolver.service';
 import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class DeleteManyResolverFactory
   public static methodName = 'deleteMany' as const;
 
   constructor(
-    private readonly graphqlQueryRunnerService: GraphqlQueryRunnerService,
+    private readonly graphqlQueryRunnerService: GraphqlQueryDeleteManyResolverService,
   ) {}
 
   create(
@@ -30,15 +30,17 @@ export class DeleteManyResolverFactory
       try {
         const options: WorkspaceQueryRunnerOptions = {
           authContext: internalContext.authContext,
-          objectMetadataItem: internalContext.objectMetadataItem,
           info,
-          fieldMetadataCollection: internalContext.fieldMetadataCollection,
-          objectMetadataCollection: internalContext.objectMetadataCollection,
-          objectMetadataMap: internalContext.objectMetadataMap,
-          objectMetadataMapItem: internalContext.objectMetadataMapItem,
+          objectMetadataMaps: internalContext.objectMetadataMaps,
+          objectMetadataItemWithFieldMaps:
+            internalContext.objectMetadataItemWithFieldMaps,
         };
 
-        return await this.graphqlQueryRunnerService.deleteMany(args, options);
+        return await this.graphqlQueryRunnerService.execute(
+          args,
+          options,
+          DeleteManyResolverFactory.methodName,
+        );
       } catch (error) {
         workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
       }

@@ -1,36 +1,39 @@
 import { Injectable } from '@nestjs/common';
 
-import { Record as IRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+import { ObjectRecord } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class ApiEventEmitterService {
   constructor(private readonly workspaceEventEmitter: WorkspaceEventEmitter) {}
 
-  public emitCreateEvents<T extends IRecord>(
+  public emitCreateEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.created`,
-      records.map((record) => ({
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.CREATED,
+      events: records.map((record) => ({
         userId: authContext.user?.id,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
         properties: {
           before: null,
-          after: this.removeGraphQLAndNestedProperties(record),
+          after: record,
         },
       })),
-      authContext.workspace.id,
-    );
+      workspaceId: authContext.workspace.id,
+    });
   }
 
-  public emitUpdateEvents<T extends IRecord>(
+  public emitUpdateEvents<T extends ObjectRecord>(
     existingRecords: T[],
     records: T[],
     updatedFields: string[],
@@ -45,93 +48,101 @@ export class ApiEventEmitterService {
       {},
     );
 
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.updated`,
-      records.map((record) => {
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.UPDATED,
+      events: records.map((record) => {
+        const before = mappedExistingRecords[record.id];
+        const after = record;
+        const diff = objectRecordChangedValues(
+          before,
+          after,
+          updatedFields,
+          objectMetadataItem,
+        );
+
         return {
           userId: authContext.user?.id,
           recordId: record.id,
           objectMetadata: objectMetadataItem,
           properties: {
-            before: mappedExistingRecords[record.id]
-              ? this.removeGraphQLAndNestedProperties(
-                  mappedExistingRecords[record.id],
-                )
-              : undefined,
-            after: this.removeGraphQLAndNestedProperties(record),
+            before,
+            after,
             updatedFields,
+            diff,
           },
         };
       }),
-      authContext.workspace.id,
-    );
+      workspaceId: authContext.workspace.id,
+    });
   }
 
-  public emitDeletedEvents<T extends IRecord>(
+  public emitDeletedEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.deleted`,
-      records.map((record) => {
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.DELETED,
+      events: records.map((record) => {
         return {
           userId: authContext.user?.id,
           recordId: record.id,
           objectMetadata: objectMetadataItem,
           properties: {
-            before: this.removeGraphQLAndNestedProperties(record),
+            before: record,
             after: null,
           },
         };
       }),
-      authContext.workspace.id,
-    );
+      workspaceId: authContext.workspace.id,
+    });
   }
 
-  public emitDestroyEvents<T extends IRecord>(
+  public emitRestoreEvents<T extends ObjectRecord>(
     records: T[],
     authContext: AuthContext,
     objectMetadataItem: ObjectMetadataInterface,
   ): void {
-    this.workspaceEventEmitter.emit(
-      `${objectMetadataItem.nameSingular}.destroyed`,
-      records.map((record) => {
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.RESTORED,
+      events: records.map((record) => {
         return {
           userId: authContext.user?.id,
           recordId: record.id,
           objectMetadata: objectMetadataItem,
           properties: {
-            before: this.removeGraphQLAndNestedProperties(record),
+            before: null,
+            after: record,
+          },
+        };
+      }),
+      workspaceId: authContext.workspace.id,
+    });
+  }
+
+  public emitDestroyEvents<T extends ObjectRecord>(
+    records: T[],
+    authContext: AuthContext,
+    objectMetadataItem: ObjectMetadataInterface,
+  ): void {
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: objectMetadataItem.nameSingular,
+      action: DatabaseEventAction.DESTROYED,
+      events: records.map((record) => {
+        return {
+          userId: authContext.user?.id,
+          recordId: record.id,
+          objectMetadata: objectMetadataItem,
+          properties: {
+            before: record,
             after: null,
           },
         };
       }),
-      authContext.workspace.id,
-    );
-  }
-
-  private removeGraphQLAndNestedProperties<ObjectRecord extends IRecord>(
-    record: ObjectRecord,
-  ) {
-    if (!record) {
-      return {};
-    }
-
-    const sanitizedRecord = {};
-
-    for (const [key, value] of Object.entries(record)) {
-      if (value && typeof value === 'object' && value['edges']) {
-        continue;
-      }
-
-      if (key === '__typename') {
-        continue;
-      }
-
-      sanitizedRecord[key] = value;
-    }
-
-    return sanitizedRecord;
+      workspaceId: authContext.workspace.id,
+    });
   }
 }

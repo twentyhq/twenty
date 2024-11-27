@@ -1,4 +1,4 @@
-import { ApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
 import {
@@ -19,7 +19,7 @@ export const useCreateOneFieldMetadataItem = () => {
     CreateOneFieldMetadataItemMutation,
     CreateOneFieldMetadataItemMutationVariables
   >(CREATE_ONE_FIELD_METADATA_ITEM, {
-    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient,
   });
 
   const createOneFieldMetadataItem = async (input: CreateFieldInput) => {

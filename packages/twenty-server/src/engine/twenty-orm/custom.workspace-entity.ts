@@ -22,7 +22,6 @@ import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
@@ -70,19 +69,6 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     },
   })
   createdBy: ActorMetadata;
-
-  @WorkspaceRelation({
-    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.activityTargets,
-    label: 'Activities',
-    type: RelationMetadataType.ONE_TO_MANY,
-    description: (objectMetadata) =>
-      `Activities tied to the ${objectMetadata.labelSingular}`,
-    icon: 'IconCheckbox',
-    inverseSideTarget: () => ActivityTargetWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsNullable()
-  activityTargets: ActivityTargetWorkspaceEntity[];
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.noteTargets,

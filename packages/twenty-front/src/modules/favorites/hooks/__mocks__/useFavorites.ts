@@ -8,10 +8,12 @@ export const favoriteId = 'f088c8c9-05d2-4276-b065-b863cc7d0b33';
 const favoriteTargetObjectId = 'f2d8b9e9-7932-4065-bc09-baf12388b75d';
 export const favoriteTargetObjectRecord = {
   id: favoriteTargetObjectId,
+  __typename: 'Person',
 };
 
 export const initialFavorites = [
   {
+    __typename: 'Favorite',
     id: '1',
     position: 0,
     key: mockId,
@@ -22,8 +24,11 @@ export const initialFavorites = [
     recordId: '1',
     person: { id: '1', name: 'John Doe' },
     company: { id: '2', name: 'ABC Corp' },
+    workspaceMemberId: '1',
+    favoriteFolderId: undefined,
   },
   {
+    __typename: 'Favorite',
     id: '2',
     position: 1,
     key: mockId,
@@ -34,8 +39,12 @@ export const initialFavorites = [
     recordId: '1',
     person: { id: '3', name: 'Jane Doe' },
     company: { id: '4', name: 'Company Test' },
+    workspaceMemberId: '1',
+    favoriteFolderId: undefined,
+
   },
   {
+    __typename: 'Favorite',
     id: '3',
     position: 2,
     key: mockId,
@@ -44,27 +53,37 @@ export const initialFavorites = [
     avatarType: 'squared' as AvatarType,
     link: 'example.com',
     recordId: '1',
+    workspaceMemberId: '1',
+    favoriteFolderId: undefined,
   },
 ];
 
 export const sortedFavorites = [
   {
     id: '1',
-    recordId: '2',
+    recordId: '1',
     position: 0,
-    avatarType: 'squared',
-    avatarUrl: undefined,
-    labelIdentifier: 'ABC Corp',
-    link: '/object/company/2',
+    avatarType: 'rounded',
+    avatarUrl: '',
+    labelIdentifier: ' ',
+    link: '/object/person/1',
+    objectNameSingular: 'person',
+    workspaceMemberId: '1',
+    favoriteFolderId: undefined,
+    __typename: 'Favorite',
   },
   {
     id: '2',
-    recordId: '4',
+    recordId: '3',
     position: 1,
-    avatarType: 'squared',
-    avatarUrl: undefined,
-    labelIdentifier: 'Company Test',
-    link: '/object/company/4',
+    avatarType: 'rounded',
+    avatarUrl: '',
+    labelIdentifier: ' ',
+    link: '/object/person/3',
+    objectNameSingular: 'person',
+    workspaceMemberId: '1',
+    favoriteFolderId: undefined,
+    __typename: 'Favorite',
   },
   {
     id: '3',
@@ -72,9 +91,12 @@ export const sortedFavorites = [
     key: '8f3b2121-f194-4ba4-9fbf-2d5a37126806',
     labelIdentifier: 'favoriteLabel',
     avatarUrl: 'example.com',
-    avatarType: 'squared',
     link: 'example.com',
     recordId: '1',
+    avatarType: 'squared',
+    favoriteFolderId: undefined,
+    workspaceMemberId: '1',
+    __typename: 'Favorite',
   },
 ];
 
@@ -142,6 +164,16 @@ export const mocks = [
             companyId
             createdAt
             deletedAt
+            favoriteFolder {
+              __typename
+              createdAt
+              deletedAt
+              id
+              name
+              position
+              updatedAt
+            }
+            favoriteFolderId
             id
             note {
               __typename
@@ -295,6 +327,41 @@ export const mocks = [
               updatedAt
             }
             workflowId
+            workflowRun {
+              __typename
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              endedAt
+              id
+              name
+              output
+              position
+              startedAt
+              status
+              updatedAt
+              workflowId
+              workflowVersionId
+            }
+            workflowRunId
+            workflowVersion {
+              __typename
+              createdAt
+              deletedAt
+              id
+              name
+              position
+              status
+              steps
+              trigger
+              updatedAt
+              workflowId
+            }
+            workflowVersionId
             workspaceMember {
               __typename
               avatarUrl
@@ -320,17 +387,20 @@ export const mocks = [
       `,
       variables: {
         input: {
-          id: mockId,
           personId: favoriteTargetObjectId,
-          position: 4,
+          position: 3,
           workspaceMemberId: '1',
+          favoriteFolderId: undefined,
+          id: mockId,
         },
       },
     },
     result: jest.fn(() => ({
       data: {
         createFavorite: {
+          __typename: 'Favorite',
           id: favoriteId,
+          position: 1,
         },
       },
     })),
@@ -341,8 +411,8 @@ export const mocks = [
         mutation DeleteOneFavorite($idToDelete: ID!) {
           deleteFavorite(id: $idToDelete) {
             __typename
-            id
             deletedAt
+            id
           }
         }
       `,
@@ -351,7 +421,9 @@ export const mocks = [
     result: jest.fn(() => ({
       data: {
         deleteFavorite: {
+          __typename: 'Favorite',
           id: favoriteId,
+          deletedAt: new Date().toISOString(),
         },
       },
     })),
@@ -422,6 +494,16 @@ export const mocks = [
             companyId
             createdAt
             deletedAt
+            favoriteFolder {
+              __typename
+              createdAt
+              deletedAt
+              id
+              name
+              position
+              updatedAt
+            }
+            favoriteFolderId
             id
             note {
               __typename
@@ -575,6 +657,41 @@ export const mocks = [
               updatedAt
             }
             workflowId
+            workflowRun {
+              __typename
+              createdAt
+              createdBy {
+                source
+                workspaceMemberId
+                name
+              }
+              deletedAt
+              endedAt
+              id
+              name
+              output
+              position
+              startedAt
+              status
+              updatedAt
+              workflowId
+              workflowVersionId
+            }
+            workflowRunId
+            workflowVersion {
+              __typename
+              createdAt
+              deletedAt
+              id
+              name
+              position
+              status
+              steps
+              trigger
+              updatedAt
+              workflowId
+            }
+            workflowVersionId
             workspaceMember {
               __typename
               avatarUrl
@@ -608,7 +725,9 @@ export const mocks = [
     result: jest.fn(() => ({
       data: {
         updateFavorite: {
+          __typename: 'Favorite',
           id: favoriteId,
+          position: 2,
         },
       },
     })),

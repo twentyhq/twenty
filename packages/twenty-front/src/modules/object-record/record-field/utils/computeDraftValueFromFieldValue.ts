@@ -3,6 +3,8 @@ import { FieldInputDraftValue } from '@/object-record/record-field/types/FieldIn
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';
+import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
+import { isFieldNumberValue } from '@/object-record/record-field/types/guards/isFieldNumberValue';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldRawJsonValue } from '@/object-record/record-field/types/guards/isFieldRawJsonValue';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
@@ -12,7 +14,7 @@ import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type computeDraftValueFromFieldValueParams<FieldValue> = {
-  fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type'>;
+  fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>;
   fieldValue: FieldValue;
 };
 
@@ -38,6 +40,18 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
         : (fieldValue.amountMicros / 1000000).toString(),
       currencyCode: fieldValue?.currencyCode ?? '',
     } as unknown as FieldInputDraftValue<FieldValue>;
+  }
+
+  if (
+    isFieldNumber(fieldDefinition) &&
+    isFieldNumberValue(fieldValue) &&
+    fieldDefinition.metadata.settings?.type === 'percentage'
+  ) {
+    return (isUndefinedOrNull(fieldValue)
+      ? ''
+      : (
+          fieldValue * 100
+        ).toString()) as unknown as FieldInputDraftValue<FieldValue>;
   }
 
   if (isFieldRelation(fieldDefinition)) {

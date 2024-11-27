@@ -11,8 +11,8 @@ export const IllustrationIconArray = (props: IllustrationIconArrayProps) => {
   return (
     <IllustrationIconWrapper>
       <IllustrationIconArrayRaw
-        fill={fill}
-        color={color}
+        fill={fill.blue}
+        color={color.blue}
         height={size}
         width={size}
       />

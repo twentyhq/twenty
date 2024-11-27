@@ -6,6 +6,7 @@
  */
 
 export const STANDARD_OBJECT_IDS = {
+  // TODO: check if activity, activityTarget and comment can be deleted
   activityTarget: '20202020-2945-440e-8d1a-f84672d33d5e',
   activity: '20202020-39aa-4a89-843b-eb5f2a8b677f',
   apiKey: '20202020-4c00-401d-8cda-ec6a4c41cd7d',
@@ -20,6 +21,7 @@ export const STANDARD_OBJECT_IDS = {
   company: '20202020-b374-4779-a561-80086cb2e17f',
   connectedAccount: '20202020-977e-46b2-890b-c3002ddfd5c5',
   favorite: '20202020-ab56-4e05-92a3-e2414a499860',
+  favoriteFolder: '20202020-7cf8-401f-8211-a9587d27fd2d',
   auditLog: '20202020-0566-476a-b4c4-a0f9781bd80a',
   messageChannelMessageAssociation: '20202020-ad1e-4127-bccb-d83ae04d2ccb',
   messageChannel: '20202020-fe8c-40bc-a681-b80b771449b7',

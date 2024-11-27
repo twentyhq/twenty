@@ -3,8 +3,6 @@ import { useUpsertCombinedViewFilterGroup } from '@/object-record/advanced-filte
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
-import { StyledMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ADVANCED_FILTER_DROPDOWN_ID } from '@/views/constants/AdvancedFilterDropdownId';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -12,7 +10,12 @@ import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedVie
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import styled from '@emotion/styled';
-import { IconFilter, Pill } from 'twenty-ui';
+import {
+  IconFilter,
+  MenuItemLeftContent,
+  Pill,
+  StyledMenuItemBase,
+} from 'twenty-ui';
 import { v4 } from 'uuid';
 
 export const StyledContainer = styled.div`

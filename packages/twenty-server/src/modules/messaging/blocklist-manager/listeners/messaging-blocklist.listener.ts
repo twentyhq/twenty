@@ -1,5 +1,4 @@
 import { Injectable, Scope } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
@@ -7,7 +6,7 @@ import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/t
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import {
   BlocklistItemDeleteMessagesJob,
@@ -17,6 +16,8 @@ import {
   BlocklistReimportMessagesJob,
   BlocklistReimportMessagesJobData,
 } from 'src/modules/messaging/blocklist-manager/jobs/messaging-blocklist-reimport-messages.job';
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable({ scope: Scope.REQUEST })
 export class MessagingBlocklistListener {
@@ -25,7 +26,7 @@ export class MessagingBlocklistListener {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @OnEvent('blocklist.created')
+  @OnDatabaseBatchEvent('blocklist', DatabaseEventAction.CREATED)
   async handleCreatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<BlocklistWorkspaceEntity>
@@ -37,7 +38,7 @@ export class MessagingBlocklistListener {
     );
   }
 
-  @OnEvent('blocklist.deleted')
+  @OnDatabaseBatchEvent('blocklist', DatabaseEventAction.CREATED)
   async handleDeletedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>
@@ -49,7 +50,7 @@ export class MessagingBlocklistListener {
     );
   }
 
-  @OnEvent('blocklist.updated')
+  @OnDatabaseBatchEvent('blocklist', DatabaseEventAction.UPDATED)
   async handleUpdatedEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordUpdateEvent<BlocklistWorkspaceEntity>

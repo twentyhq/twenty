@@ -2,27 +2,32 @@ import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
-import { RecordShowRightDrawerActionMenuBar } from '@/action-menu/components/RecordShowRightDrawerActionMenuBar';
+import { RightDrawerActionMenuDropdown } from '@/action-menu/components/RightDrawerActionMenuDropdown';
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import {
+  ActionMenuEntry,
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { MenuItemAccent } from '@/ui/navigation/menu-item/types/MenuItemAccent';
 import { userEvent, waitFor, within } from '@storybook/test';
 import {
   ComponentDecorator,
   IconFileExport,
   IconHeart,
   IconTrash,
+  MenuItemAccent,
 } from 'twenty-ui';
 
 const deleteMock = jest.fn();
 const addToFavoritesMock = jest.fn();
 const exportMock = jest.fn();
 
-const meta: Meta<typeof RecordShowRightDrawerActionMenuBar> = {
-  title: 'Modules/ActionMenu/RecordShowRightDrawerActionMenuBar',
-  component: RecordShowRightDrawerActionMenuBar,
+const meta: Meta<typeof RightDrawerActionMenuDropdown> = {
+  title: 'Modules/ActionMenu/RightDrawerActionMenuDropdown',
+  component: RightDrawerActionMenuDropdown,
   decorators: [
     (Story) => (
       <RecoilRoot
@@ -42,44 +47,46 @@ const meta: Meta<typeof RecordShowRightDrawerActionMenuBar> = {
             }),
             1,
           );
+
+          const map = new Map<string, ActionMenuEntry>();
+
           set(
             actionMenuEntriesComponentState.atomFamily({
               instanceId: 'story-action-menu',
             }),
-            new Map([
-              [
-                'addToFavorites',
-                {
-                  key: 'addToFavorites',
-                  label: 'Add to favorites',
-                  position: 0,
-                  Icon: IconHeart,
-                  onClick: addToFavoritesMock,
-                },
-              ],
-              [
-                'export',
-                {
-                  key: 'export',
-                  label: 'Export',
-                  position: 1,
-                  Icon: IconFileExport,
-                  onClick: exportMock,
-                },
-              ],
-              [
-                'delete',
-                {
-                  key: 'delete',
-                  label: 'Delete',
-                  position: 2,
-                  Icon: IconTrash,
-                  onClick: deleteMock,
-                  accent: 'danger' as MenuItemAccent,
-                },
-              ],
-            ]),
+            map,
           );
+
+          map.set('addToFavorites', {
+            type: ActionMenuEntryType.Standard,
+            scope: ActionMenuEntryScope.RecordSelection,
+            key: 'addToFavorites',
+            label: 'Add to favorites',
+            position: 0,
+            Icon: IconHeart,
+            onClick: addToFavoritesMock,
+          });
+
+          map.set('export', {
+            type: ActionMenuEntryType.Standard,
+            scope: ActionMenuEntryScope.RecordSelection,
+            key: 'export',
+            label: 'Export',
+            position: 1,
+            Icon: IconFileExport,
+            onClick: exportMock,
+          });
+
+          map.set('delete', {
+            type: ActionMenuEntryType.Standard,
+            scope: ActionMenuEntryScope.RecordSelection,
+            key: 'delete',
+            label: 'Delete',
+            position: 2,
+            Icon: IconTrash,
+            onClick: deleteMock,
+            accent: 'danger' as MenuItemAccent,
+          });
         }}
       >
         <ActionMenuComponentInstanceContext.Provider
@@ -98,7 +105,7 @@ const meta: Meta<typeof RecordShowRightDrawerActionMenuBar> = {
 
 export default meta;
 
-type Story = StoryObj<typeof RecordShowRightDrawerActionMenuBar>;
+type Story = StoryObj<typeof RightDrawerActionMenuDropdown>;
 
 export const Default: Story = {
   args: {
@@ -113,11 +120,20 @@ export const WithButtonClicks: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    let actionButton = await canvas.findByText('Actions');
+    await userEvent.click(actionButton);
+
     const deleteButton = await canvas.findByText('Delete');
     await userEvent.click(deleteButton);
 
+    actionButton = await canvas.findByText('Actions');
+    await userEvent.click(actionButton);
+
     const addToFavoritesButton = await canvas.findByText('Add to favorites');
     await userEvent.click(addToFavoritesButton);
+
+    actionButton = await canvas.findByText('Actions');
+    await userEvent.click(actionButton);
 
     const exportButton = await canvas.findByText('Export');
     await userEvent.click(exportButton);

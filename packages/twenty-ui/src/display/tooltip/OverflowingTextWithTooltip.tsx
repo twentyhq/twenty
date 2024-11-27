@@ -11,6 +11,9 @@ const spacing4 = THEME_COMMON.spacing(4);
 const StyledOverflowingText = styled.div<{
   cursorPointer: boolean;
   size: 'large' | 'small';
+  displayedMaxRows?: number;
+  isLabel: boolean;
+  allowDisplayWrap?: boolean;
 }>`
   cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'inherit')};
   font-family: inherit;
@@ -22,9 +25,14 @@ const StyledOverflowingText = styled.div<{
   text-decoration: inherit;
 
   text-overflow: ellipsis;
-  white-space: nowrap;
 
   height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
+
+  text-wrap: wrap;
+  -webkit-line-clamp: ${({ displayedMaxRows }) =>
+    displayedMaxRows ? displayedMaxRows : '1'};
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 
   & :hover {
     text-overflow: ${({ cursorPointer }) =>
@@ -37,11 +45,17 @@ const StyledOverflowingText = styled.div<{
 export const OverflowingTextWithTooltip = ({
   size = 'small',
   text,
-  mutliline,
+  isTooltipMultiline,
+  displayedMaxRows,
+  isLabel,
+  allowDisplayWrap,
 }: {
   size?: 'large' | 'small';
   text: string | null | undefined;
-  mutliline?: boolean;
+  isTooltipMultiline?: boolean;
+  displayedMaxRows?: number;
+  isLabel?: boolean;
+  allowDisplayWrap?: boolean;
 }) => {
   const textElementId = `title-id-${+new Date()}`;
 
@@ -74,6 +88,9 @@ export const OverflowingTextWithTooltip = ({
         data-testid="tooltip"
         cursorPointer={isTitleOverflowing}
         size={size}
+        displayedMaxRows={displayedMaxRows}
+        allowDisplayWrap={allowDisplayWrap}
+        isLabel={isLabel ?? false}
         ref={textRef}
         id={textElementId}
         onMouseEnter={handleMouseEnter}
@@ -86,7 +103,7 @@ export const OverflowingTextWithTooltip = ({
           <div onClick={handleTooltipClick}>
             <AppTooltip
               anchorSelect={`#${textElementId}`}
-              content={mutliline ? undefined : (text ?? '')}
+              content={isTooltipMultiline ? undefined : (text ?? '')}
               offset={5}
               isOpen
               noArrow
@@ -94,7 +111,7 @@ export const OverflowingTextWithTooltip = ({
               positionStrategy="absolute"
               delay={TooltipDelay.mediumDelay}
             >
-              {mutliline ? <pre>{text}</pre> : ''}
+              {isTooltipMultiline ? <pre>{text}</pre> : ''}
             </AppTooltip>
           </div>,
           document.body,

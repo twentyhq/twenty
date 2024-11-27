@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { Checkbox } from 'twenty-ui';
 
 const StyledContainer = styled.div`
@@ -17,27 +17,26 @@ const StyledColumnHeaderCell = styled.th`
   background-color: ${({ theme }) => theme.background.primary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-right: transparent;
-  max-width: 30px;
-  min-width: 30px;
   width: 30px;
 `;
 
 export const RecordTableHeaderCheckboxColumn = () => {
-  const { allRowsSelectedStatusSelector } = useRecordTableStates();
-
-  const allRowsSelectedStatus = useRecoilValue(allRowsSelectedStatusSelector());
+  const allRowsSelectedStatus = useRecoilComponentValueV2(
+    allRowsSelectedStatusComponentSelector,
+  );
   const { selectAllRows, resetTableRowSelection, setHasUserSelectedAllRows } =
     useRecordTable();
-
-  const checked = allRowsSelectedStatus === 'all';
+  const checked =
+    allRowsSelectedStatus === 'all' || allRowsSelectedStatus === 'some';
   const indeterminate = allRowsSelectedStatus === 'some';
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
+  const onChange = () => {
+    if (checked) {
+      setHasUserSelectedAllRows(false);
+      resetTableRowSelection();
+    } else {
       setHasUserSelectedAllRows(true);
       selectAllRows();
-    } else {
-      resetTableRowSelection();
     }
   };
 

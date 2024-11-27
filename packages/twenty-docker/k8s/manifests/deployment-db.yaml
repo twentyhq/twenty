@@ -30,10 +30,10 @@ spec:
           image: twentycrm/twenty-postgres:latest
           imagePullPolicy: Always
           env:
-            - name: POSTGRES_PASSWORD
+            - name: PGUSER_SUPERUSER
+              value: "postgres"
+            - name: PGPASSWORD_SUPERUSER
               value: "twenty"
-            - name: BITNAMI_DEBUG
-              value: "true"
           ports:
             - containerPort: 5432
               name: tcp
@@ -48,7 +48,7 @@ spec:
           stdin: true
           tty: true
           volumeMounts:
-            - mountPath: /bitnami/postgresql
+            - mountPath: /home/postgres/pgdata
               name: twentycrm-db-data
       dnsPolicy: ClusterFirst
       restartPolicy: Always

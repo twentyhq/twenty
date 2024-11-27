@@ -26,15 +26,19 @@ export const PrefetchRunQueriesEffect = () => {
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const operationSignatures = Object.values(PREFETCH_CONFIG).map(
-    ({ objectNameSingular, operationSignatureFactory }) => {
+  const operationSignatures = Object.values(PREFETCH_CONFIG)
+    .filter(
+      ({ objectNameSingular }) =>
+        // TODO: Remove this filter once we merge PrefetchFavortiteFoldersRunQueriesEffect with this component
+        objectNameSingular !== 'favoriteFolder',
+    )
+    .map(({ objectNameSingular, operationSignatureFactory }) => {
       const objectMetadataItem = objectMetadataItems.find(
         (item) => item.nameSingular === objectNameSingular,
       );
 
       return operationSignatureFactory({ objectMetadataItem });
-    },
-  );
+    });
 
   const { result } = useCombinedFindManyRecords({
     operationSignatures,

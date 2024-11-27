@@ -1,14 +1,14 @@
-import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
+import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { getRelationPickerScopedStates } from '@/object-record/relation-picker/utils/getRelationPickerScopedStates';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 
 export const useRelationPickerScopedStates = (args?: {
   relationPickerScopedId?: string;
 }) => {
   const { relationPickerScopedId } = args ?? {};
 
-  const scopeId = useAvailableScopeIdOrThrow(
-    RecordTableScopeInternalContext,
+  const scopeId = useAvailableComponentInstanceIdOrThrow(
+    RecordTableComponentInstanceContext,
     relationPickerScopedId,
   );
 

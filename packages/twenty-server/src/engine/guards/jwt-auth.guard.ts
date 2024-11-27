@@ -1,12 +1,12 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
   constructor(
-    private readonly tokenService: TokenService,
+    private readonly accessTokenService: AccessTokenService,
     private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
   ) {}
 
@@ -14,7 +14,7 @@ export class JwtAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     try {
-      const data = await this.tokenService.validateToken(request);
+      const data = await this.accessTokenService.validateToken(request);
       const metadataVersion =
         await this.workspaceStorageCacheService.getMetadataVersion(
           data.workspace.id,

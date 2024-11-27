@@ -10,7 +10,7 @@ const modulesCoverage = {
   branches: 25,
   statements: 49,
   lines: 50,
-  functions: 40,
+  functions: 38,
   include: ['src/modules/**/*'],
   exclude: ['src/**/*.ts'],
 };

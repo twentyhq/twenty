@@ -1,3 +1,4 @@
+import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 
@@ -39,20 +40,15 @@ export const CustomObject: Story = {
   },
 };
 
-export const ObjectDropdownMenu: Story = {
+export const ObjectTabs: Story = {
   play: async () => {
     const canvas = within(document.body);
-    const objectSummaryVerticalDotsIconButton = await canvas.findByRole(
-      'button',
-      {
-        name: 'Object Options',
-      },
-    );
 
-    await userEvent.click(objectSummaryVerticalDotsIconButton);
+    const fieldsTab = await canvas.findByTestId('tab-fields');
+    const settingsTab = await canvas.findByTestId('tab-settings');
 
-    await canvas.findByText('Edit');
-    await canvas.findByText('Deactivate');
+    await expect(fieldsTab).toBeVisible();
+    await expect(settingsTab).toBeVisible();
   },
 };
 

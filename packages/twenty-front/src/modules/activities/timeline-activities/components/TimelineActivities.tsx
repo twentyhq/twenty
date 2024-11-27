@@ -14,6 +14,7 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
+  MOBILE_VIEWPORT,
 } from 'twenty-ui';
 
 const StyledMainContainer = styled.div`
@@ -31,6 +32,11 @@ const StyledMainContainer = styled.div`
   padding-right: ${({ theme }) => theme.spacing(6)};
   padding-left: ${({ theme }) => theme.spacing(6)};
   gap: ${({ theme }) => theme.spacing(4)};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding-right: ${({ theme }) => theme.spacing(1)};
+    padding-left: ${({ theme }) => theme.spacing(1)};
+  }
 `;
 
 export const TimelineActivities = ({

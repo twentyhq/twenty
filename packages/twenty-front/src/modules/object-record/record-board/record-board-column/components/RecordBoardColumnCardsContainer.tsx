@@ -9,8 +9,9 @@ import { useRecordBoardStates } from '@/object-record/record-board/hooks/interna
 import { RecordBoardColumnCardContainerSkeletonLoader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardContainerSkeletonLoader';
 import { RecordBoardColumnCardsMemo } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsMemo';
 import { RecordBoardColumnFetchMoreLoader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnFetchMoreLoader';
-import { RecordBoardColumnNewButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewButton';
-import { RecordBoardColumnNewOpportunityButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewOpportunityButton';
+import { RecordBoardColumnNewOpportunity } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewOpportunity';
+import { RecordBoardColumnNewRecord } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecord';
+import { RecordBoardColumnNewRecordButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewRecordButton';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { getNumberOfCardsPerColumnForSkeletonLoading } from '@/object-record/record-board/record-board-column/utils/getNumberOfCardsPerColumnForSkeletonLoading';
@@ -74,6 +75,33 @@ export const RecordBoardColumnCardsContainer = ({
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
+      <Draggable
+        draggableId={`new-${columnDefinition.id}-top`}
+        index={-1}
+        isDragDisabled={true}
+      >
+        {(draggableProvided) => (
+          <div
+            ref={draggableProvided?.innerRef}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...draggableProvided?.draggableProps}
+          >
+            {objectMetadataItem.nameSingular ===
+              CoreObjectNameSingular.Opportunity &&
+            !isOpportunitiesCompanyFieldDisabled ? (
+              <RecordBoardColumnNewOpportunity
+                columnId={columnDefinition.id}
+                position="first"
+              />
+            ) : (
+              <RecordBoardColumnNewRecord
+                columnId={columnDefinition.id}
+                position="first"
+              />
+            )}
+          </div>
+        )}
+      </Draggable>
       {isRecordIndexBoardColumnLoading ? (
         Array.from(
           {
@@ -98,7 +126,7 @@ export const RecordBoardColumnCardsContainer = ({
       )}
       <RecordBoardColumnFetchMoreLoader />
       <Draggable
-        draggableId={`new-${columnDefinition.id}`}
+        draggableId={`new-${columnDefinition.id}-bottom`}
         index={recordIds.length}
         isDragDisabled={true}
       >
@@ -108,16 +136,23 @@ export const RecordBoardColumnCardsContainer = ({
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...draggableProvided?.draggableProps}
           >
+            {objectMetadataItem.nameSingular ===
+              CoreObjectNameSingular.Opportunity &&
+            !isOpportunitiesCompanyFieldDisabled ? (
+              <RecordBoardColumnNewOpportunity
+                columnId={columnDefinition.id}
+                position="last"
+              />
+            ) : (
+              <RecordBoardColumnNewRecord
+                columnId={columnDefinition.id}
+                position="last"
+              />
+            )}
             <StyledNewButtonContainer>
-              {objectMetadataItem.nameSingular ===
-                CoreObjectNameSingular.Opportunity &&
-              !isOpportunitiesCompanyFieldDisabled ? (
-                <RecordBoardColumnNewOpportunityButton
-                  columnId={columnDefinition.id}
-                />
-              ) : (
-                <RecordBoardColumnNewButton columnId={columnDefinition.id} />
-              )}
+              <RecordBoardColumnNewRecordButton
+                columnId={columnDefinition.id}
+              />
             </StyledNewButtonContainer>
           </div>
         )}

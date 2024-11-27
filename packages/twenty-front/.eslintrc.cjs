@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   extends: ['../../.eslintrc.cjs', '../../.eslintrc.react.cjs'],
   ignorePatterns: [
@@ -23,8 +25,10 @@ module.exports = {
       },
       plugins: ['project-structure'],
       settings: {
-        'project-structure/folder-structure-config-path':
-          'packages/twenty-front/folderStructure.json',
+        'project-structure/folder-structure-config-path':path.resolve(
+          __dirname,
+          'folderStructure.json'
+        )
       },
       rules: {
         'project-structure/folder-structure': 'error',

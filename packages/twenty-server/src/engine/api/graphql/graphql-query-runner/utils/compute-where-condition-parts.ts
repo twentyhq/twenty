@@ -19,6 +19,11 @@ export const computeWhereConditionParts = (
   const uuid = Math.random().toString(36).slice(2, 7);
 
   switch (operator) {
+    case 'isEmptyArray':
+      return {
+        sql: `"${objectNameSingular}"."${key}" = '{}'`,
+        params: {},
+      };
     case 'eq':
       return {
         sql: `"${objectNameSingular}"."${key}" = :${key}${uuid}`,
@@ -84,10 +89,19 @@ export const computeWhereConditionParts = (
         sql: `"${objectNameSingular}"."${key}" @> ARRAY[:...${key}${uuid}]`,
         params: { [`${key}${uuid}`]: value },
       };
-
-    case 'not_contains':
+    case 'notContains':
       return {
-        sql: `NOT ("${objectNameSingular}"."${key}" && ARRAY[:...${key}${uuid}])`,
+        sql: `NOT ("${objectNameSingular}"."${key}"::text[] && ARRAY[:...${key}${uuid}]::text[])`,
+        params: { [`${key}${uuid}`]: value },
+      };
+    case 'containsAny':
+      return {
+        sql: `"${objectNameSingular}"."${key}"::text[] && ARRAY[:...${key}${uuid}]::text[]`,
+        params: { [`${key}${uuid}`]: value },
+      };
+    case 'containsIlike':
+      return {
+        sql: `EXISTS (SELECT 1 FROM unnest("${objectNameSingular}"."${key}") AS elem WHERE elem ILIKE :${key}${uuid})`,
         params: { [`${key}${uuid}`]: value },
       };
 

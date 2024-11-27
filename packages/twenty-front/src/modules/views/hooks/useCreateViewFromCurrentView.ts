@@ -18,7 +18,6 @@ import { GraphQLView } from '@/views/types/GraphQLView';
 import { View } from '@/views/types/View';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType } from '@/views/types/ViewType';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-ui';
@@ -87,9 +86,9 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
         }
 
         // Here we might instead want to get view from unsaved filters ?
-        const view = await getViewFromCache(currentViewId);
+        const sourceView = await getViewFromCache(currentViewId);
 
-        if (!isDefined(view)) {
+        if (!isDefined(sourceView)) {
           return;
         }
 
@@ -97,69 +96,67 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
         const newView = await createOneRecord({
           id: id ?? v4(),
-          name: name ?? view.name,
-          icon: icon ?? view.icon,
+          name: name ?? sourceView.name,
+          icon: icon ?? sourceView.icon,
           key: null,
           kanbanFieldMetadataId:
-            kanbanFieldMetadataId ?? view.kanbanFieldMetadataId,
-          type: type ?? view.type,
-          objectMetadataId: view.objectMetadataId,
+            kanbanFieldMetadataId ?? sourceView.kanbanFieldMetadataId,
+          type: type ?? sourceView.type,
+          objectMetadataId: sourceView.objectMetadataId,
         });
 
         if (isUndefinedOrNull(newView)) {
           throw new Error('Failed to create view');
         }
 
-        await createViewFieldRecords(view.viewFields, newView);
+        await createViewFieldRecords(sourceView.viewFields, newView);
 
         if (type === ViewType.Kanban) {
-          if (!isNonEmptyArray(view.viewGroups)) {
-            if (!isDefined(kanbanFieldMetadataId)) {
-              throw new Error('Kanban view must have a kanban field');
-            }
-
-            const viewGroupsToCreate =
-              objectMetadataItem?.fields
-                ?.find((field) => field.id === kanbanFieldMetadataId)
-                ?.options?.map(
-                  (option, index) =>
-                    ({
-                      id: v4(),
-                      __typename: 'ViewGroup',
-                      fieldMetadataId: kanbanFieldMetadataId,
-                      fieldValue: option.value,
-                      isVisible: true,
-                      position: index,
-                    }) satisfies ViewGroup,
-                ) ?? [];
-
-            viewGroupsToCreate.push({
-              __typename: 'ViewGroup',
-              id: v4(),
-              fieldValue: '',
-              position: viewGroupsToCreate.length,
-              isVisible: true,
-              fieldMetadataId: kanbanFieldMetadataId,
-            } satisfies ViewGroup);
-
-            await createViewGroupRecords(viewGroupsToCreate, newView);
-          } else {
-            await createViewGroupRecords(view.viewGroups, newView);
+          if (!isDefined(kanbanFieldMetadataId)) {
+            throw new Error('Kanban view must have a kanban field');
           }
+
+          const viewGroupsToCreate =
+            objectMetadataItem?.fields
+              ?.find((field) => field.id === kanbanFieldMetadataId)
+              ?.options?.map(
+                (option, index) =>
+                  ({
+                    id: v4(),
+                    __typename: 'ViewGroup',
+                    fieldMetadataId: kanbanFieldMetadataId,
+                    fieldValue: option.value,
+                    isVisible: true,
+                    position: index,
+                  }) satisfies ViewGroup,
+              ) ?? [];
+
+          viewGroupsToCreate.push({
+            __typename: 'ViewGroup',
+            id: v4(),
+            fieldValue: '',
+            position: viewGroupsToCreate.length,
+            isVisible: true,
+            fieldMetadataId: kanbanFieldMetadataId,
+          } satisfies ViewGroup);
+
+          await createViewGroupRecords(viewGroupsToCreate, newView);
         }
 
         if (shouldCopyFiltersAndSorts === true) {
           const sourceViewCombinedFilterGroups = getViewFilterGroupsCombined(
-            view.id,
+            sourceView.id,
           );
-          const sourceViewCombinedFilters = getViewFiltersCombined(view.id);
-          const sourceViewCombinedSorts = getViewSortsCombined(view.id);
+          const sourceViewCombinedFilters = getViewFiltersCombined(
+            sourceView.id,
+          );
+          const sourceViewCombinedSorts = getViewSortsCombined(sourceView.id);
 
-          await createViewSortRecords(sourceViewCombinedSorts, view);
-          await createViewFilterRecords(sourceViewCombinedFilters, view);
+          await createViewSortRecords(sourceViewCombinedSorts, newView);
+          await createViewFilterRecords(sourceViewCombinedFilters, newView);
           await createViewFilterGroupRecords(
             sourceViewCombinedFilterGroups,
-            view,
+            newView,
           );
         }
 

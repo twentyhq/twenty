@@ -7,7 +7,9 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext } from 'react';
 import { RecoilState, useRecoilCallback } from 'recoil';
+import { isDefined } from 'twenty-ui';
 import { v4 as uuidv4 } from 'uuid';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SetFunction = <T>(
   recoilVal: RecoilState<T>,
@@ -16,7 +18,7 @@ type SetFunction = <T>(
 
 export const useAddNewCard = () => {
   const columnContext = useContext(RecordBoardColumnContext);
-  const { createOneRecord, selectFieldMetadataItem } =
+  const { createOneRecord, selectFieldMetadataItem, objectMetadataItem } =
     useContext(RecordBoardContext);
   const { resetSearchFilter } = useEntitySelectSearch({
     relationPickerScopeId: 'relation-picker',
@@ -75,16 +77,47 @@ export const useAddNewCard = () => {
         (isOpportunity && company !== null) ||
         (!isOpportunity && labelValue !== '')
       ) {
+        // TODO: Refactor this whole section (Add new card): this should be:
+        // - simpler
+        // - piloted by metadata,
+        // - avoid drill down props, especially internal stuff
+        // - and follow record table pending record creation logic
+        let computedLabelIdentifierValue: any = labelValue;
+
+        const labelIdentifierField = objectMetadataItem?.fields.find(
+          (field) =>
+            field.id === objectMetadataItem.labelIdentifierFieldMetadataId,
+        );
+
+        if (!isDefined(labelIdentifierField)) {
+          throw new Error('Label identifier field not found');
+        }
+
+        if (labelIdentifierField.type === FieldMetadataType.FullName) {
+          computedLabelIdentifierValue = {
+            firstName: labelValue,
+            lastName: '',
+          };
+        }
+
         createOneRecord({
           [selectFieldMetadataItem.name]: columnContext?.columnDefinition.value,
           position,
           ...(isOpportunity
             ? { companyId: company?.id, name: company?.name }
-            : { [labelIdentifier.toLowerCase()]: labelValue }),
+            : {
+                [labelIdentifier.toLowerCase()]: computedLabelIdentifierValue,
+              }),
         });
       }
     },
-    [createOneRecord, columnContext, selectFieldMetadataItem],
+    [
+      objectMetadataItem?.fields,
+      objectMetadataItem?.labelIdentifierFieldMetadataId,
+      createOneRecord,
+      selectFieldMetadataItem?.name,
+      columnContext?.columnDefinition?.value,
+    ],
   );
 
   const handleAddNewCardClick = useRecoilCallback(

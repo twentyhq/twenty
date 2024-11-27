@@ -2,31 +2,31 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import isEmpty from 'lodash.isempty';
-import { v4 } from 'uuid';
 import { DataSource, EntityManager, Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
+import { ForeignDataWrapperServerQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-server-query.factory';
+import { encryptText } from 'src/engine/core-modules/auth/auth.util';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { CreateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/create-remote-server.input';
+import { UpdateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/update-remote-server.input';
 import {
   RemoteServerEntity,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { encryptText } from 'src/engine/core-modules/auth/auth.util';
-import {
-  validateObjectAgainstInjections,
-  validateStringAgainstInjections,
-} from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input.utils';
-import { ForeignDataWrapperServerQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-server-query.factory';
-import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
-import { UpdateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/update-remote-server.input';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { buildUpdateRemoteServerRawQuery } from 'src/engine/metadata-modules/remote-server/utils/build-update-remote-server-raw-query.utils';
-import { validateRemoteServerType } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-type.util';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
   RemoteServerException,
   RemoteServerExceptionCode,
 } from 'src/engine/metadata-modules/remote-server/remote-server.exception';
+import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
+import { buildUpdateRemoteServerRawQuery } from 'src/engine/metadata-modules/remote-server/utils/build-update-remote-server-raw-query.utils';
+import {
+  validateObjectAgainstInjections,
+  validateStringAgainstInjections,
+} from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input.utils';
+import { validateRemoteServerType } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-type.util';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
@@ -37,7 +37,7 @@ export class RemoteServerService<T extends RemoteServerType> {
     >,
     @InjectDataSource('metadata')
     private readonly metadataDataSource: DataSource,
-    private readonly environmentService: EnvironmentService,
+    private readonly jwtWrapperService: JwtWrapperService,
     private readonly foreignDataWrapperServerQueryFactory: ForeignDataWrapperServerQueryFactory,
     private readonly remoteTableService: RemoteTableService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -72,6 +72,7 @@ export class RemoteServerService<T extends RemoteServerType> {
           ...remoteServerInput.userMappingOptions,
           password: this.encryptPassword(
             remoteServerInput.userMappingOptions.password,
+            workspaceId,
           ),
         },
       };
@@ -156,6 +157,7 @@ export class RemoteServerService<T extends RemoteServerType> {
           ...partialRemoteServerWithUpdates.userMappingOptions,
           password: this.encryptPassword(
             partialRemoteServerWithUpdates.userMappingOptions.password,
+            workspaceId,
           ),
         },
       };
@@ -252,8 +254,11 @@ export class RemoteServerService<T extends RemoteServerType> {
     });
   }
 
-  private encryptPassword(password: string) {
-    const key = this.environmentService.get('LOGIN_TOKEN_SECRET');
+  private encryptPassword(password: string, workspaceId: string) {
+    const key = this.jwtWrapperService.generateAppSecret(
+      'REMOTE_SERVER',
+      workspaceId,
+    );
 
     return encryptText(password, key);
   }

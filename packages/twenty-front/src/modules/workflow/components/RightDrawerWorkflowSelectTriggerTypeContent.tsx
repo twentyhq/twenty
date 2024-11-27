@@ -1,7 +1,6 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import { TRIGGER_TYPES } from '@/workflow/constants/TriggerTypes';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/hooks/useUpdateWorkflowVersionTrigger';
@@ -10,6 +9,7 @@ import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { getTriggerDefaultDefinition } from '@/workflow/utils/getTriggerDefaultDefinition';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
+import { MenuItem } from 'twenty-ui';
 
 const StyledActionListContainer = styled.div`
   display: flex;
@@ -37,8 +37,9 @@ export const RightDrawerWorkflowSelectTriggerTypeContent = ({
     <StyledActionListContainer>
       {TRIGGER_TYPES.map((action) => (
         <MenuItem
+          key={action.type}
           LeftIcon={action.icon}
-          text={action.label}
+          text={action.name}
           onClick={async () => {
             await updateTrigger(
               getTriggerDefaultDefinition({

@@ -1,5 +1,5 @@
+import { useApolloClient, useMutation } from '@apollo/client';
 import { useCallback } from 'react';
-import { ApolloClient, useApolloClient, useMutation } from '@apollo/client';
 
 import { SYNC_REMOTE_TABLE_SCHEMA_CHANGES } from '@/databases/graphql/mutations/syncRemoteTableSchemaChanges';
 import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRemoteTableFromCache';
@@ -29,7 +29,7 @@ export const useSyncRemoteTableSchemaChanges = () => {
     SyncRemoteTableSchemaChangesMutation,
     SyncRemoteTableSchemaChangesMutationVariables
   >(SYNC_REMOTE_TABLE_SCHEMA_CHANGES, {
-    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient,
   });
 
   const syncRemoteTableSchemaChanges = useCallback(

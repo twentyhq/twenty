@@ -22,6 +22,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 export enum ConnectedAccountProvider {
   GOOGLE = 'google',
+  MICROSOFT = 'microsoft',
 }
 
 @WorkspaceEntity({

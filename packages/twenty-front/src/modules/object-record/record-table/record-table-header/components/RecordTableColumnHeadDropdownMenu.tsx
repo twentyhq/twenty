@@ -1,19 +1,21 @@
-import { useRecoilValue } from 'recoil';
 import {
   IconArrowLeft,
   IconArrowRight,
   IconEyeOff,
   IconFilter,
   IconSortDescending,
+  MenuItem,
 } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
+import { onToggleColumnFilterComponentState } from '@/object-record/record-table/states/onToggleColumnFilterComponentState';
+import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useTableColumns } from '../../hooks/useTableColumns';
 import { ColumnDefinition } from '../../types/ColumnDefinition';
 
@@ -24,13 +26,9 @@ export type RecordTableColumnHeadDropdownMenuProps = {
 export const RecordTableColumnHeadDropdownMenu = ({
   column,
 }: RecordTableColumnHeadDropdownMenuProps) => {
-  const {
-    visibleTableColumnsSelector,
-    onToggleColumnFilterState,
-    onToggleColumnSortState,
-  } = useRecordTableStates();
-
-  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const visibleTableColumns = useRecoilComponentValueV2(
+    visibleTableColumnsComponentSelector,
+  );
 
   const secondVisibleColumn = visibleTableColumns[1];
   const canMove = column.isLabelIdentifier !== true;
@@ -67,8 +65,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
-  const onToggleColumnFilter = useRecoilValue(onToggleColumnFilterState);
-  const onToggleColumnSort = useRecoilValue(onToggleColumnSortState);
+  const onToggleColumnFilter = useRecoilComponentValueV2(
+    onToggleColumnFilterComponentState,
+  );
+  const onToggleColumnSort = useRecoilComponentValueV2(
+    onToggleColumnSortComponentState,
+  );
 
   const handleSortClick = () => {
     closeDropdown();

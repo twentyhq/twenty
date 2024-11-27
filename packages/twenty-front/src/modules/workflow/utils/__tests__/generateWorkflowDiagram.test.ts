@@ -4,6 +4,7 @@ import { generateWorkflowDiagram } from '../generateWorkflowDiagram';
 describe('generateWorkflowDiagram', () => {
   it('should generate a single trigger node when no step is provided', () => {
     const trigger: WorkflowTrigger = {
+      name: 'Company created',
       type: 'DATABASE_EVENT',
       settings: {
         eventName: 'company.created',
@@ -19,7 +20,6 @@ describe('generateWorkflowDiagram', () => {
 
     expect(result.nodes[0]).toMatchObject({
       data: {
-        label: 'Company is Created',
         nodeType: 'trigger',
       },
     });
@@ -27,6 +27,7 @@ describe('generateWorkflowDiagram', () => {
 
   it('should generate a diagram with nodes and edges corresponding to the steps', () => {
     const trigger: WorkflowTrigger = {
+      name: 'Company created',
       type: 'DATABASE_EVENT',
       settings: {
         eventName: 'company.created',
@@ -47,6 +48,7 @@ describe('generateWorkflowDiagram', () => {
           input: {
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
             serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -64,6 +66,7 @@ describe('generateWorkflowDiagram', () => {
           input: {
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
             serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -83,13 +86,14 @@ describe('generateWorkflowDiagram', () => {
       expect(stepNodes[index].data).toEqual({
         nodeType: 'action',
         actionType: 'CODE',
-        label: step.name,
+        name: step.name,
       });
     }
   });
 
   it('should correctly link nodes with edges', () => {
     const trigger: WorkflowTrigger = {
+      name: 'Company created',
       type: 'DATABASE_EVENT',
       settings: {
         eventName: 'company.created',
@@ -110,6 +114,7 @@ describe('generateWorkflowDiagram', () => {
           input: {
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
             serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -127,6 +132,7 @@ describe('generateWorkflowDiagram', () => {
           input: {
             serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
             serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
           outputSchema: {},
         },

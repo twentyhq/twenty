@@ -1,3 +1,5 @@
+import { getActionBarIdFromActionMenuId } from '@/action-menu/utils/getActionBarIdFromActionMenuId';
+import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { useBottomBar } from '@/ui/layout/bottom-bar/hooks/useBottomBar';
 import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 
@@ -5,22 +7,26 @@ export const useActionMenu = (actionMenuId: string) => {
   const { openDropdown, closeDropdown } = useDropdownV2();
   const { openBottomBar, closeBottomBar } = useBottomBar();
 
+  const actionBarId = getActionBarIdFromActionMenuId(actionMenuId);
+  const actionMenuDropdownId =
+    getActionMenuDropdownIdFromActionMenuId(actionMenuId);
+
   const openActionMenuDropdown = () => {
-    closeBottomBar(`action-bar-${actionMenuId}`);
-    openDropdown(`action-menu-dropdown-${actionMenuId}`);
+    closeBottomBar(actionBarId);
+    openDropdown(actionMenuDropdownId);
   };
 
   const openActionBar = () => {
-    closeDropdown(`action-menu-dropdown-${actionMenuId}`);
-    openBottomBar(`action-bar-${actionMenuId}`);
+    closeDropdown(actionMenuDropdownId);
+    openBottomBar(actionBarId);
   };
 
   const closeActionMenuDropdown = () => {
-    closeDropdown(`action-menu-dropdown-${actionMenuId}`);
+    closeDropdown(actionMenuDropdownId);
   };
 
   const closeActionBar = () => {
-    closeBottomBar(`action-bar-${actionMenuId}`);
+    closeBottomBar(actionBarId);
   };
 
   return {

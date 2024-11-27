@@ -140,11 +140,13 @@ export const MultiRecordSelect = ({
       <DropdownMenu ref={containerRef} data-select-disable>
         {dropdownPlacement?.includes('end') && (
           <>
-            <DropdownMenuItemsContainer>
-              {createNewButton}
-            </DropdownMenuItemsContainer>
+            {isDefined(onCreate) && (
+              <DropdownMenuItemsContainer>
+                {createNewButton}
+              </DropdownMenuItemsContainer>
+            )}
             <DropdownMenuSeparator />
-            {results}
+            {objectRecordsIdsMultiSelect?.length > 0 && results}
             {recordMultiSelectIsLoading && !relationPickerSearchFilter && (
               <>
                 <DropdownMenuSkeletonItem />
@@ -171,13 +173,11 @@ export const MultiRecordSelect = ({
                 <DropdownMenuSeparator />
               </>
             )}
-            {results}
+            {objectRecordsIdsMultiSelect?.length > 0 && results}
             {objectRecordsIdsMultiSelect?.length > 0 && (
               <DropdownMenuSeparator />
             )}
-            <DropdownMenuItemsContainer>
-              {createNewButton}
-            </DropdownMenuItemsContainer>
+            {isDefined(onCreate) && <div>{createNewButton}</div>}
           </>
         )}
       </DropdownMenu>

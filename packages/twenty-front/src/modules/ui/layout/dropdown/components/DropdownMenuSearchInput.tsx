@@ -4,11 +4,12 @@ import { forwardRef, InputHTMLAttributes } from 'react';
 import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 const StyledDropdownMenuSearchInputContainer = styled.div`
-  --vertical-padding: ${({ theme }) => theme.spacing(1)};
-
   align-items: center;
+  --vertical-padding: ${({ theme }) => theme.spacing(2)};
 
   display: flex;
+  background: ${({ theme }) => theme.background.transparent.secondary};
+  backdrop-filter: ${({ theme }) => theme.blur.medium};
   flex-direction: row;
   height: calc(36px - 2 * var(--vertical-padding));
   padding: var(--vertical-padding) 0;
@@ -20,6 +21,7 @@ const StyledInput = styled.input`
   ${TEXT_INPUT_STYLE}
 
   font-size: ${({ theme }) => theme.font.size.sm};
+  background-color: transparent;
   width: 100%;
 
   &[type='number']::-webkit-outer-spin-button,

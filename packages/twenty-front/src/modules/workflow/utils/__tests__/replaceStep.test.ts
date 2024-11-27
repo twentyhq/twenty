@@ -14,6 +14,7 @@ describe('replaceStep', () => {
         input: {
           serverlessFunctionId: 'first',
           serverlessFunctionVersion: '1',
+          serverlessFunctionInput: {},
         },
         outputSchema: {},
       },
@@ -28,6 +29,7 @@ describe('replaceStep', () => {
       name: '',
       steps: [stepToBeReplaced],
       trigger: {
+        name: 'Company created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
@@ -46,6 +48,7 @@ describe('replaceStep', () => {
           input: {
             serverlessFunctionId: 'second',
             serverlessFunctionVersion: '1',
+            serverlessFunctionInput: {},
           },
           outputSchema: {},
         },
@@ -68,6 +71,7 @@ describe('replaceStep', () => {
         input: {
           serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           serverlessFunctionVersion: '1',
+          serverlessFunctionInput: {},
         },
         outputSchema: {},
       },
@@ -92,6 +96,7 @@ describe('replaceStep', () => {
             input: {
               serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
               serverlessFunctionVersion: '1',
+              serverlessFunctionInput: {},
             },
             outputSchema: {},
           },
@@ -110,6 +115,7 @@ describe('replaceStep', () => {
             input: {
               serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
               serverlessFunctionVersion: '1',
+              serverlessFunctionInput: {},
             },
             outputSchema: {},
           },
@@ -118,6 +124,7 @@ describe('replaceStep', () => {
         },
       ],
       trigger: {
+        name: 'Company created',
         settings: {
           eventName: 'company.created',
           outputSchema: {},

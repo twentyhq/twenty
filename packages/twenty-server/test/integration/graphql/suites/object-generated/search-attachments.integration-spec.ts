@@ -18,7 +18,6 @@ describe('searchAttachmentsResolver (e2e)', () => {
                 updatedAt
                 deletedAt
                 authorId
-                activityId
                 taskId
                 noteId
                 personId
@@ -60,7 +59,6 @@ describe('searchAttachmentsResolver (e2e)', () => {
           expect(searchAttachments).toHaveProperty('updatedAt');
           expect(searchAttachments).toHaveProperty('deletedAt');
           expect(searchAttachments).toHaveProperty('authorId');
-          expect(searchAttachments).toHaveProperty('activityId');
           expect(searchAttachments).toHaveProperty('taskId');
           expect(searchAttachments).toHaveProperty('noteId');
           expect(searchAttachments).toHaveProperty('personId');

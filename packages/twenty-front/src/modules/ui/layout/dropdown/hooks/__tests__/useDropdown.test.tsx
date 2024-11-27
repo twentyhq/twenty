@@ -1,6 +1,6 @@
-import { act } from 'react-dom/test-utils';
 import { expect } from '@storybook/test';
 import { renderHook } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
 import { RecoilRoot } from 'recoil';
 
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -57,7 +57,7 @@ describe('useDropdown', () => {
       wrapper: Wrapper,
     });
 
-    expect(result.current.dropdownWidth).toBe(160);
+    expect(result.current.dropdownWidth).toBe(200);
 
     await act(async () => {
       result.current.setDropdownWidth(220);

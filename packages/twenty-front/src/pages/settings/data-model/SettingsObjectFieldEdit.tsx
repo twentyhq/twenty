@@ -18,7 +18,6 @@ import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataIt
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
@@ -46,16 +45,6 @@ type SettingsDataModelFieldEditFormValues = z.infer<
   ReturnType<typeof settingsFieldFormSchema>
 > &
   any;
-
-const canPersistFieldMetadataItemUpdate = (
-  fieldMetadataItem: FieldMetadataItem,
-) => {
-  return (
-    fieldMetadataItem.isCustom ||
-    fieldMetadataItem.type === FieldMetadataType.Select ||
-    fieldMetadataItem.type === FieldMetadataType.MultiSelect
-  );
-};
 
 export const SettingsObjectFieldEdit = () => {
   const navigate = useNavigate();
@@ -137,6 +126,7 @@ export const SettingsObjectFieldEdit = () => {
 
         if (isDefined(relationFieldMetadataItem)) {
           await updateOneFieldMetadataItem({
+            objectMetadataId: objectMetadataItem.id,
             fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
             updatePayload: formValues.relation.field,
           });
@@ -152,6 +142,7 @@ export const SettingsObjectFieldEdit = () => {
         );
 
         await updateOneFieldMetadataItem({
+          objectMetadataId: objectMetadataItem.id,
           fieldMetadataIdToUpdate: fieldMetadataItem.id,
           updatePayload: formattedInput,
         });
@@ -168,17 +159,14 @@ export const SettingsObjectFieldEdit = () => {
   };
 
   const handleDeactivate = async () => {
-    await deactivateMetadataField(fieldMetadataItem);
+    await deactivateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
     navigate(`/settings/objects/${objectSlug}`);
   };
 
   const handleActivate = async () => {
-    await activateMetadataField(fieldMetadataItem);
+    await activateMetadataField(fieldMetadataItem.id, objectMetadataItem.id);
     navigate(`/settings/objects/${objectSlug}`);
   };
-
-  const shouldDisplaySaveAndCancel =
-    canPersistFieldMetadataItemUpdate(fieldMetadataItem);
 
   return (
     <RecordFieldValueSelectorContextProvider>
@@ -204,14 +192,12 @@ export const SettingsObjectFieldEdit = () => {
             },
           ]}
           actionButton={
-            shouldDisplaySaveAndCancel && (
-              <SaveAndCancelButtons
-                isSaveDisabled={!canSave}
-                isCancelDisabled={isSubmitting}
-                onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-                onSave={formConfig.handleSubmit(handleSave)}
-              />
-            )
+            <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              isCancelDisabled={isSubmitting}
+              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+              onSave={formConfig.handleSubmit(handleSave)}
+            />
           }
         >
           <SettingsPageContainer>

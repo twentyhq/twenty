@@ -1,0 +1,34 @@
+INCLUDE "../includes/timeSeries.incl"
+
+NODE timeSeriesServerlessFunctionSuccessRateData
+SQL >
+    %
+    SELECT
+        {% if granularity == "hour" %} toStartOfHour(timestamp)
+        {% else %} toDateTime64(toStartOfDay(timestamp), 3)
+        {% end %} AS interval,
+        round(
+            if(
+                uniqIf(*, success = true) = 0,
+                0,
+                (uniqIf(*, success = true) - uniqIf(*, success = false)) / uniqIf(*, success = true)
+            ),
+            2
+        ) as success_rate
+    FROM serverlessFunctionEventMV
+    WHERE
+        true
+        AND workspaceId
+        ={{ String(workspaceId, '20202020-1c25-4d02-bf25-6aeccf7ea419', required=True) }}
+        AND functionId = {{ String(functionId, 'ad018fc5-eace-4f7e-942f-929560a16459', required=True) }}
+        AND timestamp >= parseDateTime64BestEffort({{ String(start, '2024-11-01T00:00:00.000Z') }}, 3)
+        AND timestamp < parseDateTime64BestEffort({{ String(end, '2024-11-02T00:00:00.000Z') }}, 3)
+    GROUP BY interval
+    ORDER BY interval
+
+NODE endpoint
+SQL >
+    %
+    SELECT formatDateTime(interval, '%FT%T.000%z') as start, success_rate
+    FROM selectIntervalByGranularity
+    LEFT JOIN timeSeriesServerlessFunctionSuccessRateData USING interval

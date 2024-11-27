@@ -9,11 +9,10 @@ import { Checkbox } from 'twenty-ui';
 const StyledContainer = styled.div`
   align-items: center;
   cursor: pointer;
-
   display: flex;
   height: 32px;
-
   justify-content: center;
+  min-width: 24px;
 `;
 
 export const RecordTableCellCheckbox = () => {

@@ -13,11 +13,10 @@ import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dr
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilValue } from 'recoil';
-import { useIcons } from 'twenty-ui';
+import { MenuItemSelect, useIcons } from 'twenty-ui';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {
   filterDefinition: FilterDefinition;

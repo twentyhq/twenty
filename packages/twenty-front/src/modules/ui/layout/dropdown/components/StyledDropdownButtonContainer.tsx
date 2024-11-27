@@ -3,12 +3,17 @@ import styled from '@emotion/styled';
 type StyledDropdownButtonProps = {
   isUnfolded: boolean;
   isActive?: boolean;
+  transparentBackground?: boolean;
 };
 
 export const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   align-items: center;
-  background: ${({ theme, isUnfolded }) =>
-    isUnfolded ? theme.background.transparent.light : theme.background.primary};
+  background: ${({ theme, isUnfolded, transparentBackground }) =>
+    transparentBackground
+      ? 'none'
+      : isUnfolded
+        ? theme.background.transparent.light
+        : theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ isActive, theme }) =>
     isActive ? theme.color.blue : theme.font.color.secondary};
@@ -22,9 +27,11 @@ export const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProp
   user-select: none;
 
   &:hover {
-    background: ${({ theme, isUnfolded }) =>
-      isUnfolded
-        ? theme.background.transparent.medium
-        : theme.background.transparent.light};
+    background: ${({ theme, isUnfolded, transparentBackground }) =>
+      transparentBackground
+        ? 'transparent'
+        : isUnfolded
+          ? theme.background.transparent.medium
+          : theme.background.transparent.light};
   }
 `;

@@ -1,10 +1,8 @@
 import { SupportButton } from '@/support/components/SupportButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { IconHelpCircle, IconMessage } from 'twenty-ui';
+import { IconHelpCircle, IconMessage, MenuItem } from 'twenty-ui';
 
 export const SupportDropdown = () => {
   const dropdownId = `support-field-active-action-dropdown`;
@@ -27,21 +25,20 @@ export const SupportDropdown = () => {
       dropdownPlacement="top-start"
       dropdownOffset={{ x: 0, y: -28 }}
       clickableComponent={<SupportButton />}
+      dropdownMenuWidth={160}
       dropdownComponents={
-        <DropdownMenu width="160px">
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              text="Talk to us"
-              LeftIcon={IconMessage}
-              onClick={handleTalkToUs}
-            />
-            <MenuItem
-              text="Documentation"
-              LeftIcon={IconHelpCircle}
-              onClick={handleUserGuide}
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
+        <DropdownMenuItemsContainer>
+          <MenuItem
+            text="Talk to us"
+            LeftIcon={IconMessage}
+            onClick={handleTalkToUs}
+          />
+          <MenuItem
+            text="Documentation"
+            LeftIcon={IconHelpCircle}
+            onClick={handleUserGuide}
+          />
+        </DropdownMenuItemsContainer>
       }
       dropdownHotkeyScope={{
         scope: dropdownId,

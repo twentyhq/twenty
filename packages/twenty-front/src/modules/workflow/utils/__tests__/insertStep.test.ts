@@ -11,6 +11,7 @@ describe('insertStep', () => {
       name: '',
       steps: [],
       trigger: {
+        name: 'Company created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
@@ -28,6 +29,7 @@ describe('insertStep', () => {
         input: {
           serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           serverlessFunctionVersion: '1',
+          serverlessFunctionInput: {},
         },
         outputSchema: {},
       },
@@ -53,6 +55,7 @@ describe('insertStep', () => {
       name: '',
       steps: [],
       trigger: {
+        name: 'Company created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
@@ -70,6 +73,7 @@ describe('insertStep', () => {
         input: {
           serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           serverlessFunctionVersion: '1',
+          serverlessFunctionInput: {},
         },
         outputSchema: {},
       },
@@ -106,6 +110,7 @@ describe('insertStep', () => {
             input: {
               serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
               serverlessFunctionVersion: '1',
+              serverlessFunctionInput: {},
             },
             outputSchema: {},
           },
@@ -123,6 +128,7 @@ describe('insertStep', () => {
             input: {
               serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
               serverlessFunctionVersion: '1',
+              serverlessFunctionInput: {},
             },
             outputSchema: {},
           },
@@ -131,6 +137,7 @@ describe('insertStep', () => {
         },
       ],
       trigger: {
+        name: 'Company created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
@@ -148,6 +155,7 @@ describe('insertStep', () => {
         input: {
           serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           serverlessFunctionVersion: '1',
+          serverlessFunctionInput: {},
         },
         outputSchema: {},
       },
@@ -188,6 +196,7 @@ describe('insertStep', () => {
             input: {
               serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
               serverlessFunctionVersion: '1',
+              serverlessFunctionInput: {},
             },
             outputSchema: {},
           },
@@ -205,6 +214,7 @@ describe('insertStep', () => {
             input: {
               serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
               serverlessFunctionVersion: '1',
+              serverlessFunctionInput: {},
             },
             outputSchema: {},
           },
@@ -213,6 +223,7 @@ describe('insertStep', () => {
         },
       ],
       trigger: {
+        name: 'Company created',
         settings: { eventName: 'company.created', outputSchema: {} },
         type: 'DATABASE_EVENT',
       },
@@ -230,6 +241,7 @@ describe('insertStep', () => {
         input: {
           serverlessFunctionId: 'a5434be2-c10b-465c-acec-46492782a997',
           serverlessFunctionVersion: '1',
+          serverlessFunctionInput: {},
         },
         outputSchema: {},
       },

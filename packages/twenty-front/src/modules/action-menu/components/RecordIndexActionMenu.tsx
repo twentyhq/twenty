@@ -1,4 +1,5 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
+import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexActionMenuBar';
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
@@ -27,6 +28,7 @@ export const RecordIndexActionMenu = () => {
           <ActionMenuConfirmationModals />
           <RecordIndexActionMenuEffect />
           <RecordActionMenuEntriesSetter />
+          <RecordAgnosticActionsSetterEffect />
         </ActionMenuContext.Provider>
       )}
     </>

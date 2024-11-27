@@ -1,24 +1,34 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
+import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
+import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 
 export const useSelectAllRows = (recordTableId?: string) => {
-  const {
-    allRowsSelectedStatusSelector,
-    tableRowIdsState,
-    isRowSelectedFamilyState,
-  } = useRecordTableStates(recordTableId);
+  const allRowsSelectedStatusSelector = useRecoilComponentCallbackStateV2(
+    allRowsSelectedStatusComponentSelector,
+    recordTableId,
+  );
+  const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
+    isRowSelectedComponentFamilyState,
+    recordTableId,
+  );
+  const tableAllRowIdsState = useRecoilComponentCallbackStateV2(
+    tableAllRowIdsComponentState,
+    recordTableId,
+  );
 
   const selectAllRows = useRecoilCallback(
     ({ set, snapshot }) =>
       () => {
         const allRowsSelectedStatus = getSnapshotValue(
           snapshot,
-          allRowsSelectedStatusSelector(),
+          allRowsSelectedStatusSelector,
         );
 
-        const tableRowIds = getSnapshotValue(snapshot, tableRowIdsState);
+        const tableRowIds = getSnapshotValue(snapshot, tableAllRowIdsState);
 
         if (
           allRowsSelectedStatus === 'none' ||
@@ -33,7 +43,11 @@ export const useSelectAllRows = (recordTableId?: string) => {
           }
         }
       },
-    [allRowsSelectedStatusSelector, tableRowIdsState, isRowSelectedFamilyState],
+    [
+      allRowsSelectedStatusSelector,
+      tableAllRowIdsState,
+      isRowSelectedFamilyState,
+    ],
   );
 
   return {

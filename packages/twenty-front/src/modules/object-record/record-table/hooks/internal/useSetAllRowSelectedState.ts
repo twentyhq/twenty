@@ -1,9 +1,13 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 
 export const useSetHasUserSelectedAllRows = (recordTableId?: string) => {
-  const { hasUserSelectedAllRowsState } = useRecordTableStates(recordTableId);
+  const hasUserSelectedAllRowsState = useRecoilComponentCallbackStateV2(
+    hasUserSelectedAllRowsComponentState,
+    recordTableId,
+  );
 
   return useRecoilCallback(
     ({ set }) =>

@@ -1,12 +1,20 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { sortRecordGroupDefinitions } from '@/object-record/record-group/utils/sortRecordGroupDefinitions';
+import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSetRecordBoardColumns = (recordBoardId?: string) => {
   const { scopeId, columnIdsState, columnsFamilySelector } =
     useRecordBoardStates(recordBoardId);
+
+  const recordGroupSort = useRecoilComponentValueV2(
+    recordIndexRecordGroupSortComponentState,
+    recordBoardId,
+  );
 
   const setColumns = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -15,15 +23,18 @@ export const useSetRecordBoardColumns = (recordBoardId?: string) => {
           .getLoadable(columnIdsState)
           .getValue();
 
-        const columnIds = columns
+        const sortedColumns = sortRecordGroupDefinitions(
+          columns,
+          recordGroupSort,
+        );
+
+        const columnIds = sortedColumns
           .filter(({ isVisible }) => isVisible)
           .map(({ id }) => id);
 
-        if (isDeeplyEqual(currentColumnsIds, columnIds)) {
-          return;
+        if (!isDeeplyEqual(currentColumnsIds, columnIds)) {
+          set(columnIdsState, columnIds);
         }
-
-        set(columnIdsState, columnIds);
 
         columns.forEach((column) => {
           const currentColumn = snapshot
@@ -37,7 +48,7 @@ export const useSetRecordBoardColumns = (recordBoardId?: string) => {
           set(columnsFamilySelector(column.id), column);
         });
       },
-    [columnsFamilySelector, columnIdsState],
+    [columnIdsState, recordGroupSort, columnsFamilySelector],
   );
 
   return {

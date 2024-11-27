@@ -18,16 +18,13 @@ const StyledDropdownMenu = styled.div<{
   border: ${({ disableBorder, theme }) =>
     disableBorder ? 'none' : `1px solid ${theme.border.color.medium}`};
   border-radius: ${({ theme }) => theme.border.radius.md};
-
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
 
   display: flex;
 
   flex-direction: column;
   z-index: 30;
-  overflow-y: auto;
-  overflow-x: hidden;
-  width: ${({ width = 160 }) =>
+  width: ${({ width = 200 }) =>
     typeof width === 'number' ? `${width}px` : width};
 `;
 

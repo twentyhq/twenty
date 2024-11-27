@@ -5,7 +5,6 @@ export type Attachment = {
   type: AttachmentType;
   companyId: string;
   personId: string;
-  activityId: string;
   authorId: string;
   createdAt: string;
   __typename: string;

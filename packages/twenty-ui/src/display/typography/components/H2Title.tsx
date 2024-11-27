@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 type H2TitleProps = {
   title: string;
   description?: string;
-  addornment?: React.ReactNode;
+  adornment?: React.ReactNode;
   className?: string;
 };
 
@@ -31,19 +31,19 @@ const StyledDescription = styled.h3`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin: 0;
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const H2Title = ({
   title,
   description,
-  addornment,
+  adornment,
   className,
 }: H2TitleProps) => (
   <StyledContainer className={className}>
     <StyledTitleContainer>
       <StyledTitle>{title}</StyledTitle>
-      {addornment}
+      {adornment}
     </StyledTitleContainer>
     {description && <StyledDescription>{description}</StyledDescription>}
   </StyledContainer>

@@ -1,4 +1,5 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
+import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 
@@ -10,16 +11,16 @@ import { RecordShowPageBaseHeader } from '~/pages/object-record/RecordShowPageBa
 
 export const RecordShowActionMenu = ({
   isFavorite,
-  handleFavoriteButtonClick,
   record,
   objectMetadataItem,
   objectNameSingular,
+  handleFavoriteButtonClick,
 }: {
   isFavorite: boolean;
-  handleFavoriteButtonClick: () => void;
   record: ObjectRecord | undefined;
   objectMetadataItem: ObjectMetadataItem;
   objectNameSingular: string;
+  handleFavoriteButtonClick: () => void;
 }) => {
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
@@ -39,14 +40,15 @@ export const RecordShowActionMenu = ({
           <RecordShowPageBaseHeader
             {...{
               isFavorite,
-              handleFavoriteButtonClick,
               record,
               objectMetadataItem,
               objectNameSingular,
+              handleFavoriteButtonClick,
             }}
           />
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />
+          <RecordAgnosticActionsSetterEffect />
         </ActionMenuContext.Provider>
       )}
     </>

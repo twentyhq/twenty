@@ -27,6 +27,8 @@ import {
   StringFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
 import { IDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/id-filter.input-type';
+import { MultiSelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/multi-select-filter.input-type';
+import { SelectFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/select-filter.input-type';
 import {
   BigFloatScalarType,
   UUIDScalarType,
@@ -115,6 +117,8 @@ export class TypeMapperService {
       [FieldMetadataType.RAW_JSON, RawJsonFilterType],
       [FieldMetadataType.RICH_TEXT, StringFilterType],
       [FieldMetadataType.ARRAY, ArrayFilterType],
+      [FieldMetadataType.MULTI_SELECT, MultiSelectFilterType],
+      [FieldMetadataType.SELECT, SelectFilterType],
       [FieldMetadataType.TS_VECTOR, StringFilterType], // TODO: Add TSVectorFilterType
     ]);
 

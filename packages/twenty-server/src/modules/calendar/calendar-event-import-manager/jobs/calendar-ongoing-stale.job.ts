@@ -18,7 +18,7 @@ export type CalendarOngoingStaleJobData = {
 };
 
 @Processor({
-  queueName: MessageQueue.messagingQueue,
+  queueName: MessageQueue.calendarQueue,
   scope: Scope.REQUEST,
 })
 export class CalendarOngoingStaleJob {

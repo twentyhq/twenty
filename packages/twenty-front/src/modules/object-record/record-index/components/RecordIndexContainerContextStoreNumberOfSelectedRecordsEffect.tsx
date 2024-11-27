@@ -1,3 +1,4 @@
+import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
@@ -35,6 +36,10 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       objectMetadataItem?.namePlural ?? '',
     );
 
+    const contextStoreFilters = useRecoilComponentValueV2(
+      contextStoreFiltersComponentState,
+    );
+
     const { totalCount } = useFindManyRecords({
       ...findManyRecordsParams,
       recordGqlFields: {
@@ -42,6 +47,7 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       },
       filter: computeContextStoreFilters(
         contextStoreTargetedRecordsRule,
+        contextStoreFilters,
         objectMetadataItem,
       ),
       limit: 1,
