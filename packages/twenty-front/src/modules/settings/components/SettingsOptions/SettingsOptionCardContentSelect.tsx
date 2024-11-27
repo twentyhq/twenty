@@ -9,11 +9,6 @@ import { Select, SelectValue } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui';
 
-const StyledSettingsOptionCardSelect = styled(Select)`
-  margin-left: auto;
-  width: 120px;
-`;
-
 type SettingsOptionCardContentSelectProps<Value extends SelectValue> = {
   Icon?: IconComponent;
   title: React.ReactNode;
@@ -31,6 +26,10 @@ type SettingsOptionCardContentSelectProps<Value extends SelectValue> = {
   dropdownId: string;
   fullWidth?: boolean;
 };
+
+const StyledSelectContainer = styled.div`
+  margin-left: auto;
+`;
 
 export const SettingsOptionCardContentSelect = <Value extends SelectValue>({
   Icon,
@@ -58,16 +57,18 @@ export const SettingsOptionCardContentSelect = <Value extends SelectValue>({
           {description}
         </StyledSettingsOptionCardDescription>
       </div>
-      <StyledSettingsOptionCardSelect
-        className={selectClassName}
-        dropdownWidth={fullWidth ? 'auto' : 120}
-        disabled={disabled}
-        dropdownId={dropdownId}
-        value={value}
-        onChange={onChange}
-        options={options}
-        selectSizeVariant="small"
-      />
+      <StyledSelectContainer>
+        <Select<Value>
+          className={selectClassName}
+          dropdownWidth={fullWidth ? 'auto' : 120}
+          disabled={disabled}
+          dropdownId={dropdownId}
+          value={value}
+          onChange={onChange}
+          options={options}
+          selectSizeVariant="small"
+        />
+      </StyledSelectContainer>
     </StyledSettingsOptionCardContent>
   );
 };
