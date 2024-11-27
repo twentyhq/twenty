@@ -20,6 +20,20 @@ If you used Docker Compose, follow these steps:
 
 ## Version-specific upgrade steps
 
+### v0.33.0 to v0.34.0
+
+Upgrade your Twenty instance to use v0.34.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.34
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.34` takes care of the data migration of all workspaces.
+
+
+
 ### v0.32.0 to v0.33.0
 
 Upgrade your Twenty instance to use v0.33.0 image

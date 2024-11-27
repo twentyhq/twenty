@@ -14,9 +14,9 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationException } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 import { WorkspaceInvitationService } from './workspace-invitation.service';
-import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 describe('WorkspaceInvitationService', () => {
   let service: WorkspaceInvitationService;

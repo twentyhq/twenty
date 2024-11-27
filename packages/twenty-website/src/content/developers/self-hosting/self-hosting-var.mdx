@@ -35,9 +35,12 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
     ['PG_DATABASE_URL', 'postgres://user:pw@localhost:5432/default?connection_limit=1', 'Database connection'],
     ['PG_SSL_ALLOW_SELF_SIGNED', 'false', 'Allow self signed certificates'],
     ['REDIS_URL', 'redis://localhost:6379', 'Redis connection url'],
-    ['FRONT_BASE_URL', 'http://localhost:3001', 'Url to the hosted frontend'],
+    ['FRONT_DOMAIN', 'localhost', 'Domain of the hosted frontend'],
+    ['DEFAULT_SUBDOMAIN', 'app', 'The default subdomain name when multiworkspace mode is enable'],
     ['SERVER_URL', 'http://localhost:3000', 'Url to the hosted server'],
-    ['PORT', '3000', 'Port'],
+    ['FRONT_PROTOCOL', 'http', 'protocol of the frontend server. Could be `http` or `https`'],
+    ['FRONT_PORT', '3001', 'Port of the frontend server.'],
+    ['PORT', '3000', 'Port of the backend server'],
     ['CACHE_STORAGE_TYPE', 'redis', 'Cache type (memory, redis...)'],
     ['CACHE_STORAGE_TTL', '3600 * 24 * 7', 'Cache TTL in seconds']
     ]}></ArticleTable>

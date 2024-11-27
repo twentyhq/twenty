@@ -133,7 +133,7 @@ export class EnvironmentVariables {
 
   @IsString()
   @ValidateIf((env) => env.IS_MULTIWORKSPACE_ENABLED)
-  DEFAULT_SUBDOMAIN: string;
+  DEFAULT_SUBDOMAIN = 'app';
 
   @IsString()
   @IsOptional()
@@ -147,7 +147,7 @@ export class EnvironmentVariables {
   // Server URL
   @IsUrl({ require_tld: false })
   @IsOptional()
-  SERVER_URL = 'http://localhost';
+  SERVER_URL = 'http://localhost:3000';
 
   @IsString()
   APP_SECRET: string;
