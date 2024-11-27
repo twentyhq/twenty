@@ -15,9 +15,9 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 import { AuthService } from './auth.service';
-import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 
 jest.mock('bcrypt');
 
