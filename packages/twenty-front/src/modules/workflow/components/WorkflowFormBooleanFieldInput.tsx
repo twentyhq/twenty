@@ -6,15 +6,10 @@ import {
 import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import {
-  StyledSearchVariablesDropdownContainer,
-  StyledVariableContainer,
-} from '@/workflow/components/WorkflowFormFieldInputBase';
-import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
+import { StyledVariableContainer } from '@/workflow/components/WorkflowFormFieldInputBase';
 import { extractVariableLabel } from '@/workflow/search-variables/utils/extractVariableLabel';
 import styled from '@emotion/styled';
-import { isString } from '@sniptt/guards';
-import { useId, useState } from 'react';
+import { useState } from 'react';
 
 const StyledBooleanInputContainer = styled.div`
   padding-inline: ${({ theme }) => theme.spacing(2)};
@@ -26,6 +21,9 @@ type WorkflowFormBooleanFieldInputProps = {
   label?: string;
   defaultValue: boolean | string | undefined;
   onPersist: (value: boolean | null | string) => void;
+  VariableElement?: React.FC<{
+    onVariableSelect: (variable: string) => void;
+  }>;
   readonly?: boolean;
 };
 
@@ -34,6 +32,7 @@ export const WorkflowFormBooleanFieldInput = ({
   defaultValue,
   onPersist,
   readonly,
+  VariableElement,
 }: WorkflowFormBooleanFieldInputProps) => {
   const variablesDropdownId = useId();
 
@@ -90,13 +89,9 @@ export const WorkflowFormBooleanFieldInput = ({
           )}
         </StyledInputContainer>
 
-        <StyledSearchVariablesDropdownContainer readonly={readonly}>
-          <SearchVariablesDropdown
-            inputId={variablesDropdownId}
-            onVariableSelect={handleVariableTagInsert}
-            disabled={readonly}
-          />
-        </StyledSearchVariablesDropdownContainer>
+        {VariableElement ? (
+          <VariableElement onVariableSelect={handleVariableTagInsert} />
+        ) : null}
       </StyledRowContainer>
     </StyledContainer>
   );
