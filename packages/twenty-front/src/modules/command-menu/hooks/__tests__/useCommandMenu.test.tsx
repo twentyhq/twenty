@@ -4,8 +4,10 @@ import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuCommandsSelector } from '@/command-menu/states/commandMenuCommandsSelector';
+import { commandMenuCommandsComponentSelector } from '@/command-menu/states/commandMenuCommandsSelector';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
     <MemoryRouter
@@ -22,7 +24,9 @@ const renderHooks = () => {
     () => {
       const commandMenu = useCommandMenu();
       const isCommandMenuOpened = useRecoilValue(isCommandMenuOpenedState);
-      const commandMenuCommands = useRecoilValue(commandMenuCommandsSelector);
+      const commandMenuCommands = useRecoilComponentValueV2(
+        commandMenuCommandsComponentSelector,
+      );
 
       return {
         commandMenu,

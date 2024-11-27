@@ -9,7 +9,7 @@ import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuCommandsSelector } from '@/command-menu/states/commandMenuCommandsSelector';
+import { commandMenuCommandsComponentSelector } from '@/command-menu/states/commandMenuCommandsSelector';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import {
@@ -35,6 +35,7 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
@@ -142,7 +143,9 @@ export const CommandMenu = () => {
 
   const isMobile = useIsMobile();
 
-  const commandMenuCommands = useRecoilValue(commandMenuCommandsSelector);
+  const commandMenuCommands = useRecoilComponentValueV2(
+    commandMenuCommandsComponentSelector,
+  );
 
   useScopedHotkeys(
     'ctrl+k,meta+k',
