@@ -7,21 +7,6 @@ export class UseEnumForSubscriptionStatusInterval1719327438923
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TYPE "core"."billingSubscription_status_enum" AS ENUM('active', 'canceled', 'incomplete', 'incomplete_expired', 'past_due', 'paused', 'trialing', 'unpaid')`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "status" TYPE "core"."billingSubscription_status_enum" USING "status"::"core"."billingSubscription_status_enum"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "status" SET NOT NULL`,
-    );
-    await queryRunner.query(
-      `CREATE TYPE "core"."billingSubscription_interval_enum" AS ENUM('day', 'month', 'week', 'year')`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "interval" TYPE "core"."billingSubscription_interval_enum" USING "interval"::"core"."billingSubscription_interval_enum"`,
-    );
-    await queryRunner.query(
       `CREATE TYPE "core"."workspace_subscriptionstatus_enum" AS ENUM('active', 'canceled', 'incomplete', 'incomplete_expired', 'past_due', 'paused', 'trialing', 'unpaid')`,
     );
     await queryRunner.query(
@@ -44,18 +29,6 @@ export class UseEnumForSubscriptionStatusInterval1719327438923
     );
     await queryRunner.query(
       `DROP TYPE "core"."workspace_subscriptionstatus_enum"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "interval" TYPE text`,
-    );
-    await queryRunner.query(
-      `DROP TYPE "core"."billingSubscription_interval_enum"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "status" TYPE text`,
-    );
-    await queryRunner.query(
-      `DROP TYPE "core"."billingSubscription_status_enum"`,
     );
   }
 }

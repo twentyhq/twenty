@@ -10,12 +10,7 @@ export class UseTimestampWithTZ1711633823798 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "core"."featureFlag" ALTER COLUMN "updatedAt" TYPE TIMESTAMP WITH TIME ZONE USING "updatedAt" AT TIME ZONE 'UTC'`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscriptionItem" ALTER COLUMN "deletedAt" TYPE TIMESTAMP WITH TIME ZONE USING "deletedAt" AT TIME ZONE 'UTC'`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "deletedAt" TYPE TIMESTAMP WITH TIME ZONE USING "deletedAt" AT TIME ZONE 'UTC'`,
-    );
+
     await queryRunner.query(
       `ALTER TABLE "core"."workspace" ALTER COLUMN "deletedAt" TYPE TIMESTAMP WITH TIME ZONE USING "deletedAt" AT TIME ZONE 'UTC'`,
     );
@@ -43,12 +38,7 @@ export class UseTimestampWithTZ1711633823798 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "core"."featureFlag" ALTER COLUMN "updatedAt" TYPE TIMESTAMP`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscriptionItem" ALTER COLUMN "deletedAt" TYPE TIMESTAMP`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "deletedAt" TYPE TIMESTAMP`,
-    );
+
     await queryRunner.query(
       `ALTER TABLE "core"."workspace" ALTER COLUMN "deletedAt" TYPE TIMESTAMP`,
     );
