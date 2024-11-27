@@ -1,21 +1,21 @@
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
+import {
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconPower, isDefined } from 'twenty-ui';
 
-export const ActivateWorkflowActionEffect = ({
+export const useActivateWorkflowSingleRecordAction = ({
   position,
-  objectMetadataItem,
 }: {
   position: number;
-  objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
@@ -43,7 +43,7 @@ export const ActivateWorkflowActionEffect = ({
     isDefined(workflowWithCurrentVersion) &&
     workflowWithCurrentVersion.currentVersion.status === 'ACTIVE';
 
-  useEffect(() => {
+  const registerActivateWorkflowSingleRecordAction = () => {
     if (
       !isDefined(workflowWithCurrentVersion) ||
       !isDefined(workflowWithCurrentVersion.currentVersion.trigger)
@@ -56,6 +56,8 @@ export const ActivateWorkflowActionEffect = ({
       label: isWorkflowActive ? 'Deactivate' : 'Activate',
       position,
       Icon: IconPower,
+      type: ActionMenuEntryType.Standard,
+      scope: ActionMenuEntryScope.RecordSelection,
       onClick: () => {
         isWorkflowActive
           ? deactivateWorkflowVersion(
@@ -67,21 +69,14 @@ export const ActivateWorkflowActionEffect = ({
             });
       },
     });
+  };
 
-    return () => {
-      removeActionMenuEntry('activate-workflow');
-    };
-  }, [
-    activateWorkflowVersion,
-    addActionMenuEntry,
-    deactivateWorkflowVersion,
-    isWorkflowActive,
-    objectMetadataItem,
-    position,
-    removeActionMenuEntry,
-    selectedRecord,
-    workflowWithCurrentVersion,
-  ]);
+  const unregisterActivateWorkflowSingleRecordAction = () => {
+    removeActionMenuEntry('activate-workflow');
+  };
 
-  return null;
+  return {
+    registerActivateWorkflowSingleRecordAction,
+    unregisterActivateWorkflowSingleRecordAction,
+  };
 };
