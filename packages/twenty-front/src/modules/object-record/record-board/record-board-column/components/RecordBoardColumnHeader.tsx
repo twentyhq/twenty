@@ -5,6 +5,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { useAggregateQueryForColumn } from '@/object-record/record-board/record-board-column/hooks/useAggregateQueryForColumn';
 import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
 import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
@@ -98,6 +99,8 @@ export const RecordBoardColumnHeader = () => {
     setIsBoardColumnMenuOpen(false);
   };
 
+  const { aggregateValue } = useAggregateQueryForColumn();
+
   const boardColumnTotal = 0;
 
   const { handleNewButtonClick } = useColumnNewCardActions(
@@ -141,7 +144,7 @@ export const RecordBoardColumnHeader = () => {
             {!!boardColumnTotal && (
               <StyledAmount>${boardColumnTotal}</StyledAmount>
             )}
-            <StyledNumChildren>{recordCount}</StyledNumChildren>
+            <StyledNumChildren>{aggregateValue as string}</StyledNumChildren>
           </StyledLeftContainer>
           <StyledRightContainer>
             {isHeaderHovered && (

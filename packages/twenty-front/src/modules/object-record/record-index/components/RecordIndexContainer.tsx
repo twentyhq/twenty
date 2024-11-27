@@ -27,6 +27,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
+import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -85,6 +86,9 @@ export const RecordIndexContainer = () => {
   );
   const setRecordIndexViewKanbanFieldMetadataIdState = useSetRecoilState(
     recordIndexKanbanFieldMetadataIdState,
+  );
+  const setRecordIndexViewKanbanAggregateOperationState = useSetRecoilState(
+    recordIndexKanbanAggregateOperationState,
   );
 
   const {
@@ -200,6 +204,10 @@ export const RecordIndexContainer = () => {
               setRecordIndexViewKanbanFieldMetadataIdState(
                 view.kanbanFieldMetadataId,
               );
+              setRecordIndexViewKanbanAggregateOperationState({
+                operation: view.kanbanAggregateOperation,
+                fieldMetadataId: view.kanbanAggregateOperationFieldMetadataId,
+              });
               setRecordIndexIsCompactModeActive(view.isCompact);
             }}
           />
