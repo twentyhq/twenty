@@ -24,6 +24,8 @@
 
     gcc # needed for some npm packages
     nodePackages.typescript-language-server # many editors benefit from this
+
+    cmake
   ];
 
   scripts = {
