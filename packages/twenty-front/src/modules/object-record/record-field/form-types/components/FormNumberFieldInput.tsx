@@ -1,9 +1,7 @@
-import {
-  StyledContainer,
-  StyledInputContainer,
-  StyledRowContainer,
-} from '@/object-record/record-field/form-types/components/FormFieldInputBase';
 import { SelectedVariableChip } from '@/object-record/record-field/form-types/components/SelectedVariableChip';
+import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
+import { StyledFormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputInputContainer';
+import { StyledFormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputRowContainer';
 import { EditingMode } from '@/object-record/record-field/form-types/types/EditingMode';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { TextInput } from '@/ui/field/input/components/TextInput';
@@ -77,11 +75,13 @@ export const FormNumberFieldInput = ({
   };
 
   return (
-    <StyledContainer>
+    <StyledFormFieldInputContainer>
       {label ? <InputLabel htmlFor={inputId}>{label}</InputLabel> : null}
 
-      <StyledRowContainer>
-        <StyledInputContainer hasRightElement={isDefined(VariablePicker)}>
+      <StyledFormFieldInputRowContainer>
+        <StyledFormFieldInputInputContainer
+          hasRightElement={isDefined(VariablePicker)}
+        >
           {editingMode === 'input' ? (
             <StyledInput
               inputId={inputId}
@@ -97,7 +97,7 @@ export const FormNumberFieldInput = ({
               onRemove={handleUnlinkVariable}
             />
           )}
-        </StyledInputContainer>
+        </StyledFormFieldInputInputContainer>
 
         {VariablePicker ? (
           <VariablePicker
@@ -105,7 +105,7 @@ export const FormNumberFieldInput = ({
             onVariableSelect={handleVariableTagInsert}
           />
         ) : null}
-      </StyledRowContainer>
-    </StyledContainer>
+      </StyledFormFieldInputRowContainer>
+    </StyledFormFieldInputContainer>
   );
 };

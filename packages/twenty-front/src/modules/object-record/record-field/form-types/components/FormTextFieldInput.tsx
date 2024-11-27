@@ -1,8 +1,6 @@
-import {
-  StyledContainer,
-  StyledInputContainer,
-  StyledRowContainer,
-} from '@/object-record/record-field/form-types/components/FormFieldInputBase';
+import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
+import { StyledFormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputInputContainer';
+import { StyledFormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputRowContainer';
 import { TextVariableEditor } from '@/object-record/record-field/form-types/components/TextVariableEditor';
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
@@ -60,11 +58,11 @@ export const FormTextFieldInput = ({
   }
 
   return (
-    <StyledContainer>
+    <StyledFormFieldInputContainer>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
-      <StyledRowContainer multiline={multiline}>
-        <StyledInputContainer
+      <StyledFormFieldInputRowContainer multiline={multiline}>
+        <StyledFormFieldInputInputContainer
           hasRightElement={isDefined(VariablePicker)}
           multiline={multiline}
         >
@@ -73,7 +71,7 @@ export const FormTextFieldInput = ({
             multiline={multiline}
             readonly={readonly}
           />
-        </StyledInputContainer>
+        </StyledFormFieldInputInputContainer>
 
         {VariablePicker ? (
           <VariablePicker
@@ -82,7 +80,7 @@ export const FormTextFieldInput = ({
             onVariableSelect={handleVariableTagInsert}
           />
         ) : null}
-      </StyledRowContainer>
-    </StyledContainer>
+      </StyledFormFieldInputRowContainer>
+    </StyledFormFieldInputContainer>
   );
 };
