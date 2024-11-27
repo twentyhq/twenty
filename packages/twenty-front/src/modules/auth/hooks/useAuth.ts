@@ -4,7 +4,6 @@ import {
   snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
   useRecoilCallback,
-  useRecoilState,
   useRecoilValue,
   useSetRecoilState,
 } from 'recoil';

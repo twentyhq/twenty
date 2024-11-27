@@ -22,7 +22,6 @@ import {
   useActivateWorkspaceMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 
 const StyledContentContainer = styled.div`
