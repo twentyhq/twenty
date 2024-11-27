@@ -27,7 +27,7 @@ export const SignInUp = () => {
   return (
     <>
       <AnimatedEaseIn>
-        <Logo workspaceLogo={workspacePublicData?.logo} />
+        <Logo secondaryLogo={workspacePublicData?.logo} />
       </AnimatedEaseIn>
       <Title animate>
         {`Welcome to ${workspacePublicData?.displayName ?? DEFAULT_WORKSPACE_NAME}`}
