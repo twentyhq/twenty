@@ -48,6 +48,7 @@ export const SettingsAdminImpersonateUsers = () => {
             fullWidth
             disabled={isLoading}
             dataTestId="impersonate-input"
+            onInputEnter={() => handleImpersonate(userId)}
           />
         </StyledLinkContainer>
         <Button

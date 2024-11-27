@@ -10,7 +10,13 @@ import { IconFlag, UndecoratedLink } from 'twenty-ui';
 export const SettingsAdmin = () => {
   const theme = useTheme();
   return (
-    <SubMenuTopBarContainer title="Admin Panel" links={[{ children: 'Admin' }]}>
+    <SubMenuTopBarContainer
+      title="Server Admin Panel"
+      links={[
+        { children: 'Other', href: getSettingsPagePath(SettingsPath.Admin) },
+        { children: 'Server Admin Panel' },
+      ]}
+    >
       <SettingsPageContainer>
         <SettingsAdminImpersonateUsers />
         <UndecoratedLink to={getSettingsPagePath(SettingsPath.FeatureFlags)}>

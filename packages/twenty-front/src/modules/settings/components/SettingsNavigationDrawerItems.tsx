@@ -13,8 +13,8 @@ import {
   IconKey,
   IconMail,
   IconRocket,
+  IconServer,
   IconSettings,
-  IconSettings2,
   IconTool,
   IconUserCircle,
   IconUsers,
@@ -236,9 +236,9 @@ export const SettingsNavigationDrawerItems = () => {
         <NavigationDrawerSectionTitle label="Other" />
         {isAdminPageEnabled && (
           <SettingsNavigationDrawerItem
-            label="Admin"
+            label="Server Admin Panel"
             path={SettingsPath.Admin}
-            Icon={IconSettings2}
+            Icon={IconServer}
           />
         )}
         <SettingsNavigationDrawerItem

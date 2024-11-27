@@ -160,7 +160,11 @@ export const SettingsAdminFeatureFlags = () => {
     <SubMenuTopBarContainer
       title="Feature Flags"
       links={[
-        { children: 'Admin', href: getSettingsPagePath(SettingsPath.Admin) },
+        { children: 'Other', href: getSettingsPagePath(SettingsPath.Admin) },
+        {
+          children: 'Server Admin Panel',
+          href: getSettingsPagePath(SettingsPath.Admin),
+        },
         { children: 'Feature Flags' },
       ]}
     >
@@ -176,6 +180,7 @@ export const SettingsAdminFeatureFlags = () => {
               <TextInput
                 value={userIdentifier}
                 onChange={setUserIdentifier}
+                onInputEnter={handleSearch}
                 placeholder="Enter user ID or email"
                 fullWidth
                 disabled={isLoading}
