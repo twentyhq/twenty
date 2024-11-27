@@ -99,7 +99,6 @@ export const useRecordGroupVisibility = ({
       recordIndexRecordGroupIdsState,
       objectOptionsDropdownRecordGroupHideState,
       saveViewGroups,
-      recordGroupDefinitionFamilyState,
       recordIndexRowIdsByGroupFamilyState,
     ],
   );

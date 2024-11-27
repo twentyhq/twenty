@@ -8,19 +8,12 @@ import { RecordGroupAction } from '@/object-record/record-group/types/RecordGrou
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ViewType } from '@/views/types/ViewType';
 import { useCallback, useContext, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { IconEyeOff, IconSettings, isDefined } from 'twenty-ui';
 
-type UseRecordGroupActionsParams = {
-  viewType: ViewType;
-};
-
-export const useRecordGroupActions = ({
-  viewType,
-}: UseRecordGroupActionsParams) => {
+export const useRecordGroupActions = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
