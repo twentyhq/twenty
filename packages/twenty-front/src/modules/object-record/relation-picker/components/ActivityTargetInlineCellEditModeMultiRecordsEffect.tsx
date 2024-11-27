@@ -9,10 +9,10 @@ import {
 import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useObjectRecordMultiSelectScopedStates';
 import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
 import { objectRecordMultiSelectMatchesFilterRecordsIdsComponentState } from '@/object-record/record-field/states/objectRecordMultiSelectMatchesFilterRecordsIdsComponentState';
-import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
+import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
 import { SelectedObjectRecordId } from '@/object-record/types/SelectedObjectRecordId';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
@@ -20,13 +20,13 @@ export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
 }: {
   selectedObjectRecordIds: SelectedObjectRecordId[];
 }) => {
-  const scopeId = useAvailableScopeIdOrThrow(
-    RelationPickerScopeInternalContext,
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordPickerComponentInstanceContext,
   );
   const {
     objectRecordsIdsMultiSelectState,
     objectRecordMultiSelectCheckedRecordsIdsState,
-  } = useObjectRecordMultiSelectScopedStates(scopeId);
+  } = useObjectRecordMultiSelectScopedStates(instanceId);
   const [objectRecordsIdsMultiSelect, setObjectRecordsIdsMultiSelect] =
     useRecoilState(objectRecordsIdsMultiSelectState);
 
@@ -41,7 +41,7 @@ export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
           const currentRecord = snapshot
             .getLoadable(
               objectRecordMultiSelectComponentFamilyState({
-                scopeId: scopeId,
+                scopeId: instanceId,
                 familyKey: newRecord.record.id,
               }),
             )
@@ -66,7 +66,7 @@ export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
           ) {
             set(
               objectRecordMultiSelectComponentFamilyState({
-                scopeId: scopeId,
+                scopeId: instanceId,
                 familyKey: newRecordWithSelected.record.id,
               }),
               newRecordWithSelected,
@@ -74,12 +74,12 @@ export const ActivityTargetInlineCellEditModeMultiRecordsEffect = ({
           }
         }
       },
-    [objectRecordMultiSelectCheckedRecordsIdsState, scopeId],
+    [objectRecordMultiSelectCheckedRecordsIdsState, instanceId],
   );
 
   const matchesSearchFilterObjectRecords = useRecoilValue(
     objectRecordMultiSelectMatchesFilterRecordsIdsComponentState({
-      scopeId,
+      scopeId: instanceId,
     }),
   );
 

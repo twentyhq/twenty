@@ -1,9 +1,9 @@
 import {
-  SingleEntitySelectMenuItems,
-  SingleEntitySelectMenuItemsProps,
-} from '@/object-record/relation-picker/components/SingleEntitySelectMenuItems';
-import { useEntitySelectSearch } from '@/object-record/relation-picker/hooks/useEntitySelectSearch';
-import { useRelationPickerEntitiesOptions } from '@/object-record/relation-picker/hooks/useRelationPickerEntitiesOptions';
+  SingleRecordSelectMenuItems,
+  SingleRecordSelectMenuItemsProps,
+} from '@/object-record/relation-picker/components/SingleRecordSelectMenuItems';
+import { useRecordPickerRecordsOptions } from '@/object-record/relation-picker/hooks/useRecordPickerRecordsOptions';
+import { useRecordSelectSearch } from '@/object-record/relation-picker/hooks/useRecordSelectSearch';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -13,70 +13,69 @@ import { IconPlus } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-export type SingleEntitySelectMenuItemsWithSearchProps = {
+export type SingleRecordSelectMenuItemsWithSearchProps = {
   excludedRelationRecordIds?: string[];
   onCreate?: ((searchInput?: string) => void) | (() => void);
-  relationObjectNameSingular: string;
-  relationPickerScopeId?: string;
+  objectNameSingular: string;
+  recordPickerInstanceId?: string;
   selectedRelationRecordIds: string[];
   dropdownPlacement?: Placement | null;
 } & Pick<
-  SingleEntitySelectMenuItemsProps,
+  SingleRecordSelectMenuItemsProps,
   | 'EmptyIcon'
   | 'emptyLabel'
   | 'onCancel'
-  | 'onEntitySelected'
-  | 'selectedEntity'
+  | 'onRecordSelected'
+  | 'selectedRecord'
 >;
 
-export const SingleEntitySelectMenuItemsWithSearch = ({
+export const SingleRecordSelectMenuItemsWithSearch = ({
   EmptyIcon,
   emptyLabel,
   excludedRelationRecordIds,
   onCancel,
   onCreate,
-  onEntitySelected,
-  relationObjectNameSingular,
-  relationPickerScopeId = 'relation-picker',
+  onRecordSelected,
+  objectNameSingular,
+  recordPickerInstanceId = 'relation-picker',
   selectedRelationRecordIds,
   dropdownPlacement,
-}: SingleEntitySelectMenuItemsWithSearchProps) => {
-  const { handleSearchFilterChange } = useEntitySelectSearch({
-    relationPickerScopeId,
+}: SingleRecordSelectMenuItemsWithSearchProps) => {
+  const { handleSearchFilterChange } = useRecordSelectSearch({
+    recordPickerInstanceId,
   });
 
-  const { entities, relationPickerSearchFilter } =
-    useRelationPickerEntitiesOptions({
-      relationObjectNameSingular,
-      selectedRelationRecordIds,
-      excludedRelationRecordIds,
-    });
+  const { records, recordPickerSearchFilter } = useRecordPickerRecordsOptions({
+    objectNameSingular,
+    selectedRelationRecordIds,
+    excludedRelationRecordIds,
+  });
 
   const createNewButton = isDefined(onCreate) && (
     <CreateNewButton
-      onClick={() => onCreate?.(relationPickerSearchFilter)}
+      onClick={() => onCreate?.(recordPickerSearchFilter)}
       LeftIcon={IconPlus}
       text="Add New"
     />
   );
 
   const results = (
-    <SingleEntitySelectMenuItems
-      entitiesToSelect={entities.entitiesToSelect}
-      loading={entities.loading}
-      selectedEntity={
-        entities.selectedEntities.length === 1
-          ? entities.selectedEntities[0]
+    <SingleRecordSelectMenuItems
+      recordsToSelect={records.recordsToSelect}
+      loading={records.loading}
+      selectedRecord={
+        records.recordsToSelect.length === 1
+          ? records.recordsToSelect[0]
           : undefined
       }
       shouldSelectEmptyOption={selectedRelationRecordIds?.length === 0}
-      hotkeyScope={relationPickerScopeId}
-      isFiltered={!!relationPickerSearchFilter}
+      hotkeyScope={recordPickerInstanceId}
+      isFiltered={!!recordPickerSearchFilter}
       {...{
         EmptyIcon,
         emptyLabel,
         onCancel,
-        onEntitySelected,
+        onRecordSelected,
       }}
     />
   );
@@ -88,8 +87,8 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
           <DropdownMenuItemsContainer>
             {createNewButton}
           </DropdownMenuItemsContainer>
-          {entities.entitiesToSelect.length > 0 && <DropdownMenuSeparator />}
-          {entities.entitiesToSelect.length > 0 && results}
+          {records.recordsToSelect.length > 0 && <DropdownMenuSeparator />}
+          {records.recordsToSelect.length > 0 && results}
           <DropdownMenuSeparator />
         </>
       )}
@@ -98,8 +97,8 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
         isUndefinedOrNull(dropdownPlacement)) && (
         <>
           <DropdownMenuSeparator />
-          {entities.entitiesToSelect.length > 0 && results}
-          {entities.entitiesToSelect.length > 0 && isDefined(onCreate) && (
+          {records.recordsToSelect.length > 0 && results}
+          {records.recordsToSelect.length > 0 && isDefined(onCreate) && (
             <DropdownMenuSeparator />
           )}
           {isDefined(onCreate) && (

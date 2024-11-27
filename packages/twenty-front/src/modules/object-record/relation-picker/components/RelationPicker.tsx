@@ -6,13 +6,13 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { SearchPickerInitialValueEffect } from '@/object-record/relation-picker/components/SearchPickerInitialValueEffect';
-import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
+import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
-import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 
 export type RelationPickerProps = {
   selectedRecordId?: string;
-  onSubmit: (selectedEntity: EntityForSelect | null) => void;
+  onSubmit: (selectedEntity: RecordForSelect | null) => void;
   onCancel?: () => void;
   width?: number;
   excludeRecordIds?: string[];
@@ -29,10 +29,10 @@ export const RelationPicker = ({
   initialSearchFilter,
   fieldDefinition,
 }: RelationPickerProps) => {
-  const relationPickerScopeId = 'relation-picker';
+  const recordPickerInstanceId = 'relation-picker';
 
-  const handleEntitySelected = (
-    selectedEntity: EntityForSelect | null | undefined,
+  const handleRecordSelected = (
+    selectedEntity: RecordForSelect | null | undefined,
   ) => onSubmit(selectedEntity ?? null);
 
   const { objectMetadataItem: relationObjectMetadataItem } =
@@ -60,19 +60,19 @@ export const RelationPicker = ({
     <>
       <SearchPickerInitialValueEffect
         initialValueForSearchFilter={initialSearchFilter}
-        relationPickerScopeId={relationPickerScopeId}
+        recordPickerInstanceId={recordPickerInstanceId}
       />
-      <SingleEntitySelect
+      <SingleRecordSelect
         EmptyIcon={IconForbid}
         emptyLabel={'No ' + fieldDefinition.label}
         onCancel={onCancel}
         onCreate={createNewRecordAndOpenRightDrawer}
-        onEntitySelected={handleEntitySelected}
+        onRecordSelected={handleRecordSelected}
         width={width}
-        relationObjectNameSingular={
+        objectNameSingular={
           fieldDefinition.metadata.relationObjectMetadataNameSingular
         }
-        relationPickerScopeId={relationPickerScopeId}
+        recordPickerInstanceId={recordPickerInstanceId}
         selectedRelationRecordIds={selectedRecordId ? [selectedRecordId] : []}
         excludedRelationRecordIds={excludeRecordIds}
       />

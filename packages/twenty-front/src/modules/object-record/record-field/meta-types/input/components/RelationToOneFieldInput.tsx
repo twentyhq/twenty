@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 import { RelationPicker } from '@/object-record/relation-picker/components/RelationPicker';
-import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRelationField } from '../../hooks/useRelationField';
@@ -24,11 +24,11 @@ export const RelationToOneFieldInput = ({
   onCancel,
 }: RelationToOneFieldInputProps) => {
   const { fieldDefinition, initialSearchValue, fieldValue } =
-    useRelationField<EntityForSelect>();
+    useRelationField<RecordForSelect>();
 
   const persistField = usePersistField();
 
-  const handleSubmit = (newEntity: EntityForSelect | null) => {
+  const handleSubmit = (newEntity: RecordForSelect | null) => {
     onSubmit?.(() => persistField(newEntity?.record ?? null));
   };
 

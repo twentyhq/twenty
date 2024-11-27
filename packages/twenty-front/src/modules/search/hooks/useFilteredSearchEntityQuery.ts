@@ -1,12 +1,12 @@
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useSearchRecords } from '@/object-record/hooks/useSearchRecords';
-import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/types/EntitiesForMultipleEntitySelect';
-import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
+import { RecordsForMultipleRecordSelect } from '@/object-record/relation-picker/types/RecordsForMultipleRecordSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
-// TODO: use this for all search queries, because we need selectedEntities and entitiesToSelect each time we want to search
+// TODO: use this for all search queries, because we need selectedEntities and recordsToSelect each time we want to search
 // Filtered entities to select are
 
 export const useFilteredSearchEntityQuery = ({
@@ -21,7 +21,7 @@ export const useFilteredSearchEntityQuery = ({
   excludeRecordIds?: string[];
   objectNameSingular: string;
   searchFilter?: string;
-}): EntitiesForMultipleEntitySelect<EntityForSelect> => {
+}): RecordsForMultipleRecordSelect<RecordForSelect> => {
   const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
     objectNameSingular,
   });
@@ -64,10 +64,10 @@ export const useFilteredSearchEntityQuery = ({
 
   return {
     selectedEntities: selectedRecords.map(mappingFunction).filter(isDefined),
-    filteredSelectedEntities: filteredSelectedRecords
+    filteredSelectedRecords: filteredSelectedRecords
       .map(mappingFunction)
       .filter(isDefined),
-    entitiesToSelect: recordsToSelect.map(mappingFunction).filter(isDefined),
+    recordsToSelect: recordsToSelect.map(mappingFunction).filter(isDefined),
     loading:
       recordsToSelectLoading ||
       filteredSelectedRecordsLoading ||

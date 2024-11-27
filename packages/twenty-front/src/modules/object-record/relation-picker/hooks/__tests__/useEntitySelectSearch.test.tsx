@@ -1,30 +1,29 @@
-import { ChangeEvent } from 'react';
 import { act, renderHook } from '@testing-library/react';
-import { RecoilRoot, useRecoilValue } from 'recoil';
+import { ChangeEvent } from 'react';
+import { RecoilRoot } from 'recoil';
 
-import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
-import { useEntitySelectSearch } from '@/object-record/relation-picker/hooks/useEntitySelectSearch';
-import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
+import { useRecordSelectSearch } from '@/object-record/relation-picker/hooks/useRecordSelectSearch';
+import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { recordPickerSearchFilterComponentState } from '@/object-record/relation-picker/states/recordPickerSearchFilterComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-const scopeId = 'scopeId';
+const instanceId = 'instanceId';
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RelationPickerScopeInternalContext.Provider value={{ scopeId }}>
+  <RecordPickerComponentInstanceContext.Provider value={{ instanceId }}>
     <RecoilRoot>{children}</RecoilRoot>
-  </RelationPickerScopeInternalContext.Provider>
+  </RecordPickerComponentInstanceContext.Provider>
 );
 
-describe('useEntitySelectSearch', () => {
+describe('useRecordSelectSearch', () => {
   it('should update searchFilter after change event', async () => {
     const { result } = renderHook(
       () => {
-        const entitySelectSearchHook = useEntitySelectSearch({
-          relationPickerScopeId: 'relation-picker',
+        const entitySelectSearchHook = useRecordSelectSearch({
+          recordPickerInstanceId: instanceId,
         });
-        const relationPickerScopedStatesHook = useRelationPickerScopedStates({
-          relationPickerScopedId: 'relation-picker',
-        });
-        const internallyStoredFilter = useRecoilValue(
-          relationPickerScopedStatesHook.relationPickerSearchFilterState,
+        const internallyStoredFilter = useRecoilComponentValueV2(
+          recordPickerSearchFilterComponentState,
+          instanceId,
         );
         return { entitySelectSearchHook, internallyStoredFilter };
       },
