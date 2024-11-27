@@ -2,6 +2,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
+import { WorkflowSingleRecordPicker } from '@/workflow/components/WorkflowSingleRecordPicker';
 import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
 import { WorkflowRecordCreateAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
@@ -164,6 +165,12 @@ export const WorkflowEditActionFormRecordCreate = ({
       />
 
       <HorizontalSeparator noMargin />
+
+      <WorkflowSingleRecordPicker
+        label="Record"
+        onPersist={(value) => {}}
+        objectNameSingular={formData.objectName}
+      />
 
       {editableFields.map((field) => {
         const currentValue = formData[field.name] as JsonValue;
