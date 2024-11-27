@@ -17,8 +17,8 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 
 @Entity({ name: 'billingPrice', schema: 'core' })
-@Unique('IndexOnProductIdAndStripePriceIdUnique', [
-  'productId',
+@Unique('IndexOnStripeProductIdAndStripePriceIdUnique', [
+  'stripeProductId',
   'stripePriceId',
 ])
 export class BillingPrice {
@@ -55,9 +55,6 @@ export class BillingPrice {
     nullable: true,
   })
   interval: Stripe.Price.Recurring.Interval;
-
-  @Column({ nullable: false })
-  productId: string;
 
   @Column({ nullable: false })
   stripeProductId: string;

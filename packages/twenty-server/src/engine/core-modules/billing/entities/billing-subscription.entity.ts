@@ -80,9 +80,6 @@ export class BillingSubscription {
   @ManyToOne(
     () => BillingCustomer,
     (billingCustomer) => billingCustomer.billingSubscriptions,
-    {
-      onDelete: 'CASCADE',
-    },
   )
   billingCustomer: Relation<BillingCustomer>;
 }

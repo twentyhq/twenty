@@ -1,4 +1,4 @@
-import { Field, registerEnumType } from '@nestjs/graphql';
+import { registerEnumType } from '@nestjs/graphql';
 
 import {
   Column,
@@ -11,8 +11,8 @@ import {
 } from 'typeorm';
 
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
-import { BillingAvailablePlanKey } from 'src/engine/core-modules/billing/enums/billing-available-plan-key.enum';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
+import { BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 
 registerEnumType(BillingUsageType, { name: 'BillingUsageType' });
 
@@ -37,18 +37,10 @@ export class BillingProduct {
   stripeProductId: string;
 
   @Column({ nullable: false })
-  defaultPriceId: string;
-
-  @Column({ nullable: false })
   defaultStripePriceId: string;
 
-  @Field(() => BillingAvailablePlanKey, { nullable: false })
-  @Column({
-    type: 'enum',
-    enum: Object.values(BillingAvailablePlanKey),
-    nullable: false,
-  })
-  planKey: BillingAvailablePlanKey;
+  @Column({ nullable: false, type: 'jsonb', default: {} })
+  metadata: BillingProductMetadata;
 
   @OneToMany(() => BillingPrice, (billingPrice) => billingPrice.billingProduct)
   billingPrices: Relation<BillingPrice[]>;

@@ -1,3 +1,6 @@
+import { Field, ObjectType } from '@nestjs/graphql';
+
+import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   Column,
   CreateDateColumn,
@@ -10,16 +13,19 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'billingCustomer', schema: 'core' })
+@ObjectType('billingCustomer')
 @Unique('IndexOnWorkspaceIdAndStripeCustomerIdUnique', [
   'workspaceId',
   'stripeCustomerId',
 ])
 export class BillingCustomer {
+  @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -38,7 +44,8 @@ export class BillingCustomer {
   @Column({ nullable: false })
   stripeCustomerId: string;
 
-  @Column({ nullable: false })
+  @Field()
+  @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
   @OneToMany(
