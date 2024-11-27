@@ -20,6 +20,8 @@ import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runne
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { WORKFLOW_VERSION_STATUS_UPDATED } from 'src/modules/workflow/workflow-status/constants/workflow-version-status-updated.constants';
 import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-custom-batch-event.decorator';
+import { ObjectRecordUpdateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-update.event';
+import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class WorkflowVersionStatusListener {
@@ -56,8 +58,39 @@ export class WorkflowVersionStatusListener {
     );
   }
 
-  @OnCustomBatchEvent(WORKFLOW_VERSION_STATUS_UPDATED)
+  @OnDatabaseBatchEvent('workflowVersion', DatabaseEventAction.UPDATED)
   async handleWorkflowVersionUpdated(
+    batchEvent: WorkspaceEventBatch<
+      ObjectRecordUpdateEvent<WorkflowVersionWorkspaceEntity>
+    >,
+  ): Promise<void> {
+    const serverlessFunctionIds = batchEvent.events
+      .filter(
+        (event) =>
+          isDefined(event.properties.before.steps) &&
+          isDefined(event.properties.after.steps) &&
+          event.properties.before.steps.length -
+            event.properties.after.steps.length >=
+            1,
+      )
+      .map((event) => event.properties.before.steps);
+
+    if (0 === 0) {
+      return;
+    }
+
+    await this.messageQueueService.add<WorkflowVersionBatchEvent>(
+      WorkflowStatusesUpdateJob.name,
+      {
+        type: WorkflowVersionEventType.CREATE,
+        workspaceId: batchEvent.workspaceId,
+        workflowIds: [],
+      },
+    );
+  }
+
+  @OnCustomBatchEvent(WORKFLOW_VERSION_STATUS_UPDATED)
+  async handleWorkflowVersionStatusUpdated(
     batchEvent: WorkspaceEventBatch<WorkflowVersionStatusUpdate>,
   ): Promise<void> {
     await this.messageQueueService.add<WorkflowVersionBatchEvent>(

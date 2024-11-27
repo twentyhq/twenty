@@ -56,8 +56,6 @@ export type WorkflowRecordCRUDActionInput =
   | WorkflowUpdateRecordActionInput
   | WorkflowDeleteRecordActionInput;
 
-export type WorkflowRecordCRUDType = WorkflowRecordCRUDActionInput['type'];
-
 export type WorkflowRecordCRUDActionSettings = BaseWorkflowActionSettings & {
   input: WorkflowRecordCRUDActionInput;
 };
@@ -102,9 +100,7 @@ export type WorkflowAction =
 
 export type WorkflowStep = WorkflowAction;
 
-export type WorkflowActionType =
-  | Exclude<WorkflowAction['type'], WorkflowRecordCRUDAction['type']>
-  | `${WorkflowRecordCRUDAction['type']}.${WorkflowRecordCRUDType}`;
+export type WorkflowActionType = WorkflowStep['type'];
 
 export type WorkflowStepType = WorkflowActionType;
 

@@ -22,7 +22,7 @@ export const ACTIONS: Array<{
   },
   {
     label: 'Create Record',
-    type: 'RECORD_CRUD.CREATE',
+    type: 'RECORD_CRUD',
     icon: IconAddressBook,
   },
 ];

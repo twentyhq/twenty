@@ -263,6 +263,13 @@ export type CreateServerlessFunctionInput = {
   name: Scalars['String']['input'];
 };
 
+export type CreateWorkflowVersionStepInput = {
+  /** New step type */
+  stepType: Scalars['String']['input'];
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String']['input'];
+};
+
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']['input']>;
@@ -296,6 +303,13 @@ export type DeleteSsoInput = {
 export type DeleteSsoOutput = {
   __typename?: 'DeleteSsoOutput';
   identityProviderId: Scalars['String']['output'];
+};
+
+export type DeleteWorkflowVersionStepInput = {
+  /** Step to delete ID */
+  stepId: Scalars['String']['input'];
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String']['input'];
 };
 
 /** Schema update on a table */
@@ -553,6 +567,7 @@ export type Mutation = {
   createOneRemoteServer: RemoteServer;
   createOneServerlessFunction: ServerlessFunction;
   createSAMLIdentityProvider: SetupSsoOutput;
+  createWorkflowVersionStep: WorkflowAction;
   deactivateWorkflowVersion: Scalars['Boolean']['output'];
   deleteCurrentWorkspace: Workspace;
   deleteOneField: Field;
@@ -562,6 +577,7 @@ export type Mutation = {
   deleteOneServerlessFunction: ServerlessFunction;
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteUser: User;
+  deleteWorkflowVersionStep: Scalars['Boolean']['output'];
   deleteWorkspaceInvitation: Scalars['String']['output'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
@@ -592,6 +608,7 @@ export type Mutation = {
   updateOneRemoteServer: RemoteServer;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
+  updateWorkflowVersionStep: Scalars['Boolean']['output'];
   updateWorkspace: Workspace;
   uploadFile: Scalars['String']['output'];
   uploadImage: Scalars['String']['output'];
@@ -686,6 +703,11 @@ export type MutationCreateSamlIdentityProviderArgs = {
 };
 
 
+export type MutationCreateWorkflowVersionStepArgs = {
+  input: CreateWorkflowVersionStepInput;
+};
+
+
 export type MutationDeactivateWorkflowVersionArgs = {
   workflowVersionId: Scalars['String']['input'];
 };
@@ -718,6 +740,11 @@ export type MutationDeleteOneServerlessFunctionArgs = {
 
 export type MutationDeleteSsoIdentityProviderArgs = {
   input: DeleteSsoInput;
+};
+
+
+export type MutationDeleteWorkflowVersionStepArgs = {
+  input: DeleteWorkflowVersionStepInput;
 };
 
 
@@ -852,6 +879,11 @@ export type MutationUpdateOneServerlessFunctionArgs = {
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String']['input'];
   passwordResetToken: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateWorkflowVersionStepArgs = {
+  input: UpdateWorkflowVersionStepInput;
 };
 
 
@@ -1495,6 +1527,13 @@ export type UpdateServerlessFunctionInput = {
   name: Scalars['String']['input'];
 };
 
+export type UpdateWorkflowVersionStepInput = {
+  /** Step to update in JSON format */
+  step: Scalars['JSON']['input'];
+  /** Workflow version ID */
+  workflowVersionId: Scalars['String']['input'];
+};
+
 export type UpdateWorkspaceInput = {
   allowImpersonation?: InputMaybe<Scalars['Boolean']['input']>;
   displayName?: InputMaybe<Scalars['String']['input']>;
@@ -1579,6 +1618,11 @@ export type Verify = {
   __typename?: 'Verify';
   tokens: AuthTokenPair;
   user: User;
+};
+
+export type WorkflowAction = {
+  __typename?: 'WorkflowAction';
+  id: Scalars['UUID']['output'];
 };
 
 export type WorkflowRun = {
