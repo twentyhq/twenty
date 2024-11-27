@@ -6,6 +6,7 @@ import { getAddressFieldPreviewValue } from '@/settings/data-model/fields/previe
 import { getCurrencyFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getCurrencyFieldPreviewValue';
 import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getFieldPreviewValue';
 import { getMultiSelectFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getMultiSelectFieldPreviewValue';
+import { getPhonesFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getPhonesFieldPreviewValue';
 import { getSelectFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getSelectFieldPreviewValue';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -48,6 +49,8 @@ export const useFieldPreviewValue = ({
       return getMultiSelectFieldPreviewValue({ fieldMetadataItem });
     case FieldMetadataType.Address:
       return getAddressFieldPreviewValue({ fieldMetadataItem });
+    case FieldMetadataType.Phones:
+      return getPhonesFieldPreviewValue({ fieldMetadataItem });
     default:
       return getFieldPreviewValue({ fieldMetadataItem });
   }

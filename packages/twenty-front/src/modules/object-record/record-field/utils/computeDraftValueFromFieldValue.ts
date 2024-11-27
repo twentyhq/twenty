@@ -6,6 +6,7 @@ import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFie
 import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldNumberValue } from '@/object-record/record-field/types/guards/isFieldNumberValue';
+import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldRawJsonValue } from '@/object-record/record-field/types/guards/isFieldRawJsonValue';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
@@ -51,6 +52,26 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
       return {
         ...fieldValue,
         addressCountry: fieldDefinition?.defaultValue?.addressCountry,
+      } as unknown as FieldInputDraftValue<FieldValue>;
+    }
+
+    return fieldValue as FieldInputDraftValue<FieldValue>;
+  }
+
+  if (isFieldPhones(fieldDefinition)) {
+    if (
+      isFieldValueEmpty({ fieldValue, fieldDefinition }) &&
+      !!fieldDefinition?.defaultValue?.primaryPhoneCountryCode
+    ) {
+      console.log('fieldValue', {
+        ...fieldValue,
+        primaryPhoneCountryCode:
+          fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
+      });
+      return {
+        ...fieldValue,
+        primaryPhoneCountryCode:
+          fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
       } as unknown as FieldInputDraftValue<FieldValue>;
     }
 

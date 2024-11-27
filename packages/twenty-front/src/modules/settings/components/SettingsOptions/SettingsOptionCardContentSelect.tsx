@@ -5,7 +5,7 @@ import {
   StyledSettingsOptionCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsOptionCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
-import { Select } from '@/ui/input/components/Select';
+import { Select, SelectValue } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui';
 
@@ -14,8 +14,6 @@ const StyledSettingsOptionCardSelect = styled(Select)`
   width: 120px;
 `;
 
-type SelectValue = string | number | boolean | null;
-
 type SettingsOptionCardContentSelectProps<Value extends SelectValue> = {
   Icon?: IconComponent;
   title: React.ReactNode;
@@ -23,7 +21,7 @@ type SettingsOptionCardContentSelectProps<Value extends SelectValue> = {
   divider?: boolean;
   disabled?: boolean;
   value: Value;
-  onChange: (value: SelectValue) => void;
+  onChange: (value: Value) => void;
   options: {
     value: Value;
     label: string;

@@ -6,7 +6,8 @@ import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsO
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { IconMap } from 'twenty-ui';
 import { z } from 'zod';
-import { stripSimpleQuotesFromStringRecursive } from '~/utils/string/stripSimpleQuotesFromString';
+import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
+import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 type SettingsDataModelFieldPhonesFormProps = {
   disabled?: boolean;
@@ -38,44 +39,40 @@ export const SettingsDataModelFieldPhonesForm = ({
       value: `${country.callingCode}`,
     }));
   countries.unshift({ label: 'No country', value: '' });
-  const defaultValueInstance = {
-    primaryPhoneNumber: '',
-    primaryPhoneCountryCode: '',
+  const defaultDefaultValue = {
+    primaryPhoneNumber: "''",
+    primaryPhoneCountryCode: "''",
     additionalPhones: null,
   };
-  const fieldMetadataItemDefaultValue = fieldMetadataItem?.defaultValue
-    ? stripSimpleQuotesFromStringRecursive(fieldMetadataItem?.defaultValue)
-    : fieldMetadataItem?.defaultValue;
+  const fieldMetadataItemDefaultValue = fieldMetadataItem?.defaultValue;
 
   return (
     <Controller
       name="defaultValue"
       defaultValue={{
-        ...defaultValueInstance,
+        ...defaultDefaultValue,
         ...fieldMetadataItemDefaultValue,
       }}
       control={control}
       render={({ field: { onChange, value } }) => {
-        const defaultCountryCode = value?.primaryPhoneCountryCode || '';
         return (
-          <>
-            <SettingsOptionCardContentSelect
-              Icon={IconMap}
-              dropdownId="selectDefaultCountryCode"
-              title="Default Country Code"
-              description="The default country code for new phone numbers."
-              value={defaultCountryCode}
-              onChange={(newPhoneCountryCode) =>
-                onChange({
-                  ...value,
-                  primaryPhoneCountryCode: newPhoneCountryCode,
-                })
-              }
-              disabled={disabled}
-              options={countries}
-              fullWidth={true}
-            />
-          </>
+          <SettingsOptionCardContentSelect<string>
+            Icon={IconMap}
+            dropdownId="selectDefaultCountryCode"
+            title="Default Country Code"
+            description="The default country code for new phone numbers."
+            value={stripSimpleQuotesFromString(value?.primaryPhoneCountryCode)}
+            onChange={(newPhoneCountryCode) =>
+              onChange({
+                ...value,
+                primaryPhoneCountryCode:
+                  applySimpleQuotesToString(newPhoneCountryCode),
+              })
+            }
+            disabled={disabled}
+            options={countries}
+            fullWidth={true}
+          />
         );
       }}
     />
