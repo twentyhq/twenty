@@ -119,6 +119,7 @@ export class AdminPanelService {
         id: userWorkspace.workspace.id,
         name: userWorkspace.workspace.displayName ?? '',
         totalUsers: userWorkspace.workspace.workspaceUsers.length,
+        logo: userWorkspace.workspace.logo,
         users: userWorkspace.workspace.workspaceUsers.map((workspaceUser) => ({
           id: workspaceUser.user.id,
           email: workspaceUser.user.email,

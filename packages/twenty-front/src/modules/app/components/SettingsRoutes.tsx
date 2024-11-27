@@ -248,6 +248,14 @@ const SettingsAdmin = lazy(() =>
   })),
 );
 
+const SettingsAdminFeatureFlags = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminFeatureFlags').then(
+    (module) => ({
+      default: module.SettingsAdminFeatureFlags,
+    }),
+  ),
+);
+
 type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
   isCRMMigrationEnabled?: boolean;
@@ -384,7 +392,13 @@ export const SettingsRoutes = ({
         </>
       )}
       {isAdminPageEnabled && (
-        <Route path={SettingsPath.Admin} element={<SettingsAdmin />} />
+        <>
+          <Route path={SettingsPath.Admin} element={<SettingsAdmin />} />
+          <Route
+            path={SettingsPath.FeatureFlags}
+            element={<SettingsAdminFeatureFlags />}
+          />
+        </>
       )}
     </Routes>
   </Suspense>

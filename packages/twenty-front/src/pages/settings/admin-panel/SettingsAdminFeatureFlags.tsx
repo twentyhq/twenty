@@ -1,6 +1,8 @@
 import { SETTINGS_ADMIN_FEATURE_FLAGS_TABS } from '@/settings/admin-panel/constants/SettingsAdminFeatureFlagsTabs';
 import { useFeatureFlagsManagement } from '@/settings/admin-panel/hooks/useFeatureFlagsManagement';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab/components/TabList';
@@ -155,7 +157,13 @@ export const SettingsAdminFeatureFlags = () => {
   };
 
   return (
-    <SubMenuTopBarContainer title="Admin Panel" links={[{ children: 'Admin' }]}>
+    <SubMenuTopBarContainer
+      title="Feature Flags"
+      links={[
+        { children: 'Admin', href: getSettingsPagePath(SettingsPath.Admin) },
+        { children: 'Feature Flags' },
+      ]}
+    >
       <SettingsPageContainer>
         <Section>
           <H2Title

@@ -3,6 +3,7 @@ import { FeatureFlag } from '@/settings/admin-panel/types/FeatureFlag';
 export type WorkspaceInfo = {
   id: string;
   name: string;
+  logo?: string | null;
   totalUsers: number;
   users: {
     id: string;

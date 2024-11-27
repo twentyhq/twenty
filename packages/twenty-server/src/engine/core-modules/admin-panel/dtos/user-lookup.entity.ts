@@ -25,6 +25,9 @@ class WorkspaceInfo {
   @Field(() => String)
   name: string;
 
+  @Field(() => String, { nullable: true })
+  logo?: string;
+
   @Field(() => Number)
   totalUsers: number;
 

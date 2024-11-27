@@ -12,6 +12,7 @@ export const USER_LOOKUP_ADMIN_PANEL = gql`
       workspaces {
         id
         name
+        logo
         totalUsers
         users {
           id

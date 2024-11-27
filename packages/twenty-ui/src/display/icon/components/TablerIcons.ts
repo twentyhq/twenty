@@ -130,6 +130,7 @@ export {
   IconFilter,
   IconFilterCog,
   IconFilterOff,
+  IconFlag,
   IconFocusCentered,
   IconFolder,
   IconFolderPlus,

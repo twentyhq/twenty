@@ -15,6 +15,7 @@ type TabProps = {
   disabled?: boolean;
   pill?: string | ReactElement;
   to?: string;
+  logo?: string;
 };
 
 const StyledTab = styled('button', {
@@ -61,6 +62,14 @@ const StyledHover = styled.span`
     background: ${({ theme }) => theme.background.quaternary};
   }
 `;
+const StyledLogo = styled.div<{ logo: string }>`
+  background: url(${({ logo }) => logo});
+  background-position: center;
+  background-size: cover;
+  border-radius: ${({ theme }) => theme.border.radius.xs};
+  height: 14px;
+  width: 14px;
+`;
 
 export const Tab = ({
   id,
@@ -72,6 +81,7 @@ export const Tab = ({
   disabled,
   pill,
   to,
+  logo,
 }: TabProps) => {
   const theme = useTheme();
   return (
@@ -85,6 +95,7 @@ export const Tab = ({
       to={to}
     >
       <StyledHover>
+        {logo && <StyledLogo logo={logo} />}
         {Icon && <Icon size={theme.icon.size.md} />}
         {title}
         {pill && typeof pill === 'string' ? <Pill label={pill} /> : pill}
