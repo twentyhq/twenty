@@ -1,9 +1,9 @@
 import { isNull } from '@sniptt/guards';
 
+import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
 import { RecordTableEmptyState } from '@/object-record/record-table/empty-state/components/RecordTableEmptyState';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
-import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 type RecordTableEmptyHandlerProps = {
@@ -20,8 +20,8 @@ export const RecordTableEmptyHandler = ({
     recordTableId,
   );
 
-  const tableRowIds = useRecoilComponentValueV2(
-    tableAllRowIdsComponentState,
+  const allRowIds = useRecoilComponentValueV2(
+    recordIndexAllRowIdsComponentState,
     recordTableId,
   );
 
@@ -32,7 +32,7 @@ export const RecordTableEmptyHandler = ({
 
   const recordTableIsEmpty =
     !isRecordTableInitialLoading &&
-    tableRowIds.length === 0 &&
+    allRowIds.length === 0 &&
     isNull(pendingRecordId);
 
   if (recordTableIsEmpty) {

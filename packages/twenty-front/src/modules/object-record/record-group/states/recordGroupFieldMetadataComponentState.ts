@@ -1,11 +1,11 @@
-import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { createComponentStateV2 } from '@/ui/utilities/state/component-state/utils/createComponentStateV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
-export const recordGroupDefinitionsComponentState = createComponentStateV2<
-  RecordGroupDefinition[]
+export const recordGroupFieldMetadataComponentState = createComponentStateV2<
+  FieldMetadataItem | undefined
 >({
-  key: 'recordGroupDefinitionsComponentState',
-  defaultValue: [],
+  key: 'recordGroupFieldMetadataComponentState',
+  defaultValue: undefined,
   componentInstanceContext: ViewComponentInstanceContext,
 });

@@ -1,10 +1,10 @@
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { atomFamily } from 'recoil';
 
-export const isRecordBoardFetchingRecordsByColumnFamilyState = atomFamily<
-  boolean,
+export const recordGroupDefinitionFamilyState = atomFamily<
+  RecordGroupDefinition | undefined,
   RecordGroupDefinition['id']
 >({
-  key: 'isRecordBoardFetchingRecordsByColumnFamilyState',
-  default: false,
+  key: 'recordGroupDefinitionFamilyState',
+  default: undefined,
 });
