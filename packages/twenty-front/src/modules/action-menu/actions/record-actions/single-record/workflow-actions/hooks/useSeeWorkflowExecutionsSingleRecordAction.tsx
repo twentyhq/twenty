@@ -5,8 +5,14 @@ import {
 } from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
+import { View } from '@/views/types/View';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import qs from 'qs';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { IconHistoryToggle, isDefined } from 'twenty-ui';
@@ -37,10 +43,30 @@ export const useSeeWorkflowExecutionsSingleRecordAction = ({
 
   const navigate = useNavigate();
 
+  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
+
   const registerSeeWorkflowExecutionsSingleRecordAction = () => {
     if (!isDefined(workflowWithCurrentVersion)) {
       return;
     }
+
+    const indexView = views.find(
+      (view) =>
+        view.key === 'INDEX' &&
+        view.objectMetadataId === workflowWithCurrentVersion.id,
+    );
+
+    const filterQueryParams: FilterQueryParams = {
+      filter: {
+        workflow: {
+          [ViewFilterOperand.Is]: [workflowWithCurrentVersion.id],
+        },
+      },
+      view: indexView?.id,
+    };
+    const filterLinkHref = `/objects/workflowRuns?${qs.stringify(
+      filterQueryParams,
+    )}`;
 
     addActionMenuEntry({
       key: 'see-workflow-executions',
@@ -50,8 +76,7 @@ export const useSeeWorkflowExecutionsSingleRecordAction = ({
       scope: ActionMenuEntryScope.RecordSelection,
       Icon: IconHistoryToggle,
       onClick: () => {
-        //TODO: go to past executions page http://localhost:3001/objects/workflowRuns?filter%5Bworkflow%5D%5Bis%5D%5B0%5D=3323cf02-5b95-459d-b432-20714a3d9c77&view=f3da4217-24c6-414a-8214-81fbd6012c01
-        navigate(`/object/workflow/${workflowWithCurrentVersion?.id}`);
+        navigate(filterLinkHref);
       },
     });
   };
