@@ -1,3 +1,4 @@
+import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
@@ -43,6 +44,12 @@ export const ViewPickerOptionDropdown = ({
     'IS_FAVORITE_FOLDER_ENABLED',
   );
 
+  const { sortedFavorites: favorites } = useFavorites();
+
+  const isFavorite = favorites.some(
+    (favorite) => favorite.recordId === view.id && favorite.workspaceMemberId,
+  );
+
   const handleDelete = () => {
     setViewPickerReferenceViewId(view.id);
     deleteViewFromCurrentState();
@@ -68,6 +75,7 @@ export const ViewPickerOptionDropdown = ({
           setIsHovered(false);
           closeDropdown();
         }}
+        dropdownPlacement="bottom-start"
         dropdownId={`view-picker-options-${view.id}`}
         dropdownContent={
           <DropdownMenuItemsContainer>
@@ -75,7 +83,7 @@ export const ViewPickerOptionDropdown = ({
               isFavoriteFolderEnabled && (
                 <MenuItem
                   LeftIcon={IconHeart}
-                  text={'Favorite picker'}
+                  text={isFavorite ? 'Manage favorite' : 'Add to Favorite'}
                   onClick={handleAddToFavorites}
                 />
               )
@@ -84,7 +92,7 @@ export const ViewPickerOptionDropdown = ({
                 {isFavoriteFolderEnabled && (
                   <MenuItem
                     LeftIcon={IconHeart}
-                    text={'Favorite picker'}
+                    text={isFavorite ? 'Manage favorite' : 'Add to Favorite'}
                     onClick={handleAddToFavorites}
                   />
                 )}
