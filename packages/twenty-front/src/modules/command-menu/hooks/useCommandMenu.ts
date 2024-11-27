@@ -154,29 +154,6 @@ export const useCommandMenu = () => {
     [closeCommandMenu, openCommandMenu],
   );
 
-  // const setObjectsInCommandMenu = (menuItems: ObjectMetadataItem[]) => {
-  //   const formattedItems = [
-  //     ...[
-  //       ...menuItems.map(
-  //         (item) =>
-  //           ({
-  //             id: item.id,
-  //             to: `/objects/${item.namePlural}`,
-  //             label: `Go to ${item.labelPlural}`,
-  //             type: CommandType.Navigate,
-  //             firstHotKey: item.shortcut ? 'G' : undefined,
-  //             secondHotKey: item.shortcut,
-  //             Icon: ALL_ICONS[
-  //               (item?.icon as keyof typeof ALL_ICONS) ?? 'IconArrowUpRight'
-  //             ],
-  //           }) as Command,
-  //       ),
-  //     ].sort(sortByProperty('label', 'asc')),
-  //     COMMAND_MENU_NAVIGATE_COMMANDS.settings,
-  //   ];
-  //   setCommands(formattedItems);
-  // };
-
   const onItemClick = useCallback(
     (onClick?: () => void, to?: string) => {
       toggleCommandMenu();
