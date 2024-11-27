@@ -74,6 +74,30 @@ export const getAvailableAggregationsFromObjectFields = (
     }
 
     if (field.type === FieldMetadataType.CURRENCY) {
+      acc[`min${capitalize(field.name)}AmountMicros`] = {
+        type: GraphQLFloat,
+        description: `Minimal amount contained in the field ${field.name}`,
+        fromField: field.name,
+        fromSubField: 'amountMicros',
+        aggregateOperation: AGGREGATE_OPERATIONS.min,
+      };
+
+      acc[`max${capitalize(field.name)}AmountMicros`] = {
+        type: GraphQLFloat,
+        description: `Maximal amount contained in the field ${field.name}`,
+        fromField: field.name,
+        fromSubField: 'amountMicros',
+        aggregateOperation: AGGREGATE_OPERATIONS.max,
+      };
+
+      acc[`sum${capitalize(field.name)}AmountMicros`] = {
+        type: GraphQLFloat,
+        description: `Sum of amounts contained in the field ${field.name}`,
+        fromField: field.name,
+        fromSubField: 'amountMicros',
+        aggregateOperation: AGGREGATE_OPERATIONS.sum,
+      };
+
       acc[`avg${capitalize(field.name)}AmountMicros`] = {
         type: GraphQLFloat,
         description: `Average amount contained in the field ${field.name}`,
