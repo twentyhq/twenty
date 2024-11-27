@@ -31,10 +31,6 @@ export const RecordGroupsVisibilityDropdownSection = ({
   showSubheader = true,
   showDragGrip,
 }: RecordGroupsVisibilityDropdownSectionProps) => {
-  // const { noValueRecordGroupIds, otherRecordGroupIds } = useRecoilValue(
-  //   groupedRecordGroupIdsComponentSelector(recordGroupIds),
-  // );
-
   const handleOnDrag = (result: DropResult, provided: ResponderProvided) => {
     onDragEnd?.(result, provided);
   };
