@@ -5,7 +5,7 @@ import { E164Number, parsePhoneNumber } from 'libphonenumber-js';
 import { useMemo } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { isDefined, TEXT_INPUT_STYLE } from 'twenty-ui';
+import { TEXT_INPUT_STYLE, isDefined } from 'twenty-ui';
 
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 

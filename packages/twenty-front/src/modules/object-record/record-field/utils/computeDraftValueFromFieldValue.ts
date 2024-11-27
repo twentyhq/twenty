@@ -14,6 +14,7 @@ import { computeEmptyDraftValue } from '@/object-record/record-field/utils/compu
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 type computeDraftValueFromFieldValueParams<FieldValue> = {
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>;
@@ -51,7 +52,9 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
     ) {
       return {
         ...fieldValue,
-        addressCountry: fieldDefinition?.defaultValue?.addressCountry,
+        addressCountry: stripSimpleQuotesFromString(
+          fieldDefinition?.defaultValue?.addressCountry,
+        ),
       } as unknown as FieldInputDraftValue<FieldValue>;
     }
 
