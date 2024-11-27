@@ -5,11 +5,8 @@ import {
 } from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
-import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
-import { View } from '@/views/types/View';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import qs from 'qs';
@@ -17,11 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { IconHistoryToggle, isDefined } from 'twenty-ui';
 
-export const useSeeWorkflowExecutionsSingleRecordAction = ({
-  position,
-}: {
-  position: number;
-}) => {
+export const useSeeWorkflowExecutionsSingleRecordAction = () => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
@@ -43,18 +36,14 @@ export const useSeeWorkflowExecutionsSingleRecordAction = ({
 
   const navigate = useNavigate();
 
-  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
-
-  const registerSeeWorkflowExecutionsSingleRecordAction = () => {
+  const registerSeeWorkflowExecutionsSingleRecordAction = ({
+    position,
+  }: {
+    position: number;
+  }) => {
     if (!isDefined(workflowWithCurrentVersion)) {
       return;
     }
-
-    const indexView = views.find(
-      (view) =>
-        view.key === 'INDEX' &&
-        view.objectMetadataId === workflowWithCurrentVersion.id,
-    );
 
     const filterQueryParams: FilterQueryParams = {
       filter: {
@@ -62,7 +51,6 @@ export const useSeeWorkflowExecutionsSingleRecordAction = ({
           [ViewFilterOperand.Is]: [workflowWithCurrentVersion.id],
         },
       },
-      view: indexView?.id,
     };
     const filterLinkHref = `/objects/workflowRuns?${qs.stringify(
       filterQueryParams,

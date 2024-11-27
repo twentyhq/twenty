@@ -6,13 +6,15 @@ import {
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
-import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
+import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
+import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import qs from 'qs';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { IconPlayerPause, IconPower, isDefined } from 'twenty-ui';
+import { IconHistoryToggle, isDefined } from 'twenty-ui';
 
-export const useActivateWorkflowSingleRecordAction = () => {
+export const useSeeWorkflowPreviousVersionsSingleRecordAction = () => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
@@ -28,55 +30,51 @@ export const useActivateWorkflowSingleRecordAction = () => {
     recordStoreFamilyState(selectedRecordId ?? ''),
   );
 
-  const { activateWorkflowVersion } = useActivateWorkflowVersion();
-  const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
-
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
     selectedRecord?.id,
   );
 
-  const isWorkflowActive =
-    isDefined(workflowWithCurrentVersion) &&
-    workflowWithCurrentVersion.currentVersion.status === 'ACTIVE';
+  const navigate = useNavigate();
 
-  const registerActivateWorkflowSingleRecordAction = ({
+  const registerSeeWorkflowPreviousVersionsSingleRecordAction = ({
     position,
   }: {
     position: number;
   }) => {
-    if (
-      !isDefined(workflowWithCurrentVersion) ||
-      !isDefined(workflowWithCurrentVersion.currentVersion.trigger)
-    ) {
+    if (!isDefined(workflowWithCurrentVersion)) {
       return;
     }
 
+    const filterQueryParams: FilterQueryParams = {
+      filter: {
+        workflow: {
+          [ViewFilterOperand.Is]: [workflowWithCurrentVersion.id],
+        },
+      },
+    };
+    const filterLinkHref = `/objects/workflowVersions?${qs.stringify(
+      filterQueryParams,
+    )}`;
+
     addActionMenuEntry({
-      key: 'activate-workflow',
-      label: isWorkflowActive ? 'Deactivate' : 'Activate',
+      key: 'see-workflow-previous-versions',
+      label: 'See previous versions',
       position,
-      Icon: isWorkflowActive ? IconPlayerPause : IconPower,
       type: ActionMenuEntryType.Standard,
       scope: ActionMenuEntryScope.RecordSelection,
+      Icon: IconHistoryToggle,
       onClick: () => {
-        isWorkflowActive
-          ? deactivateWorkflowVersion(
-              workflowWithCurrentVersion.currentVersion.id,
-            )
-          : activateWorkflowVersion({
-              workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
-              workflowId: workflowWithCurrentVersion.id,
-            });
+        navigate(filterLinkHref);
       },
     });
   };
 
-  const unregisterActivateWorkflowSingleRecordAction = () => {
-    removeActionMenuEntry('activate-workflow');
+  const unregisterSeeWorkflowPreviousVersionsSingleRecordAction = () => {
+    removeActionMenuEntry('see-workflow-previous-versions');
   };
 
   return {
-    registerActivateWorkflowSingleRecordAction,
-    unregisterActivateWorkflowSingleRecordAction,
+    registerSeeWorkflowPreviousVersionsSingleRecordAction,
+    unregisterSeeWorkflowPreviousVersionsSingleRecordAction,
   };
 };

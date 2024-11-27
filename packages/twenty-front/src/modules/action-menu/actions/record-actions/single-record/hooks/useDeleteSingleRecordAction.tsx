@@ -17,10 +17,8 @@ import { useCallback, useContext, useState } from 'react';
 import { IconTrash, isDefined } from 'twenty-ui';
 
 export const useDeleteSingleRecordAction = ({
-  position,
   objectMetadataItem,
 }: {
-  position: number;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
@@ -79,7 +77,11 @@ export const useDeleteSingleRecordAction = ({
   const { isInRightDrawer, onActionExecutedCallback } =
     useContext(ActionMenuContext);
 
-  const registerDeleteSingleRecordAction = () => {
+  const registerDeleteSingleRecordAction = ({
+    position,
+  }: {
+    position: number;
+  }) => {
     if (isRemoteObject || !isDefined(recordIdToDelete)) {
       return;
     }

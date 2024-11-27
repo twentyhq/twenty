@@ -14,10 +14,8 @@ import { useRecoilValue } from 'recoil';
 import { IconHeart, IconHeartOff, isDefined } from 'twenty-ui';
 
 export const useManageFavoritesSingleRecordAction = ({
-  position,
   objectMetadataItem,
 }: {
-  position: number;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
@@ -47,7 +45,11 @@ export const useManageFavoritesSingleRecordAction = ({
 
   const isFavorite = !!selectedRecordId && !!foundFavorite;
 
-  const registerManageFavoritesSingleRecordAction = () => {
+  const registerManageFavoritesSingleRecordAction = ({
+    position,
+  }: {
+    position: number;
+  }) => {
     if (!isDefined(objectMetadataItem) || objectMetadataItem.isRemote) {
       return;
     }
