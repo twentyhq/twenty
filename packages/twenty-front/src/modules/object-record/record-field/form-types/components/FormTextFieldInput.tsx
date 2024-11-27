@@ -15,7 +15,7 @@ type FormTextFieldInputProps = {
   label?: string;
   defaultValue: string | undefined;
   placeholder: string;
-  onPersist: (value: null | string) => void;
+  onPersist: (value: string) => void;
   multiline?: boolean;
   readonly?: boolean;
   VariablePicker?: VariablePickerComponent;
