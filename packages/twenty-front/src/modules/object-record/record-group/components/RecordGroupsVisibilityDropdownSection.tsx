@@ -48,6 +48,7 @@ export const RecordGroupsVisibilityDropdownSection = ({
             {!isDraggable ? (
               recordGroupIds.map((recordGroupId) => (
                 <RecordGroupMenuItemDraggable
+                  key={recordGroupId}
                   recordGroupId={recordGroupId}
                   onVisibilityChange={onVisibilityChange}
                   showDragGrip={showDragGrip}
