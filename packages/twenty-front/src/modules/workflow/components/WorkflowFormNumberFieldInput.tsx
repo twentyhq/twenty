@@ -12,8 +12,8 @@ import {
 } from '@/workflow/components/WorkflowFormFieldInputBase';
 import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
 import { extractVariableLabel } from '@/workflow/search-variables/utils/extractVariableLabel';
+import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
-import { isString } from '@sniptt/guards';
 import { useId, useState } from 'react';
 import {
   canBeCastAsNumberOrNull,
@@ -44,10 +44,9 @@ export const WorkflowFormNumberFieldInput = ({
 
   const [draftValue, setDraftValue] = useState(defaultValue ?? '');
 
-  const defaultEditingMode =
-    isString(defaultValue) && defaultValue.startsWith('{{')
-      ? 'variable'
-      : 'input';
+  const defaultEditingMode = isStandaloneVariableString(defaultValue)
+    ? 'variable'
+    : 'input';
   const [editingMode, setEditingMode] =
     useState<EditingMode>(defaultEditingMode);
 

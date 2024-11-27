@@ -8,6 +8,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
 import { StyledVariableContainer } from '@/workflow/components/WorkflowFormFieldInputBase';
 import { extractVariableLabel } from '@/workflow/search-variables/utils/extractVariableLabel';
+import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 
@@ -34,12 +35,9 @@ export const WorkflowFormBooleanFieldInput = ({
   readonly,
   VariableElement,
 }: WorkflowFormBooleanFieldInputProps) => {
-  const variablesDropdownId = useId();
-
-  const defaultEditingMode =
-    isString(defaultValue) && defaultValue.startsWith('{{')
-      ? 'variable'
-      : 'input';
+  const defaultEditingMode = isStandaloneVariableString(defaultValue)
+    ? 'variable'
+    : 'input';
   const [editingMode, setEditingMode] =
     useState<EditingMode>(defaultEditingMode);
 
