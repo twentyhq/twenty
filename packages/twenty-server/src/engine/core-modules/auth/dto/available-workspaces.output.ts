@@ -32,7 +32,7 @@ export class AvailableWorkspaceOutput {
   id: string;
 
   @Field(() => String, { nullable: true })
-  displayName?: string | null;
+  displayName?: string;
 
   @Field(() => String)
   subdomain: string;

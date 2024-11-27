@@ -53,13 +53,16 @@ export const SettingsSecurityOptionsList = () => {
     }
 
     const allAuthProvidersEnabled = [
-      ...Object.entries(currentWorkspace).filter(
-        ([k, v]) => k.startsWith('is') && k.endsWith('AuthEnabled') && v,
-      ),
-      ...((SSOIdentitiesProviders?.length ?? 0) > 0 ? [{ sso: true }] : []),
+      currentWorkspace.isGoogleAuthEnabled,
+      currentWorkspace.isMicrosoftAuthEnabled,
+      currentWorkspace.isPasswordAuthEnabled,
+      (SSOIdentitiesProviders?.length ?? 0) > 0,
     ];
 
-    if (currentWorkspace[key] === true && allAuthProvidersEnabled.length <= 1) {
+    if (
+      currentWorkspace[key] === true &&
+      allAuthProvidersEnabled.filter((isAuthEnable) => isAuthEnable).length <= 1
+    ) {
       return enqueueSnackBar(
         'At least one authentication method must be enabled',
         {

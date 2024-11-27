@@ -22,7 +22,6 @@ import {
   useActivateWorkspaceMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 
@@ -50,7 +49,6 @@ type Form = z.infer<typeof validationSchema>;
 export const CreateWorkspace = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
-  const tokenPair = useRecoilValue(tokenPairState);
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   const [activateWorkspace] = useActivateWorkspaceMutation();
@@ -104,6 +102,7 @@ export const CreateWorkspace = () => {
       activateWorkspace,
       setIsCurrentUserLoaded,
       apolloMetadataClient,
+      isMultiWorkspaceEnabled,
       enqueueSnackBar,
     ],
   );

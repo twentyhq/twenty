@@ -205,24 +205,36 @@ export class AuthService {
       );
     }
 
-    let user = await this.findOneWithWorkspacesByEmail(email);
+    const userWithIdAndDefaultWorkspaceId = await this.userRepository.findOne({
+      select: ['defaultWorkspaceId', 'id'],
+      where: { email },
+    });
 
-    if (user && workspaceId && user.defaultWorkspaceId !== workspaceId) {
-      await this.userService.saveDefaultWorkspace(user.id, workspaceId);
-      user = await this.findOneWithWorkspacesByEmail(email);
+    userValidator.assertIsExist(
+      userWithIdAndDefaultWorkspaceId,
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
+
+    if (
+      workspaceId &&
+      userWithIdAndDefaultWorkspaceId.defaultWorkspaceId !== workspaceId
+    ) {
+      await this.userService.saveDefaultWorkspace(
+        userWithIdAndDefaultWorkspaceId.id,
+        workspaceId,
+      );
     }
+
+    const user = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
+    });
 
     userValidator.assertIsExist(
       user,
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
-    );
-
-    userValidator.assertHasDefaultWorkspace(
-      user,
-      new AuthException(
-        'User has no default workspace',
-        AuthExceptionCode.INVALID_DATA,
-      ),
     );
 
     // passwordHash is hidden for security reasons

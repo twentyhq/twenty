@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { StyledText } from 'twenty-ui';
 import { useTheme } from '@emotion/react';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { SignInUpMode } from '@/auth/states/signInUpModeState';
+import { SignInUpMode } from '@/auth/types/signInUpMode.type';
 
 const StyledFullWidthMotionDiv = styled(motion.div)`
   width: 100%;
@@ -20,7 +20,7 @@ export const SignInUpPasswordField = ({
   signInUpMode,
 }: {
   showErrors: boolean;
-  signInUpMode?: SignInUpMode;
+  signInUpMode: SignInUpMode;
 }) => {
   const theme = useTheme();
   const form = useFormContext<Form>();

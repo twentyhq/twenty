@@ -45,11 +45,11 @@ import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
 
-import { urlManagerState } from '@/url-manager/state/url-manager.state';
+import { urlManagerState } from '@/url-manager/states/url-manager.state';
 import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
 
 export const useAuth = () => {
-  const [, setTokenPair] = useRecoilState(tokenPairState);
+  const setTokenPair = useSetRecoilState(tokenPairState);
   const setCurrentUser = useSetRecoilState(currentUserState);
   const urlManager = useRecoilValue(urlManagerState);
   const setLastAuthenticateWorkspaceState = useSetRecoilState(
@@ -200,10 +200,12 @@ export const useAuth = () => {
       setTokenPair,
       setCurrentUser,
       setCurrentWorkspace,
+      isTwentyWorkspaceSubdomain,
       setCurrentWorkspaceMembers,
       setCurrentWorkspaceMember,
-      setLastAuthenticateWorkspaceState,
       setDateTimeFormat,
+      setLastAuthenticateWorkspaceState,
+      urlManager.frontDomain,
       setWorkspaces,
     ],
   );

@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { urlManagerState } from '@/url-manager/state/url-manager.state';
+import { urlManagerState } from '@/url-manager/states/url-manager.state';
 
 export const ClientConfigProviderEffect = () => {
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
@@ -109,6 +109,7 @@ export const ClientConfigProviderEffect = () => {
     setApiConfig,
     setIsAnalyticsEnabled,
     error,
+    setUrlManager,
   ]);
 
   return <></>;

@@ -16,7 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
-import { urlManagerState } from '@/url-manager/state/url-manager.state';
+import { urlManagerState } from '@/url-manager/states/url-manager.state';
 import { isDefined } from '~/utils/isDefined';
 
 const validationSchema = z

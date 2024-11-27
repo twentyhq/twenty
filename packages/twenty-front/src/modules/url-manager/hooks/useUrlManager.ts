@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from 'react';
 
 import { isDefined } from '~/utils/isDefined';
-import { urlManagerState } from '@/url-manager/state/url-manager.state';
+import { urlManagerState } from '@/url-manager/states/url-manager.state';
 import { useRecoilValue } from 'recoil';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 

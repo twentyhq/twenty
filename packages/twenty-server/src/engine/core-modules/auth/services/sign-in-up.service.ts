@@ -127,37 +127,43 @@ export class SignInUpService {
           )
         : undefined;
 
-    const invitationValidation =
-      workspacePersonalInviteToken || workspaceInviteHash || maybeInvitation
-        ? await this.workspaceInvitationService.validateInvitation({
-            workspacePersonalInviteToken:
-              workspacePersonalInviteToken ?? maybeInvitation?.value,
-            workspaceInviteHash,
-            email,
-          })
-        : null;
-
     if (
-      invitationValidation?.isValid === true &&
-      invitationValidation.workspace
+      workspacePersonalInviteToken ||
+      workspaceInviteHash ||
+      maybeInvitation
     ) {
-      const updatedUser = await this.signInUpOnExistingWorkspace({
-        email,
-        passwordHash,
-        workspace: invitationValidation.workspace,
-        firstName,
-        lastName,
-        picture,
-        existingUser,
-        isAuthEnabled,
-      });
+      const invitationValidation =
+        workspacePersonalInviteToken || workspaceInviteHash || maybeInvitation
+          ? await this.workspaceInvitationService.validateInvitation({
+              workspacePersonalInviteToken:
+                workspacePersonalInviteToken ?? maybeInvitation?.value,
+              workspaceInviteHash,
+              email,
+            })
+          : null;
 
-      await this.workspaceInvitationService.invalidateWorkspaceInvitation(
-        invitationValidation.workspace.id,
-        email,
-      );
+      if (
+        invitationValidation?.isValid === true &&
+        invitationValidation.workspace
+      ) {
+        const updatedUser = await this.signInUpOnExistingWorkspace({
+          email,
+          passwordHash,
+          workspace: invitationValidation.workspace,
+          firstName,
+          lastName,
+          picture,
+          existingUser,
+          isAuthEnabled,
+        });
 
-      return updatedUser;
+        await this.workspaceInvitationService.invalidateWorkspaceInvitation(
+          invitationValidation.workspace.id,
+          email,
+        );
+
+        return updatedUser;
+      }
     }
 
     if (!existingUser) {

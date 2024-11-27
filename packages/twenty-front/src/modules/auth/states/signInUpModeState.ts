@@ -1,9 +1,5 @@
 import { createState } from 'twenty-ui';
-
-export enum SignInUpMode {
-  SignIn = 'sign-in',
-  SignUp = 'sign-up',
-}
+import { SignInUpMode } from '@/auth/types/signInUpMode.type';
 
 export const signInUpModeState = createState<SignInUpMode>({
   key: 'signInUpModeState',

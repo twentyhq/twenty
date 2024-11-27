@@ -29,6 +29,7 @@ import {
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -46,55 +47,11 @@ export class WorkspaceInvitationService {
     private readonly urlManagerService: UrlManagerService,
   ) {}
 
-  // UTILS METHODS
-  castAppTokenToWorkspaceInvitation(appToken: AppToken) {
-    if (appToken.type !== AppTokenType.InvitationToken) {
-      throw new WorkspaceInvitationException(
-        `Token type must be "${AppTokenType.InvitationToken}"`,
-        WorkspaceInvitationExceptionCode.INVALID_APP_TOKEN_TYPE,
-      );
-    }
-
-    if (!appToken.context?.email) {
-      throw new WorkspaceInvitationException(
-        `Invitation corrupted: Missing email in context`,
-        WorkspaceInvitationExceptionCode.INVITATION_CORRUPTED,
-      );
-    }
-
-    return {
-      id: appToken.id,
-      email: appToken.context.email,
-      expiresAt: appToken.expiresAt,
-    };
-  }
-
-  private getInvitationByType({
-    workspacePersonalInviteToken,
-    workspaceInviteHash,
-  }) {
-    if (workspacePersonalInviteToken) {
-      return {
-        type: 'PERSONAL_INVITATION' as const,
-        workspacePersonalInviteToken,
-        workspaceInviteHash,
-      };
-    }
-
-    if (workspaceInviteHash) {
-      return { type: 'PUBLIC_INVITATION' as const, workspaceInviteHash };
-    }
-
-    return { type: 'INVALID_INVITATION' };
-  }
-
   // VALIDATIONS METHODS
-  private async validatePublicInvitation(
-    invitationByType: ReturnType<typeof this.getInvitationByType>,
-  ) {
+  private async validatePublicInvitation(workspaceInviteHash: string) {
     const workspace = await this.workspaceRepository.findOne({
       where: {
-        inviteHash: invitationByType.workspaceInviteHash,
+        inviteHash: workspaceInviteHash,
       },
     });
 
@@ -115,14 +72,17 @@ export class WorkspaceInvitationService {
     return { isValid: true, workspace };
   }
 
-  private async validatePersonalInvitation(
-    invitationByType: ReturnType<typeof this.getInvitationByType>,
-    email: string,
-  ) {
+  private async validatePersonalInvitation({
+    workspacePersonalInviteToken,
+    email,
+  }: {
+    workspacePersonalInviteToken?: string;
+    email: string;
+  }) {
     try {
       const appToken = await this.appTokenRepository.findOne({
         where: {
-          value: invitationByType.workspacePersonalInviteToken,
+          value: workspacePersonalInviteToken,
           type: AppTokenType.InvitationToken,
         },
         relations: ['workspace'],
@@ -158,17 +118,15 @@ export class WorkspaceInvitationService {
     workspaceInviteHash?: string;
     email: string;
   }) {
-    const invitationByType = this.getInvitationByType({
-      workspacePersonalInviteToken,
-      workspaceInviteHash,
-    });
-
-    if (invitationByType.type === 'PUBLIC_INVITATION') {
-      return await this.validatePublicInvitation(invitationByType);
+    if (workspacePersonalInviteToken) {
+      return await this.validatePersonalInvitation({
+        workspacePersonalInviteToken,
+        email,
+      });
     }
 
-    if (invitationByType.type === 'PERSONAL_INVITATION') {
-      return await this.validatePersonalInvitation(invitationByType, email);
+    if (workspaceInviteHash) {
+      return await this.validatePublicInvitation(workspaceInviteHash);
     }
 
     throw new AuthException(
@@ -237,10 +195,9 @@ export class WorkspaceInvitationService {
       },
     });
 
-    return appTokens.map(this.castAppTokenToWorkspaceInvitation);
+    return appTokens.map(castAppTokenToWorkspaceInvitationUtil);
   }
 
-  // MUTATIONS METHODS
   async createWorkspaceInvitation(email: string, workspace: Workspace) {
     const maybeWorkspaceInvitation = await this.getOneWorkspaceInvitation(
       workspace.id,
@@ -381,7 +338,6 @@ export class WorkspaceInvitationService {
               }
             : {},
         });
-
         const emailData = {
           link: link.toString(),
           workspace: { name: workspace.displayName, logo: workspace.logo },
@@ -431,9 +387,7 @@ export class WorkspaceInvitationService {
         } else {
           acc.result.push(
             invitation.value.isPersonalInvitation
-              ? this.castAppTokenToWorkspaceInvitation(
-                  invitation.value.appToken,
-                )
+              ? castAppTokenToWorkspaceInvitationUtil(invitation.value.appToken)
               : { email: invitation.value.email },
           );
         }

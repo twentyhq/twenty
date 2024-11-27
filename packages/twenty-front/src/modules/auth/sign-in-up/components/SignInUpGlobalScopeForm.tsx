@@ -27,12 +27,10 @@ import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailFi
 import { SignInUpPasswordField } from '@/auth/sign-in-up/components/SignInUpPasswordField';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import {
-  SignInUpMode,
-  signInUpModeState,
-} from '@/auth/states/signInUpModeState';
+import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
+import { SignInUpMode } from '@/auth/types/signInUpMode.type';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -66,6 +64,7 @@ export const SignInUpGlobalScopeForm = () => {
   const [showErrors, setShowErrors] = useState(false);
 
   const { form } = useSignInUpForm();
+
   const { submitCredentials } = useSignInUp(form);
 
   const handleSubmit = async () => {
