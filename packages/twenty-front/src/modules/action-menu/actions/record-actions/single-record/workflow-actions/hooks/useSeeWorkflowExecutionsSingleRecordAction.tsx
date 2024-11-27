@@ -4,6 +4,7 @@ import {
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
@@ -52,7 +53,7 @@ export const useSeeWorkflowExecutionsSingleRecordAction = () => {
         },
       },
     };
-    const filterLinkHref = `/objects/workflowRuns?${qs.stringify(
+    const filterLinkHref = `/objects/${CoreObjectNamePlural.WorkflowRun}?${qs.stringify(
       filterQueryParams,
     )}`;
 

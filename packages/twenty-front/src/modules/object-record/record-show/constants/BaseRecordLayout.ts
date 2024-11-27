@@ -44,7 +44,7 @@ export const BASE_RECORD_LAYOUT: Record<string, RecordLayoutTab> = {
     position: 300,
     cards: [{ type: CardType.TaskCard }],
     hide: {
-      ifMobile: false,
+      ifMobile: true,
       ifDesktop: false,
       ifInRightDrawer: false,
       ifFeaturesDisabled: [],

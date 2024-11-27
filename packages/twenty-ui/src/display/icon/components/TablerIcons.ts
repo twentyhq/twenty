@@ -148,6 +148,7 @@ export {
   IconHeartOff,
   IconHelpCircle,
   IconHierarchy2,
+  IconHistory,
   IconHistoryToggle,
   IconHome,
   IconInbox,
