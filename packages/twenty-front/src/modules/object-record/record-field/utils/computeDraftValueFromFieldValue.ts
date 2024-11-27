@@ -63,11 +63,6 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
       isFieldValueEmpty({ fieldValue, fieldDefinition }) &&
       !!fieldDefinition?.defaultValue?.primaryPhoneCountryCode
     ) {
-      console.log('fieldValue', {
-        ...fieldValue,
-        primaryPhoneCountryCode:
-          fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
-      });
       return {
         ...fieldValue,
         primaryPhoneCountryCode:
