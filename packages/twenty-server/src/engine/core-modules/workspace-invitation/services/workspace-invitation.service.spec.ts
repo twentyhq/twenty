@@ -45,7 +45,7 @@ describe('WorkspaceInvitationService', () => {
         {
           provide: UrlManagerService,
           useValue: {
-            buildWorkspaceUrl: jest
+            buildWorkspaceURL: jest
               .fn()
               .mockResolvedValue(new URL('http://localhost:3001')),
           },
