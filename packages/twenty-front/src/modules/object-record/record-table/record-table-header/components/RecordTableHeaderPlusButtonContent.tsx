@@ -43,33 +43,29 @@ export const RecordTableHeaderPlusButtonContent = () => {
   return (
     <>
       <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-        {hiddenTableColumns.length > 0 && (
-          <>
-            <DropdownMenuItemsContainer>
-              {hiddenTableColumns.map((column) => (
-                <MenuItem
-                  key={column.fieldMetadataId}
-                  onClick={() => handleAddColumn(column)}
-                  LeftIcon={getIcon(column.iconName)}
-                  text={column.label}
-                />
-              ))}
-            </DropdownMenuItemsContainer>
-            <DropdownMenuSeparator />
-          </>
-        )}
         <DropdownMenuItemsContainer>
-          <UndecoratedLink
-            fullWidth
-            to={`/settings/objects/${getObjectSlug(objectMetadataItem)}`}
-            onClick={() => {
-              setNavigationMemorizedUrl(location.pathname + location.search);
-            }}
-          >
-            <MenuItem LeftIcon={IconSettings} text="Customize fields" />
-          </UndecoratedLink>
+          {hiddenTableColumns.map((column) => (
+            <MenuItem
+              key={column.fieldMetadataId}
+              onClick={() => handleAddColumn(column)}
+              LeftIcon={getIcon(column.iconName)}
+              text={column.label}
+            />
+          ))}
         </DropdownMenuItemsContainer>
       </ScrollWrapper>
+      <DropdownMenuSeparator />
+      <DropdownMenuItemsContainer>
+        <UndecoratedLink
+          fullWidth
+          to={`/settings/objects/${getObjectSlug(objectMetadataItem)}`}
+          onClick={() => {
+            setNavigationMemorizedUrl(location.pathname + location.search);
+          }}
+        >
+          <MenuItem LeftIcon={IconSettings} text="Customize fields" />
+        </UndecoratedLink>
+      </DropdownMenuItemsContainer>
     </>
   );
 };
