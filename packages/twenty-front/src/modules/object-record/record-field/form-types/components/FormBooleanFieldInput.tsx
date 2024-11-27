@@ -3,12 +3,11 @@ import {
   StyledInputContainer,
   StyledRowContainer,
 } from '@/object-record/record-field/form-types/components/FormFieldInputBase';
+import { SelectedVariableChip } from '@/object-record/record-field/form-types/components/SelectedVariableChip';
+import { EditingMode } from '@/object-record/record-field/form-types/types/EditingMode';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { StyledVariableContainer } from '@/workflow/components/WorkflowFormFieldInputBase';
-import { extractVariableLabel } from '@/workflow/search-variables/utils/extractVariableLabel';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
@@ -17,8 +16,6 @@ import { isDefined } from 'twenty-ui';
 const StyledBooleanInputContainer = styled.div`
   padding-inline: ${({ theme }) => theme.spacing(2)};
 `;
-
-type EditingMode = 'input' | 'variable';
 
 type FormBooleanFieldInputProps = {
   label?: string;
@@ -80,12 +77,10 @@ export const FormBooleanFieldInput = ({
               />
             </StyledBooleanInputContainer>
           ) : (
-            <StyledVariableContainer>
-              <SortOrFilterChip
-                labelValue={extractVariableLabel(draftValue as string)}
-                onRemove={handleUnlinkVariable}
-              />
-            </StyledVariableContainer>
+            <SelectedVariableChip
+              rawVariable={draftValue as string}
+              onRemove={handleUnlinkVariable}
+            />
           )}
         </StyledInputContainer>
 

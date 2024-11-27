@@ -3,12 +3,11 @@ import {
   StyledInputContainer,
   StyledRowContainer,
 } from '@/object-record/record-field/form-types/components/FormFieldInputBase';
+import { SelectedVariableChip } from '@/object-record/record-field/form-types/components/SelectedVariableChip';
+import { EditingMode } from '@/object-record/record-field/form-types/types/EditingMode';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { StyledVariableContainer } from '@/workflow/components/WorkflowFormFieldInputBase';
-import { extractVariableLabel } from '@/workflow/search-variables/utils/extractVariableLabel';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
@@ -21,8 +20,6 @@ import {
 const StyledInput = styled(TextInput)`
   padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
 `;
-
-type EditingMode = 'input' | 'variable';
 
 type FormNumberFieldInputProps = {
   label?: string;
@@ -95,12 +92,10 @@ export const FormNumberFieldInput = ({
               onChange={handleChange}
             />
           ) : (
-            <StyledVariableContainer>
-              <SortOrFilterChip
-                labelValue={extractVariableLabel(draftValue as string)}
-                onRemove={handleUnlinkVariable}
-              />
-            </StyledVariableContainer>
+            <SelectedVariableChip
+              rawVariable={draftValue as string}
+              onRemove={handleUnlinkVariable}
+            />
           )}
         </StyledInputContainer>
 
