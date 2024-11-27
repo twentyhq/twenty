@@ -9,11 +9,10 @@ import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkf
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 
 import { useTheme } from '@emotion/react';
-import { useEffect } from 'react';
 import { IconSettingsAutomation } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const WorkflowRunActionEffect = () => {
+export const useWorkflowRunActions = () => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
   const { records: activeWorkflowVersions } = useAllActiveWorkflowVersions({
@@ -26,7 +25,7 @@ export const WorkflowRunActionEffect = () => {
 
   const theme = useTheme();
 
-  useEffect(() => {
+  const addWorkflowRunActions = () => {
     for (const [
       index,
       activeWorkflowVersion,
@@ -56,20 +55,13 @@ export const WorkflowRunActionEffect = () => {
         },
       });
     }
+  };
 
-    return () => {
-      for (const activeWorkflowVersion of activeWorkflowVersions) {
-        removeActionMenuEntry(`workflow-run-${activeWorkflowVersion.id}`);
-      }
-    };
-  }, [
-    activeWorkflowVersions,
-    addActionMenuEntry,
-    enqueueSnackBar,
-    removeActionMenuEntry,
-    runWorkflowVersion,
-    theme.snackBar.success.color,
-  ]);
+  const removeWorkflowRunActions = () => {
+    for (const activeWorkflowVersion of activeWorkflowVersions) {
+      removeActionMenuEntry(`workflow-run-${activeWorkflowVersion.id}`);
+    }
+  };
 
-  return null;
+  return { addWorkflowRunActions, removeWorkflowRunActions };
 };

@@ -13,12 +13,11 @@ import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkf
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 
 import { useTheme } from '@emotion/react';
-import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconSettingsAutomation, isDefined } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const WorkflowRunRecordActionEffect = ({
+export const useWorkflowRunRecordActions = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;
@@ -49,7 +48,7 @@ export const WorkflowRunRecordActionEffect = ({
 
   const theme = useTheme();
 
-  useEffect(() => {
+  const registerWorkflowRunRecordActions = () => {
     if (!isDefined(objectMetadataItem) || objectMetadataItem.isRemote) {
       return;
     }
@@ -88,22 +87,16 @@ export const WorkflowRunRecordActionEffect = ({
         },
       });
     }
+  };
 
-    return () => {
-      for (const activeWorkflowVersion of activeWorkflowVersions) {
-        removeActionMenuEntry(`workflow-run-${activeWorkflowVersion.id}`);
-      }
-    };
-  }, [
-    activeWorkflowVersions,
-    addActionMenuEntry,
-    enqueueSnackBar,
-    objectMetadataItem,
-    removeActionMenuEntry,
-    runWorkflowVersion,
-    selectedRecord,
-    theme.snackBar.success.color,
-  ]);
+  const unregisterWorkflowRunRecordActions = () => {
+    for (const activeWorkflowVersion of activeWorkflowVersions) {
+      removeActionMenuEntry(`workflow-run-${activeWorkflowVersion.id}`);
+    }
+  };
 
-  return null;
+  return {
+    registerWorkflowRunRecordActions,
+    unregisterWorkflowRunRecordActions,
+  };
 };
