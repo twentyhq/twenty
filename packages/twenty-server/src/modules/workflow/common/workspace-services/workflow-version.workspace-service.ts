@@ -54,7 +54,7 @@ export class WorkflowVersionWorkspaceService {
 
         return {
           id: newStepId,
-          name: 'Code',
+          name: 'Code - Serverless Function',
           type,
           valid: false,
           settings: {

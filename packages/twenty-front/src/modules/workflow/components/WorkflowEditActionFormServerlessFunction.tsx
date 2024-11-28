@@ -218,18 +218,22 @@ export const WorkflowEditActionFormServerlessFunction = ({
     });
   };
 
+  const onActionUpdate = (actionUpdate: Partial<WorkflowCodeAction>) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+
+    actionOptions?.onActionUpdate({
+      ...action,
+      ...actionUpdate,
+    });
+  };
+
   return (
     !loading && (
       <WorkflowEditGenericFormBase
         onTitleChange={(newName: string) => {
-          if (actionOptions.readonly === true) {
-            return;
-          }
-
-          actionOptions?.onActionUpdate({
-            ...action,
-            name: newName,
-          });
+          onActionUpdate({ name: newName });
         }}
         HeaderIcon={<IconCode color={theme.color.orange} />}
         headerTitle={headerTitle}
@@ -239,7 +243,10 @@ export const WorkflowEditActionFormServerlessFunction = ({
           height={340}
           value={formValues.code?.[INDEX_FILE_PATH]}
           language={'typescript'}
-          onChange={onCodeChange}
+          onChange={async (value) => {
+            onActionUpdate({}); // Used to create a new workflow draft version if editing workflow active version
+            await onCodeChange(value);
+          }}
           onMount={handleEditorDidMount}
         />
         {renderFields(functionInput)}
