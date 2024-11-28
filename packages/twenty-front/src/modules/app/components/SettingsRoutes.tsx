@@ -261,7 +261,7 @@ type SettingsRoutesProps = {
   isCRMMigrationEnabled?: boolean;
   isServerlessFunctionSettingsEnabled?: boolean;
   isSSOEnabled?: boolean;
-  isAdminPageEnabled: boolean;
+  isAdminPageEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
