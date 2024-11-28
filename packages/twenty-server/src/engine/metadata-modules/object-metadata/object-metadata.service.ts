@@ -449,7 +449,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           objectMetadataForUpdate,
         );
 
-      // TODO: recompute foreign keys indexes as well (in the related object and not objectMetadataForUpdate)
+      await this.objectMetadataMigrationService.recomputeEnumNames(
+        existingObjectMetadata,
+        objectMetadataForUpdate,
+        objectMetadataForUpdate.workspaceId,
+      );
 
       await this.indexMetadataService.createIndexRecomputeMigrations(
         objectMetadataForUpdate.workspaceId,
