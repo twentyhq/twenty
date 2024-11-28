@@ -11,7 +11,7 @@ import qs from 'qs';
 import { useNavigate } from 'react-router-dom';
 import { IconHistory, isDefined } from 'twenty-ui';
 
-export const useSeeWorkflowPreviousVersionsSingleRecordAction = ({
+export const useSeeWorkflowVersionsHistorySingleRecordAction = ({
   workflowId,
 }: {
   workflowId: string;
@@ -22,7 +22,7 @@ export const useSeeWorkflowPreviousVersionsSingleRecordAction = ({
 
   const navigate = useNavigate();
 
-  const registerSeeWorkflowPreviousVersionsSingleRecordAction = ({
+  const registerSeeWorkflowVersionsHistorySingleRecordAction = ({
     position,
   }: {
     position: number;
@@ -43,7 +43,7 @@ export const useSeeWorkflowPreviousVersionsSingleRecordAction = ({
     )}`;
 
     addActionMenuEntry({
-      key: 'see-workflow-previous-versions',
+      key: 'see-workflow-versions-history',
       label: 'See versions history',
       position,
       type: ActionMenuEntryType.Standard,
@@ -55,12 +55,12 @@ export const useSeeWorkflowPreviousVersionsSingleRecordAction = ({
     });
   };
 
-  const unregisterSeeWorkflowPreviousVersionsSingleRecordAction = () => {
-    removeActionMenuEntry('see-workflow-previous-versions');
+  const unregisterSeeWorkflowVersionsHistorySingleRecordAction = () => {
+    removeActionMenuEntry('see-workflow-versions-history');
   };
 
   return {
-    registerSeeWorkflowPreviousVersionsSingleRecordAction,
-    unregisterSeeWorkflowPreviousVersionsSingleRecordAction,
+    registerSeeWorkflowVersionsHistorySingleRecordAction,
+    unregisterSeeWorkflowVersionsHistorySingleRecordAction,
   };
 };
