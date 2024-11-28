@@ -1,6 +1,8 @@
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
 import { useManageFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useManageFavoritesSingleRecordAction';
-import { useActivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useActivateWorkflowSingleRecordAction';
+import { useActivateWorkflowDraftSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useActivateWorkflowDraftSingleRecordAction';
+import { useActivateWorkflowLastPublishedVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useActivateWorkflowLastPublishedVersionSingleRecordAction';
+import { useDeactivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useDeactivateWorkflowSingleRecordAction';
 import { useSeeWorkflowActiveVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeWorkflowActiveVersionSingleRecordAction';
 import { useSeeWorkflowExecutionsSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeWorkflowExecutionsSingleRecordAction';
 import { useSeeWorkflowPreviousVersionsSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeWorkflowPreviousVersionsSingleRecordAction';
@@ -34,9 +36,14 @@ export const useSingleRecordActions = ({
   });
 
   const {
-    registerActivateWorkflowSingleRecordAction,
-    unregisterActivateWorkflowSingleRecordAction,
-  } = useActivateWorkflowSingleRecordAction();
+    registerActivateWorkflowLastPublishedVersionSingleRecordAction,
+    unregisterActivateWorkflowLastPublishedVersionSingleRecordAction,
+  } = useActivateWorkflowLastPublishedVersionSingleRecordAction();
+
+  const {
+    registerDeactivateWorkflowSingleRecordAction,
+    unregisterDeactivateWorkflowSingleRecordAction,
+  } = useDeactivateWorkflowSingleRecordAction();
 
   const {
     registerSeeWorkflowExecutionsSingleRecordAction,
@@ -53,16 +60,25 @@ export const useSingleRecordActions = ({
     unregisterSeeWorkflowActiveVersionSingleRecordAction,
   } = useSeeWorkflowActiveVersionSingleRecordAction();
 
+  const {
+    registerActivateWorkflowDraftSingleRecordAction,
+    unregisterActivateWorkflowDraftSingleRecordAction,
+  } = useActivateWorkflowDraftSingleRecordAction();
+
   const registerSingleRecordActions = () => {
     registerManageFavoritesSingleRecordAction({ position: 1 });
     registerDeleteSingleRecordAction({ position: 2 });
     registerWorkflowRunRecordActions();
 
     if (objectMetadataItem.nameSingular === 'workflow') {
-      registerActivateWorkflowSingleRecordAction({ position: 3 });
-      registerSeeWorkflowExecutionsSingleRecordAction({ position: 4 });
-      registerSeeWorkflowActiveVersionSingleRecordAction({ position: 5 });
-      registerSeeWorkflowPreviousVersionsSingleRecordAction({ position: 6 });
+      registerActivateWorkflowDraftSingleRecordAction({ position: 3 });
+      registerActivateWorkflowLastPublishedVersionSingleRecordAction({
+        position: 4,
+      });
+      registerDeactivateWorkflowSingleRecordAction({ position: 5 });
+      registerSeeWorkflowExecutionsSingleRecordAction({ position: 6 });
+      registerSeeWorkflowActiveVersionSingleRecordAction({ position: 7 });
+      registerSeeWorkflowPreviousVersionsSingleRecordAction({ position: 8 });
     }
   };
 
@@ -70,7 +86,9 @@ export const useSingleRecordActions = ({
     unregisterManageFavoritesSingleRecordAction();
     unregisterDeleteSingleRecordAction();
     unregisterWorkflowRunRecordActions();
-    unregisterActivateWorkflowSingleRecordAction();
+    unregisterActivateWorkflowLastPublishedVersionSingleRecordAction();
+    unregisterActivateWorkflowDraftSingleRecordAction();
+    unregisterDeactivateWorkflowSingleRecordAction();
     unregisterSeeWorkflowExecutionsSingleRecordAction();
     unregisterSeeWorkflowActiveVersionSingleRecordAction();
     unregisterSeeWorkflowPreviousVersionsSingleRecordAction();
