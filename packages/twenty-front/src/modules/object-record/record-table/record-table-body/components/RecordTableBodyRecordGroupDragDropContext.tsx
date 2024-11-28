@@ -76,8 +76,6 @@ export const RecordTableBodyRecordGroupDragDropContext = ({
           return;
         }
 
-        console.log('DRAP - DROP: ', result, recordGroup);
-
         const computeResult = computeNewRowPosition(result, tableAllRecordIds);
 
         if (!isDefined(computeResult)) {
