@@ -202,6 +202,7 @@ export const AddressInput = ({
       onClickOutside?.(event, internalValue);
     },
     enabled: isDefined(onClickOutside),
+    listenerId: 'addressInput',
   });
 
   useEffect(() => {

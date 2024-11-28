@@ -41,6 +41,7 @@ export const SingleEntitySelect = ({
         onCancel();
       }
     },
+    listenerId: 'single-entity-select',
   });
 
   return (

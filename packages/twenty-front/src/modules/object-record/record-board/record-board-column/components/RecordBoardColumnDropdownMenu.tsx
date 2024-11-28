@@ -37,6 +37,7 @@ export const RecordBoardColumnDropdownMenu = ({
   useListenClickOutside({
     refs: [boardColumnMenuRef],
     callback: closeMenu,
+    listenerId: 'record-board-column-dropdown-menu',
   });
 
   return (

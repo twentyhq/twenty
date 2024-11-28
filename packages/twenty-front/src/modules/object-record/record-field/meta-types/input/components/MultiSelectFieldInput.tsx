@@ -88,6 +88,7 @@ export const MultiSelectFieldInput = ({
       }
       resetSelectedItem();
     },
+    listenerId: 'MultiSelectFieldInput',
   });
 
   const optionIds = filteredOptionsInDropDown.map((option) => option.value);

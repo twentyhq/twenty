@@ -22,7 +22,8 @@ export const useClickOutsideListener = (componentId: string) => {
     refs,
     enabled,
     mode,
-  }: Omit<ClickOutsideListenerProps<T>, 'listenerId'>) => {
+    listenerId,
+  }: ClickOutsideListenerProps<T>) => {
     return useListenClickOutsideV2({
       listenerId: componentId,
       refs,

@@ -113,6 +113,7 @@ export const SelectInput = ({
         onCancel();
       }
     },
+    listenerId: 'SelectInput',
   });
 
   useScopedHotkeys(

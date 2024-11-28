@@ -48,6 +48,7 @@ export const ExpandedListDropdown = ({
   useListenClickOutside({
     refs: [refs.floating],
     callback: onClickOutside ?? (() => {}),
+    listenerId: 'ExpandedListDropdown',
   });
 
   return (

@@ -87,6 +87,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
     callback: () => {
       setOpenToolTipIndex(undefined);
     },
+    listenerId: 'Test',
   });
 
   const { nonDraggableItems = [], draggableItems = [] } = isDraggable

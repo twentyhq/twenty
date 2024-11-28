@@ -96,6 +96,7 @@ export const NavigationDrawerInput = ({
       event.stopImmediatePropagation();
       onClickOutside(event, value);
     },
+    listenerId: 'NavigationDrawerInput',
   });
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {

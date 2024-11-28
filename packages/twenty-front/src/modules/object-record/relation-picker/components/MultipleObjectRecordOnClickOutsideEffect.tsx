@@ -35,6 +35,7 @@ export const MultipleObjectRecordOnClickOutsideEffect = ({
 
       onClickOutside();
     },
+    listenerId: MULTI_OBJECT_RECORD_CLICK_OUTSIDE_LISTENER_ID,
   });
 
   return <></>;

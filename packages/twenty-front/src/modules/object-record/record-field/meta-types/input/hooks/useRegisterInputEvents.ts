@@ -32,6 +32,7 @@ export const useRegisterInputEvents = <T>({
       onClickOutside?.(event, inputValue);
     },
     enabled: isDefined(onClickOutside),
+    listenerId: hotkeyScope,
   });
 
   useScopedHotkeys(

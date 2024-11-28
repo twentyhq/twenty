@@ -21,7 +21,12 @@ describe('useListenClickOutside', () => {
     const callback = jest.fn();
 
     renderHook(
-      () => useListenClickOutside({ refs: [containerRef], callback }),
+      () =>
+        useListenClickOutside({
+          refs: [containerRef],
+          callback,
+          listenerId: 'Test',
+        }),
       { wrapper: Wrapper },
     );
 
@@ -42,6 +47,7 @@ describe('useListenClickOutside', () => {
           refs: [containerRef, nullRef],
           callback,
           mode: ClickOutsideMode.comparePixels,
+          listenerId: 'Test',
         }),
       { wrapper: Wrapper },
     );
@@ -64,6 +70,7 @@ describe('useListenClickOutside', () => {
         refs: [containerRef, nullRef],
         callback,
         mode: ClickOutsideMode.comparePixels,
+        listenerId: 'Test',
       }),
     );
 

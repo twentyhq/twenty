@@ -133,6 +133,7 @@ export const Dropdown = ({
     callback: () => {
       onClickOutside?.();
       if (isDropdownOpen) {
+        console.log(`Closing dropdown ${dropdownId} on click outside`);
         closeDropdown();
       }
     },

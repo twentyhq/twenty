@@ -36,6 +36,8 @@ export const useLeaveTableFocus = (recordTableId?: string) => {
 
         resetTableRowSelection();
 
+        console.log('click outside table - leave soft focus');
+
         if (!isSoftFocusActive) {
           return;
         }

@@ -417,6 +417,7 @@ export const CommandMenu = () => {
   useListenClickOutside({
     refs: [commandMenuRef],
     callback: closeCommandMenu,
+    listenerId: 'command-menu',
   });
 
   const isCopilotEnabled = useIsFeatureEnabled('IS_COPILOT_ENABLED');

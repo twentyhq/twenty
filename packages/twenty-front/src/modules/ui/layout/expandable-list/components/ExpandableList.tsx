@@ -114,6 +114,7 @@ export const ExpandableList = ({
         );
       }
     },
+    listenerId: 'ExpandableList',
   });
 
   return (

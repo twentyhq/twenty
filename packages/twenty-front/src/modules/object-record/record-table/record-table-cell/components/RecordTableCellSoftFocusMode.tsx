@@ -136,6 +136,7 @@ export const RecordTableCellSoftFocusMode = ({
   };
 
   useListenClickOutside({
+    listenerId: 'RecordTableCellSoftFocusMode',
     refs: [scrollRef],
     callback: () => {
       closeCurrentTableCell();

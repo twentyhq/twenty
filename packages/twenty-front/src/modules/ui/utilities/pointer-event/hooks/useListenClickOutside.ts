@@ -10,11 +10,13 @@ export const useListenClickOutside = <T extends Element>({
   callback,
   mode = ClickOutsideMode.compareHTMLRef,
   enabled = true,
+  listenerId,
 }: {
   refs: Array<React.RefObject<T>>;
   callback: (event: MouseEvent | TouchEvent) => void;
   mode?: ClickOutsideMode;
   enabled?: boolean;
+  listenerId: string;
 }) => {
   const [isMouseDownInside, setIsMouseDownInside] = useState(false);
 
@@ -69,6 +71,8 @@ export const useListenClickOutside = <T extends Element>({
           .some((ref) => ref.current?.contains(event.target as Node));
 
         if (!clickedOnAtLeastOneRef && !isMouseDownInside) {
+          console.log(`Listener callback ${listenerId} for HTML ref`);
+
           callback(event);
         }
       }
@@ -104,6 +108,8 @@ export const useListenClickOutside = <T extends Element>({
           });
 
         if (!clickedOnAtLeastOneRef && !isMouseDownInside) {
+          console.log(`Listener callback ${listenerId} for pixels`);
+
           callback(event);
         }
       }
@@ -136,5 +142,5 @@ export const useListenClickOutside = <T extends Element>({
         });
       };
     }
-  }, [refs, callback, mode, enabled, isMouseDownInside]);
+  }, [refs, callback, mode, enabled, isMouseDownInside, listenerId]);
 };

@@ -75,6 +75,7 @@ export const MultiItemFieldInput = <T,>({
   useListenClickOutside({
     refs: [containerRef],
     callback: handleDropdownCloseOutside,
+    listenerId: 'MultiItemFieldInput',
   });
 
   useScopedHotkeys(Key.Escape, handleDropdownClose, hotkeyScope);

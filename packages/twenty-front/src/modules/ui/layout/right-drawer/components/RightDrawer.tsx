@@ -19,8 +19,8 @@ import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerHotkeyScope } from '../types/RightDrawerHotkeyScope';
 
-import { RightDrawerRouter } from './RightDrawerRouter';
 import { workflowReactFlowRefState } from '@/workflow/states/workflowReactFlowRefState';
+import { RightDrawerRouter } from './RightDrawerRouter';
 
 const StyledContainer = styled(motion.div)<{ isRightDrawerMinimized: boolean }>`
   background: ${({ theme }) => theme.background.primary};
@@ -108,11 +108,14 @@ export const RightDrawer = () => {
     RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
   );
 
+  const listenerId = `${RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID}-${rightDrawerPage}`;
+
   useListenClickOutside({
     refs: [
       rightDrawerRef,
       ...(workflowReactFlowRef ? [workflowReactFlowRef] : []),
     ],
+    listenerId,
     callback: useRecoilCallback(
       ({ snapshot, set }) =>
         (event) => {

@@ -158,6 +158,7 @@ export const DoubleTextInput = ({
       });
     },
     enabled: isDefined(onClickOutside),
+    listenerId: 'DoubleTextInput',
   });
 
   const handleOnPaste = (event: ClipboardEvent<HTMLInputElement>) => {
