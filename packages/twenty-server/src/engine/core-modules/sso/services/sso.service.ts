@@ -56,7 +56,7 @@ export class SSOService {
       );
     }
     const isSSOBillingEnabled =
-      await this.billingService.verifyWorkspaceEntitlement(
+      await this.billingService.hasWorkspaceActiveSubscriptionOrFreeAccess(
         workspaceId,
         this.featureLookUpKey,
       );
