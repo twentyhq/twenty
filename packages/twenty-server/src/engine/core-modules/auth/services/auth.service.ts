@@ -188,53 +188,6 @@ export class AuthService {
     return { isValid: !!workspace };
   }
 
-  async impersonate(userIdToImpersonate: string, userImpersonating: User) {
-    if (!userImpersonating.canImpersonate) {
-      throw new AuthException(
-        'User cannot impersonate',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    const user = await this.userRepository.findOne({
-      where: {
-        id: userIdToImpersonate,
-      },
-      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
-    });
-
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.USER_NOT_FOUND,
-      );
-    }
-
-    if (!user.defaultWorkspace.allowImpersonation) {
-      throw new AuthException(
-        'Impersonation not allowed',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    const accessToken = await this.accessTokenService.generateAccessToken(
-      user.id,
-      user.defaultWorkspaceId,
-    );
-    const refreshToken = await this.refreshTokenService.generateRefreshToken(
-      user.id,
-      user.defaultWorkspaceId,
-    );
-
-    return {
-      user,
-      tokens: {
-        accessToken,
-        refreshToken,
-      },
-    };
-  }
-
   async generateAuthorizationCode(
     authorizeAppInput: AuthorizeAppInput,
     user: User,
