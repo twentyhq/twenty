@@ -7,8 +7,8 @@ import { IconChevronUp, isDefined, Tag } from 'twenty-ui';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
-import { numberOfTableRowIdsByGroupComponentFamilySelector } from '@/object-record/record-table/states/selectors/numberOfTableRowIdsByGroupComponentFamilySelector';
 import { numberOfvisibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/numberOfVisibleTableColumnComponentSelector';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -52,8 +52,8 @@ export const RecordTableRecordGroupSection = () => {
     numberOfvisibleTableColumnsComponentSelector,
   );
 
-  const numberOfRows = useRecoilComponentFamilyValueV2(
-    numberOfTableRowIdsByGroupComponentFamilySelector,
+  const recordIdsByGroup = useRecoilComponentFamilyValueV2(
+    recordIndexRecordIdsByGroupComponentFamilyState,
     currentRecordGroupId,
   );
 
@@ -106,7 +106,7 @@ export const RecordTableRecordGroupSection = () => {
           text={recordGroup.title}
           weight="medium"
         />
-        <StyledTotalRow>{numberOfRows}</StyledTotalRow>
+        <StyledTotalRow>{recordIdsByGroup.length}</StyledTotalRow>
       </StyledRecordGroupSection>
       <StyledEmptyTd></StyledEmptyTd>
       <StyledEmptyTd></StyledEmptyTd>
