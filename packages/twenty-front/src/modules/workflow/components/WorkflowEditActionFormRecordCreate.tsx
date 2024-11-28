@@ -137,6 +137,7 @@ export const WorkflowEditActionFormRecordCreate = ({
         <IconAddressBook
           color={theme.font.color.tertiary}
           stroke={theme.icon.stroke.sm}
+          size={theme.icon.size.lg}
         />
       }
       headerTitle={headerTitle}

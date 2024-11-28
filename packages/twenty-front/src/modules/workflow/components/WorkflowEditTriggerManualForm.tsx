@@ -58,7 +58,13 @@ export const WorkflowEditTriggerManualForm = ({
           name: newName,
         });
       }}
-      HeaderIcon={<IconHandMove color={theme.font.color.tertiary} />}
+      HeaderIcon={
+        <IconHandMove
+          color={theme.font.color.tertiary}
+          stroke={theme.icon.stroke.sm}
+          size={theme.icon.size.lg}
+        />
+      }
       headerTitle={headerTitle}
       headerType="Trigger · Manual"
     >
