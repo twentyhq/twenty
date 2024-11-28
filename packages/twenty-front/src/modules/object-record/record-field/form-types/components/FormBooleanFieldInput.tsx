@@ -61,13 +61,13 @@ export const FormBooleanFieldInput = ({
     onPersist(newValue);
   };
 
-  const handleVariableTagInsert = (variable: string) => {
+  const handleVariableTagInsert = (variableName: string) => {
     setDraftValue({
       type: 'variable',
-      value: variable,
+      value: variableName,
     });
 
-    onPersist(variable);
+    onPersist(variableName);
   };
 
   const handleUnlinkVariable = () => {
@@ -97,7 +97,7 @@ export const FormBooleanFieldInput = ({
             </StyledBooleanInputContainer>
           ) : (
             <VariableChip
-              rawVariable={draftValue.value}
+              rawVariableName={draftValue.value}
               onRemove={handleUnlinkVariable}
             />
           )}

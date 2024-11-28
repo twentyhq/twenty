@@ -8,15 +8,18 @@ export const StyledContainer = styled.div`
 `;
 
 type VariableChipProps = {
-  rawVariable: string;
+  rawVariableName: string;
   onRemove: () => void;
 };
 
-export const VariableChip = ({ rawVariable, onRemove }: VariableChipProps) => {
+export const VariableChip = ({
+  rawVariableName,
+  onRemove,
+}: VariableChipProps) => {
   return (
     <StyledContainer>
       <SortOrFilterChip
-        labelValue={extractVariableLabel(rawVariable)}
+        labelValue={extractVariableLabel(rawVariableName)}
         onRemove={onRemove}
       />
     </StyledContainer>

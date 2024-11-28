@@ -84,13 +84,13 @@ export const FormNumberFieldInput = ({
     onPersist(null);
   };
 
-  const handleVariableTagInsert = (variable: string) => {
+  const handleVariableTagInsert = (variableName: string) => {
     setDraftValue({
       type: 'variable',
-      value: variable,
+      value: variableName,
     });
 
-    onPersist(variable);
+    onPersist(variableName);
   };
 
   return (
@@ -112,7 +112,7 @@ export const FormNumberFieldInput = ({
             />
           ) : (
             <VariableChip
-              rawVariable={draftValue.value}
+              rawVariableName={draftValue.value}
               onRemove={handleUnlinkVariable}
             />
           )}

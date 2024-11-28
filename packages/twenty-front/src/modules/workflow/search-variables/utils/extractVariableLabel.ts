@@ -2,11 +2,11 @@ import { isDefined } from 'twenty-ui';
 
 const CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX = /{{([^{}]+)}}/g;
 
-export const extractVariableLabel = (rawVariable: string) => {
-  const variableWithoutBrackets = rawVariable.replace(
+export const extractVariableLabel = (rawVariableName: string) => {
+  const variableWithoutBrackets = rawVariableName.replace(
     CAPTURE_ALL_VARIABLE_TAG_INNER_REGEX,
-    (_, variable) => {
-      return variable;
+    (_, variableName) => {
+      return variableName;
     },
   );
 

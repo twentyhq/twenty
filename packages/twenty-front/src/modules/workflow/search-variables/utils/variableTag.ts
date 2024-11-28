@@ -5,7 +5,7 @@ import { mergeAttributes } from '@tiptap/react';
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     variableTag: {
-      insertVariableTag: (variable: string) => ReturnType;
+      insertVariableTag: (variableName: string) => ReturnType;
     };
   }
 }
@@ -43,11 +43,11 @@ export const VariableTag = Node.create({
 
   addCommands: () => ({
     insertVariableTag:
-      (variable: string) =>
+      (variableName: string) =>
       ({ commands }) => {
         commands.insertContent({
           type: 'variableTag',
-          attrs: { variable },
+          attrs: { variable: variableName },
         });
 
         return true;

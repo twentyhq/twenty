@@ -32,7 +32,7 @@ const SearchVariablesDropdown = ({
   disabled,
 }: {
   inputId: string;
-  onVariableSelect: (variable: string) => void;
+  onVariableSelect: (variableName: string) => void;
   disabled?: boolean;
 }) => {
   const theme = useTheme();

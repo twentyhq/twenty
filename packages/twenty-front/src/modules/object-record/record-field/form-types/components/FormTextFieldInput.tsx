@@ -43,14 +43,14 @@ export const FormTextFieldInput = ({
     },
   });
 
-  const handleVariableTagInsert = (variable: string) => {
+  const handleVariableTagInsert = (variableName: string) => {
     if (!isDefined(editor)) {
       throw new Error(
         'Expected the editor to be defined when a variable is selected',
       );
     }
 
-    editor.commands.insertVariableTag(variable);
+    editor.commands.insertVariableTag(variableName);
   };
 
   if (!isDefined(editor)) {
