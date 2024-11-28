@@ -5,12 +5,9 @@ import {
 } from '@/action-menu/types/ActionMenuEntry';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkflowVersions';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 
-import { useTheme } from '@emotion/react';
 import { useRecoilValue } from 'recoil';
 import { IconSettingsAutomation, isDefined } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
@@ -32,10 +29,6 @@ export const useWorkflowRunRecordActions = ({
   });
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
-
-  const { enqueueSnackBar } = useSnackBar();
-
-  const theme = useTheme();
 
   const registerWorkflowRunRecordActions = () => {
     if (!isDefined(objectMetadataItem) || objectMetadataItem.isRemote) {
@@ -60,18 +53,8 @@ export const useWorkflowRunRecordActions = ({
 
           await runWorkflowVersion({
             workflowVersionId: activeWorkflowVersion.id,
+            workflowName: activeWorkflowVersion.workflow.name,
             payload: selectedRecord,
-          });
-
-          enqueueSnackBar('', {
-            variant: SnackBarVariant.Success,
-            title: `${capitalize(activeWorkflowVersion.workflow.name)} starting...`,
-            icon: (
-              <IconSettingsAutomation
-                size={16}
-                color={theme.snackBar.success.color}
-              />
-            ),
           });
         },
       });
