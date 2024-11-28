@@ -144,7 +144,7 @@ export const query = gql`
 `;
 
 export const variables = {
-  entitiesToSelect: {
+  recordsToSelect: {
     limit: 10,
     filter: {
       and: [
@@ -154,7 +154,7 @@ export const variables = {
     },
     orderBy: [{ name: 'AscNullsLast' }],
   },
-  filteredSelectedEntities: {
+  filteredSelectedRecords: {
     limit: 60,
     filter: {
       and: [

@@ -5,18 +5,18 @@ import { ComponentDecorator, IconUserCircle } from 'twenty-ui';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { RelationPickerDecorator } from '~/testing/decorators/RelationPickerDecorator';
+import { RecordPickerDecorator } from '~/testing/decorators/RecordPickerDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getPeopleMock } from '~/testing/mock-data/people';
 import { sleep } from '~/utils/sleep';
 
-import { EntityForSelect } from '../../types/EntityForSelect';
-import { SingleEntitySelect } from '../SingleEntitySelect';
+import { RecordForSelect } from '../../types/RecordForSelect';
+import { SingleRecordSelect } from '../SingleRecordSelect';
 
 const peopleMock = getPeopleMock();
 
-const entities = peopleMock.map<EntityForSelect>((person) => ({
+const records = peopleMock.map<RecordForSelect>((person) => ({
   id: person.id,
   name: person.name.firstName + ' ' + person.name.lastName,
   avatarUrl: 'https://picsum.photos/200',
@@ -24,24 +24,24 @@ const entities = peopleMock.map<EntityForSelect>((person) => ({
   record: { ...person, __typename: 'Person' },
 }));
 
-const meta: Meta<typeof SingleEntitySelect> = {
-  title: 'UI/Input/RelationPicker/SingleEntitySelect',
-  component: SingleEntitySelect,
+const meta: Meta<typeof SingleRecordSelect> = {
+  title: 'UI/Input/RelationPicker/SingleRecordSelect',
+  component: SingleRecordSelect,
   decorators: [
     ComponentDecorator,
     ComponentWithRecoilScopeDecorator,
-    RelationPickerDecorator,
+    RecordPickerDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
   ],
   args: {
-    relationObjectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-    selectedRelationRecordIds: [],
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    selectedRecordIds: [],
   },
   argTypes: {
-    selectedEntity: {
-      options: entities.map(({ name }) => name),
-      mapping: entities.reduce(
+    selectedRecord: {
+      options: records.map(({ name }) => name),
+      mapping: records.reduce(
         (result, entity) => ({ ...result, [entity.name]: entity }),
         {},
       ),
@@ -53,12 +53,12 @@ const meta: Meta<typeof SingleEntitySelect> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SingleEntitySelect>;
+type Story = StoryObj<typeof SingleRecordSelect>;
 
 export const Default: Story = {};
 
-export const WithSelectedEntity: Story = {
-  args: { selectedEntity: entities[2] },
+export const WithSelectedRecord: Story = {
+  args: { selectedRecord: records[2] },
 };
 
 export const WithEmptyOption: Story = {

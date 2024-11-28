@@ -1,17 +1,17 @@
 import { useDebouncedCallback } from 'use-debounce';
 
-import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
+import { useRecordPicker } from '@/object-record/relation-picker/hooks/useRecordPicker';
 
-export const useEntitySelectSearch = ({
-  relationPickerScopeId,
+export const useRecordSelectSearch = ({
+  recordPickerInstanceId,
 }: {
-  relationPickerScopeId?: string;
+  recordPickerInstanceId?: string;
 } = {}) => {
-  const { setRelationPickerSearchFilter, setRelationPickerPreselectedId } =
-    useRelationPicker({ relationPickerScopeId });
+  const { setRecordPickerSearchFilter, setRecordPickerPreselectedId } =
+    useRecordPicker({ recordPickerInstanceId });
 
   const debouncedSetSearchFilter = useDebouncedCallback(
-    setRelationPickerSearchFilter,
+    setRecordPickerSearchFilter,
     100,
     {
       leading: true,
@@ -20,14 +20,14 @@ export const useEntitySelectSearch = ({
 
   const resetSearchFilter = () => {
     debouncedSetSearchFilter('');
-    setRelationPickerPreselectedId('');
+    setRecordPickerPreselectedId('');
   };
 
   const handleSearchFilterChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     debouncedSetSearchFilter(event.currentTarget.value);
-    setRelationPickerPreselectedId('');
+    setRecordPickerPreselectedId('');
   };
 
   return {

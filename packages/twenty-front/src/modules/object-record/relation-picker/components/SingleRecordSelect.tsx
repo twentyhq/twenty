@@ -1,31 +1,31 @@
 import { useRef } from 'react';
 
 import {
-  SingleEntitySelectMenuItemsWithSearch,
-  SingleEntitySelectMenuItemsWithSearchProps,
-} from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
+  SingleRecordSelectMenuItemsWithSearch,
+  SingleRecordSelectMenuItemsWithSearchProps,
+} from '@/object-record/relation-picker/components/SingleRecordSelectMenuItemsWithSearch';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
-export type SingleEntitySelectProps = {
+export type SingleRecordSelectProps = {
   disableBackgroundBlur?: boolean;
   width?: number;
-} & SingleEntitySelectMenuItemsWithSearchProps;
+} & SingleRecordSelectMenuItemsWithSearchProps;
 
-export const SingleEntitySelect = ({
+export const SingleRecordSelect = ({
   disableBackgroundBlur = false,
   EmptyIcon,
   emptyLabel,
-  excludedRelationRecordIds,
+  excludedRecordIds,
   onCancel,
   onCreate,
-  onEntitySelected,
-  relationObjectNameSingular,
-  relationPickerScopeId,
-  selectedRelationRecordIds,
+  onRecordSelected,
+  objectNameSingular,
+  recordPickerInstanceId,
+  selectedRecordIds,
   width = 200,
-}: SingleEntitySelectProps) => {
+}: SingleRecordSelectProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useListenClickOutside({
@@ -50,17 +50,17 @@ export const SingleEntitySelect = ({
       width={width}
       data-select-disable
     >
-      <SingleEntitySelectMenuItemsWithSearch
+      <SingleRecordSelectMenuItemsWithSearch
         {...{
           EmptyIcon,
           emptyLabel,
-          excludedRelationRecordIds,
+          excludedRecordIds,
           onCancel,
           onCreate,
-          onEntitySelected,
-          relationObjectNameSingular,
-          relationPickerScopeId,
-          selectedRelationRecordIds,
+          onRecordSelected,
+          objectNameSingular,
+          recordPickerInstanceId,
+          selectedRecordIds,
         }}
       />
     </DropdownMenu>

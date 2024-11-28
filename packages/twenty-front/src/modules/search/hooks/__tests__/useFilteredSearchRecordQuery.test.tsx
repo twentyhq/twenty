@@ -5,7 +5,7 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/types/EntitiesForMultipleEntitySelect';
+import { RecordsForMultipleRecordSelect } from '@/object-record/relation-picker/types/RecordsForMultipleRecordSelect';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
@@ -13,14 +13,14 @@ import {
   query,
   responseData,
   variables,
-} from '../__mocks__/useFilteredSearchEntityQuery';
-import { useFilteredSearchEntityQuery } from '../useFilteredSearchEntityQuery';
+} from '../__mocks__/useFilteredSearchRecordQuery';
+import { useFilteredSearchRecordQuery } from '../useFilteredSearchRecordQuery';
 
 const mocks = [
   {
     request: {
       query,
-      variables: variables.entitiesToSelect,
+      variables: variables.recordsToSelect,
     },
     result: jest.fn(() => ({
       data: {
@@ -31,7 +31,7 @@ const mocks = [
   {
     request: {
       query,
-      variables: variables.filteredSelectedEntities,
+      variables: variables.filteredSelectedRecords,
     },
     result: jest.fn(() => ({
       data: {
@@ -62,7 +62,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </RecoilRoot>
 );
 
-describe('useFilteredSearchEntityQuery', () => {
+describe('useFilteredSearchRecordQuery', () => {
   it('returns the correct result when everything is provided', async () => {
     const { result } = renderHook(
       () => {
@@ -79,10 +79,10 @@ describe('useFilteredSearchEntityQuery', () => {
 
         setMetadataItems(generatedMockObjectMetadataItems);
 
-        return useFilteredSearchEntityQuery({
+        return useFilteredSearchRecordQuery({
           selectedIds: ['1'],
           limit: 10,
-          excludeRecordIds: ['2'],
+          excludedRecordIds: ['2'],
           objectNameSingular: 'person',
           searchFilter: 'Entity',
         });
@@ -90,10 +90,10 @@ describe('useFilteredSearchEntityQuery', () => {
       { wrapper: Wrapper },
     );
 
-    const expectedResult: EntitiesForMultipleEntitySelect<any> = {
-      selectedEntities: [],
-      filteredSelectedEntities: [],
-      entitiesToSelect: [],
+    const expectedResult: RecordsForMultipleRecordSelect<any> = {
+      selectedRecords: [],
+      filteredSelectedRecords: [],
+      recordsToSelect: [],
       loading: true,
     };
 

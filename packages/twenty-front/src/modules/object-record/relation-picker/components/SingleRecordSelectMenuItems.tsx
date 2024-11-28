@@ -5,7 +5,7 @@ import { Key } from 'ts-key-enum';
 import { IconComponent, MenuItemSelect } from 'twenty-ui';
 
 import { SelectableMenuItemSelect } from '@/object-record/relation-picker/components/SelectableMenuItemSelect';
-import { SINGLE_ENTITY_SELECT_BASE_LIST } from '@/object-record/relation-picker/constants/SingleEntitySelectBaseList';
+import { SINGLE_RECORD_SELECT_BASE_LIST } from '@/object-record/relation-picker/constants/SingleRecordSelectBaseList';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
@@ -13,44 +13,44 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 
-import { EntityForSelect } from '../types/EntityForSelect';
+import { RecordForSelect } from '../types/RecordForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
-export type SingleEntitySelectMenuItemsProps = {
+export type SingleRecordSelectMenuItemsProps = {
   EmptyIcon?: IconComponent;
   emptyLabel?: string;
-  entitiesToSelect: EntityForSelect[];
+  recordsToSelect: RecordForSelect[];
   loading?: boolean;
   onCancel?: () => void;
-  onEntitySelected: (entity?: EntityForSelect) => void;
-  selectedEntity?: EntityForSelect;
+  onRecordSelected: (entity?: RecordForSelect) => void;
+  selectedRecord?: RecordForSelect;
   SelectAllIcon?: IconComponent;
   selectAllLabel?: string;
-  isAllEntitySelected?: boolean;
-  isAllEntitySelectShown?: boolean;
-  onAllEntitySelected?: () => void;
+  isAllRecordsSelected?: boolean;
+  isAllRecordsSelectShown?: boolean;
+  onAllRecordsSelected?: () => void;
   hotkeyScope?: string;
   isFiltered: boolean;
   shouldSelectEmptyOption?: boolean;
 };
 
-export const SingleEntitySelectMenuItems = ({
+export const SingleRecordSelectMenuItems = ({
   EmptyIcon,
   emptyLabel,
-  entitiesToSelect,
+  recordsToSelect,
   loading,
   onCancel,
-  onEntitySelected,
-  selectedEntity,
+  onRecordSelected,
+  selectedRecord,
   SelectAllIcon,
   selectAllLabel,
-  isAllEntitySelected,
-  isAllEntitySelectShown,
-  onAllEntitySelected,
+  isAllRecordsSelected,
+  isAllRecordsSelectShown,
+  onAllRecordsSelected,
   hotkeyScope = RelationPickerHotkeyScope.RelationPicker,
   isFiltered,
   shouldSelectEmptyOption,
-}: SingleEntitySelectMenuItemsProps) => {
+}: SingleRecordSelectMenuItemsProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const selectNone = emptyLabel
@@ -61,7 +61,7 @@ export const SingleEntitySelectMenuItems = ({
       }
     : null;
 
-  const selectAll = isAllEntitySelectShown
+  const selectAll = isAllRecordsSelectShown
     ? {
         __typename: '',
         id: 'select-all',
@@ -69,18 +69,18 @@ export const SingleEntitySelectMenuItems = ({
       }
     : null;
 
-  const entitiesInDropdown = [
+  const recordsInDropdown = [
     selectAll,
     selectNone,
-    selectedEntity,
-    ...entitiesToSelect,
+    selectedRecord,
+    ...recordsToSelect,
   ].filter(
-    (entity): entity is EntityForSelect =>
+    (entity): entity is RecordForSelect =>
       isDefined(entity) && isNonEmptyString(entity.name),
   );
 
   const { isSelectedItemIdSelector, resetSelectedItem } = useSelectableList(
-    SINGLE_ENTITY_SELECT_BASE_LIST,
+    SINGLE_RECORD_SELECT_BASE_LIST,
   );
 
   const isSelectedSelectNoneButton = useRecoilValue(
@@ -101,38 +101,38 @@ export const SingleEntitySelectMenuItems = ({
     [onCancel, resetSelectedItem],
   );
 
-  const selectableItemIds = entitiesInDropdown.map((entity) => entity.id);
+  const selectableItemIds = recordsInDropdown.map((entity) => entity.id);
 
   return (
     <div ref={containerRef}>
       <SelectableList
-        selectableListId={SINGLE_ENTITY_SELECT_BASE_LIST}
+        selectableListId={SINGLE_RECORD_SELECT_BASE_LIST}
         selectableItemIdArray={selectableItemIds}
         hotkeyScope={hotkeyScope}
         onEnter={(itemId) => {
-          const entityIndex = entitiesInDropdown.findIndex(
-            (entity) => entity.id === itemId,
+          const recordIndex = recordsInDropdown.findIndex(
+            (record) => record.id === itemId,
           );
-          onEntitySelected(entitiesInDropdown[entityIndex]);
+          onRecordSelected(recordsInDropdown[recordIndex]);
           resetSelectedItem();
         }}
       >
         <DropdownMenuItemsContainer hasMaxHeight>
           {loading && !isFiltered ? (
             <DropdownMenuSkeletonItem />
-          ) : entitiesInDropdown.length === 0 &&
-            !isAllEntitySelectShown &&
+          ) : recordsInDropdown.length === 0 &&
+            !isAllRecordsSelectShown &&
             !loading ? (
             <></>
           ) : (
-            entitiesInDropdown?.map((entity) => {
-              switch (entity.id) {
+            recordsInDropdown?.map((record) => {
+              switch (record.id) {
                 case 'select-none': {
                   return (
                     emptyLabel && (
                       <MenuItemSelect
-                        key={entity.id}
-                        onClick={() => onEntitySelected()}
+                        key={record.id}
+                        onClick={() => onRecordSelected()}
                         LeftIcon={EmptyIcon}
                         text={emptyLabel}
                         selected={shouldSelectEmptyOption === true}
@@ -143,15 +143,15 @@ export const SingleEntitySelectMenuItems = ({
                 }
                 case 'select-all': {
                   return (
-                    isAllEntitySelectShown &&
+                    isAllRecordsSelectShown &&
                     selectAllLabel &&
-                    onAllEntitySelected && (
+                    onAllRecordsSelected && (
                       <MenuItemSelect
-                        key={entity.id}
-                        onClick={() => onAllEntitySelected()}
+                        key={record.id}
+                        onClick={() => onAllRecordsSelected()}
                         LeftIcon={SelectAllIcon}
                         text={selectAllLabel}
-                        selected={!!isAllEntitySelected}
+                        selected={!!isAllRecordsSelected}
                         hovered={isSelectedSelectAllButton}
                       />
                     )
@@ -160,10 +160,10 @@ export const SingleEntitySelectMenuItems = ({
                 default: {
                   return (
                     <SelectableMenuItemSelect
-                      key={entity.id}
-                      entity={entity}
-                      onEntitySelected={onEntitySelected}
-                      selectedEntity={selectedEntity}
+                      key={record.id}
+                      record={record}
+                      onRecordSelected={onRecordSelected}
+                      selectedRecord={selectedRecord}
                     />
                   );
                 }
