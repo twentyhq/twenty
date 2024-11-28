@@ -23,7 +23,7 @@ export const useWorkspaceSwitching = () => {
     availableSSOIdentityProvidersState,
   );
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
-  const { signOut } = useAuth();
+  const { clearSession } = useAuth();
 
   const switchWorkspace = async (workspaceId: string) => {
     if (currentWorkspace?.id === workspaceId) return;
@@ -50,7 +50,7 @@ export const useWorkspaceSwitching = () => {
       }
 
       if (jwt.data.generateJWT.availableSSOIDPs.length > 1) {
-        await signOut();
+        await clearSession();
         setAvailableWorkspacesForSSOState(
           jwt.data.generateJWT.availableSSOIDPs,
         );

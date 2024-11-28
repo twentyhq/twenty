@@ -716,6 +716,11 @@ export const graphqlMocks = {
                   },
                   deletedAt: null,
                   workflowId: '200c1508-f102-4bb9-af32-eda55239ae61',
+                  workflow: {
+                    __typename: 'Workflow',
+                    id: '200c1508-f102-4bb9-af32-eda55239ae61',
+                    name: '1231 qqerrt',
+                  },
                 },
               },
             ],

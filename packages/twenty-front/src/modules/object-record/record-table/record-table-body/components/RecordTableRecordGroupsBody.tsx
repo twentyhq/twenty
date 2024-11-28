@@ -1,32 +1,28 @@
-import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
+import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
+import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
 import { RecordTableRecordGroupRows } from '@/object-record/record-table/components/RecordTableRecordGroupRows';
 import { RecordTableBodyDragDropContext } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDragDropContext';
 import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTablePendingRow } from '@/object-record/record-table/record-table-row/components/RecordTablePendingRow';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
-import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-type RecordTableRecordGroupsBodyProps = {
-  objectNameSingular: string;
-};
-
-export const RecordTableRecordGroupsBody = ({
-  objectNameSingular,
-}: RecordTableRecordGroupsBodyProps) => {
-  const tableAllRowIds = useRecoilComponentValueV2(
-    tableAllRowIdsComponentState,
+export const RecordTableRecordGroupsBody = () => {
+  const allRowIds = useRecoilComponentValueV2(
+    recordIndexAllRowIdsComponentState,
   );
 
   const isRecordTableInitialLoading = useRecoilComponentValueV2(
     isRecordTableInitialLoadingComponentState,
   );
 
-  const { visibleRecordGroups } = useRecordGroups({ objectNameSingular });
+  const visibleRecordGroupIds = useRecoilComponentValueV2(
+    visibleRecordGroupIdsComponentSelector,
+  );
 
-  if (isRecordTableInitialLoading && tableAllRowIds.length === 0) {
+  if (isRecordTableInitialLoading && allRowIds.length === 0) {
     return <RecordTableBodyLoading />;
   }
 
@@ -34,10 +30,10 @@ export const RecordTableRecordGroupsBody = ({
     <RecordTableBodyDragDropContext>
       <RecordTableBodyDroppable>
         <RecordTablePendingRow />
-        {visibleRecordGroups.map((recordGroupDefinition) => (
+        {visibleRecordGroupIds.map((recordGroupId) => (
           <RecordGroupContext.Provider
-            key={recordGroupDefinition.id}
-            value={{ recordGroupId: recordGroupDefinition.id }}
+            key={recordGroupId}
+            value={{ recordGroupId }}
           >
             <RecordTableRecordGroupRows />
           </RecordGroupContext.Provider>
