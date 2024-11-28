@@ -4,6 +4,7 @@ import { RecordTableCellGrip } from '@/object-record/record-table/record-table-c
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTableCells } from '@/object-record/record-table/record-table-row/components/RecordTableCells';
 import { RecordTableRowWrapper } from '@/object-record/record-table/record-table-row/components/RecordTableRowWrapper';
+import { forwardRef } from 'react';
 
 type RecordTableRowProps = {
   recordId: string;
@@ -11,13 +12,13 @@ type RecordTableRowProps = {
   isPendingRow?: boolean;
 };
 
-export const RecordTableRow = ({
-  recordId,
-  rowIndex,
-  isPendingRow,
-}: RecordTableRowProps) => {
+export const RecordTableRow = forwardRef<
+  HTMLTableRowElement,
+  RecordTableRowProps
+>(({ recordId, rowIndex, isPendingRow }, ref) => {
   return (
     <RecordTableRowWrapper
+      ref={ref}
       recordId={recordId}
       rowIndex={rowIndex}
       isPendingRow={isPendingRow}
@@ -29,4 +30,4 @@ export const RecordTableRow = ({
       <RecordValueSetterEffect recordId={recordId} />
     </RecordTableRowWrapper>
   );
-};
+});

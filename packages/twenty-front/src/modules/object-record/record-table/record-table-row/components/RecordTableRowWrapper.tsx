@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import { Draggable } from '@hello-pangea/dnd';
-import { ReactNode, useContext, useEffect, useRef } from 'react';
+import { forwardRef, ReactNode, useContext, useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
@@ -13,18 +13,19 @@ import { tableCellWidthsComponentState } from '@/object-record/record-table/stat
 import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { isDefined } from '~/utils/isDefined';
 
-export const RecordTableRowWrapper = ({
-  recordId,
-  rowIndex,
-  isPendingRow,
-  children,
-}: {
+type RecordTableRowWrapperProps = {
   recordId: string;
   rowIndex: number;
   isPendingRow?: boolean;
   children: ReactNode;
-}) => {
+};
+
+export const RecordTableRowWrapper = forwardRef<
+  HTMLTableRowElement,
+  RecordTableRowWrapperProps
+>(({ recordId, rowIndex, isPendingRow, children }, ref) => {
   const trRef = useRef<HTMLTableRowElement>(null);
 
   const { objectMetadataItem } = useContext(RecordTableContext);
@@ -82,6 +83,12 @@ export const RecordTableRowWrapper = ({
             trRef.current = node;
             elementRef(node);
             draggableProvided.innerRef(node);
+
+            if (typeof ref === 'function') {
+              ref(node);
+            } else if (isDefined(ref)) {
+              ref.current = node;
+            }
           }}
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...draggableProvided.draggableProps}
@@ -120,4 +127,4 @@ export const RecordTableRowWrapper = ({
       )}
     </Draggable>
   );
-};
+});

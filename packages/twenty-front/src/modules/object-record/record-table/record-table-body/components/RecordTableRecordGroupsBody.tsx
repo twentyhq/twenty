@@ -2,10 +2,11 @@ import { RecordGroupContext } from '@/object-record/record-group/states/context/
 import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
 import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
 import { RecordTableRecordGroupRows } from '@/object-record/record-table/components/RecordTableRecordGroupRows';
-import { RecordTableBodyDragDropContext } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDragDropContext';
 import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
+import { RecordTableBodyRecordGroupDragDropContext } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupDragDropContext';
 import { RecordTablePendingRow } from '@/object-record/record-table/record-table-row/components/RecordTablePendingRow';
+import { RecordTableRecordGroupSection } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSection';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -27,18 +28,22 @@ export const RecordTableRecordGroupsBody = () => {
   }
 
   return (
-    <RecordTableBodyDragDropContext>
-      <RecordTableBodyDroppable>
+    <RecordTableBodyRecordGroupDragDropContext>
+      {/** */}
+      <RecordTableBodyDroppable isDropDisabled>
         <RecordTablePendingRow />
-        {visibleRecordGroupIds.map((recordGroupId) => (
-          <RecordGroupContext.Provider
-            key={recordGroupId}
-            value={{ recordGroupId }}
-          >
-            <RecordTableRecordGroupRows />
-          </RecordGroupContext.Provider>
-        ))}
       </RecordTableBodyDroppable>
-    </RecordTableBodyDragDropContext>
+      {visibleRecordGroupIds.map((recordGroupId) => (
+        <RecordGroupContext.Provider
+          key={recordGroupId}
+          value={{ recordGroupId }}
+        >
+          <RecordTableBodyDroppable recordGroupId={recordGroupId}>
+            <RecordTableRecordGroupSection />
+            <RecordTableRecordGroupRows />
+          </RecordTableBodyDroppable>
+        </RecordGroupContext.Provider>
+      ))}
+    </RecordTableBodyRecordGroupDragDropContext>
   );
 };
