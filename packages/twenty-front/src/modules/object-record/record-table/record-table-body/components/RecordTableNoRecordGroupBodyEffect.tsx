@@ -13,9 +13,8 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
-import { tableLastFetchFailedComponentState } from '@/object-record/record-table/states/tableLastFetchFailedComponentState';
+import { tableEncounteredUnrecoverableErrorComponentState } from '@/object-record/record-table/states/tableEncounteredUnrecoverableErrorComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
-import { isDefined } from 'twenty-ui';
 
 export const RecordTableNoRecordGroupBodyEffect = () => {
   const { objectNameSingular } = useContext(RecordTableContext);
@@ -40,9 +39,8 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
     tableLastRowVisibleComponentState,
   );
 
-  const [lastFetchFailed, setLastFetchFailed] = useRecoilComponentStateV2(
-    tableLastFetchFailedComponentState,
-  );
+  const [encounteredUnrecoverableError, setEncounteredUnrecoverableError] =
+    useRecoilComponentStateV2(tableEncounteredUnrecoverableErrorComponentState);
 
   const setHasRecordTableFetchedAllRecordsComponents =
     useSetRecoilComponentStateV2(
@@ -108,11 +106,17 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
         !isFetchingMoreObjects &&
         tableLastRowVisible &&
         hasNextPage &&
-        !lastFetchFailed
+        !encounteredUnrecoverableError
       ) {
         const result = await fetchMoreDebouncedIfRequested();
-        if (isDefined(result?.error)) {
-          setLastFetchFailed(true);
+
+        const isForbidden =
+          result?.error?.graphQLErrors.some(
+            (e) => e.extensions?.code === 'FORBIDDEN',
+          ) ?? false;
+
+        if (isForbidden) {
+          setEncounteredUnrecoverableError(true);
         }
       }
     })();

@@ -188,7 +188,7 @@ export const useFetchMoreRecordsWithPagination = <
             };
           } catch (error) {
             handleFindManyRecordsError(error as ApolloError);
-            return { error };
+            return { error: error as ApolloError };
           } finally {
             setIsFetchingMoreObjects(false);
           }
