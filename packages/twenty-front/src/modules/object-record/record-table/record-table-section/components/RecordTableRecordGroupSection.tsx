@@ -9,7 +9,7 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
-import { numberOfvisibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/numberOfVisibleTableColumnComponentSelector';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -48,8 +48,8 @@ export const RecordTableRecordGroupSection = () => {
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 
-  const numberOfVisibleColumns = useRecoilComponentValueV2(
-    numberOfvisibleTableColumnsComponentSelector,
+  const visibleColumns = useRecoilComponentValueV2(
+    visibleTableColumnsComponentSelector,
   );
 
   const recordIdsByGroup = useRecoilComponentFamilyValueV2(
@@ -91,7 +91,7 @@ export const RecordTableRecordGroupSection = () => {
           <IconChevronUp size={theme.icon.size.md} />
         </motion.span>
       </StyledChevronContainer>
-      <StyledRecordGroupSection colSpan={numberOfVisibleColumns}>
+      <StyledRecordGroupSection colSpan={visibleColumns.length}>
         <Tag
           variant={
             recordGroup.type !== RecordGroupDefinitionType.NoValue
