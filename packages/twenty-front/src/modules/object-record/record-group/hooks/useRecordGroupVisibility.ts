@@ -45,7 +45,7 @@ export const useRecordGroupVisibility = ({
         // If visibility is manually toggled, we should reset the hideEmptyRecordGroup state
         set(objectOptionsDropdownRecordGroupHideState, false);
       },
-    [objectOptionsDropdownRecordGroupHideState, saveViewGroup],
+    [saveViewGroup, objectOptionsDropdownRecordGroupHideState],
   );
 
   const handleHideEmptyRecordGroupChange = useRecoilCallback(
@@ -61,26 +61,34 @@ export const useRecordGroupVisibility = ({
           snapshot,
           objectOptionsDropdownRecordGroupHideState,
         );
+        const newHideState = !currentHideState;
 
-        set(objectOptionsDropdownRecordGroupHideState, !currentHideState);
+        set(objectOptionsDropdownRecordGroupHideState, newHideState);
 
         for (const recordGroupId of recordGroupIds) {
           const recordGroup = getSnapshotValue(
             snapshot,
             recordGroupDefinitionFamilyState(recordGroupId),
           );
+
+          if (!isDefined(recordGroup)) {
+            throw new Error(
+              `Record group with id ${recordGroupId} not found in snapshot`,
+            );
+          }
+
           const recordGroupRowIds = getSnapshotValue(
             snapshot,
             recordIndexRowIdsByGroupFamilyState(recordGroupId),
           );
 
-          if (!isDefined(recordGroup) || recordGroupRowIds.length > 0) {
+          if (recordGroupRowIds.length > 0) {
             continue;
           }
 
           const updatedRecordGroup = {
             ...recordGroup,
-            isVisible: !currentHideState,
+            isVisible: !newHideState,
           };
 
           set(
