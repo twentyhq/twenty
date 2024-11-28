@@ -13,17 +13,17 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
 
 type RecordGroupsVisibilityDropdownSectionProps = {
-  recordGroups: RecordGroupDefinition[];
+  recordGroupIds: string[];
   isDraggable: boolean;
   onDragEnd?: OnDragEndResponder;
-  onVisibilityChange: (viewGroup: RecordGroupDefinition) => void;
+  onVisibilityChange: (recordGroup: RecordGroupDefinition) => void;
   title: string;
   showSubheader?: boolean;
   showDragGrip: boolean;
 };
 
 export const RecordGroupsVisibilityDropdownSection = ({
-  recordGroups,
+  recordGroupIds,
   isDraggable,
   onDragEnd,
   onVisibilityChange,
@@ -43,12 +43,13 @@ export const RecordGroupsVisibilityDropdownSection = ({
         <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
       )}
       <DropdownMenuItemsContainer>
-        {!!recordGroups.length && (
+        {recordGroupIds.length > 0 && (
           <>
             {!isDraggable ? (
-              recordGroups.map((recordGroup) => (
+              recordGroupIds.map((recordGroupId) => (
                 <RecordGroupMenuItemDraggable
-                  recordGroup={recordGroup}
+                  key={recordGroupId}
+                  recordGroupId={recordGroupId}
                   onVisibilityChange={onVisibilityChange}
                   showDragGrip={showDragGrip}
                   isDraggable={isDraggable}
@@ -59,14 +60,14 @@ export const RecordGroupsVisibilityDropdownSection = ({
                 onDragEnd={handleOnDrag}
                 draggableItems={
                   <>
-                    {recordGroups.map((recordGroup, index) => (
+                    {recordGroupIds.map((recordGroupId, index) => (
                       <DraggableItem
-                        key={recordGroup.id}
-                        draggableId={recordGroup.id}
+                        key={recordGroupId}
+                        draggableId={recordGroupId}
                         index={index + 1}
                         itemComponent={
                           <RecordGroupMenuItemDraggable
-                            recordGroup={recordGroup}
+                            recordGroupId={recordGroupId}
                             onVisibilityChange={onVisibilityChange}
                             showDragGrip={showDragGrip}
                             isDraggable={isDraggable}

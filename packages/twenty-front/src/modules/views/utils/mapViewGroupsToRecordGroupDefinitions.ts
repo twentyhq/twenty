@@ -1,3 +1,4 @@
+import { v4 } from 'uuid';
 import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -42,16 +43,7 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
       );
 
       if (!selectedOption) {
-        return {
-          id: 'no-value',
-          title: 'No Value',
-          type: RecordGroupDefinitionType.NoValue,
-          value: null,
-          position: viewGroup.position,
-          isVisible: viewGroup.isVisible,
-          fieldMetadataId: selectFieldMetadataItem.id,
-          color: 'transparent',
-        } satisfies RecordGroupDefinition;
+        return null;
       }
 
       return {
@@ -65,8 +57,32 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
         isVisible: viewGroup.isVisible,
       } as RecordGroupDefinition;
     })
-    .filter(isDefined)
-    .sort((a, b) => a.position - b.position);
+    .filter(isDefined);
 
-  return recordGroupDefinitionsFromViewGroups;
+  if (selectFieldMetadataItem.isNullable === true) {
+    const viewGroup = viewGroups.find(
+      (viewGroup) => viewGroup.fieldValue === '',
+    );
+
+    const noValueColumn = {
+      id: viewGroup?.id ?? v4(),
+      title: 'No Value',
+      type: RecordGroupDefinitionType.NoValue,
+      value: null,
+      position:
+        viewGroup?.position ??
+        recordGroupDefinitionsFromViewGroups
+          .map((option) => option.position)
+          .reduce((a, b) => Math.max(a, b), 0) + 1,
+      isVisible: viewGroup?.isVisible ?? true,
+      fieldMetadataId: selectFieldMetadataItem.id,
+      color: 'transparent',
+    } satisfies RecordGroupDefinition;
+
+    return [...recordGroupDefinitionsFromViewGroups, noValueColumn];
+  }
+
+  return recordGroupDefinitionsFromViewGroups.sort(
+    (a, b) => a.position - b.position,
+  );
 };
