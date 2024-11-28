@@ -83,7 +83,7 @@ export const RecordTableRecordGroupSection = () => {
       <StyledChevronContainer>
         <motion.span
           animate={{ rotate: isRecordGroupTableSectionToggled ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: theme.animation.duration.normal }}
           style={{
             display: 'inline-block',
           }}
