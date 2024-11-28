@@ -42,13 +42,11 @@ const StyledRecordInlineCellNormalModeInnerContainer = styled.div`
   align-content: center;
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
-  font-size: 'inherit';
-
-  font-weight: 'inherit';
+  padding-top: 3px;
+  padding-bottom: 3px;
 
   height: fit-content;
 
-  min-height: 24px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
