@@ -10,6 +10,8 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isSSOEnabledState } from '@/client-config/states/isSSOEnabledState';
+import { useRecoilValue } from 'recoil';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -27,7 +29,9 @@ const StyledSSOSection = styled(Section)`
 `;
 
 export const SettingsSecurity = () => {
-  const isSSOEnabled = useIsFeatureEnabled('IS_SSO_ENABLED');
+  const isSSOEnabled = useRecoilValue(isSSOEnabledState);
+  const isSSOSectionDisplay =
+    useIsFeatureEnabled('IS_SSO_ENABLED') && isSSOEnabled;
 
   return (
     <SubMenuTopBarContainer
@@ -43,7 +47,7 @@ export const SettingsSecurity = () => {
     >
       <SettingsPageContainer>
         <StyledMainContent>
-          {isSSOEnabled && (
+          {isSSOSectionDisplay && (
             <StyledSSOSection>
               <H2Title
                 title="SSO"

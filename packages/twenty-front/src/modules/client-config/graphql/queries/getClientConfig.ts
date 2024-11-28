@@ -10,6 +10,7 @@ export const GET_CLIENT_CONFIG = gql`
       }
       signInPrefilled
       isMultiWorkspaceEnabled
+      isSSOEnabled
       defaultSubdomain
       frontDomain
       debugMode

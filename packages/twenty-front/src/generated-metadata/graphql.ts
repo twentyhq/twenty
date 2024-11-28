@@ -177,6 +177,7 @@ export type ClientConfig = {
   defaultSubdomain?: Maybe<Scalars['String']['output']>;
   frontDomain: Scalars['String']['output'];
   isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
+  isSSOEnabled: Scalars['Boolean']['output'];
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
   support: Support;
