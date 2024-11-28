@@ -46,7 +46,7 @@ export const RecordInlineCellEditMode = ({
               crossAxis: 0,
             }
           : {
-              mainAxis: -28,
+              mainAxis: -29,
               crossAxis: -4,
             },
       ),
