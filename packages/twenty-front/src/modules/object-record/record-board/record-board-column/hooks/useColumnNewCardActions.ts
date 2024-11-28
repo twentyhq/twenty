@@ -1,12 +1,12 @@
-import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
-import { useRecoilValue } from 'recoil';
+import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const useColumnNewCardActions = (columnId: string) => {
-  const { visibleFieldDefinitionsState } = useRecordBoardStates();
-  const visibleFieldDefinitions = useRecoilValue(
-    visibleFieldDefinitionsState(),
+  const visibleFieldDefinitions = useRecoilComponentValueV2(
+    recordBoardVisibleFieldDefinitionsComponentSelector,
   );
+
   const labelIdentifierField = visibleFieldDefinitions.find(
     (field) => field.isLabelIdentifier,
   );

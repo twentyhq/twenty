@@ -19,6 +19,7 @@ export type SingleTabProps = {
   disabled?: boolean;
   pill?: string | React.ReactElement;
   cards?: LayoutCard[];
+  logo?: string;
 };
 
 type TabListProps = {
@@ -71,6 +72,7 @@ export const TabList = ({
                 key={tab.id}
                 title={tab.title}
                 Icon={tab.Icon}
+                logo={tab.logo}
                 active={tab.id === activeTabId}
                 disabled={tab.disabled ?? loading}
                 pill={tab.pill}

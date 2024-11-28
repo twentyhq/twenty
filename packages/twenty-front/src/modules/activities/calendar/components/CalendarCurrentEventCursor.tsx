@@ -20,6 +20,13 @@ type CalendarCurrentEventCursorProps = {
   calendarEvent: TimelineCalendarEvent;
 };
 
+const StyledDot = styled(motion.div)`
+  background-color: ${({ theme }) => theme.font.color.danger};
+  border-radius: 1px;
+  height: ${({ theme }) => theme.spacing(1)};
+  width: ${({ theme }) => theme.spacing(1)};
+`;
+
 const StyledCurrentEventCursor = styled(motion.div)`
   align-items: center;
   background-color: ${({ theme }) => theme.font.color.danger};
@@ -30,15 +37,6 @@ const StyledCurrentEventCursor = styled(motion.div)`
   right: 0;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   transform: translateY(-50%);
-
-  &::before {
-    background-color: ${({ theme }) => theme.font.color.danger};
-    border-radius: 1px;
-    content: '';
-    display: block;
-    height: ${({ theme }) => theme.spacing(1)};
-    width: ${({ theme }) => theme.spacing(1)};
-  }
 `;
 
 export const CalendarCurrentEventCursor = ({
@@ -166,7 +164,18 @@ export const CalendarCurrentEventCursor = ({
           transition={{
             duration: theme.animation.duration.normal,
           }}
-        />
+        >
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{
+              delay: theme.animation.duration.normal,
+              duration: theme.animation.duration.normal,
+            }}
+          >
+            <StyledDot />
+          </motion.div>
+        </StyledCurrentEventCursor>
       )}
     </AnimatePresence>
   );

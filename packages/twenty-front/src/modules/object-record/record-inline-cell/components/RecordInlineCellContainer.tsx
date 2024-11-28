@@ -39,7 +39,8 @@ const StyledLabelAndIconContainer = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: 24px;
+  height: 18px;
+  padding-top: 3px;
 `;
 
 const StyledValueContainer = styled.div`
@@ -61,7 +62,7 @@ const StyledInlineCellBaseContainer = styled.div`
   width: 100%;
   display: flex;
   height: fit-content;
-  line-height: 24px;
+  line-height: 18px;
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   justify-content: center;
@@ -131,11 +132,7 @@ export const RecordInlineCellContainer = () => {
           )}
           {showLabel && label && (
             <StyledLabelContainer width={labelWidth}>
-              <OverflowingTextWithTooltip
-                text={label}
-                isLabel={true}
-                displayedMaxRows={1}
-              />
+              <OverflowingTextWithTooltip text={label} displayedMaxRows={1} />
             </StyledLabelContainer>
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}
