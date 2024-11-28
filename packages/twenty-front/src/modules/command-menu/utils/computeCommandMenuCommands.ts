@@ -3,7 +3,7 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
-import { COMMAND_MENU_COMMANDS } from '@/command-menu/constants/CommandMenuCommands';
+import { COMMAND_MENU_NAVIGATE_COMMANDS } from '@/command-menu/constants/CommandMenuNavigateCommands';
 import {
   Command,
   CommandScope,
@@ -13,7 +13,7 @@ import {
 export const computeCommandMenuCommands = (
   actionMenuEntries: ActionMenuEntry[],
 ): Command[] => {
-  const commands = Object.values(COMMAND_MENU_COMMANDS);
+  const navigateCommands = Object.values(COMMAND_MENU_NAVIGATE_COMMANDS);
 
   const actionCommands: Command[] = actionMenuEntries
     ?.filter(
@@ -49,5 +49,5 @@ export const computeCommandMenuCommands = (
           : CommandScope.Global,
     }));
 
-  return [...commands, ...actionCommands, ...workflowRunCommands];
+  return [...navigateCommands, ...actionCommands, ...workflowRunCommands];
 };

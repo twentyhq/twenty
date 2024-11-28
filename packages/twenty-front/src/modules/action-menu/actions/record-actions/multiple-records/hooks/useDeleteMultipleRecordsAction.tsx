@@ -18,10 +18,10 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { IconTrash, isDefined } from 'twenty-ui';
 
-export const DeleteRecordsActionEffect = ({
+export const useDeleteMultipleRecordsAction = ({
   position,
   objectMetadataItem,
 }: {
@@ -106,12 +106,12 @@ export const DeleteRecordsActionEffect = ({
   const { isInRightDrawer, onActionExecutedCallback } =
     useContext(ActionMenuContext);
 
-  useEffect(() => {
+  const registerDeleteMultipleRecordsAction = () => {
     if (canDelete) {
       addActionMenuEntry({
         type: ActionMenuEntryType.Standard,
         scope: ActionMenuEntryScope.RecordSelection,
-        key: 'delete',
+        key: 'delete-multiple-records',
         label: 'Delete',
         position,
         Icon: IconTrash,
@@ -124,16 +124,8 @@ export const DeleteRecordsActionEffect = ({
           <ConfirmationModal
             isOpen={isDeleteRecordsModalOpen}
             setIsOpen={setIsDeleteRecordsModalOpen}
-            title={`Delete ${contextStoreNumberOfSelectedRecords} ${
-              contextStoreNumberOfSelectedRecords === 1 ? `record` : 'records'
-            }`}
-            subtitle={`Are you sure you want to delete ${
-              contextStoreNumberOfSelectedRecords === 1
-                ? 'this record'
-                : 'these records'
-            }? ${
-              contextStoreNumberOfSelectedRecords === 1 ? 'It' : 'They'
-            } can be recovered from the Options menu.`}
+            title={'Delete Records'}
+            subtitle={`Are you sure you want to delete these records? They can be recovered from the Options menu.`}
             onConfirmClick={() => {
               handleDeleteClick();
               onActionExecutedCallback?.();
@@ -141,31 +133,19 @@ export const DeleteRecordsActionEffect = ({
                 closeRightDrawer();
               }
             }}
-            deleteButtonText={`Delete ${
-              contextStoreNumberOfSelectedRecords > 1 ? 'Records' : 'Record'
-            }`}
+            deleteButtonText={'Delete Records'}
           />
         ),
       });
-    } else {
-      removeActionMenuEntry('delete');
     }
+  };
 
-    return () => {
-      removeActionMenuEntry('delete');
-    };
-  }, [
-    addActionMenuEntry,
-    canDelete,
-    closeRightDrawer,
-    contextStoreNumberOfSelectedRecords,
-    handleDeleteClick,
-    isDeleteRecordsModalOpen,
-    isInRightDrawer,
-    onActionExecutedCallback,
-    position,
-    removeActionMenuEntry,
-  ]);
+  const unregisterDeleteMultipleRecordsAction = () => {
+    removeActionMenuEntry('delete-multiple-records');
+  };
 
-  return null;
+  return {
+    registerDeleteMultipleRecordsAction,
+    unregisterDeleteMultipleRecordsAction,
+  };
 };
