@@ -115,6 +115,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
                       key={favorite.id}
                       className="navigation-drawer-item"
                       label={favorite.labelIdentifier}
+                      objectName={favorite.objectNameSingular}
                       Icon={() => <FavoriteIcon favorite={favorite} />}
                       active={isLocationMatchingFavorite(
                         currentPath,

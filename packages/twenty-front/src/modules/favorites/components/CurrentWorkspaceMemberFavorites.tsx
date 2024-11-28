@@ -160,6 +160,7 @@ export const CurrentWorkspaceMemberFavorites = ({
                       <NavigationDrawerSubItem
                         key={favorite.id}
                         label={favorite.labelIdentifier}
+                        objectName={favorite.objectNameSingular}
                         Icon={() => <FavoriteIcon favorite={favorite} />}
                         to={favorite.link}
                         active={index === selectedFavoriteIndex}
