@@ -2,7 +2,6 @@ import { SelectedVariableChip } from '@/object-record/record-field/form-types/co
 import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
 import { StyledFormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputInputContainer';
 import { StyledFormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputRowContainer';
-import { EditingMode } from '@/object-record/record-field/form-types/types/EditingMode';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -32,30 +31,50 @@ export const FormBooleanFieldInput = ({
 }: FormBooleanFieldInputProps) => {
   const inputId = useId();
 
-  const defaultEditingMode = isStandaloneVariableString(defaultValue)
-    ? 'variable'
-    : 'input';
-  const [editingMode, setEditingMode] =
-    useState<EditingMode>(defaultEditingMode);
-
-  const [draftValue, setDraftValue] = useState(defaultValue ?? false);
+  const [draftValue, setDraftValue] = useState<
+    | {
+        type: 'static';
+        value: boolean;
+      }
+    | {
+        type: 'variable';
+        value: string;
+      }
+  >(
+    isStandaloneVariableString(defaultValue)
+      ? {
+          type: 'variable',
+          value: defaultValue,
+        }
+      : {
+          type: 'static',
+          value: defaultValue ?? false,
+        },
+  );
 
   const handleChange = (newValue: boolean) => {
-    setDraftValue(newValue);
+    setDraftValue({
+      type: 'static',
+      value: newValue,
+    });
 
     onPersist(newValue);
   };
 
   const handleVariableTagInsert = (variable: string) => {
-    setEditingMode('variable');
-    setDraftValue(variable);
+    setDraftValue({
+      type: 'variable',
+      value: variable,
+    });
 
     onPersist(variable);
   };
 
   const handleUnlinkVariable = () => {
-    setEditingMode('input');
-    setDraftValue(false);
+    setDraftValue({
+      type: 'static',
+      value: false,
+    });
 
     onPersist(false);
   };
@@ -68,17 +87,17 @@ export const FormBooleanFieldInput = ({
         <StyledFormFieldInputInputContainer
           hasRightElement={isDefined(VariablePicker)}
         >
-          {editingMode === 'input' ? (
+          {draftValue.type === 'static' ? (
             <StyledBooleanInputContainer>
               <BooleanInput
-                value={draftValue as boolean}
+                value={draftValue.value}
                 readonly={readonly}
                 onToggle={handleChange}
               />
             </StyledBooleanInputContainer>
           ) : (
             <SelectedVariableChip
-              rawVariable={draftValue as string}
+              rawVariable={draftValue.value}
               onRemove={handleUnlinkVariable}
             />
           )}

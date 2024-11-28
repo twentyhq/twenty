@@ -2,7 +2,6 @@ import { SelectedVariableChip } from '@/object-record/record-field/form-types/co
 import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
 import { StyledFormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputInputContainer';
 import { StyledFormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputRowContainer';
-import { EditingMode } from '@/object-record/record-field/form-types/types/EditingMode';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -36,13 +35,26 @@ export const FormNumberFieldInput = ({
 }: FormNumberFieldInputProps) => {
   const inputId = useId();
 
-  const [draftValue, setDraftValue] = useState(defaultValue ?? '');
-
-  const defaultEditingMode = isStandaloneVariableString(defaultValue)
-    ? 'variable'
-    : 'input';
-  const [editingMode, setEditingMode] =
-    useState<EditingMode>(defaultEditingMode);
+  const [draftValue, setDraftValue] = useState<
+    | {
+        type: 'static';
+        value: string;
+      }
+    | {
+        type: 'variable';
+        value: string;
+      }
+  >(
+    isStandaloneVariableString(defaultValue)
+      ? {
+          type: 'variable',
+          value: defaultValue,
+        }
+      : {
+          type: 'static',
+          value: isDefined(defaultValue) ? String(defaultValue) : '',
+        },
+  );
 
   const persistNumber = (newValue: string) => {
     if (!canBeCastAsNumberOrNull(newValue)) {
@@ -55,21 +67,28 @@ export const FormNumberFieldInput = ({
   };
 
   const handleChange = (newText: string) => {
-    setDraftValue(newText);
+    setDraftValue({
+      type: 'static',
+      value: newText,
+    });
 
     persistNumber(newText.trim());
   };
 
   const handleUnlinkVariable = () => {
-    setEditingMode('input');
-    setDraftValue('');
+    setDraftValue({
+      type: 'static',
+      value: '',
+    });
 
     onPersist(null);
   };
 
   const handleVariableTagInsert = (variable: string) => {
-    setEditingMode('variable');
-    setDraftValue(variable);
+    setDraftValue({
+      type: 'variable',
+      value: variable,
+    });
 
     onPersist(variable);
   };
@@ -82,18 +101,18 @@ export const FormNumberFieldInput = ({
         <StyledFormFieldInputInputContainer
           hasRightElement={isDefined(VariablePicker)}
         >
-          {editingMode === 'input' ? (
+          {draftValue.type === 'static' ? (
             <StyledInput
               inputId={inputId}
               placeholder={placeholder}
-              value={String(draftValue)}
+              value={draftValue.value}
               copyButton={false}
               hotkeyScope="record-create"
               onChange={handleChange}
             />
           ) : (
             <SelectedVariableChip
-              rawVariable={draftValue as string}
+              rawVariable={draftValue.value}
               onRemove={handleUnlinkVariable}
             />
           )}
