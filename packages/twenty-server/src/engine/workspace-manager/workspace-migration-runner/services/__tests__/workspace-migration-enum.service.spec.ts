@@ -80,6 +80,7 @@ describe('WorkspaceMigrationEnumService', () => {
 
       expect(queryRunner.query).toHaveBeenCalledWith(
         expect.stringContaining('information_schema.columns'),
+        ['test_schema', 'test_table', 'status'],
       );
       expect(queryRunner.query).toHaveBeenCalledWith(
         expect.stringContaining('ALTER TYPE'),
