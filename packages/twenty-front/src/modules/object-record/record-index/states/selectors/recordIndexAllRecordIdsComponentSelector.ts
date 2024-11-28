@@ -1,5 +1,5 @@
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
-import { recordIndexRowIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRowIdsByGroupComponentFamilyState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -26,7 +26,7 @@ export const recordIndexAllRecordIdsComponentSelector =
 
         if (recordGroupIds.length === 0) {
           return get(
-            recordIndexRowIdsByGroupComponentFamilyState.atomFamily({
+            recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
               instanceId,
               familyKey: defaultFamilyKey,
             }),
@@ -36,7 +36,7 @@ export const recordIndexAllRecordIdsComponentSelector =
         return recordGroupIds.reduce<ObjectRecord['id'][]>(
           (acc, recordGroupId) => {
             const rowIds = get(
-              recordIndexRowIdsByGroupComponentFamilyState.atomFamily({
+              recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
                 instanceId,
                 familyKey: recordGroupId,
               }),
@@ -51,7 +51,7 @@ export const recordIndexAllRecordIdsComponentSelector =
       ({ instanceId }) =>
       ({ set }, recordIds) =>
         set(
-          recordIndexRowIdsByGroupComponentFamilyState.atomFamily({
+          recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
             instanceId,
             familyKey: defaultFamilyKey,
           }),

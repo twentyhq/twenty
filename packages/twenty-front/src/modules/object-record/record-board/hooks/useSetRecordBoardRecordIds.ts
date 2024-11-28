@@ -3,7 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
-import { recordIndexRowIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRowIdsByGroupComponentFamilyState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sortRecordsByPosition } from '@/object-record/utils/sortRecordsByPosition';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -21,10 +21,11 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
     recordBoardId,
   );
 
-  const recordIndexRowIdsByGroupFamilyState = useRecoilComponentCallbackStateV2(
-    recordIndexRowIdsByGroupComponentFamilyState,
-    recordBoardId,
-  );
+  const recordIndexRecordIdsByGroupFamilyState =
+    useRecoilComponentCallbackStateV2(
+      recordIndexRecordIdsByGroupComponentFamilyState,
+      recordBoardId,
+    );
 
   const setRecordIds = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -42,7 +43,7 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
 
           const existingRecordGroupRowIds = getSnapshotValue(
             snapshot,
-            recordIndexRowIdsByGroupFamilyState(recordGroupId),
+            recordIndexRecordIdsByGroupFamilyState(recordGroupId),
           );
 
           const recordGroupFieldMetadata = getSnapshotValue(
@@ -64,7 +65,7 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
 
           if (!isDeeplyEqual(existingRecordGroupRowIds, recordGroupRowIds)) {
             set(
-              recordIndexRowIdsByGroupFamilyState(recordGroupId),
+              recordIndexRecordIdsByGroupFamilyState(recordGroupId),
               recordGroupRowIds,
             );
           }
@@ -72,7 +73,7 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
       },
     [
       visibleRecordGroupIdsSelector,
-      recordIndexRowIdsByGroupFamilyState,
+      recordIndexRecordIdsByGroupFamilyState,
       recordGroupFieldMetadataState,
     ],
   );

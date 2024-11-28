@@ -1,5 +1,5 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
-import { recordIndexRowIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRowIdsByGroupComponentFamilyState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
@@ -18,8 +18,8 @@ export const RecordTableRecordGroupRows = () => {
     recordIndexAllRecordIdsComponentSelector,
   );
 
-  const recordGroupRowIds = useRecoilComponentFamilyValueV2(
-    recordIndexRowIdsByGroupComponentFamilyState,
+  const recordIdsByGroup = useRecoilComponentFamilyValueV2(
+    recordIndexRecordIdsByGroupComponentFamilyState,
     currentRecordGroupId,
   );
 
@@ -42,7 +42,7 @@ export const RecordTableRecordGroupRows = () => {
   return (
     <AnimatePresence>
       {isRecordGroupTableSectionToggled &&
-        recordGroupRowIds.map((recordId) => {
+        recordIdsByGroup.map((recordId) => {
           const rowIndex = rowIndexMap.get(recordId);
 
           if (!isDefined(rowIndex)) {

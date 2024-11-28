@@ -1,5 +1,5 @@
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { recordIndexRowIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRowIdsByGroupComponentFamilyState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { createComponentFamilySelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentFamilySelectorV2';
 
@@ -11,7 +11,7 @@ export const numberOfTableRowIdsByGroupComponentFamilySelector =
       ({ instanceId, familyKey }) =>
       ({ get }) =>
         get(
-          recordIndexRowIdsByGroupComponentFamilyState.atomFamily({
+          recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
             instanceId,
             familyKey,
           }),

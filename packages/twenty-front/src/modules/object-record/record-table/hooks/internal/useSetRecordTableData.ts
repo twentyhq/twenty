@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { recordIndexRowIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRowIdsByGroupComponentFamilyState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
@@ -20,10 +20,11 @@ export const useSetRecordTableData = ({
   recordTableId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const recordIndexRowIdsByGroupFamilyState = useRecoilComponentCallbackStateV2(
-    recordIndexRowIdsByGroupComponentFamilyState,
-    recordTableId,
-  );
+  const recordIndexRecordIdsByGroupFamilyState =
+    useRecoilComponentCallbackStateV2(
+      recordIndexRecordIdsByGroupComponentFamilyState,
+      recordTableId,
+    );
 
   const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackStateV2(
     recordIndexAllRecordIdsComponentSelector,
@@ -65,7 +66,7 @@ export const useSetRecordTableData = ({
         const currentRowIds = getSnapshotValue(
           snapshot,
           currentRecordGroupId
-            ? recordIndexRowIdsByGroupFamilyState(currentRecordGroupId)
+            ? recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId)
             : recordIndexAllRecordIdsSelector,
         );
 
@@ -85,7 +86,7 @@ export const useSetRecordTableData = ({
 
           if (isDefined(currentRecordGroupId)) {
             set(
-              recordIndexRowIdsByGroupFamilyState(currentRecordGroupId),
+              recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
               recordIds,
             );
           } else {
@@ -96,7 +97,7 @@ export const useSetRecordTableData = ({
         }
       },
     [
-      recordIndexRowIdsByGroupFamilyState,
+      recordIndexRecordIdsByGroupFamilyState,
       recordIndexAllRecordIdsSelector,
       hasUserSelectedAllRowsState,
       onEntityCountChange,
