@@ -20,6 +20,56 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
     viewBarComponentId,
   );
 
+  const saveViewGroup = useRecoilCallback(
+    ({ snapshot }) =>
+      async (viewGroupToSave: ViewGroup) => {
+        const currentViewId = snapshot
+          .getLoadable(currentViewIdCallbackState)
+          .getValue();
+
+        if (!currentViewId) {
+          return;
+        }
+
+        const view = await getViewFromCache(currentViewId);
+
+        if (isUndefinedOrNull(view)) {
+          return;
+        }
+
+        const currentViewGroups = view.viewGroups;
+
+        const existingField = currentViewGroups.find(
+          (currentViewGroup) =>
+            currentViewGroup.fieldValue === viewGroupToSave.fieldValue,
+        );
+
+        if (isUndefinedOrNull(existingField)) {
+          return;
+        }
+
+        if (
+          isDeeplyEqual(
+            {
+              position: existingField.position,
+              isVisible: existingField.isVisible,
+            },
+            {
+              position: viewGroupToSave.position,
+              isVisible: viewGroupToSave.isVisible,
+            },
+          )
+        ) {
+          return;
+        }
+
+        await updateViewGroupRecords([
+          { ...viewGroupToSave, id: existingField.id },
+        ]);
+      },
+    [currentViewIdCallbackState, getViewFromCache, updateViewGroupRecords],
+  );
+
   const saveViewGroups = useRecoilCallback(
     ({ snapshot }) =>
       async (viewGroupsToSave: ViewGroup[]) => {
@@ -91,6 +141,7 @@ export const useSaveCurrentViewGroups = (viewBarComponentId?: string) => {
   );
 
   return {
+    saveViewGroup,
     saveViewGroups,
   };
 };

@@ -5,7 +5,7 @@ export const sortRecordGroupDefinitions = (
   recordGroupDefinitions: RecordGroupDefinition[],
   recordGroupSort: RecordGroupSort,
 ) => {
-  const visibleGroups = recordGroupDefinitions.filter(
+  const visibleRecordGroups = recordGroupDefinitions.filter(
     (boardGroup) => boardGroup.isVisible,
   );
 
@@ -17,15 +17,15 @@ export const sortRecordGroupDefinitions = (
 
   switch (recordGroupSort) {
     case RecordGroupSort.Alphabetical:
-      return visibleGroups.sort((a, b) =>
+      return visibleRecordGroups.sort((a, b) =>
         compareAlphabetical(a.title.toLowerCase(), b.title.toLowerCase()),
       );
     case RecordGroupSort.ReverseAlphabetical:
-      return visibleGroups.sort((a, b) =>
+      return visibleRecordGroups.sort((a, b) =>
         compareAlphabetical(a.title.toLowerCase(), b.title.toLowerCase(), true),
       );
     case RecordGroupSort.Manual:
     default:
-      return visibleGroups.sort((a, b) => a.position - b.position);
+      return visibleRecordGroups.sort((a, b) => a.position - b.position);
   }
 };

@@ -24,11 +24,9 @@ import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/compone
 
 import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
-import { recordGroupDefinitionsComponentState } from '@/object-record/record-group/states/recordGroupDefinitionsComponentState';
+import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetRecordGroup';
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
-import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewField } from '@/views/types/ViewField';
@@ -38,7 +36,7 @@ import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToC
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContainer = styled.div`
@@ -68,9 +66,7 @@ export const RecordIndexContainer = () => {
     objectNameSingular,
   } = useContext(RecordIndexRootPropsContext);
 
-  const recordGroupDefinitionsCallbackState = useRecoilComponentCallbackStateV2(
-    recordGroupDefinitionsComponentState,
-  );
+  const setRecordGroup = useSetRecordGroup(recordIndexId);
 
   const { columnDefinitions, filterDefinitions, sortDefinitions } =
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
@@ -95,8 +91,6 @@ export const RecordIndexContainer = () => {
   } = useRecordTable({
     recordTableId: recordIndexId,
   });
-
-  const { setColumns } = useRecordBoard(recordIndexId);
 
   const onViewFieldsChange = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -124,30 +118,16 @@ export const RecordIndexContainer = () => {
     [columnDefinitions, setTableColumns],
   );
 
-  const onViewGroupsChange = useRecoilCallback(
-    ({ set, snapshot }) =>
-      (viewGroups: ViewGroup[]) => {
-        const newGroupDefinitions = mapViewGroupsToRecordGroupDefinitions({
-          objectMetadataItem,
-          viewGroups,
-        });
+  const onViewGroupsChange = useCallback(
+    (viewGroups: ViewGroup[]) => {
+      const newGroupDefinitions = mapViewGroupsToRecordGroupDefinitions({
+        objectMetadataItem,
+        viewGroups,
+      });
 
-        setColumns(newGroupDefinitions);
-
-        const existingRecordIndexGroupDefinitions = snapshot
-          .getLoadable(recordGroupDefinitionsCallbackState)
-          .getValue();
-
-        if (
-          !isDeeplyEqual(
-            existingRecordIndexGroupDefinitions,
-            newGroupDefinitions,
-          )
-        ) {
-          set(recordGroupDefinitionsCallbackState, newGroupDefinitions);
-        }
-      },
-    [objectMetadataItem, recordGroupDefinitionsCallbackState, setColumns],
+      setRecordGroup(newGroupDefinitions);
+    },
+    [objectMetadataItem, setRecordGroup],
   );
 
   const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
@@ -229,10 +209,7 @@ export const RecordIndexContainer = () => {
               objectNameSingular={objectNameSingular}
               recordBoardId={recordIndexId}
             />
-            <RecordIndexBoardDataLoaderEffect
-              objectNameSingular={objectNameSingular}
-              recordBoardId={recordIndexId}
-            />
+            <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
           </StyledContainerWithPadding>
         )}
         <RecordIndexActionMenu />
