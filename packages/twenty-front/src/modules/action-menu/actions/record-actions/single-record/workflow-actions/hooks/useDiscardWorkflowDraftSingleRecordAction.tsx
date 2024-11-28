@@ -6,12 +6,12 @@ import {
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
+import { useDeleteOneWorkflowVersion } from '@/workflow/hooks/useDeleteOneWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { useRecoilValue } from 'recoil';
-import { IconPower, isDefined } from 'twenty-ui';
+import { IconTrash, isDefined } from 'twenty-ui';
 
-export const useActivateWorkflowLastPublishedVersionSingleRecordAction = () => {
+export const useDiscardWorkflowDraftSingleRecordAction = () => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
   const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
@@ -27,49 +27,52 @@ export const useActivateWorkflowLastPublishedVersionSingleRecordAction = () => {
     recordStoreFamilyState(selectedRecordId ?? ''),
   );
 
-  const { activateWorkflowVersion } = useActivateWorkflowVersion();
+  const { deleteOneWorkflowVersion } = useDeleteOneWorkflowVersion();
 
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
     selectedRecord?.id,
   );
 
-  const registerActivateWorkflowLastPublishedVersionSingleRecordAction = ({
+  const registerDiscardWorkflowDraftSingleRecordAction = ({
     position,
   }: {
     position: number;
   }) => {
     if (
       !isDefined(workflowWithCurrentVersion) ||
-      !isDefined(workflowWithCurrentVersion.currentVersion.trigger) ||
-      !isDefined(workflowWithCurrentVersion.lastPublishedVersionId) ||
-      workflowWithCurrentVersion.currentVersion.status === 'ACTIVE'
+      !isDefined(workflowWithCurrentVersion.currentVersion.trigger)
     ) {
       return;
     }
 
+    const isDraft =
+      workflowWithCurrentVersion.currentVersion.status === 'DRAFT';
+
+    if (!isDraft) {
+      return;
+    }
+
     addActionMenuEntry({
-      key: 'activate-workflow-last-published-version',
-      label: 'Activate last published version',
+      key: 'discard-workflow-draft',
+      label: 'Discard Draft',
       position,
-      Icon: IconPower,
+      Icon: IconTrash,
       type: ActionMenuEntryType.Standard,
       scope: ActionMenuEntryScope.RecordSelection,
       onClick: () => {
-        activateWorkflowVersion({
-          workflowVersionId: workflowWithCurrentVersion.lastPublishedVersionId,
-          workflowId: workflowWithCurrentVersion.id,
+        deleteOneWorkflowVersion({
+          workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
         });
       },
     });
   };
 
-  const unregisterActivateWorkflowLastPublishedVersionSingleRecordAction =
-    () => {
-      removeActionMenuEntry('activate-workflow-last-published-version');
-    };
+  const unregisterDiscardWorkflowDraftSingleRecordAction = () => {
+    removeActionMenuEntry('discard-workflow-draft');
+  };
 
   return {
-    registerActivateWorkflowLastPublishedVersionSingleRecordAction,
-    unregisterActivateWorkflowLastPublishedVersionSingleRecordAction,
+    registerDiscardWorkflowDraftSingleRecordAction,
+    unregisterDiscardWorkflowDraftSingleRecordAction,
   };
 };
