@@ -13,7 +13,10 @@ export const SettingsAdmin = () => {
     <SubMenuTopBarContainer
       title="Server Admin Panel"
       links={[
-        { children: 'Other', href: getSettingsPagePath(SettingsPath.Admin) },
+        {
+          children: 'Other',
+          href: getSettingsPagePath(SettingsPath.AdminPanel),
+        },
         { children: 'Server Admin Panel' },
       ]}
     >

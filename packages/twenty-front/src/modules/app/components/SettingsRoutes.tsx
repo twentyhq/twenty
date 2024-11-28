@@ -261,7 +261,7 @@ type SettingsRoutesProps = {
   isCRMMigrationEnabled?: boolean;
   isServerlessFunctionSettingsEnabled?: boolean;
   isSSOEnabled?: boolean;
-  isAdminPageEnabled?: boolean;
+  isAdminPageEnabled: boolean;
 };
 
 export const SettingsRoutes = ({
@@ -393,7 +393,7 @@ export const SettingsRoutes = ({
       )}
       {isAdminPageEnabled && (
         <>
-          <Route path={SettingsPath.Admin} element={<SettingsAdmin />} />
+          <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />
           <Route
             path={SettingsPath.FeatureFlags}
             element={<SettingsAdminFeatureFlags />}

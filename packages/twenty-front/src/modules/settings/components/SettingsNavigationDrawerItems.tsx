@@ -237,7 +237,7 @@ export const SettingsNavigationDrawerItems = () => {
         {isAdminPageEnabled && (
           <SettingsNavigationDrawerItem
             label="Server Admin Panel"
-            path={SettingsPath.Admin}
+            path={SettingsPath.AdminPanel}
             Icon={IconServer}
           />
         )}

@@ -35,6 +35,6 @@ export enum SettingsPath {
   DevelopersNewWebhook = 'webhooks/new',
   DevelopersNewWebhookDetail = 'webhooks/:webhookId',
   Releases = 'releases',
-  Admin = 'admin',
-  FeatureFlags = 'admin/feature-flags',
+  AdminPanel = 'admin-panel',
+  FeatureFlags = 'admin-panel/feature-flags',
 }

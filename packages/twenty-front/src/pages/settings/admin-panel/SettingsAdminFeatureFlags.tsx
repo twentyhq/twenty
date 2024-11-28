@@ -1,4 +1,4 @@
-import { SETTINGS_ADMIN_FEATURE_FLAGS_TABS } from '@/settings/admin-panel/constants/SettingsAdminFeatureFlagsTabs';
+import { SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID } from '@/settings/admin-panel/constants/SettingsAdminFeatureFlagsTabs';
 import { useFeatureFlagsManagement } from '@/settings/admin-panel/hooks/useFeatureFlagsManagement';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -67,10 +67,9 @@ const StyledContentContainer = styled.div`
 
 export const SettingsAdminFeatureFlags = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
-  const [activeWorkspaceId, setActiveWorkspaceId] = useState<string>('');
 
-  const { activeTabIdState } = useTabList(
-    SETTINGS_ADMIN_FEATURE_FLAGS_TABS.COMPONENT_INSTANCE_ID,
+  const { activeTabIdState, setActiveTabId } = useTabList(
+    SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID,
   );
   const activeTabId = useRecoilValue(activeTabIdState);
 
@@ -83,19 +82,24 @@ export const SettingsAdminFeatureFlags = () => {
   } = useFeatureFlagsManagement();
 
   const handleSearch = async () => {
-    setActiveWorkspaceId('');
-    await handleUserLookup(userIdentifier);
+    setActiveTabId('');
+
+    const result = await handleUserLookup(userIdentifier);
+
+    if (
+      isDefined(result?.workspaces) &&
+      result.workspaces.length > 0 &&
+      !error
+    ) {
+      setActiveTabId(result.workspaces[0].id);
+    }
   };
 
   const shouldShowUserData = userLookupResult && !error;
 
-  if (
-    isDefined(userLookupResult?.workspaces.length) &&
-    !activeWorkspaceId &&
-    !error
-  ) {
-    setActiveWorkspaceId(userLookupResult.workspaces[0].id);
-  }
+  const activeWorkspace = userLookupResult?.workspaces.find(
+    (workspace) => workspace.id === activeTabId,
+  );
 
   const tabs =
     userLookupResult?.workspaces.map((workspace) => ({
@@ -107,10 +111,6 @@ export const SettingsAdminFeatureFlags = () => {
         ) ?? '',
     })) ?? [];
 
-  const activeWorkspace = userLookupResult?.workspaces.find(
-    (workspace) => workspace.id === activeTabId,
-  );
-
   const renderWorkspaceContent = () => {
     if (!activeWorkspace) return null;
 
@@ -118,7 +118,9 @@ export const SettingsAdminFeatureFlags = () => {
       <>
         <H2Title title={activeWorkspace.name} description={'Workspace Name'} />
         <H2Title
-          title={`${activeWorkspace.totalUsers} ${activeWorkspace.totalUsers > 1 ? 'Users' : 'User'}`}
+          title={`${activeWorkspace.totalUsers} ${
+            activeWorkspace.totalUsers > 1 ? 'Users' : 'User'
+          }`}
           description={'Total Users'}
         />
         <StyledTable>
@@ -160,10 +162,13 @@ export const SettingsAdminFeatureFlags = () => {
     <SubMenuTopBarContainer
       title="Feature Flags"
       links={[
-        { children: 'Other', href: getSettingsPagePath(SettingsPath.Admin) },
+        {
+          children: 'Other',
+          href: getSettingsPagePath(SettingsPath.AdminPanel),
+        },
         {
           children: 'Server Admin Panel',
-          href: getSettingsPagePath(SettingsPath.Admin),
+          href: getSettingsPagePath(SettingsPath.AdminPanel),
         },
         { children: 'Feature Flags' },
       ]}
@@ -181,7 +186,7 @@ export const SettingsAdminFeatureFlags = () => {
                 value={userIdentifier}
                 onChange={setUserIdentifier}
                 onInputEnter={handleSearch}
-                placeholder="Enter user ID or email"
+                placeholder="Enter user ID or email address"
                 fullWidth
                 disabled={isLoading}
               />
@@ -204,7 +209,9 @@ export const SettingsAdminFeatureFlags = () => {
             <StyledUserInfo>
               <H1Title title="User Info" fontColor={H1TitleFontColor.Primary} />
               <H2Title
-                title={`${userLookupResult.user.firstName || ''} ${userLookupResult.user.lastName || ''}`.trim()}
+                title={`${userLookupResult.user.firstName || ''} ${
+                  userLookupResult.user.lastName || ''
+                }`.trim()}
                 description="User Name"
               />
               <H2Title
@@ -218,9 +225,7 @@ export const SettingsAdminFeatureFlags = () => {
             <StyledTabListContainer>
               <TabList
                 tabs={tabs}
-                tabListInstanceId={
-                  SETTINGS_ADMIN_FEATURE_FLAGS_TABS.COMPONENT_INSTANCE_ID
-                }
+                tabListInstanceId={SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID}
                 behaveAsLinks={false}
               />
             </StyledTabListContainer>

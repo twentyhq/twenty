@@ -43,7 +43,7 @@ export const useImpersonate = () => {
       await clearSession();
       setCurrentUser(user);
       setTokenPair(tokens);
-      await sleep(0);
+      await sleep(0); // This hacky workaround is necessary to ensure the tokens stored in the cookie are updated correctly.
       window.location.href = AppPath.Index;
     } catch (error) {
       setError('Failed to impersonate user. Please try again.');

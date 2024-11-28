@@ -62,11 +62,7 @@ const StyledHover = styled.span`
     background: ${({ theme }) => theme.background.quaternary};
   }
 `;
-const StyledLogo = styled.div<{ logo: string }>`
-  background: url(${({ logo }) => logo});
-  background-position: center;
-  background-size: cover;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
+const StyledLogo = styled.img`
   height: 14px;
   width: 14px;
 `;
@@ -95,7 +91,7 @@ export const Tab = ({
       to={to}
     >
       <StyledHover>
-        {logo && <StyledLogo logo={logo} />}
+        {logo && <StyledLogo src={logo} alt={`${title} logo`} />}
         {Icon && <Icon size={theme.icon.size.md} />}
         {title}
         {pill && typeof pill === 'string' ? <Pill label={pill} /> : pill}
