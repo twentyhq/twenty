@@ -1,15 +1,8 @@
-import { useContextStoreSelectedRecords } from '@/context-store/hooks/useContextStoreSelectedRecords';
-import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
-import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
+import { CommandMenuContextRecordChipAvatars } from '@/command-menu/components/CommandMenuContextRecordChipAvatars';
+import { useFindManyRecordsSelectedInContextStore } from '@/context-store/hooks/useFindManyRecordsSelectedInContextStore';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
-import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Avatar } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
 
 const StyledChip = styled.div`
@@ -28,70 +21,23 @@ const StyledChip = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
 `;
 
-const StyledAvatarWrapper = styled.div`
-  background-color: ${({ theme }) => theme.background.primary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  padding: ${({ theme }) => theme.spacing(0.5)};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  &:not(:first-of-type) {
-    margin-left: -${({ theme }) => theme.spacing(1)};
-  }
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
 const StyledAvatarContainer = styled.div`
   display: flex;
 `;
 
-const CommandMenuContextRecordChipAvatars = ({
-  objectMetadataItem,
-  record,
+export const CommandMenuContextRecordChip = ({
+  objectMetadataItemId,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
-  record: ObjectRecord;
+  objectMetadataItemId: string;
 }) => {
-  const { recordChipData } = useRecordChipData({
-    objectNameSingular: objectMetadataItem.nameSingular,
-    record,
-  });
-
-  const { Icon, IconColor } = useGetStandardObjectIcon(
-    objectMetadataItem.nameSingular,
-  );
-
-  const theme = useTheme();
-
-  return (
-    <StyledAvatarWrapper>
-      {Icon ? (
-        <Icon color={IconColor} size={theme.icon.size.sm} />
-      ) : (
-        <Avatar
-          avatarUrl={recordChipData.avatarUrl}
-          placeholderColorSeed={recordChipData.recordId}
-          placeholder={recordChipData.name}
-          type={recordChipData.avatarType}
-          size="sm"
-        />
-      )}
-    </StyledAvatarWrapper>
-  );
-};
-
-export const CommandMenuContextRecordChip = () => {
-  const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
-    contextStoreCurrentObjectMetadataIdComponentState,
-  );
-
   const { objectMetadataItem } = useObjectMetadataItemById({
-    objectId: contextStoreCurrentObjectMetadataId ?? '',
+    objectId: objectMetadataItemId,
   });
 
-  const { records, loading, totalCount } = useContextStoreSelectedRecords({
-    limit: 3,
-  });
+  const { records, loading, totalCount } =
+    useFindManyRecordsSelectedInContextStore({
+      limit: 3,
+    });
 
   if (loading || !totalCount) {
     return null;

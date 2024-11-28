@@ -3,9 +3,11 @@ import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-me
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
+import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
+import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
+import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardVisibleFieldDefinitionsComponentSelector';
 import {
   FieldContext,
   RecordUpdateHook,
@@ -22,11 +24,13 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
+import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import styled from '@emotion/styled';
 import { ReactNode, useContext, useState } from 'react';
 import { InView, useInView } from 'react-intersection-observer';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   AnimatedEaseInOut,
   AvatarChipVariant,
@@ -157,27 +161,30 @@ export const RecordBoardCard = ({
   onCreateSuccess?: () => void;
   position?: 'first' | 'last';
 }) => {
-  const [newLabelValue, setNewLabelValue] = useState('');
-  const { handleBlur, handleInputEnter } = useAddNewCard();
   const { recordId } = useContext(RecordBoardCardContext);
+
+  const [newLabelValue, setNewLabelValue] = useState('');
+
+  const { handleBlur, handleInputEnter } = useAddNewCard();
+
   const { updateOneRecord, objectMetadataItem } =
     useContext(RecordBoardContext);
-  const {
-    isCompactModeActiveState,
-    isRecordBoardCardSelectedFamilyState,
-    visibleFieldDefinitionsState,
-  } = useRecordBoardStates();
-  const isCompactModeActive = useRecoilValue(isCompactModeActiveState);
+
+  const visibleFieldDefinitions = useRecoilComponentValueV2(
+    recordBoardVisibleFieldDefinitionsComponentSelector,
+  );
+
+  const isCompactModeActive = useRecoilComponentValueV2(
+    isRecordBoardCompactModeActiveComponentState,
+  );
 
   const [isCardExpanded, setIsCardExpanded] = useState(false);
 
-  const [isCurrentCardSelected, setIsCurrentCardSelected] = useRecoilState(
-    isRecordBoardCardSelectedFamilyState(recordId),
-  );
-
-  const visibleFieldDefinitions = useRecoilValue(
-    visibleFieldDefinitionsState(),
-  );
+  const [isCurrentCardSelected, setIsCurrentCardSelected] =
+    useRecoilComponentFamilyStateV2(
+      isRecordBoardCardSelectedComponentFamilyState,
+      recordId,
+    );
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 

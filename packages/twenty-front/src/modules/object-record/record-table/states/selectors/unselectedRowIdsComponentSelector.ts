@@ -1,6 +1,6 @@
+import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 
 export const unselectedRowIdsComponentSelector = createComponentSelectorV2<
@@ -12,7 +12,8 @@ export const unselectedRowIdsComponentSelector = createComponentSelectorV2<
     ({ instanceId }) =>
     ({ get }) => {
       const rowIds = get(
-        tableAllRowIdsComponentState.atomFamily({
+        // TODO: Working because instanceId is the same, but we're not in the same context, should be changed !
+        recordIndexAllRowIdsComponentState.atomFamily({
           instanceId,
         }),
       );

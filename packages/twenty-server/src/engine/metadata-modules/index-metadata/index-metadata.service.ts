@@ -13,6 +13,7 @@ import { generateDeterministicIndexName } from 'src/engine/metadata-modules/inde
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
+  WorkspaceMigrationIndexAction,
   WorkspaceMigrationIndexActionType,
   WorkspaceMigrationTableAction,
   WorkspaceMigrationTableActionType,
@@ -103,6 +104,55 @@ export class IndexMetadataService {
     );
   }
 
+  async recomputeIndexMetadataForObject(
+    workspaceId: string,
+    updatedObjectMetadata: ObjectMetadataEntity,
+  ) {
+    const indexesToRecompute = await this.indexMetadataRepository.find({
+      where: {
+        objectMetadataId: updatedObjectMetadata.id,
+        workspaceId,
+      },
+      relations: ['indexFieldMetadatas.fieldMetadata'],
+    });
+
+    const recomputedIndexes: {
+      indexMetadata: IndexMetadataEntity;
+      previousName: string;
+      newName: string;
+    }[] = [];
+
+    for (const index of indexesToRecompute) {
+      const previousIndexName = index.name;
+      const tableName = computeObjectTargetTable(updatedObjectMetadata);
+
+      const indexFieldsMetadataOrdered = index.indexFieldMetadatas.sort(
+        (a, b) => a.order - b.order,
+      );
+
+      const columnNames = indexFieldsMetadataOrdered.map(
+        (indexFieldMetadata) => indexFieldMetadata.fieldMetadata.name,
+      );
+
+      const newIndexName = `IDX_${generateDeterministicIndexName([
+        tableName,
+        ...columnNames,
+      ])}`;
+
+      await this.indexMetadataRepository.update(index.id, {
+        name: newIndexName,
+      });
+
+      recomputedIndexes.push({
+        indexMetadata: index,
+        previousName: previousIndexName,
+        newName: newIndexName,
+      });
+    }
+
+    return recomputedIndexes;
+  }
+
   async deleteIndexMetadata(
     workspaceId: string,
     objectMetadata: ObjectMetadataEntity,
@@ -178,5 +228,56 @@ export class IndexMetadataService {
       workspaceId,
       [migration],
     );
+  }
+
+  async createIndexRecomputeMigrations(
+    workspaceId: string,
+    objectMetadata: ObjectMetadataEntity,
+    recomputedIndexes: {
+      indexMetadata: IndexMetadataEntity;
+      previousName: string;
+      newName: string;
+    }[],
+  ) {
+    for (const recomputedIndex of recomputedIndexes) {
+      const { previousName, newName, indexMetadata } = recomputedIndex;
+
+      const tableName = computeObjectTargetTable(objectMetadata);
+
+      const indexFieldsMetadataOrdered = indexMetadata.indexFieldMetadatas.sort(
+        (a, b) => a.order - b.order,
+      );
+
+      const columnNames = indexFieldsMetadataOrdered.map(
+        (indexFieldMetadata) => indexFieldMetadata.fieldMetadata.name,
+      );
+
+      const migration = {
+        name: tableName,
+        action: WorkspaceMigrationTableActionType.ALTER_INDEXES,
+        indexes: [
+          {
+            action: WorkspaceMigrationIndexActionType.DROP,
+            name: previousName,
+            columns: [],
+            isUnique: indexMetadata.isUnique,
+          } satisfies WorkspaceMigrationIndexAction,
+          {
+            action: WorkspaceMigrationIndexActionType.CREATE,
+            columns: columnNames,
+            name: newName,
+            isUnique: indexMetadata.isUnique,
+            where: indexMetadata.indexWhereClause,
+            type: indexMetadata.indexType,
+          } satisfies WorkspaceMigrationIndexAction,
+        ],
+      } satisfies WorkspaceMigrationTableAction;
+
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`update-${objectMetadata.nameSingular}-index`),
+        workspaceId,
+        [migration],
+      );
+    }
   }
 }

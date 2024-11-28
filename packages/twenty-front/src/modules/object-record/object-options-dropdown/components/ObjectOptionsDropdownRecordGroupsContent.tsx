@@ -13,8 +13,10 @@ import {
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
 import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
-import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
+import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
+import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
+import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
 import { recordIndexRecordGroupHideComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentState';
 import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexRecordGroupIsDraggableSortComponentSelector';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
@@ -26,22 +28,20 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const isViewGroupEnabled = useIsFeatureEnabled('IS_VIEW_GROUPS_ENABLED');
 
-  const {
-    currentContentId,
-    viewType,
-    recordIndexId,
-    objectMetadataItem,
-    onContentChange,
-    resetContent,
-  } = useOptionsDropdown();
+  const { currentContentId, recordIndexId, onContentChange, resetContent } =
+    useOptionsDropdown();
 
-  const {
-    hiddenRecordGroups,
-    visibleRecordGroups,
-    viewGroupFieldMetadataItem,
-  } = useRecordGroups({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
+  const recordGroupFieldMetadata = useRecoilComponentValueV2(
+    recordGroupFieldMetadataComponentState,
+  );
+
+  const visibleRecordGroupIds = useRecoilComponentValueV2(
+    visibleRecordGroupIdsComponentSelector,
+  );
+
+  const hiddenRecordGroupIds = useRecoilComponentValueV2(
+    hiddenRecordGroupIdsComponentSelector,
+  );
 
   const isDragableSortRecordGroup = useRecoilComponentValueV2(
     recordIndexRecordGroupIsDraggableSortComponentSelector,
@@ -56,23 +56,21 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     handleHideEmptyRecordGroupChange,
   } = useRecordGroupVisibility({
     viewBarId: recordIndexId,
-    viewType,
   });
 
   const { handleOrderChange: handleRecordGroupOrderChange } =
     useRecordGroupReorder({
-      objectNameSingular: objectMetadataItem.nameSingular,
       viewBarId: recordIndexId,
     });
 
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
-      hiddenRecordGroups.length === 0
+      hiddenRecordGroupIds.length === 0
     ) {
       onContentChange('recordGroups');
     }
-  }, [hiddenRecordGroups, currentContentId, onContentChange]);
+  }, [hiddenRecordGroupIds, currentContentId, onContentChange]);
 
   return (
     <>
@@ -86,9 +84,9 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
               onClick={() => onContentChange('recordGroupFields')}
               LeftIcon={IconLayoutList}
               text={
-                !viewGroupFieldMetadataItem
+                !recordGroupFieldMetadata
                   ? 'Group by'
-                  : `Group by "${viewGroupFieldMetadataItem.label}"`
+                  : `Group by "${recordGroupFieldMetadata.label}"`
               }
               hasSubMenu
             />
@@ -108,12 +106,12 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           toggleSize="small"
         />
       </DropdownMenuItemsContainer>
-      {visibleRecordGroups.length > 0 && (
+      {visibleRecordGroupIds.length > 0 && (
         <>
           <DropdownMenuSeparator />
           <RecordGroupsVisibilityDropdownSection
             title="Visible groups"
-            recordGroups={visibleRecordGroups}
+            recordGroupIds={visibleRecordGroupIds}
             onDragEnd={handleRecordGroupOrderChange}
             onVisibilityChange={handleRecordGroupVisibilityChange}
             isDraggable={isDragableSortRecordGroup}
@@ -121,14 +119,14 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           />
         </>
       )}
-      {hiddenRecordGroups.length > 0 && (
+      {hiddenRecordGroupIds.length > 0 && (
         <>
           <DropdownMenuSeparator />
           <DropdownMenuItemsContainer>
             <MenuItemNavigate
               onClick={() => onContentChange('hiddenRecordGroups')}
               LeftIcon={IconEyeOff}
-              text={`Hidden ${viewGroupFieldMetadataItem?.label ?? ''}`}
+              text={`Hidden ${recordGroupFieldMetadata?.label ?? ''}`}
             />
           </DropdownMenuItemsContainer>
         </>

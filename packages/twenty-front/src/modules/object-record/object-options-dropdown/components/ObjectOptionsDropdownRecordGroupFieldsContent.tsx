@@ -12,7 +12,7 @@ import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObje
 import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useSearchRecordGroupField';
-import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
+import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { useHandleRecordGroupField } from '@/object-record/record-index/hooks/useHandleRecordGroupField';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -20,6 +20,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
@@ -38,9 +39,9 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
-  const { hiddenRecordGroups } = useRecordGroups({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
+  const hiddenRecordGroupIds = useRecoilComponentValueV2(
+    hiddenRecordGroupIdsComponentSelector,
+  );
 
   const {
     recordGroupFieldSearchInput,
@@ -68,11 +69,11 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
-      hiddenRecordGroups.length === 0
+      hiddenRecordGroupIds.length === 0
     ) {
       onContentChange('recordGroups');
     }
-  }, [hiddenRecordGroups, currentContentId, onContentChange]);
+  }, [hiddenRecordGroupIds, currentContentId, onContentChange]);
 
   return (
     <>
