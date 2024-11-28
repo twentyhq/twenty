@@ -232,7 +232,8 @@ export class WorkspaceMigrationEnumService {
     columnName: string,
   ): Promise<string> {
     const result = await queryRunner.query(
-      `SELECT udt_name FROM information_schema.columns WHERE table_schema = '${schemaName}' AND table_name = '${tableName}' AND column_name = '${columnName}'`,
+      `SELECT udt_name FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2 AND column_name = $3`,
+      [schemaName, tableName, columnName],
     );
 
     const enumTypeName = result[0].udt_name;

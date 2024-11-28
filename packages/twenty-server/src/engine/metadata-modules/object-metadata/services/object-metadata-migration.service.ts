@@ -269,7 +269,6 @@ export class ObjectMetadataMigrationService {
   }
 
   public async recomputeEnumNames(
-    existingObjectMetadata: ObjectMetadataEntity,
     updatedObjectMetadata: ObjectMetadataEntity,
     workspaceId: string,
   ) {
@@ -288,7 +287,7 @@ export class ObjectMetadataMigrationService {
 
     for (const fieldMetadata of fieldMetadataToUpdate) {
       await this.workspaceMigrationService.createCustomMigration(
-        generateMigrationName(`update-${fieldMetadata.name}-enum-names`),
+        generateMigrationName(`update-${fieldMetadata.name}-enum-name`),
         workspaceId,
         [
           {
