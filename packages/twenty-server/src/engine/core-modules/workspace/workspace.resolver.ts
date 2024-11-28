@@ -110,7 +110,11 @@ export class WorkspaceResolver {
   @ResolveField(() => BillingSubscription, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
-  ): Promise<BillingSubscription | null> {
+  ): Promise<BillingSubscription | undefined> {
+    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+      return;
+    }
+
     return this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );
