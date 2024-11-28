@@ -1,3 +1,4 @@
+import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -45,6 +46,7 @@ export const ViewPickerOptionDropdown = ({
   );
 
   const { sortedFavorites: favorites } = useFavorites();
+  const { createFavorite } = useCreateFavorite();
 
   const isFavorite = favorites.some(
     (favorite) => favorite.recordId === view.id && favorite.workspaceMemberId,
@@ -57,6 +59,9 @@ export const ViewPickerOptionDropdown = ({
   };
 
   const handleAddToFavorites = () => {
+    if (!isFavorite) {
+      createFavorite(view, 'view');
+    }
     setViewPickerReferenceViewId(view.id);
     setViewPickerMode('favorite-folders-picker');
     closeDropdown();
