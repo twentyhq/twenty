@@ -13,6 +13,9 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
+import { tableLastFetchFailedComponentState } from '@/object-record/record-table/states/tableLastFetchFailedComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { isDefined } from 'twenty-ui';
 
 export const RecordTableNoRecordGroupBodyEffect = () => {
   const { objectNameSingular } = useContext(RecordTableContext);
@@ -35,6 +38,10 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
 
   const tableLastRowVisible = useRecoilComponentValueV2(
     tableLastRowVisibleComponentState,
+  );
+
+  const [lastFetchFailed, setLastFetchFailed] = useRecoilComponentStateV2(
+    tableLastFetchFailedComponentState,
   );
 
   const setHasRecordTableFetchedAllRecordsComponents =
@@ -86,7 +93,7 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
 
   const fetchMoreDebouncedIfRequested = useDebouncedCallback(async () => {
     // We are debouncing here to give the user some room to scroll if they want to within this throttle window
-    await fetchMoreRecords();
+    return await fetchMoreRecords();
   }, 100);
 
   useEffect(() => {
@@ -97,16 +104,16 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
 
   useEffect(() => {
     (async () => {
-      // NOW: tableLastRowVisible and hasNextPage
-      // TODO: and latest fetch succeeded and reset on component remount.
-      if (!isFetchingMoreObjects && tableLastRowVisible && hasNextPage) {
-        console.log(
-          'RecordTableNoRecordGroupBodyEffect useEffect',
-          isFetchingMoreObjects,
-          tableLastRowVisible,
-          hasNextPage,
-        );
-        await fetchMoreDebouncedIfRequested();
+      if (
+        !isFetchingMoreObjects &&
+        tableLastRowVisible &&
+        hasNextPage &&
+        !lastFetchFailed
+      ) {
+        const result = await fetchMoreDebouncedIfRequested();
+        if (isDefined(result?.error)) {
+          setLastFetchFailed(true);
+        }
       }
     })();
   }, [
