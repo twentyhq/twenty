@@ -1,6 +1,7 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
 import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
+import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/getAvailableAggregationsFromObjectFields';
 import { useMemo } from 'react';
@@ -26,6 +27,14 @@ export const useAggregateQuery = ({
 
   Object.entries(recordGqlFieldsAggregate).forEach(
     ([fieldName, aggregateOperation]) => {
+      if (
+        !isDefined(fieldName) &&
+        aggregateOperation === AGGREGATE_OPERATIONS.count
+      ) {
+        recordGqlFields.totalCount = true;
+        return;
+      }
+
       const fieldToQuery =
         availableAggregations[fieldName]?.[aggregateOperation];
 
