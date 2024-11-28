@@ -265,7 +265,7 @@ export type FieldActorValue = {
 
 export type FieldArrayValue = string[];
 
-export type PhoneRecord = { number: string; countryCode: string };
+export type PhoneRecord = { number: string; callingCode: string };
 
 export type FieldPhonesValue = {
   primaryPhoneNumber: string;
