@@ -1,7 +1,10 @@
-import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
+import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
+import { atomFamily } from 'recoil';
 
-export const isRecordBoardFetchingRecordsByColumnFamilyState =
-  createComponentFamilyState<boolean, { columnId: string }>({
-    key: 'isRecordBoardFetchingRecordsByColumnFamilyState',
-    defaultValue: false,
-  });
+export const isRecordBoardFetchingRecordsByColumnFamilyState = atomFamily<
+  boolean,
+  RecordGroupDefinition['id']
+>({
+  key: 'isRecordBoardFetchingRecordsByColumnFamilyState',
+  default: false,
+});

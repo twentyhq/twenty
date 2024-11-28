@@ -22,6 +22,7 @@ import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/sw
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -96,6 +97,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MicrosoftAPIsService,
     AppTokenService,
     AccessTokenService,
+    RefreshTokenService,
     LoginTokenService,
     ResetPasswordService,
     SwitchWorkspaceService,
@@ -103,6 +105,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ApiKeyService,
     OAuthService,
   ],
-  exports: [AccessTokenService, LoginTokenService],
+  exports: [AccessTokenService, LoginTokenService, RefreshTokenService],
 })
 export class AuthModule {}

@@ -131,7 +131,11 @@ export const RecordInlineCellContainer = () => {
           )}
           {showLabel && label && (
             <StyledLabelContainer width={labelWidth}>
-              <OverflowingTextWithTooltip text={label} isLabel={true} />
+              <OverflowingTextWithTooltip
+                text={label}
+                isLabel={true}
+                displayedMaxRows={1}
+              />
             </StyledLabelContainer>
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}

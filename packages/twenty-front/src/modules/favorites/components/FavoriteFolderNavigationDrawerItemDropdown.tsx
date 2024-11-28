@@ -1,13 +1,10 @@
 import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import {
-  IconDotsVertical,
-  IconPencil,
-  IconTrash,
-  LightIconButton,
-  MenuItem,
-} from 'twenty-ui';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+
+import { IconDotsVertical, IconPencil, IconTrash, MenuItem } from 'twenty-ui';
 
 type FavoriteFolderNavigationDrawerItemDropdownProps = {
   folderId: string;
@@ -16,12 +13,24 @@ type FavoriteFolderNavigationDrawerItemDropdownProps = {
   closeDropdown: () => void;
 };
 
+const StyledIconContainer = styled.div`
+  align-items: center;
+  background: transparent;
+  height: 24px;
+  width: 24px;
+  justify-content: center;
+  transition: background 0.1s ease;
+  display: flex;
+`;
+
 export const FavoriteFolderNavigationDrawerItemDropdown = ({
   folderId,
   onRename,
   onDelete,
   closeDropdown,
 }: FavoriteFolderNavigationDrawerItemDropdownProps) => {
+  const theme = useTheme();
+
   const handleRename = () => {
     onRename();
     closeDropdown();
@@ -41,7 +50,12 @@ export const FavoriteFolderNavigationDrawerItemDropdown = ({
       usePortal
       data-select-disable
       clickableComponent={
-        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+        <StyledIconContainer>
+          <IconDotsVertical
+            size={theme.icon.size.sm}
+            color={theme.font.color.tertiary}
+          />
+        </StyledIconContainer>
       }
       dropdownPlacement="right"
       dropdownOffset={{ y: -15 }}
