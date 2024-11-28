@@ -2,7 +2,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useEffect } from 'react';
 import { useWorkflowRunRecordActions } from '../hooks/useWorkflowRunRecordActions';
 
-export const WorkflowRunRecordActionMenuEntrySetterEffect = ({
+export const WorkflowRunRecordActionsMenuEntrySetterEffect = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;
