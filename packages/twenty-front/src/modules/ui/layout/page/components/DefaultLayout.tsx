@@ -1,10 +1,9 @@
-import { GlobalActionMenuEntriesSetter } from '@/action-menu/actions/global-actions/components/GlobalActionMenuEntriesSetter';
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
+import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
-import { CommandMenuCommandsEffect } from '@/command-menu/components/CommandMenuCommandsEffect';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
@@ -93,9 +92,8 @@ export const DefaultLayout = () => {
             value={{ instanceId: 'command-menu' }}
           >
             <RecordActionMenuEntriesSetter />
-            <GlobalActionMenuEntriesSetter />
+            <RecordAgnosticActionsSetterEffect />
             <ActionMenuConfirmationModals />
-            <CommandMenuCommandsEffect />
             <CommandMenu />
           </ActionMenuComponentInstanceContext.Provider>
         </ContextStoreComponentInstanceContext.Provider>

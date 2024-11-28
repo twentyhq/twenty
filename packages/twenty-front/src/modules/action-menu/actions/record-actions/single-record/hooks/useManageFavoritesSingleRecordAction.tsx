@@ -10,11 +10,10 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconHeart, IconHeartOff, isDefined } from 'twenty-ui';
 
-export const ManageFavoritesActionEffect = ({
+export const useManageFavoritesSingleRecordAction = ({
   position,
   objectMetadataItem,
 }: {
@@ -48,7 +47,7 @@ export const ManageFavoritesActionEffect = ({
 
   const isFavorite = !!selectedRecordId && !!foundFavorite;
 
-  useEffect(() => {
+  const registerManageFavoritesSingleRecordAction = () => {
     if (!isDefined(objectMetadataItem) || objectMetadataItem.isRemote) {
       return;
     }
@@ -56,7 +55,7 @@ export const ManageFavoritesActionEffect = ({
     addActionMenuEntry({
       type: ActionMenuEntryType.Standard,
       scope: ActionMenuEntryScope.RecordSelection,
-      key: 'manage-favorites',
+      key: 'manage-favorites-single-record',
       label: isFavorite ? 'Remove from favorites' : 'Add to favorites',
       position,
       Icon: isFavorite ? IconHeartOff : IconHeart,
@@ -68,21 +67,14 @@ export const ManageFavoritesActionEffect = ({
         }
       },
     });
+  };
 
-    return () => {
-      removeActionMenuEntry('manage-favorites');
-    };
-  }, [
-    addActionMenuEntry,
-    createFavorite,
-    deleteFavorite,
-    foundFavorite?.id,
-    isFavorite,
-    objectMetadataItem,
-    position,
-    removeActionMenuEntry,
-    selectedRecord,
-  ]);
+  const unregisterManageFavoritesSingleRecordAction = () => {
+    removeActionMenuEntry('manage-favorites-single-record');
+  };
 
-  return null;
+  return {
+    registerManageFavoritesSingleRecordAction,
+    unregisterManageFavoritesSingleRecordAction,
+  };
 };
