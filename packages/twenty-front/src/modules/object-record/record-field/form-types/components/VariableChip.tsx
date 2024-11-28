@@ -7,15 +7,12 @@ export const StyledContainer = styled.div`
   display: flex;
 `;
 
-type SelectedVariableChipProps = {
+type VariableChipProps = {
   rawVariable: string;
   onRemove: () => void;
 };
 
-export const SelectedVariableChip = ({
-  rawVariable,
-  onRemove,
-}: SelectedVariableChipProps) => {
+export const VariableChip = ({ rawVariable, onRemove }: VariableChipProps) => {
   return (
     <StyledContainer>
       <SortOrFilterChip

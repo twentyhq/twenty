@@ -1,7 +1,7 @@
-import { SelectedVariableChip } from '@/object-record/record-field/form-types/components/SelectedVariableChip';
 import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
 import { StyledFormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputInputContainer';
 import { StyledFormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputRowContainer';
+import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -111,7 +111,7 @@ export const FormNumberFieldInput = ({
               onChange={handleChange}
             />
           ) : (
-            <SelectedVariableChip
+            <VariableChip
               rawVariable={draftValue.value}
               onRemove={handleUnlinkVariable}
             />
