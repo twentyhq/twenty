@@ -11,7 +11,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { isDefined } from '~/utils/isDefined';
 
-export const RecordTableBodyDragDropContext = ({
+export const RecordTableBodyDragDropContextProvider = ({
   children,
 }: {
   children: ReactNode;

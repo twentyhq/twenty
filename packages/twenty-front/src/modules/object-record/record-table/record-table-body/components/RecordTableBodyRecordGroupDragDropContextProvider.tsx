@@ -13,7 +13,7 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { isDefined } from '~/utils/isDefined';
 
-export const RecordTableBodyRecordGroupDragDropContext = ({
+export const RecordTableBodyRecordGroupDragDropContextProvider = ({
   children,
 }: {
   children: ReactNode;
