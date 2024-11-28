@@ -8,6 +8,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useActiveWorkflowVersion } from '@/workflow/hooks/useActiveWorkflowVersion';
+import { Workflow } from '@/workflow/types/Workflow';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { IconHistory, isDefined } from 'twenty-ui';
@@ -26,7 +27,7 @@ export const useSeeWorkflowActiveVersionSingleRecordAction = () => {
 
   const selectedRecord = useRecoilValue(
     recordStoreFamilyState(selectedRecordId ?? ''),
-  );
+  ) as Workflow | undefined;
 
   const workflowActiveVersion = useActiveWorkflowVersion(selectedRecord?.id);
 
@@ -37,7 +38,10 @@ export const useSeeWorkflowActiveVersionSingleRecordAction = () => {
   }: {
     position: number;
   }) => {
-    if (!isDefined(workflowActiveVersion)) {
+    if (
+      !isDefined(workflowActiveVersion) ||
+      !selectedRecord?.statuses?.includes('DRAFT')
+    ) {
       return;
     }
 
