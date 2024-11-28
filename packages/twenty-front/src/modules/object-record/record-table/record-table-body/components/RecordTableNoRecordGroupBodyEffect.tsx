@@ -97,7 +97,15 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
 
   useEffect(() => {
     (async () => {
+      // NOW: tableLastRowVisible and hasNextPage
+      // TODO: and latest fetch succeeded and reset on component remount.
       if (!isFetchingMoreObjects && tableLastRowVisible && hasNextPage) {
+        console.log(
+          'RecordTableNoRecordGroupBodyEffect useEffect',
+          isFetchingMoreObjects,
+          tableLastRowVisible,
+          hasNextPage,
+        );
         await fetchMoreDebouncedIfRequested();
       }
     })();
