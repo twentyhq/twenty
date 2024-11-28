@@ -3,13 +3,12 @@ import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { v4 } from 'uuid';
 
 /**
  * Do not use this key outside of this file.
  * This is a temporary key to store the record ids for the default record group.
  */
-const defaultFamilyKey = v4();
+const defaultFamilyKey = 'record-group-default-id';
 
 export const recordIndexAllRecordIdsComponentSelector =
   createComponentSelectorV2<ObjectRecord['id'][]>({
