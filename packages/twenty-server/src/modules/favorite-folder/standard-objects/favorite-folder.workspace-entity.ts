@@ -2,7 +2,10 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import {
+  RelationMetadataType,
+  RelationOnDeleteAction,
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -53,6 +56,7 @@ export class FavoriteFolderWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconHeart',
     inverseSideFieldKey: 'favoriteFolder',
     inverseSideTarget: () => FavoriteWorkspaceEntity,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   favorites: Relation<FavoriteWorkspaceEntity[]>;
 }

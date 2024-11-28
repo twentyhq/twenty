@@ -30,3 +30,13 @@ storybook-static
 test-results/
 dump.rdb
 .tinyb
+
+.notes
+/data/
+/.devenv/
+/.direnv/
+/.pre-commit-config.yaml
+/.envrc
+/devenv.nix
+/flake.lock
+/flake.nix

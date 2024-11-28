@@ -17,7 +17,7 @@ import { workspacesState } from '@/auth/states/workspaces';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
-import { isClientConfigLoadedState } from '@/client-config/states/isClientConfigLoadedState';
+import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
@@ -68,6 +68,49 @@ export const useAuth = () => {
   const goToRecoilSnapshot = useGotoRecoilSnapshot();
 
   const setDateTimeFormat = useSetRecoilState(dateTimeFormatState);
+
+  const clearSession = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const emptySnapshot = snapshot_UNSTABLE();
+        const iconsValue = snapshot.getLoadable(iconsState).getValue();
+        const authProvidersValue = snapshot
+          .getLoadable(authProvidersState)
+          .getValue();
+        const billing = snapshot.getLoadable(billingState).getValue();
+        const isSignInPrefilled = snapshot
+          .getLoadable(isSignInPrefilledState)
+          .getValue();
+        const supportChat = snapshot.getLoadable(supportChatState).getValue();
+        const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
+        const captchaProvider = snapshot
+          .getLoadable(captchaProviderState)
+          .getValue();
+        const clientConfigApiStatus = snapshot
+          .getLoadable(clientConfigApiStatusState)
+          .getValue();
+        const isCurrentUserLoaded = snapshot
+          .getLoadable(isCurrentUserLoadedState)
+          .getValue();
+        const initialSnapshot = emptySnapshot.map(({ set }) => {
+          set(iconsState, iconsValue);
+          set(authProvidersState, authProvidersValue);
+          set(billingState, billing);
+          set(isSignInPrefilledState, isSignInPrefilled);
+          set(supportChatState, supportChat);
+          set(isDebugModeState, isDebugMode);
+          set(captchaProviderState, captchaProvider);
+          set(clientConfigApiStatusState, clientConfigApiStatus);
+          set(isCurrentUserLoadedState, isCurrentUserLoaded);
+          return undefined;
+        });
+        goToRecoilSnapshot(initialSnapshot);
+        await client.clearStore();
+        sessionStorage.clear();
+        localStorage.clear();
+      },
+    [client, goToRecoilSnapshot],
+  );
 
   const handleChallenge = useCallback(
     async (email: string, password: string, captchaToken?: string) => {
@@ -212,51 +255,9 @@ export const useAuth = () => {
     [handleChallenge, handleVerify, setIsVerifyPendingState],
   );
 
-  const handleSignOut = useRecoilCallback(
-    ({ snapshot }) =>
-      async () => {
-        const emptySnapshot = snapshot_UNSTABLE();
-        const iconsValue = snapshot.getLoadable(iconsState).getValue();
-        const authProvidersValue = snapshot
-          .getLoadable(authProvidersState)
-          .getValue();
-        const billing = snapshot.getLoadable(billingState).getValue();
-        const isSignInPrefilled = snapshot
-          .getLoadable(isSignInPrefilledState)
-          .getValue();
-        const supportChat = snapshot.getLoadable(supportChatState).getValue();
-        const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
-        const captchaProvider = snapshot
-          .getLoadable(captchaProviderState)
-          .getValue();
-        const isClientConfigLoaded = snapshot
-          .getLoadable(isClientConfigLoadedState)
-          .getValue();
-        const isCurrentUserLoaded = snapshot
-          .getLoadable(isCurrentUserLoadedState)
-          .getValue();
-
-        const initialSnapshot = emptySnapshot.map(({ set }) => {
-          set(iconsState, iconsValue);
-          set(authProvidersState, authProvidersValue);
-          set(billingState, billing);
-          set(isSignInPrefilledState, isSignInPrefilled);
-          set(supportChatState, supportChat);
-          set(isDebugModeState, isDebugMode);
-          set(captchaProviderState, captchaProvider);
-          set(isClientConfigLoadedState, isClientConfigLoaded);
-          set(isCurrentUserLoadedState, isCurrentUserLoaded);
-          return undefined;
-        });
-
-        goToRecoilSnapshot(initialSnapshot);
-
-        await client.clearStore();
-        sessionStorage.clear();
-        localStorage.clear();
-      },
-    [client, goToRecoilSnapshot],
-  );
+  const handleSignOut = useCallback(async () => {
+    await clearSession();
+  }, [clearSession]);
 
   const handleCredentialsSignUp = useCallback(
     async (
@@ -350,7 +351,7 @@ export const useAuth = () => {
     verify: handleVerify,
 
     checkUserExists: { checkUserExistsData, checkUserExistsQuery },
-
+    clearSession,
     signOut: handleSignOut,
     signUpWithCredentials: handleCredentialsSignUp,
     signInWithCredentials: handleCrendentialsSignIn,

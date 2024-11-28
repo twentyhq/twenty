@@ -1,7 +1,7 @@
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
 
+import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 import { AllRowsSelectedStatus } from '../../types/AllRowSelectedStatus';
 
@@ -12,8 +12,9 @@ export const allRowsSelectedStatusComponentSelector =
     get:
       ({ instanceId }) =>
       ({ get }) => {
-        const tableRowIds = get(
-          tableAllRowIdsComponentState.atomFamily({
+        const allRowIds = get(
+          // TODO: Working because instanceId is the same, but we're not in the same context, should be changed !
+          recordIndexAllRowIdsComponentState.atomFamily({
             instanceId,
           }),
         );
@@ -29,7 +30,7 @@ export const allRowsSelectedStatusComponentSelector =
         const allRowsSelectedStatus =
           numberOfSelectedRows === 0
             ? 'none'
-            : selectedRowIds.length === tableRowIds.length
+            : selectedRowIds.length === allRowIds.length
               ? 'all'
               : 'some';
 

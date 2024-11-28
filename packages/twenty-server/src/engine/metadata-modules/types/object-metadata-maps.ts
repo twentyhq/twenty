@@ -2,6 +2,5 @@ import { ObjectMetadataItemWithFieldMaps } from 'src/engine/metadata-modules/typ
 
 export type ObjectMetadataMaps = {
   byId: Record<string, ObjectMetadataItemWithFieldMaps>;
-  byNameSingular: Record<string, ObjectMetadataItemWithFieldMaps>;
-  byNamePlural: Record<string, ObjectMetadataItemWithFieldMaps>;
+  idByNameSingular: Record<string, string>;
 };

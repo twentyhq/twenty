@@ -34,6 +34,7 @@ const StyledTextArea = styled(TextareaAutosize)`
   max-height: 400px;
   width: calc(100% - ${({ theme }) => theme.spacing(7)});
   background: transparent;
+  line-height: 18px;
 `;
 
 const StyledTextAreaContainer = styled.div`
@@ -41,7 +42,9 @@ const StyledTextAreaContainer = styled.div`
   border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
   position: relative;
   width: 100%;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(0)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
+  padding-bottom: ${({ theme }) => theme.spacing(2)};
+
   border-radius: ${({ theme }) => theme.border.radius.sm};
 
   @supports (
@@ -56,7 +59,7 @@ const StyledTextAreaContainer = styled.div`
 const StyledLightIconButtonContainer = styled.div`
   background: transparent;
   position: absolute;
-  top: 50%;
+  top: 18px;
   transform: translateY(-50%);
   right: 0;
 `;

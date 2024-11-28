@@ -5,7 +5,6 @@ import { useRecordGroupActions } from '@/object-record/record-group/hooks/useRec
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { ViewType } from '@/views/types/ViewType';
 import { MenuItem } from 'twenty-ui';
 
 const StyledMenuContainer = styled.div`
@@ -26,9 +25,7 @@ export const RecordBoardColumnDropdownMenu = ({
 }: RecordBoardColumnDropdownMenuProps) => {
   const boardColumnMenuRef = useRef<HTMLDivElement>(null);
 
-  const recordGroupActions = useRecordGroupActions({
-    viewType: ViewType.Kanban,
-  });
+  const recordGroupActions = useRecordGroupActions();
 
   const closeMenu = useCallback(() => {
     onClose();

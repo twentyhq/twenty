@@ -1,5 +1,6 @@
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { ActionMenuEntryScope } from '@/action-menu/types/ActionMenuEntry';
 import { RightDrawerActionMenuDropdownHotkeyScope } from '@/action-menu/types/RightDrawerActionMenuDropdownHotkeyScope';
 import { getRightDrawerActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getRightDrawerActionMenuDropdownIdFromActionMenuId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -61,13 +62,14 @@ export const RightDrawerActionMenuDropdown = () => {
       clickableComponent={<Button title="Actions" shortcut="⌘O" />}
       dropdownPlacement="top-end"
       dropdownOffset={{
-        y: parseInt(theme.spacing(2)),
+        y: parseInt(theme.spacing(2), 10),
       }}
       dropdownComponents={
         <DropdownMenuItemsContainer>
           {actionMenuEntries
             .filter(
-              (actionMenuEntry) => actionMenuEntry.scope === 'record-selection',
+              (actionMenuEntry) =>
+                actionMenuEntry.scope === ActionMenuEntryScope.RecordSelection,
             )
             .map((actionMenuEntry, index) => (
               <MenuItem

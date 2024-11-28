@@ -27,8 +27,7 @@ export const useFindManyParams = (
     objectNameSingular,
   });
 
-  const currentRecordGroupDefinition =
-    useCurrentRecordGroupDefinition(recordTableId);
+  const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();
 
   const tableViewFilterGroups = useRecoilComponentValueV2(
     tableViewFilterGroupsComponentState,

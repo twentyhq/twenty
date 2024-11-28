@@ -65,6 +65,8 @@ const StyledColumnHeaderCell = styled.th<{
       }`;
     }
   }};
+
+  // TODO: refactor this, each component should own its CSS
   div {
     overflow: hidden;
   }

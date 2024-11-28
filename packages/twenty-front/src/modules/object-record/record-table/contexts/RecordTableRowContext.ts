@@ -7,7 +7,6 @@ export type RecordTableRowContextProps = {
   recordId: string;
   rowIndex: number;
   isSelected: boolean;
-  isReadOnly: boolean;
   isPendingRow?: boolean;
   isDragging: boolean;
   dragHandleProps: DraggableProvidedDragHandleProps | null;

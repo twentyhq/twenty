@@ -1,5 +1,10 @@
+import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
+import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
+import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
@@ -80,7 +85,18 @@ export const DefaultLayout = () => {
         `}
       />
       <StyledLayout>
-        <CommandMenu />
+        <ContextStoreComponentInstanceContext.Provider
+          value={{ instanceId: 'command-menu' }}
+        >
+          <ActionMenuComponentInstanceContext.Provider
+            value={{ instanceId: 'command-menu' }}
+          >
+            <RecordActionMenuEntriesSetter />
+            <RecordAgnosticActionsSetterEffect />
+            <ActionMenuConfirmationModals />
+            <CommandMenu />
+          </ActionMenuComponentInstanceContext.Provider>
+        </ContextStoreComponentInstanceContext.Provider>
         <KeyboardShortcutMenu />
 
         <StyledPageContainer

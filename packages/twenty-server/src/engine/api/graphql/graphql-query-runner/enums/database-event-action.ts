@@ -3,4 +3,5 @@ export enum DatabaseEventAction {
   UPDATED = 'updated',
   DELETED = 'deleted',
   DESTROYED = 'destroyed',
+  RESTORED = 'restored',
 }

@@ -41,6 +41,7 @@ export const useRecordTableRecordGqlFields = ({
 
   const recordGqlFields: Record<string, any> = {
     id: true,
+    deletedAt: true,
     ...Object.fromEntries(
       visibleTableColumns.map((column) => [column.metadata.fieldName, true]),
     ),
