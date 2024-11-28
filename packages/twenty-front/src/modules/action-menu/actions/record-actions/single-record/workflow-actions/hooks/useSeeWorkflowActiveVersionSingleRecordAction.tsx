@@ -7,7 +7,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { useActiveWorkflowVersion } from '@/workflow/hooks/useActiveWorkflowVersion';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { IconHistory, isDefined } from 'twenty-ui';
@@ -28,9 +28,7 @@ export const useSeeWorkflowActiveVersionSingleRecordAction = () => {
     recordStoreFamilyState(selectedRecordId ?? ''),
   );
 
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
-    selectedRecord?.id,
-  );
+  const workflowActiveVersion = useActiveWorkflowVersion(selectedRecord?.id);
 
   const navigate = useNavigate();
 
@@ -39,7 +37,7 @@ export const useSeeWorkflowActiveVersionSingleRecordAction = () => {
   }: {
     position: number;
   }) => {
-    if (!isDefined(workflowWithCurrentVersion)) {
+    if (!isDefined(workflowActiveVersion)) {
       return;
     }
 
@@ -52,7 +50,7 @@ export const useSeeWorkflowActiveVersionSingleRecordAction = () => {
       Icon: IconHistory,
       onClick: () => {
         navigate(
-          `/object/${CoreObjectNameSingular.WorkflowVersion}/${workflowWithCurrentVersion.currentVersion.id}`,
+          `/object/${CoreObjectNameSingular.WorkflowVersion}/${workflowActiveVersion.id}`,
         );
       },
     });
