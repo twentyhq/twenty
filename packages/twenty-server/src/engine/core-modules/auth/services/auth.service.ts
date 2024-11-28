@@ -188,15 +188,6 @@ export class AuthService {
     });
   }
 
-  private async findOneWithWorkspacesByEmail(email: string) {
-    return this.userRepository.findOne({
-      where: {
-        email,
-      },
-      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
-    });
-  }
-
   async verify(email: string, workspaceId?: string): Promise<Verify> {
     if (!email) {
       throw new AuthException(

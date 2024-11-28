@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
@@ -30,6 +30,7 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -45,6 +46,7 @@ export class WorkspaceInvitationService {
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
     private readonly urlManagerService: UrlManagerService,
+    private readonly workspaceService: WorkspaceService,
   ) {}
 
   // VALIDATIONS METHODS
@@ -139,12 +141,14 @@ export class WorkspaceInvitationService {
     subdomain,
     email,
   }: {
-    subdomain: string;
+    subdomain?: string;
     email: string;
   }) {
-    const workspace = await this.workspaceRepository.findOneBy({
-      subdomain,
-    });
+    const workspace = this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
+      ? await this.workspaceRepository.findOneBy({
+          subdomain,
+        })
+      : await this.workspaceService.getDefaultWorkspace();
 
     if (!workspace) return;
 

@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { workspacesState } from '@/auth/states/workspaces';
@@ -62,15 +63,16 @@ export const NavigationDrawerHeader = ({
   const isMobile = useIsMobile();
   const workspaces = useRecoilValue(workspacesState);
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-  const isMultiWorkspace =
-    workspaces !== null && workspaces.length > 1 && isMultiWorkspaceEnabled;
+
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
 
   return (
     <StyledContainer>
-      {isMultiWorkspace ? (
+      {isMultiWorkspaceEnabled &&
+      workspaces !== null &&
+      workspaces.length > 1 ? (
         <MultiWorkspaceDropdownButton workspaces={workspaces} />
       ) : (
         <StyledSingleWorkspaceContainer>

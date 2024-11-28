@@ -31,6 +31,7 @@ import { getImageBufferFromUrl } from 'src/utils/image';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -116,9 +117,7 @@ export class SignInUpService {
     }
 
     const maybeInvitation =
-      targetWorkspaceSubdomain &&
-      !workspacePersonalInviteToken &&
-      !workspaceInviteHash
+      fromSSO && !workspacePersonalInviteToken && !workspaceInviteHash
         ? await this.workspaceInvitationService.findInvitationByWorkspaceSubdomainAndUserEmail(
             {
               subdomain: targetWorkspaceSubdomain,

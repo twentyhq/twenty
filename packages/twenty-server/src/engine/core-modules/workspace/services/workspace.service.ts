@@ -317,23 +317,33 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     };
   }
 
+  async getDefaultWorkspace() {
+    if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      const workspaces = await this.workspaceRepository.find({
+        order: {
+          createdAt: 'DESC',
+        },
+      });
+
+      if (workspaces.length > 1) {
+        // TODO AMOREAUX: this logger is trigger twice and the second time the message is undefined for an unknown reason
+        Logger.warn(
+          `In single-workspace mode, there should be only one workspace. Today there are ${workspaces.length} workspaces`,
+        );
+      }
+
+      return workspaces[0];
+    }
+
+    throw new Error(
+      'Default workspace not exist when multi-workspace is enabled',
+    );
+  }
+
   async getWorkspaceByOrigin(origin: string) {
     try {
       if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
-        const workspaces = await this.workspaceRepository.find({
-          order: {
-            createdAt: 'DESC',
-          },
-        });
-
-        if (workspaces.length > 1) {
-          // TODO AMOREAUX: this logger is trigger twice and the second time the message is undefined for an unknown reason
-          Logger.warn(
-            `In single-workspace mode, there should be only one workspace. Today there are ${workspaces.length} workspaces`,
-          );
-        }
-
-        return workspaces[0];
+        return this.getDefaultWorkspace();
       }
 
       const subdomain =

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
@@ -29,6 +29,7 @@ import { WorkspaceService } from './services/workspace.service';
 @Module({
   imports: [
     TypeORMModule,
+    forwardRef(() => WorkspaceInvitationModule),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         UrlManagerModule,
@@ -46,7 +47,6 @@ import { WorkspaceService } from './services/workspace.service';
         DataSourceModule,
         OnboardingModule,
         TypeORMModule,
-        WorkspaceInvitationModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,
