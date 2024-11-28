@@ -29,7 +29,6 @@ export const RecordTableRecordGroupsBody = () => {
 
   return (
     <RecordTableBodyRecordGroupDragDropContext>
-      {/** */}
       <RecordTableBodyDroppable isDropDisabled>
         <RecordTablePendingRow />
       </RecordTableBodyDroppable>
