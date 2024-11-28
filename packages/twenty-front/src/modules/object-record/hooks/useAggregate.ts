@@ -33,7 +33,6 @@ export const useAggregate = ({
       variables: {
         filter,
       },
-      fetchPolicy: 'network-only',
     },
   );
 

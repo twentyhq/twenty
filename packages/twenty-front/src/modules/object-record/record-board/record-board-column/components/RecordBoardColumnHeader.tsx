@@ -71,9 +71,7 @@ const StyledColumn = styled.div`
 `;
 
 export const RecordBoardColumnHeader = () => {
-  const { columnDefinition, recordCount } = useContext(
-    RecordBoardColumnContext,
-  );
+  const { columnDefinition } = useContext(RecordBoardColumnContext);
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
   const [isHeaderHovered, setIsHeaderHovered] = useState(false);
 
