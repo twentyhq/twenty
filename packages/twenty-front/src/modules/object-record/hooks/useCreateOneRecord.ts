@@ -13,6 +13,7 @@ import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { addDefaultValueRecordInput } from '@/object-record/utils/addDefaultValueRecordInput';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isDefined } from '~/utils/isDefined';
@@ -60,16 +61,21 @@ export const useCreateOneRecord = <
 
     const idForCreation = input.id ?? v4();
 
+    const inputWithDefaultValues = addDefaultValueRecordInput({
+      objectMetadataItem,
+      recordInput: input,
+    });
+
     const sanitizedInput = {
       ...sanitizeRecordInput({
         objectMetadataItem,
-        recordInput: input,
+        recordInput: inputWithDefaultValues,
       }),
       id: idForCreation,
     };
 
     const recordCreatedInCache = createOneRecordInCache({
-      ...input,
+      ...inputWithDefaultValues,
       id: idForCreation,
       __typename: getObjectTypename(objectMetadataItem.nameSingular),
     });
