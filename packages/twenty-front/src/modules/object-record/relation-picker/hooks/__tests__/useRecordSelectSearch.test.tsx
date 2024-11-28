@@ -18,14 +18,14 @@ describe('useRecordSelectSearch', () => {
   it('should update searchFilter after change event', async () => {
     const { result } = renderHook(
       () => {
-        const entitySelectSearchHook = useRecordSelectSearch({
+        const recordSelectSearchHook = useRecordSelectSearch({
           recordPickerInstanceId: instanceId,
         });
         const internallyStoredFilter = useRecoilComponentValueV2(
           recordPickerSearchFilterComponentState,
           instanceId,
         );
-        return { entitySelectSearchHook, internallyStoredFilter };
+        return { recordSelectSearchHook, internallyStoredFilter };
       },
       {
         wrapper: Wrapper,
@@ -35,7 +35,7 @@ describe('useRecordSelectSearch', () => {
     const filter = 'value';
 
     act(() => {
-      result.current.entitySelectSearchHook.handleSearchFilterChange({
+      result.current.recordSelectSearchHook.handleSearchFilterChange({
         currentTarget: { value: filter },
       } as ChangeEvent<HTMLInputElement>);
     });

@@ -12,10 +12,10 @@ import { RecordForSelect } from '@/object-record/relation-picker/types/RecordFor
 
 export type RelationPickerProps = {
   selectedRecordId?: string;
-  onSubmit: (selectedEntity: RecordForSelect | null) => void;
+  onSubmit: (selectedRecord: RecordForSelect | null) => void;
   onCancel?: () => void;
   width?: number;
-  excludeRecordIds?: string[];
+  excludedRecordIds?: string[];
   initialSearchFilter?: string | null;
   fieldDefinition: FieldDefinition<FieldRelationMetadata>;
 };
@@ -24,7 +24,7 @@ export const RelationPicker = ({
   selectedRecordId,
   onSubmit,
   onCancel,
-  excludeRecordIds,
+  excludedRecordIds,
   width,
   initialSearchFilter,
   fieldDefinition,
@@ -32,8 +32,8 @@ export const RelationPicker = ({
   const recordPickerInstanceId = 'relation-picker';
 
   const handleRecordSelected = (
-    selectedEntity: RecordForSelect | null | undefined,
-  ) => onSubmit(selectedEntity ?? null);
+    selectedRecord: RecordForSelect | null | undefined,
+  ) => onSubmit(selectedRecord ?? null);
 
   const { objectMetadataItem: relationObjectMetadataItem } =
     useObjectMetadataItem({
@@ -73,8 +73,8 @@ export const RelationPicker = ({
           fieldDefinition.metadata.relationObjectMetadataNameSingular
         }
         recordPickerInstanceId={recordPickerInstanceId}
-        selectedRelationRecordIds={selectedRecordId ? [selectedRecordId] : []}
-        excludedRelationRecordIds={excludeRecordIds}
+        selectedRecordIds={selectedRecordId ? [selectedRecordId] : []}
+        excludedRecordIds={excludedRecordIds}
       />
     </>
   );

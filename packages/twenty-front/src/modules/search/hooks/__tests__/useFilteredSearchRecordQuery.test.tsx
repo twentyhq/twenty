@@ -82,7 +82,7 @@ describe('useFilteredSearchRecordQuery', () => {
         return useFilteredSearchRecordQuery({
           selectedIds: ['1'],
           limit: 10,
-          excludeRecordIds: ['2'],
+          excludedRecordIds: ['2'],
           objectNameSingular: 'person',
           searchFilter: 'Entity',
         });

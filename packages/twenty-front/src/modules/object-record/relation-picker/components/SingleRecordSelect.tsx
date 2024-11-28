@@ -17,13 +17,13 @@ export const SingleRecordSelect = ({
   disableBackgroundBlur = false,
   EmptyIcon,
   emptyLabel,
-  excludedRelationRecordIds,
+  excludedRecordIds,
   onCancel,
   onCreate,
   onRecordSelected,
   objectNameSingular,
   recordPickerInstanceId,
-  selectedRelationRecordIds,
+  selectedRecordIds,
   width = 200,
 }: SingleRecordSelectProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -54,13 +54,13 @@ export const SingleRecordSelect = ({
         {...{
           EmptyIcon,
           emptyLabel,
-          excludedRelationRecordIds,
+          excludedRecordIds,
           onCancel,
           onCreate,
           onRecordSelected,
           objectNameSingular,
           recordPickerInstanceId,
-          selectedRelationRecordIds,
+          selectedRecordIds,
         }}
       />
     </DropdownMenu>

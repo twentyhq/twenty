@@ -58,7 +58,6 @@ export const RelationFromManyFieldInput = ({
       <RecordPickerComponentInstanceContext.Provider
         value={{ instanceId: recordPickerInstanceId }}
       >
-        {' '}
         <RelationFromManyFieldInputMultiRecordsEffect />
         <MultiRecordSelect
           onSubmit={handleSubmit}

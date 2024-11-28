@@ -20,7 +20,7 @@ export const ObjectMetadataItemsProvider = ({
       {shouldDisplayChildren ? (
         <PreComputedChipGeneratorsProvider>
           <RecordPickerComponentInstanceContext.Provider
-            value={{ instanceId: 'relation-picker' }}
+            value={{ instanceId: 'record-picker' }}
           >
             {children}
           </RecordPickerComponentInstanceContext.Provider>

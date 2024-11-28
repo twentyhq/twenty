@@ -4,7 +4,7 @@ import { RecordPickerComponentInstanceContext } from '@/object-record/relation-p
 
 export const RecordPickerDecorator: Decorator = (Story) => (
   <RecordPickerComponentInstanceContext.Provider
-    value={{ instanceId: 'relation-picker' }}
+    value={{ instanceId: 'record-picker' }}
   >
     <Story />
   </RecordPickerComponentInstanceContext.Provider>

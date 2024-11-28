@@ -1,6 +1,6 @@
 import { useDebouncedCallback } from 'use-debounce';
 
-import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRecordPicker';
+import { useRecordPicker } from '@/object-record/relation-picker/hooks/useRecordPicker';
 
 export const useRecordSelectSearch = ({
   recordPickerInstanceId,
@@ -8,7 +8,7 @@ export const useRecordSelectSearch = ({
   recordPickerInstanceId?: string;
 } = {}) => {
   const { setRecordPickerSearchFilter, setRecordPickerPreselectedId } =
-    useRelationPicker({ recordPickerInstanceId });
+    useRecordPicker({ recordPickerInstanceId });
 
   const debouncedSetSearchFilter = useDebouncedCallback(
     setRecordPickerSearchFilter,

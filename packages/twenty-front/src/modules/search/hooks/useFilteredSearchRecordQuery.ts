@@ -12,13 +12,13 @@ import { isDefined } from '~/utils/isDefined';
 export const useFilteredSearchRecordQuery = ({
   selectedIds,
   limit,
-  excludeRecordIds = [],
+  excludedRecordIds = [],
   objectNameSingular,
   searchFilter,
 }: {
   selectedIds: string[];
   limit?: number;
-  excludeRecordIds?: string[];
+  excludedRecordIds?: string[];
   objectNameSingular: string;
   searchFilter?: string;
 }): RecordsForMultipleRecordSelect<RecordForSelect> => {
@@ -50,7 +50,7 @@ export const useFilteredSearchRecordQuery = ({
     searchInput: searchFilter,
   });
 
-  const notFilterIds = [...selectedIds, ...excludeRecordIds];
+  const notFilterIds = [...selectedIds, ...excludedRecordIds];
   const notFilter = notFilterIds.length
     ? { not: { id: { in: notFilterIds } } }
     : undefined;

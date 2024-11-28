@@ -45,7 +45,7 @@ export const RecordBoardColumnNewOpportunity = ({
             }
             objectNameSingular={CoreObjectNameSingular.Company}
             recordPickerInstanceId="relation-picker"
-            selectedRelationRecordIds={[]}
+            selectedRecordIds={[]}
           />
         </StyledCompanyPickerContainer>
       )}

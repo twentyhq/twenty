@@ -20,7 +20,7 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
 import { SingleRecordSelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleRecordSelectMenuItemsWithSearch';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
-import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRecordPicker';
+import { useRecordPicker } from '@/object-record/relation-picker/hooks/useRecordPicker';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -84,7 +84,7 @@ export const RecordDetailRelationSection = ({
   const { closeDropdown, isDropdownOpen, dropdownPlacement } =
     useDropdown(dropdownId);
 
-  const { setRecordPickerSearchFilter } = useRelationPicker({
+  const { setRecordPickerSearchFilter } = useRecordPicker({
     recordPickerInstanceId: dropdownId,
   });
 
@@ -200,7 +200,7 @@ export const RecordDetailRelationSection = ({
                       <SingleRecordSelectMenuItemsWithSearch
                         EmptyIcon={IconForbid}
                         onRecordSelected={handleRelationPickerEntitySelected}
-                        selectedRelationRecordIds={relationRecordIds}
+                        selectedRecordIds={relationRecordIds}
                         objectNameSingular={relationObjectMetadataNameSingular}
                         recordPickerInstanceId={dropdownId}
                         onCreate={createNewRecordAndOpenRightDrawer}

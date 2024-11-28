@@ -2,7 +2,7 @@ import { recordPickerPreselectedIdComponentState } from '@/object-record/relatio
 import { recordPickerSearchFilterComponentState } from '@/object-record/relation-picker/states/recordPickerSearchFilterComponentState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
-export const useRelationPicker = ({
+export const useRecordPicker = ({
   recordPickerInstanceId,
 }: {
   recordPickerInstanceId?: string;

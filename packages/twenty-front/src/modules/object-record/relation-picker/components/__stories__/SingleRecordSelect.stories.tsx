@@ -36,7 +36,7 @@ const meta: Meta<typeof SingleRecordSelect> = {
   ],
   args: {
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-    selectedRelationRecordIds: [],
+    selectedRecordIds: [],
   },
   argTypes: {
     selectedRecord: {
@@ -57,7 +57,7 @@ type Story = StoryObj<typeof SingleRecordSelect>;
 
 export const Default: Story = {};
 
-export const WithSelectedEntity: Story = {
+export const WithSelectedRecord: Story = {
   args: { selectedRecord: records[2] },
 };
 

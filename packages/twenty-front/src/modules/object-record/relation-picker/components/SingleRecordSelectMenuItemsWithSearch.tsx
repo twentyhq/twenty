@@ -14,11 +14,11 @@ import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export type SingleRecordSelectMenuItemsWithSearchProps = {
-  excludedRelationRecordIds?: string[];
+  excludedRecordIds?: string[];
   onCreate?: ((searchInput?: string) => void) | (() => void);
   objectNameSingular: string;
   recordPickerInstanceId?: string;
-  selectedRelationRecordIds: string[];
+  selectedRecordIds: string[];
   dropdownPlacement?: Placement | null;
 } & Pick<
   SingleRecordSelectMenuItemsProps,
@@ -32,13 +32,13 @@ export type SingleRecordSelectMenuItemsWithSearchProps = {
 export const SingleRecordSelectMenuItemsWithSearch = ({
   EmptyIcon,
   emptyLabel,
-  excludedRelationRecordIds,
+  excludedRecordIds,
   onCancel,
   onCreate,
   onRecordSelected,
   objectNameSingular,
-  recordPickerInstanceId = 'relation-picker',
-  selectedRelationRecordIds,
+  recordPickerInstanceId = 'record-picker',
+  selectedRecordIds,
   dropdownPlacement,
 }: SingleRecordSelectMenuItemsWithSearchProps) => {
   const { handleSearchFilterChange } = useRecordSelectSearch({
@@ -47,8 +47,8 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
 
   const { records, recordPickerSearchFilter } = useRecordPickerRecordsOptions({
     objectNameSingular,
-    selectedRelationRecordIds,
-    excludedRelationRecordIds,
+    selectedRecordIds,
+    excludedRecordIds,
   });
 
   const createNewButton = isDefined(onCreate) && (
@@ -68,7 +68,7 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
           ? records.recordsToSelect[0]
           : undefined
       }
-      shouldSelectEmptyOption={selectedRelationRecordIds?.length === 0}
+      shouldSelectEmptyOption={selectedRecordIds?.length === 0}
       hotkeyScope={recordPickerInstanceId}
       isFiltered={!!recordPickerSearchFilter}
       {...{

@@ -284,7 +284,6 @@ export const ActivityTargetInlineCellEditMode = ({
       <RecordPickerComponentInstanceContext.Provider
         value={{ instanceId: recordPickerInstanceId }}
       >
-        {' '}
         <ActivityTargetObjectRecordEffect
           activityTargetWithTargetRecords={activityTargetWithTargetRecords}
         />
