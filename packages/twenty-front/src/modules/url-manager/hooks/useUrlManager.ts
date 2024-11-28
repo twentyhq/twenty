@@ -79,13 +79,12 @@ export const useUrlManager = () => {
   );
 
   const redirectToHome = useCallback(() => {
-    if (!isMultiWorkspaceEnabled) return;
     const url = new URL(window.location.href);
     if (url.hostname !== homePageDomain) {
       url.hostname = homePageDomain;
       window.location.href = url.toString();
     }
-  }, [homePageDomain, isMultiWorkspaceEnabled]);
+  }, [homePageDomain]);
 
   return {
     redirectToHome,

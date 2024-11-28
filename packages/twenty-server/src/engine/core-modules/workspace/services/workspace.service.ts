@@ -1,4 +1,4 @@
-import { BadRequestException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -29,6 +29,7 @@ import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/u
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { isDefined } from 'src/utils/is-defined';
 
+@Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   private readonly userWorkspaceService: UserWorkspaceService;

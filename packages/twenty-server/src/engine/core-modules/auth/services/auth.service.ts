@@ -485,7 +485,7 @@ export class AuthService {
     return workspace;
   }
 
-  async computeRedirectURI(loginToken: string, subdomain: string) {
+  async computeRedirectURI(loginToken: string, subdomain?: string) {
     const url = this.urlManagerService.buildWorkspaceURL({
       subdomain,
       pathname: '/verify',

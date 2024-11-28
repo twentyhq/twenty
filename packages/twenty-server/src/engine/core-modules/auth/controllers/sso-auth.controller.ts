@@ -31,8 +31,9 @@ import {
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 
 @Controller('auth')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -41,8 +42,8 @@ export class SSOAuthController {
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
     private readonly urlManagerService: UrlManagerService,
-    private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly environmentService: EnvironmentService,
     private readonly ssoService: SSOService,
     @InjectRepository(WorkspaceSSOIdentityProvider, 'core')
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
@@ -81,16 +82,26 @@ export class SSOAuthController {
   @UseGuards(SSOProviderEnabledGuard, OIDCAuthGuard)
   async oidcAuthCallback(@Req() req: any, @Res() res: Response) {
     try {
-      const loginToken = await this.generateLoginToken(req.user);
+      const { loginToken, identityProvider } = await this.generateLoginToken(
+        req.user,
+      );
 
       return res.redirect(
         await this.authService.computeRedirectURI(
           loginToken.token,
-          req.user.defaultWorkspace.subdomain,
+          identityProvider.workspace.subdomain,
         ),
       );
     } catch (err) {
-      res.status(403).send(err.message);
+      if (err instanceof AuthException) {
+        return res.redirect(
+          this.urlManagerService.computeRedirectErrorUrl({
+            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+            errorMessage: err.message,
+          }),
+        );
+      }
+      throw err;
     }
   }
 
@@ -98,16 +109,26 @@ export class SSOAuthController {
   @UseGuards(SSOProviderEnabledGuard, SAMLAuthGuard)
   async samlAuthCallback(@Req() req: any, @Res() res: Response) {
     try {
-      const loginToken = await this.generateLoginToken(req.user);
+      const { loginToken, identityProvider } = await this.generateLoginToken(
+        req.user,
+      );
 
       return res.redirect(
         await this.authService.computeRedirectURI(
           loginToken.token,
-          req.user.defaultWorkspace.subdomain,
+          identityProvider.workspace.subdomain,
         ),
       );
     } catch (err) {
-      res.status(403).send(err.message);
+      if (err instanceof AuthException) {
+        return res.redirect(
+          this.urlManagerService.computeRedirectErrorUrl({
+            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+            errorMessage: err.message,
+          }),
+        );
+      }
+      throw err;
     }
   }
 
@@ -138,20 +159,15 @@ export class SSOAuthController {
       );
     }
 
-    const invitation =
-      await this.workspaceInvitationService.getOneWorkspaceInvitation(
-        identityProvider.workspaceId,
-        user.email,
-      );
-
-    if (invitation) {
-      await this.authService.signInUp({
-        ...user,
-        workspacePersonalInviteToken: invitation.value,
-        workspaceInviteHash: identityProvider.workspace.inviteHash,
-        fromSSO: true,
-      });
-    }
+    await this.authService.signInUp({
+      ...user,
+      ...(this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
+        ? {
+            targetWorkspaceSubdomain: identityProvider.workspace.subdomain,
+          }
+        : {}),
+      fromSSO: true,
+    });
 
     const isUserExistInWorkspace =
       await this.userWorkspaceService.checkUserWorkspaceExistsByEmail(
@@ -166,6 +182,9 @@ export class SSOAuthController {
       );
     }
 
-    return this.loginTokenService.generateLoginToken(user.email);
+    return {
+      identityProvider,
+      loginToken: await this.loginTokenService.generateLoginToken(user.email),
+    };
   }
 }

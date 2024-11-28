@@ -15,8 +15,12 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationException } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 import { WorkspaceInvitationService } from './workspace-invitation.service';
+
+// To fix a circular dependency issue
+jest.mock('src/engine/core-modules/workspace/services/workspace.service');
 
 describe('WorkspaceInvitationService', () => {
   let service: WorkspaceInvitationService;
@@ -66,6 +70,16 @@ describe('WorkspaceInvitationService', () => {
           provide: OnboardingService,
           useValue: {
             setOnboardingInviteTeamPending: jest.fn(),
+          },
+        },
+        {
+          provide: WorkspaceService,
+          useValue: {
+            // Mock methods you expect WorkspaceInvitationService to call
+            getDefaultWorkspace: jest
+              .fn()
+              .mockResolvedValue({ id: 'default-workspace-id' }),
+            // Add other methods as needed
           },
         },
       ],

@@ -28,9 +28,17 @@ const workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock =
 const userWorkspaceServiceAddUserToWorkspaceMock = jest.fn();
 const UserCreateMock = jest.fn();
 const UserSaveMock = jest.fn();
+const EnvironmentServiceGetMock = jest.fn();
+const WorkspaceCountMock = jest.fn();
+const WorkspaceCreateMock = jest.fn();
+const WorkspaceSaveMock = jest.fn();
 
 describe('SignInUpService', () => {
   let service: SignInUpService;
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -42,7 +50,11 @@ describe('SignInUpService', () => {
         },
         {
           provide: getRepositoryToken(Workspace, 'core'),
-          useValue: {},
+          useValue: {
+            count: WorkspaceCountMock,
+            create: WorkspaceCreateMock,
+            save: WorkspaceSaveMock,
+          },
         },
         {
           provide: getRepositoryToken(User, 'core'),
@@ -60,12 +72,14 @@ describe('SignInUpService', () => {
           provide: UserWorkspaceService,
           useValue: {
             addUserToWorkspace: userWorkspaceServiceAddUserToWorkspaceMock,
+            create: jest.fn(),
           },
         },
         {
           provide: OnboardingService,
           useValue: {
             setOnboardingConnectAccountPending: jest.fn(),
+            setOnboardingInviteTeamPending: jest.fn(),
             setOnboardingCreateProfilePending: jest.fn(),
           },
         },
@@ -75,7 +89,9 @@ describe('SignInUpService', () => {
         },
         {
           provide: EnvironmentService,
-          useValue: {},
+          useValue: {
+            get: EnvironmentServiceGetMock,
+          },
         },
         {
           provide: WorkspaceInvitationService,
@@ -328,10 +344,9 @@ describe('SignInUpService', () => {
       workspaceInvitationInvalidateWorkspaceInvitationMock,
     ).toHaveBeenCalledWith(workspaceId, email);
   });
-  it('signInUp - credentials - existing user - invitation', async () => {
+  it('signInUp - credentials - existing user', async () => {
     const email = 'existinguser@test.com';
     const password = 'validPassword123';
-    const workspaceId = 'workspace-id';
     const existingUser = {
       id: 'user-id',
       email,
@@ -340,22 +355,8 @@ describe('SignInUpService', () => {
     };
 
     UserFindOneMock.mockReturnValueOnce(existingUser);
-    workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock.mockReturnValueOnce(
-      {
-        value: 'personal-token-value',
-      },
-    );
-    workspaceInvitationValidateInvitationMock.mockReturnValueOnce({
-      isValid: true,
-      workspace: {
-        id: workspaceId,
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-    });
 
-    workspaceInvitationInvalidateWorkspaceInvitationMock.mockReturnValueOnce(
-      true,
-    );
+    EnvironmentServiceGetMock.mockReturnValueOnce(false);
 
     (bcrypt.compare as jest.Mock).mockReturnValueOnce(true);
 
@@ -368,33 +369,21 @@ describe('SignInUpService', () => {
 
     expect(
       workspaceInvitationInvalidateWorkspaceInvitationMock,
-    ).toHaveBeenCalledWith(workspaceId, email);
+    ).not.toHaveBeenCalled();
   });
-  it('signInUp - credentials - new user - invitation', async () => {
+  it('signInUp - credentials - new user', async () => {
     const email = 'newuser@test.com';
     const password = 'validPassword123';
-    const workspaceId = 'workspace-id';
 
     UserFindOneMock.mockReturnValueOnce(null);
-    workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock.mockReturnValueOnce(
-      {
-        value: 'personal-token-value',
-      },
-    );
-    workspaceInvitationValidateInvitationMock.mockReturnValueOnce({
-      isValid: true,
-      workspace: {
-        id: workspaceId,
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-    });
-
-    workspaceInvitationInvalidateWorkspaceInvitationMock.mockReturnValueOnce(
-      true,
-    );
 
     UserCreateMock.mockReturnValueOnce({} as User);
     UserSaveMock.mockReturnValueOnce({} as User);
+
+    EnvironmentServiceGetMock.mockReturnValueOnce(true);
+
+    WorkspaceCreateMock.mockReturnValueOnce({});
+    WorkspaceSaveMock.mockReturnValueOnce({});
 
     await service.signInUp({
       email,
@@ -406,9 +395,8 @@ describe('SignInUpService', () => {
     expect(UserCreateMock).toHaveBeenCalledTimes(1);
     expect(UserSaveMock).toHaveBeenCalledTimes(1);
 
-    expect(
-      workspaceInvitationInvalidateWorkspaceInvitationMock,
-    ).toHaveBeenCalledWith(workspaceId, email);
+    expect(WorkspaceSaveMock).toHaveBeenCalledTimes(1);
+    expect(WorkspaceCreateMock).toHaveBeenCalledTimes(1);
   });
   it('signInUp - credentials - new user - personal invitation token', async () => {
     const email = 'newuser@test.com';
