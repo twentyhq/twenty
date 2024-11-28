@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { DataSource, QueryRunner } from 'typeorm';
+import { DataSource, QueryRunner, TableColumn } from 'typeorm';
 
 import {
   WorkspaceMigrationColumnActionType,
@@ -84,7 +84,17 @@ describe('WorkspaceMigrationEnumService', () => {
       expect(queryRunner.query).toHaveBeenCalledWith(
         expect.stringContaining('ALTER TYPE'),
       );
-      expect(queryRunner.addColumn).toHaveBeenCalled();
+      expect(queryRunner.addColumn).toHaveBeenCalledWith(
+        'test_schema.test_table',
+        new TableColumn({
+          name: 'status',
+          type: 'enum',
+          enum: ['ENABLED', 'DISABLED'],
+          isNullable: false,
+          default: 'ENABLED',
+          enumName: 'test_table_status_enum',
+        }),
+      );
     });
   });
 });
