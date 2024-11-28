@@ -16,8 +16,8 @@ import { RecordBoardComponentInstanceContext } from '@/object-record/record-boar
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
-import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
 import { recordIndexRowIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRowIdsByGroupComponentFamilyState';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
@@ -73,8 +73,8 @@ export const RecordBoard = () => {
     recordIndexRowIdsByGroupComponentFamilyState,
   );
 
-  const recordIndexAllRowIdsState = useRecoilComponentCallbackStateV2(
-    recordIndexAllRowIdsComponentState,
+  const recordIndexAllRecordIdsState = useRecoilComponentCallbackStateV2(
+    recordIndexAllRecordIdsComponentSelector,
   );
 
   const { resetRecordSelection, setRecordAsSelected } =
@@ -97,14 +97,14 @@ export const RecordBoard = () => {
       () => {
         const allRecordIds = getSnapshotValue(
           snapshot,
-          recordIndexAllRowIdsState,
+          recordIndexAllRecordIdsState,
         );
 
         for (const recordId of allRecordIds) {
           setRecordAsSelected(recordId, true);
         }
       },
-    [recordIndexAllRowIdsState, setRecordAsSelected],
+    [recordIndexAllRecordIdsState, setRecordAsSelected],
   );
 
   useScopedHotkeys('ctrl+a,meta+a', selectAll, TableHotkeyScope.Table);

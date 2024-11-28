@@ -1,6 +1,6 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
-import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
 import { recordIndexRowIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRowIdsByGroupComponentFamilyState';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
@@ -14,8 +14,8 @@ const MotionRecordTableRow = motion(RecordTableRow);
 export const RecordTableRecordGroupRows = () => {
   const currentRecordGroupId = useCurrentRecordGroupId();
 
-  const allRowIds = useRecoilComponentValueV2(
-    recordIndexAllRowIdsComponentState,
+  const allRecordIds = useRecoilComponentValueV2(
+    recordIndexAllRecordIdsComponentSelector,
   );
 
   const recordGroupRowIds = useRecoilComponentFamilyValueV2(
@@ -29,8 +29,8 @@ export const RecordTableRecordGroupRows = () => {
   );
 
   const rowIndexMap = useMemo(
-    () => new Map(allRowIds.map((id, index) => [id, index])),
-    [allRowIds],
+    () => new Map(allRecordIds.map((recordId, index) => [recordId, index])),
+    [allRecordIds],
   );
 
   // TODO: Animation is not working, find a way to make it works

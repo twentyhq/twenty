@@ -1,6 +1,6 @@
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
-import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableRecordGroupRows } from '@/object-record/record-table/components/RecordTableRecordGroupRows';
 import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
@@ -11,8 +11,8 @@ import { isRecordTableInitialLoadingComponentState } from '@/object-record/recor
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTableRecordGroupsBody = () => {
-  const allRowIds = useRecoilComponentValueV2(
-    recordIndexAllRowIdsComponentState,
+  const allRecordIds = useRecoilComponentValueV2(
+    recordIndexAllRecordIdsComponentSelector,
   );
 
   const isRecordTableInitialLoading = useRecoilComponentValueV2(
@@ -23,7 +23,7 @@ export const RecordTableRecordGroupsBody = () => {
     visibleRecordGroupIdsComponentSelector,
   );
 
-  if (isRecordTableInitialLoading && allRowIds.length === 0) {
+  if (isRecordTableInitialLoading && allRecordIds.length === 0) {
     return <RecordTableBodyLoading />;
   }
 

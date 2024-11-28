@@ -3,7 +3,6 @@ import { useRecoilCallback } from 'recoil';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
-import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
 import { recordIndexRowIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRowIdsByGroupComponentFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sortRecordsByPosition } from '@/object-record/utils/sortRecordsByPosition';
@@ -22,11 +21,6 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
     recordBoardId,
   );
 
-  const recordIndexAllRowIdsState = useRecoilComponentCallbackStateV2(
-    recordIndexAllRowIdsComponentState,
-    recordBoardId,
-  );
-
   const recordIndexRowIdsByGroupFamilyState = useRecoilComponentCallbackStateV2(
     recordIndexRowIdsByGroupComponentFamilyState,
     recordBoardId,
@@ -35,11 +29,6 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
   const setRecordIds = useRecoilCallback(
     ({ set, snapshot }) =>
       (records: ObjectRecord[]) => {
-        const existingAllRowIds = getSnapshotValue(
-          snapshot,
-          recordIndexAllRowIdsState,
-        );
-
         const recordGroupIds = getSnapshotValue(
           snapshot,
           visibleRecordGroupIdsSelector,
@@ -80,27 +69,11 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
             );
           }
         }
-
-        const allRowIds: string[] = [];
-
-        for (const recordGroupId of recordGroupIds) {
-          const tableRowIdsByGroup = getSnapshotValue(
-            snapshot,
-            recordIndexRowIdsByGroupFamilyState(recordGroupId),
-          );
-
-          allRowIds.push(...tableRowIdsByGroup);
-        }
-
-        if (!isDeeplyEqual(existingAllRowIds, allRowIds)) {
-          set(recordIndexAllRowIdsState, allRowIds);
-        }
       },
     [
       visibleRecordGroupIdsSelector,
       recordIndexRowIdsByGroupFamilyState,
       recordGroupFieldMetadataState,
-      recordIndexAllRowIdsState,
     ],
   );
 

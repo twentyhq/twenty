@@ -4,7 +4,7 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useComputeNewRowPosition } from '@/object-record/record-table/hooks/useComputeNewRowPosition';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
@@ -25,8 +25,8 @@ export const RecordTableBodyRecordGroupDragDropContext = ({
     objectNameSingular,
   });
 
-  const recordIndexAllRowIdsState = useRecoilComponentCallbackStateV2(
-    recordIndexAllRowIdsComponentState,
+  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackStateV2(
+    recordIndexAllRecordIdsComponentSelector,
   );
 
   const { currentViewWithCombinedFiltersAndSorts } =
@@ -43,9 +43,9 @@ export const RecordTableBodyRecordGroupDragDropContext = ({
   const handleDragEnd = useRecoilCallback(
     ({ snapshot }) =>
       (result: DropResult) => {
-        const tableAllRowIds = getSnapshotValue(
+        const tableAllRecordIds = getSnapshotValue(
           snapshot,
-          recordIndexAllRowIdsState,
+          recordIndexAllRecordIdsSelector,
         );
 
         const recordGroupId = result.destination?.droppableId;
@@ -78,7 +78,7 @@ export const RecordTableBodyRecordGroupDragDropContext = ({
 
         console.log('DRAP - DROP: ', result, recordGroup);
 
-        const computeResult = computeNewRowPosition(result, tableAllRowIds);
+        const computeResult = computeNewRowPosition(result, tableAllRecordIds);
 
         if (!isDefined(computeResult)) {
           return;
@@ -93,12 +93,12 @@ export const RecordTableBodyRecordGroupDragDropContext = ({
         });
       },
     [
-      objectMetadataItem,
-      computeNewRowPosition,
-      setIsRemoveSortingModalOpenState,
-      recordIndexAllRowIdsState,
-      updateOneRow,
+      recordIndexAllRecordIdsSelector,
+      objectMetadataItem.fields,
       viewSorts.length,
+      computeNewRowPosition,
+      updateOneRow,
+      setIsRemoveSortingModalOpenState,
     ],
   );
 
