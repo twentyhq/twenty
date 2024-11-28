@@ -1,6 +1,6 @@
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { recordPickerSearchFilterComponentState } from '@/object-record/relation-picker/states/recordPickerSearchFilterComponentState';
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
+import { useFilteredSearchRecordQuery } from '@/search/hooks/useFilteredSearchRecordQuery';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -22,7 +22,7 @@ export const useRecordPickerRecordsOptions = ({
     instanceId,
   );
 
-  const records = useFilteredSearchEntityQuery({
+  const records = useFilteredSearchRecordQuery({
     searchFilter: recordPickerSearchFilter,
     selectedIds: selectedRelationRecordIds,
     excludeRecordIds: excludedRelationRecordIds,

@@ -3,7 +3,7 @@ import { RecordForSelect } from '@/object-record/relation-picker/types/RecordFor
 export type RecordsForMultipleRecordSelect<
   CustomRecordForSelect extends RecordForSelect,
 > = {
-  selectedEntities: CustomRecordForSelect[];
+  selectedRecords: CustomRecordForSelect[];
   filteredSelectedRecords: CustomRecordForSelect[];
   recordsToSelect: CustomRecordForSelect[];
   loading: boolean;

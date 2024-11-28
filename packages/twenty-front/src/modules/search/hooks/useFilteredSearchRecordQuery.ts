@@ -6,10 +6,10 @@ import { RecordsForMultipleRecordSelect } from '@/object-record/relation-picker/
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
-// TODO: use this for all search queries, because we need selectedEntities and recordsToSelect each time we want to search
+// TODO: use this for all search queries, because we need selectedRecords and recordsToSelect each time we want to search
 // Filtered entities to select are
 
-export const useFilteredSearchEntityQuery = ({
+export const useFilteredSearchRecordQuery = ({
   selectedIds,
   limit,
   excludeRecordIds = [],
@@ -63,7 +63,7 @@ export const useFilteredSearchEntityQuery = ({
     });
 
   return {
-    selectedEntities: selectedRecords.map(mappingFunction).filter(isDefined),
+    selectedRecords: selectedRecords.map(mappingFunction).filter(isDefined),
     filteredSelectedRecords: filteredSelectedRecords
       .map(mappingFunction)
       .filter(isDefined),

@@ -13,8 +13,8 @@ import {
   query,
   responseData,
   variables,
-} from '../__mocks__/useFilteredSearchEntityQuery';
-import { useFilteredSearchEntityQuery } from '../useFilteredSearchEntityQuery';
+} from '../__mocks__/useFilteredSearchRecordQuery';
+import { useFilteredSearchRecordQuery } from '../useFilteredSearchRecordQuery';
 
 const mocks = [
   {
@@ -62,7 +62,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </RecoilRoot>
 );
 
-describe('useFilteredSearchEntityQuery', () => {
+describe('useFilteredSearchRecordQuery', () => {
   it('returns the correct result when everything is provided', async () => {
     const { result } = renderHook(
       () => {
@@ -79,7 +79,7 @@ describe('useFilteredSearchEntityQuery', () => {
 
         setMetadataItems(generatedMockObjectMetadataItems);
 
-        return useFilteredSearchEntityQuery({
+        return useFilteredSearchRecordQuery({
           selectedIds: ['1'],
           limit: 10,
           excludeRecordIds: ['2'],
@@ -91,7 +91,7 @@ describe('useFilteredSearchEntityQuery', () => {
     );
 
     const expectedResult: RecordsForMultipleRecordSelect<any> = {
-      selectedEntities: [],
+      selectedRecords: [],
       filteredSelectedRecords: [],
       recordsToSelect: [],
       loading: true,
