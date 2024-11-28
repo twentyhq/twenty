@@ -3,37 +3,22 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import qs from 'qs';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { IconHistoryToggle, isDefined } from 'twenty-ui';
 
-export const useSeeWorkflowExecutionsSingleRecordAction = () => {
+export const useSeeWorkflowExecutionsSingleRecordAction = ({
+  workflowId,
+}: {
+  workflowId: string;
+}) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
-    contextStoreTargetedRecordsRuleComponentState,
-  );
-
-  const selectedRecordId =
-    contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
-      : undefined;
-
-  const selectedRecord = useRecoilValue(
-    recordStoreFamilyState(selectedRecordId ?? ''),
-  );
-
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
-    selectedRecord?.id,
-  );
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
   const navigate = useNavigate();
 

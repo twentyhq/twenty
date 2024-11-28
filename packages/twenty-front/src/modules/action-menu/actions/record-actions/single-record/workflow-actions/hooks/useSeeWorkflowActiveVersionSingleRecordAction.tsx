@@ -3,33 +3,25 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useActiveWorkflowVersion } from '@/workflow/hooks/useActiveWorkflowVersion';
-import { Workflow } from '@/workflow/types/Workflow';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { IconHistory, isDefined } from 'twenty-ui';
 
-export const useSeeWorkflowActiveVersionSingleRecordAction = () => {
+export const useSeeWorkflowActiveVersionSingleRecordAction = ({
+  workflowId,
+}: {
+  workflowId: string;
+}) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
-    contextStoreTargetedRecordsRuleComponentState,
-  );
+  const workflow = useRecoilValue(recordStoreFamilyState(workflowId));
 
-  const selectedRecordId =
-    contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
-      : undefined;
+  const isDraft = workflow?.statuses?.includes('DRAFT');
 
-  const selectedRecord = useRecoilValue(
-    recordStoreFamilyState(selectedRecordId ?? ''),
-  ) as Workflow | undefined;
-
-  const workflowActiveVersion = useActiveWorkflowVersion(selectedRecord?.id);
+  const workflowActiveVersion = useActiveWorkflowVersion(workflowId);
 
   const navigate = useNavigate();
 
@@ -38,10 +30,7 @@ export const useSeeWorkflowActiveVersionSingleRecordAction = () => {
   }: {
     position: number;
   }) => {
-    if (
-      !isDefined(workflowActiveVersion) ||
-      !selectedRecord?.statuses?.includes('DRAFT')
-    ) {
+    if (!isDefined(workflowActiveVersion) || !isDraft) {
       return;
     }
 

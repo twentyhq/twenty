@@ -3,35 +3,20 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useDeleteOneWorkflowVersion } from '@/workflow/hooks/useDeleteOneWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useRecoilValue } from 'recoil';
 import { IconTrash, isDefined } from 'twenty-ui';
 
-export const useDiscardWorkflowDraftSingleRecordAction = () => {
+export const useDiscardWorkflowDraftSingleRecordAction = ({
+  workflowId,
+}: {
+  workflowId: string;
+}) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
-
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
-    contextStoreTargetedRecordsRuleComponentState,
-  );
-
-  const selectedRecordId =
-    contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
-      : undefined;
-
-  const selectedRecord = useRecoilValue(
-    recordStoreFamilyState(selectedRecordId ?? ''),
-  );
 
   const { deleteOneWorkflowVersion } = useDeleteOneWorkflowVersion();
 
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
-    selectedRecord?.id,
-  );
+  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
   const registerDiscardWorkflowDraftSingleRecordAction = ({
     position,

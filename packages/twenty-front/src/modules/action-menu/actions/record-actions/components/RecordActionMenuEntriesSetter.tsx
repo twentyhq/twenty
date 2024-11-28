@@ -2,7 +2,7 @@ import { MultipleRecordsActionMenuEntrySetterEffect } from '@/action-menu/action
 import { NoSelectionActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/no-selection/components/NoSelectionActionMenuEntrySetterEffect';
 import { SingleRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/single-record/components/SingleRecordActionMenuEntrySetterEffect';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
-import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-ui';
@@ -30,27 +30,31 @@ const ActionEffects = ({
     objectId: objectMetadataItemId,
   });
 
-  const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
-    contextStoreNumberOfSelectedRecordsComponentState,
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+    contextStoreTargetedRecordsRuleComponentState,
   );
 
   return (
     <>
-      {contextStoreNumberOfSelectedRecords === 0 && (
-        <NoSelectionActionMenuEntrySetterEffect
-          objectMetadataItem={objectMetadataItem}
-        />
-      )}
-      {contextStoreNumberOfSelectedRecords === 1 && (
-        <SingleRecordActionMenuEntrySetterEffect
-          objectMetadataItem={objectMetadataItem}
-        />
-      )}
-      {contextStoreNumberOfSelectedRecords > 1 && (
-        <MultipleRecordsActionMenuEntrySetterEffect
-          objectMetadataItem={objectMetadataItem}
-        />
-      )}
+      {contextStoreTargetedRecordsRule.mode === 'selection' &&
+        contextStoreTargetedRecordsRule.selectedRecordIds.length === 0 && (
+          <NoSelectionActionMenuEntrySetterEffect
+            objectMetadataItem={objectMetadataItem}
+          />
+        )}
+      {contextStoreTargetedRecordsRule.mode === 'selection' &&
+        contextStoreTargetedRecordsRule.selectedRecordIds.length === 1 && (
+          <SingleRecordActionMenuEntrySetterEffect
+            objectMetadataItem={objectMetadataItem}
+          />
+        )}
+      {contextStoreTargetedRecordsRule.mode === 'exclusion' ||
+        (contextStoreTargetedRecordsRule.mode === 'selection' &&
+          contextStoreTargetedRecordsRule.selectedRecordIds.length > 1 && (
+            <MultipleRecordsActionMenuEntrySetterEffect
+              objectMetadataItem={objectMetadataItem}
+            />
+          ))}
     </>
   );
 };
