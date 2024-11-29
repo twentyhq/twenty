@@ -18,7 +18,7 @@ export type Scalars = {
   JSON: any;
   JSONObject: any;
   UUID: any;
-  Upload: any;
+  Upload: any;  
 };
 
 export type ActivateWorkspaceInput = {
