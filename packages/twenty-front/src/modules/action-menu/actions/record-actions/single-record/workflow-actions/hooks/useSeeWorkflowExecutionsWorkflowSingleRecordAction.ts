@@ -9,9 +9,9 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import qs from 'qs';
 import { useNavigate } from 'react-router-dom';
-import { IconHistory, isDefined } from 'twenty-ui';
+import { IconHistoryToggle, isDefined } from 'twenty-ui';
 
-export const useSeeWorkflowVersionsHistorySingleRecordAction = ({
+export const useSeeWorkflowExecutionsWorkflowSingleRecordAction = ({
   workflowId,
 }: {
   workflowId: string;
@@ -22,7 +22,7 @@ export const useSeeWorkflowVersionsHistorySingleRecordAction = ({
 
   const navigate = useNavigate();
 
-  const registerSeeWorkflowVersionsHistorySingleRecordAction = ({
+  const registerSeeWorkflowExecutionsWorkflowSingleRecordAction = ({
     position,
   }: {
     position: number;
@@ -38,29 +38,29 @@ export const useSeeWorkflowVersionsHistorySingleRecordAction = ({
         },
       },
     };
-    const filterLinkHref = `/objects/${CoreObjectNamePlural.WorkflowVersion}?${qs.stringify(
+    const filterLinkHref = `/objects/${CoreObjectNamePlural.WorkflowRun}?${qs.stringify(
       filterQueryParams,
     )}`;
 
     addActionMenuEntry({
-      key: 'see-workflow-versions-history',
-      label: 'See versions history',
+      key: 'see-workflow-executions',
+      label: 'See executions',
       position,
       type: ActionMenuEntryType.Standard,
       scope: ActionMenuEntryScope.RecordSelection,
-      Icon: IconHistory,
+      Icon: IconHistoryToggle,
       onClick: () => {
         navigate(filterLinkHref);
       },
     });
   };
 
-  const unregisterSeeWorkflowVersionsHistorySingleRecordAction = () => {
-    removeActionMenuEntry('see-workflow-versions-history');
+  const unregisterSeeWorkflowExecutionsWorkflowSingleRecordAction = () => {
+    removeActionMenuEntry('see-workflow-executions');
   };
 
   return {
-    registerSeeWorkflowVersionsHistorySingleRecordAction,
-    unregisterSeeWorkflowVersionsHistorySingleRecordAction,
+    registerSeeWorkflowExecutionsWorkflowSingleRecordAction,
+    unregisterSeeWorkflowExecutionsWorkflowSingleRecordAction,
   };
 };

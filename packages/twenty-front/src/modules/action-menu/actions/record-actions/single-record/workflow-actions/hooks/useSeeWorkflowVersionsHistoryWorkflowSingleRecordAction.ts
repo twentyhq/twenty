@@ -9,9 +9,9 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import qs from 'qs';
 import { useNavigate } from 'react-router-dom';
-import { IconHistoryToggle, isDefined } from 'twenty-ui';
+import { IconHistory, isDefined } from 'twenty-ui';
 
-export const useSeeWorkflowExecutionsSingleRecordAction = ({
+export const useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction = ({
   workflowId,
 }: {
   workflowId: string;
@@ -22,7 +22,7 @@ export const useSeeWorkflowExecutionsSingleRecordAction = ({
 
   const navigate = useNavigate();
 
-  const registerSeeWorkflowExecutionsSingleRecordAction = ({
+  const registerSeeWorkflowVersionsHistoryWorkflowSingleRecordAction = ({
     position,
   }: {
     position: number;
@@ -38,29 +38,29 @@ export const useSeeWorkflowExecutionsSingleRecordAction = ({
         },
       },
     };
-    const filterLinkHref = `/objects/${CoreObjectNamePlural.WorkflowRun}?${qs.stringify(
+    const filterLinkHref = `/objects/${CoreObjectNamePlural.WorkflowVersion}?${qs.stringify(
       filterQueryParams,
     )}`;
 
     addActionMenuEntry({
-      key: 'see-workflow-executions',
-      label: 'See executions',
+      key: 'see-workflow-versions-history',
+      label: 'See versions history',
       position,
       type: ActionMenuEntryType.Standard,
       scope: ActionMenuEntryScope.RecordSelection,
-      Icon: IconHistoryToggle,
+      Icon: IconHistory,
       onClick: () => {
         navigate(filterLinkHref);
       },
     });
   };
 
-  const unregisterSeeWorkflowExecutionsSingleRecordAction = () => {
-    removeActionMenuEntry('see-workflow-executions');
+  const unregisterSeeWorkflowVersionsHistoryWorkflowSingleRecordAction = () => {
+    removeActionMenuEntry('see-workflow-versions-history');
   };
 
   return {
-    registerSeeWorkflowExecutionsSingleRecordAction,
-    unregisterSeeWorkflowExecutionsSingleRecordAction,
+    registerSeeWorkflowVersionsHistoryWorkflowSingleRecordAction,
+    unregisterSeeWorkflowVersionsHistoryWorkflowSingleRecordAction,
   };
 };

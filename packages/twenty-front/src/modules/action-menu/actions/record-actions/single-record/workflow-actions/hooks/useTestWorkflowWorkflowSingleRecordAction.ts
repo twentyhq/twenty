@@ -7,7 +7,7 @@ import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { IconPlayerPlay, isDefined } from 'twenty-ui';
 
-export const useTestWorkflowSingleRecordAction = ({
+export const useTestWorkflowWorkflowSingleRecordAction = ({
   workflowId,
 }: {
   workflowId: string;
@@ -18,7 +18,7 @@ export const useTestWorkflowSingleRecordAction = ({
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
-  const registerTestWorkflowSingleRecordAction = ({
+  const registerTestWorkflowWorkflowSingleRecordAction = ({
     position,
   }: {
     position: number;
@@ -55,12 +55,12 @@ export const useTestWorkflowSingleRecordAction = ({
     });
   };
 
-  const unregisterTestWorkflowSingleRecordAction = () => {
+  const unregisterTestWorkflowWorkflowSingleRecordAction = () => {
     removeActionMenuEntry('test-workflow');
   };
 
   return {
-    registerTestWorkflowSingleRecordAction,
-    unregisterTestWorkflowSingleRecordAction,
+    registerTestWorkflowWorkflowSingleRecordAction,
+    unregisterTestWorkflowWorkflowSingleRecordAction,
   };
 };

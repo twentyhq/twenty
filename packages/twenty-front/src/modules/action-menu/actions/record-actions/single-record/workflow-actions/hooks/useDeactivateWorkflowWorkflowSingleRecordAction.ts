@@ -8,7 +8,7 @@ import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWork
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { IconPlayerPause, isDefined } from 'twenty-ui';
 
-export const useDeactivateWorkflowSingleRecordAction = ({
+export const useDeactivateWorkflowWorkflowSingleRecordAction = ({
   workflowId,
 }: {
   workflowId: string;
@@ -24,7 +24,7 @@ export const useDeactivateWorkflowSingleRecordAction = ({
     isDefined(workflowWithCurrentVersion) &&
     workflowWithCurrentVersion.currentVersion.status === 'ACTIVE';
 
-  const registerDeactivateWorkflowSingleRecordAction = ({
+  const registerDeactivateWorkflowWorkflowSingleRecordAction = ({
     position,
   }: {
     position: number;
@@ -57,12 +57,12 @@ export const useDeactivateWorkflowSingleRecordAction = ({
     });
   };
 
-  const unregisterDeactivateWorkflowSingleRecordAction = () => {
+  const unregisterDeactivateWorkflowWorkflowSingleRecordAction = () => {
     removeActionMenuEntry('deactivate-workflow');
   };
 
   return {
-    registerDeactivateWorkflowSingleRecordAction,
-    unregisterDeactivateWorkflowSingleRecordAction,
+    registerDeactivateWorkflowWorkflowSingleRecordAction,
+    unregisterDeactivateWorkflowWorkflowSingleRecordAction,
   };
 };

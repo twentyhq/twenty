@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { IconHistory, isDefined } from 'twenty-ui';
 
-export const useSeeWorkflowActiveVersionSingleRecordAction = ({
+export const useSeeWorkflowActiveVersionWorkflowSingleRecordAction = ({
   workflowId,
 }: {
   workflowId: string;
@@ -25,7 +25,7 @@ export const useSeeWorkflowActiveVersionSingleRecordAction = ({
 
   const navigate = useNavigate();
 
-  const registerSeeWorkflowActiveVersionSingleRecordAction = ({
+  const registerSeeWorkflowActiveVersionWorkflowSingleRecordAction = ({
     position,
   }: {
     position: number;
@@ -49,12 +49,12 @@ export const useSeeWorkflowActiveVersionSingleRecordAction = ({
     });
   };
 
-  const unregisterSeeWorkflowActiveVersionSingleRecordAction = () => {
+  const unregisterSeeWorkflowActiveVersionWorkflowSingleRecordAction = () => {
     removeActionMenuEntry('see-workflow-active-version');
   };
 
   return {
-    registerSeeWorkflowActiveVersionSingleRecordAction,
-    unregisterSeeWorkflowActiveVersionSingleRecordAction,
+    registerSeeWorkflowActiveVersionWorkflowSingleRecordAction,
+    unregisterSeeWorkflowActiveVersionWorkflowSingleRecordAction,
   };
 };

@@ -7,7 +7,7 @@ import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflow
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { IconPower, isDefined } from 'twenty-ui';
 
-export const useActivateWorkflowLastPublishedVersionSingleRecordAction = ({
+export const useActivateWorkflowDraftWorkflowSingleRecordAction = ({
   workflowId,
 }: {
   workflowId: string;
@@ -18,43 +18,47 @@ export const useActivateWorkflowLastPublishedVersionSingleRecordAction = ({
 
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
-  const registerActivateWorkflowLastPublishedVersionSingleRecordAction = ({
+  const registerActivateWorkflowDraftWorkflowSingleRecordAction = ({
     position,
   }: {
     position: number;
   }) => {
     if (
       !isDefined(workflowWithCurrentVersion) ||
-      !isDefined(workflowWithCurrentVersion.currentVersion.trigger) ||
-      !isDefined(workflowWithCurrentVersion.lastPublishedVersionId) ||
-      workflowWithCurrentVersion.currentVersion.status === 'ACTIVE'
+      !isDefined(workflowWithCurrentVersion.currentVersion.trigger)
     ) {
       return;
     }
 
+    const isDraft =
+      workflowWithCurrentVersion.currentVersion.status === 'DRAFT';
+
+    if (!isDraft) {
+      return;
+    }
+
     addActionMenuEntry({
-      key: 'activate-workflow-last-published-version',
-      label: 'Activate last published version',
+      key: 'activate-workflow-draft',
+      label: 'Activate Draft',
       position,
       Icon: IconPower,
       type: ActionMenuEntryType.Standard,
       scope: ActionMenuEntryScope.RecordSelection,
       onClick: () => {
         activateWorkflowVersion({
-          workflowVersionId: workflowWithCurrentVersion.lastPublishedVersionId,
+          workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
           workflowId: workflowWithCurrentVersion.id,
         });
       },
     });
   };
 
-  const unregisterActivateWorkflowLastPublishedVersionSingleRecordAction =
-    () => {
-      removeActionMenuEntry('activate-workflow-last-published-version');
-    };
+  const unregisterActivateWorkflowDraftWorkflowSingleRecordAction = () => {
+    removeActionMenuEntry('activate-workflow-draft');
+  };
 
   return {
-    registerActivateWorkflowLastPublishedVersionSingleRecordAction,
-    unregisterActivateWorkflowLastPublishedVersionSingleRecordAction,
+    registerActivateWorkflowDraftWorkflowSingleRecordAction,
+    unregisterActivateWorkflowDraftWorkflowSingleRecordAction,
   };
 };
