@@ -1,5 +1,7 @@
-import { BillingAvailablePlanKey } from 'src/engine/core-modules/billing/enums/billing-available-plan-key.enum';
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
+import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 
 export type BillingProductMetadata = {
-  planKey: BillingAvailablePlanKey;
+  planKey: BillingPlanKey;
+  priceUsageBased: BillingUsageType;
 };

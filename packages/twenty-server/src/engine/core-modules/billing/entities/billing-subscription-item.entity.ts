@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
@@ -12,12 +13,12 @@ import {
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 
 @Entity({ name: 'billingSubscriptionItem', schema: 'core' })
-@Unique('IndexOnBillingSubscriptionIdAndStripeProductIdUnique', [
-  'billingSubscriptionId',
+@Unique('IndexOnStripeSubscriptionIdAndStripeProductIdUnique', [
+  'stripeSubscriptionId',
   'stripeProductId',
 ])
-@Unique('IndexOnBillingSubscriptionIdAndStripeSubscriptionItemIdUnique', [
-  'billingSubscriptionId',
+@Unique('IndexOnStripeSubscriptionIdAndStripeSubscriptionItemIdUnique', [
+  'stripeSubscriptionId',
   'stripeSubscriptionItemId',
 ])
 export class BillingSubscriptionItem {
@@ -34,7 +35,7 @@ export class BillingSubscriptionItem {
   updatedAt: Date;
 
   @Column({ nullable: false })
-  billingSubscriptionId: string;
+  stripeSubscriptionId: string;
 
   @ManyToOne(
     () => BillingSubscription,
@@ -43,6 +44,10 @@ export class BillingSubscriptionItem {
       onDelete: 'CASCADE',
     },
   )
+  @JoinColumn({
+    referencedColumnName: 'stripeSubscriptionId',
+    name: 'stripeSubscriptionId',
+  })
   billingSubscription: Relation<BillingSubscription>;
 
   @Column({ nullable: false })

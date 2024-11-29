@@ -5,10 +5,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -17,10 +17,6 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 
 @Entity({ name: 'billingPrice', schema: 'core' })
-@Unique('IndexOnStripeProductIdAndStripePriceIdUnique', [
-  'stripeProductId',
-  'stripePriceId',
-])
 export class BillingPrice {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -34,11 +30,14 @@ export class BillingPrice {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   stripePriceId: string;
 
   @Column({ nullable: false })
   active: boolean;
+
+  @Column({ nullable: false })
+  stripeProductId: string;
 
   @Field(() => BillingUsageType)
   @Column({
@@ -56,9 +55,6 @@ export class BillingPrice {
   })
   interval: Stripe.Price.Recurring.Interval;
 
-  @Column({ nullable: false })
-  stripeProductId: string;
-
   @ManyToOne(
     () => BillingProduct,
     (billingProduct) => billingProduct.billingPrices,
@@ -66,5 +62,9 @@ export class BillingPrice {
       onDelete: 'CASCADE',
     },
   )
+  @JoinColumn({
+    referencedColumnName: 'stripeProductId',
+    name: 'stripeProductId',
+  })
   billingProduct: Relation<BillingProduct>;
 }

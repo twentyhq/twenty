@@ -22,7 +22,7 @@ export class BillingService {
     return this.environmentService.get('IS_BILLING_ENABLED');
   }
 
-  async hasWorkspaceActiveSubscriptionOrFreeAccess(
+  async hasWorkspaceActiveSubscriptionOrFreeAccessOrEntitlement(
     workspaceId: string,
     entitlementKey?: BillingEntitlementKey,
   ) {

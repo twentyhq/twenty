@@ -15,7 +15,6 @@ import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-
 import { BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
 
 registerEnumType(BillingUsageType, { name: 'BillingUsageType' });
-
 @Entity({ name: 'billingProduct', schema: 'core' })
 export class BillingProduct {
   @PrimaryGeneratedColumn('uuid')
@@ -33,7 +32,7 @@ export class BillingProduct {
   @Column({ nullable: false })
   active: boolean;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   stripeProductId: string;
 
   @Column({ nullable: false })

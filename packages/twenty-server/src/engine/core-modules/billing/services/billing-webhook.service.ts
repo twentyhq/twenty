@@ -61,15 +61,10 @@ export class BillingWebhookService {
       },
     );
 
-    const billingSubscription =
-      await this.billingSubscriptionRepository.findOneOrFail({
-        where: { stripeSubscriptionId: data.object.id },
-      });
-
     await this.billingSubscriptionItemRepository.upsert(
       data.object.items.data.map((item) => {
         return {
-          billingSubscriptionId: billingSubscription.id,
+          stripeSubscriptionId: data.object.id,
           stripeProductId: item.price.product as string,
           stripePriceId: item.price.id,
           stripeSubscriptionItemId: item.id,
@@ -77,7 +72,7 @@ export class BillingWebhookService {
         };
       }),
       {
-        conflictPaths: ['billingSubscriptionId', 'stripeProductId'],
+        conflictPaths: ['stripeSubscriptionId', 'stripeProductId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );

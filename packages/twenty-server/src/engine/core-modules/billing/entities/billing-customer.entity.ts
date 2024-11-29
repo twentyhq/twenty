@@ -41,7 +41,7 @@ export class BillingCustomer {
   @JoinColumn()
   workspace: Relation<Workspace>;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: true })
   stripeCustomerId: string;
 
   @Field()

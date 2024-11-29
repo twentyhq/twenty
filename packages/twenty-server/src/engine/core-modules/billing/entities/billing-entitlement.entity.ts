@@ -62,5 +62,9 @@ export class BillingEntitlement {
       onDelete: 'CASCADE',
     },
   )
+  @JoinColumn({
+    referencedColumnName: 'stripeCustomerId',
+    name: 'stripeCustomerId',
+  })
   billingCustomer: Relation<BillingCustomer>;
 }
