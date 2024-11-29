@@ -19,6 +19,7 @@ import {
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
+
 const DEFAULT_INDENTATION_LEVEL = 1;
 
 export type NavigationDrawerItemIndentationLevel = 1 | 2;
@@ -186,7 +187,7 @@ const StyledSpacer = styled.span`
 const StyledIcon = styled.div`
   flex-shrink: 0;
   flex-grow: 0;
-  margin-right: 8px;
+  margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledRightOptionsContainer = styled.div`
@@ -308,12 +309,12 @@ export const NavigationDrawerItem = ({
           <StyledLabelParent>
             <StyledEllipsisContainer>
               <StyledItemLabel>{label}</StyledItemLabel>
-              {objectName ? (
+              {objectName && (
                 <StyledItemObjectName>
                   {' · '}
                   {capitalize(objectName)}
                 </StyledItemObjectName>
-              ) : null}
+              )}
             </StyledEllipsisContainer>
           </StyledLabelParent>
 
