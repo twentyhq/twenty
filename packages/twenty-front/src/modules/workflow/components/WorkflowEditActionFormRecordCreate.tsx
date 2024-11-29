@@ -2,6 +2,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
+import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
 import { WorkflowRecordCreateAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
@@ -11,6 +12,7 @@ import {
   isDefined,
   useIcons,
 } from 'twenty-ui';
+import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';
 
@@ -55,7 +57,7 @@ export const WorkflowEditActionFormRecordCreate = ({
 
   const handleFieldChange = (
     fieldName: keyof SendEmailFormData,
-    updatedValue: string,
+    updatedValue: JsonValue,
   ) => {
     const newFormData: SendEmailFormData = {
       ...formData,
@@ -163,17 +165,21 @@ export const WorkflowEditActionFormRecordCreate = ({
 
       <HorizontalSeparator noMargin />
 
-      {editableFields.map((field) => (
-        <FormFieldInput
-          key={field.id}
-          recordFieldInputdId={field.id}
-          label={field.label}
-          value={formData[field.name] as string}
-          onChange={(value) => {
-            handleFieldChange(field.name, value);
-          }}
-        />
-      ))}
+      {editableFields.map((field) => {
+        const currentValue = formData[field.name] as JsonValue;
+
+        return (
+          <FormFieldInput
+            key={field.id}
+            defaultValue={currentValue}
+            field={field}
+            onPersist={(value) => {
+              handleFieldChange(field.name, value);
+            }}
+            VariablePicker={WorkflowVariablePicker}
+          />
+        );
+      })}
     </WorkflowEditGenericFormBase>
   );
 };

@@ -4,7 +4,7 @@ import { Droppable } from '@hello-pangea/dnd';
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { recordIndexRowIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRowIdsByGroupComponentFamilyState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilValue } from 'recoil';
 
@@ -31,8 +31,8 @@ export const RecordBoardColumn = ({
     recordGroupDefinitionFamilyState(recordBoardColumnId),
   );
 
-  const recordRowIdsByGroup = useRecoilComponentFamilyValueV2(
-    recordIndexRowIdsByGroupComponentFamilyState,
+  const recordIdsByGroup = useRecoilComponentFamilyValueV2(
+    recordIndexRecordIdsByGroupComponentFamilyState,
     recordBoardColumnId,
   );
 
@@ -44,9 +44,9 @@ export const RecordBoardColumn = ({
     <RecordBoardColumnContext.Provider
       value={{
         columnDefinition: recordGroupDefinition,
-        recordCount: recordRowIdsByGroup.length,
+        recordCount: recordIdsByGroup.length,
         columnId: recordBoardColumnId,
-        recordIds: recordRowIdsByGroup,
+        recordIds: recordIdsByGroup,
       }}
     >
       <Droppable droppableId={recordBoardColumnId}>
@@ -54,7 +54,7 @@ export const RecordBoardColumn = ({
           <StyledColumn>
             <RecordBoardColumnCardsContainer
               droppableProvided={droppableProvided}
-              recordIds={recordRowIdsByGroup}
+              recordIds={recordIdsByGroup}
             />
           </StyledColumn>
         )}

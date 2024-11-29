@@ -14,17 +14,19 @@ import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scro
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
+type RecordTableRowWrapperProps = {
+  recordId: string;
+  rowIndex: number;
+  isPendingRow?: boolean;
+  children: ReactNode;
+};
+
 export const RecordTableRowWrapper = ({
   recordId,
   rowIndex,
   isPendingRow,
   children,
-}: {
-  recordId: string;
-  rowIndex: number;
-  isPendingRow?: boolean;
-  children: ReactNode;
-}) => {
+}: RecordTableRowWrapperProps) => {
   const trRef = useRef<HTMLTableRowElement>(null);
 
   const { objectMetadataItem } = useContext(RecordTableContext);

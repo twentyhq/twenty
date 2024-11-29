@@ -1,6 +1,5 @@
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
 import { useManageFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useManageFavoritesSingleRecordAction';
-import { useWorkflowRunRecordActions } from '@/action-menu/actions/record-actions/workflow-run-record-actions/hooks/useWorkflowRunRecordActions';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -40,24 +39,14 @@ export const useSingleRecordActions = ({
     objectMetadataItem,
   });
 
-  const {
-    registerWorkflowRunRecordActions,
-    unregisterWorkflowRunRecordActions,
-  } = useWorkflowRunRecordActions({
-    recordId: selectedRecordId,
-    objectMetadataItem,
-  });
-
   const registerSingleRecordActions = () => {
     registerManageFavoritesSingleRecordAction({ position: 1 });
     registerDeleteSingleRecordAction({ position: 2 });
-    registerWorkflowRunRecordActions();
   };
 
   const unregisterSingleRecordActions = () => {
     unregisterManageFavoritesSingleRecordAction();
     unregisterDeleteSingleRecordAction();
-    unregisterWorkflowRunRecordActions();
   };
 
   return {
