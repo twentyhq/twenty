@@ -44,13 +44,13 @@ export const SignInUpWorkspaceScopeForm = () => {
       return continueWithCredentials();
     }
   }, [
+    continueWithCredentials,
+    location.search,
     authProviders.google,
     authProviders.microsoft,
     authProviders.password,
     authProviders.sso,
-    continueWithCredentials,
     continueWithEmail,
-    location.search,
     signInUpStep,
   ]);
 

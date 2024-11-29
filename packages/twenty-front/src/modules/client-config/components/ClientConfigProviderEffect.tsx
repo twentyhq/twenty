@@ -113,6 +113,7 @@ export const ClientConfigProviderEffect = () => {
     setIsAnalyticsEnabled,
     error,
     setUrlManager,
+    setIsSSOEnabledState,
   ]);
 
   return <></>;

@@ -54,7 +54,7 @@ export const WorkspaceProviderEffect = () => {
     ) {
       redirectToHome();
     }
-  }, [isMultiWorkspaceEnabled, redirectToHome]);
+  }, [homePageDomain, isMultiWorkspaceEnabled, redirectToHome]);
 
   useEffect(() => {
     if (

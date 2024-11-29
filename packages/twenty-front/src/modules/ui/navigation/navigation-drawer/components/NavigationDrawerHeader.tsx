@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { workspacesState } from '@/auth/states/workspaces';
