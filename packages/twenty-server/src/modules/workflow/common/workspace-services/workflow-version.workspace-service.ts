@@ -150,6 +150,36 @@ export class WorkflowVersionWorkspaceService {
           },
         };
       }
+      case `${WorkflowActionType.RECORD_CRUD}.${WorkflowRecordCRUDType.UPDATE}`: {
+        const activeObjectMetadataItem =
+          await this.objectMetadataRepository.findOne({
+            where: { workspaceId, isActive: true, isSystem: false },
+          });
+
+        return {
+          id: newStepId,
+          name: 'Update Record',
+          type: WorkflowActionType.RECORD_CRUD,
+          valid: false,
+          settings: {
+            input: {
+              type: WorkflowRecordCRUDType.UPDATE,
+              objectName: activeObjectMetadataItem?.nameSingular || '',
+              objectRecord: {},
+              objectRecordId: '',
+            },
+            outputSchema: {},
+            errorHandlingOptions: {
+              continueOnFailure: {
+                value: false,
+              },
+              retryOnFailure: {
+                value: false,
+              },
+            },
+          },
+        };
+      }
       default:
         throw new Error(`WorkflowActionType '${type}' unknown`);
     }
