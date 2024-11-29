@@ -31,7 +31,7 @@ spec:
             - name: FRONT_BASE_URL
               value: "https://crm.example.com:443"
             - name: PG_DATABASE_URL
-              value: "postgres://postgres:twenty@twenty-db.twentycrm.svc.cluster.local/default"
+              value: "postgres://postgres:postgres@twenty-db.twentycrm.svc.cluster.local/default"
             - name: ENABLE_DB_MIGRATIONS
               value: "false" # it already runs on the server
             - name: STORAGE_TYPE
