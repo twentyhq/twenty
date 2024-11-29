@@ -43,7 +43,7 @@ export class WorkflowVersionWorkspaceService {
   }): Promise<WorkflowAction> {
     const newStepId = v4();
 
-    switch (type) {
+    switch (`${type}`) {
       case WorkflowActionType.CODE: {
         const newServerlessFunction =
           await this.serverlessFunctionService.createOneServerlessFunction(
@@ -76,7 +76,7 @@ export class WorkflowVersionWorkspaceService {
         return {
           id: newStepId,
           name: 'Code - Serverless Function',
-          type,
+          type: WorkflowActionType.CODE,
           valid: false,
           settings: {
             input: {
@@ -100,7 +100,7 @@ export class WorkflowVersionWorkspaceService {
         return {
           id: newStepId,
           name: 'Send Email',
-          type,
+          type: WorkflowActionType.SEND_EMAIL,
           valid: false,
           settings: {
             input: {
@@ -121,7 +121,7 @@ export class WorkflowVersionWorkspaceService {
           },
         };
       }
-      case WorkflowActionType.RECORD_CRUD: {
+      case `${WorkflowActionType.RECORD_CRUD}.${WorkflowRecordCRUDType.CREATE}`: {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({
             where: { workspaceId, isActive: true, isSystem: false },
@@ -130,7 +130,7 @@ export class WorkflowVersionWorkspaceService {
         return {
           id: newStepId,
           name: 'Create Record',
-          type,
+          type: WorkflowActionType.RECORD_CRUD,
           valid: false,
           settings: {
             input: {
@@ -150,6 +150,8 @@ export class WorkflowVersionWorkspaceService {
           },
         };
       }
+      default:
+        throw new Error(`WorkflowActionType '${type}' unknown`);
     }
   }
 

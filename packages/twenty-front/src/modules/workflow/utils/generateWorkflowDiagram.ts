@@ -1,5 +1,9 @@
 import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
-import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
+import {
+  WorkflowActionType,
+  WorkflowStep,
+  WorkflowTrigger,
+} from '@/workflow/types/Workflow';
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
@@ -31,7 +35,12 @@ export const generateWorkflowDiagram = ({
   ) => {
     const nodeId = step.id;
 
-    const nodeActionType = step.type;
+    let nodeActionType: WorkflowActionType;
+    if (step.type === 'RECORD_CRUD') {
+      nodeActionType = `RECORD_CRUD.${step.settings.input.type}`;
+    } else {
+      nodeActionType = step.type;
+    }
 
     let nodeLabel = step.name;
     if (step.type === 'RECORD_CRUD') {
