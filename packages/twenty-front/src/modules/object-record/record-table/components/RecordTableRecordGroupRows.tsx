@@ -5,11 +5,8 @@ import { RecordTableRow } from '@/object-record/record-table/record-table-row/co
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useMemo } from 'react';
 import { isDefined } from '~/utils/isDefined';
-
-const MotionRecordTableRow = motion(RecordTableRow);
 
 export const RecordTableRecordGroupRows = () => {
   const currentRecordGroupId = useCurrentRecordGroupId();
@@ -33,32 +30,23 @@ export const RecordTableRecordGroupRows = () => {
     [allRecordIds],
   );
 
-  // TODO: Animation is not working, find a way to make it works
-  const variants = {
-    hidden: { height: 0, opacity: 0 },
-    visible: { height: 'auto', opacity: 1 },
-  };
-
   return (
-    <AnimatePresence>
-      {isRecordGroupTableSectionToggled &&
-        recordIdsByGroup.map((recordId) => {
-          const rowIndex = rowIndexMap.get(recordId);
+    isRecordGroupTableSectionToggled &&
+    recordIdsByGroup.map((recordId) => {
+      const rowIndex = rowIndexMap.get(recordId);
 
-          if (!isDefined(rowIndex)) {
-            return null;
-          }
+      if (!isDefined(rowIndex)) {
+        return null;
+      }
 
-          return (
-            <MotionRecordTableRow
-              key={recordId}
-              recordId={recordId}
-              rowIndex={rowIndex}
-              isPendingRow={!isRecordGroupTableSectionToggled}
-              variants={variants}
-            />
-          );
-        })}
-    </AnimatePresence>
+      return (
+        <RecordTableRow
+          key={recordId}
+          recordId={recordId}
+          rowIndex={rowIndex}
+          isPendingRow={!isRecordGroupTableSectionToggled}
+        />
+      );
+    })
   );
 };
