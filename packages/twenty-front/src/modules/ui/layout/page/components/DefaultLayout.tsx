@@ -88,19 +88,23 @@ export const DefaultLayout = () => {
         `}
       />
       <StyledLayout>
-        <ContextStoreComponentInstanceContext.Provider
-          value={{ instanceId: 'command-menu' }}
-        >
-          <ActionMenuComponentInstanceContext.Provider
-            value={{ instanceId: 'command-menu' }}
-          >
-            <RecordActionMenuEntriesSetter />
-            {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
-            <ActionMenuConfirmationModals />
-            <CommandMenu />
-          </ActionMenuComponentInstanceContext.Provider>
-        </ContextStoreComponentInstanceContext.Provider>
-        <KeyboardShortcutMenu />
+        {!showAuthModal && (
+          <>
+            <ContextStoreComponentInstanceContext.Provider
+              value={{ instanceId: 'command-menu' }}
+            >
+              <ActionMenuComponentInstanceContext.Provider
+                value={{ instanceId: 'command-menu' }}
+              >
+                <RecordActionMenuEntriesSetter />
+                {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
+                <ActionMenuConfirmationModals />
+                <CommandMenu />
+              </ActionMenuComponentInstanceContext.Provider>
+            </ContextStoreComponentInstanceContext.Provider>
+            <KeyboardShortcutMenu />
+          </>
+        )}
 
         <StyledPageContainer
           animate={{
