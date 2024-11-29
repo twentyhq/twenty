@@ -79,7 +79,7 @@ export const RecordTableRecordGroupSection = () => {
 
   return (
     <StyledTrContainer onClick={handleDropdownToggle}>
-      <td></td>
+      <td aria-hidden></td>
       <StyledChevronContainer>
         <motion.span
           animate={{ rotate: isRecordGroupTableSectionToggled ? 180 : 0 }}
