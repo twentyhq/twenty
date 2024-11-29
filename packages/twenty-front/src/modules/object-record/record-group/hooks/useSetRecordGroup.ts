@@ -8,7 +8,6 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from '~/utils/isDefined';
 
 export const useSetRecordGroup = (viewId?: string) => {
   const { objectMetadataItem } = useContext(RecordIndexRootPropsContext);
@@ -42,10 +41,7 @@ export const useSetRecordGroup = (viewId?: string) => {
         );
 
         // Set the field metadata linked to the record groups
-        if (
-          isDefined(fieldMetadata) &&
-          !isDeeplyEqual(fieldMetadata, currentFieldMetadata)
-        ) {
+        if (!isDeeplyEqual(fieldMetadata, currentFieldMetadata)) {
           set(recordGroupFieldMetadataState, fieldMetadata);
         }
 
