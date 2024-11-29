@@ -128,6 +128,8 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
     fetchMoreDebouncedIfRequested,
     isFetchingMoreObjects,
     tableLastRowVisible,
+    encounteredUnrecoverableError,
+    setEncounteredUnrecoverableError,
   ]);
 
   return <></>;
