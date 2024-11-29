@@ -1,13 +1,12 @@
+import { Dropdown } from '@/dropdown/components/Dropdown';
 import { DropdownButton } from '@/dropdown/components/DropdownButton';
+import { useCurrentContentId } from '@/dropdown/hooks/useCurrentContentId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
-import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { ViewType } from '@/views/types/ViewType';
-import { useCallback, useState } from 'react';
 
 type ObjectOptionsDropdownProps = {
   viewType: ViewType;
@@ -20,16 +19,8 @@ export const ObjectOptionsDropdown = ({
   objectMetadataItem,
   viewType,
 }: ObjectOptionsDropdownProps) => {
-  const [currentContentId, setCurrentContentId] =
-    useState<ObjectOptionsContentId | null>(null);
-
-  const handleContentChange = useCallback((key: ObjectOptionsContentId) => {
-    setCurrentContentId(key);
-  }, []);
-
-  const handleResetContent = useCallback(() => {
-    setCurrentContentId(null);
-  }, []);
+  const { currentContentId, handleContentChange, handleResetContent } =
+    useCurrentContentId<ObjectOptionsContentId>();
 
   return (
     <Dropdown
@@ -40,9 +31,6 @@ export const ObjectOptionsDropdown = ({
           value="Options"
         />
       }
-      dropdownMenuWidth={'200px'}
-      dropdownHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
-      dropdownOffset={{ y: 8 }}
       dropdownComponents={
         <ObjectOptionsDropdownContext.Provider
           value={{
