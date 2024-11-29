@@ -103,7 +103,7 @@ export class WorkflowVersionWorkspaceService {
       case WorkflowActionType.RECORD_CRUD: {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true },
+            where: { workspaceId, isActive: true, isSystem: false },
           });
 
         return {

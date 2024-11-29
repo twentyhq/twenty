@@ -6,10 +6,10 @@ import {
 type ObjectRecord = Record<string, any>;
 
 export enum WorkflowRecordCRUDType {
-  CREATE = 'create',
-  UPDATE = 'update',
-  DELETE = 'delete',
-  READ = 'read',
+  CREATE = 'CREATE',
+  UPDATE = 'UPDATE',
+  DELETE = 'DELETE',
+  READ = 'READ',
 }
 
 export type WorkflowCreateRecordActionInput = {
