@@ -489,6 +489,15 @@ export class EnvironmentVariables {
   // milliseconds
   @CastToPositiveNumber()
   SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 1000;
+
+  // SSL
+  @IsString()
+  @IsOptional()
+  SSL_KEY_PATH: string;
+
+  @IsString()
+  @IsOptional()
+  SSL_CERT_PATH: string;
 }
 
 export const validate = (
