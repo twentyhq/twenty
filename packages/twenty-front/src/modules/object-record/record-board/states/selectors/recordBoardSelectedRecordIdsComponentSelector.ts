@@ -1,6 +1,6 @@
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
-import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 
 export const recordBoardSelectedRecordIdsComponentSelector =
@@ -10,11 +10,15 @@ export const recordBoardSelectedRecordIdsComponentSelector =
     get:
       ({ instanceId }) =>
       ({ get }) => {
-        const allRowIds = get(
-          recordIndexAllRowIdsComponentState.atomFamily({ instanceId }),
+        const allRecordIds = get(
+          // TODO: This selector use a context different from the one used in the snippet
+          // its working for now as the instanceId is the same but we should change this
+          recordIndexAllRecordIdsComponentSelector.selectorFamily({
+            instanceId,
+          }),
         );
 
-        return allRowIds.filter(
+        return allRecordIds.filter(
           (recordId) =>
             get(
               isRecordBoardCardSelectedComponentFamilyState.atomFamily({

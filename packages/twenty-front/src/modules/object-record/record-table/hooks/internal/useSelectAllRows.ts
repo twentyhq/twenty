@@ -1,6 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
-import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -15,8 +15,8 @@ export const useSelectAllRows = (recordTableId?: string) => {
     isRowSelectedComponentFamilyState,
     recordTableId,
   );
-  const recordIndexAllRowIdsState = useRecoilComponentCallbackStateV2(
-    recordIndexAllRowIdsComponentState,
+  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackStateV2(
+    recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
 
@@ -28,24 +28,22 @@ export const useSelectAllRows = (recordTableId?: string) => {
           allRowsSelectedStatusSelector,
         );
 
-        const allRowIds = getSnapshotValue(snapshot, recordIndexAllRowIdsState);
+        const allRecordIds = getSnapshotValue(
+          snapshot,
+          recordIndexAllRecordIdsSelector,
+        );
 
-        if (
-          allRowsSelectedStatus === 'none' ||
-          allRowsSelectedStatus === 'some'
-        ) {
-          for (const rowId of allRowIds) {
-            set(isRowSelectedFamilyState(rowId), true);
-          }
-        } else {
-          for (const rowId of allRowIds) {
-            set(isRowSelectedFamilyState(rowId), false);
-          }
+        for (const recordId of allRecordIds) {
+          const isSelected =
+            allRowsSelectedStatus === 'none' ||
+            allRowsSelectedStatus === 'some';
+
+          set(isRowSelectedFamilyState(recordId), isSelected);
         }
       },
     [
       allRowsSelectedStatusSelector,
-      recordIndexAllRowIdsState,
+      recordIndexAllRecordIdsSelector,
       isRowSelectedFamilyState,
     ],
   );
