@@ -56,7 +56,7 @@ export const RecordTableRecordGroupBodyEffect = () => {
     if (!loading) {
       setRecordTableData({
         records,
-        recordGroupId,
+        currentRecordGroupId: recordGroupId,
         totalCount,
       });
     }

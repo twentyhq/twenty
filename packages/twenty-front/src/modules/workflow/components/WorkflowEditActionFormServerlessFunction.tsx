@@ -1,5 +1,4 @@
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
-import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
 import { WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/utils/mergeDefaultFunctionInputAndFunctionInput';
@@ -23,6 +22,8 @@ import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/u
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { editor } from 'monaco-editor';
 import { Monaco } from '@monaco-editor/react';
+import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
+import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -187,14 +188,14 @@ export const WorkflowEditActionFormServerlessFunction = ({
         );
       } else {
         return (
-          <VariableTagInput
+          <FormTextFieldInput
             key={pathKey}
-            inputId={`input-${inputKey}`}
             label={inputKey}
             placeholder="Enter value"
+            defaultValue={inputValue ? `${inputValue}` : ''}
             readonly={actionOptions.readonly}
-            value={`${inputValue || ''}`}
-            onChange={(value) => handleInputChange(value, currentPath)}
+            onPersist={(value) => handleInputChange(value, currentPath)}
+            VariablePicker={WorkflowVariablePicker}
           />
         );
       }

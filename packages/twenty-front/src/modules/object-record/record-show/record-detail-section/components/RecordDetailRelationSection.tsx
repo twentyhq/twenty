@@ -18,11 +18,11 @@ import { RecordDetailSectionHeader } from '@/object-record/record-show/record-de
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
-import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
+import { SingleRecordSelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleRecordSelectMenuItemsWithSearch';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
-import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
-import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
-import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { useRecordPicker } from '@/object-record/relation-picker/hooks/useRecordPicker';
+import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
@@ -84,13 +84,13 @@ export const RecordDetailRelationSection = ({
   const { closeDropdown, isDropdownOpen, dropdownPlacement } =
     useDropdown(dropdownId);
 
-  const { setRelationPickerSearchFilter } = useRelationPicker({
-    relationPickerScopeId: dropdownId,
+  const { setRecordPickerSearchFilter } = useRecordPicker({
+    recordPickerInstanceId: dropdownId,
   });
 
   const handleCloseRelationPickerDropdown = useCallback(() => {
-    setRelationPickerSearchFilter('');
-  }, [setRelationPickerSearchFilter]);
+    setRecordPickerSearchFilter('');
+  }, [setRecordPickerSearchFilter]);
 
   const persistField = usePersistField();
   const { updateOneRecord: updateOneRelationRecord } = useUpdateOneRecord({
@@ -98,7 +98,7 @@ export const RecordDetailRelationSection = ({
   });
 
   const handleRelationPickerEntitySelected = (
-    selectedRelationEntity?: EntityForSelect,
+    selectedRelationEntity?: RecordForSelect,
   ) => {
     closeDropdown();
 
@@ -193,16 +193,16 @@ export const RecordDetailRelationSection = ({
                   />
                 }
                 dropdownComponents={
-                  <RelationPickerScope relationPickerScopeId={dropdownId}>
+                  <RecordPickerComponentInstanceContext.Provider
+                    value={{ instanceId: dropdownId }}
+                  >
                     {isToOneObject ? (
-                      <SingleEntitySelectMenuItemsWithSearch
+                      <SingleRecordSelectMenuItemsWithSearch
                         EmptyIcon={IconForbid}
-                        onEntitySelected={handleRelationPickerEntitySelected}
-                        selectedRelationRecordIds={relationRecordIds}
-                        relationObjectNameSingular={
-                          relationObjectMetadataNameSingular
-                        }
-                        relationPickerScopeId={dropdownId}
+                        onRecordSelected={handleRelationPickerEntitySelected}
+                        selectedRecordIds={relationRecordIds}
+                        objectNameSingular={relationObjectMetadataNameSingular}
+                        recordPickerInstanceId={dropdownId}
                         onCreate={createNewRecordAndOpenRightDrawer}
                         dropdownPlacement={dropdownPlacement}
                       />
@@ -217,7 +217,7 @@ export const RecordDetailRelationSection = ({
                         />
                       </>
                     )}
-                  </RelationPickerScope>
+                  </RecordPickerComponentInstanceContext.Provider>
                 }
                 dropdownHotkeyScope={{
                   scope: dropdownId,

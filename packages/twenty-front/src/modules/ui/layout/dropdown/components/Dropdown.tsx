@@ -1,3 +1,8 @@
+import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import {
   autoUpdate,
   flip,
@@ -8,21 +13,19 @@ import {
   useFloating,
 } from '@floating-ui/react';
 import { MouseEvent, ReactNode, useEffect, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import { Keys } from 'react-hotkeys-hook';
 import { Key } from 'ts-key-enum';
-
-import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { isDefined } from '~/utils/isDefined';
 
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
 
 import { DropdownUnmountEffect } from '@/ui/layout/dropdown/components/DropdownUnmountEffect';
+import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
+import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
 import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { DropdownMenu } from './DropdownMenu';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
@@ -76,6 +79,11 @@ export const Dropdown = ({
 
   const offsetMiddlewares = [];
 
+  const [dropdownMaxHeight, setDropdownMaxHeight] = useRecoilComponentStateV2(
+    dropdownMaxHeightComponentStateV2,
+    dropdownId,
+  );
+
   if (isDefined(dropdownOffset.x)) {
     offsetMiddlewares.push(offset({ crossAxis: dropdownOffset.x }));
   }
@@ -90,13 +98,10 @@ export const Dropdown = ({
       flip(),
       size({
         padding: 32,
-        apply: ({ availableHeight, elements }) => {
-          elements.floating.style.maxHeight =
-            availableHeight >= elements.floating.scrollHeight
-              ? ''
-              : `${availableHeight}px`;
-
-          elements.floating.style.height = 'auto';
+        apply: ({ availableHeight }) => {
+          flushSync(() => {
+            setDropdownMaxHeight(availableHeight);
+          });
         },
         boundary: document.querySelector('#root') ?? undefined,
       }),
@@ -149,8 +154,15 @@ export const Dropdown = ({
     [closeDropdown, isDropdownOpen],
   );
 
+  const dropdownMenuStyles = {
+    ...floatingStyles,
+    maxHeight: dropdownMaxHeight,
+  };
+
   return (
-    <>
+    <DropdownComponentInstanceContext.Provider
+      value={{ instanceId: dropdownId }}
+    >
       <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>
         <div ref={containerRef} className={className}>
           {clickableComponent && (
@@ -175,7 +187,7 @@ export const Dropdown = ({
                 width={dropdownMenuWidth ?? dropdownWidth}
                 data-select-disable
                 ref={refs.setFloating}
-                style={floatingStyles}
+                style={dropdownMenuStyles}
               >
                 {dropdownComponents}
               </DropdownMenu>
@@ -187,7 +199,7 @@ export const Dropdown = ({
               width={dropdownMenuWidth ?? dropdownWidth}
               data-select-disable
               ref={refs.setFloating}
-              style={floatingStyles}
+              style={dropdownMenuStyles}
             >
               {dropdownComponents}
             </DropdownMenu>
@@ -199,6 +211,6 @@ export const Dropdown = ({
         </div>
       </DropdownScope>
       <DropdownUnmountEffect dropdownId={dropdownId} />
-    </>
+    </DropdownComponentInstanceContext.Provider>
   );
 };

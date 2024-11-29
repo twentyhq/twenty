@@ -1,5 +1,5 @@
 import { WorkflowDiagramStepNodeBase } from '@/workflow/components/WorkflowDiagramStepNodeBase';
-import { useDeleteStep } from 'packages/twenty-front/src/modules/workflow/hooks/useDeleteStep';
+import { useDeleteStep } from '@/workflow/hooks/useDeleteStep';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowDiagramStepNodeData } from '@/workflow/types/WorkflowDiagram';

@@ -127,13 +127,12 @@ export class EnvironmentVariables {
   PG_SSL_ALLOW_SELF_SIGNED = false;
 
   // Frontend URL
-  @IsUrl({ require_tld: false })
+  @IsUrl({ require_tld: false, require_protocol: true })
   FRONT_BASE_URL: string;
 
-  // Server URL
-  @IsUrl({ require_tld: false })
+  @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
-  SERVER_URL: string;
+  SERVER_URL = 'http://localhost:3000';
 
   @IsString()
   APP_SECRET: string;
@@ -166,10 +165,6 @@ export class EnvironmentVariables {
   INVITATION_TOKEN_EXPIRES_IN = '30d';
 
   // Auth
-  @IsUrl({ require_tld: false })
-  @IsOptional()
-  FRONT_AUTH_CALLBACK_URL: string;
-
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
@@ -198,11 +193,11 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_CLIENT_SECRET: string;
 
-  @IsUrl({ require_tld: false })
+  @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_CALLBACK_URL: string;
 
-  @IsUrl({ require_tld: false })
+  @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
 
@@ -219,7 +214,7 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CLIENT_SECRET: string;
 
-  @IsUrl({ require_tld: false })
+  @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
 
@@ -475,6 +470,15 @@ export class EnvironmentVariables {
   // milliseconds
   @CastToPositiveNumber()
   SERVERLESS_FUNCTION_EXEC_THROTTLE_TTL = 1000;
+
+  // SSL
+  @IsString()
+  @ValidateIf((env) => env.SERVER_URL.startsWith('https'))
+  SSL_KEY_PATH: string;
+
+  @IsString()
+  @ValidateIf((env) => env.SERVER_URL.startsWith('https'))
+  SSL_CERT_PATH: string;
 }
 
 export const validate = (

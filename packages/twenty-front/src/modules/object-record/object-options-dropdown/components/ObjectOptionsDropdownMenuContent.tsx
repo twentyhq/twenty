@@ -15,7 +15,7 @@ import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/h
 
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
-import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
+import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import {
   displayedExportProgress,
   useExportRecords,
@@ -26,6 +26,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
@@ -43,6 +44,10 @@ export const ObjectOptionsDropdownMenuContent = () => {
   const { objectNamePlural } = useObjectNamePluralFromSingular({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
+
+  const recordGroupFieldMetadata = useRecoilComponentValueV2(
+    recordGroupFieldMetadataComponentState,
+  );
 
   useScopedHotkeys(
     [Key.Escape],
@@ -62,10 +67,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
     objectNameSingular: objectMetadataItem.nameSingular,
     recordBoardId: recordIndexId,
     viewBarId: recordIndexId,
-  });
-
-  const { viewGroupFieldMetadataItem } = useRecordGroups({
-    objectNameSingular: objectMetadataItem.nameSingular,
   });
 
   const { openObjectRecordsSpreasheetImportDialog } =
@@ -113,7 +114,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
             onClick={() => onContentChange('recordGroups')}
             LeftIcon={IconLayoutList}
             text="Group by"
-            contextualText={viewGroupFieldMetadataItem?.label}
+            contextualText={recordGroupFieldMetadata?.label}
             hasSubMenu
           />
         )}

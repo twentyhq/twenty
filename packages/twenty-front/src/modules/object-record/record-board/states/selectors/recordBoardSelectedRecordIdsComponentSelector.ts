@@ -1,32 +1,24 @@
+import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
-import { recordBoardColumnIdsComponentState } from '@/object-record/record-board/states/recordBoardColumnIdsComponentState';
-import { recordBoardRecordIdsByColumnIdComponentFamilyState } from '@/object-record/record-board/states/recordBoardRecordIdsByColumnIdComponentFamilyState';
-import { createComponentReadOnlySelector } from '@/ui/utilities/state/component-state/utils/createComponentReadOnlySelector';
+import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
+import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 
 export const recordBoardSelectedRecordIdsComponentSelector =
-  createComponentReadOnlySelector<string[]>({
+  createComponentSelectorV2<string[]>({
     key: 'recordBoardSelectedRecordIdsSelector',
+    componentInstanceContext: RecordBoardComponentInstanceContext,
     get:
-      ({ scopeId }) =>
+      ({ instanceId }) =>
       ({ get }) => {
-        const columnIds = get(recordBoardColumnIdsComponentState({ scopeId }));
-
-        const recordIdsByColumn = columnIds.map((columnId) =>
-          get(
-            recordBoardRecordIdsByColumnIdComponentFamilyState({
-              scopeId,
-              familyKey: columnId,
-            }),
-          ),
+        const allRowIds = get(
+          recordIndexAllRowIdsComponentState.atomFamily({ instanceId }),
         );
 
-        const recordIds = recordIdsByColumn.flat();
-
-        return recordIds.filter(
+        return allRowIds.filter(
           (recordId) =>
             get(
-              isRecordBoardCardSelectedComponentFamilyState({
-                scopeId,
+              isRecordBoardCardSelectedComponentFamilyState.atomFamily({
+                instanceId,
                 familyKey: recordId,
               }),
             ) === true,

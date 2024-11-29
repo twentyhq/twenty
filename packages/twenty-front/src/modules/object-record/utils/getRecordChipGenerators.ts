@@ -47,13 +47,13 @@ export const getRecordChipGenerators = (
             labelIdentifierFieldMetadataItem?.id === fieldMetadataItem.id;
 
           const currentObjectNameSingular = objectMetadataItem.nameSingular;
-          const fieldRelationObjectNameSingular =
+          const fieldObjectNameSingular =
             fieldMetadataItem.relationDefinition?.targetObjectMetadata
               .nameSingular ?? undefined;
 
           const objectNameSingularToFind = isLabelIdentifier
             ? currentObjectNameSingular
-            : fieldRelationObjectNameSingular;
+            : fieldObjectNameSingular;
 
           const objectMetadataItemToUse = objectMetadataItems.find(
             (objectMetadataItem) =>
