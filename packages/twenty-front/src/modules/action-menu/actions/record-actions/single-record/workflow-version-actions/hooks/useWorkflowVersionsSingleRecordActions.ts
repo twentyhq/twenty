@@ -1,3 +1,4 @@
+import { useDiscardDraftWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useDiscardDraftWorkflowVersionSingleRecordAction';
 import { useSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction';
 import { useUseAsDraftWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useUseAsDraftWorkflowVersionSingleRecordAction';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -32,6 +33,13 @@ export const useWorkflowVersionsSingleRecordActions = () => {
     workflowVersionId: selectedRecordId,
   });
 
+  const {
+    registerDiscardDraftWorkflowVersionSingleRecordAction,
+    unregisterDiscardDraftWorkflowVersionSingleRecordAction,
+  } = useDiscardDraftWorkflowVersionSingleRecordAction({
+    workflowVersionId: selectedRecordId,
+  });
+
   const registerSingleRecordActions = ({
     startPosition = 3,
   }: {
@@ -43,11 +51,15 @@ export const useWorkflowVersionsSingleRecordActions = () => {
     registerUseAsDraftWorkflowVersionSingleRecordAction({
       position: startPosition + 1,
     });
+    registerDiscardDraftWorkflowVersionSingleRecordAction({
+      position: startPosition + 2,
+    });
   };
 
   const unregisterSingleRecordActions = () => {
     unregisterSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction();
     unregisterUseAsDraftWorkflowVersionSingleRecordAction();
+    unregisterDiscardDraftWorkflowVersionSingleRecordAction();
   };
 
   return {

@@ -7,7 +7,7 @@ import { useDeleteOneWorkflowVersion } from '@/workflow/hooks/useDeleteOneWorkfl
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { IconTrash, isDefined } from 'twenty-ui';
 
-export const useDiscardWorkflowDraftWorkflowSingleRecordAction = ({
+export const useDiscardDraftWorkflowSingleRecordAction = ({
   workflowId,
 }: {
   workflowId: string;
@@ -18,7 +18,7 @@ export const useDiscardWorkflowDraftWorkflowSingleRecordAction = ({
 
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
-  const registerDiscardWorkflowDraftWorkflowSingleRecordAction = ({
+  const registerDiscardDraftWorkflowSingleRecordAction = ({
     position,
   }: {
     position: number;
@@ -52,12 +52,12 @@ export const useDiscardWorkflowDraftWorkflowSingleRecordAction = ({
     });
   };
 
-  const unregisterDiscardWorkflowDraftWorkflowSingleRecordAction = () => {
+  const unregisterDiscardDraftWorkflowSingleRecordAction = () => {
     removeActionMenuEntry('discard-workflow-draft');
   };
 
   return {
-    registerDiscardWorkflowDraftWorkflowSingleRecordAction,
-    unregisterDiscardWorkflowDraftWorkflowSingleRecordAction,
+    registerDiscardDraftWorkflowSingleRecordAction,
+    unregisterDiscardDraftWorkflowSingleRecordAction,
   };
 };
