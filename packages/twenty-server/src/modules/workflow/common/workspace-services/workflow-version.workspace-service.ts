@@ -81,7 +81,7 @@ export class WorkflowVersionWorkspaceService {
           settings: {
             input: {
               serverlessFunctionId: newServerlessFunction.id,
-              serverlessFunctionVersion: '',
+              serverlessFunctionVersion: 'draft',
               serverlessFunctionInput,
             },
             outputSchema: {},
