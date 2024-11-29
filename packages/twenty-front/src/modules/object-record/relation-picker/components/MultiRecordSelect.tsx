@@ -2,8 +2,8 @@ import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useOb
 import { MultipleObjectRecordOnClickOutsideEffect } from '@/object-record/relation-picker/components/MultipleObjectRecordOnClickOutsideEffect';
 import { MultipleObjectRecordSelectItem } from '@/object-record/relation-picker/components/MultipleObjectRecordSelectItem';
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
-import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
-import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
+import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { recordPickerSearchFilterComponentState } from '@/object-record/relation-picker/states/recordPickerSearchFilterComponentState';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -16,11 +16,13 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import styled from '@emotion/styled';
 import { Placement } from '@floating-ui/react';
 import { useCallback, useEffect, useRef } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { IconPlus, isDefined } from 'twenty-ui';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -45,12 +47,12 @@ export const MultiRecordSelect = ({
   const setHotkeyScope = useSetHotkeyScope();
   const { goBackToPreviousHotkeyScope } = usePreviousHotkeyScope();
 
-  const relationPickerScopedId = useAvailableScopeIdOrThrow(
-    RelationPickerScopeInternalContext,
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordPickerComponentInstanceContext,
   );
 
   const { objectRecordsIdsMultiSelectState, recordMultiSelectIsLoadingState } =
-    useObjectRecordMultiSelectScopedStates(relationPickerScopedId);
+    useObjectRecordMultiSelectScopedStates(instanceId);
 
   const { resetSelectedItem } = useSelectableList(
     MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID,
@@ -63,18 +65,18 @@ export const MultiRecordSelect = ({
     objectRecordsIdsMultiSelectState,
   );
 
-  const { relationPickerSearchFilterState } = useRelationPickerScopedStates({
-    relationPickerScopedId,
-  });
-
-  const setSearchFilter = useSetRecoilState(relationPickerSearchFilterState);
-  const relationPickerSearchFilter = useRecoilValue(
-    relationPickerSearchFilterState,
+  const setSearchFilter = useSetRecoilComponentStateV2(
+    recordPickerSearchFilterComponentState,
+    instanceId,
+  );
+  const recordPickerSearchFilter = useRecoilComponentValueV2(
+    recordPickerSearchFilterComponentState,
+    instanceId,
   );
 
   useEffect(() => {
-    setHotkeyScope(relationPickerScopedId);
-  }, [setHotkeyScope, relationPickerScopedId]);
+    setHotkeyScope(instanceId);
+  }, [setHotkeyScope, instanceId]);
 
   useScopedHotkeys(
     Key.Escape,
@@ -83,7 +85,7 @@ export const MultiRecordSelect = ({
       goBackToPreviousHotkeyScope();
       resetSelectedItem();
     },
-    relationPickerScopedId,
+    instanceId,
     [onSubmit, goBackToPreviousHotkeyScope, resetSelectedItem],
   );
 
@@ -99,7 +101,7 @@ export const MultiRecordSelect = ({
       <SelectableList
         selectableListId={MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID}
         selectableItemIdArray={objectRecordsIdsMultiSelect}
-        hotkeyScope={relationPickerScopedId}
+        hotkeyScope={instanceId}
         onEnter={(selectedId) => {
           onChange?.(selectedId);
           resetSelectedItem();
@@ -123,7 +125,7 @@ export const MultiRecordSelect = ({
 
   const createNewButton = isDefined(onCreate) && (
     <CreateNewButton
-      onClick={() => onCreate?.(relationPickerSearchFilter)}
+      onClick={() => onCreate?.(recordPickerSearchFilter)}
       LeftIcon={IconPlus}
       text="Add New"
     />
@@ -147,7 +149,7 @@ export const MultiRecordSelect = ({
             )}
             <DropdownMenuSeparator />
             {objectRecordsIdsMultiSelect?.length > 0 && results}
-            {recordMultiSelectIsLoading && !relationPickerSearchFilter && (
+            {recordMultiSelectIsLoading && !recordPickerSearchFilter && (
               <>
                 <DropdownMenuSkeletonItem />
                 <DropdownMenuSeparator />
@@ -159,7 +161,7 @@ export const MultiRecordSelect = ({
           </>
         )}
         <DropdownMenuSearchInput
-          value={relationPickerSearchFilter}
+          value={recordPickerSearchFilter}
           onChange={handleFilterChange}
           autoFocus
         />
@@ -167,7 +169,7 @@ export const MultiRecordSelect = ({
           isUndefinedOrNull(dropdownPlacement)) && (
           <>
             <DropdownMenuSeparator />
-            {recordMultiSelectIsLoading && !relationPickerSearchFilter && (
+            {recordMultiSelectIsLoading && !recordPickerSearchFilter && (
               <>
                 <DropdownMenuSkeletonItem />
                 <DropdownMenuSeparator />

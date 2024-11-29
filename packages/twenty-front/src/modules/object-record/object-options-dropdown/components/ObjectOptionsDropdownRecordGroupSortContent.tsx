@@ -8,24 +8,21 @@ import {
 } from 'twenty-ui';
 
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
-import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
+import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 
 export const ObjectOptionsDropdownRecordGroupSortContent = () => {
-  const {
-    currentContentId,
-    objectMetadataItem,
-    onContentChange,
-    closeDropdown,
-  } = useOptionsDropdown();
+  const { currentContentId, onContentChange, closeDropdown } =
+    useOptionsDropdown();
 
-  const { hiddenRecordGroups } = useRecordGroups({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
+  const hiddenRecordGroupIds = useRecoilComponentValueV2(
+    hiddenRecordGroupIdsComponentSelector,
+  );
 
   const setRecordGroupSort = useSetRecoilComponentStateV2(
     recordIndexRecordGroupSortComponentState,
@@ -39,11 +36,11 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
-      hiddenRecordGroups.length === 0
+      hiddenRecordGroupIds.length === 0
     ) {
       onContentChange('recordGroups');
     }
-  }, [hiddenRecordGroups, currentContentId, onContentChange]);
+  }, [hiddenRecordGroupIds, currentContentId, onContentChange]);
 
   return (
     <>

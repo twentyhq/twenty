@@ -1,8 +1,8 @@
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
-import { useEntitySelectSearch } from '@/object-record/relation-picker/hooks/useEntitySelectSearch';
-import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { useRecordSelectSearch } from '@/object-record/relation-picker/hooks/useRecordSelectSearch';
+import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext } from 'react';
@@ -20,8 +20,8 @@ export const useAddNewCard = () => {
   const columnContext = useContext(RecordBoardColumnContext);
   const { createOneRecord, selectFieldMetadataItem, objectMetadataItem } =
     useContext(RecordBoardContext);
-  const { resetSearchFilter } = useEntitySelectSearch({
-    relationPickerScopeId: 'relation-picker',
+  const { resetSearchFilter } = useRecordSelectSearch({
+    recordPickerInstanceId: 'record-picker',
   });
 
   const {
@@ -71,7 +71,7 @@ export const useAddNewCard = () => {
       labelValue: string,
       position: 'first' | 'last',
       isOpportunity: boolean,
-      company?: EntityForSelect,
+      company?: RecordForSelect,
     ) => {
       if (
         (isOpportunity && company !== null) ||
@@ -220,7 +220,7 @@ export const useAddNewCard = () => {
   const handleEntitySelect = useCallback(
     (
       position: 'first' | 'last',
-      company: EntityForSelect,
+      company: RecordForSelect,
       columnId?: string,
     ) => {
       const columnDefinitionId = getColumnDefinitionId(columnId);

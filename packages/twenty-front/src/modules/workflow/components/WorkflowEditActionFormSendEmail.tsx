@@ -2,10 +2,11 @@ import { GMAIL_SEND_SCOPE } from '@/accounts/constants/GmailSendScope';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
-import { VariableTagInput } from '@/workflow/search-variables/components/VariableTagInput';
+import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
@@ -214,16 +215,16 @@ export const WorkflowEditActionFormSendEmail = ({
           name="email"
           control={form.control}
           render={({ field }) => (
-            <VariableTagInput
-              inputId="email-input"
+            <FormTextFieldInput
               label="Email"
               placeholder="Enter receiver email"
-              value={field.value}
-              onChange={(email) => {
-                field.onChange(email);
+              readonly={actionOptions.readonly}
+              defaultValue={field.value}
+              onPersist={(value) => {
+                field.onChange(value);
                 handleSave();
               }}
-              readonly={actionOptions.readonly}
+              VariablePicker={WorkflowVariablePicker}
             />
           )}
         />
@@ -231,16 +232,16 @@ export const WorkflowEditActionFormSendEmail = ({
           name="subject"
           control={form.control}
           render={({ field }) => (
-            <VariableTagInput
-              inputId="email-subject-input"
+            <FormTextFieldInput
               label="Subject"
               placeholder="Enter email subject"
-              value={field.value}
-              onChange={(email) => {
-                field.onChange(email);
+              readonly={actionOptions.readonly}
+              defaultValue={field.value}
+              onPersist={(value) => {
+                field.onChange(value);
                 handleSave();
               }}
-              readonly={actionOptions.readonly}
+              VariablePicker={WorkflowVariablePicker}
             />
           )}
         />
@@ -248,17 +249,16 @@ export const WorkflowEditActionFormSendEmail = ({
           name="body"
           control={form.control}
           render={({ field }) => (
-            <VariableTagInput
-              inputId="email-body-input"
+            <FormTextFieldInput
               label="Body"
               placeholder="Enter email body"
-              value={field.value}
-              onChange={(email) => {
-                field.onChange(email);
+              readonly={actionOptions.readonly}
+              defaultValue={field.value}
+              onPersist={(value) => {
+                field.onChange(value);
                 handleSave();
               }}
-              multiline
-              readonly={actionOptions.readonly}
+              VariablePicker={WorkflowVariablePicker}
             />
           )}
         />

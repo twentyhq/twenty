@@ -443,13 +443,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataForUpdate.workspaceId,
       );
 
+      await this.objectMetadataMigrationService.recomputeEnumNames(
+        objectMetadataForUpdate,
+        objectMetadataForUpdate.workspaceId,
+      );
+
       const recomputedIndexes =
         await this.indexMetadataService.recomputeIndexMetadataForObject(
           objectMetadataForUpdate.workspaceId,
           objectMetadataForUpdate,
         );
-
-      // TODO: recompute foreign keys indexes as well (in the related object and not objectMetadataForUpdate)
 
       await this.indexMetadataService.createIndexRecomputeMigrations(
         objectMetadataForUpdate.workspaceId,

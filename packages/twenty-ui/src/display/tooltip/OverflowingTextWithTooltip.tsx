@@ -12,8 +12,6 @@ const StyledOverflowingText = styled.div<{
   cursorPointer: boolean;
   size: 'large' | 'small';
   displayedMaxRows?: number;
-  isLabel: boolean;
-  allowDisplayWrap?: boolean;
 }>`
   cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'inherit')};
   font-family: inherit;
@@ -25,7 +23,7 @@ const StyledOverflowingText = styled.div<{
   text-decoration: inherit;
 
   text-overflow: ellipsis;
-
+  white-space: pre-wrap;
   height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
 
   text-wrap: wrap;
@@ -42,20 +40,21 @@ const StyledOverflowingText = styled.div<{
   }
 `;
 
+const Styledpre = styled.pre`
+  font-family: inherit;
+  white-space: pre-wrap;
+`;
+
 export const OverflowingTextWithTooltip = ({
   size = 'small',
   text,
   isTooltipMultiline,
   displayedMaxRows,
-  isLabel,
-  allowDisplayWrap,
 }: {
   size?: 'large' | 'small';
   text: string | null | undefined;
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
-  isLabel?: boolean;
-  allowDisplayWrap?: boolean;
 }) => {
   const textElementId = `title-id-${+new Date()}`;
 
@@ -81,7 +80,6 @@ export const OverflowingTextWithTooltip = ({
     event.stopPropagation();
     event.preventDefault();
   };
-
   return (
     <>
       <StyledOverflowingText
@@ -89,8 +87,6 @@ export const OverflowingTextWithTooltip = ({
         cursorPointer={isTitleOverflowing}
         size={size}
         displayedMaxRows={displayedMaxRows}
-        allowDisplayWrap={allowDisplayWrap}
-        isLabel={isLabel ?? false}
         ref={textRef}
         id={textElementId}
         onMouseEnter={handleMouseEnter}
@@ -103,7 +99,6 @@ export const OverflowingTextWithTooltip = ({
           <div onClick={handleTooltipClick}>
             <AppTooltip
               anchorSelect={`#${textElementId}`}
-              content={isTooltipMultiline ? undefined : (text ?? '')}
               offset={5}
               isOpen
               noArrow
@@ -111,7 +106,11 @@ export const OverflowingTextWithTooltip = ({
               positionStrategy="absolute"
               delay={TooltipDelay.mediumDelay}
             >
-              {isTooltipMultiline ? <pre>{text}</pre> : ''}
+              {isTooltipMultiline ? (
+                <Styledpre>{text}</Styledpre>
+              ) : (
+                `${text || ''}`
+              )}
             </AppTooltip>
           </div>,
           document.body,

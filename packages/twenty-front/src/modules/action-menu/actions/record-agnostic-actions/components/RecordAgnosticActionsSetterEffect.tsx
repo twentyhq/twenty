@@ -1,4 +1,4 @@
-import { useRecordAgnosticActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useGlobalActions';
+import { useRecordAgnosticActions } from '@/action-menu/actions/record-agnostic-actions/hooks/useRecordAgnosticActions';
 import { useEffect } from 'react';
 
 export const RecordAgnosticActionsSetterEffect = () => {
