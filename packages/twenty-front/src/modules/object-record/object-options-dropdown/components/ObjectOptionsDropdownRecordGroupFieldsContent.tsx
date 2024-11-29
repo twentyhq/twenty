@@ -9,6 +9,7 @@ import {
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { StyledInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelect';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useSearchRecordGroupField';
@@ -66,6 +67,16 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     navigationMemorizedUrlState,
   );
 
+  const onResetRecordGroupField = () => {
+    resetRecordGroupField();
+    closeDropdown();
+  };
+
+  const onRecordGroupFieldChange = (fieldMetadataItem: FieldMetadataItem) => {
+    handleRecordGroupFieldChange(fieldMetadataItem);
+    closeDropdown();
+  };
+
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
@@ -90,13 +101,11 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         onChange={(event) => setRecordGroupFieldSearchInput(event.target.value)}
       />
       <DropdownMenuItemsContainer>
-        <MenuItem text="None" onClick={resetRecordGroupField} />
+        <MenuItem text="None" onClick={onResetRecordGroupField} />
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
           <MenuItem
             key={fieldMetadataItem.id}
-            onClick={() => {
-              handleRecordGroupFieldChange(fieldMetadataItem);
-            }}
+            onClick={() => onRecordGroupFieldChange(fieldMetadataItem)}
             LeftIcon={getIcon(fieldMetadataItem.icon)}
             text={fieldMetadataItem.label}
           />
