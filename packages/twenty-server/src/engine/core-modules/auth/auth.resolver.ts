@@ -32,7 +32,6 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SwitchWorkspaceInput } from 'src/engine/core-modules/auth/dto/switch-workspace.input';
 import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -41,6 +40,7 @@ import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { WorkspaceGettersService } from 'src/engine/core-modules/workspace/services/workspace-getters.service';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { ImpersonateInput } from './dto/impersonate.input';
@@ -63,7 +63,7 @@ export class AuthResolver {
     private renewTokenService: RenewTokenService,
     private userService: UserService,
     private apiKeyService: ApiKeyService,
-    private workspaceService: WorkspaceService,
+    private workspaceGetterService: WorkspaceGettersService,
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
     private switchWorkspaceService: SwitchWorkspaceService,
@@ -104,7 +104,8 @@ export class AuthResolver {
     @Args() challengeInput: ChallengeInput,
     @OriginHeader() origin: string,
   ): Promise<LoginToken> {
-    const workspace = await this.workspaceService.getWorkspaceByOrigin(origin);
+    const workspace =
+      await this.workspaceGetterService.getWorkspaceByOrigin(origin);
 
     if (!workspace) {
       throw new AuthException(
@@ -185,7 +186,8 @@ export class AuthResolver {
     @Args() verifyInput: VerifyInput,
     @OriginHeader() origin: string,
   ): Promise<Verify> {
-    const workspace = await this.workspaceService.getWorkspaceByOrigin(origin);
+    const workspace =
+      await this.workspaceGetterService.getWorkspaceByOrigin(origin);
 
     const { sub: email } = await this.loginTokenService.verifyLoginToken(
       verifyInput.loginToken,

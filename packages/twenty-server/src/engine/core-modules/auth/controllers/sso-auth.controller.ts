@@ -33,7 +33,6 @@ import {
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
 
 @Controller('auth')
 @UseFilters(AuthRestApiExceptionFilter)

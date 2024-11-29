@@ -60,6 +60,7 @@ export class SignInUpService {
     private readonly onboardingService: OnboardingService,
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
+    private readonly workspaceService: WorkspaceService,
   ) {}
 
   async signInUp({
@@ -302,7 +303,7 @@ export class SignInUpService {
     }
 
     const workspaceToCreate = this.workspaceRepository.create({
-      subdomain: v4().replace(/-/g, ''),
+      subdomain: await this.workspaceService.generateSubdomain(),
       displayName: '',
       domainName: '',
       inviteHash: v4(),

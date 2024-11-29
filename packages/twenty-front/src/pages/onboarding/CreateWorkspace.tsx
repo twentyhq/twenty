@@ -23,6 +23,9 @@ import {
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
+import { AppPath } from '@/types/AppPath';
+import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -49,6 +52,7 @@ export const CreateWorkspace = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const { redirectToWorkspace } = useUrlManager();
 
   const [activateWorkspace] = useActivateWorkspaceMutation();
   const apolloMetadataClient = useApolloMetadataClient();
@@ -80,16 +84,22 @@ export const CreateWorkspace = () => {
 
         setIsCurrentUserLoaded(false);
 
+        if (isDefined(result.data) && isMultiWorkspaceEnabled) {
+          return redirectToWorkspace(
+            result.data.activateWorkspace.workspace.subdomain,
+            AppPath.Verify,
+            {
+              loginToken: result.data.activateWorkspace.loginToken.token,
+            },
+          );
+        }
+
         await apolloMetadataClient?.refetchQueries({
           include: [FIND_MANY_OBJECT_METADATA_ITEMS],
         });
 
         if (isDefined(result.errors)) {
           throw result.errors ?? new Error('Unknown error');
-        }
-
-        if (isMultiWorkspaceEnabled) {
-          // TODO AMOREAUX: Generate a login token and redirect to workspace
         }
       } catch (error: any) {
         enqueueSnackBar(error?.message, {

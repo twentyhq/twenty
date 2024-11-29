@@ -13,6 +13,8 @@ import { FormProvider } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useLocation } from 'react-router-dom';
+
 import { isDefined } from '~/utils/isDefined';
 import {
   SignInUpStep,
@@ -64,6 +66,7 @@ export const SignInUpGlobalScopeForm = () => {
   const [showErrors, setShowErrors] = useState(false);
 
   const { form } = useSignInUpForm();
+  const { pathname } = useLocation();
 
   const { submitCredentials } = useSignInUp(form);
 
@@ -98,6 +101,7 @@ export const SignInUpGlobalScopeForm = () => {
           ) {
             return redirectToWorkspace(
               data?.checkUserExists.availableWorkspaces[0].subdomain,
+              pathname,
               {
                 email: form.getValues('email'),
               },

@@ -1,5 +1,4 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
@@ -19,20 +18,13 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
-import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
-} from 'src/engine/core-modules/workspace/workspace.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { getDomainNameByEmail, isWorkEmail } from 'src/utils/is-work-email';
-import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
-  private readonly userWorkspaceService: UserWorkspaceService;
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -44,13 +36,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly featureFlagService: FeatureFlagService,
     private readonly environmentService: EnvironmentService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly urlManagerService: UrlManagerService,
-    private moduleRef: ModuleRef,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {
     super(workspaceRepository);
-    this.userWorkspaceService = this.moduleRef.get(UserWorkspaceService, {
-      strict: false,
-    });
   }
 
   private generateRandomSubdomain(): string {
@@ -125,13 +113,14 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return `${randomPrefix}-${randomSuffix}`;
   }
 
-  private getSubdomainNameByEmail(email: string) {
-    if (isWorkEmail(email)) {
-      return getDomainNameByEmail(email);
-    }
+  private getSubdomainNameByEmail(email?: string) {
+    if (!isDefined(email) || !isWorkEmail(email)) return;
+
+    return getDomainNameByEmail(email);
   }
 
-  private getSubdomainNameByDisplayName(displayName: string) {
+  private getSubdomainNameByDisplayName(displayName?: string) {
+    if (!isDefined(displayName)) return;
     const displayNameWords = displayName.match(/(\w| |\d)+/g);
 
     if (displayNameWords) {
@@ -139,23 +128,17 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
-  private async generateSubdomain({
-    email,
-    displayName,
-  }: {
-    email: string;
-    displayName: string;
-  }) {
+  async generateSubdomain(params?: { email?: string; displayName?: string }) {
     const subdomain =
-      this.getSubdomainNameByEmail(email) ??
-      this.getSubdomainNameByDisplayName(displayName) ??
+      this.getSubdomainNameByEmail(params?.email) ??
+      this.getSubdomainNameByDisplayName(params?.displayName) ??
       this.generateRandomSubdomain();
 
     const existingWorkspaceCount = await this.workspaceRepository.countBy({
       subdomain,
     });
 
-    return `${subdomain}${existingWorkspaceCount <= 1 ? `-${Math.random().toString(36).substring(2, 10)}` : ''}`;
+    return `${subdomain}${existingWorkspaceCount > 0 ? `-${Math.random().toString(36).substring(2, 10)}` : ''}`;
   }
 
   async activateWorkspace(user: User, data: ActivateWorkspaceInput) {
@@ -200,13 +183,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       user,
     );
 
-    const subdomain = await this.generateSubdomain({
-      email: user.email,
-      displayName: data.displayName,
-    });
-
     await this.workspaceRepository.update(user.defaultWorkspaceId, {
-      subdomain,
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
@@ -283,80 +260,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         {
           defaultWorkspaceId: userWorkspaces[0].workspaceId,
         },
-      );
-    }
-  }
-
-  async getAuthProvidersByWorkspaceId(workspaceId: string) {
-    const workspace = await this.workspaceRepository.findOne({
-      where: {
-        id: workspaceId,
-      },
-      relations: ['workspaceSSOIdentityProviders'],
-    });
-
-    workspaceValidator.assertIsExist(
-      workspace,
-      new WorkspaceException(
-        'Workspace not found',
-        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
-      ),
-    );
-
-    return {
-      google: workspace.isGoogleAuthEnabled,
-      magicLink: false,
-      password: workspace.isPasswordAuthEnabled,
-      microsoft: workspace.isMicrosoftAuthEnabled,
-      sso: workspace.workspaceSSOIdentityProviders.map((identityProvider) => ({
-        id: identityProvider.id,
-        name: identityProvider.name,
-        type: identityProvider.type,
-        status: identityProvider.status,
-        issuer: identityProvider.issuer,
-      })),
-    };
-  }
-
-  async getDefaultWorkspace() {
-    if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
-      const workspaces = await this.workspaceRepository.find({
-        order: {
-          createdAt: 'DESC',
-        },
-      });
-
-      if (workspaces.length > 1) {
-        // TODO AMOREAUX: this logger is trigger twice and the second time the message is undefined for an unknown reason
-        Logger.warn(
-          `In single-workspace mode, there should be only one workspace. Today there are ${workspaces.length} workspaces`,
-        );
-      }
-
-      return workspaces[0];
-    }
-
-    throw new Error(
-      'Default workspace not exist when multi-workspace is enabled',
-    );
-  }
-
-  async getWorkspaceByOrigin(origin: string) {
-    try {
-      if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
-        return this.getDefaultWorkspace();
-      }
-
-      const subdomain =
-        this.urlManagerService.getWorkspaceSubdomainByOrigin(origin);
-
-      if (!isDefined(subdomain)) return;
-
-      return this.workspaceRepository.findOneBy({ subdomain });
-    } catch (e) {
-      throw new WorkspaceException(
-        'Workspace not found',
-        WorkspaceExceptionCode.SUBDOMAIN_NOT_FOUND,
       );
     }
   }

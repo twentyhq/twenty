@@ -25,6 +25,12 @@ export type ActivateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']>;
 };
 
+export type ActivateWorkspaceOutput = {
+  __typename?: 'ActivateWorkspaceOutput';
+  loginToken: AuthToken;
+  workspace: Workspace;
+};
+
 export type Analytics = {
   __typename?: 'Analytics';
   /** Boolean that confirms query was dispatched */
@@ -424,7 +430,7 @@ export enum MessageChannelVisibility {
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkflowVersion: Scalars['Boolean'];
-  activateWorkspace: Workspace;
+  activateWorkspace: ActivateWorkspaceOutput;
   addUserToWorkspace: User;
   addUserToWorkspaceByInviteToken: User;
   authorizeApp: AuthorizeApp;
@@ -1978,7 +1984,7 @@ export type ActivateWorkspaceMutationVariables = Exact<{
 }>;
 
 
-export type ActivateWorkspaceMutation = { __typename?: 'Mutation', activateWorkspace: { __typename?: 'Workspace', id: any } };
+export type ActivateWorkspaceMutation = { __typename?: 'Mutation', activateWorkspace: { __typename?: 'ActivateWorkspaceOutput', workspace: { __typename?: 'Workspace', id: any, subdomain: string }, loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
 export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -3901,10 +3907,16 @@ export type AddUserToWorkspaceByInviteTokenMutationOptions = Apollo.BaseMutation
 export const ActivateWorkspaceDocument = gql`
     mutation ActivateWorkspace($input: ActivateWorkspaceInput!) {
   activateWorkspace(data: $input) {
-    id
+    workspace {
+      id
+      subdomain
+    }
+    loginToken {
+      ...AuthTokenFragment
+    }
   }
 }
-    `;
+    ${AuthTokenFragmentFragmentDoc}`;
 export type ActivateWorkspaceMutationFn = Apollo.MutationFunction<ActivateWorkspaceMutation, ActivateWorkspaceMutationVariables>;
 
 /**

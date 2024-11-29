@@ -14,12 +14,12 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 @Module({
   imports: [
     UrlManagerModule,
-    forwardRef(() => WorkspaceModule),
     NestjsQueryTypeOrmModule.forFeature(
       [AppToken, UserWorkspace, Workspace],
       'core',
     ),
     OnboardingModule,
+    forwardRef(() => WorkspaceModule),
   ],
   exports: [WorkspaceInvitationService],
   providers: [WorkspaceInvitationService, WorkspaceInvitationResolver],

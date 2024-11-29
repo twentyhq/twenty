@@ -4,6 +4,7 @@ import { isDefined } from '~/utils/isDefined';
 import { urlManagerState } from '@/url-manager/states/url-manager.state';
 import { useRecoilValue } from 'recoil';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { AppPath } from '@/types/AppPath';
 
 export const useUrlManager = () => {
   const urlManager = useRecoilValue(urlManagerState);
@@ -53,11 +54,19 @@ export const useUrlManager = () => {
   }, [isTwentyWorkspaceSubdomain, urlManager.frontDomain]);
 
   const buildWorkspaceUrl = useCallback(
-    (subdomain?: string, searchParams?: Record<string, string>) => {
+    (
+      subdomain?: string,
+      onPage?: string,
+      searchParams?: Record<string, string>,
+    ) => {
       const url = new URL(window.location.href);
 
       if (isDefined(subdomain) && subdomain.length !== 0) {
         url.hostname = `${subdomain}.${urlManager.frontDomain}`;
+      }
+
+      if (isDefined(onPage)) {
+        url.pathname = onPage;
       }
 
       if (isDefined(searchParams)) {
@@ -71,9 +80,13 @@ export const useUrlManager = () => {
   );
 
   const redirectToWorkspace = useCallback(
-    (subdomain: string, searchParams?: Record<string, string>) => {
+    (
+      subdomain: string,
+      onPage?: string,
+      searchParams?: Record<string, string>,
+    ) => {
       if (!isMultiWorkspaceEnabled) return;
-      window.location.href = buildWorkspaceUrl(subdomain, searchParams);
+      window.location.href = buildWorkspaceUrl(subdomain, onPage, searchParams);
     },
     [buildWorkspaceUrl, isMultiWorkspaceEnabled],
   );
