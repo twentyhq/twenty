@@ -5,11 +5,9 @@ import {
   LightIconButton,
 } from 'twenty-ui';
 
-import { RecordChip } from '@/object-record/components/RecordChip';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
 import { StyledFormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputRowContainer';
-import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
 import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
 import { useRecordPicker } from '@/object-record/relation-picker/hooks/useRecordPicker';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
@@ -19,18 +17,13 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { WorkflowSingleRecordFieldChip } from '@/workflow/components/WorkflowSingleRecordFieldChip';
 import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useCallback, useState } from 'react';
 import { isValidUuid } from '~/utils/isValidUuid';
-
-const StyledPlaceholder = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  margin: ${({ theme }) => theme.spacing(2)};
-`;
 
 const StyledFormSelectContainer = styled.div`
   background-color: ${({ theme }) => theme.background.transparent.lighter};
@@ -66,12 +59,8 @@ const StyledSearchVariablesDropdownContainer = styled.div`
   `}
 `;
 
-const StyledRecordChip = styled(RecordChip)`
-  margin: ${({ theme }) => theme.spacing(2)};
-`;
-
-type RecordId = string;
-type Variable = string;
+export type RecordId = string;
+export type Variable = string;
 
 export type WorkflowSingleRecordPickerProps = {
   label?: string;
@@ -168,29 +157,17 @@ export const WorkflowSingleRecordPicker = ({
     onChange('');
   };
 
-  const Chip =
-    draftValue &&
-    draftValue.type === 'variable' &&
-    isStandaloneVariableString(draftValue.value) ? (
-      <VariableChip
-        rawVariableName={draftValue.value}
-        onRemove={handleUnlinkVariable}
-      />
-    ) : draftValue && draftValue.type === 'static' && selectedRecord ? (
-      <StyledRecordChip
-        record={selectedRecord}
-        objectNameSingular={objectNameSingular}
-      />
-    ) : (
-      <StyledPlaceholder>Select a {objectNameSingular}</StyledPlaceholder>
-    );
-
   return (
     <StyledFormFieldInputContainer>
       {label ? <InputLabel>{label}</InputLabel> : null}
       <StyledFormFieldInputRowContainer>
         <StyledFormSelectContainer>
-          {Chip}
+          <WorkflowSingleRecordFieldChip
+            draftValue={draftValue}
+            selectedRecord={selectedRecord}
+            objectNameSingular={objectNameSingular}
+            onRemove={handleUnlinkVariable}
+          />
           <DropdownScope dropdownScopeId={dropdownId}>
             <Dropdown
               dropdownId={dropdownId}

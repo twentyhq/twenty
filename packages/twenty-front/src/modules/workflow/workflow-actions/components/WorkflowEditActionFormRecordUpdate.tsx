@@ -145,7 +145,7 @@ export const WorkflowEditActionFormRecordUpdate = ({
       headerType="Action"
     >
       <Select
-        dropdownId="workflow-edit-action-record-create-object-name"
+        dropdownId="workflow-edit-action-record-update-object-name"
         label="Object"
         fullWidth
         disabled={isFormDisabled}
