@@ -20,7 +20,6 @@ import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverles
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { SERVERLESS_FUNCTION_PUBLISHED } from 'src/engine/metadata-modules/serverless-function/constants/serverless-function-published';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
@@ -31,9 +30,9 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { isDefined } from 'src/utils/is-defined';
 import { getLayerDependencies } from 'src/engine/core-modules/serverless/drivers/utils/get-last-layer-dependencies';
+import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -45,7 +44,7 @@ export class ServerlessFunctionService {
     private readonly throttlerService: ThrottlerService,
     private readonly environmentService: EnvironmentService,
     private readonly analyticsService: AnalyticsService,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly codeIntrospectionService: CodeIntrospectionService,
   ) {}
 
   async findManyServerlessFunctions(where) {
@@ -192,17 +191,6 @@ export class ServerlessFunctionService {
         latestVersion: newVersion,
         publishedVersions: newPublishedVersions,
       },
-    );
-
-    this.workspaceEventEmitter.emitCustomBatchEvent(
-      SERVERLESS_FUNCTION_PUBLISHED,
-      [
-        {
-          serverlessFunctionId: existingServerlessFunction.id,
-          serverlessFunctionVersion: newVersion,
-        },
-      ],
-      workspaceId,
     );
 
     return this.serverlessFunctionRepository.findOneBy({
