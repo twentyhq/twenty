@@ -1,4 +1,4 @@
-import { useSeeWorkflowVersionsHistorySingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction';
+import { useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilValue } from 'recoil';
 
@@ -12,11 +12,11 @@ export const useSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction = ({
   );
 
   const {
-    registerSeeWorkflowVersionsHistorySingleRecordAction:
+    registerSeeWorkflowVersionsHistoryWorkflowSingleRecordAction:
       registerSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction,
-    unregisterSeeWorkflowVersionsHistorySingleRecordAction:
+    unregisterSeeWorkflowVersionsHistoryWorkflowSingleRecordAction:
       unregisterSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction,
-  } = useSeeWorkflowVersionsHistorySingleRecordAction({
+  } = useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction({
     workflowId: workflowVersion?.workflow.id,
   });
 

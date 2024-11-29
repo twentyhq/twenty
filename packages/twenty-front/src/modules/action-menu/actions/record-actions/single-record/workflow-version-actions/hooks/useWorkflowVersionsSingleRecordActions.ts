@@ -1,4 +1,5 @@
 import { useSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction';
+import { useUseAsDraftWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useUseAsDraftWorkflowVersionSingleRecordAction';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from 'twenty-ui';
@@ -24,6 +25,13 @@ export const useWorkflowVersionsSingleRecordActions = () => {
     workflowVersionId: selectedRecordId,
   });
 
+  const {
+    registerUseAsDraftWorkflowVersionSingleRecordAction,
+    unregisterUseAsDraftWorkflowVersionSingleRecordAction,
+  } = useUseAsDraftWorkflowVersionSingleRecordAction({
+    workflowVersionId: selectedRecordId,
+  });
+
   const registerSingleRecordActions = ({
     startPosition = 3,
   }: {
@@ -32,10 +40,14 @@ export const useWorkflowVersionsSingleRecordActions = () => {
     registerSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction({
       position: startPosition,
     });
+    registerUseAsDraftWorkflowVersionSingleRecordAction({
+      position: startPosition + 1,
+    });
   };
 
   const unregisterSingleRecordActions = () => {
     unregisterSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction();
+    unregisterUseAsDraftWorkflowVersionSingleRecordAction();
   };
 
   return {
