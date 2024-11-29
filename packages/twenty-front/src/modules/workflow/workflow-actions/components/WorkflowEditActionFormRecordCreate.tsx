@@ -28,7 +28,7 @@ type WorkflowEditActionFormRecordCreateProps = {
       };
 };
 
-type SendEmailFormData = {
+type CreateRecordFormData = {
   objectName: string;
   [field: string]: unknown;
 };
@@ -49,17 +49,17 @@ export const WorkflowEditActionFormRecordCreate = ({
       value: item.nameSingular,
     }));
 
-  const [formData, setFormData] = useState<SendEmailFormData>({
+  const [formData, setFormData] = useState<CreateRecordFormData>({
     objectName: action.settings.input.objectName,
     ...action.settings.input.objectRecord,
   });
   const isFormDisabled = actionOptions.readonly;
 
   const handleFieldChange = (
-    fieldName: keyof SendEmailFormData,
+    fieldName: keyof CreateRecordFormData,
     updatedValue: JsonValue,
   ) => {
-    const newFormData: SendEmailFormData = {
+    const newFormData: CreateRecordFormData = {
       ...formData,
       [fieldName]: updatedValue,
     };
@@ -93,7 +93,7 @@ export const WorkflowEditActionFormRecordCreate = ({
   );
 
   const saveAction = useDebouncedCallback(
-    async (formData: SendEmailFormData) => {
+    async (formData: CreateRecordFormData) => {
       if (actionOptions.readonly === true) {
         return;
       }
@@ -153,7 +153,7 @@ export const WorkflowEditActionFormRecordCreate = ({
         emptyOption={{ label: 'Select an option', value: '' }}
         options={availableMetadata}
         onChange={(updatedObjectName) => {
-          const newFormData: SendEmailFormData = {
+          const newFormData: CreateRecordFormData = {
             objectName: updatedObjectName,
           };
 
