@@ -34,7 +34,7 @@ export const WorkflowDiagramStepNodeEditable = ({
             size="medium"
             Icon={IconTrash}
             onClick={() => {
-              return deleteOneStep(id);
+              deleteOneStep(id);
             }}
           />
         ) : undefined
