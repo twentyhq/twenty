@@ -24,6 +24,12 @@ import { editor } from 'monaco-editor';
 import { Monaco } from '@monaco-editor/react';
 import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { getFunctionInputSchema } from '@/workflow/utils/getFunctionInputSchema';
+import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
+import { useRecoilValue } from 'recoil';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -74,7 +80,10 @@ export const WorkflowEditActionFormServerlessFunction = ({
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
+  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
+  const workflowId = useRecoilValue(workflowIdState);
+  const workflow = useWorkflowWithCurrentVersion(workflowId);
   const { availablePackages } = useGetAvailablePackages({
     id: serverlessFunctionId,
   });
@@ -108,7 +117,27 @@ export const WorkflowEditActionFormServerlessFunction = ({
       code: { ...prevState.code, [INDEX_FILE_PATH]: value },
     }));
     await handleSave();
+    await handleUpdateFunctionInputSchema();
   };
+
+  const updateFunctionInputSchema = async () => {
+    const sourceCode = formValues.code?.[INDEX_FILE_PATH];
+    if (!isDefined(sourceCode)) {
+      return;
+    }
+    const functionInputSchema = getFunctionInputSchema(sourceCode);
+    const newMergedInputSchema = mergeDefaultFunctionInputAndFunctionInput({
+      defaultFunctionInput:
+        getDefaultFunctionInputFromInputSchema(functionInputSchema),
+      functionInput: action.settings.input.serverlessFunctionInput,
+    });
+    setFunctionInput(newMergedInputSchema);
+  };
+
+  const handleUpdateFunctionInputSchema = useDebouncedCallback(
+    updateFunctionInputSchema,
+    100,
+  );
 
   const [functionInput, setFunctionInput] =
     useState<ServerlessFunctionInputFormData>(
@@ -230,6 +259,13 @@ export const WorkflowEditActionFormServerlessFunction = ({
     });
   };
 
+  const checkWorkflowUpdatable = async () => {
+    if (actionOptions.readonly === true || !isDefined(workflow)) {
+      return;
+    }
+    await getUpdatableWorkflowVersion(workflow);
+  };
+
   return (
     !loading && (
       <WorkflowEditGenericFormBase
@@ -251,7 +287,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
           value={formValues.code?.[INDEX_FILE_PATH]}
           language={'typescript'}
           onChange={async (value) => {
-            onActionUpdate({}); // Used to create a new workflow draft version if editing workflow active version
+            await checkWorkflowUpdatable();
             await onCodeChange(value);
           }}
           onMount={handleEditorDidMount}

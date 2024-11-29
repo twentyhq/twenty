@@ -32,7 +32,6 @@ import {
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { isDefined } from 'src/utils/is-defined';
 import { getLayerDependencies } from 'src/engine/core-modules/serverless/drivers/utils/get-last-layer-dependencies';
-import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -44,7 +43,6 @@ export class ServerlessFunctionService {
     private readonly throttlerService: ThrottlerService,
     private readonly environmentService: EnvironmentService,
     private readonly analyticsService: AnalyticsService,
-    private readonly codeIntrospectionService: CodeIntrospectionService,
   ) {}
 
   async findManyServerlessFunctions(where) {
