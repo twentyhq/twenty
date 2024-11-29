@@ -61,14 +61,16 @@ export const useFindManyParams = (
         );
       }
 
+      if (!isDefined(currentRecordGroupDefinition.value)) {
+        return { [fieldMetadataItem.name]: { is: 'NULL' } };
+      }
+
       return {
         [fieldMetadataItem.name]: {
           eq: currentRecordGroupDefinition.value,
         },
       };
     }
-
-    // TODO: Handle case when value is nullable
 
     return {};
   }, [objectMetadataItem.fields, currentRecordGroupDefinition]);

@@ -109,7 +109,7 @@ You should run all commands in the following steps from the root of the project.
     <b>Option 1 (preferred):</b> To provision your database locally:
     Use the following link to install Postgresql on your Linux machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
     ```bash
-      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
     Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
 
@@ -124,7 +124,7 @@ You should run all commands in the following steps from the root of the project.
     ```bash
       brew install postgresql@16
       export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
-      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
 
     <b>Option 2:</b> If you have docker installed:
@@ -138,7 +138,7 @@ You should run all commands in the following steps from the root of the project.
     <b>Option 1:</b> To provision your Postgresql locally:
     Use the following link to install Postgresql on your Linux virtual machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
     ```bash
-      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
     Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
 

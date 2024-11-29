@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-ui';
 import { RecordBoardColumnHeader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeader';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { recordIndexRowIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRowIdsByGroupComponentFamilyState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilValue } from 'recoil';
 
@@ -18,8 +18,8 @@ export const RecordBoardColumnHeaderWrapper = ({
     recordGroupDefinitionFamilyState(columnId),
   );
 
-  const recordRowIdsByGroup = useRecoilComponentFamilyValueV2(
-    recordIndexRowIdsByGroupComponentFamilyState,
+  const recordIdsByGroup = useRecoilComponentFamilyValueV2(
+    recordIndexRecordIdsByGroupComponentFamilyState,
     columnId,
   );
 
@@ -32,8 +32,8 @@ export const RecordBoardColumnHeaderWrapper = ({
       value={{
         columnId,
         columnDefinition: recordGroupDefinition,
-        recordCount: recordRowIdsByGroup.length,
-        recordIds: recordRowIdsByGroup,
+        recordCount: recordIdsByGroup.length,
+        recordIds: recordIdsByGroup,
       }}
     >
       <RecordBoardColumnHeader />

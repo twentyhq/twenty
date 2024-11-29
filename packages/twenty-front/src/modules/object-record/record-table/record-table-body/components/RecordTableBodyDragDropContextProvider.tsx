@@ -3,7 +3,7 @@ import { ReactNode, useContext } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useComputeNewRowPosition } from '@/object-record/record-table/hooks/useComputeNewRowPosition';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
@@ -11,7 +11,7 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { isDefined } from '~/utils/isDefined';
 
-export const RecordTableBodyDragDropContext = ({
+export const RecordTableBodyDragDropContextProvider = ({
   children,
 }: {
   children: ReactNode;
@@ -22,8 +22,8 @@ export const RecordTableBodyDragDropContext = ({
     objectNameSingular,
   });
 
-  const allRowIds = useRecoilComponentValueV2(
-    recordIndexAllRowIdsComponentState,
+  const allRecordIds = useRecoilComponentValueV2(
+    recordIndexAllRecordIdsComponentSelector,
   );
 
   const { currentViewWithCombinedFiltersAndSorts } =
@@ -43,7 +43,7 @@ export const RecordTableBodyDragDropContext = ({
       return;
     }
 
-    const computeResult = computeNewRowPosition(result, allRowIds);
+    const computeResult = computeNewRowPosition(result, allRecordIds);
 
     if (!isDefined(computeResult)) {
       return;

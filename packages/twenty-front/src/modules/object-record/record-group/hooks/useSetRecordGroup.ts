@@ -8,7 +8,6 @@ import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from '~/utils/isDefined';
 
 export const useSetRecordGroup = (viewId?: string) => {
   const { objectMetadataItem } = useContext(RecordIndexRootPropsContext);
@@ -26,28 +25,23 @@ export const useSetRecordGroup = (viewId?: string) => {
   return useRecoilCallback(
     ({ snapshot, set }) =>
       (recordGroups: RecordGroupDefinition[]) => {
-        if (recordGroups.length === 0) {
-          return;
-        }
-
         const currentRecordGroupId = getSnapshotValue(
           snapshot,
           recordIndexRecordGroupIdsState,
         );
-        const fieldMetadataId = recordGroups[0].fieldMetadataId;
-        const fieldMetadata = objectMetadataItem.fields.find(
-          (field) => field.id === fieldMetadataId,
-        );
+        const fieldMetadataId = recordGroups?.[0]?.fieldMetadataId;
+        const fieldMetadata = fieldMetadataId
+          ? objectMetadataItem.fields.find(
+              (field) => field.id === fieldMetadataId,
+            )
+          : undefined;
         const currentFieldMetadata = getSnapshotValue(
           snapshot,
           recordGroupFieldMetadataState,
         );
 
         // Set the field metadata linked to the record groups
-        if (
-          isDefined(fieldMetadata) &&
-          !isDeeplyEqual(fieldMetadata, currentFieldMetadata)
-        ) {
+        if (!isDeeplyEqual(fieldMetadata, currentFieldMetadata)) {
           set(recordGroupFieldMetadataState, fieldMetadata);
         }
 
@@ -66,6 +60,16 @@ export const useSetRecordGroup = (viewId?: string) => {
         });
 
         const recordGroupIds = recordGroups.map(({ id }) => id);
+
+        // Get ids that has been removed between the current and new record groups
+        const removedRecordGroupIds = currentRecordGroupId.filter(
+          (id) => !recordGroupIds.includes(id),
+        );
+
+        // Remove the record groups that has been removed
+        removedRecordGroupIds.forEach((id) => {
+          set(recordGroupDefinitionFamilyState(id), undefined);
+        });
 
         if (isDeeplyEqual(currentRecordGroupId, recordGroupIds)) {
           return;
