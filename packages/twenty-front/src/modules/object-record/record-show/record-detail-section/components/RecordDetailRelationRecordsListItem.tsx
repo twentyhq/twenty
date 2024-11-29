@@ -97,13 +97,12 @@ export const RecordDetailRelationRecordsListItem = ({
 }: RecordDetailRelationRecordsListItemProps) => {
   const { fieldDefinition } = useContext(FieldContext);
 
-  const [isDeleteRelationModalOpen, setIsDeleteRelatinoModalOpen] =
+  const [isDeleteRelationModalOpen, setIsDeleteRelationModalOpen] =
     useState(false);
 
   const {
     relationFieldMetadataId,
     relationObjectMetadataNameSingular,
-    relationObjectMetadataNamePlural,
     relationType,
   } = fieldDefinition.metadata as FieldRelationMetadata;
 
@@ -169,13 +168,13 @@ export const RecordDetailRelationRecordsListItem = ({
   };
 
   const handleDelete = async () => {
-    setIsDeleteRelatinoModalOpen(true);
+    setIsDeleteRelationModalOpen(true);
     closeDropdown();
   };
 
   const handleConfirmDelete = async () => {
     await deleteOneRelationRecord(relationRecord.id);
-    setIsDeleteRelatinoModalOpen(false);
+    setIsDeleteRelationModalOpen(false);
   };
 
   const useUpdateOneObjectRecordMutation: RecordUpdateHook = () => {
@@ -287,7 +286,7 @@ export const RecordDetailRelationRecordsListItem = ({
       {createPortal(
         <ConfirmationModal
           isOpen={isDeleteRelationModalOpen}
-          setIsOpen={setIsDeleteRelatinoModalOpen}
+          setIsOpen={setIsDeleteRelationModalOpen}
           title={`Delete Related ${relationObjectTypeName}`}
           subtitle={
             <>
