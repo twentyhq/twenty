@@ -54,6 +54,9 @@ export const useWorkflowRunRecordActions = ({
       index,
       activeWorkflowVersion,
     ] of activeWorkflowVersions.entries()) {
+      if (!isDefined(activeWorkflowVersion.workflow)) {
+        continue;
+      }
       addActionMenuEntry({
         type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,

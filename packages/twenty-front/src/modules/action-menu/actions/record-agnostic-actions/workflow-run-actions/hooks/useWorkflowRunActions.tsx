@@ -10,7 +10,7 @@ import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 import { useTheme } from '@emotion/react';
-import { IconSettingsAutomation } from 'twenty-ui';
+import { IconSettingsAutomation, isDefined } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useWorkflowRunActions = () => {
@@ -37,6 +37,10 @@ export const useWorkflowRunActions = () => {
       index,
       activeWorkflowVersion,
     ] of activeWorkflowVersions.entries()) {
+      if (!isDefined(activeWorkflowVersion.workflow)) {
+        continue;
+      }
+
       addActionMenuEntry({
         type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
