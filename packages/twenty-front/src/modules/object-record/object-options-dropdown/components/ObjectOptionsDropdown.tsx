@@ -1,5 +1,5 @@
+import { DropdownButton } from '@/dropdown/components/DropdownButton';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { ObjectOptionsDropdownButton } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownButton';
 import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
@@ -34,7 +34,12 @@ export const ObjectOptionsDropdown = ({
   return (
     <Dropdown
       dropdownId={OBJECT_OPTIONS_DROPDOWN_ID}
-      clickableComponent={<ObjectOptionsDropdownButton />}
+      clickableComponent={
+        <DropdownButton
+          dropdownId={OBJECT_OPTIONS_DROPDOWN_ID}
+          value="Options"
+        />
+      }
       dropdownMenuWidth={'200px'}
       dropdownHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
       dropdownOffset={{ y: 8 }}
@@ -47,6 +52,7 @@ export const ObjectOptionsDropdown = ({
             currentContentId,
             onContentChange: handleContentChange,
             resetContent: handleResetContent,
+            dropdownId: OBJECT_OPTIONS_DROPDOWN_ID,
           }}
         >
           <ObjectOptionsDropdownContent />
