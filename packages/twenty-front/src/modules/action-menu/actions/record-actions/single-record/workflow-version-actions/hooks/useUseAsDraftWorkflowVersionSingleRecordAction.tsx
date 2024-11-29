@@ -38,7 +38,8 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction = ({
     if (
       !isDefined(workflowVersion) ||
       !isDefined(workflow) ||
-      !isDefined(workflow.statuses)
+      !isDefined(workflow.statuses) ||
+      workflowVersion.status === 'DRAFT'
     ) {
       return;
     }
