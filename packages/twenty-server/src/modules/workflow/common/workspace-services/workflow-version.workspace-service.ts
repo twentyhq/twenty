@@ -242,7 +242,7 @@ export class WorkflowVersionWorkspaceService {
     workspaceId: string;
     workflowVersionId: string;
     stepId: string;
-  }): Promise<boolean> {
+  }): Promise<WorkflowActionDTO> {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
         'workflowVersion',
@@ -255,7 +255,7 @@ export class WorkflowVersionWorkspaceService {
     });
 
     if (!isDefined(workflowVersion.steps)) {
-      throw new Error("Can't update step from undefined steps");
+      throw new Error("Can't delete step from undefined steps");
     }
 
     const stepToDelete = workflowVersion.steps.filter(
@@ -263,7 +263,7 @@ export class WorkflowVersionWorkspaceService {
     )?.[0];
 
     if (!isDefined(stepToDelete)) {
-      return false;
+      throw new Error("Can't delete not existing step");
     }
 
     const workflowVersionUpdates =
@@ -284,6 +284,6 @@ export class WorkflowVersionWorkspaceService {
         );
     }
 
-    return true;
+    return stepToDelete;
   }
 }

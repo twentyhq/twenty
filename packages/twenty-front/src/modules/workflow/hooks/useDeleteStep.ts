@@ -7,9 +7,7 @@ export const useDeleteStep = ({
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
-  const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep({
-    workflowId: workflow.id,
-  });
+  const { deleteWorkflowVersionStep } = useDeleteWorkflowVersionStep();
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 

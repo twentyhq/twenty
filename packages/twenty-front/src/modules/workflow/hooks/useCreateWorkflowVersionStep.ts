@@ -6,22 +6,21 @@ import {
 } from '~/generated/graphql';
 import { CREATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/createWorkflowVersionStep';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { isDefined } from 'twenty-ui';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 
-export const useCreateWorkflowVersionStep = ({
-  workflowId,
-}: {
-  workflowId: string;
-}) => {
+export const useCreateWorkflowVersionStep = () => {
   const apolloClient = useApolloClient();
-  const { findOneRecord } = useLazyFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.Workflow,
-    recordGqlFields: {
-      id: true,
-      name: true,
-      statuses: true,
-      versions: true,
-    },
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+  });
+  const getRecordFromCache = useGetRecordFromCache({
+    objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
   });
   const [mutate] = useMutation<
     CreateWorkflowVersionStepMutation,
@@ -35,7 +34,29 @@ export const useCreateWorkflowVersionStep = ({
     const result = await mutate({
       variables: { input },
     });
-    await findOneRecord({ objectRecordId: workflowId });
+    const createdStep = result?.data?.createWorkflowVersionStep;
+    if (!isDefined(createdStep)) {
+      return;
+    }
+
+    const cachedRecord = getRecordFromCache<ObjectRecord>(
+      input.workflowVersionId,
+    );
+    if (!cachedRecord) {
+      return;
+    }
+
+    const newCachedRecord = {
+      ...cachedRecord,
+      steps: [...cachedRecord.steps, createdStep],
+    };
+
+    updateRecordFromCache({
+      objectMetadataItems,
+      objectMetadataItem,
+      cache: apolloClient.cache,
+      record: newCachedRecord,
+    });
     return result;
   };
 

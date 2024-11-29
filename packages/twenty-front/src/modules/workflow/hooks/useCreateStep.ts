@@ -18,9 +18,7 @@ export const useCreateStep = ({
   workflow: WorkflowWithCurrentVersion;
 }) => {
   const { openRightDrawer } = useRightDrawer();
-  const { createWorkflowVersionStep } = useCreateWorkflowVersionStep({
-    workflowId: workflow.id,
-  });
+  const { createWorkflowVersionStep } = useCreateWorkflowVersionStep();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
 
   const workflowCreateStepFromParentStepId = useRecoilValue(
