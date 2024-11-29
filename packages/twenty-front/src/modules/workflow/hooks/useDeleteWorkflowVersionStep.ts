@@ -10,7 +10,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { isDefined } from 'packages/twenty-ui';
+import { isDefined } from 'twenty-ui';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 
