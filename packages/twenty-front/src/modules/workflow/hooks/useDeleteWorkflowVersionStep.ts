@@ -47,7 +47,7 @@ export const useDeleteWorkflowVersionStep = () => {
 
     const newCachedRecord = {
       ...cachedRecord,
-      steps: cachedRecord.steps.filter(
+      steps: (cachedRecord.steps || []).filter(
         (step: WorkflowAction) => step.id !== deletedStep.id,
       ),
     };

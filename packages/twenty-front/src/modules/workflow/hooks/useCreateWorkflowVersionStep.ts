@@ -48,7 +48,7 @@ export const useCreateWorkflowVersionStep = () => {
 
     const newCachedRecord = {
       ...cachedRecord,
-      steps: [...cachedRecord.steps, createdStep],
+      steps: [...(cachedRecord.steps || []), createdStep],
     };
 
     updateRecordFromCache({

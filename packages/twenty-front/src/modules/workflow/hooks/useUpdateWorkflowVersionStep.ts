@@ -48,7 +48,7 @@ export const useUpdateWorkflowVersionStep = () => {
 
     const newCachedRecord = {
       ...cachedRecord,
-      steps: cachedRecord.steps.reduce(
+      steps: (cachedRecord.steps || []).reduce(
         (acc: WorkflowAction[], step: WorkflowAction) => {
           if (step.id === updatedStep.id) {
             acc.push(updatedStep);
