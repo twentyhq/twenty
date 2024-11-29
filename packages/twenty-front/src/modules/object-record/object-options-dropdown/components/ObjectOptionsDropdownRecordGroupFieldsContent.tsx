@@ -57,10 +57,12 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     filteredRecordGroupFieldMetadataItems,
   } = useSearchRecordGroupField();
 
-  const { handleRecordGroupFieldChange, resetRecordGroupField } =
-    useHandleRecordGroupField({
-      viewBarComponentId: recordIndexId,
-    });
+  const {
+    handleRecordGroupFieldChange: setRecordGroupField,
+    resetRecordGroupField,
+  } = useHandleRecordGroupField({
+    viewBarComponentId: recordIndexId,
+  });
 
   const newFieldSettingsUrl = getSettingsPagePath(
     SettingsPath.ObjectNewFieldSelect,
@@ -74,13 +76,15 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     navigationMemorizedUrlState,
   );
 
-  const onResetRecordGroupField = () => {
+  const handleResetRecordGroupField = () => {
     resetRecordGroupField();
     closeDropdown();
   };
 
-  const onRecordGroupFieldChange = (fieldMetadataItem: FieldMetadataItem) => {
-    handleRecordGroupFieldChange(fieldMetadataItem);
+  const handleRecordGroupFieldChange = (
+    fieldMetadataItem: FieldMetadataItem,
+  ) => {
+    setRecordGroupField(fieldMetadataItem);
     closeDropdown();
   };
 
@@ -111,13 +115,13 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
         <MenuItemSelect
           text="None"
           selected={!isDefined(recordGroupFieldMetadataItem)}
-          onClick={onResetRecordGroupField}
+          onClick={handleResetRecordGroupField}
         />
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
           <MenuItemSelect
             key={fieldMetadataItem.id}
             selected={fieldMetadataItem.id === recordGroupFieldMetadataItem?.id}
-            onClick={() => onRecordGroupFieldChange(fieldMetadataItem)}
+            onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
             LeftIcon={getIcon(fieldMetadataItem.icon)}
             text={fieldMetadataItem.label}
           />
