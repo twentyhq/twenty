@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { join } from 'path';
+
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -16,6 +18,8 @@ import { WorkflowBuilderWorkspaceService } from 'src/modules/workflow/workflow-b
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { WorkflowRecordCRUDType } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
+import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
+import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
 
 const TRIGGER_STEP_ID = 'trigger';
 
@@ -25,6 +29,7 @@ export class WorkflowVersionWorkspaceService {
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workflowBuilderWorkspaceService: WorkflowBuilderWorkspaceService,
     private readonly serverlessFunctionService: ServerlessFunctionService,
+    private readonly codeIntrospectionService: CodeIntrospectionService,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
@@ -53,6 +58,21 @@ export class WorkflowVersionWorkspaceService {
           throw new Error('Fail to create Code Step');
         }
 
+        const sourceCode = (
+          await this.serverlessFunctionService.getServerlessFunctionSourceCode(
+            workspaceId,
+            newServerlessFunction.id,
+            'draft',
+          )
+        )?.[join('src', INDEX_FILE_NAME)];
+
+        const inputSchema = isDefined(sourceCode)
+          ? this.codeIntrospectionService.getFunctionInputSchema(sourceCode)
+          : {};
+
+        const serverlessFunctionInput =
+          this.codeIntrospectionService.generateInputData(inputSchema, true);
+
         return {
           id: newStepId,
           name: 'Code - Serverless Function',
@@ -62,7 +82,7 @@ export class WorkflowVersionWorkspaceService {
             input: {
               serverlessFunctionId: newServerlessFunction.id,
               serverlessFunctionVersion: '',
-              serverlessFunctionInput: {},
+              serverlessFunctionInput,
             },
             outputSchema: {},
             errorHandlingOptions: {

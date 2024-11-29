@@ -131,7 +131,13 @@ export const WorkflowEditActionFormServerlessFunction = ({
         getDefaultFunctionInputFromInputSchema(functionInputSchema),
       functionInput: action.settings.input.serverlessFunctionInput,
     });
-    setFunctionInput(newMergedInputSchema);
+
+    if (
+      action.settings.input.serverlessFunctionInput !== newMergedInputSchema
+    ) {
+      setFunctionInput(newMergedInputSchema);
+      await updateFunctionInput(newMergedInputSchema);
+    }
   };
 
   const handleUpdateFunctionInputSchema = useDebouncedCallback(
@@ -141,10 +147,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
 
   const [functionInput, setFunctionInput] =
     useState<ServerlessFunctionInputFormData>(
-      mergeDefaultFunctionInputAndFunctionInput({
-        defaultFunctionInput: {},
-        functionInput: action.settings.input.serverlessFunctionInput,
-      }),
+      action.settings.input.serverlessFunctionInput,
     );
 
   const updateFunctionInput = useDebouncedCallback(
