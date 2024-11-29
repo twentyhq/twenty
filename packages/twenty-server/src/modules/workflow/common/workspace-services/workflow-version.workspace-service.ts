@@ -16,6 +16,7 @@ import { WorkflowBuilderWorkspaceService } from 'src/modules/workflow/workflow-b
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { WorkflowRecordCRUDType } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
+
 const TRIGGER_STEP_ID = 'trigger';
 
 @Injectable()
@@ -234,9 +235,11 @@ export class WorkflowVersionWorkspaceService {
   }
 
   async deleteWorkflowVersionStep({
+    workspaceId,
     workflowVersionId,
     stepId,
   }: {
+    workspaceId: string;
     workflowVersionId: string;
     stepId: string;
   }): Promise<boolean> {
@@ -255,6 +258,14 @@ export class WorkflowVersionWorkspaceService {
       throw new Error("Can't update step from undefined steps");
     }
 
+    const stepToDelete = workflowVersion.steps.filter(
+      (step) => step.id === stepId,
+    )?.[0];
+
+    if (!isDefined(stepToDelete)) {
+      return false;
+    }
+
     const workflowVersionUpdates =
       stepId === TRIGGER_STEP_ID
         ? { trigger: null }
@@ -264,6 +275,14 @@ export class WorkflowVersionWorkspaceService {
       workflowVersion.id,
       workflowVersionUpdates,
     );
+
+    switch (stepToDelete.type) {
+      case WorkflowActionType.CODE:
+        await this.serverlessFunctionService.deleteOneServerlessFunction(
+          stepToDelete.settings.input.serverlessFunctionId,
+          workspaceId,
+        );
+    }
 
     return true;
   }

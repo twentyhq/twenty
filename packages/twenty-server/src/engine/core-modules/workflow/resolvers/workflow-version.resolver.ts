@@ -47,10 +47,12 @@ export class WorkflowVersionResolver {
 
   @Mutation(() => Boolean)
   async deleteWorkflowVersionStep(
+    @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input')
     { stepId, workflowVersionId }: DeleteWorkflowVersionStepInput,
   ): Promise<boolean> {
     return this.workflowVersionWorkspaceService.deleteWorkflowVersionStep({
+      workspaceId,
       workflowVersionId,
       stepId,
     });
