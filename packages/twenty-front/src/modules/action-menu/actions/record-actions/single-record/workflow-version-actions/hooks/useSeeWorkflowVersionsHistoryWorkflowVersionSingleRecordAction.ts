@@ -11,8 +11,6 @@ export const useSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction = ({
     recordStoreFamilyState(workflowVersionId),
   );
 
-  console.log('workflowVersion', workflowVersion);
-
   const {
     registerSeeWorkflowVersionsHistorySingleRecordAction:
       registerSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction,
