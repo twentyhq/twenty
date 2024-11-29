@@ -1,3 +1,4 @@
+import { useSeeWorkflowExecutionsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeWorkflowExecutionsWorkflowVersionSingleRecordAction';
 import { useSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction';
 import { useUseAsDraftWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useUseAsDraftWorkflowVersionSingleRecordAction';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -32,22 +33,34 @@ export const useWorkflowVersionsSingleRecordActions = () => {
     workflowVersionId: selectedRecordId,
   });
 
+  const {
+    registerSeeWorkflowExecutionsWorkflowVersionSingleRecordAction,
+    unregisterSeeWorkflowExecutionsWorkflowVersionSingleRecordAction,
+  } = useSeeWorkflowExecutionsWorkflowVersionSingleRecordAction({
+    workflowVersionId: selectedRecordId,
+  });
+
   const registerSingleRecordActions = ({
     startPosition = 3,
   }: {
     startPosition?: number;
   }) => {
-    registerSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction({
+    registerUseAsDraftWorkflowVersionSingleRecordAction({
       position: startPosition,
     });
-    registerUseAsDraftWorkflowVersionSingleRecordAction({
+    registerSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction({
       position: startPosition + 1,
+    });
+
+    registerSeeWorkflowExecutionsWorkflowVersionSingleRecordAction({
+      position: startPosition + 2,
     });
   };
 
   const unregisterSingleRecordActions = () => {
-    unregisterSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction();
     unregisterUseAsDraftWorkflowVersionSingleRecordAction();
+    unregisterSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction();
+    unregisterSeeWorkflowExecutionsWorkflowVersionSingleRecordAction();
   };
 
   return {
