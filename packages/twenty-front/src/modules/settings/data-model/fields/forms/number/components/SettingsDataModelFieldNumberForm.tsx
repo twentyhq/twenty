@@ -49,7 +49,7 @@ export const SettingsDataModelFieldNumberForm = ({
               Icon={IconEye}
               dropdownId="number-type"
               title="Number type"
-              description="The number type you want to use, e.g. percentage"
+              description="Display as a plain number or a percentage"
               value={type}
               onChange={(value) => onChange({ type: value, decimals: count })}
               disabled={disabled}
@@ -69,7 +69,7 @@ export const SettingsDataModelFieldNumberForm = ({
             <SettingsOptionCardContentCounter
               Icon={IconDecimal}
               title="Number of decimals"
-              description={`Example: ${(type === 'percentage' ? 99 : 1000).toFixed(count)} ${type === 'percentage' ? '%' : ''}`}
+              description={`E.g. ${(type === 'percentage' ? 99 : 1000).toFixed(count)}${type === 'percentage' ? '%' : ''} for ${count} decimal${count > 1 ? 's' : ''}`}
               value={count}
               onChange={(value) => onChange({ type: type, decimals: value })}
               disabled={disabled}
