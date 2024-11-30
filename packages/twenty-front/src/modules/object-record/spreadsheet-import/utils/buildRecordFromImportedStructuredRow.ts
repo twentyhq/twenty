@@ -203,6 +203,12 @@ export const buildRecordFromImportedStructuredRow = (
           source: 'IMPORT',
         };
         break;
+      case FieldMetadataType.MultiSelect:
+        recordToBuild[field.name] =
+          typeof importedFieldValue === 'string'
+            ? JSON.parse(importedFieldValue)
+            : [];
+        break;
       default:
         recordToBuild[field.name] = importedFieldValue;
         break;
