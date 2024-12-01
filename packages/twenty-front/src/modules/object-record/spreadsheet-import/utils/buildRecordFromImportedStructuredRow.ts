@@ -209,7 +209,10 @@ export const buildRecordFromImportedStructuredRow = (
         const stringArrayJSONSchema = z
           .preprocess((value) => {
             try {
-              return JSON.parse(value as string);
+              if (typeof value !== 'string') {
+                return [];
+              }
+              return JSON.parse(value);
             } catch {
               return [];
             }
@@ -218,6 +221,16 @@ export const buildRecordFromImportedStructuredRow = (
 
         recordToBuild[field.name] =
           stringArrayJSONSchema.parse(importedFieldValue);
+        break;
+      }
+      case FieldMetadataType.RawJson: {
+        if (typeof importedFieldValue === 'string') {
+          try {
+            recordToBuild[field.name] = JSON.parse(importedFieldValue);
+          } catch {
+            break;
+          }
+        }
         break;
       }
       default:
