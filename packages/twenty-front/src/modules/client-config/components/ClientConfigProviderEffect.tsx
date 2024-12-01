@@ -6,7 +6,7 @@ import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionId
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isSignUpDisabledState } from '@/client-config/states/isSignUpDisabledState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
@@ -20,7 +20,9 @@ export const ClientConfigProviderEffect = () => {
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
 
-  const setIsSignInPrefilled = useSetRecoilState(isSignInPrefilledState);
+  const setisDeveloperDefaultSignInPrefilled = useSetRecoilState(
+    isDeveloperDefaultSignInPrefilledState,
+  );
   const setIsSignUpDisabled = useSetRecoilState(isSignUpDisabledState);
 
   const setBilling = useSetRecoilState(billingState);
@@ -76,7 +78,7 @@ export const ClientConfigProviderEffect = () => {
     });
     setIsDebugMode(data?.clientConfig.debugMode);
     setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
-    setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
+    setisDeveloperDefaultSignInPrefilled(data?.clientConfig.signInPrefilled);
     setIsSignUpDisabled(data?.clientConfig.signUpDisabled);
 
     setBilling(data?.clientConfig.billing);
@@ -99,7 +101,7 @@ export const ClientConfigProviderEffect = () => {
     data,
     setAuthProviders,
     setIsDebugMode,
-    setIsSignInPrefilled,
+    setisDeveloperDefaultSignInPrefilled,
     setIsSignUpDisabled,
     setSupportChat,
     setBilling,
