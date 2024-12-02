@@ -4,6 +4,7 @@ import { ObjectFilterDropdownFilterSelectCompositeFieldSubMenu } from '@/object-
 import { ObjectFilterOperandSelectAndInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterOperandSelectAndInput';
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilValue } from 'recoil';
 import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from './MultipleFiltersDropdownFilterOnFilterChangedEffect';
@@ -41,7 +42,7 @@ export const MultipleFiltersDropdownContent = ({
   const shoudShowFilterInput = objectFilterDropdownFilterIsSelected;
 
   return (
-    <>
+    <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
       {shoudShowFilterInput ? (
         <ObjectFilterOperandSelectAndInput
           filterDropdownId={filterDropdownId}
@@ -56,6 +57,6 @@ export const MultipleFiltersDropdownContent = ({
           filterDefinitionUsedInDropdown?.type
         }
       />
-    </>
+    </ScrollWrapper>
   );
 };
