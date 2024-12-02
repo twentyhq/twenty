@@ -59,13 +59,13 @@ const ActionEffects = ({
             objectMetadataItem={objectMetadataItem}
           />
         )}
-      {contextStoreTargetedRecordsRule.mode === 'exclusion' ||
+      {(contextStoreTargetedRecordsRule.mode === 'exclusion' ||
         (contextStoreTargetedRecordsRule.mode === 'selection' &&
-          contextStoreTargetedRecordsRule.selectedRecordIds.length > 1 && (
-            <MultipleRecordsActionMenuEntrySetterEffect
-              objectMetadataItem={objectMetadataItem}
-            />
-          ))}
+          contextStoreTargetedRecordsRule.selectedRecordIds.length > 1)) && (
+        <MultipleRecordsActionMenuEntrySetterEffect
+          objectMetadataItem={objectMetadataItem}
+        />
+      )}
     </>
   );
 };
