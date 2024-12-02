@@ -11,8 +11,9 @@ import { SelectInput } from '@/ui/input/components/SelectInput';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import styled from '@emotion/styled';
 import { useId, useState } from 'react';
-import { isDefined, Tag, TagColor } from 'twenty-ui';
+import { isDefined, Tag, TagColor, VisibilityHidden } from 'twenty-ui';
 
 type FormSelectFieldInputProps = {
   field: ObjectMetadataItem & {
@@ -24,6 +25,22 @@ type FormSelectFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
 };
 
+const StyledDisplayModeContainer = styled.button`
+  width: 100%;
+  align-items: center;
+  display: flex;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  padding-inline: ${({ theme }) => theme.spacing(2)};
+
+  &:hover,
+  &[data-open='true'] {
+    background-color: ${({ theme }) => theme.background.transparent.lighter};
+  }
+`;
+
 export const FormSelectFieldInput = ({
   label,
   field,
@@ -32,21 +49,6 @@ export const FormSelectFieldInput = ({
   VariablePicker,
 }: FormSelectFieldInputProps) => {
   const inputId = useId();
-
-  console.log('field in Form Field Select', field);
-
-  const onSubmit = (option: string) => {
-    setDraftValue({
-      type: 'static',
-      value: option,
-      editingMode: 'view',
-    });
-
-    onPersist(option);
-  };
-  const onCancel = (...args) => {
-    console.log(args);
-  };
 
   const [draftValue, setDraftValue] = useState<
     | {
@@ -70,6 +72,27 @@ export const FormSelectFieldInput = ({
           editingMode: 'view',
         },
   );
+
+  const onSubmit = (option: string) => {
+    setDraftValue({
+      type: 'static',
+      value: option,
+      editingMode: 'view',
+    });
+
+    onPersist(option);
+  };
+
+  const onCancel = () => {
+    if (draftValue.type !== 'static') {
+      throw new Error('Can only be called when editing a static value');
+    }
+
+    setDraftValue({
+      ...draftValue,
+      editingMode: 'view',
+    });
+  };
 
   const [selectWrapperRef, setSelectWrapperRef] =
     useState<HTMLDivElement | null>(null);
@@ -145,8 +168,8 @@ export const FormSelectFieldInput = ({
         >
           {draftValue.type === 'static' ? (
             <>
-              <div
-                style={{ width: '100%' }}
+              <StyledDisplayModeContainer
+                data-open={draftValue.editingMode === 'edit'}
                 onClick={() => {
                   setDraftValue({
                     ...draftValue,
@@ -154,14 +177,16 @@ export const FormSelectFieldInput = ({
                   });
                 }}
               >
+                <VisibilityHidden>Edit</VisibilityHidden>
+
                 {isDefined(selectedOption) ? (
                   <Tag
                     preventShrink
-                    color={selectedOption!.color}
-                    text={selectedOption!.label}
+                    color={selectedOption.color}
+                    text={selectedOption.label}
                   />
                 ) : null}
-              </div>
+              </StyledDisplayModeContainer>
 
               {draftValue.editingMode === 'edit' ? (
                 <SelectableList
