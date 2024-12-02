@@ -5,15 +5,19 @@ import { VariableChip } from '@/object-record/record-field/form-types/components
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldSelectMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { SINGLE_RECORD_SELECT_BASE_LIST } from '@/object-record/relation-picker/constants/SingleRecordSelectBaseList';
 import { SelectOption } from '@/spreadsheet-import/types';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { SelectInput } from '@/ui/input/components/SelectInput';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
+import { Key } from 'ts-key-enum';
 import { isDefined, Tag, VisibilityHidden } from 'twenty-ui';
 
 type FormSelectFieldInputProps = {
@@ -49,6 +53,13 @@ export const FormSelectFieldInput = ({
 }: FormSelectFieldInputProps) => {
   const inputId = useId();
 
+  const hotkeyScope = InlineCellHotkeyScope.InlineCell;
+
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+
   const [draftValue, setDraftValue] = useState<
     | {
         type: 'static';
@@ -79,6 +90,8 @@ export const FormSelectFieldInput = ({
       editingMode: 'view',
     });
 
+    goBackToPreviousHotkeyScope();
+
     onPersist(option);
   };
 
@@ -91,6 +104,8 @@ export const FormSelectFieldInput = ({
       ...draftValue,
       editingMode: 'view',
     });
+
+    goBackToPreviousHotkeyScope();
   };
 
   const [selectWrapperRef, setSelectWrapperRef] =
@@ -101,26 +116,29 @@ export const FormSelectFieldInput = ({
   const { resetSelectedItem } = useSelectableList(
     SINGLE_RECORD_SELECT_BASE_LIST,
   );
+
   const clearField = () => {
-    console.log('calling clearField');
+    setDraftValue({
+      type: 'static',
+      editingMode: 'view',
+      value: '',
+    });
   };
 
   const selectedOption = field.metadata.options.find(
     (option) => option.value === draftValue.value,
   );
-  // handlers
+
   const handleClearField = () => {
     clearField();
-    onCancel?.();
+    onCancel();
   };
 
   const handleSubmit = (option: SelectOption) => {
-    onSubmit?.(option?.value);
+    onSubmit(option?.value);
 
     resetSelectedItem();
   };
-
-  const hotkeyScope = 'workflow form';
 
   const handleUnlinkVariable = () => {
     setDraftValue({
@@ -141,15 +159,15 @@ export const FormSelectFieldInput = ({
     onPersist(variableName);
   };
 
-  //   useScopedHotkeys(
-  //     Key.Escape,
-  //     () => {
-  //       onCancel?.();
-  //       resetSelectedItem();
-  //     },
-  //     hotkeyScope,
-  //     [onCancel, resetSelectedItem],
-  //   );
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      onCancel();
+      resetSelectedItem();
+    },
+    hotkeyScope,
+    [onCancel, resetSelectedItem],
+  );
 
   const optionIds = [
     `No ${field.label}`,
@@ -174,6 +192,8 @@ export const FormSelectFieldInput = ({
                     ...draftValue,
                     editingMode: 'edit',
                   });
+
+                  setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
                 }}
               >
                 <VisibilityHidden>Edit</VisibilityHidden>
@@ -197,7 +217,7 @@ export const FormSelectFieldInput = ({
                       (option) => option.value === itemId,
                     );
                     if (isDefined(option)) {
-                      onSubmit?.(option.value);
+                      onSubmit(option.value);
                       resetSelectedItem();
                     }
                   }}
