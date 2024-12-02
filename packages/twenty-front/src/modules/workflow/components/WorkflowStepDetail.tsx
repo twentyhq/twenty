@@ -14,7 +14,7 @@ import { WorkflowEditActionFormRecordCreate } from '@/workflow/workflow-actions/
 import { WorkflowEditActionFormRecordUpdate } from '@/workflow/workflow-actions/components/WorkflowEditActionFormRecordUpdate';
 import { WorkflowEditActionFormSendEmail } from '@/workflow/workflow-actions/components/WorkflowEditActionFormSendEmail';
 import { isDefined } from 'twenty-ui';
-import { RightPanelSkeletonLoader } from 'packages/twenty-front/src/loading/components/RightPanelSkeletonLoader';
+import { RightPanelSkeletonLoader } from '~/loading/components/RightPanelSkeletonLoader';
 
 const WorkflowEditActionFormServerlessFunction = lazy(() =>
   import(
