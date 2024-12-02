@@ -23,10 +23,7 @@ export const useActivateWorkflowDraftWorkflowSingleRecordAction = ({
   }: {
     position: number;
   }) => {
-    if (
-      !isDefined(workflowWithCurrentVersion) ||
-      !isDefined(workflowWithCurrentVersion.currentVersion.trigger)
-    ) {
+    if (!isDefined(workflowWithCurrentVersion?.currentVersion?.trigger)) {
       return;
     }
 
