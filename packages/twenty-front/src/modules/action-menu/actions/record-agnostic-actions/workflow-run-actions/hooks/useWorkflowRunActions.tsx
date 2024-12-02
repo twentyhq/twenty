@@ -37,7 +37,7 @@ export const useWorkflowRunActions = () => {
       index,
       activeWorkflowVersion,
     ] of activeWorkflowVersions.entries()) {
-      const name = capitalize(activeWorkflowVersion.workflow?.name || '');
+      const name = capitalize(activeWorkflowVersion.workflow.name);
       addActionMenuEntry({
         type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
