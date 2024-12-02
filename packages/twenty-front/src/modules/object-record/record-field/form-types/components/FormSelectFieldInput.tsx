@@ -1,9 +1,10 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
 import { StyledFormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputInputContainer';
 import { StyledFormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputRowContainer';
 import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { FieldSelectMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { SINGLE_RECORD_SELECT_BASE_LIST } from '@/object-record/relation-picker/constants/SingleRecordSelectBaseList';
 import { SelectOption } from '@/spreadsheet-import/types';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -13,12 +14,10 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
-import { isDefined, Tag, TagColor, VisibilityHidden } from 'twenty-ui';
+import { isDefined, Tag, VisibilityHidden } from 'twenty-ui';
 
 type FormSelectFieldInputProps = {
-  field: ObjectMetadataItem & {
-    options: { label: string; value: string; color: TagColor }[];
-  };
+  field: FieldDefinition<FieldSelectMetadata>;
   label?: string;
   defaultValue: string | undefined;
   onPersist: (value: number | null | string) => void;
@@ -106,7 +105,7 @@ export const FormSelectFieldInput = ({
     console.log('calling clearField');
   };
 
-  const selectedOption = field.options.find(
+  const selectedOption = field.metadata.options.find(
     (option) => option.value === draftValue.value,
   );
   // handlers
@@ -153,7 +152,7 @@ export const FormSelectFieldInput = ({
   //   );
 
   const optionIds = [
-    `No ${field.labelSingular}`,
+    `No ${field.label}`,
     ...filteredOptions.map((option) => option.value),
   ];
 
@@ -206,12 +205,14 @@ export const FormSelectFieldInput = ({
                   <SelectInput
                     parentRef={selectWrapperRef}
                     onOptionSelected={handleSubmit}
-                    options={field.options}
+                    options={field.metadata.options}
                     onCancel={onCancel}
                     defaultOption={selectedOption}
                     onFilterChange={setFilteredOptions}
-                    onClear={true ? handleClearField : undefined}
-                    clearLabel={field.labelSingular}
+                    onClear={
+                      field.metadata.isNullable ? handleClearField : undefined
+                    }
+                    clearLabel={field.label}
                     hotkeyScope={hotkeyScope}
                   />
                 </SelectableList>

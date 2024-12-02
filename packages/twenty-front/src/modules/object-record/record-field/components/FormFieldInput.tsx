@@ -1,9 +1,10 @@
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
+import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
@@ -11,7 +12,7 @@ import { isFieldText } from '@/object-record/record-field/types/guards/isFieldTe
 import { JsonValue } from 'type-fest';
 
 type FormFieldInputProps = {
-  field: FieldMetadataItem;
+  field: FieldDefinition<FieldMetadata>;
   defaultValue: JsonValue;
   onPersist: (value: JsonValue) => void;
   VariablePicker?: VariablePickerComponent;
@@ -25,7 +26,6 @@ export const FormFieldInput = ({
 }: FormFieldInputProps) => {
   return isFieldNumber(field) ? (
     <FormNumberFieldInput
-      key={field.id}
       label={field.label}
       defaultValue={defaultValue as string | number | undefined}
       onPersist={onPersist}
@@ -34,7 +34,6 @@ export const FormFieldInput = ({
     />
   ) : isFieldBoolean(field) ? (
     <FormBooleanFieldInput
-      key={field.id}
       label={field.label}
       defaultValue={defaultValue as string | boolean | undefined}
       onPersist={onPersist}
