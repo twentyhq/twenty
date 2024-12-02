@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
+import { userEvent, within } from '@storybook/test';
 
 import {
   PageDecorator,
@@ -31,6 +31,8 @@ export const Default: Story = {};
 export const LogOut: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Logout');
+    const logoutButton = await canvas.findByText('Logout');
+
+    await userEvent.click(logoutButton);
   },
 };

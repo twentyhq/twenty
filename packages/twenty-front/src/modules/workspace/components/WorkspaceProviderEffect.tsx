@@ -23,7 +23,6 @@ export const WorkspaceProviderEffect = () => {
 
   const {
     redirectToHome,
-    homePageDomain,
     getWorkspaceSubdomain,
     redirectToWorkspace,
     isTwentyHomePage,
@@ -46,15 +45,6 @@ export const WorkspaceProviderEffect = () => {
       redirectToHome();
     },
   });
-
-  useEffect(() => {
-    if (
-      !isMultiWorkspaceEnabled &&
-      window.location.hostname !== homePageDomain
-    ) {
-      redirectToHome();
-    }
-  }, [homePageDomain, isMultiWorkspaceEnabled, redirectToHome]);
 
   useEffect(() => {
     if (
