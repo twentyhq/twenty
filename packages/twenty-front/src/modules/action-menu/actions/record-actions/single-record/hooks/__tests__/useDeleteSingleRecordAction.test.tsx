@@ -73,7 +73,7 @@ describe('useDeleteSingleRecordAction', () => {
 
     act(() => {
       result.current.useDeleteSingleRecordAction.registerDeleteSingleRecordAction(
-        { position: 0 },
+        { position: 1 },
       );
     });
 
@@ -83,7 +83,7 @@ describe('useDeleteSingleRecordAction', () => {
     ).toBeDefined();
     expect(
       result.current.actionMenuEntries.get('delete-single-record')?.position,
-    ).toBe(0);
+    ).toBe(1);
   });
 
   it('should unregister delete action', () => {
@@ -106,7 +106,7 @@ describe('useDeleteSingleRecordAction', () => {
 
     act(() => {
       result.current.useDeleteSingleRecordAction.registerDeleteSingleRecordAction(
-        { position: 0 },
+        { position: 1 },
       );
     });
 

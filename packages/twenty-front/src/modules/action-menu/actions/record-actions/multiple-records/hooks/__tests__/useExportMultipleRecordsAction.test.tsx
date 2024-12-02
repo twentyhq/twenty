@@ -58,7 +58,7 @@ describe('useExportMultipleRecordsAction', () => {
 
     act(() => {
       result.current.useExportMultipleRecordsAction.registerExportMultipleRecordsAction(
-        { position: 0 },
+        { position: 1 },
       );
     });
 
@@ -68,7 +68,7 @@ describe('useExportMultipleRecordsAction', () => {
     ).toBeDefined();
     expect(
       result.current.actionMenuEntries.get('export-multiple-records')?.position,
-    ).toBe(0);
+    ).toBe(1);
   });
 
   it('should unregister export multiple records action', () => {
@@ -90,7 +90,7 @@ describe('useExportMultipleRecordsAction', () => {
 
     act(() => {
       result.current.useExportMultipleRecordsAction.registerExportMultipleRecordsAction(
-        { position: 0 },
+        { position: 1 },
       );
     });
 

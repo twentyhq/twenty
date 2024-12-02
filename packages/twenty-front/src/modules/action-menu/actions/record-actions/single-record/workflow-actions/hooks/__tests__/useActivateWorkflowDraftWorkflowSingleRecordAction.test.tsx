@@ -71,7 +71,7 @@ describe('useActivateWorkflowDraftWorkflowSingleRecordAction', () => {
 
     act(() => {
       result.current.useActivateWorkflowDraftWorkflowSingleRecordAction.registerActivateWorkflowDraftWorkflowSingleRecordAction(
-        { position: 0 },
+        { position: 1 },
       );
     });
 
@@ -85,7 +85,7 @@ describe('useActivateWorkflowDraftWorkflowSingleRecordAction', () => {
       result.current.actionMenuEntries.get(
         'activate-workflow-draft-single-record',
       )?.position,
-    ).toBe(0);
+    ).toBe(1);
   });
 
   it('should unregister activate workflow draft workflow action', () => {
@@ -108,7 +108,7 @@ describe('useActivateWorkflowDraftWorkflowSingleRecordAction', () => {
 
     act(() => {
       result.current.useActivateWorkflowDraftWorkflowSingleRecordAction.registerActivateWorkflowDraftWorkflowSingleRecordAction(
-        { position: 0 },
+        { position: 1 },
       );
     });
 

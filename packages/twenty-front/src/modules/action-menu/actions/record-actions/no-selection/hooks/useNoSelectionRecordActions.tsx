@@ -14,7 +14,7 @@ export const useNoSelectionRecordActions = ({
   });
 
   const registerNoSelectionRecordActions = () => {
-    registerExportViewNoSelectionRecordsAction({ position: 0 });
+    registerExportViewNoSelectionRecordsAction({ position: 1 });
   };
 
   const unregisterNoSelectionRecordActions = () => {

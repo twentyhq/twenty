@@ -22,8 +22,8 @@ export const useMultipleRecordsActions = ({
   });
 
   const registerMultipleRecordsActions = () => {
-    registerDeleteMultipleRecordsAction({ position: 0 });
-    registerExportMultipleRecordsAction({ position: 1 });
+    registerDeleteMultipleRecordsAction({ position: 1 });
+    registerExportMultipleRecordsAction({ position: 2 });
   };
 
   const unregisterMultipleRecordsActions = () => {

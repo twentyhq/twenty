@@ -85,7 +85,7 @@ describe('useDeleteMultipleRecordsAction', () => {
 
     act(() => {
       result.current.useDeleteMultipleRecordsAction.registerDeleteMultipleRecordsAction(
-        { position: 0 },
+        { position: 1 },
       );
     });
 
@@ -95,7 +95,7 @@ describe('useDeleteMultipleRecordsAction', () => {
     ).toBeDefined();
     expect(
       result.current.actionMenuEntries.get('delete-multiple-records')?.position,
-    ).toBe(0);
+    ).toBe(1);
   });
 
   it('should unregister delete action', () => {
@@ -117,7 +117,7 @@ describe('useDeleteMultipleRecordsAction', () => {
 
     act(() => {
       result.current.useDeleteMultipleRecordsAction.registerDeleteMultipleRecordsAction(
-        { position: 0 },
+        { position: 1 },
       );
     });
 

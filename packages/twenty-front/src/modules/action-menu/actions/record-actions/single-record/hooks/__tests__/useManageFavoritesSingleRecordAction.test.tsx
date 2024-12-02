@@ -60,7 +60,7 @@ describe('useManageFavoritesSingleRecordAction', () => {
 
     act(() => {
       result.current.useManageFavoritesSingleRecordAction.registerManageFavoritesSingleRecordAction(
-        { position: 0 },
+        { position: 1 },
       );
     });
 
@@ -71,7 +71,7 @@ describe('useManageFavoritesSingleRecordAction', () => {
     expect(
       result.current.actionMenuEntries.get('manage-favorites-single-record')
         ?.position,
-    ).toBe(0);
+    ).toBe(1);
   });
 
   it('should unregister manage favorites action', () => {
@@ -95,7 +95,7 @@ describe('useManageFavoritesSingleRecordAction', () => {
 
     act(() => {
       result.current.useManageFavoritesSingleRecordAction.registerManageFavoritesSingleRecordAction(
-        { position: 0 },
+        { position: 1 },
       );
     });
 

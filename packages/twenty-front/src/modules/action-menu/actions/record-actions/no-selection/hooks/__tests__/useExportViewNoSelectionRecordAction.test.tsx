@@ -59,7 +59,7 @@ describe('useExportViewNoSelectionRecordAction', () => {
 
     act(() => {
       result.current.useExportViewNoSelectionRecordAction.registerExportViewNoSelectionRecordsAction(
-        { position: 0 },
+        { position: 1 },
       );
     });
 
@@ -70,7 +70,7 @@ describe('useExportViewNoSelectionRecordAction', () => {
     expect(
       result.current.actionMenuEntries.get('export-view-no-selection')
         ?.position,
-    ).toBe(0);
+    ).toBe(1);
   });
 
   it('should unregister export view action', () => {
@@ -93,7 +93,7 @@ describe('useExportViewNoSelectionRecordAction', () => {
 
     act(() => {
       result.current.useExportViewNoSelectionRecordAction.registerExportViewNoSelectionRecordsAction(
-        { position: 0 },
+        { position: 1 },
       );
     });
 

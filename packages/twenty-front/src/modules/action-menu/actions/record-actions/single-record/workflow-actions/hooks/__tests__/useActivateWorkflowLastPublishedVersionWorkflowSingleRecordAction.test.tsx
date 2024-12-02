@@ -72,7 +72,7 @@ describe('useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction', ()
 
     act(() => {
       result.current.useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction.registerActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction(
-        { position: 0 },
+        { position: 1 },
       );
     });
 
@@ -86,7 +86,7 @@ describe('useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction', ()
       result.current.actionMenuEntries.get(
         'activate-workflow-last-published-version-single-record',
       )?.position,
-    ).toBe(0);
+    ).toBe(1);
   });
 
   it('should unregister activate workflow last published version workflow action', () => {
@@ -109,7 +109,7 @@ describe('useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction', ()
 
     act(() => {
       result.current.useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction.registerActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction(
-        { position: 0 },
+        { position: 1 },
       );
     });
 
