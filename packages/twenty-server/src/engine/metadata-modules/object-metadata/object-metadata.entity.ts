@@ -78,7 +78,7 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @Column({ nullable: true, type: 'uuid' })
   imageIdentifierFieldMetadataId?: string | null;
 
-  @Column({ default: true })
+  @Column({ default: false })
   isLabelSyncedWithName: boolean;
 
   @Column({ nullable: false, type: 'uuid' })

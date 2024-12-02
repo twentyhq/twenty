@@ -114,7 +114,7 @@ export class FieldMetadataEntity<
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @Column({ default: true })
+  @Column({ default: false })
   isLabelSyncedWithName: boolean;
 
   @OneToOne(
