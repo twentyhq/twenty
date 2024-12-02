@@ -23,6 +23,18 @@ import { CodeIntrospectionService } from 'src/modules/code-introspection/code-in
 
 const TRIGGER_STEP_ID = 'trigger';
 
+const BASE_STEP_DEFINITION = {
+  outputSchema: {},
+  errorHandlingOptions: {
+    continueOnFailure: {
+      value: false,
+    },
+    retryOnFailure: {
+      value: false,
+    },
+  },
+};
+
 @Injectable()
 export class WorkflowVersionStepWorkspaceService {
   constructor(
@@ -84,15 +96,7 @@ export class WorkflowVersionStepWorkspaceService {
               serverlessFunctionVersion: 'draft',
               serverlessFunctionInput,
             },
-            outputSchema: {},
-            errorHandlingOptions: {
-              continueOnFailure: {
-                value: false,
-              },
-              retryOnFailure: {
-                value: false,
-              },
-            },
+            ...BASE_STEP_DEFINITION,
           },
         };
       }
@@ -109,15 +113,7 @@ export class WorkflowVersionStepWorkspaceService {
               subject: '',
               body: '',
             },
-            outputSchema: {},
-            errorHandlingOptions: {
-              continueOnFailure: {
-                value: false,
-              },
-              retryOnFailure: {
-                value: false,
-              },
-            },
+            ...BASE_STEP_DEFINITION,
           },
         };
       }
@@ -138,15 +134,7 @@ export class WorkflowVersionStepWorkspaceService {
               objectName: activeObjectMetadataItem?.nameSingular || '',
               objectRecord: {},
             },
-            outputSchema: {},
-            errorHandlingOptions: {
-              continueOnFailure: {
-                value: false,
-              },
-              retryOnFailure: {
-                value: false,
-              },
-            },
+            ...BASE_STEP_DEFINITION,
           },
         };
       }
@@ -168,15 +156,7 @@ export class WorkflowVersionStepWorkspaceService {
               objectRecord: {},
               objectRecordId: '',
             },
-            outputSchema: {},
-            errorHandlingOptions: {
-              continueOnFailure: {
-                value: false,
-              },
-              retryOnFailure: {
-                value: false,
-              },
-            },
+            ...BASE_STEP_DEFINITION,
           },
         };
       }
