@@ -119,7 +119,7 @@ const StyledContainer = withTheme(styled.div<
 
   padding-left: ${({ variant }) =>
     variant === ChipVariant.Transparent
-      ? '2px !important'
+      ? '0px'
       : 'var(--chip-horizontal-padding)'};
 
 `);
