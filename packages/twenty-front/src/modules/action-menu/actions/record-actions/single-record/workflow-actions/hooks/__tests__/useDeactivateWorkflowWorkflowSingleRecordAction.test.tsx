@@ -25,12 +25,6 @@ jest.mock('@/workflow/hooks/useWorkflowWithCurrentVersion', () => ({
   }),
 }));
 
-jest.mock('@/workflow/hooks/useDeactivateWorkflowVersion', () => ({
-  useDeactivateWorkflowVersion: () => ({
-    deactivateWorkflowVersion: jest.fn(),
-  }),
-}));
-
 describe('useDeactivateWorkflowWorkflowSingleRecordAction', () => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <JestMetadataAndApolloMocksWrapper>

@@ -7,7 +7,7 @@ import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction } from '../useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction';
+import { useDiscardDraftWorkflowSingleRecordAction } from '../useDiscardDraftWorkflowSingleRecordAction';
 
 const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
@@ -19,13 +19,13 @@ jest.mock('@/workflow/hooks/useWorkflowWithCurrentVersion', () => ({
     currentVersion: {
       id: 'currentVersionId',
       trigger: 'trigger',
-      status: 'DEACTIVATED',
+      status: 'DRAFT',
     },
     lastPublishedVersionId: 'lastPublishedVersionId',
   }),
 }));
 
-describe('useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction', () => {
+describe('useDiscardDraftWorkflowSingleRecordAction', () => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <JestMetadataAndApolloMocksWrapper>
       <JestObjectMetadataItemSetter>
@@ -46,7 +46,7 @@ describe('useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction', ()
     </JestMetadataAndApolloMocksWrapper>
   );
 
-  it('should register activate workflow last published version workflow action', () => {
+  it('should register discard workflow draft workflow action', () => {
     const { result } = renderHook(
       () => {
         const actionMenuEntries = useRecoilComponentValueV2(
@@ -55,8 +55,8 @@ describe('useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction', ()
 
         return {
           actionMenuEntries,
-          useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction:
-            useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction({
+          useDiscardDraftWorkflowSingleRecordAction:
+            useDiscardDraftWorkflowSingleRecordAction({
               workflowId: 'workflowId',
             }),
         };
@@ -65,7 +65,7 @@ describe('useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction', ()
     );
 
     act(() => {
-      result.current.useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction.registerActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction(
+      result.current.useDiscardDraftWorkflowSingleRecordAction.registerDiscardDraftWorkflowSingleRecordAction(
         { position: 1 },
       );
     });
@@ -73,17 +73,17 @@ describe('useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction', ()
     expect(result.current.actionMenuEntries.size).toBe(1);
     expect(
       result.current.actionMenuEntries.get(
-        'activate-workflow-last-published-version-single-record',
+        'discard-workflow-draft-single-record',
       ),
     ).toBeDefined();
     expect(
       result.current.actionMenuEntries.get(
-        'activate-workflow-last-published-version-single-record',
+        'discard-workflow-draft-single-record',
       )?.position,
     ).toBe(1);
   });
 
-  it('should unregister activate workflow last published version workflow action', () => {
+  it('should unregister deactivate workflow workflow action', () => {
     const { result } = renderHook(
       () => {
         const actionMenuEntries = useRecoilComponentValueV2(
@@ -92,8 +92,8 @@ describe('useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction', ()
 
         return {
           actionMenuEntries,
-          useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction:
-            useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction({
+          useDiscardDraftWorkflowSingleRecordAction:
+            useDiscardDraftWorkflowSingleRecordAction({
               workflowId: 'workflow1',
             }),
         };
@@ -102,13 +102,13 @@ describe('useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction', ()
     );
 
     act(() => {
-      result.current.useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction.registerActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction(
+      result.current.useDiscardDraftWorkflowSingleRecordAction.registerDiscardDraftWorkflowSingleRecordAction(
         { position: 1 },
       );
     });
 
     act(() => {
-      result.current.useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction.unregisterActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction();
+      result.current.useDiscardDraftWorkflowSingleRecordAction.unregisterDiscardDraftWorkflowSingleRecordAction();
     });
 
     expect(result.current.actionMenuEntries.size).toBe(0);

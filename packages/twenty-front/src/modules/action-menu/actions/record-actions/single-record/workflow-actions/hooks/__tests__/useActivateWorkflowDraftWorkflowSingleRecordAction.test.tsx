@@ -24,12 +24,6 @@ jest.mock('@/workflow/hooks/useWorkflowWithCurrentVersion', () => ({
   }),
 }));
 
-jest.mock('@/workflow/hooks/useActivateWorkflowVersion', () => ({
-  useActivateWorkflowVersion: () => ({
-    activateWorkflowVersion: jest.fn(),
-  }),
-}));
-
 describe('useActivateWorkflowDraftWorkflowSingleRecordAction', () => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
     <JestMetadataAndApolloMocksWrapper>
