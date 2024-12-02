@@ -14,6 +14,8 @@ Twenty offers integrations with Gmail and Google Calendar. To enable these featu
 yarn command:prod cron:messaging:messages-import
 yarn command:prod cron:messaging:message-list-fetch
 yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
 ```
 
 # Setup Environment Variables
@@ -79,7 +81,6 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
     ['AUTH_MICROSOFT_CLIENT_SECRET', '', 'Microsoft client secret'],
     ['AUTH_MICROSOFT_CALLBACK_URL', 'http://[YourDomain]/auth/microsoft/redirect', 'Microsoft auth callback'],
     ['AUTH_MICROSOFT_APIS_CALLBACK_URL', 'http://[YourDomain]/auth/microsoft-apis/get-access-token', 'Microsoft APIs auth callback'],
-    ['FRONT_AUTH_CALLBACK_URL', 'http://localhost:3001/verify ', 'Callback used for Login page'],
     ['IS_MULTIWORKSPACE_ENABLED', 'false', 'Allows the use of multiple workspaces. Requires a web server that can manage wildcards for subdomains.'],
     ['PASSWORD_RESET_TOKEN_EXPIRES_IN', '5m', 'Password reset token expiration time'],
     ]}></ArticleTable>
@@ -162,7 +163,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
 ### Message Queue
 
 <ArticleTable options={[
-    ['MESSAGE_QUEUE_TYPE', 'bull-mq', "Queue driver: 'pg-boss' or 'bull-mq'"],
+    ['MESSAGE_QUEUE_TYPE', 'bull-mq', "Queue driver: 'bull-mq'"],
     ]}></ArticleTable>
 
 ### Logging

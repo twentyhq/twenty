@@ -52,14 +52,14 @@ export const sortFavorites = (
         if (isDefined(favorite[relationField.name])) {
           const relationObject = favorite[relationField.name];
 
-          const relationObjectNameSingular =
+          const objectNameSingular =
             relationField.relationDefinition?.targetObjectMetadata
               .nameSingular ?? '';
 
           const objectRecordIdentifier =
             getObjectRecordIdentifierByNameSingular(
               relationObject,
-              relationObjectNameSingular,
+              objectNameSingular,
             );
 
           return {
@@ -75,7 +75,7 @@ export const sortFavorites = (
               : '',
             workspaceMemberId: favorite.workspaceMemberId,
             favoriteFolderId: favorite.favoriteFolderId,
-            objectNameSingular: relationObjectNameSingular,
+            objectNameSingular: objectNameSingular,
           } as ProcessedFavorite;
         }
       }

@@ -13,6 +13,7 @@ import {
 import { IconComponent, IconEye, IconEyeOff, RGBA } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { InputLabel } from './InputLabel';
 
 const StyledContainer = styled.div<
   Pick<TextInputV2ComponentProps, 'fullWidth'>
@@ -20,13 +21,6 @@ const StyledContainer = styled.div<
   display: inline-flex;
   flex-direction: column;
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
-`;
-
-const StyledLabel = styled.label`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledInputContainer = styled.div`
@@ -177,9 +171,9 @@ const TextInputV2Component = (
   return (
     <StyledContainer className={className} fullWidth={fullWidth ?? false}>
       {label && (
-        <StyledLabel htmlFor={inputId}>
+        <InputLabel htmlFor={inputId}>
           {label + (required ? '*' : '')}
-        </StyledLabel>
+        </InputLabel>
       )}
       <StyledInputContainer>
         {!!LeftIcon && (

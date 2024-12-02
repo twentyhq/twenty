@@ -55,7 +55,11 @@ export const ObjectFilterDropdownRecordSelect = ({
   const selectedFilter = useRecoilValue(selectedFilterState);
 
   const objectNameSingular =
-    filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular ?? '';
+    filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular;
+
+  if (!isDefined(objectNameSingular)) {
+    throw new Error('objectNameSingular is not defined');
+  }
 
   const { loading, filteredSelectedRecords, recordsToSelect, selectedRecords } =
     useRecordsForSelect({

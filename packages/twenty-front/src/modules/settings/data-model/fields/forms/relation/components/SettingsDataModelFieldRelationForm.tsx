@@ -107,6 +107,11 @@ export const SettingsDataModelFieldRelationForm = ({
     ),
   );
 
+  const selectedRelationType = watchFormValue(
+    'relation.type',
+    initialRelationType,
+  );
+
   const isMobile = useIsMobile();
 
   return (
@@ -152,7 +157,10 @@ export const SettingsDataModelFieldRelationForm = ({
         />
       </StyledSelectsContainer>
       <StyledInputsLabel>
-        Field on {selectedObjectMetadataItem?.labelPlural}
+        Field on{' '}
+        {selectedRelationType === RelationDefinitionType.ManyToOne
+          ? selectedObjectMetadataItem?.labelSingular
+          : selectedObjectMetadataItem?.labelPlural}
       </StyledInputsLabel>
       <StyledInputsContainer>
         <Controller

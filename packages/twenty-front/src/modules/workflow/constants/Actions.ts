@@ -25,4 +25,9 @@ export const ACTIONS: Array<{
     type: 'RECORD_CRUD.CREATE',
     icon: IconAddressBook,
   },
+  {
+    label: 'Update Record',
+    type: 'RECORD_CRUD.UPDATE',
+    icon: IconAddressBook,
+  },
 ];

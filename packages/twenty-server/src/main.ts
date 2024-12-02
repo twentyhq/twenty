@@ -2,6 +2,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
+import fs from 'fs';
+
 import session from 'express-session';
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
@@ -24,6 +26,14 @@ const bootstrap = async () => {
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
     snapshot: process.env.DEBUG_MODE === 'true',
+    ...(process.env.SSL_KEY_PATH && process.env.SSL_CERT_PATH
+      ? {
+          httpsOptions: {
+            key: fs.readFileSync(process.env.SSL_KEY_PATH),
+            cert: fs.readFileSync(process.env.SSL_CERT_PATH),
+          },
+        }
+      : {}),
   });
   const logger = app.get(LoggerService);
   const environmentService = app.get(EnvironmentService);
@@ -68,7 +78,7 @@ const bootstrap = async () => {
     app.use(session(getSessionStorageOptions(environmentService)));
   }
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(environmentService.get('PORT'));
 };
 
 bootstrap();

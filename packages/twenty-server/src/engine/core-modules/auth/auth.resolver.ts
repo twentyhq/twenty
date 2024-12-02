@@ -43,7 +43,6 @@ import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/u
 import { WorkspaceGettersService } from 'src/engine/core-modules/workspace/services/workspace-getters.service';
 
 import { ChallengeInput } from './dto/challenge.input';
-import { ImpersonateInput } from './dto/impersonate.input';
 import { LoginToken } from './dto/login-token.entity';
 import { SignUpInput } from './dto/sign-up.input';
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
@@ -227,15 +226,6 @@ export class AuthResolver {
     );
 
     return { tokens: tokens };
-  }
-
-  @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
-  @Mutation(() => Verify)
-  async impersonate(
-    @Args() impersonateInput: ImpersonateInput,
-    @AuthUser() user: User,
-  ): Promise<Verify> {
-    return await this.authService.impersonate(impersonateInput.userId, user);
   }
 
   @UseGuards(WorkspaceAuthGuard)

@@ -12,7 +12,6 @@ const StyledOverflowingText = styled.div<{
   cursorPointer: boolean;
   size: 'large' | 'small';
   displayedMaxRows?: number;
-  isLabel: boolean;
 }>`
   cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'inherit')};
   font-family: inherit;
@@ -24,18 +23,14 @@ const StyledOverflowingText = styled.div<{
   text-decoration: inherit;
 
   text-overflow: ellipsis;
-  white-space: nowrap;
-
+  white-space: pre-wrap;
   height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
 
-  text-wrap-mode: ${({ isLabel, displayedMaxRows }) =>
-    isLabel === false && displayedMaxRows ? 'wrap' : 'nowrap'};
-  -webkit-line-clamp: ${({ isLabel, displayedMaxRows }) =>
-    isLabel === false && displayedMaxRows ? displayedMaxRows : 'inherit'};
-  display: ${({ isLabel, displayedMaxRows }) =>
-    isLabel === false && displayedMaxRows ? `-webkit-box` : 'block'};
-  -webkit-box-orient: ${({ isLabel, displayedMaxRows }) =>
-    isLabel === false && displayedMaxRows ? 'vertical' : 'inherit'};
+  text-wrap: wrap;
+  -webkit-line-clamp: ${({ displayedMaxRows }) =>
+    displayedMaxRows ? displayedMaxRows : '1'};
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 
   & :hover {
     text-overflow: ${({ cursorPointer }) =>
@@ -45,18 +40,21 @@ const StyledOverflowingText = styled.div<{
   }
 `;
 
+const Styledpre = styled.pre`
+  font-family: inherit;
+  white-space: pre-wrap;
+`;
+
 export const OverflowingTextWithTooltip = ({
   size = 'small',
   text,
   isTooltipMultiline,
   displayedMaxRows,
-  isLabel,
 }: {
   size?: 'large' | 'small';
   text: string | null | undefined;
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
-  isLabel?: boolean;
 }) => {
   const textElementId = `title-id-${+new Date()}`;
 
@@ -82,7 +80,6 @@ export const OverflowingTextWithTooltip = ({
     event.stopPropagation();
     event.preventDefault();
   };
-
   return (
     <>
       <StyledOverflowingText
@@ -90,7 +87,6 @@ export const OverflowingTextWithTooltip = ({
         cursorPointer={isTitleOverflowing}
         size={size}
         displayedMaxRows={displayedMaxRows}
-        isLabel={isLabel ?? false}
         ref={textRef}
         id={textElementId}
         onMouseEnter={handleMouseEnter}
@@ -103,7 +99,6 @@ export const OverflowingTextWithTooltip = ({
           <div onClick={handleTooltipClick}>
             <AppTooltip
               anchorSelect={`#${textElementId}`}
-              content={isTooltipMultiline ? undefined : (text ?? '')}
               offset={5}
               isOpen
               noArrow
@@ -111,7 +106,11 @@ export const OverflowingTextWithTooltip = ({
               positionStrategy="absolute"
               delay={TooltipDelay.mediumDelay}
             >
-              {isTooltipMultiline ? <pre>{text}</pre> : ''}
+              {isTooltipMultiline ? (
+                <Styledpre>{text}</Styledpre>
+              ) : (
+                `${text || ''}`
+              )}
             </AppTooltip>
           </div>,
           document.body,

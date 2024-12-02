@@ -4,9 +4,9 @@ import { useRecoilValue } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
+import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/useSetRecordIdsForColumn';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
@@ -30,16 +30,18 @@ export const useLoadRecordIndexBoardColumn = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-  const { setRecordIdsForColumn } = useRecordBoard(recordBoardId);
-  const { columnsFamilySelector } = useRecordBoardStates(recordBoardId);
+  const { setRecordIdsForColumn } = useSetRecordIdsForColumn(recordBoardId);
   const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
+
+  const recordGroupDefinition = useRecoilValue(
+    recordGroupDefinitionFamilyState(columnId),
+  );
 
   const recordIndexViewFilterGroups = useRecoilValue(
     recordIndexViewFilterGroupsState,
   );
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
   const recordIndexSorts = useRecoilValue(recordIndexSortsState);
-  const columnDefinition = useRecoilValue(columnsFamilySelector(columnId));
 
   const requestFilters = computeViewRecordGqlOperationFilter(
     recordIndexFilters,
@@ -60,9 +62,9 @@ export const useLoadRecordIndexBoardColumn = ({
   const filter = {
     ...requestFilters,
     [recordIndexKanbanFieldMetadataItem?.name ?? '']: isDefined(
-      columnDefinition?.value,
+      recordGroupDefinition?.value,
     )
-      ? { in: [columnDefinition?.value] }
+      ? { in: [recordGroupDefinition?.value] }
       : { is: 'NULL' },
   };
 

@@ -16,14 +16,14 @@ export const useRecordsForSelect = ({
   sortOrder = 'AscNullsLast',
   selectedIds,
   limit,
-  excludeRecordIds = [],
+  excludedRecordIds = [],
   objectNameSingular,
 }: {
   searchFilterText: string;
   sortOrder?: OrderBy;
   selectedIds: string[];
   limit?: number;
-  excludeRecordIds?: string[];
+  excludedRecordIds?: string[];
   objectNameSingular: string;
 }) => {
   const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
@@ -91,7 +91,7 @@ export const useRecordsForSelect = ({
     skip: !selectedIds.length,
   });
 
-  const notFilterIds = [...selectedIds, ...excludeRecordIds];
+  const notFilterIds = [...selectedIds, ...excludedRecordIds];
   const notFilter = notFilterIds.length
     ? { not: { id: { in: notFilterIds } } }
     : undefined;

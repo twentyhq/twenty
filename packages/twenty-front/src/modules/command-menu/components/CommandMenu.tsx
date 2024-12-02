@@ -9,7 +9,7 @@ import { CommandMenuTopBar } from '@/command-menu/components/CommandMenuTopBar';
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
-import { commandMenuCommandsState } from '@/command-menu/states/commandMenuCommandsState';
+import { commandMenuCommandsComponentSelector } from '@/command-menu/states/commandMenuCommandsSelector';
 import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchState';
 import { isCommandMenuOpenedState } from '@/command-menu/states/isCommandMenuOpenedState';
 import {
@@ -32,9 +32,10 @@ import { SelectableItem } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
@@ -67,6 +68,8 @@ type CommandGroupConfig = {
     to?: string;
     onClick?: () => void;
     key?: string;
+    firstHotKey?: string;
+    secondHotKey?: string;
   };
 };
 
@@ -128,7 +131,6 @@ export const CommandMenu = () => {
     commandMenuSearchState,
   );
   const [deferredCommandMenuSearch] = useDebounce(commandMenuSearch, 300); // 200ms - 500ms
-  const commandMenuCommands = useRecoilValue(commandMenuCommandsState);
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
   const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
@@ -140,6 +142,10 @@ export const CommandMenu = () => {
   );
 
   const isMobile = useIsMobile();
+
+  const commandMenuCommands = useRecoilComponentValueV2(
+    commandMenuCommandsComponentSelector,
+  );
 
   useScopedHotkeys(
     'ctrl+k,meta+k',
@@ -408,9 +414,11 @@ export const CommandMenu = () => {
       cmd.scope === CommandScope.Global,
   );
 
-  useListenClickOutside({
+  useListenClickOutsideV2({
     refs: [commandMenuRef],
     callback: closeCommandMenu,
+    listenerId: 'COMMAND_MENU_LISTENER_ID',
+    hotkeyScope: AppHotkeyScope.CommandMenuOpen,
   });
 
   const isCopilotEnabled = useIsFeatureEnabled('IS_COPILOT_ENABLED');
@@ -478,6 +486,8 @@ export const CommandMenu = () => {
         label: command.label,
         to: command.to,
         onClick: command.onCommandClick,
+        firstHotKey: command.firstHotKey,
+        secondHotKey: command.secondHotKey,
       }),
     },
     {
@@ -489,6 +499,8 @@ export const CommandMenu = () => {
         label: command.label,
         to: command.to,
         onClick: command.onCommandClick,
+        firstHotKey: command.firstHotKey,
+        secondHotKey: command.secondHotKey,
       }),
     },
     {
@@ -506,6 +518,8 @@ export const CommandMenu = () => {
             placeholder={`${person.name.firstName} ${person.name.lastName}`}
           />
         ),
+        firstHotKey: person.firstHotKey,
+        secondHotKey: person.secondHotKey,
       }),
     },
     {
@@ -524,6 +538,8 @@ export const CommandMenu = () => {
             )}
           />
         ),
+        firstHotKey: company.firstHotKey,
+        secondHotKey: company.secondHotKey,
       }),
     },
     {
@@ -628,6 +644,8 @@ export const CommandMenu = () => {
                               : ''
                           }`}
                           onClick={copilotCommand.onCommandClick}
+                          firstHotKey={copilotCommand.firstHotKey}
+                          secondHotKey={copilotCommand.secondHotKey}
                         />
                       </SelectableItem>
                     </CommandGroup>
@@ -646,6 +664,12 @@ export const CommandMenu = () => {
                             onClick={
                               standardActionrecordSelectionCommand.onCommandClick
                             }
+                            firstHotKey={
+                              standardActionrecordSelectionCommand.firstHotKey
+                            }
+                            secondHotKey={
+                              standardActionrecordSelectionCommand.secondHotKey
+                            }
                           />
                         </SelectableItem>
                       ),
@@ -662,6 +686,12 @@ export const CommandMenu = () => {
                             Icon={workflowRunRecordSelectionCommand.Icon}
                             onClick={
                               workflowRunRecordSelectionCommand.onCommandClick
+                            }
+                            firstHotKey={
+                              workflowRunRecordSelectionCommand.firstHotKey
+                            }
+                            secondHotKey={
+                              workflowRunRecordSelectionCommand.secondHotKey
                             }
                           />
                         </SelectableItem>
@@ -683,6 +713,12 @@ export const CommandMenu = () => {
                               onClick={
                                 standardActionGlobalCommand.onCommandClick
                               }
+                              firstHotKey={
+                                standardActionGlobalCommand.firstHotKey
+                              }
+                              secondHotKey={
+                                standardActionGlobalCommand.secondHotKey
+                              }
                             />
                           </SelectableItem>
                         ),
@@ -702,6 +738,10 @@ export const CommandMenu = () => {
                               label={workflowRunGlobalCommand.label}
                               Icon={workflowRunGlobalCommand.Icon}
                               onClick={workflowRunGlobalCommand.onCommandClick}
+                              firstHotKey={workflowRunGlobalCommand.firstHotKey}
+                              secondHotKey={
+                                workflowRunGlobalCommand.secondHotKey
+                              }
                             />
                           </SelectableItem>
                         ),
@@ -713,8 +753,16 @@ export const CommandMenu = () => {
                     items?.length ? (
                       <CommandGroup heading={heading} key={heading}>
                         {items.map((item) => {
-                          const { id, Icon, label, to, onClick, key } =
-                            renderItem(item);
+                          const {
+                            id,
+                            Icon,
+                            label,
+                            to,
+                            onClick,
+                            key,
+                            firstHotKey,
+                            secondHotKey,
+                          } = renderItem(item);
                           return (
                             <SelectableItem itemId={id} key={id}>
                               <CommandMenuItem
@@ -724,6 +772,8 @@ export const CommandMenu = () => {
                                 label={label}
                                 to={to}
                                 onClick={onClick}
+                                firstHotKey={firstHotKey}
+                                secondHotKey={secondHotKey}
                               />
                             </SelectableItem>
                           );

@@ -1,5 +1,5 @@
-import { GlobalActionMenuEntriesSetter } from '@/action-menu/actions/global-actions/components/GlobalActionMenuEntriesSetter';
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
+import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 
@@ -7,6 +7,7 @@ import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-sto
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { RecordShowPageBaseHeader } from '~/pages/object-record/RecordShowPageBaseHeader';
 
 export const RecordShowActionMenu = ({
@@ -25,6 +26,8 @@ export const RecordShowActionMenu = ({
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
   );
+
+  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
   // TODO: refactor RecordShowPageBaseHeader to use the context store
 
@@ -48,7 +51,7 @@ export const RecordShowActionMenu = ({
           />
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />
-          <GlobalActionMenuEntriesSetter />
+          {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
         </ActionMenuContext.Provider>
       )}
     </>

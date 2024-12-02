@@ -5,7 +5,7 @@ import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButto
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { FieldRelationValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
@@ -13,7 +13,7 @@ import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
 import { isFieldRelation } from '../../types/guards/isFieldRelation';
 
 export const useRelationField = <
-  T extends EntityForSelect | EntityForSelect[],
+  T extends RecordForSelect | RecordForSelect[],
 >() => {
   const { recordId, fieldDefinition, maxWidth } = useContext(FieldContext);
   const button = useGetButtonIcon();

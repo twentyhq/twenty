@@ -144,8 +144,7 @@ export class EnvironmentVariables {
   @IsOptional()
   FRONT_PORT = 3001;
 
-  // Server URL
-  @IsUrl({ require_tld: false })
+  @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
   SERVER_URL = 'http://localhost:3000';
 
@@ -180,10 +179,6 @@ export class EnvironmentVariables {
   INVITATION_TOKEN_EXPIRES_IN = '30d';
 
   // Auth
-  @IsUrl({ require_tld: false })
-  @IsOptional()
-  FRONT_AUTH_CALLBACK_URL: string;
-
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
@@ -212,11 +207,11 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_CLIENT_SECRET: string;
 
-  @IsUrl({ require_tld: false })
+  @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_CALLBACK_URL: string;
 
-  @IsUrl({ require_tld: false })
+  @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
 
@@ -233,7 +228,7 @@ export class EnvironmentVariables {
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CLIENT_SECRET: string;
 
-  @IsUrl({ require_tld: false })
+  @IsUrl({ require_tld: false, require_protocol: true })
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
 

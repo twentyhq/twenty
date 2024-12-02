@@ -1,10 +1,9 @@
-import { GlobalActionMenuEntriesSetter } from '@/action-menu/actions/global-actions/components/GlobalActionMenuEntriesSetter';
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
+import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { AuthModal } from '@/auth/components/AuthModal';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
-import { CommandMenuCommandsEffect } from '@/command-menu/components/CommandMenuCommandsEffect';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
@@ -17,6 +16,7 @@ import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/S
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
@@ -76,6 +76,8 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
 
+  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+
   return (
     <>
       <Global
@@ -86,20 +88,23 @@ export const DefaultLayout = () => {
         `}
       />
       <StyledLayout>
-        <ContextStoreComponentInstanceContext.Provider
-          value={{ instanceId: 'command-menu' }}
-        >
-          <ActionMenuComponentInstanceContext.Provider
-            value={{ instanceId: 'command-menu' }}
-          >
-            <RecordActionMenuEntriesSetter />
-            <GlobalActionMenuEntriesSetter />
-            <ActionMenuConfirmationModals />
-            <CommandMenuCommandsEffect />
-            <CommandMenu />
-          </ActionMenuComponentInstanceContext.Provider>
-        </ContextStoreComponentInstanceContext.Provider>
-        <KeyboardShortcutMenu />
+        {!showAuthModal && (
+          <>
+            <ContextStoreComponentInstanceContext.Provider
+              value={{ instanceId: 'command-menu' }}
+            >
+              <ActionMenuComponentInstanceContext.Provider
+                value={{ instanceId: 'command-menu' }}
+              >
+                <RecordActionMenuEntriesSetter />
+                {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
+                <ActionMenuConfirmationModals />
+                <CommandMenu />
+              </ActionMenuComponentInstanceContext.Provider>
+            </ContextStoreComponentInstanceContext.Provider>
+            <KeyboardShortcutMenu />
+          </>
+        )}
 
         <StyledPageContainer
           animate={{

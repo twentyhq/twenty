@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
-import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
+import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
 import { useRecoilValue } from 'recoil';
 
 const StyledCompanyPickerContainer = styled.div`
@@ -37,15 +37,15 @@ export const RecordBoardColumnNewOpportunity = ({
     <>
       {newRecord.isCreating && newRecord.position === position && (
         <StyledCompanyPickerContainer>
-          <SingleEntitySelect
+          <SingleRecordSelect
             disableBackgroundBlur
             onCancel={() => handleCreateSuccess(position, columnId, false)}
-            onEntitySelected={(company) =>
+            onRecordSelected={(company) =>
               company ? handleEntitySelect(position, company) : null
             }
-            relationObjectNameSingular={CoreObjectNameSingular.Company}
-            relationPickerScopeId="relation-picker"
-            selectedRelationRecordIds={[]}
+            objectNameSingular={CoreObjectNameSingular.Company}
+            recordPickerInstanceId="relation-picker"
+            selectedRecordIds={[]}
           />
         </StyledCompanyPickerContainer>
       )}

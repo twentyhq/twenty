@@ -1,7 +1,8 @@
+import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { useGetManyServerlessFunctions } from '@/settings/serverless-functions/hooks/useGetManyServerlessFunctions';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
-import VariableTagInput from '@/workflow/search-variables/components/VariableTagInput';
+import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
 import { WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
@@ -203,14 +204,16 @@ export const WorkflowEditActionFormServerlessFunctionInner = ({
         );
       } else {
         return (
-          <VariableTagInput
+          <FormTextFieldInput
             key={pathKey}
-            inputId={`input-${inputKey}`}
             label={inputKey}
             placeholder="Enter value"
+            defaultValue={inputValue ? String(inputValue) : ''}
             readonly={actionOptions.readonly}
-            value={`${inputValue || ''}`}
-            onChange={(value) => handleInputChange(value, currentPath)}
+            onPersist={(value) => {
+              handleInputChange(value, currentPath);
+            }}
+            VariablePicker={WorkflowVariablePicker}
           />
         );
       }

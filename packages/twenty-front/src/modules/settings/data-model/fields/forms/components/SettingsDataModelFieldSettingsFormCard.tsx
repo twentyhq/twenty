@@ -5,6 +5,8 @@ import { z } from 'zod';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import { settingsDataModelFieldAddressFormSchema } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm';
+import { SettingsDataModelFieldAddressSettingsFormCard } from '@/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressSettingsFormCard';
 import { settingsDataModelFieldBooleanFormSchema } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
 import { SettingsDataModelFieldBooleanSettingsFormCard } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanSettingsFormCard';
 import { settingsDataModelFieldtextFormSchema } from '@/settings/data-model/fields/forms/components/text/SettingsDataModelFieldTextForm';
@@ -15,6 +17,8 @@ import { settingsDataModelFieldDateFormSchema } from '@/settings/data-model/fiel
 import { SettingsDataModelFieldDateSettingsFormCard } from '@/settings/data-model/fields/forms/date/components/SettingsDataModelFieldDateSettingsFormCard';
 import { settingsDataModelFieldNumberFormSchema } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
 import { SettingsDataModelFieldNumberSettingsFormCard } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberSettingsFormCard';
+import { settingsDataModelFieldPhonesFormSchema } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm';
+import { SettingsDataModelFieldPhonesSettingsFormCard } from '@/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesSettingsFormCard';
 import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
 import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationSettingsFormCard';
 import {
@@ -64,6 +68,14 @@ const textFieldFormSchema = z
   .object({ type: z.literal(FieldMetadataType.Text) })
   .merge(settingsDataModelFieldtextFormSchema);
 
+const addressFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.Address) })
+  .merge(settingsDataModelFieldAddressFormSchema);
+
+const phonesFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.Phones) })
+  .merge(settingsDataModelFieldPhonesFormSchema);
+
 const otherFieldsFormSchema = z.object({
   type: z.enum(
     Object.keys(
@@ -76,6 +88,8 @@ const otherFieldsFormSchema = z.object({
         FieldMetadataType.Date,
         FieldMetadataType.DateTime,
         FieldMetadataType.Number,
+        FieldMetadataType.Address,
+        FieldMetadataType.Phones,
         FieldMetadataType.Text,
       ]),
     ) as [FieldMetadataType, ...FieldMetadataType[]],
@@ -94,12 +108,13 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     multiSelectFieldFormSchema,
     numberFieldFormSchema,
     textFieldFormSchema,
+    addressFieldFormSchema,
+    phonesFieldFormSchema,
     otherFieldsFormSchema,
   ],
 );
 
 type SettingsDataModelFieldSettingsFormCardProps = {
-  isCreatingField?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
     'icon' | 'label' | 'type' | 'isCustom'
@@ -132,7 +147,6 @@ const previewableTypes = [
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({
-  isCreatingField,
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
@@ -152,7 +166,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.Currency) {
     return (
       <SettingsDataModelFieldCurrencySettingsFormCard
-        disabled={!isCreatingField}
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
@@ -165,7 +178,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   ) {
     return (
       <SettingsDataModelFieldDateSettingsFormCard
-        disabled={!isCreatingField}
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
@@ -184,7 +196,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.Number) {
     return (
       <SettingsDataModelFieldNumberSettingsFormCard
-        disabled={fieldMetadataItem.isCustom === false}
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />
@@ -194,6 +205,24 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   if (fieldMetadataItem.type === FieldMetadataType.Text) {
     return (
       <SettingsDataModelFieldTextSettingsFormCard
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
+  if (fieldMetadataItem.type === FieldMetadataType.Address) {
+    return (
+      <SettingsDataModelFieldAddressSettingsFormCard
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
+  if (fieldMetadataItem.type === FieldMetadataType.Phones) {
+    return (
+      <SettingsDataModelFieldPhonesSettingsFormCard
         fieldMetadataItem={fieldMetadataItem}
         objectMetadataItem={objectMetadataItem}
       />

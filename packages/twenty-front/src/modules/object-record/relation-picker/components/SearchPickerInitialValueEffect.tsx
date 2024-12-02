@@ -1,25 +1,22 @@
-import { getRelationPickerScopedStates } from '@/object-record/relation-picker/utils/getRelationPickerScopedStates';
+import { recordPickerSearchFilterComponentState } from '@/object-record/relation-picker/states/recordPickerSearchFilterComponentState';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 export const SearchPickerInitialValueEffect = ({
   initialValueForSearchFilter,
-  relationPickerScopeId,
+  recordPickerInstanceId,
 }: {
   initialValueForSearchFilter?: string | null;
-  relationPickerScopeId: string;
+  recordPickerInstanceId: string;
 }) => {
-  const { relationPickerSearchFilterState } = getRelationPickerScopedStates({
-    relationPickerScopeId: relationPickerScopeId,
-  });
-
-  const setRelationPickerSearchFilter = useSetRecoilState(
-    relationPickerSearchFilterState,
+  const setRecordPickerSearchFilter = useSetRecoilComponentStateV2(
+    recordPickerSearchFilterComponentState,
+    recordPickerInstanceId,
   );
 
   useEffect(() => {
-    setRelationPickerSearchFilter(initialValueForSearchFilter ?? '');
-  }, [initialValueForSearchFilter, setRelationPickerSearchFilter]);
+    setRecordPickerSearchFilter(initialValueForSearchFilter ?? '');
+  }, [initialValueForSearchFilter, setRecordPickerSearchFilter]);
 
   return <></>;
 };

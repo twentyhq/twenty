@@ -50,6 +50,7 @@ export const RecordTableCellFieldContextWrapper = ({
           },
           objectMetadataItem,
         }),
+        displayedMaxRows: 1,
       }}
     >
       {children}

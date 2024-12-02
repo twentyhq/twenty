@@ -13,6 +13,8 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
+import { tableEncounteredUnrecoverableErrorComponentState } from '@/object-record/record-table/states/tableEncounteredUnrecoverableErrorComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 
 export const RecordTableNoRecordGroupBodyEffect = () => {
   const { objectNameSingular } = useContext(RecordTableContext);
@@ -36,6 +38,9 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
   const tableLastRowVisible = useRecoilComponentValueV2(
     tableLastRowVisibleComponentState,
   );
+
+  const [encounteredUnrecoverableError, setEncounteredUnrecoverableError] =
+    useRecoilComponentStateV2(tableEncounteredUnrecoverableErrorComponentState);
 
   const setHasRecordTableFetchedAllRecordsComponents =
     useSetRecoilComponentStateV2(
@@ -86,7 +91,7 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
 
   const fetchMoreDebouncedIfRequested = useDebouncedCallback(async () => {
     // We are debouncing here to give the user some room to scroll if they want to within this throttle window
-    await fetchMoreRecords();
+    return await fetchMoreRecords();
   }, 100);
 
   useEffect(() => {
@@ -97,8 +102,22 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
 
   useEffect(() => {
     (async () => {
-      if (!isFetchingMoreObjects && tableLastRowVisible && hasNextPage) {
-        await fetchMoreDebouncedIfRequested();
+      if (
+        !isFetchingMoreObjects &&
+        tableLastRowVisible &&
+        hasNextPage &&
+        !encounteredUnrecoverableError
+      ) {
+        const result = await fetchMoreDebouncedIfRequested();
+
+        const isForbidden =
+          result?.error?.graphQLErrors.some(
+            (e) => e.extensions?.code === 'FORBIDDEN',
+          ) ?? false;
+
+        if (isForbidden) {
+          setEncounteredUnrecoverableError(true);
+        }
       }
     })();
   }, [
@@ -109,6 +128,8 @@ export const RecordTableNoRecordGroupBodyEffect = () => {
     fetchMoreDebouncedIfRequested,
     isFetchingMoreObjects,
     tableLastRowVisible,
+    encounteredUnrecoverableError,
+    setEncounteredUnrecoverableError,
   ]);
 
   return <></>;

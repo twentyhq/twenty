@@ -248,11 +248,26 @@ const SettingsSecuritySSOIdentifyProvider = lazy(() =>
   ),
 );
 
+const SettingsAdmin = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdmin').then((module) => ({
+    default: module.SettingsAdmin,
+  })),
+);
+
+const SettingsAdminFeatureFlags = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminFeatureFlags').then(
+    (module) => ({
+      default: module.SettingsAdminFeatureFlags,
+    }),
+  ),
+);
+
 type SettingsRoutesProps = {
   isBillingEnabled?: boolean;
   isCRMMigrationEnabled?: boolean;
   isServerlessFunctionSettingsEnabled?: boolean;
   isSSOEnabled?: boolean;
+  isAdminPageEnabled?: boolean;
 };
 
 export const SettingsRoutes = ({
@@ -260,6 +275,7 @@ export const SettingsRoutes = ({
   isCRMMigrationEnabled,
   isServerlessFunctionSettingsEnabled,
   isSSOEnabled,
+  isAdminPageEnabled,
 }: SettingsRoutesProps) => (
   <Suspense fallback={<SettingsSkeletonLoader />}>
     <Routes>
@@ -380,6 +396,15 @@ export const SettingsRoutes = ({
           path={SettingsPath.NewSSOIdentityProvider}
           element={<SettingsSecuritySSOIdentifyProvider />}
         />
+      )}
+      {isAdminPageEnabled && (
+        <>
+          <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />
+          <Route
+            path={SettingsPath.FeatureFlags}
+            element={<SettingsAdminFeatureFlags />}
+          />
+        </>
       )}
     </Routes>
   </Suspense>
