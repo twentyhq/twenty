@@ -8,8 +8,8 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
-
 import { WorkspaceGettersService } from 'src/engine/core-modules/workspace/services/workspace-getters.service';
+
 import { AuthResolver } from './auth.resolver';
 
 import { ApiKeyService } from './services/api-key.service';
