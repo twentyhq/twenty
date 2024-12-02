@@ -6,6 +6,7 @@ export const mockedClientConfig: ClientConfig = {
   isMultiWorkspaceEnabled: false,
   isSSOEnabled: false,
   frontDomain: 'localhost',
+  defaultSubdomain: 'app',
   chromeExtensionId: 'MOCKED_EXTENSION_ID',
   debugMode: false,
   analyticsEnabled: true,
