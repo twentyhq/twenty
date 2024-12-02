@@ -271,14 +271,9 @@ export const WorkflowEditActionFormServerlessFunction = ({
         onTitleChange={(newName: string) => {
           onActionUpdate({ name: newName });
         }}
-        HeaderIcon={
-          <IconCode
-            color={theme.color.orange}
-            stroke={theme.icon.stroke.sm}
-            size={theme.icon.size.lg}
-          />
-        }
-        headerTitle={headerTitle}
+        Icon={IconCode}
+        iconColor={theme.color.orange}
+        initialTitle={headerTitle}
         headerType="Code"
       >
         <CodeEditor

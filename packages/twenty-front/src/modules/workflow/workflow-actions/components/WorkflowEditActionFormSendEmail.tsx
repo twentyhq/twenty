@@ -182,14 +182,9 @@ export const WorkflowEditActionFormSendEmail = ({
             name: newName,
           });
         }}
-        HeaderIcon={
-          <IconMail
-            color={theme.color.blue}
-            stroke={theme.icon.stroke.sm}
-            size={theme.icon.size.lg}
-          />
-        }
-        headerTitle={headerTitle}
+        Icon={IconMail}
+        iconColor={theme.color.blue}
+        initialTitle={headerTitle}
         headerType="Email"
       >
         <Controller

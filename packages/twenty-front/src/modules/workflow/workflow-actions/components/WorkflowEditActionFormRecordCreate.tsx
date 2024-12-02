@@ -136,14 +136,9 @@ export const WorkflowEditActionFormRecordCreate = ({
           name: newName,
         });
       }}
-      HeaderIcon={
-        <IconAddressBook
-          color={theme.font.color.tertiary}
-          stroke={theme.icon.stroke.sm}
-          size={theme.icon.size.lg}
-        />
-      }
-      headerTitle={headerTitle}
+      Icon={IconAddressBook}
+      iconColor={theme.font.color.tertiary}
+      initialTitle={headerTitle}
       headerType="Action"
     >
       <Select

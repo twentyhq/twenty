@@ -1,7 +1,9 @@
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import styled from '@emotion/styled';
-import React from 'react';
+import React, { useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+import { IconComponent } from 'packages/twenty-ui';
+import { useTheme } from '@emotion/react';
 
 const StyledHeader = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
@@ -50,32 +52,48 @@ const StyledContentContainer = styled.div`
 
 export const WorkflowEditGenericFormBase = ({
   onTitleChange,
-  HeaderIcon,
-  headerTitle,
+  Icon,
+  iconColor,
+  initialTitle,
   headerType,
   children,
 }: {
   onTitleChange: (newTitle: string) => void;
-  HeaderIcon: React.ReactNode;
-  headerTitle: string;
+  Icon: IconComponent;
+  iconColor: string;
+  initialTitle: string;
   headerType: string;
   children: React.ReactNode;
 }) => {
+  const theme = useTheme();
+  const [title, setTitle] = useState(initialTitle);
   const debouncedOnTitleChange = useDebouncedCallback(onTitleChange, 100);
+  const handleChange = (newTitle: string) => {
+    setTitle(newTitle);
+    debouncedOnTitleChange(newTitle);
+  };
 
   return (
     <>
       <StyledHeader>
-        <StyledHeaderIconContainer>{HeaderIcon}</StyledHeaderIconContainer>
+        <StyledHeaderIconContainer>
+          {
+            <Icon
+              color={iconColor}
+              stroke={theme.icon.stroke.sm}
+              size={theme.icon.size.lg}
+            />
+          }
+        </StyledHeaderIconContainer>
         <StyledHeaderInfo>
           <StyledHeaderTitle>
             <TextInput
-              value={headerTitle}
+              value={title}
               copyButton={false}
               hotkeyScope="workflow-step-title"
               onEnter={onTitleChange}
               onEscape={onTitleChange}
-              onChange={debouncedOnTitleChange}
+              onChange={handleChange}
               shouldTrim={false}
             />
           </StyledHeaderTitle>
