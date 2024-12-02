@@ -21,7 +21,7 @@ export const WorkflowDiagramStepNodeEditable = ({
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
   assertWorkflowWithCurrentVersionIsDefined(workflowWithCurrentVersion);
 
-  const { deleteOneStep } = useDeleteStep({
+  const { deleteStep } = useDeleteStep({
     workflow: workflowWithCurrentVersion,
   });
 
@@ -34,7 +34,7 @@ export const WorkflowDiagramStepNodeEditable = ({
             size="medium"
             Icon={IconTrash}
             onClick={() => {
-              deleteOneStep(id);
+              deleteStep(id);
             }}
           />
         ) : undefined

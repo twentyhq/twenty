@@ -13,7 +13,7 @@ export const useDeleteStep = ({
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
   const { closeRightDrawer } = useRightDrawer();
 
-  const deleteOneStep = async (stepId: string) => {
+  const deleteStep = async (stepId: string) => {
     closeRightDrawer();
     const workflowVersion = await getUpdatableWorkflowVersion(workflow);
     await deleteWorkflowVersionStep({
@@ -23,6 +23,6 @@ export const useDeleteStep = ({
   };
 
   return {
-    deleteOneStep,
+    deleteStep,
   };
 };
