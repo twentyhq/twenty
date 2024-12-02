@@ -1,7 +1,7 @@
 import { usePhonesField } from '@/object-record/record-field/meta-types/hooks/usePhonesField';
 import { PhonesFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/PhonesFieldMenuItem';
 import styled from '@emotion/styled';
-import { CountryCode, E164Number, parsePhoneNumber } from 'libphonenumber-js';
+import { E164Number, parsePhoneNumber } from 'libphonenumber-js';
 import { useMemo } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
@@ -76,7 +76,7 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
   // TODO : improve once we store the real country code
   const defaultCountry = useCountries().find(
     (obj) => obj.callingCode === defaultCallingCode,
-  )?.countryCode as CountryCode;
+  )?.countryCode;
 
   const handlePersistPhones = (
     updatedPhones: { number: string; callingCode: string }[],
