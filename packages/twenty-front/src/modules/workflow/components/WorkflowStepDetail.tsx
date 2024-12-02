@@ -14,7 +14,7 @@ import { WorkflowEditActionFormRecordCreate } from '@/workflow/workflow-actions/
 import { WorkflowEditActionFormRecordUpdate } from '@/workflow/workflow-actions/components/WorkflowEditActionFormRecordUpdate';
 import { WorkflowEditActionFormSendEmail } from '@/workflow/workflow-actions/components/WorkflowEditActionFormSendEmail';
 import { isDefined } from 'twenty-ui';
-import { RightPanelSkeletonLoader } from '~/loading/components/RightPanelSkeletonLoader';
+import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 
 const WorkflowEditActionFormServerlessFunction = lazy(() =>
   import(
@@ -89,7 +89,7 @@ export const WorkflowStepDetail = ({
       switch (stepDefinition.definition.type) {
         case 'CODE': {
           return (
-            <Suspense fallback={<RightPanelSkeletonLoader />}>
+            <Suspense fallback={<RightDrawerSkeletonLoader />}>
               <WorkflowEditActionFormServerlessFunction
                 action={stepDefinition.definition}
                 actionOptions={props}
