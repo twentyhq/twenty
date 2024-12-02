@@ -23,6 +23,7 @@ const fieldMetadataItem: FieldMetadataItem = {
   name: 'name',
   type: FieldMetadataType.Text,
   updatedAt: '',
+  isLabelSyncedWithName: true,
 };
 
 const fieldRelationMetadataItem: FieldMetadataItem = {
@@ -32,6 +33,7 @@ const fieldRelationMetadataItem: FieldMetadataItem = {
   name: 'name',
   type: FieldMetadataType.Relation,
   updatedAt: '',
+  isLabelSyncedWithName: true,
   relationDefinition: {
     relationId: RELATION_METADATA_ID,
     direction: RelationDefinitionType.OneToMany,
@@ -171,6 +173,8 @@ describe('useFieldMetadataItem', () => {
         label: 'fieldLabel',
         objectMetadataId,
         type: FieldMetadataType.Text,
+        isLabelSyncedWithName: true,
+        name: 'fieldName',
       });
 
       expect(res.data).toEqual({
