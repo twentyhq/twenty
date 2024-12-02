@@ -5,9 +5,7 @@ import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataIt
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType, RelationDefinitionType } from '~/generated/graphql';
 
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
-import { mockedUserData } from '~/testing/mock-data/users';
 import {
   FIELD_METADATA_ID,
   FIELD_RELATION_METADATA_ID,
@@ -138,16 +136,6 @@ const mocks = [
     result: jest.fn(() => ({
       data: {
         updateOneField: responseData.default,
-      },
-    })),
-  },
-  {
-    request: {
-      query: GET_CURRENT_USER,
-    },
-    result: jest.fn(() => ({
-      data: {
-        currentUser: mockedUserData,
       },
     })),
   },
