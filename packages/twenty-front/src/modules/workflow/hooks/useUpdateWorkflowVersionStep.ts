@@ -10,9 +10,9 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isDefined } from 'twenty-ui';
+import { WorkflowVersion } from '@/workflow/types/Workflow';
 
 export const useUpdateWorkflowVersionStep = () => {
   const apolloClient = useApolloClient();
@@ -39,7 +39,7 @@ export const useUpdateWorkflowVersionStep = () => {
       return;
     }
 
-    const cachedRecord = getRecordFromCache<ObjectRecord>(
+    const cachedRecord = getRecordFromCache<WorkflowVersion>(
       input.workflowVersionId,
     );
     if (!cachedRecord) {
@@ -48,17 +48,12 @@ export const useUpdateWorkflowVersionStep = () => {
 
     const newCachedRecord = {
       ...cachedRecord,
-      steps: (cachedRecord.steps || []).reduce(
-        (acc: WorkflowAction[], step: WorkflowAction) => {
-          if (step.id === updatedStep.id) {
-            acc.push(updatedStep);
-          } else {
-            acc.push(step);
-          }
-          return acc;
-        },
-        [],
-      ),
+      steps: (cachedRecord.steps || []).map((step: WorkflowAction) => {
+        if (step.id === updatedStep.id) {
+          return updatedStep;
+        }
+        return step;
+      }),
     };
 
     updateRecordFromCache({

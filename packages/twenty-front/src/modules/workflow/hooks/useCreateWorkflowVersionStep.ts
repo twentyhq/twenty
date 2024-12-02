@@ -10,8 +10,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isDefined } from 'twenty-ui';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { WorkflowVersion } from '@/workflow/types/Workflow';
 
 export const useCreateWorkflowVersionStep = () => {
   const apolloClient = useApolloClient();
@@ -39,7 +39,7 @@ export const useCreateWorkflowVersionStep = () => {
       return;
     }
 
-    const cachedRecord = getRecordFromCache<ObjectRecord>(
+    const cachedRecord = getRecordFromCache<WorkflowVersion>(
       input.workflowVersionId,
     );
     if (!cachedRecord) {
