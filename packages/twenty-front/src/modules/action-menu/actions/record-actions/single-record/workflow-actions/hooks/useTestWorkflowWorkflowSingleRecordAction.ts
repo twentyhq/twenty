@@ -23,10 +23,7 @@ export const useTestWorkflowWorkflowSingleRecordAction = ({
   }: {
     position: number;
   }) => {
-    if (
-      !isDefined(workflowWithCurrentVersion) ||
-      !isDefined(workflowWithCurrentVersion.currentVersion.trigger)
-    ) {
+    if (!isDefined(workflowWithCurrentVersion?.currentVersion?.trigger)) {
       return;
     }
 
