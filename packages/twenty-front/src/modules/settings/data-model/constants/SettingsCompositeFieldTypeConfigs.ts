@@ -110,7 +110,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     label: 'Full Name',
     Icon: IllustrationIconUser,
     exampleValue: { firstName: 'John', lastName: 'Doe' },
-    category: 'Advanced',
+    category: 'Basic',
     subFields: ['firstName', 'lastName'],
     filterableSubFields: ['firstName', 'lastName'],
     labelBySubField: {

@@ -9,6 +9,7 @@ import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLab
 export type SettingsDataModelObjectSummaryProps = {
   className?: string;
   objectMetadataItem: ObjectMetadataItem;
+  pluralizeLabel?: boolean;
 };
 
 const StyledObjectSummary = styled.div`
@@ -30,6 +31,7 @@ const StyledIconContainer = styled.div`
 export const SettingsDataModelObjectSummary = ({
   className,
   objectMetadataItem,
+  pluralizeLabel = true,
 }: SettingsDataModelObjectSummaryProps) => {
   const theme = useTheme();
 
@@ -43,7 +45,13 @@ export const SettingsDataModelObjectSummary = ({
         <StyledIconContainer>
           <ObjectIcon size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
         </StyledIconContainer>
-        <OverflowingTextWithTooltip text={objectMetadataItem.labelPlural} />
+        <OverflowingTextWithTooltip
+          text={
+            pluralizeLabel
+              ? objectMetadataItem.labelPlural
+              : objectMetadataItem.labelSingular
+          }
+        />
       </StyledObjectName>
       <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
     </StyledObjectSummary>
