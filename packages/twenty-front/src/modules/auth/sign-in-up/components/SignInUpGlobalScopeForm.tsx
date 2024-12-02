@@ -109,11 +109,6 @@ export const SignInUpGlobalScopeForm = () => {
           }
         }
         if (data.checkUserExists.__typename === 'UserNotExists') {
-          if (!isMultiWorkspaceEnabled) {
-            return enqueueSnackBar('User not found', {
-              variant: SnackBarVariant.Error,
-            });
-          }
           setSignInUpMode(SignInUpMode.SignUp);
           setSignInUpStep(SignInUpStep.Password);
         }

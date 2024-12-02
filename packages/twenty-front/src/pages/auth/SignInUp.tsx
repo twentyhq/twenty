@@ -15,6 +15,8 @@ import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/consta
 import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/SignInUpSSOIdentityProviderSelection';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
+import { useMemo } from 'react';
+import { isDefined } from '~/utils/isDefined';
 
 export const SignInUp = () => {
   const { form } = useSignInUpForm();
@@ -24,6 +26,35 @@ export const SignInUp = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
+  const signInUpForm = useMemo(() => {
+    if (isTwentyHomePage && isMultiWorkspaceEnabled) {
+      return <SignInUpGlobalScopeForm />;
+    }
+
+    if (
+      (!isMultiWorkspaceEnabled ||
+        (isMultiWorkspaceEnabled && isTwentyWorkspaceSubdomain)) &&
+      signInUpStep === SignInUpStep.SSOIdentityProviderSelection
+    ) {
+      return <SignInUpSSOIdentityProviderSelection />;
+    }
+
+    if (
+      isDefined(workspacePublicData) &&
+      (!isMultiWorkspaceEnabled || isTwentyWorkspaceSubdomain)
+    ) {
+      return <SignInUpWorkspaceScopeForm />;
+    }
+
+    return <SignInUpGlobalScopeForm />;
+  }, [
+    isTwentyHomePage,
+    isMultiWorkspaceEnabled,
+    isTwentyWorkspaceSubdomain,
+    signInUpStep,
+    workspacePublicData,
+  ]);
+
   return (
     <>
       <AnimatedEaseIn>
@@ -32,16 +63,7 @@ export const SignInUp = () => {
       <Title animate>
         {`Welcome to ${workspacePublicData?.displayName ?? DEFAULT_WORKSPACE_NAME}`}
       </Title>
-      {isTwentyHomePage && isMultiWorkspaceEnabled ? (
-        <SignInUpGlobalScopeForm />
-      ) : (!isMultiWorkspaceEnabled ||
-          (isMultiWorkspaceEnabled && isTwentyWorkspaceSubdomain)) &&
-        signInUpStep === SignInUpStep.SSOIdentityProviderSelection ? (
-        <SignInUpSSOIdentityProviderSelection />
-      ) : workspacePublicData &&
-        (!isMultiWorkspaceEnabled || isTwentyWorkspaceSubdomain) ? (
-        <SignInUpWorkspaceScopeForm />
-      ) : null}
+      {signInUpForm}
       {signInUpStep !== SignInUpStep.Password && <FooterNote />}
     </>
   );
