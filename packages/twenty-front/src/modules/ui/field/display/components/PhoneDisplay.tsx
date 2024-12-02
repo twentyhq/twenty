@@ -12,11 +12,9 @@ type PhoneDisplayValueProps = {
   callingCode: string | null | undefined;
 };
 
-// TODO: see if we can find a faster way to format the phone number
 export const PhoneDisplay = ({
   value: { number, callingCode },
 }: PhoneDisplayProps) => {
-  // console.log('PhoneDisplay: number, callingCode', number, callingCode);
   if (!isDefined(number)) return <ContactLink href="#">{number}</ContactLink>;
 
   const callingCodeSanitized = callingCode?.replace('+', '');
@@ -37,8 +35,6 @@ export const PhoneDisplay = ({
 
   const URI = parsedPhoneNumber.getURI();
   const formatedPhoneNumber = parsedPhoneNumber.formatInternational();
-  // todo
-  // console.log('PhoneDisplay: formatedPhoneNumber', formatedPhoneNumber);
   return (
     <ContactLink
       href={URI}

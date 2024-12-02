@@ -1,7 +1,7 @@
 import { usePhonesField } from '@/object-record/record-field/meta-types/hooks/usePhonesField';
 import { PhonesFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/PhonesFieldMenuItem';
 import styled from '@emotion/styled';
-import { E164Number, parsePhoneNumber } from 'libphonenumber-js';
+import { CountryCode, E164Number, parsePhoneNumber } from 'libphonenumber-js';
 import { useMemo } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
@@ -9,8 +9,10 @@ import { TEXT_INPUT_STYLE, isDefined } from 'twenty-ui';
 
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
+import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
   font-family: ${({ theme }) => theme.font.family};
@@ -51,12 +53,10 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
   const { persistPhonesField, hotkeyScope, draftValue, fieldDefinition } =
     usePhonesField();
 
-  // console.log('before phones draftvalue', draftValue);
-
   const phones = useMemo<{ number: string; callingCode: string }[]>(
     () =>
       [
-        draftValue?.primaryPhoneCountryCode
+        draftValue?.primaryPhoneNumber
           ? {
               number: draftValue.primaryPhoneNumber,
               callingCode: draftValue.primaryPhoneCountryCode,
@@ -71,9 +71,15 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
     ],
   );
 
-  // todo: in order to have defaut country when adding a new phone, we should use the user's country
   const defaultCallingCode =
-    fieldDefinition?.defaultValue?.primaryPhoneCountryCode ?? '+1';
+    stripSimpleQuotesFromString(
+      fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
+    ) ?? '+1';
+
+  // TODO : improve once we store the real country code
+  const defaultCountry = useCountries().find(
+    (obj) => obj.callingCode === defaultCallingCode,
+  )?.countryCode as CountryCode;
 
   const handlePersistPhones = (
     updatedPhones: { number: string; callingCode: string }[],
@@ -135,6 +141,7 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
             international={true}
             withCountryCallingCode={true}
             countrySelectComponent={PhoneCountryPickerDropdownButton}
+            defaultCountry={defaultCountry}
           />
         );
       }}
