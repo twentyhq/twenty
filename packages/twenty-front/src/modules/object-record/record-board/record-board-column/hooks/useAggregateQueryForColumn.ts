@@ -19,6 +19,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import isEmpty from 'lodash.isempty';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const useAggregateQueryForColumn = () => {
@@ -145,10 +146,12 @@ const computeAggregateValueAndLabel = (
   if (isEmpty(data)) {
     return {};
   }
-  const kanbanAggregateOperationFieldName = objectMetadataItem.fields?.find(
+  const kanbanAggregateOperationField = objectMetadataItem.fields?.find(
     (field) =>
       field.id === recordIndexKanbanAggregateOperation?.fieldMetadataId,
-  )?.name;
+  );
+
+  const kanbanAggregateOperationFieldName = kanbanAggregateOperationField?.name;
 
   if (
     !isDefined(kanbanAggregateOperationFieldName) ||
@@ -160,11 +163,19 @@ const computeAggregateValueAndLabel = (
     };
   }
 
+  const aggregateValue =
+    data[kanbanAggregateOperationFieldName]?.[
+      recordIndexKanbanAggregateOperation.operation
+    ];
+
+  const value =
+    isDefined(aggregateValue) &&
+    kanbanAggregateOperationField?.type === FieldMetadataType.Currency
+      ? Number(aggregateValue) / 1000000
+      : aggregateValue;
+
   return {
-    value:
-      data[kanbanAggregateOperationFieldName][
-        recordIndexKanbanAggregateOperation.operation
-      ],
+    value,
     label: `${getAggregateOperationLabel(recordIndexKanbanAggregateOperation.operation)} of ${kanbanAggregateOperationFieldName}`,
   };
 };
