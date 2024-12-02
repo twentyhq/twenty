@@ -2,7 +2,6 @@ import { useDropdown } from '@/dropdown/hooks/useDropdown';
 import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
 import { aggregateDropdownState } from '@/object-record/record-board/record-board-column/states/aggregateDropdownState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
@@ -20,12 +19,14 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
 
   const { getIcon } = useIcons();
 
-  if (!isDefined(aggregateDropdown.operation)) return <></>;
+  const operation = aggregateDropdown.operation;
+
+  if (!isDefined(operation)) return <></>;
 
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
-        {getAggregateOperationLabel(aggregateDropdown.operation)}
+        {getAggregateOperationLabel(operation)}
       </DropdownMenuHeader>
       {aggregateDropdown.availableFieldIdsForOperation.map((fieldId) => {
         const fieldMetadata = objectMetadataItem.fields.find(
@@ -42,8 +43,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
               onClick={() => {
                 updateViewAggregate({
                   kanbanAggregateOperationFieldMetadataId: fieldId,
-                  kanbanAggregateOperation:
-                    aggregateDropdown.operation as AGGREGATE_OPERATIONS,
+                  kanbanAggregateOperation: operation,
                 });
                 closeDropdown();
               }}
