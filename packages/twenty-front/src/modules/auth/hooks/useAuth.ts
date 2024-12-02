@@ -19,7 +19,6 @@ import { billingState } from '@/client-config/states/billingState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -32,6 +31,7 @@ import {
 import { isDefined } from '~/utils/isDefined';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersStates';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { DateFormat } from '@/localization/constants/DateFormat';
 import { TimeFormat } from '@/localization/constants/TimeFormat';
 import { dateTimeFormatState } from '@/localization/states/dateTimeFormatState';
@@ -78,8 +78,8 @@ export const useAuth = () => {
           .getLoadable(authProvidersState)
           .getValue();
         const billing = snapshot.getLoadable(billingState).getValue();
-        const isSignInPrefilled = snapshot
-          .getLoadable(isSignInPrefilledState)
+        const isDeveloperDefaultSignInPrefilled = snapshot
+          .getLoadable(isDeveloperDefaultSignInPrefilledState)
           .getValue();
         const supportChat = snapshot.getLoadable(supportChatState).getValue();
         const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
@@ -96,7 +96,10 @@ export const useAuth = () => {
           set(iconsState, iconsValue);
           set(authProvidersState, authProvidersValue);
           set(billingState, billing);
-          set(isSignInPrefilledState, isSignInPrefilled);
+          set(
+            isDeveloperDefaultSignInPrefilledState,
+            isDeveloperDefaultSignInPrefilled,
+          );
           set(supportChatState, supportChat);
           set(isDebugModeState, isDebugMode);
           set(captchaProviderState, captchaProvider);

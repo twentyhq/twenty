@@ -10,6 +10,10 @@ import {
   WorkspaceMigrationColumnAlter,
   WorkspaceMigrationRenamedEnum,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import {
+  WorkspaceMigrationException,
+  WorkspaceMigrationExceptionCode,
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.exception';
 
 @Injectable()
 export class WorkspaceMigrationEnumService {
@@ -33,8 +37,14 @@ export class WorkspaceMigrationEnumService {
       );
     }
 
+    const oldEnumTypeName = await this.getEnumTypeName(
+      queryRunner,
+      schemaName,
+      tableName,
+      migrationColumn.currentColumnDefinition.columnName,
+    );
+
     const columnDefinition = migrationColumn.alteredColumnDefinition;
-    const oldEnumTypeName = `${tableName}_${migrationColumn.currentColumnDefinition.columnName}_enum`;
     const tempEnumTypeName = `${oldEnumTypeName}_temp`;
     const newEnumTypeName = `${tableName}_${columnDefinition.columnName}_enum`;
     const enumValues =
@@ -213,5 +223,28 @@ export class WorkspaceMigrationEnumService {
       ALTER TYPE "${schemaName}"."${oldEnumTypeName}"
       RENAME TO "${newEnumTypeName}"
     `);
+  }
+
+  private async getEnumTypeName(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    columnName: string,
+  ): Promise<string> {
+    const result = await queryRunner.query(
+      `SELECT udt_name FROM information_schema.columns WHERE table_schema = $1 AND table_name = $2 AND column_name = $3`,
+      [schemaName, tableName, columnName],
+    );
+
+    const enumTypeName = result[0].udt_name;
+
+    if (!enumTypeName) {
+      throw new WorkspaceMigrationException(
+        `Enum type name not found for column ${columnName} in table ${tableName} while trying to alter enum`,
+        WorkspaceMigrationExceptionCode.ENUM_TYPE_NAME_NOT_FOUND,
+      );
+    }
+
+    return enumTypeName;
   }
 }

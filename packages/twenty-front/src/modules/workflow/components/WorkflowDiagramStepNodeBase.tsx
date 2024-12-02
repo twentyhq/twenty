@@ -76,6 +76,7 @@ export const WorkflowDiagramStepNodeBase = ({
               </StyledStepNodeLabelIconContainer>
             );
           }
+          case 'RECORD_CRUD.UPDATE':
           case 'RECORD_CRUD.CREATE': {
             return (
               <StyledStepNodeLabelIconContainer>
@@ -87,8 +88,8 @@ export const WorkflowDiagramStepNodeBase = ({
               </StyledStepNodeLabelIconContainer>
             );
           }
-          case 'RECORD_CRUD.DELETE':
-          case 'RECORD_CRUD.UPDATE': {
+
+          case 'RECORD_CRUD.DELETE': {
             return null;
           }
         }

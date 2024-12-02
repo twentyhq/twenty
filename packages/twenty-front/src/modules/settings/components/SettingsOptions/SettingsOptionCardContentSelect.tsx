@@ -5,16 +5,9 @@ import {
   StyledSettingsOptionCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsOptionCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
-import { Select } from '@/ui/input/components/Select';
+import { Select, SelectValue } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui';
-
-const StyledSettingsOptionCardSelect = styled(Select)`
-  margin-left: auto;
-  width: 120px;
-`;
-
-type SelectValue = string | number | boolean | null;
 
 type SettingsOptionCardContentSelectProps<Value extends SelectValue> = {
   Icon?: IconComponent;
@@ -23,7 +16,7 @@ type SettingsOptionCardContentSelectProps<Value extends SelectValue> = {
   divider?: boolean;
   disabled?: boolean;
   value: Value;
-  onChange: (value: SelectValue) => void;
+  onChange: (value: Value) => void;
   options: {
     value: Value;
     label: string;
@@ -33,6 +26,10 @@ type SettingsOptionCardContentSelectProps<Value extends SelectValue> = {
   dropdownId: string;
   fullWidth?: boolean;
 };
+
+const StyledSelectContainer = styled.div`
+  margin-left: auto;
+`;
 
 export const SettingsOptionCardContentSelect = <Value extends SelectValue>({
   Icon,
@@ -60,16 +57,18 @@ export const SettingsOptionCardContentSelect = <Value extends SelectValue>({
           {description}
         </StyledSettingsOptionCardDescription>
       </div>
-      <StyledSettingsOptionCardSelect
-        className={selectClassName}
-        dropdownWidth={fullWidth ? 'auto' : 120}
-        disabled={disabled}
-        dropdownId={dropdownId}
-        value={value}
-        onChange={onChange}
-        options={options}
-        selectSizeVariant="small"
-      />
+      <StyledSelectContainer>
+        <Select<Value>
+          className={selectClassName}
+          dropdownWidth={fullWidth ? 'auto' : 120}
+          disabled={disabled}
+          dropdownId={dropdownId}
+          value={value}
+          onChange={onChange}
+          options={options}
+          selectSizeVariant="small"
+        />
+      </StyledSelectContainer>
     </StyledSettingsOptionCardContent>
   );
 };

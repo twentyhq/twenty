@@ -1,6 +1,6 @@
-import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableNoRecordGroupRows } from '@/object-record/record-table/components/RecordTableNoRecordGroupRows';
-import { RecordTableBodyDragDropContext } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDragDropContext';
+import { RecordTableBodyDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDragDropContextProvider';
 import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTablePendingRow } from '@/object-record/record-table/record-table-row/components/RecordTablePendingRow';
@@ -8,24 +8,24 @@ import { isRecordTableInitialLoadingComponentState } from '@/object-record/recor
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTableNoRecordGroupBody = () => {
-  const allRowIds = useRecoilComponentValueV2(
-    recordIndexAllRowIdsComponentState,
+  const allRecordIds = useRecoilComponentValueV2(
+    recordIndexAllRecordIdsComponentSelector,
   );
 
   const isRecordTableInitialLoading = useRecoilComponentValueV2(
     isRecordTableInitialLoadingComponentState,
   );
 
-  if (isRecordTableInitialLoading && allRowIds.length === 0) {
+  if (isRecordTableInitialLoading && allRecordIds.length === 0) {
     return <RecordTableBodyLoading />;
   }
 
   return (
-    <RecordTableBodyDragDropContext>
+    <RecordTableBodyDragDropContextProvider>
       <RecordTableBodyDroppable>
         <RecordTablePendingRow />
         <RecordTableNoRecordGroupRows />
       </RecordTableBodyDroppable>
-    </RecordTableBodyDragDropContext>
+    </RecordTableBodyDragDropContextProvider>
   );
 };

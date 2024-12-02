@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString, isNull } from '@sniptt/guards';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
-import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { RecordTableStickyEffect } from '@/object-record/record-table/components/RecordTableStickyEffect';
@@ -53,8 +53,8 @@ export const RecordTable = ({
     recordTableId,
   );
 
-  const allRowIds = useRecoilComponentValueV2(
-    recordIndexAllRowIdsComponentState,
+  const allRecordIds = useRecoilComponentValueV2(
+    recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
 
@@ -70,7 +70,7 @@ export const RecordTable = ({
 
   const recordTableIsEmpty =
     !isRecordTableInitialLoading &&
-    allRowIds.length === 0 &&
+    allRecordIds.length === 0 &&
     isNull(pendingRecordId);
 
   const { resetTableRowSelection, setRowSelected } = useRecordTable({

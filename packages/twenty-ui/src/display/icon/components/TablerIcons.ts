@@ -133,6 +133,7 @@ export {
   IconFlag,
   IconFocusCentered,
   IconFolder,
+  IconFolderOpen,
   IconFolderPlus,
   IconForbid,
   IconFunction,
