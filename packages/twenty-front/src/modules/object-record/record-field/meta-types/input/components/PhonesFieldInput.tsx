@@ -53,23 +53,20 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
   const { persistPhonesField, hotkeyScope, draftValue, fieldDefinition } =
     usePhonesField();
 
-  const phones = useMemo<{ number: string; callingCode: string }[]>(
-    () =>
-      [
-        draftValue?.primaryPhoneNumber
-          ? {
-              number: draftValue.primaryPhoneNumber,
-              callingCode: draftValue.primaryPhoneCountryCode,
-            }
-          : null,
-        ...(draftValue?.additionalPhones ?? []),
-      ].filter(isDefined),
-    [
-      draftValue?.primaryPhoneNumber,
-      draftValue?.primaryPhoneCountryCode,
-      draftValue?.additionalPhones,
-    ],
-  );
+  const phones = useMemo<{ number: string; callingCode: string }[]>(() => {
+    if (!isDefined(draftValue)) {
+      return [];
+    }
+    return [
+      draftValue.primaryPhoneNumber
+        ? {
+            number: draftValue.primaryPhoneNumber,
+            callingCode: draftValue.primaryPhoneCountryCode,
+          }
+        : null,
+      ...(draftValue.additionalPhones ?? []),
+    ].filter(isDefined);
+  }, [draftValue]);
 
   const defaultCallingCode =
     stripSimpleQuotesFromString(
