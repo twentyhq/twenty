@@ -44,20 +44,18 @@ export const useFieldMetadataItem = () => {
 
   const activateMetadataField = (
     fieldMetadataId: string,
-    objectMetadataId: string,
+    _objectMetadataId: string,
   ) =>
     updateOneFieldMetadataItem({
-      objectMetadataId: objectMetadataId,
       fieldMetadataIdToUpdate: fieldMetadataId,
       updatePayload: { isActive: true },
     });
 
   const deactivateMetadataField = (
     fieldMetadataId: string,
-    objectMetadataId: string,
+    _objectMetadataId: string,
   ) =>
     updateOneFieldMetadataItem({
-      objectMetadataId: objectMetadataId,
       fieldMetadataIdToUpdate: fieldMetadataId,
       updatePayload: { isActive: false },
     });

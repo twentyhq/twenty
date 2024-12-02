@@ -111,7 +111,6 @@ export const SettingsObjectFieldEdit = () => {
 
         if (isDefined(relationFieldMetadataItem)) {
           await updateOneFieldMetadataItem({
-            objectMetadataId: objectMetadataItem.id,
             fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
             updatePayload: formValues.relation.field,
           });
@@ -127,7 +126,6 @@ export const SettingsObjectFieldEdit = () => {
         );
 
         await updateOneFieldMetadataItem({
-          objectMetadataId: objectMetadataItem.id,
           fieldMetadataIdToUpdate: fieldMetadataItem.id,
           updatePayload: formattedInput,
         });

@@ -22,11 +22,9 @@ export const useUpdateOneFieldMetadataItem = () => {
   });
 
   const updateOneFieldMetadataItem = async ({
-    objectMetadataId,
     fieldMetadataIdToUpdate,
     updatePayload,
   }: {
-    objectMetadataId: string;
     fieldMetadataIdToUpdate: UpdateOneFieldMetadataItemMutationVariables['idToUpdate'];
     updatePayload: Pick<
       UpdateOneFieldMetadataItemMutationVariables['updatePayload'],
