@@ -1,12 +1,10 @@
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
 import { renderHook } from '@testing-library/react';
-import { useCreateStep } from '../useCreateStep';
+import { useDeleteStep } from '@/workflow/hooks/useDeleteStep';
 
-const mockOpenRightDrawer = jest.fn();
+const mockCloseRightDrawer = jest.fn();
 const mockCreateNewWorkflowVersion = jest.fn();
-const mockCreateWorkflowVersionStep = jest.fn().mockResolvedValue({
-  data: { createWorkflowVersionStep: { id: '1' } },
-});
+const mockDeleteWorkflowVersionStep = jest.fn();
 
 jest.mock('recoil', () => ({
   useRecoilValue: () => 'parent-step-id',
@@ -16,13 +14,13 @@ jest.mock('recoil', () => ({
 
 jest.mock('@/ui/layout/right-drawer/hooks/useRightDrawer', () => ({
   useRightDrawer: () => ({
-    openRightDrawer: mockOpenRightDrawer,
+    closeRightDrawer: mockCloseRightDrawer,
   }),
 }));
 
-jest.mock('@/workflow/hooks/useCreateWorkflowVersionStep', () => ({
-  useCreateWorkflowVersionStep: () => ({
-    createWorkflowVersionStep: mockCreateWorkflowVersionStep,
+jest.mock('@/workflow/hooks/useDeleteWorkflowVersionStep', () => ({
+  useDeleteWorkflowVersionStep: () => ({
+    deleteWorkflowVersionStep: mockDeleteWorkflowVersionStep,
   }),
 }));
 
@@ -32,7 +30,7 @@ jest.mock('@/workflow/hooks/useCreateNewWorkflowVersion', () => ({
   }),
 }));
 
-describe('useCreateStep', () => {
+describe('useDeleteStep', () => {
   const mockWorkflow = {
     id: '123',
     currentVersion: {
@@ -44,15 +42,14 @@ describe('useCreateStep', () => {
     versions: [],
   };
 
-  it('should create step in draft version', async () => {
+  it('should delete step in draft version', async () => {
     const { result } = renderHook(() =>
-      useCreateStep({
+      useDeleteStep({
         workflow: mockWorkflow as unknown as WorkflowWithCurrentVersion,
       }),
     );
-    await result.current.createStep('CODE');
+    await result.current.deleteStep('1');
 
-    expect(mockCreateWorkflowVersionStep).toHaveBeenCalled();
-    expect(mockOpenRightDrawer).toHaveBeenCalled();
+    expect(mockDeleteWorkflowVersionStep).toHaveBeenCalled();
   });
 });
