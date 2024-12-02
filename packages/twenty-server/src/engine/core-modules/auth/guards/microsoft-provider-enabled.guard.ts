@@ -17,7 +17,7 @@ export class MicrosoftProviderEnabledGuard implements CanActivate {
     if (!this.environmentService.get('AUTH_MICROSOFT_ENABLED')) {
       throw new AuthException(
         'Microsoft auth is not enabled',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        AuthExceptionCode.ENVIRONMENT_VARIABLES_NOT_FOUND,
       );
     }
 

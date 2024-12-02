@@ -2,13 +2,14 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'class-validator';
 import FileType from 'file-type';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import { isDefined } from 'class-validator';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
   AuthExceptionCode,
@@ -18,6 +19,7 @@ import {
   compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -26,9 +28,7 @@ import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -300,7 +300,7 @@ export class SignInUpService {
     if (this.environmentService.get('IS_SIGN_UP_DISABLED')) {
       throw new AuthException(
         'Sign up is disabled',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        AuthExceptionCode.ENVIRONMENT_VARIABLES_NOT_FOUND,
       );
     }
 

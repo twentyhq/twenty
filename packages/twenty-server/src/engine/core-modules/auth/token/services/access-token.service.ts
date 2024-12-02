@@ -44,7 +44,7 @@ export class AccessTokenService {
     if (!expiresIn) {
       throw new AuthException(
         'Expiration time for access token is not set',
-        AuthExceptionCode.INTERNAL_SERVER_ERROR,
+        AuthExceptionCode.ENVIRONMENT_VARIABLES_NOT_FOUND,
       );
     }
 
