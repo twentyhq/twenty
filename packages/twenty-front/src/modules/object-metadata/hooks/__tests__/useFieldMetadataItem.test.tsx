@@ -5,7 +5,9 @@ import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataIt
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType, RelationDefinitionType } from '~/generated/graphql';
 
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+import { mockedUserData } from '~/testing/mock-data/users';
 import {
   FIELD_METADATA_ID,
   FIELD_RELATION_METADATA_ID,
@@ -23,7 +25,7 @@ const fieldMetadataItem: FieldMetadataItem = {
   name: 'name',
   type: FieldMetadataType.Text,
   updatedAt: '',
-  isLabelSyncedWithName: true,
+  isLabelSyncedWithName: false,
 };
 
 const fieldRelationMetadataItem: FieldMetadataItem = {
@@ -33,7 +35,7 @@ const fieldRelationMetadataItem: FieldMetadataItem = {
   name: 'name',
   type: FieldMetadataType.Relation,
   updatedAt: '',
-  isLabelSyncedWithName: true,
+  isLabelSyncedWithName: false,
   relationDefinition: {
     relationId: RELATION_METADATA_ID,
     direction: RelationDefinitionType.OneToMany,
@@ -136,6 +138,16 @@ const mocks = [
     result: jest.fn(() => ({
       data: {
         updateOneField: responseData.default,
+      },
+    })),
+  },
+  {
+    request: {
+      query: GET_CURRENT_USER,
+    },
+    result: jest.fn(() => ({
+      data: {
+        currentUser: mockedUserData,
       },
     })),
   },

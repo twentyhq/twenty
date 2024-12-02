@@ -16,6 +16,7 @@ const baseFields = `
   isCustom
   isActive
   isNullable
+  isLabelSyncedWithName
   createdAt
   updatedAt
   settings
@@ -95,6 +96,7 @@ export const queries = {
         settings
         defaultValue
         options
+        isLabelSyncedWithName
       }
     }
   `,
@@ -121,6 +123,7 @@ export const variables = {
         settings: undefined,
         objectMetadataId,
         type: 'TEXT',
+        isLabelSyncedWithName: false,
       },
     },
   },
@@ -140,6 +143,7 @@ const defaultResponseData = {
   isCustom: false,
   isActive: true,
   isNullable: false,
+  isLabelSyncedWithName: false,
   createdAt: '1977-09-28T13:56:55.157Z',
   updatedAt: '1996-10-10T08:27:57.117Z',
   settings: undefined,

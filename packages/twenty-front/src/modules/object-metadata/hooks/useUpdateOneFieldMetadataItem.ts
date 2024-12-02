@@ -9,14 +9,27 @@ import {
 import { UPDATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { useSetRecoilState } from 'recoil';
+import { isDefined } from 'twenty-ui';
+import { useGetCurrentUserQuery } from '~/generated/graphql';
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useUpdateOneFieldMetadataItem = () => {
   const apolloMetadataClient = useApolloMetadataClient();
   const apolloClient = useApolloClient();
+
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+
+  const { refetch: refetchCurrentUser } = useGetCurrentUserQuery({
+    onCompleted: (data) => {
+      if (isDefined(data?.currentUser?.defaultWorkspace)) {
+        setCurrentWorkspace(data.currentUser.defaultWorkspace);
+      }
+    },
+  });
 
   const { findManyRecordsQuery } = useFindManyRecordsQuery({
     objectNameSingular: CoreObjectNameSingular.View,
@@ -70,10 +83,7 @@ export const useUpdateOneFieldMetadataItem = () => {
       refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
     });
 
-    await apolloClient.query({
-      query: GET_CURRENT_USER,
-      fetchPolicy: 'network-only',
-    });
+    await refetchCurrentUser();
 
     await apolloClient.query({
       query: findManyRecordsQuery,
