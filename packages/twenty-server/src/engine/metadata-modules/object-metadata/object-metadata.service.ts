@@ -10,6 +10,7 @@ import { FindManyOptions, FindOneOptions, In, Not, Repository } from 'typeorm';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/index-metadata.service';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
@@ -26,11 +27,11 @@ import {
   validateObjectMetadataInputOrThrow,
 } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
-import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { SearchService } from 'src/engine/metadata-modules/search/search.service';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { isSearchableFieldType } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-searchable-field.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -54,6 +55,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly objectMetadataRelationService: ObjectMetadataRelationService,
     private readonly objectMetadataMigrationService: ObjectMetadataMigrationService,
     private readonly objectMetadataRelatedRecordsService: ObjectMetadataRelatedRecordsService,
+    private readonly indexMetadataService: IndexMetadataService,
   ) {
     super(objectMetadataRepository);
   }
@@ -118,6 +120,21 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         : buildDefaultFieldsForCustomObject(objectMetadataInput.workspaceId),
     });
 
+    const labelIdentifierFieldMetadata = createdObjectMetadata.fields.find(
+      (field) => field.standardId === CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
+    );
+
+    if (!labelIdentifierFieldMetadata) {
+      throw new ObjectMetadataException(
+        'Label identifier field metadata not created properly',
+        ObjectMetadataExceptionCode.MISSING_CUSTOM_OBJECT_DEFAULT_LABEL_IDENTIFIER_FIELD,
+      );
+    }
+
+    await this.objectMetadataRepository.update(createdObjectMetadata.id, {
+      labelIdentifierFieldMetadataId: labelIdentifierFieldMetadata.id,
+    });
+
     if (objectMetadataInput.isRemote) {
       await this.remoteTableRelationsService.createForeignKeysMetadataAndMigrations(
         objectMetadataInput.workspaceId,
@@ -126,18 +143,29 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput.primaryKeyColumnType,
       );
     } else {
-      await this.objectMetadataMigrationService.createObjectMigration(
+      await this.objectMetadataMigrationService.createTableMigration(
         createdObjectMetadata,
       );
 
-      await this.objectMetadataMigrationService.createFieldMigrations(
+      await this.objectMetadataMigrationService.createColumnsMigrations(
         createdObjectMetadata,
         createdObjectMetadata.fields,
       );
 
-      await this.createRelationsMetadataAndMigrations(
-        objectMetadataInput,
+      const createdRelatedObjectMetadataCollection =
+        await this.objectMetadataRelationService.createRelationsAndForeignKeysMetadata(
+          objectMetadataInput.workspaceId,
+          createdObjectMetadata,
+          {
+            primaryKeyFieldMetadataSettings:
+              objectMetadataInput.primaryKeyFieldMetadataSettings,
+            primaryKeyColumnType: objectMetadataInput.primaryKeyColumnType,
+          },
+        );
+
+      await this.objectMetadataMigrationService.createRelationMigrations(
         createdObjectMetadata,
+        createdRelatedObjectMetadataCollection,
       );
 
       await this.searchService.createSearchVectorFieldForObject(
@@ -178,26 +206,29 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
-    const fullObjectMetadataAfterUpdate = {
+    const existingObjectMetadataCombinedWithUpdateInput = {
       ...existingObjectMetadata,
       ...input.update,
     };
 
     await this.validatesNoOtherObjectWithSameNameExistsOrThrows({
-      objectMetadataNameSingular: fullObjectMetadataAfterUpdate.nameSingular,
-      objectMetadataNamePlural: fullObjectMetadataAfterUpdate.namePlural,
+      objectMetadataNameSingular:
+        existingObjectMetadataCombinedWithUpdateInput.nameSingular,
+      objectMetadataNamePlural:
+        existingObjectMetadataCombinedWithUpdateInput.namePlural,
       workspaceId: workspaceId,
-      existingObjectMetadataId: fullObjectMetadataAfterUpdate.id,
+      existingObjectMetadataId:
+        existingObjectMetadataCombinedWithUpdateInput.id,
     });
 
-    if (fullObjectMetadataAfterUpdate.isLabelSyncedWithName) {
+    if (existingObjectMetadataCombinedWithUpdateInput.isLabelSyncedWithName) {
       validateNameAndLabelAreSyncOrThrow(
-        fullObjectMetadataAfterUpdate.labelSingular,
-        fullObjectMetadataAfterUpdate.nameSingular,
+        existingObjectMetadataCombinedWithUpdateInput.labelSingular,
+        existingObjectMetadataCombinedWithUpdateInput.nameSingular,
       );
       validateNameAndLabelAreSyncOrThrow(
-        fullObjectMetadataAfterUpdate.labelPlural,
-        fullObjectMetadataAfterUpdate.namePlural,
+        existingObjectMetadataCombinedWithUpdateInput.labelPlural,
+        existingObjectMetadataCombinedWithUpdateInput.namePlural,
       );
     }
 
@@ -206,8 +237,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       isDefined(input.update.namePlural)
     ) {
       validateNameSingularAndNamePluralAreDifferentOrThrow(
-        fullObjectMetadataAfterUpdate.nameSingular,
-        fullObjectMetadataAfterUpdate.namePlural,
+        existingObjectMetadataCombinedWithUpdateInput.nameSingular,
+        existingObjectMetadataCombinedWithUpdateInput.namePlural,
       );
     }
 
@@ -215,12 +246,12 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     await this.handleObjectNameAndLabelUpdates(
       existingObjectMetadata,
-      fullObjectMetadataAfterUpdate,
+      existingObjectMetadataCombinedWithUpdateInput,
       input,
     );
 
     if (input.update.isActive !== undefined) {
-      await this.objectMetadataRelationService.updateObjectRelationships(
+      await this.objectMetadataRelationService.updateObjectRelationshipsActivationStatus(
         input.id,
         input.update.isActive,
       );
@@ -380,38 +411,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
   }
 
-  private async createRelationsMetadataAndMigrations(
-    objectMetadataInput: CreateObjectInput,
-    createdObjectMetadata: ObjectMetadataEntity,
-  ) {
-    const relatedObjectTypes = [
-      'timelineActivity',
-      'favorite',
-      'attachment',
-      'noteTarget',
-      'taskTarget',
-    ];
-
-    const createdRelatedObjectMetadata = await Promise.all(
-      relatedObjectTypes.map(async (relationType) =>
-        this.objectMetadataRelationService.createMetadata(
-          objectMetadataInput.workspaceId,
-          createdObjectMetadata,
-          mapUdtNameToFieldType(
-            objectMetadataInput.primaryKeyColumnType ?? 'uuid',
-          ),
-          objectMetadataInput.primaryKeyFieldMetadataSettings,
-          relationType,
-        ),
-      ),
-    );
-
-    await this.objectMetadataMigrationService.createRelationMigrations(
-      createdObjectMetadata,
-      createdRelatedObjectMetadata,
-    );
-  }
-
   private async handleObjectNameAndLabelUpdates(
     existingObjectMetadata: ObjectMetadataEntity,
     objectMetadataForUpdate: ObjectMetadataEntity,
@@ -431,17 +430,40 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataForUpdate.workspaceId,
       );
 
-      await this.objectMetadataMigrationService.createStandardRelationsUpdatesMigrations(
+      const relationsAndForeignKeysMetadata =
+        await this.objectMetadataRelationService.updateRelationsAndForeignKeysMetadata(
+          objectMetadataForUpdate.workspaceId,
+          objectMetadataForUpdate,
+        );
+
+      await this.objectMetadataMigrationService.createUpdateForeignKeysMigrations(
         existingObjectMetadata,
+        objectMetadataForUpdate,
+        relationsAndForeignKeysMetadata,
+        objectMetadataForUpdate.workspaceId,
+      );
+
+      await this.objectMetadataMigrationService.recomputeEnumNames(
         objectMetadataForUpdate,
         objectMetadataForUpdate.workspaceId,
       );
-    }
 
-    if (input.update.labelPlural || input.update.icon) {
+      const recomputedIndexes =
+        await this.indexMetadataService.recomputeIndexMetadataForObject(
+          objectMetadataForUpdate.workspaceId,
+          objectMetadataForUpdate,
+        );
+
+      await this.indexMetadataService.createIndexRecomputeMigrations(
+        objectMetadataForUpdate.workspaceId,
+        objectMetadataForUpdate,
+        recomputedIndexes,
+      );
+
       if (
-        !(input.update.labelPlural === existingObjectMetadata.labelPlural) ||
-        !(input.update.icon === existingObjectMetadata.icon)
+        (input.update.labelPlural || input.update.icon) &&
+        (input.update.labelPlural !== existingObjectMetadata.labelPlural ||
+          input.update.icon !== existingObjectMetadata.icon)
       ) {
         await this.objectMetadataRelatedRecordsService.updateObjectViews(
           objectMetadataForUpdate,

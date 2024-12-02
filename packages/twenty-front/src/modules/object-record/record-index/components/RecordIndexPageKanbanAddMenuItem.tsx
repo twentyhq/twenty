@@ -1,7 +1,9 @@
+import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { useRecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/hooks/useRecordIndexPageKanbanAddMenuItem';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import { MenuItem, Tag } from 'twenty-ui';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledMenuItem = styled(MenuItem)`
   width: calc(100% - 2 * var(--horizontal-padding));
@@ -9,20 +11,18 @@ const StyledMenuItem = styled(MenuItem)`
 
 type RecordIndexPageKanbanAddMenuItemProps = {
   columnId: string;
-  recordIndexId: string;
   onItemClick: (columnDefinition: any) => void;
 };
 
 export const RecordIndexPageKanbanAddMenuItem = ({
   columnId,
-  recordIndexId,
   onItemClick,
 }: RecordIndexPageKanbanAddMenuItemProps) => {
-  const { columnDefinition } = useRecordIndexPageKanbanAddMenuItem(
-    recordIndexId,
-    columnId,
+  const recordGroupDefinition = useRecoilValue(
+    recordGroupDefinitionFamilyState(columnId),
   );
-  if (!columnDefinition) {
+
+  if (!isDefined(recordGroupDefinition)) {
     return null;
   }
 
@@ -31,24 +31,24 @@ export const RecordIndexPageKanbanAddMenuItem = ({
       text={
         <Tag
           variant={
-            columnDefinition.type === RecordGroupDefinitionType.Value
+            recordGroupDefinition.type === RecordGroupDefinitionType.Value
               ? 'solid'
               : 'outline'
           }
           color={
-            columnDefinition.type === RecordGroupDefinitionType.Value
-              ? columnDefinition.color
+            recordGroupDefinition.type === RecordGroupDefinitionType.Value
+              ? recordGroupDefinition.color
               : 'transparent'
           }
-          text={columnDefinition.title}
+          text={recordGroupDefinition.title}
           weight={
-            columnDefinition.type === RecordGroupDefinitionType.Value
+            recordGroupDefinition.type === RecordGroupDefinitionType.Value
               ? 'regular'
               : 'medium'
           }
         />
       }
-      onClick={() => onItemClick(columnDefinition)}
+      onClick={() => onItemClick(recordGroupDefinition)}
     />
   );
 };

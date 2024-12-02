@@ -18,8 +18,8 @@ export const useRegisterInputEvents = <T>({
   inputRef: React.RefObject<any>;
   copyRef?: React.RefObject<any>;
   inputValue: T;
-  onEscape: (inputValue: T) => void;
-  onEnter: (inputValue: T) => void;
+  onEscape?: (inputValue: T) => void;
+  onEnter?: (inputValue: T) => void;
   onTab?: (inputValue: T) => void;
   onShiftTab?: (inputValue: T) => void;
   onClickOutside?: (event: MouseEvent | TouchEvent, inputValue: T) => void;

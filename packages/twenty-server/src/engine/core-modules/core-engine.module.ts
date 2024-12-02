@@ -3,6 +3,7 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
+import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -70,6 +71,7 @@ import { FileModule } from './file/file.module';
     WorkspaceEventEmitterModule,
     ActorModule,
     TelemetryModule,
+    AdminPanelModule,
     EnvironmentModule.forRoot({}),
     RedisClientModule,
     FileStorageModule.forRootAsync({

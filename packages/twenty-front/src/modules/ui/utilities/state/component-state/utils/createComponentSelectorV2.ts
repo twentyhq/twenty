@@ -14,6 +14,7 @@ import { isDefined } from 'twenty-ui';
 export function createComponentSelectorV2<ValueType>(options: {
   key: string;
   get: SelectorGetter<ValueType, ComponentStateKeyV2>;
+  set?: never;
   componentInstanceContext: ComponentInstanceStateContext<any> | null;
 }): ComponentReadOnlySelectorV2<ValueType>;
 

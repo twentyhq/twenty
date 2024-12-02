@@ -7,15 +7,16 @@ This is not related in anyway to the main app, which you can find in twenty-fron
 ## Getting Started
 
 We're using Next.JS
+We're using Postgres for the database. Mandatory for the website to work, even locally.
 
-Copy the .env.example file to .env and fill in the values.
+1. Copy the .env.example file to .env and fill in the values.
 
-Run the migrations:
+2. Run the migrations:
 ```bash
 npx nx run twenty-website:database:migrate
 ```
 
-From the root directory:
+3. From the root directory:
 ```bash
 npx nx run twenty-website:dev
 ```

@@ -76,7 +76,7 @@ export const Invite = () => {
   return (
     <>
       <AnimatedEaseIn>
-        <Logo workspaceLogo={workspaceFromInviteHash?.logo} />
+        <Logo secondaryLogo={workspaceFromInviteHash?.logo} />
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
       {isDefined(currentUser) ? (

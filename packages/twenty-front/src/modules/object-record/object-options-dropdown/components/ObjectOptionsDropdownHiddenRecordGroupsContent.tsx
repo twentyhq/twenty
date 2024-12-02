@@ -10,46 +10,50 @@ import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObje
 
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
-import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
+import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
+import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   const {
     currentContentId,
-    viewType,
     recordIndexId,
     objectMetadataItem,
     onContentChange,
     closeDropdown,
   } = useOptionsDropdown();
 
-  const { objectNamePlural } = useObjectNamePluralFromSingular({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
+  const recordGroupFieldMetadata = useRecoilComponentValueV2(
+    recordGroupFieldMetadataComponentState,
+  );
 
-  const { hiddenRecordGroups, viewGroupFieldMetadataItem } = useRecordGroups({
+  const hiddenRecordGroupIds = useRecoilComponentValueV2(
+    hiddenRecordGroupIdsComponentSelector,
+  );
+
+  const { objectNamePlural } = useObjectNamePluralFromSingular({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
 
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
     useRecordGroupVisibility({
       viewBarId: recordIndexId,
-      viewType,
     });
 
   const viewGroupSettingsUrl = getSettingsPagePath(
     SettingsPath.ObjectFieldEdit,
     {
       objectSlug: objectNamePlural,
-      fieldSlug: viewGroupFieldMetadataItem?.name ?? '',
+      fieldSlug: recordGroupFieldMetadata?.name ?? '',
     },
   );
 
@@ -61,11 +65,11 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
-      hiddenRecordGroups.length === 0
+      hiddenRecordGroupIds.length === 0
     ) {
       onContentChange('recordGroups');
     }
-  }, [hiddenRecordGroups, currentContentId, onContentChange]);
+  }, [hiddenRecordGroupIds, currentContentId, onContentChange]);
 
   return (
     <>
@@ -74,13 +78,13 @@ export const ObjectOptionsDropdownHiddenRecordGroupsContent = () => {
           StartIcon={IconChevronLeft}
           onClick={() => onContentChange('recordGroups')}
         >
-          Hidden {viewGroupFieldMetadataItem?.label}
+          Hidden {recordGroupFieldMetadata?.label}
         </DropdownMenuHeader>
       </DropdownMenuItemsContainer>
 
       <RecordGroupsVisibilityDropdownSection
-        title={`Hidden ${viewGroupFieldMetadataItem?.label}`}
-        recordGroups={hiddenRecordGroups}
+        title={`Hidden ${recordGroupFieldMetadata?.label}`}
+        recordGroupIds={hiddenRecordGroupIds}
         onVisibilityChange={handleRecordGroupVisibilityChange}
         isDraggable={false}
         showSubheader={false}

@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
 import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
 import {
@@ -15,6 +16,8 @@ export const useDeleteOneStep = ({
   stepId: string;
   workflow: WorkflowWithCurrentVersion;
 }) => {
+  const { closeRightDrawer } = useRightDrawer();
+
   const { updateOneRecord: updateOneWorkflowVersion } =
     useUpdateOneRecord<WorkflowVersion>({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
@@ -23,6 +26,8 @@ export const useDeleteOneStep = ({
   const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
 
   const deleteOneStep = async () => {
+    closeRightDrawer();
+
     if (workflow.currentVersion.status !== 'DRAFT') {
       const newVersionName = `v${workflow.versions.length + 1}`;
 

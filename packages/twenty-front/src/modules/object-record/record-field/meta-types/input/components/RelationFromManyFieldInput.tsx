@@ -9,7 +9,7 @@ import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEv
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
 import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
-import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
+import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 type RelationFromManyFieldInputProps = {
@@ -20,9 +20,9 @@ export const RelationFromManyFieldInput = ({
   onSubmit,
 }: RelationFromManyFieldInputProps) => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
-  const relationPickerScopeId = `relation-picker-${fieldDefinition.fieldMetadataId}`;
+  const recordPickerInstanceId = `record-picker-${fieldDefinition.fieldMetadataId}`;
   const { updateRelation } = useUpdateRelationFromManyFieldInput({
-    scopeId: relationPickerScopeId,
+    scopeId: recordPickerInstanceId,
   });
 
   const handleSubmit = () => {
@@ -51,11 +51,13 @@ export const RelationFromManyFieldInput = ({
       recordId,
     });
 
-  const { dropdownPlacement } = useDropdown(relationPickerScopeId);
+  const { dropdownPlacement } = useDropdown(recordPickerInstanceId);
 
   return (
     <>
-      <RelationPickerScope relationPickerScopeId={relationPickerScopeId}>
+      <RecordPickerComponentInstanceContext.Provider
+        value={{ instanceId: recordPickerInstanceId }}
+      >
         <RelationFromManyFieldInputMultiRecordsEffect />
         <MultiRecordSelect
           onSubmit={handleSubmit}
@@ -63,7 +65,7 @@ export const RelationFromManyFieldInput = ({
           onCreate={createNewRecordAndOpenRightDrawer}
           dropdownPlacement={dropdownPlacement}
         />
-      </RelationPickerScope>
+      </RecordPickerComponentInstanceContext.Provider>
     </>
   );
 };

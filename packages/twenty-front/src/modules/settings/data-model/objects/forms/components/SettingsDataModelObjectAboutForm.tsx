@@ -109,6 +109,7 @@ export const SettingsDataModelObjectAboutForm = ({
   watch('nameSingular');
   watch('namePlural');
   watch('description');
+  watch('icon');
   const apiNameTooltipText = isLabelSyncedWithName
     ? 'Deactivate "Synchronize Objects Labels and API Names" to set a custom API name'
     : 'Input must be in camel case and cannot start with a number';
@@ -152,7 +153,10 @@ export const SettingsDataModelObjectAboutForm = ({
               <IconPicker
                 disabled={disableEdition}
                 selectedIconKey={value}
-                onChange={({ iconKey }) => onChange(iconKey)}
+                onChange={({ iconKey }) => {
+                  onChange(iconKey);
+                  onBlur?.();
+                }}
               />
             )}
           />

@@ -24,7 +24,7 @@ import { isFieldRelationToOneValue } from '@/object-record/record-field/types/gu
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 
 import { isFieldArray } from '@/object-record/record-field/types/guards/isFieldArray';
 import { isFieldArrayValue } from '@/object-record/record-field/types/guards/isFieldArrayValue';
@@ -141,7 +141,7 @@ export const usePersistField = () => {
           );
 
           if (fieldIsRelationToOneObject) {
-            const value = valueToPersist as EntityForSelect;
+            const value = valueToPersist as RecordForSelect;
             updateRecord?.({
               variables: {
                 where: { id: recordId },

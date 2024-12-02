@@ -85,8 +85,8 @@ export class MessagingMessagesImportService {
           );
       } catch (error) {
         switch (error.code) {
-          case (RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED,
-          RefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND):
+          case RefreshAccessTokenExceptionCode.REFRESH_ACCESS_TOKEN_FAILED:
+          case RefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
             await this.messagingTelemetryService.track({
               eventName: `refresh_token.error.insufficient_permissions`,
               workspaceId,
@@ -191,7 +191,7 @@ export class MessagingMessagesImportService {
 
       await this.messageImportErrorHandlerService.handleDriverException(
         error,
-        MessageImportSyncStep.PARTIAL_MESSAGE_LIST_FETCH,
+        MessageImportSyncStep.MESSAGES_IMPORT,
         messageChannel,
         workspaceId,
       );
