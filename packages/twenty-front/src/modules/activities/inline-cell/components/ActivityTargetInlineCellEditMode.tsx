@@ -98,7 +98,7 @@ export const ActivityTargetInlineCellEditMode = ({
       async () => {
         const activityTargetsAfterUpdate =
           activityTargetWithTargetRecords.filter((activityTarget) => {
-            const record = snapshot
+            const recordSelectedInMultiSelect = snapshot
               .getLoadable(
                 objectRecordMultiSelectComponentFamilyState({
                   scopeId: recordPickerInstanceId,
@@ -107,7 +107,9 @@ export const ActivityTargetInlineCellEditMode = ({
               )
               .getValue() as ObjectRecordAndSelected;
 
-            return record.selected;
+            return recordSelectedInMultiSelect
+              ? recordSelectedInMultiSelect.selected
+              : true;
           });
         setActivityFromStore((currentActivity) => {
           if (isNull(currentActivity)) {
