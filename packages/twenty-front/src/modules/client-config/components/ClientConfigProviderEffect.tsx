@@ -78,7 +78,7 @@ export const ClientConfigProviderEffect = () => {
     });
     setIsDebugMode(data?.clientConfig.debugMode);
     setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
-    setisDeveloperDefaultSignInPrefilled(data?.clientConfig.signInPrefilled);
+    setIsDeveloperDefaultSignInPrefilled(data?.clientConfig.signInPrefilled);
     setIsSignUpDisabled(data?.clientConfig.signUpDisabled);
 
     setBilling(data?.clientConfig.billing);
