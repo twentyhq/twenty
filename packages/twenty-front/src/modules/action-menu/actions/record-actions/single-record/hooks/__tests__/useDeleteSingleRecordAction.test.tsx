@@ -78,5 +78,11 @@ describe('useDeleteSingleRecordAction', () => {
     });
 
     expect(result.current.actionMenuEntries.size).toBe(1);
+    expect(
+      result.current.actionMenuEntries.get('delete-single-record'),
+    ).toBeDefined();
+    expect(
+      result.current.actionMenuEntries.get('delete-single-record')?.position,
+    ).toBe(0);
   });
 });

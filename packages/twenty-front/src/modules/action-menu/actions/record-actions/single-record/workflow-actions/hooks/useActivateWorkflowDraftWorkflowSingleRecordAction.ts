@@ -35,7 +35,7 @@ export const useActivateWorkflowDraftWorkflowSingleRecordAction = ({
     }
 
     addActionMenuEntry({
-      key: 'activate-workflow-draft',
+      key: 'activate-workflow-draft-single-record',
       label: 'Activate Draft',
       position,
       Icon: IconPower,
@@ -51,7 +51,7 @@ export const useActivateWorkflowDraftWorkflowSingleRecordAction = ({
   };
 
   const unregisterActivateWorkflowDraftWorkflowSingleRecordAction = () => {
-    removeActionMenuEntry('activate-workflow-draft');
+    removeActionMenuEntry('activate-workflow-draft-single-record');
   };
 
   return {

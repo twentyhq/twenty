@@ -29,7 +29,7 @@ export const useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction =
         }
 
         addActionMenuEntry({
-          key: 'activate-workflow-last-published-version',
+          key: 'activate-workflow-last-published-version-single-record',
           label: 'Activate last published version',
           position,
           Icon: IconPower,
@@ -47,7 +47,9 @@ export const useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction =
 
     const unregisterActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction =
       () => {
-        removeActionMenuEntry('activate-workflow-last-published-version');
+        removeActionMenuEntry(
+          'activate-workflow-last-published-version-single-record',
+        );
       };
 
     return {

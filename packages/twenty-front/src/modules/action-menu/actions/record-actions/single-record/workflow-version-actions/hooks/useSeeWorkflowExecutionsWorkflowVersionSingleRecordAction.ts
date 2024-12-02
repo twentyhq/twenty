@@ -54,7 +54,7 @@ export const useSeeWorkflowExecutionsWorkflowVersionSingleRecordAction = ({
     )}`;
 
     addActionMenuEntry({
-      key: 'see-workflow-executions',
+      key: 'see-workflow-executions-single-record',
       label: 'See executions',
       position,
       type: ActionMenuEntryType.Standard,
@@ -68,7 +68,7 @@ export const useSeeWorkflowExecutionsWorkflowVersionSingleRecordAction = ({
 
   const unregisterSeeWorkflowExecutionsWorkflowVersionSingleRecordAction =
     () => {
-      removeActionMenuEntry('see-workflow-executions');
+      removeActionMenuEntry('see-workflow-executions-single-record');
     };
 
   return {

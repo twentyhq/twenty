@@ -43,7 +43,7 @@ export const useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction = ({
     )}`;
 
     addActionMenuEntry({
-      key: 'see-workflow-versions-history',
+      key: 'see-workflow-versions-history-single-record',
       label: 'See versions history',
       position,
       type: ActionMenuEntryType.Standard,
@@ -56,7 +56,7 @@ export const useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction = ({
   };
 
   const unregisterSeeWorkflowVersionsHistoryWorkflowSingleRecordAction = () => {
-    removeActionMenuEntry('see-workflow-versions-history');
+    removeActionMenuEntry('see-workflow-versions-history-single-record');
   };
 
   return {

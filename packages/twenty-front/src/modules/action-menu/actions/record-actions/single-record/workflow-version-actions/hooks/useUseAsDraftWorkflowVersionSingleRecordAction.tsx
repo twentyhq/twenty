@@ -49,7 +49,7 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction = ({
     const hasAlreadyDraftVersion = workflow.statuses.includes('DRAFT');
 
     addActionMenuEntry({
-      key: 'use-workflow-version-as-draft',
+      key: 'use-workflow-version-as-draft-single-record',
       label: 'Use as draft',
       position,
       Icon: IconPencil,
@@ -82,7 +82,7 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction = ({
   };
 
   const unregisterUseAsDraftWorkflowVersionSingleRecordAction = () => {
-    removeActionMenuEntry('use-workflow-version-as-draft');
+    removeActionMenuEntry('use-workflow-version-as-draft-single-record');
   };
 
   return {

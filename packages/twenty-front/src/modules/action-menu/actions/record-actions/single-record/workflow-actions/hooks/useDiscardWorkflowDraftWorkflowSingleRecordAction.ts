@@ -38,7 +38,7 @@ export const useDiscardDraftWorkflowSingleRecordAction = ({
     }
 
     addActionMenuEntry({
-      key: 'discard-workflow-draft',
+      key: 'discard-workflow-draft-single-record',
       label: 'Discard Draft',
       position,
       Icon: IconTrash,
@@ -53,7 +53,7 @@ export const useDiscardDraftWorkflowSingleRecordAction = ({
   };
 
   const unregisterDiscardDraftWorkflowSingleRecordAction = () => {
-    removeActionMenuEntry('discard-workflow-draft');
+    removeActionMenuEntry('discard-workflow-draft-single-record');
   };
 
   return {

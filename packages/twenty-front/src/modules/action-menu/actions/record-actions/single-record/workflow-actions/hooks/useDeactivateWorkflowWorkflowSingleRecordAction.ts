@@ -36,7 +36,7 @@ export const useDeactivateWorkflowWorkflowSingleRecordAction = ({
     }
 
     addActionMenuEntry({
-      key: 'deactivate-workflow',
+      key: 'deactivate-workflow-single-record',
       label: 'Deactivate Workflow',
       position,
       Icon: IconPlayerPause,
@@ -49,7 +49,7 @@ export const useDeactivateWorkflowWorkflowSingleRecordAction = ({
   };
 
   const unregisterDeactivateWorkflowWorkflowSingleRecordAction = () => {
-    removeActionMenuEntry('deactivate-workflow');
+    removeActionMenuEntry('deactivate-workflow-single-record');
   };
 
   return {

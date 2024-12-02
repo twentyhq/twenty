@@ -37,7 +37,7 @@ export const useTestWorkflowWorkflowSingleRecordAction = ({
     }
 
     addActionMenuEntry({
-      key: 'test-workflow',
+      key: 'test-workflow-single-record',
       label: 'Test workflow',
       position,
       type: ActionMenuEntryType.Standard,
@@ -53,7 +53,7 @@ export const useTestWorkflowWorkflowSingleRecordAction = ({
   };
 
   const unregisterTestWorkflowWorkflowSingleRecordAction = () => {
-    removeActionMenuEntry('test-workflow');
+    removeActionMenuEntry('test-workflow-single-record');
   };
 
   return {

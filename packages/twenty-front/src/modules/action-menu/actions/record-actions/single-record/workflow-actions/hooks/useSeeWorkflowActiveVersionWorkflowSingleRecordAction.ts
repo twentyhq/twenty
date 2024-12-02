@@ -35,7 +35,7 @@ export const useSeeWorkflowActiveVersionWorkflowSingleRecordAction = ({
     }
 
     addActionMenuEntry({
-      key: 'see-workflow-active-version',
+      key: 'see-workflow-active-version-single-record',
       label: 'See active version',
       position,
       type: ActionMenuEntryType.Standard,
@@ -50,7 +50,7 @@ export const useSeeWorkflowActiveVersionWorkflowSingleRecordAction = ({
   };
 
   const unregisterSeeWorkflowActiveVersionWorkflowSingleRecordAction = () => {
-    removeActionMenuEntry('see-workflow-active-version');
+    removeActionMenuEntry('see-workflow-active-version-single-record');
   };
 
   return {
