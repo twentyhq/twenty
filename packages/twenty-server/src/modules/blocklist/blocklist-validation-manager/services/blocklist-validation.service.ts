@@ -21,6 +21,7 @@ export type BlocklistItem = Omit<
   createdAt: string;
   updatedAt: string;
   workspaceMemberId: string;
+  context: string;
 };
 
 @Injectable()
@@ -66,16 +67,21 @@ export class BlocklistValidationService {
           ),
       );
 
-    for (const handle of blocklist.map((item) => item.handle)) {
-      if (!handle) {
-        throw new BadRequestException('Blocklist handle is required');
-      }
-
-      const result = emailOrDomainSchema.safeParse(handle);
-
-      if (!result.success) {
-        throw new BadRequestException(result.error.errors[0].message);
-      }
+      for (const item of blocklist) {
+       
+        if (!item.handle) {
+          throw new BadRequestException('Blocklist handle is required');
+        }
+    
+        const result = emailOrDomainSchema.safeParse(item.handle);
+        if (!result.success) {
+          throw new BadRequestException(result.error.errors[0].message);
+        }
+    
+      
+        if (!item.context) {
+          throw new BadRequestException('Context is required');
+        }
     }
   }
 
@@ -103,7 +109,23 @@ export class BlocklistValidationService {
       throw new BadRequestException('Blocklist handle already exists');
     }
   }
-
+  public async validateUniquenessForContext(
+    context: string,
+    userId: string,
+    workspaceId: string,
+  ): Promise<void> {
+    const currentWorkspaceMember = await this.workspaceMemberRepository.getByIdOrFail(userId, workspaceId);
+  
+    const currentBlocklist = await this.blocklistRepository.getByContext(
+      context,
+      workspaceId,
+    );
+  
+    if (currentBlocklist.some((item) => item.context === context)) {
+      throw new BadRequestException(`Blocklist item with context "${context}" already exists.`);
+    }
+  }
+  
   public async validateUniquenessForUpdateOne(
     payload: UpdateOneResolverArgs<BlocklistItem>,
     userId: string,

@@ -33,6 +33,7 @@ export class BlocklistWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconAt',
   })
   handle: string;
+  context:string;
 
   @WorkspaceRelation({
     standardId: BLOCKLIST_STANDARD_FIELD_IDS.workspaceMember,

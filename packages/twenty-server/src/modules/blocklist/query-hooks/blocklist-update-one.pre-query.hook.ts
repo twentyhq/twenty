@@ -4,11 +4,11 @@ import { WorkspaceQueryHookInstance } from 'src/engine/api/graphql/workspace-que
 import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
+import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 import {
   BlocklistItem,
   BlocklistValidationService,
 } from 'src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service';
-import { AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
 
 @WorkspaceQueryHook(`blocklist.updateOne`)
 export class BlocklistUpdateOnePreQueryHook
@@ -23,10 +23,11 @@ export class BlocklistUpdateOnePreQueryHook
     objectName: string,
     payload: UpdateOneResolverArgs<BlocklistItem>,
   ): Promise<UpdateOneResolverArgs<BlocklistItem>> {
+    
     if (!authContext.user?.id) {
       throw new BadRequestException('User id is required');
     }
-
+ 
     await this.blocklistValidationService.validateBlocklistForUpdateOne(
       payload,
       authContext.user?.id,

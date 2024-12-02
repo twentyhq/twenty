@@ -33,7 +33,21 @@ export class BlocklistRepository {
 
     return blocklistItems[0];
   }
-
+  public async getByContext(
+    context: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<BlocklistWorkspaceEntity[]> {
+    const dataSourceSchema = this.workspaceDataSourceService.getSchemaName(workspaceId);
+  
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."blocklist" WHERE "context" = $1`,
+      [context],
+      workspaceId,
+      transactionManager,
+    );
+  }
+  
   public async getByWorkspaceMemberId(
     workspaceMemberId: string,
     workspaceId: string,
