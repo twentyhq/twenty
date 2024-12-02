@@ -2,7 +2,9 @@ import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenu
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { act, renderHook } from '@testing-library/react';
+import { expect } from '@storybook/test';
+import { renderHook } from '@testing-library/react';
+import { act } from 'react';
 import { RecoilRoot } from 'recoil';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { useDeleteSingleRecordAction } from '../useDeleteSingleRecordAction';
@@ -53,25 +55,28 @@ describe('useDeleteSingleRecordAction', () => {
 
   it('should register delete action', () => {
     const { result } = renderHook(
-      () =>
-        useDeleteSingleRecordAction({
-          recordId: 'record1',
-          objectMetadataItem: companyMockObjectMetadataItem,
-        }),
+      () => {
+        const actionMenuEntries = useRecoilComponentValueV2(
+          actionMenuEntriesComponentState,
+        );
+
+        return {
+          actionMenuEntries,
+          useDeleteSingleRecordAction: useDeleteSingleRecordAction({
+            recordId: 'record1',
+            objectMetadataItem: companyMockObjectMetadataItem,
+          }),
+        };
+      },
       { wrapper },
     );
 
     act(() => {
-      result.current.registerDeleteSingleRecordAction({ position: 0 });
+      result.current.useDeleteSingleRecordAction.registerDeleteSingleRecordAction(
+        { position: 0 },
+      );
     });
 
-    const { result: actionMenuEntriesResult } = renderHook(
-      () => useRecoilComponentValueV2(actionMenuEntriesComponentState),
-      {
-        wrapper,
-      },
-    );
-
-    expect(actionMenuEntriesResult.current.size).toBe(1);
+    expect(result.current.actionMenuEntries.size).toBe(1);
   });
 });
