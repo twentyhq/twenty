@@ -1,37 +1,52 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
-import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
-import { recordIndexRowIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRowIdsByGroupComponentFamilyState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
+import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useMemo } from 'react';
+import { isDefined } from '~/utils/isDefined';
 
 export const RecordTableRecordGroupRows = () => {
-  const recordGroupId = useCurrentRecordGroupId();
+  const currentRecordGroupId = useCurrentRecordGroupId();
 
-  const allRowIds = useRecoilComponentValueV2(
-    recordIndexAllRowIdsComponentState,
+  const allRecordIds = useRecoilComponentValueV2(
+    recordIndexAllRecordIdsComponentSelector,
   );
 
-  const recordGroupRowIds = useRecoilComponentFamilyValueV2(
-    recordIndexRowIdsByGroupComponentFamilyState,
-    recordGroupId,
+  const recordIdsByGroup = useRecoilComponentFamilyValueV2(
+    recordIndexRecordIdsByGroupComponentFamilyState,
+    currentRecordGroupId,
+  );
+
+  const isRecordGroupTableSectionToggled = useRecoilComponentFamilyValueV2(
+    isRecordGroupTableSectionToggledComponentState,
+    currentRecordGroupId,
   );
 
   const rowIndexMap = useMemo(
-    () => new Map(allRowIds.map((id, index) => [id, index])),
-    [allRowIds],
+    () => new Map(allRecordIds.map((recordId, index) => [recordId, index])),
+    [allRecordIds],
   );
 
-  return recordGroupRowIds.map((recordId) => {
-    const rowIndex = rowIndexMap.get(recordId);
+  return (
+    isRecordGroupTableSectionToggled &&
+    recordIdsByGroup.map((recordId) => {
+      const rowIndex = rowIndexMap.get(recordId);
 
-    if (!rowIndex) {
-      throw new Error(`Row index for record id ${recordId} not found`);
-    }
+      if (!isDefined(rowIndex)) {
+        return null;
+      }
 
-    return (
-      <RecordTableRow key={recordId} recordId={recordId} rowIndex={rowIndex} />
-    );
-  });
+      return (
+        <RecordTableRow
+          key={recordId}
+          recordId={recordId}
+          rowIndex={rowIndex}
+          isPendingRow={!isRecordGroupTableSectionToggled}
+        />
+      );
+    })
+  );
 };

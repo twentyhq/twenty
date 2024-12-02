@@ -1,4 +1,4 @@
-import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 import { createComponentFamilyState } from '@/ui/utilities/state/component-state/utils/createComponentFamilyState';
 
 export type NewCard = {
@@ -7,7 +7,7 @@ export type NewCard = {
   isCreating: boolean;
   position: 'first' | 'last';
   isOpportunity: boolean;
-  company: EntityForSelect | null;
+  company: RecordForSelect | null;
 };
 
 export const recordBoardNewRecordByColumnIdComponentFamilyState =

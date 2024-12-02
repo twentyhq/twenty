@@ -2,7 +2,7 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexRecordGroupHideComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentState';
-import { recordIndexRowIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRowIdsByGroupComponentFamilyState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useSaveCurrentViewGroups } from '@/views/hooks/useSaveCurrentViewGroups';
@@ -22,10 +22,11 @@ export const useRecordGroupVisibility = ({
     recordGroupIdsComponentState,
   );
 
-  const recordIndexRowIdsByGroupFamilyState = useRecoilComponentCallbackStateV2(
-    recordIndexRowIdsByGroupComponentFamilyState,
-    viewBarId,
-  );
+  const recordIndexRecordIdsByGroupFamilyState =
+    useRecoilComponentCallbackStateV2(
+      recordIndexRecordIdsByGroupComponentFamilyState,
+      viewBarId,
+    );
 
   const objectOptionsDropdownRecordGroupHideState =
     useRecoilComponentCallbackStateV2(recordIndexRecordGroupHideComponentState);
@@ -79,7 +80,7 @@ export const useRecordGroupVisibility = ({
 
           const recordGroupRowIds = getSnapshotValue(
             snapshot,
-            recordIndexRowIdsByGroupFamilyState(recordGroupId),
+            recordIndexRecordIdsByGroupFamilyState(recordGroupId),
           );
 
           if (recordGroupRowIds.length > 0) {
@@ -107,7 +108,7 @@ export const useRecordGroupVisibility = ({
       recordIndexRecordGroupIdsState,
       objectOptionsDropdownRecordGroupHideState,
       saveViewGroups,
-      recordIndexRowIdsByGroupFamilyState,
+      recordIndexRecordIdsByGroupFamilyState,
     ],
   );
 

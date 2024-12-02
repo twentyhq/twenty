@@ -14,7 +14,7 @@ export const RelationFromManyFieldDisplay = () => {
 
   const { fieldName, objectMetadataNameSingular } = fieldDefinition.metadata;
 
-  const relationObjectNameSingular =
+  const objectNameSingular =
     fieldDefinition?.metadata.relationObjectMetadataNameSingular;
 
   const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
@@ -22,7 +22,7 @@ export const RelationFromManyFieldDisplay = () => {
     fieldValue as NoteTarget[] | TaskTarget[],
   );
 
-  if (!fieldValue || !relationObjectNameSingular) {
+  if (!fieldValue || !objectNameSingular) {
     return null;
   }
 
@@ -81,7 +81,7 @@ export const RelationFromManyFieldDisplay = () => {
           .map((record) => (
             <RecordChip
               key={record.id}
-              objectNameSingular={relationObjectNameSingular}
+              objectNameSingular={objectNameSingular}
               record={record}
             />
           ))}

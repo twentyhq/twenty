@@ -10,7 +10,7 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 import { isDefined } from '~/utils/isDefined';
 
 export const visibleRecordGroupIdsComponentSelector = createComponentSelectorV2<
-  string[]
+  RecordGroupDefinition['id'][]
 >({
   key: 'visibleRecordGroupIdsComponentSelector',
   componentInstanceContext: ViewComponentInstanceContext,

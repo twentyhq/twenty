@@ -2,7 +2,7 @@ import { ThemeColor } from 'twenty-ui';
 
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { ZodHelperLiteral } from '@/object-record/record-field/types/ZodHelperLiteral';
-import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
@@ -244,9 +244,9 @@ export type FieldRatingValue = (typeof RATING_VALUES)[number] | null;
 export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
 
-export type FieldRelationToOneValue = EntityForSelect | null;
+export type FieldRelationToOneValue = RecordForSelect | null;
 
-export type FieldRelationFromManyValue = EntityForSelect[] | [];
+export type FieldRelationFromManyValue = RecordForSelect[] | [];
 
 export type FieldRelationValue<
   T extends FieldRelationToOneValue | FieldRelationFromManyValue,

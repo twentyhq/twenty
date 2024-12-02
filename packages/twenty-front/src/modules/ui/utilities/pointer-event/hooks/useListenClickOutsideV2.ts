@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useRecoilCallback } from 'recoil';
 
+import { internalHotkeysEnabledScopesState } from '@/ui/utilities/hotkey/states/internal/internalHotkeysEnabledScopesState';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 
 export enum ClickOutsideMode {
@@ -14,6 +15,7 @@ export type ClickOutsideListenerProps<T extends Element> = {
   callback: (event: MouseEvent | TouchEvent) => void;
   mode?: ClickOutsideMode;
   listenerId: string;
+  hotkeyScope?: string;
   enabled?: boolean;
 };
 
@@ -23,6 +25,7 @@ export const useListenClickOutsideV2 = <T extends Element>({
   callback,
   mode = ClickOutsideMode.compareHTMLRef,
   listenerId,
+  hotkeyScope,
   enabled = true,
 }: ClickOutsideListenerProps<T>) => {
   const {
@@ -40,7 +43,18 @@ export const useListenClickOutsideV2 = <T extends Element>({
 
         set(getClickOutsideListenerMouseDownHappenedState, true);
 
-        const isListening = clickOutsideListenerIsActivated && enabled;
+        const currentHotkeyScopes = snapshot
+          .getLoadable(internalHotkeysEnabledScopesState)
+          .getValue();
+
+        const isListeningBasedOnHotkeyScope = hotkeyScope
+          ? currentHotkeyScopes.includes(hotkeyScope)
+          : true;
+
+        const isListening =
+          clickOutsideListenerIsActivated &&
+          enabled &&
+          isListeningBasedOnHotkeyScope;
 
         if (!isListening) {
           return;
@@ -96,11 +110,12 @@ export const useListenClickOutsideV2 = <T extends Element>({
       },
     [
       getClickOutsideListenerIsActivatedState,
+      getClickOutsideListenerMouseDownHappenedState,
+      hotkeyScope,
       enabled,
       mode,
       refs,
       getClickOutsideListenerIsMouseDownInsideState,
-      getClickOutsideListenerMouseDownHappenedState,
     ],
   );
 
@@ -111,7 +126,18 @@ export const useListenClickOutsideV2 = <T extends Element>({
           .getLoadable(getClickOutsideListenerIsActivatedState)
           .getValue();
 
-        const isListening = clickOutsideListenerIsActivated && enabled;
+        const currentHotkeyScopes = snapshot
+          .getLoadable(internalHotkeysEnabledScopesState)
+          .getValue();
+
+        const isListeningBasedOnHotkeyScope = hotkeyScope
+          ? currentHotkeyScopes.includes(hotkeyScope)
+          : true;
+
+        const isListening =
+          clickOutsideListenerIsActivated &&
+          enabled &&
+          isListeningBasedOnHotkeyScope;
 
         const isMouseDownInside = snapshot
           .getLoadable(getClickOutsideListenerIsMouseDownInsideState)
@@ -199,6 +225,7 @@ export const useListenClickOutsideV2 = <T extends Element>({
       },
     [
       getClickOutsideListenerIsActivatedState,
+      hotkeyScope,
       enabled,
       getClickOutsideListenerIsMouseDownInsideState,
       getClickOutsideListenerMouseDownHappenedState,

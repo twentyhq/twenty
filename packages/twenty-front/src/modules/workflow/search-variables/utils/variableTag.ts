@@ -1,10 +1,11 @@
+import { extractVariableLabel } from '@/workflow/search-variables/utils/extractVariableLabel';
 import { Node } from '@tiptap/core';
 import { mergeAttributes } from '@tiptap/react';
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
     variableTag: {
-      insertVariableTag: (variable: string) => ReturnType;
+      insertVariableTag: (variableName: string) => ReturnType;
     };
   }
 }
@@ -29,15 +30,6 @@ export const VariableTag = Node.create({
 
   renderHTML: ({ node, HTMLAttributes }) => {
     const variable = node.attrs.variable as string;
-    const variableWithoutBrackets = variable.replace(
-      /\{\{([^}]+)\}\}/g,
-      (_, variable) => {
-        return variable;
-      },
-    );
-
-    const parts = variableWithoutBrackets.split('.');
-    const displayText = parts[parts.length - 1];
 
     return [
       'span',
@@ -45,17 +37,17 @@ export const VariableTag = Node.create({
         'data-type': 'variableTag',
         class: 'variable-tag',
       }),
-      displayText,
+      extractVariableLabel(variable),
     ];
   },
 
   addCommands: () => ({
     insertVariableTag:
-      (variable: string) =>
+      (variableName: string) =>
       ({ commands }) => {
-        commands.insertContent?.({
+        commands.insertContent({
           type: 'variableTag',
-          attrs: { variable },
+          attrs: { variable: variableName },
         });
 
         return true;

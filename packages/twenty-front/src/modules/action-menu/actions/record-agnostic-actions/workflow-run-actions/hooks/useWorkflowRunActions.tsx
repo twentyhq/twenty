@@ -7,12 +7,15 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkflowVersions';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 import { useTheme } from '@emotion/react';
 import { IconSettingsAutomation } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useWorkflowRunActions = () => {
+  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
   const { records: activeWorkflowVersions } = useAllActiveWorkflowVersions({
@@ -26,6 +29,10 @@ export const useWorkflowRunActions = () => {
   const theme = useTheme();
 
   const addWorkflowRunActions = () => {
+    if (!isWorkflowEnabled) {
+      return;
+    }
+
     for (const [
       index,
       activeWorkflowVersion,
