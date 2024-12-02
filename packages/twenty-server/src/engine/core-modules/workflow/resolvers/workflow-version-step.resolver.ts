@@ -7,7 +7,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-workflow-version-step-input.dto';
 import { UpdateWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-version-step-input.dto';
 import { DeleteWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/delete-workflow-version-step-input.dto';
-import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version.workspace-service';
+import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-version-step.workspace-service';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
@@ -15,9 +15,9 @@ import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflo
 @Resolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
 @UseFilters(WorkflowTriggerGraphqlApiExceptionFilter)
-export class WorkflowVersionResolver {
+export class WorkflowVersionStepResolver {
   constructor(
-    private readonly workflowVersionWorkspaceService: WorkflowVersionWorkspaceService,
+    private readonly workflowVersionStepWorkspaceService: WorkflowVersionStepWorkspaceService,
   ) {}
 
   @Mutation(() => WorkflowActionDTO)
@@ -26,7 +26,7 @@ export class WorkflowVersionResolver {
     @Args('input')
     { stepType, workflowVersionId }: CreateWorkflowVersionStepInput,
   ): Promise<WorkflowActionDTO> {
-    return this.workflowVersionWorkspaceService.createWorkflowVersionStep({
+    return this.workflowVersionStepWorkspaceService.createWorkflowVersionStep({
       workspaceId,
       workflowVersionId,
       stepType,
@@ -38,7 +38,7 @@ export class WorkflowVersionResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args('input') { step, workflowVersionId }: UpdateWorkflowVersionStepInput,
   ): Promise<WorkflowActionDTO> {
-    return this.workflowVersionWorkspaceService.updateWorkflowVersionStep({
+    return this.workflowVersionStepWorkspaceService.updateWorkflowVersionStep({
       workspaceId,
       workflowVersionId,
       step,
@@ -51,7 +51,7 @@ export class WorkflowVersionResolver {
     @Args('input')
     { stepId, workflowVersionId }: DeleteWorkflowVersionStepInput,
   ): Promise<WorkflowActionDTO> {
-    return this.workflowVersionWorkspaceService.deleteWorkflowVersionStep({
+    return this.workflowVersionStepWorkspaceService.deleteWorkflowVersionStep({
       workspaceId,
       workflowVersionId,
       stepId,

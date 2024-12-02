@@ -24,7 +24,7 @@ import { CodeIntrospectionService } from 'src/modules/code-introspection/code-in
 const TRIGGER_STEP_ID = 'trigger';
 
 @Injectable()
-export class WorkflowVersionWorkspaceService {
+export class WorkflowVersionStepWorkspaceService {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workflowBuilderWorkspaceService: WorkflowBuilderWorkspaceService,
