@@ -12,6 +12,7 @@ import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-b
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { IconDotsVertical, IconPlus, LightIconButton, Tag } from 'twenty-ui';
 
 const StyledHeader = styled.div`
@@ -38,6 +39,16 @@ const StyledLeftContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledNumChildren = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  height: 24px;
+  justify-content: center;
+  line-height: ${({ theme }) => theme.text.lineHeight.lg};
+  width: 22px;
 `;
 
 const StyledRightContainer = styled.div`
@@ -90,6 +101,10 @@ export const RecordBoardColumnHeader = () => {
     columnDefinition.id ?? '',
   );
 
+  const isAggregateQueryEnabled = useIsFeatureEnabled(
+    'IS_AGGREGATE_QUERY_ENABLED',
+  );
+
   const { isOpportunitiesCompanyFieldDisabled } =
     useIsOpportunitiesCompanyFieldDisabled();
 
@@ -124,12 +139,16 @@ export const RecordBoardColumnHeader = () => {
                   : 'medium'
               }
             />
-            <RecordBoardColumnHeaderAggregateDropdown
-              aggregateValue={aggregateValue}
-              dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
-              objectMetadataItem={objectMetadataItem}
-              aggregateLabel={aggregateLabel}
-            />
+            {isAggregateQueryEnabled ? (
+              <RecordBoardColumnHeaderAggregateDropdown
+                aggregateValue={aggregateValue}
+                dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}
+                objectMetadataItem={objectMetadataItem}
+                aggregateLabel={aggregateLabel}
+              />
+            ) : (
+              <StyledNumChildren>{aggregateValue}</StyledNumChildren>
+            )}
           </StyledLeftContainer>
           <StyledRightContainer>
             {isHeaderHovered && (
