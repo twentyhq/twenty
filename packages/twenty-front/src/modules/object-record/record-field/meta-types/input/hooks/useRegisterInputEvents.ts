@@ -1,7 +1,7 @@
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { isDefined } from '~/utils/isDefined';
 
 export const useRegisterInputEvents = <T>({
@@ -25,7 +25,7 @@ export const useRegisterInputEvents = <T>({
   onClickOutside?: (event: MouseEvent | TouchEvent, inputValue: T) => void;
   hotkeyScope: string;
 }) => {
-  useListenClickOutside({
+  useListenClickOutsideV2({
     refs: [inputRef, copyRef].filter(isDefined),
     callback: (event) => {
       event.stopImmediatePropagation();

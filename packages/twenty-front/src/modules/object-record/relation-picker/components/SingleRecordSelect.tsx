@@ -5,7 +5,7 @@ import {
   SingleRecordSelectMenuItemsWithSearchProps,
 } from '@/object-record/relation-picker/components/SingleRecordSelectMenuItemsWithSearch';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { isDefined } from '~/utils/isDefined';
 
 export type SingleRecordSelectProps = {
@@ -28,7 +28,7 @@ export const SingleRecordSelect = ({
 }: SingleRecordSelectProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useListenClickOutside({
+  useListenClickOutsideV2({
     refs: [containerRef],
     callback: (event) => {
       event.stopImmediatePropagation();

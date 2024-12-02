@@ -10,6 +10,7 @@ import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
@@ -192,7 +193,7 @@ export const AddressInput = ({
 
   const { useListenClickOutside } = useClickOutsideListener('addressInput');
 
-  useListenClickOutside({
+  useListenClickOutsideV2({
     refs: [wrapperRef],
     callback: (event) => {
       event.stopImmediatePropagation();

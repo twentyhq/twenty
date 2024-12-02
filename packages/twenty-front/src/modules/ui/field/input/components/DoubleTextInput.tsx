@@ -10,9 +10,9 @@ import { Key } from 'ts-key-enum';
 
 import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { splitFullName } from '~/utils/format/spiltFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { StyledTextInput } from './TextInput';
@@ -149,7 +149,7 @@ export const DoubleTextInput = ({
     [onShiftTab, firstInternalValue, secondInternalValue, focusPosition],
   );
 
-  useListenClickOutside({
+  useListenClickOutsideV2({
     refs: [containerRef],
     callback: (event) => {
       onClickOutside?.(event, {

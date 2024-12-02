@@ -20,7 +20,6 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 import { isDefined } from '~/utils/isDefined';
 
@@ -81,14 +80,6 @@ export const ViewFieldsVisibilityDropdownSection = ({
   };
 
   const ref = useRef<HTMLDivElement>(null);
-
-  useListenClickOutside({
-    refs: [ref],
-    callback: () => {
-      setOpenToolTipIndex(undefined);
-    },
-    listenerId: 'Test',
-  });
 
   const { nonDraggableItems = [], draggableItems = [] } = isDraggable
     ? groupArrayItemsBy(fields, ({ isLabelIdentifier }) =>

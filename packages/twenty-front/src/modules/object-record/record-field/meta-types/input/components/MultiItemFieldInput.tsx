@@ -12,7 +12,7 @@ import {
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
@@ -72,7 +72,7 @@ export const MultiItemFieldInput = <T,>({
     }
   };
 
-  useListenClickOutside({
+  useListenClickOutsideV2({
     refs: [containerRef],
     callback: handleDropdownCloseOutside,
     listenerId: 'MultiItemFieldInput',

@@ -1,7 +1,7 @@
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ChangeEvent, FocusEvent, useRef } from 'react';
@@ -90,7 +90,7 @@ export const NavigationDrawerInput = ({
     hotkeyScope,
   );
 
-  useListenClickOutside({
+  useListenClickOutsideV2({
     refs: [inputRef],
     callback: (event) => {
       event.stopImmediatePropagation();

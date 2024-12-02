@@ -4,7 +4,7 @@ import { useCallback, useRef } from 'react';
 import { useRecordGroupActions } from '@/object-record/record-group/hooks/useRecordGroupActions';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { MenuItem } from 'twenty-ui';
 
 const StyledMenuContainer = styled.div`
@@ -31,7 +31,7 @@ export const RecordBoardColumnDropdownMenu = ({
     onClose();
   }, [onClose]);
 
-  useListenClickOutside({
+  useListenClickOutsideV2({
     refs: [boardColumnMenuRef],
     callback: closeMenu,
     listenerId: 'record-board-column-dropdown-menu',

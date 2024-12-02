@@ -4,7 +4,7 @@ import { FloatingPortal, offset, shift, useFloating } from '@floating-ui/react';
 import { ReactNode } from 'react';
 
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 
 type ExpandedListDropdownProps = {
   anchorElement?: HTMLElement;
@@ -45,7 +45,7 @@ export const ExpandedListDropdown = ({
     elements: { reference: anchorElement },
   });
 
-  useListenClickOutside({
+  useListenClickOutsideV2({
     refs: [refs.floating],
     callback: onClickOutside ?? (() => {}),
     listenerId: 'ExpandedListDropdown',
