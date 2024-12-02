@@ -16,6 +16,7 @@ import { WorkspaceInvitationException } from 'src/engine/core-modules/workspace-
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { WorkspaceGettersService } from 'src/engine/core-modules/workspace/services/workspace-getters.service';
 
 import { WorkspaceInvitationService } from './workspace-invitation.service';
 
@@ -45,6 +46,10 @@ describe('WorkspaceInvitationService', () => {
         {
           provide: getRepositoryToken(Workspace, 'core'),
           useClass: Repository,
+        },
+        {
+          provide: WorkspaceGettersService,
+          useValue: {},
         },
         {
           provide: UrlManagerService,

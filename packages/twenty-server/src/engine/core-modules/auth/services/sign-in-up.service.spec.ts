@@ -17,6 +17,7 @@ import {
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 jest.mock('bcrypt');
 
@@ -67,6 +68,16 @@ describe('SignInUpService', () => {
         {
           provide: getRepositoryToken(AppToken, 'core'),
           useValue: {},
+        },
+        {
+          provide: WorkspaceInvitationService,
+          useValue: {},
+        },
+        {
+          provide: WorkspaceService,
+          useValue: {
+            generateSubdomain: jest.fn().mockReturnValue('tartanpion'),
+          },
         },
         {
           provide: UserWorkspaceService,

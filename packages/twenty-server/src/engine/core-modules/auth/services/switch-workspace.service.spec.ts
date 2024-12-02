@@ -9,7 +9,7 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { WorkspaceGettersService } from 'src/engine/core-modules/workspace/services/workspace-getters.service';
 
 import { SwitchWorkspaceService } from './switch-workspace.service';
 
@@ -20,7 +20,7 @@ describe('SwitchWorkspaceService', () => {
   let userService: UserService;
   let accessTokenService: AccessTokenService;
   let refreshTokenService: RefreshTokenService;
-  let workspaceService: WorkspaceService;
+  let workspaceGettersService: WorkspaceGettersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -53,7 +53,7 @@ describe('SwitchWorkspaceService', () => {
           },
         },
         {
-          provide: WorkspaceService,
+          provide: WorkspaceGettersService,
           useValue: {
             getAuthProvidersByWorkspaceId: jest.fn(),
           },
@@ -71,7 +71,9 @@ describe('SwitchWorkspaceService', () => {
     accessTokenService = module.get<AccessTokenService>(AccessTokenService);
     refreshTokenService = module.get<RefreshTokenService>(RefreshTokenService);
     userService = module.get<UserService>(UserService);
-    workspaceService = module.get<WorkspaceService>(WorkspaceService);
+    workspaceGettersService = module.get<WorkspaceGettersService>(
+      WorkspaceGettersService,
+    );
   });
 
   it('should be defined', () => {
@@ -153,7 +155,7 @@ describe('SwitchWorkspaceService', () => {
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace as any);
       jest
-        .spyOn(workspaceService, 'getAuthProvidersByWorkspaceId')
+        .spyOn(workspaceGettersService, 'getAuthProvidersByWorkspaceId')
         .mockResolvedValue(mockAuthProviders as any);
 
       const result = await service.switchWorkspace(
@@ -195,7 +197,7 @@ describe('SwitchWorkspaceService', () => {
         .mockResolvedValue(mockWorkspace as any);
       jest.spyOn(userRepository, 'save').mockResolvedValue({} as User);
       jest
-        .spyOn(workspaceService, 'getAuthProvidersByWorkspaceId')
+        .spyOn(workspaceGettersService, 'getAuthProvidersByWorkspaceId')
         .mockResolvedValue(mockAuthProviders);
 
       const result = await service.switchWorkspace(
