@@ -24,10 +24,12 @@ import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
+import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 
 const TRIGGER_STEP_ID = 'trigger';
 
-const BASE_STEP_DEFINITION = {
+const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
+  input: {},
   outputSchema: {},
   errorHandlingOptions: {
     continueOnFailure: {
@@ -98,12 +100,12 @@ export class WorkflowVersionStepWorkspaceService {
           type: WorkflowActionType.CODE,
           valid: false,
           settings: {
+            ...BASE_STEP_DEFINITION,
             input: {
               serverlessFunctionId: newServerlessFunction.id,
               serverlessFunctionVersion: 'draft',
               serverlessFunctionInput,
             },
-            ...BASE_STEP_DEFINITION,
           },
         };
       }
@@ -114,13 +116,13 @@ export class WorkflowVersionStepWorkspaceService {
           type: WorkflowActionType.SEND_EMAIL,
           valid: false,
           settings: {
+            ...BASE_STEP_DEFINITION,
             input: {
               connectedAccountId: '',
               email: '',
               subject: '',
               body: '',
             },
-            ...BASE_STEP_DEFINITION,
           },
         };
       }
@@ -136,12 +138,12 @@ export class WorkflowVersionStepWorkspaceService {
           type: WorkflowActionType.RECORD_CRUD,
           valid: false,
           settings: {
+            ...BASE_STEP_DEFINITION,
             input: {
               type: WorkflowRecordCRUDType.CREATE,
               objectName: activeObjectMetadataItem?.nameSingular || '',
               objectRecord: {},
             },
-            ...BASE_STEP_DEFINITION,
           },
         };
       }
@@ -157,13 +159,13 @@ export class WorkflowVersionStepWorkspaceService {
           type: WorkflowActionType.RECORD_CRUD,
           valid: false,
           settings: {
+            ...BASE_STEP_DEFINITION,
             input: {
               type: WorkflowRecordCRUDType.UPDATE,
               objectName: activeObjectMetadataItem?.nameSingular || '',
               objectRecord: {},
               objectRecordId: '',
             },
-            ...BASE_STEP_DEFINITION,
           },
         };
       }

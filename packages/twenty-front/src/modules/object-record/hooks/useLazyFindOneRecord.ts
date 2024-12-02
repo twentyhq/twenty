@@ -23,7 +23,7 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   recordGqlFields,
   withSoftDeleted = false,
-  fetchPolicy = 'network-only',
+  fetchPolicy = 'cache-first',
 }: UseLazyFindOneRecordParams) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
