@@ -55,6 +55,8 @@ export class BillingEntitlement {
   @Column({ nullable: true, type: 'timestamptz' })
   deletedAt?: Date;
 
+  // Because we haven't populated the billingCustomer table yet, this table is not updated
+  //It will be fixed in the next prs.
   @ManyToOne(
     () => BillingCustomer,
     (billingCustomer) => billingCustomer.billingEntitlements,
