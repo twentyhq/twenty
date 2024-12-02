@@ -5,6 +5,15 @@ import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGq
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
 import { useAggregateQuery } from '@/object-record/hooks/useAggregateQuery';
+import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
+import isEmpty from 'lodash.isempty';
+import { isDefined } from 'twenty-ui';
+
+export type AggregateData = {
+  [fieldName: string]: {
+    [operation in AGGREGATE_OPERATIONS]?: string | number | undefined;
+  };
+};
 
 export const useAggregate = ({
   objectNameSingular,
@@ -21,7 +30,7 @@ export const useAggregate = ({
     objectNameSingular,
   });
 
-  const { aggregateQuery } = useAggregateQuery({
+  const { aggregateQuery, gqlFieldToFieldMap } = useAggregateQuery({
     objectNameSingular,
     recordGqlFieldsAggregate,
   });
@@ -36,9 +45,25 @@ export const useAggregate = ({
     },
   );
 
+  const formattedData: AggregateData = {};
+
+  if (!isEmpty(data)) {
+    Object.entries(data?.[objectMetadataItem.namePlural] ?? {})?.forEach(
+      ([gqlField, result]) => {
+        if (isDefined(gqlFieldToFieldMap[gqlField])) {
+          const [fieldName, aggregateOperation] = gqlFieldToFieldMap[gqlField];
+          formattedData[fieldName] = {
+            ...(formattedData[fieldName] ?? {}),
+            [aggregateOperation]: result,
+          };
+        }
+      },
+    );
+  }
+
   return {
     objectMetadataItem,
-    data,
+    data: formattedData,
     loading,
     error,
   };

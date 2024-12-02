@@ -14,4 +14,5 @@ export type RecordGqlConnection = {
     totalCount?: number;
   };
   totalCount?: number;
+  [key: string]: any; // unpredictable aggregate query field names
 };

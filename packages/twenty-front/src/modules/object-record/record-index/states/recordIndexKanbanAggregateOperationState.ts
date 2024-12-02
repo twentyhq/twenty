@@ -2,8 +2,8 @@ import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/Agg
 import { createState } from 'twenty-ui';
 
 export type KanbanAggregateOperation = {
-  operation: AGGREGATE_OPERATIONS;
-  fieldMetadataId?: string;
+  operation: AGGREGATE_OPERATIONS | null;
+  fieldMetadataId: string | null;
 } | null;
 
 export const recordIndexKanbanAggregateOperationState =

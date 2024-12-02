@@ -7,6 +7,13 @@ import { getAvailableAggregationsFromObjectFields } from '@/object-record/utils/
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-ui';
 
+export type GqlFieldToFieldMap = {
+  [gqlField: string]: [
+    fieldName: string,
+    aggregateOperation: AGGREGATE_OPERATIONS,
+  ];
+};
+
 export const useAggregateQuery = ({
   objectNameSingular,
   recordGqlFieldsAggregate = {},
@@ -24,6 +31,7 @@ export const useAggregateQuery = ({
   );
 
   const recordGqlFields: RecordGqlFields = {};
+  const gqlFieldToFieldMap: GqlFieldToFieldMap = {};
 
   Object.entries(recordGqlFieldsAggregate).forEach(
     ([fieldName, aggregateOperation]) => {
@@ -43,6 +51,7 @@ export const useAggregateQuery = ({
           `Cannot query operation ${aggregateOperation} on field ${fieldName}`,
         );
       }
+      gqlFieldToFieldMap[fieldToQuery] = [fieldName, aggregateOperation];
 
       recordGqlFields[fieldToQuery] = true;
     },
@@ -55,5 +64,6 @@ export const useAggregateQuery = ({
 
   return {
     aggregateQuery,
+    gqlFieldToFieldMap,
   };
 };

@@ -20,8 +20,8 @@ export type View = {
   viewFilterGroups?: ViewFilterGroup[];
   viewSorts: ViewSort[];
   kanbanFieldMetadataId: string;
-  kanbanAggregateOperation: AGGREGATE_OPERATIONS;
-  kanbanAggregateOperationFieldMetadataId: string;
+  kanbanAggregateOperation: AGGREGATE_OPERATIONS | null;
+  kanbanAggregateOperationFieldMetadataId: string | null;
   position: number;
   icon: string;
   __typename: 'View';
