@@ -4,20 +4,17 @@ import { Dropdown as DropdownUi } from '@/ui/layout/dropdown/components/Dropdown
 const DROPDOWN_WIDTH = '200px';
 const DROPDOWN_OFFSET_Y = 8;
 
-type DropdownProps<T> = {
+type DropdownProps = {
   dropdownId: string;
   clickableComponent: React.ReactNode;
   dropdownComponents: React.ReactNode;
-  initialContentId?: T;
-  onContentChange?: (contentId: T) => void;
-  onResetContent?: () => void;
 };
 
-export const Dropdown = <T,>({
+export const Dropdown = ({
   dropdownId,
   clickableComponent,
   dropdownComponents,
-}: DropdownProps<T>) => {
+}: DropdownProps) => {
   return (
     <DropdownUi
       dropdownId={dropdownId}

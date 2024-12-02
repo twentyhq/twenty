@@ -24,11 +24,6 @@ const StyledHeader = styled.div`
   height: 100%;
 `;
 
-const StyledAmount = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  margin-left: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledHeaderActions = styled.div`
   display: flex;
   margin-left: auto;
@@ -91,10 +86,8 @@ export const RecordBoardColumnHeader = () => {
 
   const { aggregateValue, aggregateLabel } = useAggregateQueryForColumn();
 
-  const boardColumnTotal = 0;
-
   const { handleNewButtonClick } = useColumnNewCardActions(
-    columnDefinition?.id ?? '',
+    columnDefinition.id ?? '',
   );
 
   const { isOpportunitiesCompanyFieldDisabled } =
@@ -131,9 +124,6 @@ export const RecordBoardColumnHeader = () => {
                   : 'medium'
               }
             />
-            {!!boardColumnTotal && (
-              <StyledAmount>${boardColumnTotal}</StyledAmount>
-            )}
             <RecordBoardColumnHeaderAggregateDropdown
               aggregateValue={aggregateValue}
               dropdownId={`record-board-column-aggregate-dropdown-${columnDefinition.id}`}

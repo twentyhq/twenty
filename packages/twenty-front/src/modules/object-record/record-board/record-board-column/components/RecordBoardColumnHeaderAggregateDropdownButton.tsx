@@ -1,6 +1,5 @@
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import styled from '@emotion/styled';
-import { ReactNode } from 'react';
 import { AppTooltip, Tag, TooltipDelay } from 'twenty-ui';
 import { formatNumber } from '~/utils/format/number';
 
@@ -14,7 +13,7 @@ export const RecordBoardColumnHeaderAggregateDropdownButton = ({
   tooltip,
 }: {
   dropdownId: string;
-  value: string | ReactNode;
+  value: string | number;
   tooltip?: string;
 }) => {
   return (

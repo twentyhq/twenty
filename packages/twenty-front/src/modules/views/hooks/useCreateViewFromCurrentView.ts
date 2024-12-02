@@ -67,19 +67,11 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           name,
           icon,
           kanbanFieldMetadataId,
-          kanbanAggregateOperation,
-          kanbanAggregateOperationFieldMetadataId,
           type,
         }: Partial<
           Pick<
             GraphQLView,
-            | 'id'
-            | 'name'
-            | 'icon'
-            | 'kanbanFieldMetadataId'
-            | 'type'
-            | 'kanbanAggregateOperation'
-            | 'kanbanAggregateOperationFieldMetadataId'
+            'id' | 'name' | 'icon' | 'kanbanFieldMetadataId' | 'type'
           >
         >,
         shouldCopyFiltersAndSortsAndAggregate?: boolean,

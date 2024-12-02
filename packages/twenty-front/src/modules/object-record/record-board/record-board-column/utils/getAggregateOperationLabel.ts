@@ -1,6 +1,6 @@
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 
-export const getAggregateOperationLabel = (operation: string) => {
+export const getAggregateOperationLabel = (operation: AGGREGATE_OPERATIONS) => {
   switch (operation) {
     case AGGREGATE_OPERATIONS.min:
       return 'Min';
@@ -13,6 +13,6 @@ export const getAggregateOperationLabel = (operation: string) => {
     case AGGREGATE_OPERATIONS.count:
       return 'Count';
     default:
-      return '';
+      throw new Error(`Unknown aggregate operation: ${operation}`);
   }
 };

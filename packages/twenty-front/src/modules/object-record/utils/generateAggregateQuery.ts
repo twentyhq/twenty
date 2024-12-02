@@ -9,15 +9,15 @@ export const generateAggregateQuery = ({
   recordGqlFields,
 }: {
   objectMetadataItem: ObjectMetadataItem;
-  recordGqlFields?: RecordGqlFields;
+  recordGqlFields: RecordGqlFields;
 }) => {
-  const selectedFields = Object.entries(recordGqlFields ?? {})
+  const selectedFields = Object.entries(recordGqlFields)
     .filter(([_, shouldBeQueried]) => shouldBeQueried)
     .map(([fieldName]) => fieldName)
     .join('\n      ');
 
   return gql`
-    query FindMany${capitalize(objectMetadataItem.namePlural)}($filter: ${capitalize(
+    query AggregateMany${capitalize(objectMetadataItem.namePlural)}($filter: ${capitalize(
       objectMetadataItem.nameSingular,
     )}FilterInput) {
       ${objectMetadataItem.namePlural}(filter: $filter) {

@@ -76,7 +76,7 @@ export const getAvailableAggregationsFromObjectFields = (
     if (field.type === FieldMetadataType.CURRENCY) {
       acc[`min${capitalize(field.name)}AmountMicros`] = {
         type: GraphQLFloat,
-        description: `Minimal amount contained in the field ${field.name}`,
+        description: `Minimum amount contained in the field ${field.name}`,
         fromField: field.name,
         fromSubField: 'amountMicros',
         aggregateOperation: AGGREGATE_OPERATIONS.min,

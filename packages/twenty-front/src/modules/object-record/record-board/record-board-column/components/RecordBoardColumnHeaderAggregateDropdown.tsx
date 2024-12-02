@@ -10,7 +10,6 @@ type RecordBoardColumnHeaderAggregateDropdownProps = {
   aggregateValue: string | number;
   aggregateLabel?: string;
   objectMetadataItem: ObjectMetadataItem;
-  recordIndexId?: string;
   dropdownId: string;
 };
 

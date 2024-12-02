@@ -222,7 +222,7 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.kanbanAggregateOperationFieldMetadataId,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.UUID,
     label: 'Field metadata used for aggregate operation',
     description: 'Field metadata used for aggregate operation',
     defaultValue: null,

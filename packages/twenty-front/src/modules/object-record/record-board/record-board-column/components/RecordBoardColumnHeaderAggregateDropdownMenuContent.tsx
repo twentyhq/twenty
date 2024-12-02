@@ -12,7 +12,10 @@ import { aggregateDropdownState } from '@/object-record/record-board/record-boar
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
-import { getAvailableFieldsForAggregationFromObjectFieldss } from '@/object-record/utils/getAvailableFieldsForAggregationFromObjectFields';
+import {
+  AvailableFieldsForAggregation,
+  getAvailableFieldsForAggregationFromObjectFields,
+} from '@/object-record/utils/getAvailableFieldsForAggregationFromObjectFields';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
@@ -34,9 +37,9 @@ export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
     TableOptionsHotkeyScope.Dropdown,
   );
 
-  const availableAggregations = useMemo(
+  const availableAggregations: AvailableFieldsForAggregation = useMemo(
     () =>
-      getAvailableFieldsForAggregationFromObjectFieldss(
+      getAvailableFieldsForAggregationFromObjectFields(
         objectMetadataItem.fields,
       ),
     [objectMetadataItem.fields],
@@ -62,9 +65,10 @@ export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
           isEmpty(availableAggregationFieldsIdsForOperation) ? (
             <></>
           ) : (
-            <DropdownMenuItemsContainer>
+            <DropdownMenuItemsContainer
+              key={`aggregate-dropdown-menu-content-${availableAggregationOperation}`}
+            >
               <RecordBoardColumnHeaderAggregateDropdownMenuItem
-                key={`aggregate-dropdown-menu-content-${availableAggregationOperation}`}
                 onContentChange={() => {
                   setAggregateDropdownState({
                     operation:
@@ -74,7 +78,9 @@ export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
                   });
                   onContentChange('aggregateFields');
                 }}
-                text={getAggregateOperationLabel(availableAggregationOperation)}
+                text={getAggregateOperationLabel(
+                  availableAggregationOperation as AGGREGATE_OPERATIONS,
+                )}
                 hasSubMenu
               />
             </DropdownMenuItemsContainer>

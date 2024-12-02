@@ -50,7 +50,7 @@ export const useAggregateQueryForColumn = () => {
     );
   }
 
-  const recordGqlFieldsAggregate = builRecordGqlFieldsAggregate({
+  const recordGqlFieldsAggregate = buildRecordGqlFieldsAggregate({
     objectMetadataItem: objectMetadataItem,
     recordIndexKanbanAggregateOperation: recordIndexKanbanAggregateOperation,
     kanbanFieldName: kanbanFieldName,
@@ -95,7 +95,7 @@ export const useAggregateQueryForColumn = () => {
   };
 };
 
-const builRecordGqlFieldsAggregate = ({
+const buildRecordGqlFieldsAggregate = ({
   objectMetadataItem,
   recordIndexKanbanAggregateOperation,
   kanbanFieldName,

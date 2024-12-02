@@ -4,6 +4,11 @@ import { useContext } from 'react';
 
 export const useOptionsDropdown = () => {
   const context = useContext(ObjectOptionsDropdownContext);
+
+  if (!context) {
+    throw new Error('useOptionsDropdown must be used within a context');
+  }
+
   const { closeDropdown } = useDropdown({
     context: ObjectOptionsDropdownContext,
   });
