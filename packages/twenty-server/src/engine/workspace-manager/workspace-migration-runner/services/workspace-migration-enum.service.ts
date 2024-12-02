@@ -236,7 +236,7 @@ export class WorkspaceMigrationEnumService {
       [schemaName, tableName, columnName],
     );
 
-    const enumTypeName = result[0].udt_name;
+    const enumTypeName = result[0]?.udt_name;
 
     if (!enumTypeName) {
       throw new WorkspaceMigrationException(
