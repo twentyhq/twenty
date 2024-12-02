@@ -4,8 +4,10 @@ import { act } from 'react-dom/test-utils';
 
 import { isDefined } from '~/utils/isDefined';
 
-import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
-import { ClickOutsideMode } from '../useListenClickOutside';
+import {
+  ClickOutsideMode,
+  useListenClickOutside,
+} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 const containerRef = React.createRef<HTMLDivElement>();
 const nullRef = React.createRef<HTMLDivElement>();
@@ -20,7 +22,7 @@ describe('useListenClickOutside', () => {
 
     renderHook(
       () =>
-        useListenClickOutsideV2({
+        useListenClickOutside({
           refs: [containerRef],
           callback,
           listenerId: 'Test',
@@ -41,7 +43,7 @@ describe('useListenClickOutside', () => {
 
     renderHook(
       () =>
-        useListenClickOutsideV2({
+        useListenClickOutside({
           refs: [containerRef, nullRef],
           callback,
           mode: ClickOutsideMode.comparePixels,
@@ -64,7 +66,7 @@ describe('useListenClickOutside', () => {
     const callback = jest.fn();
 
     renderHook(() =>
-      useListenClickOutsideV2({
+      useListenClickOutside({
         refs: [containerRef, nullRef],
         callback,
         mode: ClickOutsideMode.comparePixels,

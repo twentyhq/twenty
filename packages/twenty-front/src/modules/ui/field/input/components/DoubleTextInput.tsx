@@ -12,7 +12,7 @@ import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleT
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 
-import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { splitFullName } from '~/utils/format/spiltFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { StyledTextInput } from './TextInput';
@@ -149,7 +149,7 @@ export const DoubleTextInput = ({
     [onShiftTab, firstInternalValue, secondInternalValue, focusPosition],
   );
 
-  useListenClickOutsideV2({
+  useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
       onClickOutside?.(event, {

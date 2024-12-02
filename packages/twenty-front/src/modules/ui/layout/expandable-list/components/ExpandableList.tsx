@@ -4,7 +4,7 @@ import { AnimatedContainer, Chip, ChipVariant } from 'twenty-ui';
 
 import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/ExpandedListDropdown';
 import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
-import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
@@ -101,7 +101,7 @@ export const ExpandableList = ({
     resetFirstHiddenChildIndex();
   }, [isChipCountDisplayed, children.length, resetFirstHiddenChildIndex]);
 
-  useListenClickOutsideV2({
+  useListenClickOutside({
     refs: [containerRef],
     callback: () => {
       // Handle container resize

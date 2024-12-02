@@ -19,7 +19,7 @@ export type ClickOutsideListenerProps<T extends Element> = {
   enabled?: boolean;
 };
 
-export const useListenClickOutsideV2 = <T extends Element>({
+export const useListenClickOutside = <T extends Element>({
   refs,
   excludeClassNames,
   callback,

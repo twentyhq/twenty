@@ -18,7 +18,7 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
 const StyledFloatingDropdown = styled.div`
@@ -96,7 +96,7 @@ export const MatchColumnSelect = ({
     setIsOpen(false);
   };
 
-  useListenClickOutsideV2({
+  useListenClickOutside({
     refs: [dropdownContainerRef],
     callback: () => {
       setIsOpen(false);

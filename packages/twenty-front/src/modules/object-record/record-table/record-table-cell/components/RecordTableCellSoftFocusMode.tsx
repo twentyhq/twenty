@@ -21,7 +21,7 @@ import { isDefined } from '~/utils/isDefined';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
-import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
 type RecordTableCellSoftFocusModeProps = {
@@ -135,7 +135,7 @@ export const RecordTableCellSoftFocusMode = ({
     */
   };
 
-  useListenClickOutsideV2({
+  useListenClickOutside({
     listenerId: 'RecordTableCellSoftFocusMode',
     refs: [scrollRef],
     callback: () => {

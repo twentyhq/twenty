@@ -13,7 +13,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { MenuItemMultiSelectTag } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
@@ -74,7 +74,7 @@ export const MultiSelectFieldInput = ({
     [onCancel, resetSelectedItem],
   );
 
-  useListenClickOutsideV2({
+  useListenClickOutside({
     refs: [containerRef],
     callback: (event) => {
       event.stopImmediatePropagation();
