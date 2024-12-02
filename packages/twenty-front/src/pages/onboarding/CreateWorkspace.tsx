@@ -23,7 +23,6 @@ import {
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
 import { AppPath } from '@/types/AppPath';
 import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
 
@@ -110,8 +109,9 @@ export const CreateWorkspace = () => {
     [
       activateWorkspace,
       setIsCurrentUserLoaded,
-      apolloMetadataClient,
       isMultiWorkspaceEnabled,
+      apolloMetadataClient,
+      redirectToWorkspace,
       enqueueSnackBar,
     ],
   );

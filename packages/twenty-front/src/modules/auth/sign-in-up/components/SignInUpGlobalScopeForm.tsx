@@ -20,7 +20,6 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
@@ -48,7 +47,6 @@ const StyledForm = styled.form`
 
 export const SignInUpGlobalScopeForm = () => {
   const theme = useTheme();
-  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const signInUpStep = useRecoilValue(signInUpStepState);
 
   const { signInWithGoogle } = useSignInWithGoogle();

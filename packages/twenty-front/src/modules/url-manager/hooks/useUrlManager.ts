@@ -4,7 +4,6 @@ import { isDefined } from '~/utils/isDefined';
 import { urlManagerState } from '@/url-manager/states/url-manager.state';
 import { useRecoilValue } from 'recoil';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { AppPath } from '@/types/AppPath';
 
 export const useUrlManager = () => {
   const urlManager = useRecoilValue(urlManagerState);
