@@ -35,7 +35,7 @@ export const RecordShowContainer = ({
     objectRecordId,
   });
 
-  const tabs = useRecordShowContainerTabs(
+  const { layout, tabs } = useRecordShowContainerTabs(
     loading,
     objectNameSingular as CoreObjectNameSingular,
     isInRightDrawer,
@@ -61,6 +61,7 @@ export const RecordShowContainer = ({
       <ShowPageContainer>
         <ShowPageSubContainer
           tabs={tabs}
+          layout={layout}
           targetableObject={{
             id: objectRecordId,
             targetObjectNameSingular: objectMetadataItem?.nameSingular,

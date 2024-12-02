@@ -92,19 +92,41 @@ it('returns a valid definition for RECORD_CRUD.CREATE actions', () => {
   });
 });
 
+it('returns a valid definition for RECORD_CRUD.UPDATE actions', () => {
+  expect(
+    getStepDefaultDefinition({
+      type: 'RECORD_CRUD.UPDATE',
+      activeObjectMetadataItems: generatedMockObjectMetadataItems,
+    }),
+  ).toStrictEqual({
+    id: expect.any(String),
+    name: 'Update Record',
+    type: 'RECORD_CRUD',
+    valid: false,
+    settings: {
+      input: {
+        type: 'UPDATE',
+        objectName: generatedMockObjectMetadataItems[0].nameSingular,
+        objectRecord: {},
+        objectRecordId: '',
+      },
+      outputSchema: {},
+      errorHandlingOptions: {
+        continueOnFailure: {
+          value: false,
+        },
+        retryOnFailure: {
+          value: false,
+        },
+      },
+    },
+  });
+});
+
 it("throws for RECORD_CRUD.DELETE actions as it's not implemented yet", () => {
   expect(() => {
     getStepDefaultDefinition({
       type: 'RECORD_CRUD.DELETE',
-      activeObjectMetadataItems: generatedMockObjectMetadataItems,
-    });
-  }).toThrow('Not implemented yet');
-});
-
-it("throws for RECORD_CRUD.UPDATE actions as it's not implemented yet", () => {
-  expect(() => {
-    getStepDefaultDefinition({
-      type: 'RECORD_CRUD.UPDATE',
       activeObjectMetadataItems: generatedMockObjectMetadataItems,
     });
   }).toThrow('Not implemented yet');

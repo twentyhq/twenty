@@ -4,6 +4,7 @@ import { isNewViewableRecordLoadingState } from '@/object-record/record-right-dr
 import { CardComponents } from '@/object-record/record-show/components/CardComponents';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
+import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
@@ -23,12 +24,12 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   overflow: auto;
 `;
 
-const StyledTabListContainer = styled.div`
+const StyledTabListContainer = styled.div<{ shouldDisplay: boolean }>`
   align-items: center;
   padding-left: ${({ theme }) => theme.spacing(2)};
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   box-sizing: border-box;
-  display: flex;
+  display: ${({ shouldDisplay }) => (shouldDisplay ? 'flex' : 'none')};
   gap: ${({ theme }) => theme.spacing(2)};
   height: 40px;
 `;
@@ -56,6 +57,7 @@ const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
 export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
 
 type ShowPageSubContainerProps = {
+  layout: RecordLayout;
   tabs: SingleTabProps[];
   targetableObject: Pick<
     ActivityTargetableObject,
@@ -68,6 +70,7 @@ type ShowPageSubContainerProps = {
 
 export const ShowPageSubContainer = ({
   tabs,
+  layout,
   targetableObject,
   loading,
   isInRightDrawer = false,
@@ -120,16 +123,18 @@ export const ShowPageSubContainer = ({
     recordStoreFamilyState(targetableObject.id),
   );
 
+  const visibleTabs = tabs.filter((tab) => !tab.hide);
+
   return (
     <>
-      {!isMobile && !isInRightDrawer && (
+      {!layout.hideSummaryAndFields && !isMobile && !isInRightDrawer && (
         <ShowPageLeftContainer forceMobile={isMobile}>
           {summaryCard}
           {fieldsCard}
         </ShowPageLeftContainer>
       )}
       <StyledShowPageRightContainer isMobile={isMobile}>
-        <StyledTabListContainer>
+        <StyledTabListContainer shouldDisplay={visibleTabs.length > 1}>
           <TabList
             behaveAsLinks={!isInRightDrawer}
             loading={loading || isNewViewableRecordLoading}

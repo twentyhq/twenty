@@ -21,7 +21,7 @@ jobs:
         image: twentycrm/twenty-postgres-spilo
         env:
           PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: twenty
+          PGPASSWORD_SUPERUSER: postgres
           ALLOW_NOSSL: "true"
           SPILO_PROVIDER: "local"
         ports:
@@ -73,8 +73,8 @@ jobs:
       - name: Server / Create DB
         if: steps.changed-files.outputs.any_changed == 'true'
         run: |
-          PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
-          PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
       - name: Worker / Run
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx run twenty-server:worker:ci
@@ -124,7 +124,7 @@ jobs:
         image: twentycrm/twenty-postgres-spilo
         env:
           PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: twenty
+          PGPASSWORD_SUPERUSER: postgres
           ALLOW_NOSSL: "true"
           SPILO_PROVIDER: "local"
         ports:
