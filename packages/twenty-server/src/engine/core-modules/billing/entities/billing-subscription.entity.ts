@@ -81,7 +81,7 @@ export class BillingSubscription {
     () => BillingCustomer,
     (billingCustomer) => billingCustomer.billingSubscriptions,
   )
-  //The join column will be added after the integration of customer table
+  //TODO:Add join column after the integration of customer table
   // if we put it we cannot create a subscription unless the customer is already on the db
   //It will be added on the next PR
   billingCustomer: Relation<BillingCustomer>;
