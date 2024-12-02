@@ -4,7 +4,7 @@ import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 
 export const recordIndexRecordGroupIsDraggableSortComponentSelector =
-  createComponentSelectorV2({
+  createComponentSelectorV2<boolean>({
     key: 'recordIndexRecordGroupIsDraggableSortComponentSelector',
     componentInstanceContext: ViewComponentInstanceContext,
     get:

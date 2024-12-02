@@ -2,9 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
-import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
-import { recordIndexAllRowIdsComponentState } from '@/object-record/record-index/states/recordIndexAllRowIdsComponentState';
-import { recordIndexRowIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRowIdsByGroupComponentFamilyState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { sortRecordsByPosition } from '@/object-record/utils/sortRecordsByPosition';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -13,36 +11,20 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 
 export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
-  const recordGroupIdsState = useRecoilComponentCallbackStateV2(
-    recordGroupIdsComponentState,
-    recordBoardId,
-  );
-
   const recordGroupFieldMetadataState = useRecoilComponentCallbackStateV2(
     recordGroupFieldMetadataComponentState,
     recordBoardId,
   );
 
-  const recordIndexAllRowIdsState = useRecoilComponentCallbackStateV2(
-    recordIndexAllRowIdsComponentState,
-    recordBoardId,
-  );
-
-  const recordIndexRowIdsByGroupFamilyState = useRecoilComponentCallbackStateV2(
-    recordIndexRowIdsByGroupComponentFamilyState,
-    recordBoardId,
-  );
+  const recordIndexRecordIdsByGroupFamilyState =
+    useRecoilComponentCallbackStateV2(
+      recordIndexRecordIdsByGroupComponentFamilyState,
+      recordBoardId,
+    );
 
   const setRecordIdsForColumn = useRecoilCallback(
     ({ set, snapshot }) =>
       (currentRecordGroupId: string, records: ObjectRecord[]) => {
-        const existingAllRowIds = getSnapshotValue(
-          snapshot,
-          recordIndexAllRowIdsState,
-        );
-
-        const recordGroupIds = getSnapshotValue(snapshot, recordGroupIdsState);
-
         const recordGroup = getSnapshotValue(
           snapshot,
           recordGroupDefinitionFamilyState(currentRecordGroupId),
@@ -50,7 +32,7 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
 
         const existingRecordGroupRowIds = getSnapshotValue(
           snapshot,
-          recordIndexRowIdsByGroupFamilyState(currentRecordGroupId),
+          recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
         );
 
         const recordGroupFieldMetadata = getSnapshotValue(
@@ -72,35 +54,12 @@ export const useSetRecordIdsForColumn = (recordBoardId?: string) => {
 
         if (!isDeeplyEqual(existingRecordGroupRowIds, recordGroupRowIds)) {
           set(
-            recordIndexRowIdsByGroupFamilyState(currentRecordGroupId),
+            recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
             recordGroupRowIds,
           );
         }
-
-        const allRowIds: string[] = [];
-
-        for (const recordGroupId of recordGroupIds) {
-          const tableRowIdsByGroup =
-            recordGroupId !== currentRecordGroupId
-              ? getSnapshotValue(
-                  snapshot,
-                  recordIndexRowIdsByGroupFamilyState(recordGroupId),
-                )
-              : recordGroupRowIds;
-
-          allRowIds.push(...tableRowIdsByGroup);
-        }
-
-        if (!isDeeplyEqual(existingAllRowIds, allRowIds)) {
-          set(recordIndexAllRowIdsState, allRowIds);
-        }
       },
-    [
-      recordGroupIdsState,
-      recordIndexRowIdsByGroupFamilyState,
-      recordGroupFieldMetadataState,
-      recordIndexAllRowIdsState,
-    ],
+    [recordIndexRecordIdsByGroupFamilyState, recordGroupFieldMetadataState],
   );
 
   return {

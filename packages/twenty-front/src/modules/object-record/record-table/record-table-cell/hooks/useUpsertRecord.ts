@@ -4,10 +4,12 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordFieldInputDraftValueComponentSelector } from '@/object-record/record-field/states/selectors/recordFieldInputDraftValueComponentSelector';
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentSelector } from '@/ui/utilities/state/component-state/utils/extractComponentSelector';
 import { isDefined } from '~/utils/isDefined';
 
@@ -18,8 +20,13 @@ export const useUpsertRecord = ({
   objectNameSingular: string;
   recordTableId: string;
 }) => {
+  const hasRecordGroups = useRecoilComponentValueV2(
+    hasRecordGroupsComponentSelector,
+  );
+
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular,
+    shouldMatchRootQueryFilter: hasRecordGroups,
   });
 
   const recordTablePendingRecordIdState = useRecoilComponentCallbackStateV2(

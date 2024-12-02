@@ -16,6 +16,7 @@ import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/S
 import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/NavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
@@ -75,6 +76,8 @@ export const DefaultLayout = () => {
   const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
 
+  const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
+
   return (
     <>
       <Global
@@ -85,19 +88,23 @@ export const DefaultLayout = () => {
         `}
       />
       <StyledLayout>
-        <ContextStoreComponentInstanceContext.Provider
-          value={{ instanceId: 'command-menu' }}
-        >
-          <ActionMenuComponentInstanceContext.Provider
-            value={{ instanceId: 'command-menu' }}
-          >
-            <RecordActionMenuEntriesSetter />
-            <RecordAgnosticActionsSetterEffect />
-            <ActionMenuConfirmationModals />
-            <CommandMenu />
-          </ActionMenuComponentInstanceContext.Provider>
-        </ContextStoreComponentInstanceContext.Provider>
-        <KeyboardShortcutMenu />
+        {!showAuthModal && (
+          <>
+            <ContextStoreComponentInstanceContext.Provider
+              value={{ instanceId: 'command-menu' }}
+            >
+              <ActionMenuComponentInstanceContext.Provider
+                value={{ instanceId: 'command-menu' }}
+              >
+                <RecordActionMenuEntriesSetter />
+                {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
+                <ActionMenuConfirmationModals />
+                <CommandMenu />
+              </ActionMenuComponentInstanceContext.Provider>
+            </ContextStoreComponentInstanceContext.Provider>
+            <KeyboardShortcutMenu />
+          </>
+        )}
 
         <StyledPageContainer
           animate={{

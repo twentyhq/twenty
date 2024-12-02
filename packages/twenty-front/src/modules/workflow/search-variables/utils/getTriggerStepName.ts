@@ -2,6 +2,8 @@ import {
   WorkflowDatabaseEventTrigger,
   WorkflowTrigger,
 } from '@/workflow/types/Workflow';
+import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
+import { isDefined } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const getTriggerStepName = (trigger: WorkflowTrigger): string => {
@@ -9,14 +11,14 @@ export const getTriggerStepName = (trigger: WorkflowTrigger): string => {
     case 'DATABASE_EVENT':
       return getDatabaseEventTriggerStepName(trigger);
     case 'MANUAL':
-      if (!trigger.settings.objectType) {
+      if (!isDefined(trigger.settings.objectType)) {
         return 'Manual trigger';
       }
 
       return 'Manual trigger for ' + capitalize(trigger.settings.objectType);
-    default:
-      return '';
   }
+
+  return assertUnreachable(trigger);
 };
 
 const getDatabaseEventTriggerStepName = (

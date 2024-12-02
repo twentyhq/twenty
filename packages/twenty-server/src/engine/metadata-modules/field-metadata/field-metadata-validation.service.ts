@@ -23,7 +23,7 @@ enum ValueType {
   NUMBER = 'number',
 }
 
-class SettingsValidation {
+class NumberSettingsValidation {
   @IsOptional()
   @IsInt()
   @Min(0)
@@ -32,7 +32,9 @@ class SettingsValidation {
   @IsOptional()
   @IsEnum(ValueType)
   type?: 'percentage' | 'number';
+}
 
+class TextSettingsValidation {
   @IsOptional()
   @IsInt()
   @Min(0)
@@ -55,17 +57,19 @@ export class FieldMetadataValidationService<
   }) {
     switch (fieldType) {
       case FieldMetadataType.NUMBER:
+        await this.validateSettings(NumberSettingsValidation, settings);
+        break;
       case FieldMetadataType.TEXT:
-        await this.validateSettings(settings);
+        await this.validateSettings(TextSettingsValidation, settings);
         break;
       default:
         break;
     }
   }
 
-  private async validateSettings(settings: any) {
+  private async validateSettings(validator: any, settings: any) {
     try {
-      const settingsInstance = plainToInstance(SettingsValidation, settings);
+      const settingsInstance = plainToInstance(validator, settings);
 
       await validateOrReject(settingsInstance);
     } catch (error) {

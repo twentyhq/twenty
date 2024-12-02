@@ -1,6 +1,3 @@
-import { WorkflowEditActionFormRecordCreate } from '@/workflow/components/WorkflowEditActionFormRecordCreate';
-import { WorkflowEditActionFormSendEmail } from '@/workflow/components/WorkflowEditActionFormSendEmail';
-import { WorkflowEditActionFormServerlessFunction } from '@/workflow/components/WorkflowEditActionFormServerlessFunction';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/components/WorkflowEditTriggerManualForm';
 import {
@@ -11,6 +8,11 @@ import {
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { isWorkflowRecordCreateAction } from '@/workflow/utils/isWorkflowRecordCreateAction';
+import { isWorkflowRecordUpdateAction } from '@/workflow/utils/isWorkflowRecordUpdateAction';
+import { WorkflowEditActionFormRecordCreate } from '@/workflow/workflow-actions/components/WorkflowEditActionFormRecordCreate';
+import { WorkflowEditActionFormRecordUpdate } from '@/workflow/workflow-actions/components/WorkflowEditActionFormRecordUpdate';
+import { WorkflowEditActionFormSendEmail } from '@/workflow/workflow-actions/components/WorkflowEditActionFormSendEmail';
+import { WorkflowEditActionFormServerlessFunction } from '@/workflow/workflow-actions/components/WorkflowEditActionFormServerlessFunction';
 import { isDefined } from 'twenty-ui';
 
 type WorkflowStepDetailProps =
@@ -96,6 +98,15 @@ export const WorkflowStepDetail = ({
           if (isWorkflowRecordCreateAction(stepDefinition.definition)) {
             return (
               <WorkflowEditActionFormRecordCreate
+                action={stepDefinition.definition}
+                actionOptions={props}
+              />
+            );
+          }
+
+          if (isWorkflowRecordUpdateAction(stepDefinition.definition)) {
+            return (
+              <WorkflowEditActionFormRecordUpdate
                 action={stepDefinition.definition}
                 actionOptions={props}
               />

@@ -6,7 +6,7 @@ export const sortRecordGroupDefinitions = (
   recordGroupSort: RecordGroupSort,
 ) => {
   const visibleRecordGroups = recordGroupDefinitions.filter(
-    (boardGroup) => boardGroup.isVisible,
+    (recordGroup) => recordGroup.isVisible,
   );
 
   const compareAlphabetical = (a: string, b: string, reverse = false) => {
