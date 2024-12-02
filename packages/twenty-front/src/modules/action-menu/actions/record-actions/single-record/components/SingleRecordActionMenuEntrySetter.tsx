@@ -15,13 +15,11 @@ export const SingleRecordActionMenuEntrySetter = ({
         objectMetadataItem={objectMetadataItem}
       />
       {objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow && (
-        <WorkflowSingleRecordActionMenuEntrySetterEffect startPosition={3} />
+        <WorkflowSingleRecordActionMenuEntrySetterEffect />
       )}
       {objectMetadataItem.nameSingular ===
         CoreObjectNameSingular.WorkflowVersion && (
-        <WorkflowVersionsSingleRecordActionMenuEntrySetterEffect
-          startPosition={3}
-        />
+        <WorkflowVersionsSingleRecordActionMenuEntrySetterEffect />
       )}
     </>
   );
