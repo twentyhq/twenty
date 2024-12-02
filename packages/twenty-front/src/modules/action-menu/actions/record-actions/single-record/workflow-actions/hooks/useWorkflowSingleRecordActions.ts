@@ -17,7 +17,7 @@ export const useWorkflowSingleRecordActions = () => {
 
   const selectedRecordId =
     contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
+      ? contextStoreTargetedRecordsRule.selectedRecordIds?.[0]
       : undefined;
 
   if (!isDefined(selectedRecordId)) {

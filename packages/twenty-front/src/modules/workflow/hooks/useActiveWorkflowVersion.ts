@@ -2,7 +2,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Workflow, WorkflowVersion } from '@/workflow/types/Workflow';
 
-export const useActiveWorkflowVersion = (workflowId?: string) => {
+export const useActiveWorkflowVersion = (workflowId: string) => {
   const { records: workflowVersions } = useFindManyRecords<
     WorkflowVersion & {
       workflow: Omit<Workflow, 'versions'> & {

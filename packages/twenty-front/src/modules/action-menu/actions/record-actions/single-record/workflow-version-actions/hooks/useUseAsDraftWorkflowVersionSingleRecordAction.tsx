@@ -22,7 +22,9 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction = ({
     recordStoreFamilyState(workflowVersionId),
   );
 
-  const workflow = useWorkflowWithCurrentVersion(workflowVersion?.workflow.id);
+  const workflow = useWorkflowWithCurrentVersion(
+    workflowVersion?.workflow?.id ?? '',
+  );
 
   const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
 
@@ -68,8 +70,8 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction = ({
       },
       ConfirmationModal: (
         <OverrideWorkflowDraftConfirmationModal
-          draftWorkflowVersionId={workflow.currentVersion.id}
-          workflowId={workflow.id}
+          draftWorkflowVersionId={workflow?.currentVersion?.id ?? ''}
+          workflowId={workflow?.id ?? ''}
           workflowVersionUpdateInput={{
             steps: workflowVersion.steps,
             trigger: workflowVersion.trigger,
