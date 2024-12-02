@@ -3,7 +3,10 @@ import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/s
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { ClickOutsideMode } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import {
+  ClickOutsideMode,
+  useListenClickOutsideV2,
+} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -18,7 +21,6 @@ import { isRightDrawerOpenState } from '../states/isRightDrawerOpenState';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerHotkeyScope } from '../types/RightDrawerHotkeyScope';
 
-import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { workflowReactFlowRefState } from '@/workflow/states/workflowReactFlowRefState';
 import { RightDrawerRouter } from './RightDrawerRouter';
 

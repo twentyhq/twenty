@@ -5,7 +5,7 @@ import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 type RecordTableBodyUnselectEffectProps = {
   tableBodyRef: React.RefObject<HTMLDivElement>;
