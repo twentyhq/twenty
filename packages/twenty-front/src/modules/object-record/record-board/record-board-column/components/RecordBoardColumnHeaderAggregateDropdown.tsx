@@ -6,7 +6,7 @@ import { RecordBoardColumnHeaderAggregateDropdownButton } from '@/object-record/
 import { AggregateDropdownContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent';
 import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
 import { AggregateContentId } from '@/object-record/record-board/types/AggregateContentId';
-import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
+import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
 type RecordBoardColumnHeaderAggregateDropdownProps = {
@@ -28,7 +28,7 @@ export const RecordBoardColumnHeaderAggregateDropdown = ({
   return (
     <Dropdown
       dropdownId={dropdownId}
-      dropdownHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
+      dropdownHotkeyScope={{ scope: RecordBoardColumnHotkeyScope.ColumnHeader }}
       dropdownMenuWidth={DROPDOWN_WIDTH}
       dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
       clickableComponent={

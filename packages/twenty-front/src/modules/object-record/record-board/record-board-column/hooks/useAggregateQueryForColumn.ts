@@ -171,7 +171,7 @@ const computeAggregateValueAndLabel = (
   const value =
     isDefined(aggregateValue) &&
     kanbanAggregateOperationField?.type === FieldMetadataType.Currency
-      ? Number(aggregateValue) / 1000000
+      ? Number(aggregateValue) / 1_000_000
       : aggregateValue;
 
   return {
