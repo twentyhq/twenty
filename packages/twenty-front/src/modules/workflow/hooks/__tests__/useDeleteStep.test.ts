@@ -5,6 +5,13 @@ import { useDeleteStep } from '@/workflow/hooks/useDeleteStep';
 const mockCloseRightDrawer = jest.fn();
 const mockCreateNewWorkflowVersion = jest.fn();
 const mockDeleteWorkflowVersionStep = jest.fn();
+const updateOneRecordMock = jest.fn();
+
+jest.mock('@/object-record/hooks/useUpdateOneRecord', () => ({
+  useUpdateOneRecord: () => ({
+    updateOneRecord: updateOneRecordMock,
+  }),
+}));
 
 jest.mock('recoil', () => ({
   useRecoilValue: () => 'parent-step-id',
