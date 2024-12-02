@@ -159,6 +159,29 @@ export const FormSelectFieldInput = ({
     onPersist(variableName);
   };
 
+  const handleDisplayModeClick = () => {
+    if (draftValue.type !== 'static') {
+      throw new Error(
+        'This function can only be called when editing a static value.',
+      );
+    }
+
+    setDraftValue({
+      ...draftValue,
+      editingMode: 'edit',
+    });
+
+    setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
+  };
+
+  const handleSelectEnter = (itemId: string) => {
+    const option = filteredOptions.find((option) => option.value === itemId);
+    if (isDefined(option)) {
+      onSubmit(option.value);
+      resetSelectedItem();
+    }
+  };
+
   useScopedHotkeys(
     Key.Escape,
     () => {
@@ -187,14 +210,7 @@ export const FormSelectFieldInput = ({
             <>
               <StyledDisplayModeContainer
                 data-open={draftValue.editingMode === 'edit'}
-                onClick={() => {
-                  setDraftValue({
-                    ...draftValue,
-                    editingMode: 'edit',
-                  });
-
-                  setHotkeyScopeAndMemorizePreviousScope(hotkeyScope);
-                }}
+                onClick={handleDisplayModeClick}
               >
                 <VisibilityHidden>Edit</VisibilityHidden>
 
@@ -212,15 +228,7 @@ export const FormSelectFieldInput = ({
                   selectableListId={SINGLE_RECORD_SELECT_BASE_LIST}
                   selectableItemIdArray={optionIds}
                   hotkeyScope={hotkeyScope}
-                  onEnter={(itemId) => {
-                    const option = filteredOptions.find(
-                      (option) => option.value === itemId,
-                    );
-                    if (isDefined(option)) {
-                      onSubmit(option.value);
-                      resetSelectedItem();
-                    }
-                  }}
+                  onEnter={handleSelectEnter}
                 >
                   <SelectInput
                     parentRef={selectWrapperRef}
