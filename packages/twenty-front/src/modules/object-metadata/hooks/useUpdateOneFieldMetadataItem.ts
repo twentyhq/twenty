@@ -54,6 +54,7 @@ export const useUpdateOneFieldMetadataItem = () => {
       | 'name'
       | 'defaultValue'
       | 'options'
+      | 'isLabelSyncedWithName'
     >;
   }) => {
     const result = await mutate({
@@ -68,17 +69,17 @@ export const useUpdateOneFieldMetadataItem = () => {
       refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
     });
 
-    await apolloClient.query({
-      query: findManyRecordsQuery,
-      variables: {
-        filter: {
-          objectMetadataId: {
-            eq: objectMetadataId,
-          },
-        },
-      },
-      fetchPolicy: 'network-only',
-    });
+    // await apolloClient.query({
+    //   query: findManyRecordsQuery,
+    //   variables: {
+    //     filter: {
+    //       objectMetadataId: {
+    //         eq: objectMetadataId,
+    //       },
+    //     },
+    //   },
+    //   fetchPolicy: 'network-only',
+    // });
 
     return result;
   };

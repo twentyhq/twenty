@@ -41,6 +41,7 @@ export const query = gql`
                 isNullable
                 createdAt
                 updatedAt
+                isLabelSyncedWithName
                 relationDefinition {
                   relationId
                   direction
