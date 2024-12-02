@@ -1,17 +1,18 @@
 import { actionMenuEntriesComponentState } from '@/action-menu/states/actionMenuEntriesComponentState';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { expect } from '@storybook/test';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
-import { RecoilRoot } from 'recoil';
+import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { useDeleteSingleRecordAction } from '../useDeleteSingleRecordAction';
+import { useDeleteMultipleRecordsAction } from '../useDeleteMultipleRecordsAction';
 
-jest.mock('@/object-record/hooks/useDeleteOneRecord', () => ({
-  useDeleteOneRecord: () => ({
-    deleteOneRecord: jest.fn(),
+jest.mock('@/object-record/hooks/useDeleteManyRecords', () => ({
+  useDeleteManyRecords: () => ({
+    deleteManyRecords: jest.fn(),
   }),
 }));
 jest.mock('@/favorites/hooks/useDeleteFavorite', () => ({
@@ -34,9 +35,21 @@ const companyMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'company',
 )!;
 
-describe('useDeleteSingleRecordAction', () => {
+const JestMetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
+  apolloMocks: [],
+  onInitializeRecoilSnapshot: ({ set }) => {
+    set(
+      contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+        instanceId: '1',
+      }),
+      3,
+    );
+  },
+});
+
+describe('useDeleteMultipleRecordsAction', () => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
-    <RecoilRoot>
+    <JestMetadataAndApolloMocksWrapper>
       <ContextStoreComponentInstanceContext.Provider
         value={{
           instanceId: '1',
@@ -50,7 +63,7 @@ describe('useDeleteSingleRecordAction', () => {
           {children}
         </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
-    </RecoilRoot>
+    </JestMetadataAndApolloMocksWrapper>
   );
 
   it('should register delete action', () => {
@@ -62,8 +75,7 @@ describe('useDeleteSingleRecordAction', () => {
 
         return {
           actionMenuEntries,
-          useDeleteSingleRecordAction: useDeleteSingleRecordAction({
-            recordId: 'record1',
+          useDeleteMultipleRecordsAction: useDeleteMultipleRecordsAction({
             objectMetadataItem: companyMockObjectMetadataItem,
           }),
         };
@@ -72,17 +84,17 @@ describe('useDeleteSingleRecordAction', () => {
     );
 
     act(() => {
-      result.current.useDeleteSingleRecordAction.registerDeleteSingleRecordAction(
+      result.current.useDeleteMultipleRecordsAction.registerDeleteMultipleRecordsAction(
         { position: 0 },
       );
     });
 
     expect(result.current.actionMenuEntries.size).toBe(1);
     expect(
-      result.current.actionMenuEntries.get('delete-single-record'),
+      result.current.actionMenuEntries.get('delete-multiple-records'),
     ).toBeDefined();
     expect(
-      result.current.actionMenuEntries.get('delete-single-record')?.position,
+      result.current.actionMenuEntries.get('delete-multiple-records')?.position,
     ).toBe(0);
   });
 
@@ -95,8 +107,7 @@ describe('useDeleteSingleRecordAction', () => {
 
         return {
           actionMenuEntries,
-          useDeleteSingleRecordAction: useDeleteSingleRecordAction({
-            recordId: 'record1',
+          useDeleteMultipleRecordsAction: useDeleteMultipleRecordsAction({
             objectMetadataItem: companyMockObjectMetadataItem,
           }),
         };
@@ -105,7 +116,7 @@ describe('useDeleteSingleRecordAction', () => {
     );
 
     act(() => {
-      result.current.useDeleteSingleRecordAction.registerDeleteSingleRecordAction(
+      result.current.useDeleteMultipleRecordsAction.registerDeleteMultipleRecordsAction(
         { position: 0 },
       );
     });
@@ -113,7 +124,7 @@ describe('useDeleteSingleRecordAction', () => {
     expect(result.current.actionMenuEntries.size).toBe(1);
 
     act(() => {
-      result.current.useDeleteSingleRecordAction.unregisterDeleteSingleRecordAction();
+      result.current.useDeleteMultipleRecordsAction.unregisterDeleteMultipleRecordsAction();
     });
 
     expect(result.current.actionMenuEntries.size).toBe(0);
