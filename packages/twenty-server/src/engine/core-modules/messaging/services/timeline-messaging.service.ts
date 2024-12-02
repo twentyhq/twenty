@@ -44,8 +44,14 @@ export class TimelineMessagingService {
             },
           },
         },
+        order: {
+          messages: {
+            receivedAt: 'DESC',
+          },
+        },
         skip: offset,
         take: pageSize,
+        relations: ['messages'],
       });
 
     const messageThreads = await messageThreadRepository.find({

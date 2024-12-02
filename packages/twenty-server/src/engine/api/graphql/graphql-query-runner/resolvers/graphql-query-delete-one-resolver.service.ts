@@ -35,8 +35,8 @@ export class GraphqlQueryDeleteOneResolverService extends GraphqlQueryBaseResolv
     );
 
     const nonFormattedDeletedObjectRecords = await queryBuilder
-      .where({ id: executionArgs.args.id })
       .softDelete()
+      .where({ id: executionArgs.args.id })
       .returning('*')
       .execute();
 

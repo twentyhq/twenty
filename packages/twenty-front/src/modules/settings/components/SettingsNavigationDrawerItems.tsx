@@ -13,6 +13,7 @@ import {
   IconKey,
   IconMail,
   IconRocket,
+  IconServer,
   IconSettings,
   IconTool,
   IconUserCircle,
@@ -21,6 +22,7 @@ import {
 } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import { useExpandedAnimation } from '@/settings/hooks/useExpandedAnimation';
@@ -84,6 +86,8 @@ export const SettingsNavigationDrawerItems = () => {
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
 
+  const currentUser = useRecoilValue(currentUserState);
+  const isAdminPageEnabled = currentUser?.canImpersonate;
   // TODO: Refactor this part to only have arrays of navigation items
   const currentPathName = useLocation().pathname;
 
@@ -230,6 +234,13 @@ export const SettingsNavigationDrawerItems = () => {
       </AnimatePresence>
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Other" />
+        {isAdminPageEnabled && (
+          <SettingsNavigationDrawerItem
+            label="Server Admin Panel"
+            path={SettingsPath.AdminPanel}
+            Icon={IconServer}
+          />
+        )}
         <SettingsNavigationDrawerItem
           label="Releases"
           path={SettingsPath.Releases}

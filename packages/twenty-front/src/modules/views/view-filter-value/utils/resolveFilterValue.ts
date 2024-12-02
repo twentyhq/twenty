@@ -7,6 +7,7 @@ import {
   resolveDateViewFilterValue,
   ResolvedDateViewFilterValue,
 } from './resolveDateViewFilterValue';
+import { resolveBooleanViewFilterValue } from '@/views/view-filter-value/utils/resolveBooleanViewFilterValue';
 
 type ResolvedFilterValue<
   T extends FilterableFieldType,
@@ -17,7 +18,9 @@ type ResolvedFilterValue<
     ? ReturnType<typeof resolveNumberViewFilterValue>
     : T extends 'SELECT' | 'MULTI_SELECT'
       ? string[]
-      : string;
+      : T extends 'BOOLEAN'
+        ? boolean
+        : string;
 
 type PartialFilter<
   T extends FilterableFieldType,
@@ -42,6 +45,8 @@ export const resolveFilterValue = <
     case 'SELECT':
     case 'MULTI_SELECT':
       return resolveSelectViewFilterValue(filter) as ResolvedFilterValue<T, O>;
+    case 'BOOLEAN':
+      return resolveBooleanViewFilterValue(filter) as ResolvedFilterValue<T, O>;
     default:
       return filter.value as ResolvedFilterValue<T, O>;
   }

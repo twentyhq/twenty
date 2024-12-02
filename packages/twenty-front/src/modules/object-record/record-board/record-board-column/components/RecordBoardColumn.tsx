@@ -1,10 +1,12 @@
 import styled from '@emotion/styled';
 import { Droppable } from '@hello-pangea/dnd';
-import { useRecoilValue } from 'recoil';
 
-import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardColumnCardsContainer } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsContainer';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
+import { useRecoilValue } from 'recoil';
 
 const StyledColumn = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
@@ -25,27 +27,26 @@ type RecordBoardColumnProps = {
 export const RecordBoardColumn = ({
   recordBoardColumnId,
 }: RecordBoardColumnProps) => {
-  const { columnsFamilySelector, recordIdsByColumnIdFamilyState } =
-    useRecordBoardStates();
-  const columnDefinition = useRecoilValue(
-    columnsFamilySelector(recordBoardColumnId),
+  const recordGroupDefinition = useRecoilValue(
+    recordGroupDefinitionFamilyState(recordBoardColumnId),
   );
 
-  const recordIds = useRecoilValue(
-    recordIdsByColumnIdFamilyState(recordBoardColumnId),
+  const recordIdsByGroup = useRecoilComponentFamilyValueV2(
+    recordIndexRecordIdsByGroupComponentFamilyState,
+    recordBoardColumnId,
   );
 
-  if (!columnDefinition) {
+  if (!recordGroupDefinition) {
     return null;
   }
 
   return (
     <RecordBoardColumnContext.Provider
       value={{
-        columnDefinition: columnDefinition,
-        recordCount: recordIds.length,
+        columnDefinition: recordGroupDefinition,
+        recordCount: recordIdsByGroup.length,
         columnId: recordBoardColumnId,
-        recordIds,
+        recordIds: recordIdsByGroup,
       }}
     >
       <Droppable droppableId={recordBoardColumnId}>
@@ -53,7 +54,7 @@ export const RecordBoardColumn = ({
           <StyledColumn>
             <RecordBoardColumnCardsContainer
               droppableProvided={droppableProvided}
-              recordIds={recordIds}
+              recordIds={recordIdsByGroup}
             />
           </StyledColumn>
         )}

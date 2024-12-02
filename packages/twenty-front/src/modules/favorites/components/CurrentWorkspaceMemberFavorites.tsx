@@ -17,9 +17,15 @@ import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navig
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { IconFolder, IconHeartOff, LightIconButton } from 'twenty-ui';
+import {
+  IconFolder,
+  IconFolderOpen,
+  IconHeartOff,
+  LightIconButton,
+} from 'twenty-ui';
 
 type CurrentWorkspaceMemberFavoritesProps = {
   folder: {
@@ -136,7 +142,7 @@ export const CurrentWorkspaceMemberFavorites = ({
           <NavigationDrawerItem
             key={folder.folderId}
             label={folder.folderName}
-            Icon={IconFolder}
+            Icon={isOpen ? IconFolderOpen : IconFolder}
             onClick={handleToggle}
             rightOptions={rightOptions}
             className="navigation-drawer-item"
@@ -185,14 +191,17 @@ export const CurrentWorkspaceMemberFavorites = ({
         )}
       </NavigationDrawerItemsCollapsableContainer>
 
-      <ConfirmationModal
-        isOpen={isDeleteModalOpen}
-        setIsOpen={setIsDeleteModalOpen}
-        title={`Remove ${folder.favorites.length} ${folder.favorites.length > 1 ? 'favorites' : 'favorite'}?`}
-        subtitle={`This action will delete this favorite folder ${folder.favorites.length > 1 ? `and all ${folder.favorites.length} favorites` : 'and the favorite'} inside. Do you want to continue?`}
-        onConfirmClick={handleConfirmDelete}
-        deleteButtonText="Delete Folder"
-      />
+      {createPortal(
+        <ConfirmationModal
+          isOpen={isDeleteModalOpen}
+          setIsOpen={setIsDeleteModalOpen}
+          title={`Remove ${folder.favorites.length} ${folder.favorites.length > 1 ? 'favorites' : 'favorite'}?`}
+          subtitle={`This action will delete this favorite folder ${folder.favorites.length > 1 ? `and all ${folder.favorites.length} favorites` : 'and the favorite'} inside. Do you want to continue?`}
+          onConfirmClick={handleConfirmDelete}
+          deleteButtonText="Delete Folder"
+        />,
+        document.body,
+      )}
     </>
   );
 };

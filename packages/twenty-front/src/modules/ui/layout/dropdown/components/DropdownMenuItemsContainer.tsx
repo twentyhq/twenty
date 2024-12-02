@@ -1,7 +1,5 @@
 import styled from '@emotion/styled';
 
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-
 const StyledDropdownMenuItemsExternalContainer = styled.div<{
   hasMaxHeight?: boolean;
 }>`
@@ -16,10 +14,6 @@ const StyledDropdownMenuItemsExternalContainer = styled.div<{
   padding: var(--padding);
 
   width: calc(100% - 2 * var(--padding));
-`;
-
-const StyledScrollWrapper = styled(ScrollWrapper)`
-  width: 100%;
 `;
 
 const StyledDropdownMenuItemsInternalContainer = styled.div`
@@ -48,17 +42,9 @@ export const DropdownMenuItemsContainer = ({
       hasMaxHeight={hasMaxHeight}
       className={className}
     >
-      {hasMaxHeight ? (
-        <StyledScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-          <StyledDropdownMenuItemsInternalContainer>
-            {children}
-          </StyledDropdownMenuItemsInternalContainer>
-        </StyledScrollWrapper>
-      ) : (
-        <StyledDropdownMenuItemsInternalContainer>
-          {children}
-        </StyledDropdownMenuItemsInternalContainer>
-      )}
+      <StyledDropdownMenuItemsInternalContainer>
+        {children}
+      </StyledDropdownMenuItemsInternalContainer>
     </StyledDropdownMenuItemsExternalContainer>
   );
 };
