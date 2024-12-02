@@ -20,7 +20,7 @@ export const ClientConfigProviderEffect = () => {
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
 
-  const setisDeveloperDefaultSignInPrefilled = useSetRecoilState(
+  const setIsDeveloperDefaultSignInPrefilled = useSetRecoilState(
     isDeveloperDefaultSignInPrefilledState,
   );
   const setIsSignUpDisabled = useSetRecoilState(isSignUpDisabledState);
@@ -101,7 +101,7 @@ export const ClientConfigProviderEffect = () => {
     data,
     setAuthProviders,
     setIsDebugMode,
-    setisDeveloperDefaultSignInPrefilled,
+    setIsDeveloperDefaultSignInPrefilled,
     setIsSignUpDisabled,
     setSupportChat,
     setBilling,
