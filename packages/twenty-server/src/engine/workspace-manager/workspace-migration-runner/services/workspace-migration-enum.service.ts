@@ -23,6 +23,13 @@ export class WorkspaceMigrationEnumService {
     tableName: string,
     migrationColumn: WorkspaceMigrationColumnAlter,
   ) {
+    const oldEnumTypeName = await this.getEnumTypeName(
+      queryRunner,
+      schemaName,
+      tableName,
+      migrationColumn.currentColumnDefinition.columnName,
+    );
+
     // Rename column name
     if (
       migrationColumn.currentColumnDefinition.columnName !==
@@ -36,13 +43,6 @@ export class WorkspaceMigrationEnumService {
         migrationColumn.alteredColumnDefinition.columnName,
       );
     }
-
-    const oldEnumTypeName = await this.getEnumTypeName(
-      queryRunner,
-      schemaName,
-      tableName,
-      migrationColumn.currentColumnDefinition.columnName,
-    );
 
     const columnDefinition = migrationColumn.alteredColumnDefinition;
     const tempEnumTypeName = `${oldEnumTypeName}_temp`;
