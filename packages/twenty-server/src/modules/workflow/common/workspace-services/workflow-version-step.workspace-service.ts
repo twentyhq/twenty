@@ -20,6 +20,10 @@ import { WorkflowRecordCRUDType } from 'src/modules/workflow/workflow-executor/w
 import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
+import {
+  WorkflowVersionStepException,
+  WorkflowVersionStepExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 
 const TRIGGER_STEP_ID = 'trigger';
 
@@ -67,7 +71,10 @@ export class WorkflowVersionStepWorkspaceService {
           );
 
         if (!isDefined(newServerlessFunction)) {
-          throw new Error('Fail to create Code Step');
+          throw new WorkflowVersionStepException(
+            'Fail to create Code Step',
+            WorkflowVersionStepExceptionCode.FAILURE,
+          );
         }
 
         const sourceCode = (
@@ -161,7 +168,10 @@ export class WorkflowVersionStepWorkspaceService {
         };
       }
       default:
-        throw new Error(`WorkflowActionType '${type}' unknown`);
+        throw new WorkflowVersionStepException(
+          `WorkflowActionType '${type}' unknown`,
+          WorkflowVersionStepExceptionCode.UNKNOWN,
+        );
     }
   }
 
@@ -209,11 +219,18 @@ export class WorkflowVersionStepWorkspaceService {
         'workflowVersion',
       );
 
-    const workflowVersion = await workflowVersionRepository.findOneOrFail({
+    const workflowVersion = await workflowVersionRepository.findOne({
       where: {
         id: workflowVersionId,
       },
     });
+
+    if (!isDefined(workflowVersion)) {
+      throw new WorkflowVersionStepException(
+        'WorkflowVersion not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
 
     await workflowVersionRepository.update(workflowVersion.id, {
       steps: [...(workflowVersion.steps || []), enrichedNewStep],
@@ -236,14 +253,24 @@ export class WorkflowVersionStepWorkspaceService {
         'workflowVersion',
       );
 
-    const workflowVersion = await workflowVersionRepository.findOneOrFail({
+    const workflowVersion = await workflowVersionRepository.findOne({
       where: {
         id: workflowVersionId,
       },
     });
 
+    if (!isDefined(workflowVersion)) {
+      throw new WorkflowVersionStepException(
+        'WorkflowVersion not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
     if (!isDefined(workflowVersion.steps)) {
-      throw new Error("Can't update step from undefined steps");
+      throw new WorkflowVersionStepException(
+        "Can't update step from undefined steps",
+        WorkflowVersionStepExceptionCode.UNDEFINED,
+      );
     }
 
     const enrichedNewStep = await this.enrichOutputSchema({
@@ -280,14 +307,24 @@ export class WorkflowVersionStepWorkspaceService {
         'workflowVersion',
       );
 
-    const workflowVersion = await workflowVersionRepository.findOneOrFail({
+    const workflowVersion = await workflowVersionRepository.findOne({
       where: {
         id: workflowVersionId,
       },
     });
 
+    if (!isDefined(workflowVersion)) {
+      throw new WorkflowVersionStepException(
+        'WorkflowVersion not found',
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
+    }
+
     if (!isDefined(workflowVersion.steps)) {
-      throw new Error("Can't delete step from undefined steps");
+      throw new WorkflowVersionStepException(
+        "Can't delete step from undefined steps",
+        WorkflowVersionStepExceptionCode.UNDEFINED,
+      );
     }
 
     const stepToDelete = workflowVersion.steps.filter(
@@ -295,7 +332,10 @@ export class WorkflowVersionStepWorkspaceService {
     )?.[0];
 
     if (!isDefined(stepToDelete)) {
-      throw new Error("Can't delete not existing step");
+      throw new WorkflowVersionStepException(
+        "Can't delete not existing step",
+        WorkflowVersionStepExceptionCode.NOT_FOUND,
+      );
     }
 
     const workflowVersionUpdates =
