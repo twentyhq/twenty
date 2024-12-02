@@ -49,6 +49,10 @@ export class FieldMetadataRelatedRecordsService {
       );
 
     for (const view of views) {
+      if (view.type === 'table') {
+        continue;
+      }
+
       const maxPosition = view.viewGroups.reduce(
         (max, viewGroup) => Math.max(max, viewGroup.position),
         0,
