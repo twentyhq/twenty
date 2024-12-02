@@ -40,10 +40,6 @@ export const useDeleteSingleRecordAction = ({
   const { closeRightDrawer } = useRightDrawer();
 
   const handleDeleteClick = useCallback(async () => {
-    if (!isDefined(recordId)) {
-      return;
-    }
-
     resetTableRowSelection();
 
     const foundFavorite = favorites?.find(
