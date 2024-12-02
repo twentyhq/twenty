@@ -91,7 +91,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     exampleValue: {
       primaryPhoneNumber: '234-567-890',
       primaryPhoneCountryCode: '+1',
-      additionalPhones: [{ number: '234-567-890', countryCode: '+1' }],
+      additionalPhones: [{ number: '234-567-890', callingCode: '+1' }],
     },
     subFields: [
       'primaryPhoneNumber',
@@ -151,7 +151,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     },
     exampleValue: {
       addressStreet1: '456 Oak Street',
-      addressStreet2: 'Unit 3B',
+      addressStreet2: '',
       addressCity: 'Springfield',
       addressState: 'California',
       addressCountry: 'United States',

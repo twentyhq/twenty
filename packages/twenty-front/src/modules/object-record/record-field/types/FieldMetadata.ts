@@ -10,13 +10,13 @@ import { CurrencyCode } from './CurrencyCode';
 export type FieldUuidMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldBooleanMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldTextMetadata = {
@@ -61,13 +61,13 @@ export type FieldLinkMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldLinksMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldCurrencyMetadata = {
@@ -75,66 +75,66 @@ export type FieldCurrencyMetadata = {
   fieldName: string;
   placeHolder: string;
   isPositive?: boolean;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldFullNameMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldEmailMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldEmailsMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldPhoneMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldRatingMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldAddressMetadata = {
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldRawJsonMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
   placeHolder: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldRichTextMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldPositionMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldRelationMetadata = {
@@ -146,7 +146,7 @@ export type FieldRelationMetadata = {
   relationType?: RelationDefinitionType;
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldSelectMetadata = {
@@ -154,39 +154,39 @@ export type FieldSelectMetadata = {
   fieldName: string;
   options: { label: string; color: ThemeColor; value: string }[];
   isNullable: boolean;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldMultiSelectMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
   options: { label: string; color: ThemeColor; value: string }[];
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldActorMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldArrayMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
   values: { label: string; value: string }[];
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldPhonesMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldTsVectorMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
-  settings?: Record<string, never>;
+  settings?: null;
 };
 
 export type FieldMetadata =
@@ -265,7 +265,7 @@ export type FieldActorValue = {
 
 export type FieldArrayValue = string[];
 
-export type PhoneRecord = { number: string; countryCode: string };
+export type PhoneRecord = { number: string; callingCode: string };
 
 export type FieldPhonesValue = {
   primaryPhoneNumber: string;
