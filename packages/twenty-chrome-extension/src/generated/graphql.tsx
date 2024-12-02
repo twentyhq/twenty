@@ -891,6 +891,8 @@ export type Blocklist = {
   workspaceMember?: Maybe<WorkspaceMember>;
   /** WorkspaceMember id foreign key */
   workspaceMemberId?: Maybe<Scalars['UUID']>;
+   /** Context for blocklist entry */
+   context?: Maybe<Scalars['String']>;
 };
 
 /** Blocklist */
@@ -913,6 +915,8 @@ export type BlocklistCreateInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   /** WorkspaceMember id foreign key */
   workspaceMemberId: Scalars['UUID'];
+   /** Context for blocklist entry */
+   context?: InputMaybe<Scalars['String']>;
 };
 
 /** Blocklist */
@@ -964,6 +968,8 @@ export type BlocklistUpdateInput = {
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   /** WorkspaceMember id foreign key */
   workspaceMemberId?: InputMaybe<Scalars['UUID']>;
+   /** Context for blocklist entry */
+   context?: InputMaybe<Scalars['String']>;
 };
 
 export type BooleanFieldComparison = {

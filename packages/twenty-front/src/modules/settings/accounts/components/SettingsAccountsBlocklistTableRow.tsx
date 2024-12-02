@@ -25,6 +25,11 @@ export const SettingsAccountsBlocklistTableRow = ({
         <OverflowingTextWithTooltip text={blocklistItem.handle} />
       </TableCell>
       <TableCell>
+        <OverflowingTextWithTooltip
+          text={blocklistItem.context || 'Any'} // Default to "Any" if context is not set
+        />
+      </TableCell>
+      <TableCell>
         {blocklistItem.createdAt
           ? formatToHumanReadableDate(blocklistItem.createdAt)
           : ''}

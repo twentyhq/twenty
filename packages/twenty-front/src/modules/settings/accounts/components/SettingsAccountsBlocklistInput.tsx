@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
@@ -20,7 +20,7 @@ const StyledLinkContainer = styled.div`
 `;
 
 type SettingsAccountsBlocklistInputProps = {
-  updateBlockedEmailList: (email: string) => void;
+  updateBlockedEmailList: (email: string,context: "To" | "Cc" | "Bcc" | "Any") => void;
   blockedEmailOrDomainList: string[];
 };
 
@@ -43,11 +43,13 @@ const validationSchema = (blockedEmailOrDomainList: string[]) =>
           (value) => !blockedEmailOrDomainList.includes(value),
           'Email or domain is already in blocklist',
         ),
+      context: z.enum(['To', 'Cc', 'Bcc', 'Any']),  
     })
     .required();
 
 type FormInput = {
   emailOrDomain: string;
+  context: 'To' | 'Cc' | 'Bcc' | 'Any';
 };
 
 export const SettingsAccountsBlocklistInput = ({
@@ -59,11 +61,12 @@ export const SettingsAccountsBlocklistInput = ({
     resolver: zodResolver(validationSchema(blockedEmailOrDomainList)),
     defaultValues: {
       emailOrDomain: '',
+      context: 'Any',
     },
   });
 
   const submit = handleSubmit((data) => {
-    updateBlockedEmailList(data.emailOrDomain);
+    updateBlockedEmailList(data.emailOrDomain,"Any");
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -99,6 +102,18 @@ export const SettingsAccountsBlocklistInput = ({
             )}
           />
         </StyledLinkContainer>
+        <Controller
+          name="context"
+          control={control}
+          render={({ field }) => (
+            <select {...field}>
+              <option value="Any">Any</option>
+              <option value="To">To</option>
+              <option value="Cc">Cc</option>
+              <option value="Bcc">Bcc</option>
+            </select>
+          )}
+        />
         <Button title="Add to blocklist" type="submit" />
       </StyledContainer>
     </form>

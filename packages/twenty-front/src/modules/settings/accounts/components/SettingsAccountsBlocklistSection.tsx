@@ -31,10 +31,11 @@ export const SettingsAccountsBlocklistSection = () => {
     deleteBlocklistItem(id);
   };
 
-  const updateBlockedEmailList = (handle: string) => {
+  const updateBlockedEmailList = (handle: string, context: 'To' | 'Cc' | 'Bcc' | 'Any') => {
     createBlocklistItem({
       handle,
       workspaceMemberId: currentWorkspaceMember?.id,
+      context, 
     });
   };
 
