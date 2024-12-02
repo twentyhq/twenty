@@ -19,6 +19,10 @@ import {
   compareHash,
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
+import {
+  EnvironmentException,
+  EnvironmentExceptionCode,
+} from 'src/engine/core-modules/environment/environment.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -298,9 +302,9 @@ export class SignInUpService {
     picture: SignInUpServiceInput['picture'];
   }) {
     if (this.environmentService.get('IS_SIGN_UP_DISABLED')) {
-      throw new AuthException(
+      throw new EnvironmentException(
         'Sign up is disabled',
-        AuthExceptionCode.ENVIRONMENT_VARIABLES_NOT_FOUND,
+        EnvironmentExceptionCode.ENVIRONMENT_VARIABLES_NOT_FOUND,
       );
     }
 
