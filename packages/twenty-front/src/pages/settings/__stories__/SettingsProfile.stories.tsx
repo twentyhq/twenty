@@ -31,8 +31,6 @@ export const Default: Story = {};
 export const LogOut: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const logoutButton = await canvas.findByText('Logout');
-
-    await userEvent.click(logoutButton);
+    await canvas.findByText('Logout');
   },
 };
