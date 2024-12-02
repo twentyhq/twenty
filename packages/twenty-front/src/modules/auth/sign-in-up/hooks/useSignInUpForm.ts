@@ -45,7 +45,7 @@ export const useSignInUpForm = () => {
     } else if (isDeveloperDefaultSignInPrefilled === true) {
       form.setValue('email', 'tim@apple.dev');
       form.setValue('password', 'Applecar2025');
-    } 
+    }
   }, [form, isDeveloperDefaultSignInPrefilled, invitationPrefilledEmail]);
   return { form: form };
 };
