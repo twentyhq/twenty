@@ -22,7 +22,7 @@ export const useWorkflowWithCurrentVersion = (
     skip: !isDefined(workflowId),
   });
 
-  const workflowWithCurrentVersion = useMemo(() => {
+  return useMemo(() => {
     if (!isDefined(workflow)) {
       return undefined;
     }
@@ -30,9 +30,12 @@ export const useWorkflowWithCurrentVersion = (
     const draftVersion = workflow.versions.find(
       (workflowVersion) => workflowVersion.status === 'DRAFT',
     );
-    const latestVersion = workflow.versions.sort((a, b) =>
-      a.createdAt > b.createdAt ? -1 : 1,
-    )[0];
+
+    const workflowVersions = [...workflow.versions];
+
+    workflowVersions.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
+
+    const latestVersion = workflowVersions[0];
 
     const currentVersion = draftVersion ?? latestVersion;
 
@@ -45,6 +48,4 @@ export const useWorkflowWithCurrentVersion = (
       currentVersion,
     };
   }, [workflow]);
-
-  return workflowWithCurrentVersion;
 };
