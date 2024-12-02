@@ -3,7 +3,6 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
-import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { IconPlayerPause, isDefined } from 'twenty-ui';
@@ -15,7 +14,6 @@ export const useDeactivateWorkflowWorkflowSingleRecordAction = ({
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
-  const { activateWorkflowVersion } = useActivateWorkflowVersion();
   const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
 
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
@@ -45,14 +43,7 @@ export const useDeactivateWorkflowWorkflowSingleRecordAction = ({
       type: ActionMenuEntryType.Standard,
       scope: ActionMenuEntryScope.RecordSelection,
       onClick: () => {
-        isWorkflowActive
-          ? deactivateWorkflowVersion(
-              workflowWithCurrentVersion.currentVersion.id,
-            )
-          : activateWorkflowVersion({
-              workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
-              workflowId: workflowWithCurrentVersion.id,
-            });
+        deactivateWorkflowVersion(workflowWithCurrentVersion.currentVersion.id);
       },
     });
   };
