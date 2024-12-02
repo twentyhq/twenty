@@ -41,7 +41,6 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
       !this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED') &&
       !this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')
     ) {
-      console.log('canActivate: Google apis auth is not enabled');
       throw new EnvironmentException(
         'Google apis auth is not enabled',
         EnvironmentExceptionCode.ENVIRONMENT_VARIABLES_NOT_FOUND,
