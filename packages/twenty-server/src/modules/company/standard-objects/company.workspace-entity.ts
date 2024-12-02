@@ -7,7 +7,10 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { AddressMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/address.composite-type';
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
+import { EmailsMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/emails.composite-type';
+import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { LinksMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
+import { PhonesMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/phones.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import {
@@ -47,6 +50,20 @@ export const SEARCH_FIELDS_FOR_COMPANY: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
   { name: DOMAIN_NAME_FIELD_NAME, type: FieldMetadataType.LINKS },
 ];
+
+export enum CompanyDemoSelect {
+  OPTION_SINGLE_1 = 'OPTION_SINGLE_1',
+  OPTION_SINGLE_2 = 'OPTION_SINGLE_2',
+  OPTION_SINGLE_3 = 'OPTION_SINGLE_3',
+  OPTION_SINGLE_4 = 'OPTION_SINGLE_4',
+}
+
+export enum CompanyDemoMultiSelect {
+  OPTION_MULTI_1 = 'OPTION_MULTI_1',
+  OPTION_MULTI_2 = 'OPTION_MULTI_2',
+  OPTION_MULTI_3 = 'OPTION_MULTI_3',
+  OPTION_MULTI_4 = 'OPTION_MULTI_4',
+}
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.company,
@@ -294,4 +311,183 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceIsSystem()
   @WorkspaceFieldIndex({ indexType: IndexType.GIN })
   [SEARCH_VECTOR_FIELD.name]: any;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.demoUUID,
+    type: FieldMetadataType.UUID,
+    label: 'Demo UUID',
+    description: 'Demo UUID',
+    icon: 'IconIdBadge2',
+  })
+  @WorkspaceIsNullable()
+  demoUUID: string;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.demoRichText,
+    type: FieldMetadataType.RICH_TEXT,
+    label: 'Demo Rich Text',
+    description: 'Demo Rich Text',
+    icon: 'IconTextCaption',
+  })
+  @WorkspaceIsNullable()
+  demoRichText: string;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.demoArray,
+    type: FieldMetadataType.ARRAY,
+    label: 'Demo Array',
+    description: 'Demo Array',
+    icon: 'IconBrackets',
+  })
+  @WorkspaceIsNullable()
+  demoArray: string[] | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.demoRating,
+    type: FieldMetadataType.RATING,
+    label: 'Demo Rating',
+    description: 'Demo Rating',
+    icon: 'IconStars',
+    options: [
+      {
+        label: '1',
+        value: 'RATING_1',
+        position: 0,
+      },
+      {
+        label: '2',
+        value: 'RATING_2',
+        position: 1,
+      },
+      {
+        label: '3',
+        value: 'RATING_3',
+        position: 2,
+      },
+      {
+        label: '4',
+        value: 'RATING_4',
+        position: 3,
+      },
+      {
+        label: '5',
+        value: 'RATING_5',
+        position: 4,
+      },
+    ],
+  })
+  @WorkspaceIsNullable()
+  demoRating: string;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.demoSelect,
+    type: FieldMetadataType.SELECT,
+    label: 'Demo Select',
+    description: 'Demo Select',
+    icon: 'IconTag',
+    options: [
+      {
+        value: CompanyDemoSelect.OPTION_SINGLE_1,
+        label: 'Option 1',
+        position: 0,
+        color: 'gray',
+      },
+      {
+        value: CompanyDemoSelect.OPTION_SINGLE_2,
+        label: 'Option 2',
+        position: 1,
+        color: 'yellow',
+      },
+      {
+        value: CompanyDemoSelect.OPTION_SINGLE_3,
+        label: 'Option 3',
+        position: 2,
+        color: 'green',
+      },
+      {
+        value: CompanyDemoSelect.OPTION_SINGLE_4,
+        label: 'Option 4',
+        position: 3,
+        color: 'red',
+      },
+    ],
+  })
+  @WorkspaceIsNullable()
+  demoSelect: CompanyDemoSelect;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.demoMultiSelect,
+    type: FieldMetadataType.MULTI_SELECT,
+    label: 'Demo Multi Select',
+    description: 'Demo Multi Select',
+    icon: 'IconTags',
+    options: [
+      {
+        value: CompanyDemoMultiSelect.OPTION_MULTI_1,
+        label: 'Option multi 1',
+        position: 0,
+        color: 'gray',
+      },
+      {
+        value: CompanyDemoMultiSelect.OPTION_MULTI_2,
+        label: 'Option multi 2',
+        position: 1,
+        color: 'yellow',
+      },
+      {
+        value: CompanyDemoMultiSelect.OPTION_MULTI_3,
+        label: 'Option multi 3',
+        position: 2,
+        color: 'green',
+      },
+      {
+        value: CompanyDemoMultiSelect.OPTION_MULTI_4,
+        label: 'Option multi 4',
+        position: 3,
+        color: 'red',
+      },
+    ],
+  })
+  @WorkspaceIsNullable()
+  demoMultiSelect: CompanyDemoMultiSelect;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.demoRawJSON,
+    type: FieldMetadataType.RAW_JSON,
+    label: 'Demo Raw JSON',
+    description: 'Demo Raw JSON',
+    icon: 'IconJson',
+  })
+  @WorkspaceIsNullable()
+  demoRawJSON: JSON | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.demoEmails,
+    type: FieldMetadataType.EMAILS,
+    label: 'Demo Emails',
+    description: 'Demo Emails',
+    icon: 'IconMail',
+  })
+  @WorkspaceIsNullable()
+  demoEmails: EmailsMetadata | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.demoPhones,
+    type: FieldMetadataType.PHONES,
+    label: 'Demo Phones',
+    description: 'Demo Phones',
+    icon: 'IconPhone',
+  })
+  @WorkspaceIsNullable()
+  demoPhones: PhonesMetadata | null;
+
+  @WorkspaceField({
+    standardId: COMPANY_STANDARD_FIELD_IDS.demoFullName,
+    type: FieldMetadataType.FULL_NAME,
+    label: 'Demo Full Name',
+    description: 'Demo Full Name',
+    icon: 'IconSignature',
+  })
+  @WorkspaceIsNullable()
+  demoFullName: FullNameMetadata | null;
 }

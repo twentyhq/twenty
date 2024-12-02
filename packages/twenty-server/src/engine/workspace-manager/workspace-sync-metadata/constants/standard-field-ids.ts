@@ -141,6 +141,16 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   attachments: '20202020-c1b5-4120-b0f0-987ca401ed53',
   timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89f',
   searchVector: '85c71601-72f9-4b7b-b343-d46100b2c74d',
+  demoUUID: '20202020-ce6a-445e-9ece-a2f6bc98fa0b',
+  demoRichText: '20202020-ce6a-445e-9ece-a2f6bc98fa0c',
+  demoArray: '20202020-ce6a-445e-9ece-a2f6bc98fa0d',
+  demoRating: '20202020-ce6a-445e-9ece-a2f6bc98fa0e',
+  demoSelect: '20202020-ce6a-445e-9ece-a2f6bc98fa0f',
+  demoMultiSelect: '20202020-ce6a-445e-9ece-a2f6bc98fa1a',
+  demoRawJSON: '20202020-ce6a-445e-9ece-a2f6bc98fa1b',
+  demoEmails: '20202020-ce6a-445e-9ece-a2f6bc98fa1c',
+  demoPhones: '20202020-ce6a-445e-9ece-a2f6bc98fa1d',
+  demoFullName: '20202020-ce6a-445e-9ece-a2f6bc98fa1e',
 };
 
 export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {

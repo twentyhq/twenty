@@ -90,6 +90,96 @@ export const companiesAllView = (
         isVisible: true,
         size: 170,
       },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+            COMPANY_STANDARD_FIELD_IDS.demoUUID
+          ],
+        position: 8,
+        isVisible: true,
+        size: 170,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+            COMPANY_STANDARD_FIELD_IDS.demoRichText
+          ],
+        position: 9,
+        isVisible: true,
+        size: 170,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+            COMPANY_STANDARD_FIELD_IDS.demoArray
+          ],
+        position: 10,
+        isVisible: true,
+        size: 170,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+            COMPANY_STANDARD_FIELD_IDS.demoRating
+          ],
+        position: 11,
+        isVisible: true,
+        size: 170,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+            COMPANY_STANDARD_FIELD_IDS.demoSelect
+          ],
+        position: 12,
+        isVisible: true,
+        size: 170,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+            COMPANY_STANDARD_FIELD_IDS.demoMultiSelect
+          ],
+        position: 13,
+        isVisible: true,
+        size: 170,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+            COMPANY_STANDARD_FIELD_IDS.demoRawJSON
+          ],
+        position: 14,
+        isVisible: true,
+        size: 170,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+            COMPANY_STANDARD_FIELD_IDS.demoEmails
+          ],
+        position: 15,
+        isVisible: true,
+        size: 170,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+            COMPANY_STANDARD_FIELD_IDS.demoPhones
+          ],
+        position: 16,
+        isVisible: true,
+        size: 170,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+            COMPANY_STANDARD_FIELD_IDS.demoFullName
+          ],
+        position: 17,
+        isVisible: true,
+        size: 170,
+      },
     ],
   };
 };

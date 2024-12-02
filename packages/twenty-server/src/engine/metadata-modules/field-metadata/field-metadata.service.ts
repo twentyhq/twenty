@@ -733,7 +733,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           );
         } else if (error instanceof NameNotAvailableException) {
           throw new FieldMetadataException(
-            `Name "${fieldMetadataInput.name}" is not available`,
+            `Name "${fieldMetadataInput.name}" is not available, check that it is not duplicating another field's name.`,
             FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
           );
         } else {

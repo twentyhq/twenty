@@ -185,7 +185,7 @@
           "nx ts-node-no-deps -- ./scripts/setup-db.ts",
           "nx database:migrate",
           "nx command-no-deps -- cache:flush",
-          "nx command-no-deps -- workspace:seed:dev"
+          "nx command-no-deps -- workspace:seed:demo"
         ],
         "parallel": false
       }

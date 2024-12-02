@@ -9,6 +9,7 @@ import {
   ThemeContext,
   ThemeType,
 } from '@ui/theme';
+import { isDefined } from '@ui/utilities';
 
 const spacing5 = THEME_COMMON.spacing(5);
 const spacing2 = THEME_COMMON.spacing(2);
@@ -22,13 +23,35 @@ const StyledTag = styled.h3<{
   preventShrink?: boolean;
 }>`
   align-items: center;
-  background: ${({ color, theme }) =>
-    color === 'transparent' ? color : theme.tag.background[color]};
+  background: ${({ color, theme }) => {
+    if (color === 'transparent') {
+      return 'transparent';
+    } else {
+      const themeColor = theme.tag.background[color];
+
+      if (!isDefined(themeColor)) {
+        console.warn(`Tag color ${color} is not defined in the theme`);
+        return theme.tag.background.gray;
+      } else {
+        return themeColor;
+      }
+    }
+  }};
   border-radius: ${BORDER_COMMON.radius.sm};
-  color: ${({ color, theme }) =>
-    color === 'transparent'
-      ? theme.font.color.tertiary
-      : theme.tag.text[color]};
+  color: ${({ color, theme }) => {
+    if (color === 'transparent') {
+      return theme.font.color.tertiary;
+    } else {
+      const themeColor = theme.tag.text[color];
+
+      if (!isDefined(themeColor)) {
+        console.warn(`Tag font color ${color} is not defined in the theme`);
+        return theme.tag.text.gray;
+      } else {
+        return themeColor;
+      }
+    }
+  }};
   display: inline-flex;
   font-size: ${({ theme }) => theme.font.size.md};
   font-style: normal;
@@ -103,10 +126,12 @@ export const Tag = ({
       variant={variant}
       preventShrink={preventShrink}
     >
-      {!!Icon && (
+      {isDefined(Icon) ? (
         <StyledIconContainer>
           <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
         </StyledIconContainer>
+      ) : (
+        <></>
       )}
       {preventShrink ? (
         <StyledNonShrinkableText>{text}</StyledNonShrinkableText>

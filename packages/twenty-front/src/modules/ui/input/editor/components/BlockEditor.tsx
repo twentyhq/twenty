@@ -19,14 +19,17 @@ interface BlockEditorProps {
   onBlur?: () => void;
   onPaste?: (event: ClipboardEvent) => void;
   onChange?: () => void;
+  readonly?: boolean;
 }
 
 const StyledEditor = styled.div`
   width: 100%;
+
   & .editor {
     background: ${({ theme }) => theme.background.primary};
     font-size: 13px;
     color: ${({ theme }) => theme.font.color.primary};
+    min-height: 400px;
   }
   & .editor [class^='_inlineContent']:before {
     color: ${({ theme }) => theme.font.color.tertiary};
@@ -111,6 +114,7 @@ export const BlockEditor = ({
   onBlur,
   onChange,
   onPaste,
+  readonly,
 }: BlockEditorProps) => {
   const theme = useTheme();
   const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
@@ -142,6 +146,7 @@ export const BlockEditor = ({
         theme={blockNoteTheme}
         slashMenu={false}
         sideMenu={false}
+        editable={!readonly}
       >
         <CustomSideMenu editor={editor} />
         <SuggestionMenuController

@@ -4,10 +4,10 @@ import { COLOR } from './Colors';
 export const ILLUSTRATION_ICON_LIGHT = {
   color: {
     blue: COLOR.blue40,
-    grey: GRAY_SCALE.gray40,
+    gray: GRAY_SCALE.gray40,
   },
   fill: {
     blue: COLOR.blue20,
-    grey: GRAY_SCALE.gray20,
+    gray: GRAY_SCALE.gray20,
   },
 };

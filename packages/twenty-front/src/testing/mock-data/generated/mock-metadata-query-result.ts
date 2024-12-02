@@ -3962,7 +3962,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             },
                                             {
                                                 "id": "f59e3f72-2ac5-44cc-9a12-8530f9550cc3",
-                                                "color": "grey",
+                                                "color": "gray",
                                                 "label": "Archived",
                                                 "value": "ARCHIVED",
                                                 "position": 3
@@ -10691,7 +10691,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "options": [
                                             {
                                                 "id": "c7ff1ce0-2e47-44de-9761-867c25f68a90",
-                                                "color": "grey",
+                                                "color": "gray",
                                                 "label": "Not started",
                                                 "value": "NOT_STARTED",
                                                 "position": 0
@@ -14590,7 +14590,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 1
                                             },
                                             {
-                                                "color": "grey",
+                                                "color": "gray",
                                                 "label": "Deactivated",
                                                 "value": "DEACTIVATED",
                                                 "position": 2

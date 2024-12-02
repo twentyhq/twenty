@@ -8,6 +8,7 @@ import { visibleTableColumnsComponentSelector } from '@/object-record/record-tab
 import { tableCellWidthsComponentState } from '@/object-record/record-table/states/tableCellWidthsComponentState';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 
 export const RecordTableCellsVisible = () => {
   const { isSelected, isDragging } = useContext(RecordTableRowContext);
@@ -19,6 +20,10 @@ export const RecordTableCellsVisible = () => {
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
   );
+
+  if (!isNonEmptyArray(visibleTableColumns)) {
+    return null;
+  }
 
   const tableColumnsAfterFirst = visibleTableColumns.slice(1);
 
