@@ -37,15 +37,10 @@ export const DropdownMenuItemsContainer = ({
   hasMaxHeight?: boolean;
   className?: string;
 }) => {
-  const handleContainerClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    console.log({ event });
-  };
-
   return (
     <StyledDropdownMenuItemsExternalContainer
       hasMaxHeight={hasMaxHeight}
       className={className}
-      onClick={handleContainerClick}
     >
       <StyledDropdownMenuItemsInternalContainer>
         {children}
