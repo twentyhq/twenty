@@ -23,6 +23,7 @@ export const fieldMetadataItemSchema = (existingLabels?: string[]) => {
     isUnique: z.boolean(),
     isSystem: z.boolean(),
     label: metadataLabelSchema(existingLabels),
+    isLabelSyncedWithName: z.boolean(),
     name: camelCaseStringSchema,
     options: z
       .array(

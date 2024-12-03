@@ -1508,6 +1508,7 @@ export type Field = {
   id: Scalars['UUID'];
   isActive?: Maybe<Scalars['Boolean']>;
   isCustom?: Maybe<Scalars['Boolean']>;
+  isLabelSyncedWithName: Scalars['Boolean'];
   isNullable?: Maybe<Scalars['Boolean']>;
   isSystem?: Maybe<Scalars['Boolean']>;
   isUnique?: Maybe<Scalars['Boolean']>;
