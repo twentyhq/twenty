@@ -13,7 +13,7 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@envelop/on-resolve": "^4.1.0",
-    "@floating-ui/react": "^0.24.3",
+    "@floating-ui/react": "^0.26.28",
     "@google-cloud/local-auth": "2.1.0",
     "@graphiql/plugin-explorer": "^1.0.2",
     "@graphql-tools/schema": "^10.0.0",
