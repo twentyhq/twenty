@@ -41,9 +41,9 @@ export const useWorkflowVersionsSingleRecordActions = () => {
   });
 
   const registerSingleRecordActions = ({
-    startPosition = 3,
+    startPosition,
   }: {
-    startPosition?: number;
+    startPosition: number;
   }) => {
     registerUseAsDraftWorkflowVersionSingleRecordAction({
       position: startPosition,

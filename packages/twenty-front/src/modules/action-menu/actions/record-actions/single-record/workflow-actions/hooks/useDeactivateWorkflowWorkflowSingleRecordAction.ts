@@ -27,11 +27,7 @@ export const useDeactivateWorkflowWorkflowSingleRecordAction = ({
   }: {
     position: number;
   }) => {
-    if (
-      !isDefined(workflowWithCurrentVersion) ||
-      !isDefined(workflowWithCurrentVersion.currentVersion.trigger) ||
-      !isWorkflowActive
-    ) {
+    if (!isDefined(workflowWithCurrentVersion) || !isWorkflowActive) {
       return;
     }
 

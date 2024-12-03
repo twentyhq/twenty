@@ -48,20 +48,19 @@ const ActionEffects = ({
         )}
       {contextStoreTargetedRecordsRule.mode === 'selection' &&
         contextStoreTargetedRecordsRule.selectedRecordIds.length === 1 && (
-          <SingleRecordActionMenuEntrySetter
-            objectMetadataItem={objectMetadataItem}
-          />
-        )}
-      {contextStoreTargetedRecordsRule.mode === 'selection' &&
-        contextStoreTargetedRecordsRule.selectedRecordIds.length === 1 &&
-        isWorkflowEnabled && (
-          <WorkflowRunRecordActionMenuEntrySetterEffect
-            objectMetadataItem={objectMetadataItem}
-          />
+          <>
+            <SingleRecordActionMenuEntrySetter
+              objectMetadataItem={objectMetadataItem}
+            />
+            {isWorkflowEnabled && (
+              <WorkflowRunRecordActionMenuEntrySetterEffect
+                objectMetadataItem={objectMetadataItem}
+              />
+            )}
+          </>
         )}
       {(contextStoreTargetedRecordsRule.mode === 'exclusion' ||
-        (contextStoreTargetedRecordsRule.mode === 'selection' &&
-          contextStoreTargetedRecordsRule.selectedRecordIds.length > 1)) && (
+        contextStoreTargetedRecordsRule.selectedRecordIds.length > 1) && (
         <MultipleRecordsActionMenuEntrySetterEffect
           objectMetadataItem={objectMetadataItem}
         />

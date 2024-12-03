@@ -11,7 +11,7 @@ import qs from 'qs';
 import { useNavigate } from 'react-router-dom';
 import { IconHistoryToggle, isDefined } from 'twenty-ui';
 
-export const useSeeWorkflowExecutionsWorkflowSingleRecordAction = ({
+export const useSeeWorkflowRunsWorkflowSingleRecordAction = ({
   workflowId,
 }: {
   workflowId: string;
@@ -22,7 +22,7 @@ export const useSeeWorkflowExecutionsWorkflowSingleRecordAction = ({
 
   const navigate = useNavigate();
 
-  const registerSeeWorkflowExecutionsWorkflowSingleRecordAction = ({
+  const registerSeeWorkflowRunsWorkflowSingleRecordAction = ({
     position,
   }: {
     position: number;
@@ -43,8 +43,8 @@ export const useSeeWorkflowExecutionsWorkflowSingleRecordAction = ({
     )}`;
 
     addActionMenuEntry({
-      key: 'see-workflow-executions-single-record',
-      label: 'See executions',
+      key: 'see-workflow-runs-single-record',
+      label: 'See runs',
       position,
       type: ActionMenuEntryType.Standard,
       scope: ActionMenuEntryScope.RecordSelection,
@@ -55,12 +55,12 @@ export const useSeeWorkflowExecutionsWorkflowSingleRecordAction = ({
     });
   };
 
-  const unregisterSeeWorkflowExecutionsWorkflowSingleRecordAction = () => {
-    removeActionMenuEntry('see-workflow-executions-single-record');
+  const unregisterSeeWorkflowRunsWorkflowSingleRecordAction = () => {
+    removeActionMenuEntry('see-workflow-runs-single-record');
   };
 
   return {
-    registerSeeWorkflowExecutionsWorkflowSingleRecordAction,
-    unregisterSeeWorkflowExecutionsWorkflowSingleRecordAction,
+    registerSeeWorkflowRunsWorkflowSingleRecordAction,
+    unregisterSeeWorkflowRunsWorkflowSingleRecordAction,
   };
 };
