@@ -20,6 +20,14 @@ jest.mock('@/workflow/hooks/useWorkflowWithCurrentVersion', () => ({
       id: 'currentVersionId',
       trigger: 'trigger',
       status: 'DRAFT',
+      steps: [
+        {
+          id: 'stepId1',
+        },
+        {
+          id: 'stepId2',
+        },
+      ],
     },
   }),
 }));

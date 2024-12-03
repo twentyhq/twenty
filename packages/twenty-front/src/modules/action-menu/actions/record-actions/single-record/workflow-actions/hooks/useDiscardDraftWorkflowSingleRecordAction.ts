@@ -25,7 +25,6 @@ export const useDiscardDraftWorkflowSingleRecordAction = ({
   }) => {
     if (
       !isDefined(workflowWithCurrentVersion) ||
-      !isDefined(workflowWithCurrentVersion.currentVersion?.steps) ||
       workflowWithCurrentVersion.versions.length < 2
     ) {
       return;
