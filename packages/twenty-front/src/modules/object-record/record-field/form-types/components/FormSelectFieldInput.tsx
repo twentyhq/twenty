@@ -131,7 +131,8 @@ export const FormSelectFieldInput = ({
 
   const handleClearField = () => {
     clearField();
-    onCancel();
+
+    goBackToPreviousHotkeyScope();
   };
 
   const handleSubmit = (option: SelectOption) => {
