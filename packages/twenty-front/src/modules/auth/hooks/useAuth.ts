@@ -4,7 +4,6 @@ import {
   snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
   useRecoilCallback,
-  useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
 import { iconsState } from 'twenty-ui';
@@ -43,14 +42,13 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useWorkspaceSubdomain } from '@/domain-manager/hooks/useWorkspaceSubdomain';
 import { useLastAuthenticateWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticateWorkspaceDomain';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setCurrentUser = useSetRecoilState(currentUserState);
-  const domainConfiguration = useRecoilValue(domainConfigurationState);
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
@@ -100,6 +98,9 @@ export const useAuth = () => {
         const isCurrentUserLoaded = snapshot
           .getLoadable(isCurrentUserLoadedState)
           .getValue();
+        const isMultiWorkspaceEnabled = snapshot
+          .getLoadable(isCurrentUserLoadedState)
+          .getValue();
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
           set(authProvidersState, authProvidersValue);
@@ -110,6 +111,7 @@ export const useAuth = () => {
           set(captchaProviderState, captchaProvider);
           set(clientConfigApiStatusState, clientConfigApiStatus);
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
+          set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
           return undefined;
         });
         goToRecoilSnapshot(initialSnapshot);
@@ -208,6 +210,7 @@ export const useAuth = () => {
       const workspace = user.defaultWorkspace ?? null;
 
       setCurrentWorkspace(workspace);
+
       if (isDefined(workspace) && isWorkspaceSubdomain()) {
         setLastAuthenticateWorkspaceDomain({
           id: workspace.id,

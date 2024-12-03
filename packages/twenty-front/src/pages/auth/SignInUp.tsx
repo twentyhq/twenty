@@ -56,6 +56,7 @@ export const SignInUp = () => {
     isDefaultDomain,
     isMultiWorkspaceEnabled,
     isWorkspaceSubdomain,
+    loading,
     signInUpStep,
     workspacePublicData,
   ]);

@@ -1,5 +1,6 @@
 import { AtomEffect } from 'recoil';
 import omit from 'lodash.omit';
+import { z } from 'zod';
 
 import { cookieStorage } from '~/utils/cookie-storage';
 
@@ -19,6 +20,17 @@ export const localStorageEffect =
         : localStorage.setItem(key ?? node.key, JSON.stringify(newValue));
     });
   };
+
+const customCookieAttributeZodSchema = z.object({
+  cookieAttributes: z
+    .object({
+      expires: z.union([z.number(), z.instanceof(Date)]).optional(),
+      path: z.string().optional(),
+      domain: z.string().optional(),
+      secure: z.boolean().optional(),
+    })
+    .default({}),
+});
 
 export const cookieStorageEffect =
   <T>(
@@ -50,13 +62,11 @@ export const cookieStorageEffect =
         return;
       }
 
+      const { data } = customCookieAttributeZodSchema.safeParse(newValue);
+
       const cookieAttributes = {
         ...defaultAttributes,
-        ...(typeof newValue === 'object' &&
-        'cookieAttributes' in newValue &&
-        typeof newValue.cookieAttributes === 'object'
-          ? newValue.cookieAttributes
-          : {}),
+        ...(data ? data.cookieAttributes : {}),
       };
 
       isReset
