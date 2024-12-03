@@ -67,12 +67,12 @@ export class GenerateDefaultSubdomainCommand extends ActiveWorkspacesCommandRunn
     return acc;
   }
 
-  private deduplicateAndSave(
+  private async deduplicateAndSave(
     subdomain: Subdomain,
     workspaceIds: Array<WorkspaceId>,
     options: BaseCommandOptions,
   ) {
-    return workspaceIds.map(async (workspaceId, index) => {
+    for (const [index, workspaceId] of workspaceIds.entries()) {
       const subdomainDeduplicated =
         index === 0 ? subdomain : `${subdomain}-${index}`;
 
@@ -85,7 +85,7 @@ export class GenerateDefaultSubdomainCommand extends ActiveWorkspacesCommandRunn
           subdomain: subdomainDeduplicated,
         });
       }
-    });
+    }
   }
 
   async executeActiveWorkspacesCommand(
@@ -109,17 +109,15 @@ export class GenerateDefaultSubdomainCommand extends ActiveWorkspacesCommandRunn
       return;
     }
 
-    await Promise.all(
-      Object.entries(
-        workspaces.reduce(
-          (acc, workspace) => this.groupBySubdomainName(acc, workspace),
-          {} as ReturnType<typeof this.groupBySubdomainName>,
-        ),
-      )
-        .map(([subdomain, workspaceIds]) =>
-          this.deduplicateAndSave(subdomain, workspaceIds, options),
-        )
-        .flat(2),
+    const workspaceBySubdomain = Object.entries(
+      workspaces.reduce(
+        (acc, workspace) => this.groupBySubdomainName(acc, workspace),
+        {} as ReturnType<typeof this.groupBySubdomainName>,
+      ),
     );
+
+    for (const [subdomain, workspaceIds] of workspaceBySubdomain) {
+      await this.deduplicateAndSave(subdomain, workspaceIds, options);
+    }
   }
 }
