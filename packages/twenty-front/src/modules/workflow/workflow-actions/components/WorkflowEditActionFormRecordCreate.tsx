@@ -63,7 +63,7 @@ export const WorkflowEditActionFormRecordCreate = ({
     objectNameSingular,
   });
 
-  const availableFieldMetadataItems = objectMetadataItem.fields
+  const inlineFieldMetadataItems = objectMetadataItem.fields
     .filter(
       (fieldMetadataItem) =>
         fieldMetadataItem.type !== FieldMetadataType.Relation &&
@@ -73,11 +73,6 @@ export const WorkflowEditActionFormRecordCreate = ({
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
     );
-
-  const inlineFieldMetadataItems = availableFieldMetadataItems.filter(
-    (fieldMetadataItem) =>
-      fieldMetadataItem.type !== FieldMetadataType.Relation,
-  );
 
   const inlineFieldDefinitions = inlineFieldMetadataItems.map(
     (fieldMetadataItem) =>
