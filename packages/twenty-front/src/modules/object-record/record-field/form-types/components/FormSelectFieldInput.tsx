@@ -9,9 +9,8 @@ import { FieldSelectMetadata } from '@/object-record/record-field/types/FieldMet
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { SINGLE_RECORD_SELECT_BASE_LIST } from '@/object-record/relation-picker/constants/SingleRecordSelectBaseList';
 import { SelectOption } from '@/spreadsheet-import/types';
+import { SelectInput } from '@/ui/field/input/components/SelectInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { SelectInput } from '@/ui/input/components/SelectInput';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -227,26 +226,22 @@ export const FormSelectFieldInput = ({
               </StyledDisplayModeContainer>
 
               {draftValue.editingMode === 'edit' ? (
-                <SelectableList
+                <SelectInput
                   selectableListId={SINGLE_RECORD_SELECT_BASE_LIST}
                   selectableItemIdArray={optionIds}
                   hotkeyScope={hotkeyScope}
                   onEnter={handleSelectEnter}
-                >
-                  <SelectInput
-                    parentRef={selectWrapperRef}
-                    onOptionSelected={handleSubmit}
-                    options={field.metadata.options}
-                    onCancel={onCancel}
-                    defaultOption={selectedOption}
-                    onFilterChange={setFilteredOptions}
-                    onClear={
-                      field.metadata.isNullable ? handleClearField : undefined
-                    }
-                    clearLabel={field.label}
-                    hotkeyScope={hotkeyScope}
-                  />
-                </SelectableList>
+                  selectWrapperRef={selectWrapperRef}
+                  onOptionSelected={handleSubmit}
+                  options={field.metadata.options}
+                  onCancel={onCancel}
+                  defaultOption={selectedOption}
+                  onFilterChange={setFilteredOptions}
+                  onClear={
+                    field.metadata.isNullable ? handleClearField : undefined
+                  }
+                  clearLabel={field.label}
+                />
               ) : null}
             </>
           ) : (
