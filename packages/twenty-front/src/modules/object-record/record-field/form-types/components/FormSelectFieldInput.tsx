@@ -3,6 +3,7 @@ import { StyledFormFieldInputInputContainer } from '@/object-record/record-field
 import { StyledFormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputRowContainer';
 import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
+import { SelectFieldDisplayContent } from '@/object-record/record-field/meta-types/display/components/SelectFieldDisplayContent';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldSelectMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
@@ -18,7 +19,7 @@ import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariabl
 import styled from '@emotion/styled';
 import { useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { isDefined, Tag, VisibilityHidden } from 'twenty-ui';
+import { isDefined, VisibilityHidden } from 'twenty-ui';
 
 type FormSelectFieldInputProps = {
   field: FieldDefinition<FieldSelectMetadata>;
@@ -218,10 +219,9 @@ export const FormSelectFieldInput = ({
                 <VisibilityHidden>Edit</VisibilityHidden>
 
                 {isDefined(selectedOption) ? (
-                  <Tag
-                    preventShrink
+                  <SelectFieldDisplayContent
                     color={selectedOption.color}
-                    text={selectedOption.label}
+                    label={selectedOption.label}
                   />
                 ) : null}
               </StyledDisplayModeContainer>

@@ -1,5 +1,4 @@
-import { Tag } from 'twenty-ui';
-
+import { SelectFieldDisplayContent } from '@/object-record/record-field/meta-types/display/components/SelectFieldDisplayContent';
 import { useSelectFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useSelectFieldDisplay';
 import { isDefined } from '~/utils/isDefined';
 
@@ -15,10 +14,9 @@ export const SelectFieldDisplay = () => {
   }
 
   return (
-    <Tag
-      preventShrink
+    <SelectFieldDisplayContent
       color={selectedOption.color}
-      text={selectedOption.label}
+      label={selectedOption.label}
     />
   );
 };
