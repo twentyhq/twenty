@@ -71,8 +71,9 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
           name: newName,
         });
       }}
-      HeaderIcon={<IconPlaylistAdd color={theme.font.color.tertiary} />}
-      headerTitle={headerTitle}
+      Icon={IconPlaylistAdd}
+      iconColor={theme.font.color.tertiary}
+      initialTitle={headerTitle}
       headerType={headerType}
     >
       <Select

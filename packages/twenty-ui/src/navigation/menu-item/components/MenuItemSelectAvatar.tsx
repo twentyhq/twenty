@@ -14,7 +14,7 @@ type MenuItemSelectAvatarProps = {
   selected: boolean;
   text: string;
   className?: string;
-  onClick?: () => void;
+  onClick?: (event?: React.MouseEvent) => void;
   disabled?: boolean;
   hovered?: boolean;
   testId?: string;

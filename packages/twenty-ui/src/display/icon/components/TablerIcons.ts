@@ -150,6 +150,8 @@ export {
   IconHeartOff,
   IconHelpCircle,
   IconHierarchy2,
+  IconHistory,
+  IconHistoryToggle,
   IconHome,
   IconInbox,
   IconInfoCircle,
@@ -192,6 +194,7 @@ export {
   IconPhoto,
   IconPhotoUp,
   IconPilcrow,
+  IconPlayerPause,
   IconPlayerPlay,
   IconPlayerStop,
   IconPlaylistAdd,
@@ -251,6 +254,7 @@ export {
   IconWand,
   IconWorld,
   IconX,
+  IconPassword,
 } from '@tabler/icons-react';
 
 export type { TablerIconsProps } from '@tabler/icons-react';

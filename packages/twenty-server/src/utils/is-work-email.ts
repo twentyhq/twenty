@@ -1,21 +1,10 @@
 import { emailProvidersSet } from 'src/utils/email-providers';
+import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 
 export const isWorkEmail = (email: string) => {
-  if (!email) {
+  try {
+    return !emailProvidersSet.has(getDomainNameByEmail(email));
+  } catch (err) {
     return false;
   }
-
-  const fields = email.split('@');
-
-  if (fields.length !== 2) {
-    return false;
-  }
-
-  const domain = fields[1];
-
-  if (!domain) {
-    return false;
-  }
-
-  return !emailProvidersSet.has(domain);
 };

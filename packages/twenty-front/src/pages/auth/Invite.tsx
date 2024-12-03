@@ -1,7 +1,7 @@
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
-import { SignInUpForm } from '@/auth/sign-in-up/components/SignInUpForm';
+import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -16,6 +16,7 @@ import {
   useAddUserToWorkspaceMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { currentUserState } from '@/auth/states/currentUserState';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -28,6 +29,7 @@ export const Invite = () => {
 
   const { form } = useSignInUpForm();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const currentUser = useRecoilValue(currentUserState);
   const [addUserToWorkspace] = useAddUserToWorkspaceMutation();
   const [addUserToWorkspaceByInviteToken] =
     useAddUserToWorkspaceByInviteTokenMutation();
@@ -77,7 +79,7 @@ export const Invite = () => {
         <Logo secondaryLogo={workspaceFromInviteHash?.logo} />
       </AnimatedEaseIn>
       <Title animate>{title}</Title>
-      {isDefined(currentWorkspace) ? (
+      {isDefined(currentUser) ? (
         <>
           <StyledContentContainer>
             <MainButton
@@ -91,7 +93,7 @@ export const Invite = () => {
           <FooterNote />
         </>
       ) : (
-        <SignInUpForm />
+        <SignInUpWorkspaceScopeForm />
       )}
     </>
   );

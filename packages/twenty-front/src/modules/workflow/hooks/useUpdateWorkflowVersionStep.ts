@@ -1,73 +1,69 @@
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
+import { useApolloClient, useMutation } from '@apollo/client';
 import {
-  WorkflowStep,
-  WorkflowVersion,
-  WorkflowWithCurrentVersion,
-} from '@/workflow/types/Workflow';
-import { replaceStep } from '@/workflow/utils/replaceStep';
+  UpdateWorkflowVersionStepInput,
+  UpdateWorkflowVersionStepMutation,
+  UpdateWorkflowVersionStepMutationVariables,
+  WorkflowAction,
+} from '~/generated/graphql';
+import { UPDATE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/updateWorkflowVersionStep';
+import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { isDefined } from 'twenty-ui';
-import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
+import { WorkflowVersion } from '@/workflow/types/Workflow';
 
-export const useUpdateWorkflowVersionStep = ({
-  workflow,
-  stepId,
-}: {
-  workflow: WorkflowWithCurrentVersion;
-  stepId: string;
-}) => {
-  const { updateOneRecord: updateOneWorkflowVersion } =
-    useUpdateOneRecord<WorkflowVersion>({
-      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-    });
+export const useUpdateWorkflowVersionStep = () => {
+  const apolloClient = useApolloClient();
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+  });
+  const getRecordFromCache = useGetRecordFromCache({
+    objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+  });
+  const [mutate] = useMutation<
+    UpdateWorkflowVersionStepMutation,
+    UpdateWorkflowVersionStepMutationVariables
+  >(UPDATE_WORKFLOW_VERSION_STEP, {
+    client: apolloClient,
+  });
 
-  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
-  const { computeStepOutputSchema } = useComputeStepOutputSchema();
-
-  const updateStep = async <T extends WorkflowStep>(updatedStep: T) => {
-    if (!isDefined(workflow.currentVersion)) {
-      throw new Error('Can not update an undefined workflow version.');
-    }
-
-    const outputSchema = (
-      await computeStepOutputSchema({
-        step: updatedStep,
-      })
-    )?.data?.computeStepOutputSchema;
-
-    updatedStep.settings = {
-      ...updatedStep.settings,
-      outputSchema: outputSchema || {},
-    };
-
-    const updatedSteps = replaceStep({
-      steps: workflow.currentVersion.steps ?? [],
-      stepId,
-      stepToReplace: updatedStep,
-    });
-
-    if (workflow.currentVersion.status === 'DRAFT') {
-      await updateOneWorkflowVersion({
-        idToUpdate: workflow.currentVersion.id,
-        updateOneRecordInput: {
-          steps: updatedSteps,
-        },
-      });
-
+  const updateWorkflowVersionStep = async (
+    input: UpdateWorkflowVersionStepInput,
+  ) => {
+    const result = await mutate({ variables: { input } });
+    const updatedStep = result?.data?.updateWorkflowVersionStep;
+    if (!isDefined(updatedStep)) {
       return;
     }
 
-    await createNewWorkflowVersion({
-      workflowId: workflow.id,
-      name: `v${workflow.versions.length + 1}`,
-      status: 'DRAFT',
-      trigger: workflow.currentVersion.trigger,
-      steps: updatedSteps,
+    const cachedRecord = getRecordFromCache<WorkflowVersion>(
+      input.workflowVersionId,
+    );
+    if (!cachedRecord) {
+      return;
+    }
+
+    const newCachedRecord = {
+      ...cachedRecord,
+      steps: (cachedRecord.steps || []).map((step: WorkflowAction) => {
+        if (step.id === updatedStep.id) {
+          return updatedStep;
+        }
+        return step;
+      }),
+    };
+
+    updateRecordFromCache({
+      objectMetadataItems,
+      objectMetadataItem,
+      cache: apolloClient.cache,
+      record: newCachedRecord,
     });
+    return result;
   };
 
-  return {
-    updateStep,
-  };
+  return { updateWorkflowVersionStep };
 };

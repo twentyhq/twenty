@@ -3,7 +3,9 @@ import { HttpException } from '@nestjs/common';
 import { GraphQLError } from 'graphql';
 
 import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
+import { ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import {
   AuthenticationError,
   BaseGraphQLError,
@@ -15,7 +17,6 @@ import {
   TimeoutError,
   ValidationError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 const graphQLPredefinedExceptions = {
   400: ValidationError,
@@ -42,8 +43,9 @@ export const handleExceptionAndConvertToGraphQLError = (
   exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
   user?: ExceptionHandlerUser,
+  workspace?: ExceptionHandlerWorkspace,
 ): BaseGraphQLError => {
-  handleException(exception, exceptionHandlerService, user);
+  handleException(exception, exceptionHandlerService, user, workspace);
 
   return convertExceptionToGraphQLError(exception);
 };
@@ -74,12 +76,13 @@ const handleException = (
   exception: Error,
   exceptionHandlerService: ExceptionHandlerService,
   user?: ExceptionHandlerUser,
+  workspace?: ExceptionHandlerWorkspace,
 ): void => {
   if (shouldFilterException(exception)) {
     return;
   }
 
-  exceptionHandlerService.captureExceptions([exception], { user });
+  exceptionHandlerService.captureExceptions([exception], { user, workspace });
 };
 
 export const convertExceptionToGraphQLError = (
