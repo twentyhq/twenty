@@ -99,7 +99,7 @@ export const useAuth = () => {
           .getLoadable(isCurrentUserLoadedState)
           .getValue();
         const isMultiWorkspaceEnabled = snapshot
-          .getLoadable(isCurrentUserLoadedState)
+          .getLoadable(isMultiWorkspaceEnabledState)
           .getValue();
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
