@@ -1,18 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
-import { useLocation } from 'react-router-dom';
 
-import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
-import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
-import { useSearchParams } from 'react-router-dom';
-import { isDefined } from '~/utils/isDefined';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { isDefined } from '~/utils/isDefined';
 
 const makeValidationSchema = (signInUpStep: SignInUpStep) =>
   z
@@ -63,6 +62,11 @@ export const useSignInUpForm = () => {
       form.setValue('email', 'tim@apple.dev');
       form.setValue('password', 'Applecar2025');
     }
-  }, [form, isDeveloperDefaultSignInPrefilled, prefilledEmail, location.search]);
-  return { form: form };
+  }, [
+    form,
+    isDeveloperDefaultSignInPrefilled,
+    prefilledEmail,
+    location.search,
+  ]);
+  return { form, validationSchema };
 };

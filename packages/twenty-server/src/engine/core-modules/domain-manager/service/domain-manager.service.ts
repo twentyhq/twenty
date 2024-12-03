@@ -4,17 +4,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { isDefined } from 'src/utils/is-defined';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { isWorkEmail } from 'src/utils/is-work-email';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
+import { isDefined } from 'src/utils/is-defined';
+import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
-// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class DomainManagerService {
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -126,6 +125,7 @@ export class DomainManagerService {
         order: {
           createdAt: 'DESC',
         },
+        relations: ['workspaceSSOIdentityProviders'],
       });
 
       if (workspaces.length > 1) {
@@ -153,7 +153,12 @@ export class DomainManagerService {
 
       if (!isDefined(subdomain)) return;
 
-      return this.workspaceRepository.findOneBy({ subdomain });
+      const workspace = await this.workspaceRepository.findOne({
+        where: { subdomain },
+        relations: ['workspaceSSOIdentityProviders'],
+      });
+
+      return workspace;
     } catch (e) {
       throw new WorkspaceException(
         'Workspace not found',

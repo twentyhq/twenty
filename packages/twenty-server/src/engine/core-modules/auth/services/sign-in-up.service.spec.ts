@@ -2,22 +2,23 @@ import { HttpService } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import bcrypt from 'bcrypt';
 import { expect, jest } from '@jest/globals';
+import bcrypt from 'bcrypt';
 
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 jest.mock('bcrypt');
 
@@ -75,9 +76,7 @@ describe('SignInUpService', () => {
         },
         {
           provide: WorkspaceService,
-          useValue: {
-            generateSubdomain: jest.fn().mockReturnValue('tartanpion'),
-          },
+          useValue: {},
         },
         {
           provide: UserWorkspaceService,
@@ -114,6 +113,12 @@ describe('SignInUpService', () => {
               workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock,
           },
         },
+        {
+          provide: DomainManagerService,
+          useValue: {
+            generateSubdomain: jest.fn().mockReturnValue('testSubDomain'),
+          },
+        },
       ],
     }).compile();
 
@@ -139,7 +144,7 @@ describe('SignInUpService', () => {
     await service.signInUp({
       email: 'test@test.com',
       fromSSO: true,
-      targetWorkspaceSubdomain: 'tartanpion',
+      targetWorkspaceSubdomain: 'testSubDomain',
     });
 
     expect(spy).toHaveBeenCalledWith(
@@ -169,7 +174,7 @@ describe('SignInUpService', () => {
     const result = await service.signInUp({
       email,
       fromSSO: true,
-      targetWorkspaceSubdomain: 'tartanpion',
+      targetWorkspaceSubdomain: 'testSubDomain',
     });
 
     expect(result).toEqual(existingUser);
@@ -204,7 +209,7 @@ describe('SignInUpService', () => {
     await service.signInUp({
       email,
       fromSSO: true,
-      targetWorkspaceSubdomain: 'tartanpion',
+      targetWorkspaceSubdomain: 'testSubDomain',
     });
 
     expect(spySignInUpOnExistingWorkspace).toHaveBeenCalledWith(
@@ -257,7 +262,7 @@ describe('SignInUpService', () => {
     const result = await service.signInUp({
       email,
       fromSSO: true,
-      targetWorkspaceSubdomain: 'tartanpion',
+      targetWorkspaceSubdomain: 'testSubDomain',
     });
 
     expect(result).toEqual(existingUser);
@@ -297,7 +302,7 @@ describe('SignInUpService', () => {
       email,
       fromSSO: true,
       workspacePersonalInviteToken,
-      targetWorkspaceSubdomain: 'tartanpion',
+      targetWorkspaceSubdomain: 'testSubDomain',
     });
 
     expect(spySignInUpOnExistingWorkspace).toHaveBeenCalledWith(
@@ -348,7 +353,7 @@ describe('SignInUpService', () => {
       email,
       fromSSO: true,
       workspacePersonalInviteToken,
-      targetWorkspaceSubdomain: 'tartanpion',
+      targetWorkspaceSubdomain: 'testSubDomain',
     });
 
     expect(
@@ -375,7 +380,7 @@ describe('SignInUpService', () => {
       email,
       password,
       fromSSO: false,
-      targetWorkspaceSubdomain: 'tartanpion',
+      targetWorkspaceSubdomain: 'testSubDomain',
     });
 
     expect(
@@ -400,7 +405,7 @@ describe('SignInUpService', () => {
       email,
       password,
       fromSSO: false,
-      targetWorkspaceSubdomain: 'tartanpion',
+      targetWorkspaceSubdomain: 'testSubDomain',
     });
 
     expect(UserCreateMock).toHaveBeenCalledTimes(1);
@@ -436,7 +441,7 @@ describe('SignInUpService', () => {
       password,
       fromSSO: false,
       workspacePersonalInviteToken,
-      targetWorkspaceSubdomain: 'tartanpion',
+      targetWorkspaceSubdomain: 'testSubDomain',
     });
 
     expect(UserCreateMock).toHaveBeenCalledTimes(1);
