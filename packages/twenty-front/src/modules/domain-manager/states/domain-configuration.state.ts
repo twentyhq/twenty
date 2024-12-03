@@ -1,10 +1,10 @@
 import { createState } from 'twenty-ui';
 import { ClientConfig } from '~/generated/graphql';
 
-export const urlManagerState = createState<
+export const domainConfigurationState = createState<
   Pick<ClientConfig, 'frontDomain' | 'defaultSubdomain'>
 >({
-  key: 'urlManager',
+  key: 'domainConfiguration',
   defaultValue: {
     frontDomain: '',
     defaultSubdomain: undefined,

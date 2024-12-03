@@ -7,14 +7,16 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSwitchWorkspaceMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
+import { useDomainBackToDefaultSubdomain } from '@/domain-manager/hooks/useDomainBackToDefaultSubdomain';
+import { useDomainBackToWorkspace } from '@/domain-manager/hooks/useDomainBackToWorkspace';
 
 export const useWorkspaceSwitching = () => {
   const [switchWorkspaceMutation] = useSwitchWorkspaceMutation();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const { enqueueSnackBar } = useSnackBar();
-  const { redirectToHome, redirectToWorkspace } = useUrlManager();
+  const backToDefaultSubdomain = useDomainBackToDefaultSubdomain();
+  const backToWorkspace = useDomainBackToWorkspace();
 
   const switchWorkspace = async (workspaceId: string) => {
     if (currentWorkspace?.id === workspaceId) return;
@@ -35,10 +37,10 @@ export const useWorkspaceSwitching = () => {
     });
 
     if (isDefined(errors) || !isDefined(data?.switchWorkspace.subdomain)) {
-      return redirectToHome();
+      return backToDefaultSubdomain();
     }
 
-    redirectToWorkspace(data.switchWorkspace.subdomain);
+    backToWorkspace(data.switchWorkspace.subdomain);
   };
 
   return { switchWorkspace };
