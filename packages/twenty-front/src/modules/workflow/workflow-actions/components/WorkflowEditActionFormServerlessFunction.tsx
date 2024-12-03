@@ -112,6 +112,9 @@ export const WorkflowEditActionFormServerlessFunction = ({
   const handleSave = usePreventOverlapCallback(save, 1000);
 
   const onCodeChange = async (value: string) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
     setFormValues((prevState) => ({
       ...prevState,
       code: { ...prevState.code, [INDEX_FILE_PATH]: value },
@@ -121,6 +124,9 @@ export const WorkflowEditActionFormServerlessFunction = ({
   };
 
   const updateFunctionInputSchema = async () => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
     const sourceCode = formValues.code?.[INDEX_FILE_PATH];
     if (!isDefined(sourceCode)) {
       return;
@@ -285,6 +291,10 @@ export const WorkflowEditActionFormServerlessFunction = ({
             await onCodeChange(value);
           }}
           onMount={handleEditorDidMount}
+          options={{
+            readOnly: actionOptions.readonly,
+            domReadOnly: actionOptions.readonly,
+          }}
         />
         {renderFields(functionInput)}
       </WorkflowEditGenericFormBase>
