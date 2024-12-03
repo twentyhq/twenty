@@ -117,7 +117,7 @@ export class SignInUpService {
       }
     }
 
-    const maybeInvitation =
+    const autoRetrievedFromSSOInvitation =
       fromSSO && !workspacePersonalInviteToken && !workspaceInviteHash
         ? await this.workspaceInvitationService.findInvitationByWorkspaceSubdomainAndUserEmail(
             {
@@ -130,13 +130,16 @@ export class SignInUpService {
     if (
       workspacePersonalInviteToken ||
       workspaceInviteHash ||
-      maybeInvitation
+      autoRetrievedFromSSOInvitation
     ) {
       const invitationValidation =
-        workspacePersonalInviteToken || workspaceInviteHash || maybeInvitation
+        workspacePersonalInviteToken ||
+        workspaceInviteHash ||
+        autoRetrievedFromSSOInvitation
           ? await this.workspaceInvitationService.validateInvitation({
               workspacePersonalInviteToken:
-                workspacePersonalInviteToken ?? maybeInvitation?.value,
+                workspacePersonalInviteToken ??
+                autoRetrievedFromSSOInvitation?.value,
               workspaceInviteHash,
               email,
             })

@@ -11,7 +11,6 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { UserWorkspaceResolver } from 'src/engine/core-modules/user-workspace/user-workspace.resolver';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
@@ -32,6 +31,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
     }),
   ],
   exports: [UserWorkspaceService],
-  providers: [UserWorkspaceService, UserWorkspaceResolver],
+  providers: [UserWorkspaceService],
 })
 export class UserWorkspaceModule {}
