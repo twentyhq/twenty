@@ -1,5 +1,5 @@
-import { SelectFieldDisplayContent } from '@/object-record/record-field/meta-types/display/components/SelectFieldDisplayContent';
 import { useSelectFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useSelectFieldDisplay';
+import { SelectDisplay } from '@/ui/field/display/components/SelectDisplay';
 import { isDefined } from '~/utils/isDefined';
 
 export const SelectFieldDisplay = () => {
@@ -14,9 +14,6 @@ export const SelectFieldDisplay = () => {
   }
 
   return (
-    <SelectFieldDisplayContent
-      color={selectedOption.color}
-      label={selectedOption.label}
-    />
+    <SelectDisplay color={selectedOption.color} label={selectedOption.label} />
   );
 };

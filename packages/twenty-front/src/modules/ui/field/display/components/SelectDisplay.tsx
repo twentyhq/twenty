@@ -1,13 +1,10 @@
 import { Tag, ThemeColor } from 'twenty-ui';
 
-type SelectFieldDisplayContentProps = {
+type SelectDisplayProps = {
   color: ThemeColor;
   label: string;
 };
 
-export const SelectFieldDisplayContent = ({
-  color,
-  label,
-}: SelectFieldDisplayContentProps) => {
+export const SelectDisplay = ({ color, label }: SelectDisplayProps) => {
   return <Tag preventShrink color={color} text={label} />;
 };
