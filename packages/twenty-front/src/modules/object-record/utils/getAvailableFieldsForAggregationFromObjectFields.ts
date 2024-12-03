@@ -1,63 +1,28 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-
-type AGGREGATE_OPERATIONS_OMITTING_COUNT = Exclude<
-  AGGREGATE_OPERATIONS,
-  AGGREGATE_OPERATIONS.count
->;
-export type AvailableFieldsForAggregation = {
-  [T in AGGREGATE_OPERATIONS_OMITTING_COUNT]?: string[];
-};
-
-const FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION = {
-  [AGGREGATE_OPERATIONS.min]: [
-    FieldMetadataType.Number,
-    FieldMetadataType.Currency,
-  ],
-  [AGGREGATE_OPERATIONS.max]: [
-    FieldMetadataType.Number,
-    FieldMetadataType.Currency,
-  ],
-  [AGGREGATE_OPERATIONS.avg]: [
-    FieldMetadataType.Number,
-    FieldMetadataType.Currency,
-  ],
-  [AGGREGATE_OPERATIONS.sum]: [
-    FieldMetadataType.Number,
-    FieldMetadataType.Currency,
-  ],
-};
-
-const initializeAggregationMap = (): AvailableFieldsForAggregation => {
-  return Object.keys(FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION).reduce(
-    (acc, operation) => ({
-      ...acc,
-      [operation]: [],
-    }),
-    {},
-  );
-};
-
-const isFieldTypeValidForOperation = (
-  fieldType: FieldMetadataType,
-  operation: AGGREGATE_OPERATIONS_OMITTING_COUNT,
-): boolean => {
-  return FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION[operation].includes(fieldType);
-};
+import { FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION } from '@/object-record/record-table/constants/FieldsAvailableByAggregateOperation';
+import { AgreggateOperationsOmittingCount } from '@/object-record/types/AggregateOperationsOmittingCount';
+import { AvailableFieldsForAggregateOperation } from '@/object-record/types/AvailableFieldsForAggregateOperation';
+import { initializeAvailableFieldsForAggregateOperationMap } from '@/object-record/utils/initializeAvailableFieldsForAggregateOperationMap';
+import { isFieldTypeValidForAggregateOperation } from '@/object-record/utils/isFieldTypeValidForAggregateOperation';
 
 export const getAvailableFieldsForAggregationFromObjectFields = (
   fields: FieldMetadataItem[],
-): AvailableFieldsForAggregation => {
-  const aggregationMap = initializeAggregationMap();
+): AvailableFieldsForAggregateOperation => {
+  const aggregationMap = initializeAvailableFieldsForAggregateOperationMap();
 
   return fields.reduce((acc, field) => {
     Object.keys(FIELDS_AVAILABLE_BY_AGGREGATE_OPERATION).forEach(
-      (operation) => {
-        const typedOperation = operation as AGGREGATE_OPERATIONS_OMITTING_COUNT;
+      (aggregateOperation) => {
+        const typedAggregateOperation =
+          aggregateOperation as AgreggateOperationsOmittingCount;
 
-        if (isFieldTypeValidForOperation(field.type, typedOperation)) {
-          acc[typedOperation]?.push(field.id);
+        if (
+          isFieldTypeValidForAggregateOperation(
+            field.type,
+            typedAggregateOperation,
+          )
+        ) {
+          acc[typedAggregateOperation]?.push(field.id);
         }
       },
     );
