@@ -1,4 +1,3 @@
-import { SettingsServerlessFunctionCodeEditorContainer } from '@/settings/serverless-functions/components/SettingsServerlessFunctionCodeEditorContainer';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { EditorProps, Monaco } from '@monaco-editor/react';
 import dotenv from 'dotenv';
@@ -6,6 +5,7 @@ import { editor, MarkerSeverity } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { CodeEditor } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
+import { useParams } from 'react-router-dom';
 
 export type File = {
   language: string;
@@ -31,7 +31,10 @@ export const SettingsServerlessFunctionCodeEditor = ({
   height = 450,
   options = undefined,
 }: SettingsServerlessFunctionCodeEditorProps) => {
-  const { availablePackages } = useGetAvailablePackages();
+  const { serverlessFunctionId = '' } = useParams();
+  const { availablePackages } = useGetAvailablePackages({
+    id: serverlessFunctionId,
+  });
 
   const currentFile = files.find((file) => file.path === currentFilePath);
   const environmentVariablesFile = files.find((file) => file.path === '.env');
@@ -116,17 +119,16 @@ export const SettingsServerlessFunctionCodeEditor = ({
   return (
     isDefined(currentFile) &&
     isDefined(availablePackages) && (
-      <SettingsServerlessFunctionCodeEditorContainer>
-        <CodeEditor
-          height={height}
-          value={currentFile.content}
-          language={currentFile.language}
-          onMount={handleEditorDidMount}
-          onChange={onChange}
-          onValidate={handleEditorValidation}
-          options={options}
-        />
-      </SettingsServerlessFunctionCodeEditorContainer>
+      <CodeEditor
+        height={height}
+        value={currentFile.content}
+        language={currentFile.language}
+        onMount={handleEditorDidMount}
+        onChange={onChange}
+        onValidate={handleEditorValidation}
+        options={options}
+        withHeader
+      />
     )
   );
 };
