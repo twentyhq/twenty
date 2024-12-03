@@ -24,15 +24,15 @@ import {
 
 @Injectable()
 export class CodeIntrospectionService {
-  public generateInputData(inputSchema: InputSchema) {
+  public generateInputData(inputSchema: InputSchema, setNullValue = false) {
     return Object.entries(inputSchema).reduce((acc, [key, value]) => {
       if (isDefined(value.enum)) {
         acc[key] = value.enum?.[0];
       } else if (['string', 'number', 'boolean'].includes(value.type)) {
-        acc[key] = generateFakeValue(value.type);
+        acc[key] = setNullValue ? null : generateFakeValue(value.type);
       } else if (value.type === 'object') {
         acc[key] = isDefined(value.properties)
-          ? this.generateInputData(value.properties)
+          ? this.generateInputData(value.properties, setNullValue)
           : {};
       } else if (value.type === 'array' && isDefined(value.items)) {
         acc[key] = [generateFakeValue(value.items.type)];

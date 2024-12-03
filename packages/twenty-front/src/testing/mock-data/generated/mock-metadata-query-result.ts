@@ -187,6 +187,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -236,6 +237,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -259,6 +261,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -308,6 +311,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -331,6 +335,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -354,6 +359,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -403,6 +409,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -428,6 +435,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -453,6 +461,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.033Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -502,6 +511,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -525,6 +535,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -548,6 +559,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -573,6 +585,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -622,6 +635,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.027Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "isForeignKey": true
                                         },
@@ -728,6 +742,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -751,6 +766,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -774,6 +790,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -799,6 +816,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "'asc'",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -822,6 +840,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -845,6 +864,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -870,6 +890,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -919,6 +940,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -1025,6 +1047,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -1050,6 +1073,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1073,6 +1097,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": true,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1096,6 +1121,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": 0,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1119,6 +1145,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -1144,6 +1171,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1167,6 +1195,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": 0,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1190,6 +1219,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -1239,6 +1269,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -1264,6 +1295,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1397,6 +1429,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -1446,6 +1479,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -1471,6 +1505,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:38.211Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1498,6 +1533,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "primaryLinkLabel": "''"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1521,6 +1557,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1544,6 +1581,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -1569,6 +1607,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -1622,6 +1661,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "primaryLinkLabel": "''"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1645,6 +1685,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1668,6 +1709,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -1717,6 +1759,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -1775,6 +1818,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "addressPostcode": "''"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1798,6 +1842,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": false,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1825,6 +1870,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "primaryLinkLabel": "''"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1848,6 +1894,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -1897,6 +1944,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:38.469Z",
                                         "defaultValue": false,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1920,6 +1968,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1943,6 +1992,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -1988,7 +2038,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 2
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -2011,6 +2062,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -2060,6 +2112,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2083,6 +2136,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -2135,6 +2189,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "source": "'MANUAL'"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2158,6 +2213,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2184,6 +2240,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "currencyCode": "''"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2211,6 +2268,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "primaryLinkLabel": "''"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2234,6 +2292,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -2283,6 +2342,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -2389,6 +2449,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -2438,6 +2499,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2461,6 +2523,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -2486,6 +2549,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -2511,6 +2575,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -2536,6 +2601,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2559,6 +2625,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2622,6 +2689,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -2647,6 +2715,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2670,6 +2739,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2693,6 +2763,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2718,6 +2789,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "*.*"
                                         ],
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2741,6 +2813,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -2766,6 +2839,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -2861,6 +2935,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.039Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2884,6 +2959,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:38.993Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2910,6 +2986,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "source": "'MANUAL'"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2933,6 +3010,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:38.993Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -2956,6 +3034,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.014Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -3005,6 +3084,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.033Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -3054,6 +3134,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:38.993Z",
                                         "defaultValue": "'Untitled'",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -3077,6 +3158,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:38.993Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -3100,6 +3182,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.033Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -3149,6 +3232,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.033Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -3198,6 +3282,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:38.993Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -3221,6 +3306,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:38.993Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -3244,6 +3330,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.014Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -3363,6 +3450,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -3386,6 +3474,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -3435,6 +3524,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -3484,6 +3574,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -3507,6 +3598,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -3530,6 +3622,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -3579,6 +3672,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -3607,6 +3701,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "source": "'MANUAL'"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -3630,6 +3725,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -3655,6 +3751,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -3678,6 +3775,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -3727,6 +3825,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -3752,6 +3851,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -3845,6 +3945,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -3868,6 +3969,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -3891,6 +3993,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -3916,6 +4019,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -3968,7 +4072,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 3
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -3991,6 +4096,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -4014,6 +4120,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -4039,6 +4146,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -4062,6 +4170,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -4111,6 +4220,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -4160,6 +4270,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -4209,6 +4320,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -4232,6 +4344,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -4257,6 +4370,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -4387,6 +4501,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -4412,6 +4527,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -4461,6 +4577,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -4510,6 +4627,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -4559,6 +4677,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -4584,6 +4703,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -4607,6 +4727,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -4630,6 +4751,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -4653,6 +4775,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -4676,6 +4799,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -4699,6 +4823,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -4722,6 +4847,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -4839,7 +4965,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 2
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -4862,6 +4989,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -4885,6 +5013,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -4908,6 +5037,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -4933,6 +5063,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -4958,6 +5089,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -4981,6 +5113,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -5006,6 +5139,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -5029,6 +5163,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -5292,6 +5427,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -5315,6 +5451,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -5364,6 +5501,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.033Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -5413,6 +5551,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.027Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "isForeignKey": true
                                         },
@@ -5438,6 +5577,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -5461,6 +5601,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -5484,6 +5625,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -5507,6 +5649,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -5530,6 +5673,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -5553,6 +5697,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -5602,6 +5747,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -5625,6 +5771,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -5674,6 +5821,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -5697,6 +5845,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -5746,6 +5895,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -5795,6 +5945,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -5818,6 +5969,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -5843,6 +5995,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -5866,6 +6019,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -5891,6 +6045,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -5940,6 +6095,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -6046,6 +6202,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "'Contains'",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -6069,6 +6226,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -6092,6 +6250,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -6117,6 +6276,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -6140,6 +6300,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -6163,6 +6324,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -6186,6 +6348,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -6211,6 +6374,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -6260,6 +6424,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -6283,6 +6448,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -6306,6 +6472,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -6329,6 +6496,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -6394,6 +6562,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -6419,6 +6588,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -6444,6 +6614,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -6469,6 +6640,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -6492,6 +6664,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -6541,6 +6714,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": 0,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -6564,6 +6738,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -6697,6 +6872,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -6720,6 +6896,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -6769,6 +6946,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -6809,7 +6987,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 1
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -6832,6 +7011,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -6855,6 +7035,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -6904,6 +7085,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -6929,6 +7111,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -6952,6 +7135,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -6977,6 +7161,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -7000,6 +7185,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -7379,6 +7565,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -7402,6 +7589,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -7425,6 +7613,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -7474,6 +7663,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -7523,6 +7713,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -7572,6 +7763,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -7621,6 +7813,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -7644,6 +7837,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -7669,6 +7863,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -7692,6 +7887,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -7715,6 +7911,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -7764,6 +7961,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -7787,6 +7985,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -7836,6 +8035,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -7859,6 +8059,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -7884,6 +8085,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -7907,6 +8109,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -7930,6 +8133,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -7953,6 +8157,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -7976,6 +8181,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.009Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "isForeignKey": true
                                         },
@@ -8001,6 +8207,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8024,6 +8231,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8047,6 +8255,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -8096,6 +8305,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.014Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -8145,6 +8355,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -8194,6 +8405,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -8219,6 +8431,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8242,6 +8455,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8265,6 +8479,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8288,6 +8503,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -8395,6 +8611,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8418,6 +8635,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -8467,6 +8685,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": true,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8490,6 +8709,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -8515,6 +8735,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -8540,6 +8761,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8563,6 +8785,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8586,6 +8809,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": 0,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8609,6 +8833,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8632,6 +8857,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -8738,6 +8964,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8761,6 +8988,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -8786,6 +9014,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -8835,6 +9064,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8858,6 +9088,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8881,6 +9112,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8904,6 +9136,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8927,6 +9160,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -8952,6 +9186,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -8975,6 +9210,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -9000,6 +9236,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -9023,6 +9260,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -9217,6 +9455,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "source": "'MANUAL'"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -9240,6 +9479,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -9265,6 +9505,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -9288,6 +9529,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -9347,7 +9589,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 4
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -9370,6 +9613,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -9419,6 +9663,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -9468,6 +9713,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -9517,6 +9763,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -9540,6 +9787,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -9589,6 +9837,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -9638,6 +9887,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -9661,6 +9911,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -9689,6 +9940,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "currencyCode": "''"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -9712,6 +9964,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -9735,6 +9988,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -9760,6 +10014,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -9809,6 +10064,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -9858,6 +10114,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -9881,6 +10138,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -9985,6 +10243,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -10010,6 +10269,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10033,6 +10293,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10056,6 +10317,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -10105,6 +10367,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10128,6 +10391,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -10177,6 +10441,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -10226,6 +10491,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10249,6 +10515,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10272,6 +10539,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10295,6 +10563,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -10320,6 +10589,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10343,6 +10613,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -10368,6 +10639,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10391,6 +10663,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10414,6 +10687,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10547,6 +10821,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -10572,6 +10847,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10595,6 +10871,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -10620,6 +10897,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10643,6 +10921,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10666,6 +10945,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10718,7 +10998,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 3
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -10741,6 +11022,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10764,6 +11046,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -10813,6 +11096,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -10838,6 +11122,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10861,6 +11146,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -10913,6 +11199,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "source": "'MANUAL'"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -10936,6 +11223,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -10985,6 +11273,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -11008,6 +11297,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -11057,6 +11347,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -11176,7 +11467,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 1
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -11199,6 +11491,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -11224,6 +11517,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -11247,6 +11541,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -11270,6 +11565,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -11295,6 +11591,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -11344,6 +11641,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -11393,6 +11691,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": true,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -11416,6 +11715,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -11441,6 +11741,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -11464,6 +11765,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": true,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -11487,6 +11789,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -11539,7 +11842,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 3
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -11562,6 +11866,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -11585,6 +11890,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": 0,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -11651,7 +11957,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 5
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -11674,6 +11981,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -11733,7 +12041,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 5
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 }
@@ -11826,6 +12135,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -11875,6 +12185,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -11924,6 +12235,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -11973,6 +12285,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "'en'",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -11996,6 +12309,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -12021,6 +12335,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -12073,6 +12388,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "firstName": "''"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -12118,7 +12434,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 2
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -12141,6 +12458,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "'Light'",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -12164,6 +12482,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -12187,6 +12506,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -12210,6 +12530,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -12262,7 +12583,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 3
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -12285,6 +12607,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -12308,6 +12631,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -12357,6 +12681,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -12406,6 +12731,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -12455,6 +12781,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -12478,6 +12805,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -12527,6 +12855,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -12576,6 +12905,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -12625,6 +12955,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -12650,6 +12981,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -12675,6 +13007,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "'system'",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -12738,6 +13071,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -12761,6 +13095,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -12784,6 +13119,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -12809,6 +13145,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -12832,6 +13169,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -12857,6 +13195,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -12880,6 +13219,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -13331,6 +13671,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -13380,6 +13721,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -13429,6 +13771,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.008Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "isForeignKey": true
                                         },
@@ -13454,6 +13797,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -13477,6 +13821,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -13500,6 +13845,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -13549,6 +13895,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -13572,6 +13919,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -13621,6 +13969,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -13670,6 +14019,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -13719,6 +14069,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -13742,6 +14093,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -13765,6 +14117,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.014Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -13814,6 +14167,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -13863,6 +14217,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -13886,6 +14241,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -13911,6 +14267,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -13934,6 +14291,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": 0,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -13957,6 +14315,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -13982,6 +14341,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -14031,6 +14391,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -14054,6 +14415,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -14079,6 +14441,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -14128,6 +14491,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -14151,6 +14515,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -14200,6 +14565,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -14223,6 +14589,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -14272,6 +14639,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -14295,6 +14663,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -14358,6 +14727,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -14407,6 +14777,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -14430,6 +14801,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -14455,6 +14827,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -14480,6 +14853,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -14505,6 +14879,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -14554,6 +14929,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -14596,7 +14972,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 2
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -14619,6 +14996,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -14668,6 +15046,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -14691,6 +15070,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -14740,6 +15120,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -14789,6 +15170,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -14962,6 +15344,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -14985,6 +15368,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -15039,7 +15423,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 3
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -15062,6 +15447,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -15087,6 +15473,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -15112,6 +15499,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -15161,6 +15549,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -15210,6 +15599,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -15233,6 +15623,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -15256,6 +15647,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -15279,6 +15671,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -15302,6 +15695,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -15351,6 +15745,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -15414,6 +15809,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "'table'",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -15437,6 +15833,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": false,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -15460,6 +15857,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -15483,6 +15881,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -15532,6 +15931,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -15557,6 +15957,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -15606,6 +16007,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -15629,6 +16031,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -15652,6 +16055,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -15675,6 +16079,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -15698,6 +16103,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -15723,6 +16129,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -15772,6 +16179,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -15803,7 +16211,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 0
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -15826,6 +16235,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -15875,6 +16285,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -15924,6 +16335,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -15973,6 +16385,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -16038,6 +16451,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16061,6 +16475,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16084,6 +16499,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16107,6 +16523,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -16132,6 +16549,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16155,6 +16573,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -16180,6 +16599,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -16229,6 +16649,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -16278,6 +16699,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16301,6 +16723,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": false,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16328,6 +16751,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "primaryLinkLabel": "''"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16351,6 +16775,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16374,6 +16799,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16397,6 +16823,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -16422,6 +16849,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16445,6 +16873,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": false,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16468,6 +16897,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16491,6 +16921,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16584,6 +17015,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -16609,6 +17041,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16632,6 +17065,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16655,6 +17089,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -16680,6 +17115,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16703,6 +17139,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -16752,6 +17189,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -16915,6 +17353,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16938,6 +17377,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -16963,6 +17403,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": false,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -16986,6 +17427,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -17035,6 +17477,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -17058,6 +17501,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -17083,6 +17527,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -17132,6 +17577,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -17155,6 +17601,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -17178,6 +17625,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -17201,6 +17649,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -17250,6 +17699,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -17273,6 +17723,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -17327,7 +17778,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 3
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 }
@@ -17517,6 +17969,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -17542,6 +17995,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -17591,6 +18045,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -17616,6 +18071,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -17665,6 +18121,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -17688,6 +18145,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -17711,6 +18169,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -17760,6 +18219,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.033Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -17809,6 +18269,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -17834,6 +18295,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -17857,6 +18319,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:39.027Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "isForeignKey": true
                                         },
@@ -17882,6 +18345,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -17931,6 +18395,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -17954,6 +18419,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -18075,6 +18541,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -18100,6 +18567,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -18149,6 +18617,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -18174,6 +18643,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -18223,6 +18693,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -18246,6 +18717,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -18295,6 +18767,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -18344,6 +18817,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -18367,6 +18841,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -18390,6 +18865,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -18413,6 +18889,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -18436,6 +18913,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -18459,6 +18937,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -18506,7 +18985,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 1
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -18529,6 +19009,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -18578,6 +19059,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -18604,6 +19086,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "source": "'MANUAL'"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -18667,6 +19150,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -18692,6 +19176,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -18741,6 +19226,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -18766,6 +19252,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -18789,6 +19276,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -18924,6 +19412,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:38.555Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -18947,6 +19436,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -18974,6 +19464,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "primaryPhoneCountryCode": "''"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -19019,7 +19510,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 2
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -19042,6 +19534,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -19091,6 +19584,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -19114,6 +19608,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -19139,6 +19634,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -19164,6 +19660,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -19217,6 +19714,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "primaryLinkLabel": "''"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -19246,6 +19744,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             }
                                         ],
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -19272,6 +19771,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "firstName": "''"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -19295,6 +19795,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -19318,6 +19819,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -19367,6 +19869,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -19390,6 +19893,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -19439,6 +19943,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -19462,6 +19967,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -19487,6 +19993,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -19536,6 +20043,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -19585,6 +20093,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -19611,6 +20120,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "source": "'MANUAL'"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -19665,7 +20175,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 4
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -19691,6 +20202,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "additionalEmails": null
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -19714,6 +20226,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -19763,6 +20276,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -19786,6 +20300,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -19839,6 +20354,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                             "primaryLinkLabel": "''"
                                         },
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -19862,6 +20378,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -19992,6 +20509,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": true,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20015,6 +20533,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -20040,6 +20559,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": true,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20063,6 +20583,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20086,6 +20607,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -20147,7 +20669,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 5
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -20170,6 +20693,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20193,6 +20717,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": 0,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20231,7 +20756,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 1
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -20276,7 +20802,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 2
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -20342,7 +20869,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 5
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -20365,6 +20893,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20388,6 +20917,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20411,6 +20941,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20434,6 +20965,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -20483,6 +21015,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -20508,6 +21041,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": true,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20553,7 +21087,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                                 "position": 2
                                             }
                                         ],
-                                        "settings": null,
+             
+             "isLabelSyncedWithName": false,                           "settings": null,
                                         "relationDefinition": null
                                     }
                                 },
@@ -20576,6 +21111,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -20625,6 +21161,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20648,6 +21185,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": true,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20781,6 +21319,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -20806,6 +21345,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20829,6 +21369,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20852,6 +21393,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "uuid",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20875,6 +21417,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }
@@ -20898,6 +21441,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -20923,6 +21467,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "now",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": {
                                             "displayAsRelativeDate": true
                                         },
@@ -20948,6 +21493,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -20997,6 +21543,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": null,
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": {
                                             "__typename": "RelationDefinition",
@@ -21046,6 +21593,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                                         "updatedAt": "2024-11-06T08:55:35.625Z",
                                         "defaultValue": "''",
                                         "options": null,
+                                        "isLabelSyncedWithName": false,
                                         "settings": null,
                                         "relationDefinition": null
                                     }

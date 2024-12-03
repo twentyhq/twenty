@@ -1,5 +1,5 @@
 import { useDeleteMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useDeleteMultipleRecordsAction';
-import { useExportViewNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useExportMultipleRecordsAction';
+import { useExportMultipleRecordsAction } from '@/action-menu/actions/record-actions/multiple-records/hooks/useExportMultipleRecordsAction';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const useMultipleRecordsActions = ({
@@ -11,26 +11,24 @@ export const useMultipleRecordsActions = ({
     registerDeleteMultipleRecordsAction,
     unregisterDeleteMultipleRecordsAction,
   } = useDeleteMultipleRecordsAction({
-    position: 0,
     objectMetadataItem,
   });
 
   const {
-    registerExportViewNoSelectionRecordsAction,
-    unregisterExportViewNoSelectionRecordsAction,
-  } = useExportViewNoSelectionRecordAction({
-    position: 1,
+    registerExportMultipleRecordsAction,
+    unregisterExportMultipleRecordsAction,
+  } = useExportMultipleRecordsAction({
     objectMetadataItem,
   });
 
   const registerMultipleRecordsActions = () => {
-    registerDeleteMultipleRecordsAction();
-    registerExportViewNoSelectionRecordsAction();
+    registerDeleteMultipleRecordsAction({ position: 1 });
+    registerExportMultipleRecordsAction({ position: 2 });
   };
 
   const unregisterMultipleRecordsActions = () => {
     unregisterDeleteMultipleRecordsAction();
-    unregisterExportViewNoSelectionRecordsAction();
+    unregisterExportMultipleRecordsAction();
   };
 
   return {
