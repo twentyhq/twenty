@@ -20,10 +20,20 @@ import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldRelationFormSchema = z.object({
   relation: z.object({
-    field: fieldMetadataItemSchema().pick({
-      icon: true,
-      label: true,
-    }),
+    field: fieldMetadataItemSchema()
+      .pick({
+        icon: true,
+        label: true,
+      })
+      // NOT SURE IF THIS IS CORRECT
+      .merge(
+        fieldMetadataItemSchema()
+          .pick({
+            name: true,
+            isLabelSyncedWithName: true,
+          })
+          .partial(),
+      ),
     objectMetadataId: z.string().uuid(),
     type: z.enum(
       Object.keys(RELATION_TYPES) as [

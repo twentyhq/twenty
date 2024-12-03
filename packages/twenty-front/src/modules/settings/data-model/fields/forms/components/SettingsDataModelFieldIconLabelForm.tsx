@@ -75,8 +75,6 @@ type SettingsDataModelFieldIconLabelFormProps = {
   maxLength?: number;
 };
 
-const infoCircleElementId = 'info-circle-id';
-
 export const SettingsDataModelFieldIconLabelForm = ({
   disabled,
   fieldMetadataItem,
@@ -170,13 +168,13 @@ export const SettingsDataModelFieldIconLabelForm = ({
                           apiNameTooltipText && (
                             <>
                               <IconInfoCircle
-                                id={infoCircleElementId + 'name'}
+                                id="info-circle-id-name"
                                 size={theme.icon.size.md}
                                 color={theme.font.color.tertiary}
                                 style={{ outline: 'none' }}
                               />
                               <AppTooltip
-                                anchorSelect={`#${infoCircleElementId}name`}
+                                anchorSelect="#info-circle-id-name"
                                 content={apiNameTooltipText}
                                 offset={5}
                                 noArrow

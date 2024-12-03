@@ -67,6 +67,7 @@ export const SettingsObjectNewFieldConfigure = () => {
         DEFAULT_ICONS_BY_FIELD_TYPE[fieldType] ?? DEFAULT_ICON_FOR_NEW_FIELD,
       label: '',
       description: '',
+      name: '',
     },
   });
 
@@ -134,12 +135,18 @@ export const SettingsObjectNewFieldConfigure = () => {
 
         await createOneRelationMetadata({
           relationType: relationFormValues.type,
-          field: pick(fieldFormValues, ['icon', 'label', 'description']),
+          field: pick(fieldFormValues, [
+            'icon',
+            'label',
+            'description',
+            'name',
+          ]),
           objectMetadataId: activeObjectMetadataItem.id,
           connect: {
             field: {
               icon: relationFormValues.field.icon,
               label: relationFormValues.field.label,
+              name: relationFormValues.field.name,
             },
             objectMetadataId: relationFormValues.objectMetadataId,
           },

@@ -74,10 +74,7 @@ export const useUpdateOneFieldMetadataItem = () => {
     const result = await mutate({
       variables: {
         idToUpdate: fieldMetadataIdToUpdate,
-        updatePayload: {
-          ...updatePayload,
-          label: updatePayload.label ?? undefined,
-        },
+        updatePayload: updatePayload,
       },
       awaitRefetchQueries: true,
       refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
