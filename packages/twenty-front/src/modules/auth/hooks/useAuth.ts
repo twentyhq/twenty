@@ -42,7 +42,7 @@ import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDa
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
-import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
+import { workspaceDomainState } from '@/auth/states/workspaceDomainState';
 
 import { domainConfigurationState } from '@/domain-manager/states/domain-configuration.state';
 import { useWorkspaceSubdomain } from '@/domain-manager/hooks/useWorkspaceSubdomain';
@@ -51,9 +51,7 @@ export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setCurrentUser = useSetRecoilState(currentUserState);
   const domainConfiguration = useRecoilValue(domainConfigurationState);
-  const setLastAuthenticateWorkspaceState = useSetRecoilState(
-    lastAuthenticateWorkspaceState,
-  );
+  const setWorkspaceDomainState = useSetRecoilState(workspaceDomainState);
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
@@ -210,7 +208,7 @@ export const useAuth = () => {
 
       setCurrentWorkspace(workspace);
       if (isDefined(workspace) && isWorkspaceSubdomain()) {
-        setLastAuthenticateWorkspaceState({
+        setWorkspaceDomainState({
           id: workspace.id,
           subdomain: workspace.subdomain,
           cookieAttributes: {
@@ -246,7 +244,7 @@ export const useAuth = () => {
       setCurrentWorkspaceMembers,
       setCurrentWorkspaceMember,
       setDateTimeFormat,
-      setLastAuthenticateWorkspaceState,
+      setWorkspaceDomainState,
       domainConfiguration.frontDomain,
       setWorkspaces,
     ],

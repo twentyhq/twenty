@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { useEffect } from 'react';
 import { isDefined } from '~/utils/isDefined';
-import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
+import { workspaceDomainState } from '@/auth/states/workspaceDomainState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useDomainBackToWorkspace } from '@/domain-manager/hooks/useDomainBackToWorkspace';
 import { useDefaultDomain } from '@/domain-manager/hooks/useDefaultDomain';
@@ -12,9 +12,7 @@ import { useWorkspaceSubdomain } from '@/domain-manager/hooks/useWorkspaceSubdom
 export const WorkspaceProviderEffect = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
-  const lastAuthenticateWorkspace = useRecoilValue(
-    lastAuthenticateWorkspaceState,
-  );
+  const workspaceDomain = useRecoilValue(workspaceDomainState);
 
   const backToWorkspace = useDomainBackToWorkspace();
   const { isDefaultDomain } = useDefaultDomain();
@@ -40,15 +38,15 @@ export const WorkspaceProviderEffect = () => {
   useEffect(() => {
     if (
       isMultiWorkspaceEnabled &&
-      isDefined(lastAuthenticateWorkspace?.subdomain) &&
+      isDefined(workspaceDomain?.subdomain) &&
       isDefaultDomain
     ) {
-      backToWorkspace(lastAuthenticateWorkspace.subdomain);
+      backToWorkspace(workspaceDomain.subdomain);
     }
   }, [
     isMultiWorkspaceEnabled,
     isDefaultDomain,
-    lastAuthenticateWorkspace,
+    workspaceDomain,
     backToWorkspace,
   ]);
 
