@@ -117,9 +117,9 @@ const StyledContainer = withTheme(styled.div<
     flex-shrink: 0;
   }
 
-  padding-left: ${({ variant }) =>
+  padding-left: ${({ theme, variant }) =>
     variant === ChipVariant.Transparent
-      ? '0px'
+      ? theme.spacing(0)
       : 'var(--chip-horizontal-padding)'};
 
 `);
