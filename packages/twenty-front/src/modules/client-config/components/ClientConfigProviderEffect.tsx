@@ -5,7 +5,7 @@ import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionId
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
@@ -21,7 +21,9 @@ export const ClientConfigProviderEffect = () => {
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
   const setUrlManager = useSetRecoilState(urlManagerState);
 
-  const setIsSignInPrefilled = useSetRecoilState(isSignInPrefilledState);
+  const setIsDeveloperDefaultSignInPrefilled = useSetRecoilState(
+    isDeveloperDefaultSignInPrefilledState,
+  );
   const setIsMultiWorkspaceEnabled = useSetRecoilState(
     isMultiWorkspaceEnabledState,
   );
@@ -73,7 +75,7 @@ export const ClientConfigProviderEffect = () => {
 
     setIsDebugMode(data?.clientConfig.debugMode);
     setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
-    setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
+    setIsDeveloperDefaultSignInPrefilled(data?.clientConfig.signInPrefilled);
     setIsMultiWorkspaceEnabled(data?.clientConfig.isMultiWorkspaceEnabled);
 
     setBilling(data?.clientConfig.billing);
@@ -100,7 +102,7 @@ export const ClientConfigProviderEffect = () => {
   }, [
     data,
     setIsDebugMode,
-    setIsSignInPrefilled,
+    setIsDeveloperDefaultSignInPrefilled,
     setIsMultiWorkspaceEnabled,
     setSupportChat,
     setBilling,

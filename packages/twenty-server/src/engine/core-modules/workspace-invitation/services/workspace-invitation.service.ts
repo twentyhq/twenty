@@ -337,7 +337,8 @@ export class WorkspaceInvitationService {
           searchParams: invitation.value.isPersonalInvitation
             ? {
                 inviteToken: invitation.value.appToken.value,
-              }
+                email: invitation.value.email,
+            }
             : {},
         });
         const emailData = {

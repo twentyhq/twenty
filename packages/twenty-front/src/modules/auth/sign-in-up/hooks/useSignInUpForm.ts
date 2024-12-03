@@ -6,7 +6,8 @@ import { z } from 'zod';
 import { useLocation } from 'react-router-dom';
 
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { useSearchParams } from 'react-router-dom';
 import { isDefined } from '~/utils/isDefined';
 import {
   SignInUpStep,
@@ -34,10 +35,16 @@ const makeValidationSchema = (signInUpStep: SignInUpStep) =>
 export type Form = z.infer<ReturnType<typeof makeValidationSchema>>;
 export const useSignInUpForm = () => {
   const location = useLocation();
-  const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
   const signInUpStep = useRecoilValue(signInUpStepState);
 
   const validationSchema = makeValidationSchema(signInUpStep); // Create schema based on the current step
+
+  const isDeveloperDefaultSignInPrefilled = useRecoilValue(
+    isDeveloperDefaultSignInPrefilledState,
+  );
+  const [searchParams] = useSearchParams();
+  const prefilledEmail = searchParams.get('email');
+
   const form = useForm<Form>({
     mode: 'onSubmit',
     defaultValues: {
@@ -50,16 +57,12 @@ export const useSignInUpForm = () => {
   });
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const email = searchParams.get('email');
-    if (isDefined(email)) {
-      form.setValue('email', email);
-    } else if (isSignInPrefilled) {
+    if (isDefined(prefilledEmail)) {
+      form.setValue('email', prefilledEmail);
+    } else if (isDeveloperDefaultSignInPrefilled === true) {
       form.setValue('email', 'tim@apple.dev');
-    }
-    if (isSignInPrefilled && form.getValues('email') === 'tim@apple.dev') {
       form.setValue('password', 'Applecar2025');
     }
-  }, [form, isSignInPrefilled, location.search]);
-  return { form: form, validationSchema };
+  }, [form, isDeveloperDefaultSignInPrefilled, prefilledEmail, location.search]);
+  return { form: form };
 };

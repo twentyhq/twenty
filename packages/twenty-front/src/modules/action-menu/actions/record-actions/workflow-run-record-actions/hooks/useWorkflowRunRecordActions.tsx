@@ -57,11 +57,12 @@ export const useWorkflowRunRecordActions = ({
       index,
       activeWorkflowVersion,
     ] of activeWorkflowVersions.entries()) {
+      const name = capitalize(activeWorkflowVersion.workflow.name);
       addActionMenuEntry({
         type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionMenuEntryScope.RecordSelection,
-        label: capitalize(activeWorkflowVersion.workflow.name),
+        label: name,
         position: index,
         Icon: IconSettingsAutomation,
         onClick: async () => {
@@ -76,7 +77,7 @@ export const useWorkflowRunRecordActions = ({
 
           enqueueSnackBar('', {
             variant: SnackBarVariant.Success,
-            title: `${capitalize(activeWorkflowVersion.workflow.name)} starting...`,
+            title: `${name} starting...`,
             icon: (
               <IconSettingsAutomation
                 size={16}
