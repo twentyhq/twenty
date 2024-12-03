@@ -105,6 +105,12 @@ const SettingsWorkspace = lazy(() =>
   })),
 );
 
+const SettingsDomain = lazy(() =>
+  import('~/pages/settings/workspace/SettingsDomain').then((module) => ({
+    default: module.SettingsDomain,
+  })),
+);
+
 const SettingsWorkspaceMembers = lazy(() =>
   import('~/pages/settings/SettingsWorkspaceMembers').then((module) => ({
     default: module.SettingsWorkspaceMembers,
@@ -288,6 +294,8 @@ export const SettingsRoutes = ({
       {isBillingEnabled && (
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
       )}
+      <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
+      <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
       <Route
         path={SettingsPath.WorkspaceMembersPage}
         element={<SettingsWorkspaceMembers />}
@@ -382,14 +390,12 @@ export const SettingsRoutes = ({
         element={<SettingsObjectFieldEdit />}
       />
       <Route path={SettingsPath.Releases} element={<Releases />} />
+      <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
       {isSSOEnabled && (
-        <>
-          <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
-          <Route
-            path={SettingsPath.NewSSOIdentityProvider}
-            element={<SettingsSecuritySSOIdentifyProvider />}
-          />
-        </>
+        <Route
+          path={SettingsPath.NewSSOIdentityProvider}
+          element={<SettingsSecuritySSOIdentifyProvider />}
+        />
       )}
       {isAdminPageEnabled && (
         <>

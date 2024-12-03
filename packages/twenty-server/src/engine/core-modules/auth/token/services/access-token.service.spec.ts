@@ -166,7 +166,7 @@ describe('AccessTokenService', () => {
         .spyOn(service['jwtStrategy'], 'validate')
         .mockReturnValue(mockAuthContext as any);
 
-      const result = await service.validateToken(mockRequest);
+      const result = await service.validateTokenByRequest(mockRequest);
 
       expect(result).toEqual(mockAuthContext);
       expect(jwtWrapperService.verifyWorkspaceToken).toHaveBeenCalledWith(
@@ -184,7 +184,7 @@ describe('AccessTokenService', () => {
         headers: {},
       } as Request;
 
-      await expect(service.validateToken(mockRequest)).rejects.toThrow(
+      await expect(service.validateTokenByRequest(mockRequest)).rejects.toThrow(
         AuthException,
       );
     });

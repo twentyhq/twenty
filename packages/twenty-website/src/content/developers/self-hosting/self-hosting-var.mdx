@@ -37,9 +37,12 @@ yarn command:prod cron:calendar:ongoing-stale
     ['PG_DATABASE_URL', 'postgres://user:pw@localhost:5432/default?connection_limit=1', 'Database connection'],
     ['PG_SSL_ALLOW_SELF_SIGNED', 'false', 'Allow self signed certificates'],
     ['REDIS_URL', 'redis://localhost:6379', 'Redis connection url'],
-    ['FRONT_BASE_URL', 'http://localhost:3001', 'Url to the hosted frontend'],
+    ['FRONT_DOMAIN', 'localhost', 'Domain of the hosted frontend'],
+    ['DEFAULT_SUBDOMAIN', 'app', 'The default subdomain name when multiworkspace mode is enabled'],
     ['SERVER_URL', 'http://localhost:3000', 'Url to the hosted server'],
-    ['PORT', '3000', 'Port'],
+    ['FRONT_PROTOCOL', 'http', 'protocol of the frontend server. Could be `http` or `https`'],
+    ['FRONT_PORT', '3001', 'Port of the frontend server.'],
+    ['PORT', '3000', 'Port of the backend server'],
     ['CACHE_STORAGE_TYPE', 'redis', 'Cache type (memory, redis...)'],
     ['CACHE_STORAGE_TTL', '3600 * 24 * 7', 'Cache TTL in seconds']
     ]}></ArticleTable>
@@ -78,7 +81,7 @@ yarn command:prod cron:calendar:ongoing-stale
     ['AUTH_MICROSOFT_CLIENT_SECRET', '', 'Microsoft client secret'],
     ['AUTH_MICROSOFT_CALLBACK_URL', 'http://[YourDomain]/auth/microsoft/redirect', 'Microsoft auth callback'],
     ['AUTH_MICROSOFT_APIS_CALLBACK_URL', 'http://[YourDomain]/auth/microsoft-apis/get-access-token', 'Microsoft APIs auth callback'],
-    ['IS_SIGN_UP_DISABLED', 'false', 'Disable sign-up'],
+    ['IS_MULTIWORKSPACE_ENABLED', 'false', 'Allows the use of multiple workspaces. Requires a web server that can manage wildcards for subdomains.'],
     ['PASSWORD_RESET_TOKEN_EXPIRES_IN', '5m', 'Password reset token expiration time'],
     ]}></ArticleTable>
 

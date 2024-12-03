@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { HttpModule } from '@nestjs/axios';
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
@@ -11,7 +11,6 @@ import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/g
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
-import { VerifyAuthController } from 'src/engine/core-modules/auth/controllers/verify-auth.controller';
 import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
@@ -24,7 +23,6 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
-import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
@@ -36,13 +34,15 @@ import { WorkspaceSSOIdentityProvider } from 'src/engine/core-modules/sso/worksp
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
-import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
+import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -54,7 +54,9 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     JwtModule,
     FileUploadModule,
     DataSourceModule,
-    forwardRef(() => UserModule),
+    DomainManagerModule,
+    TokenModule,
+    UserModule,
     WorkspaceManagerModule,
     TypeORMModule,
     TypeOrmModule.forFeature(
@@ -69,22 +71,20 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       'core',
     ),
     HttpModule,
-    TokenModule,
     UserWorkspaceModule,
     WorkspaceModule,
     OnboardingModule,
     WorkspaceDataSourceModule,
-    WorkspaceInvitationModule,
     ConnectedAccountModule,
     WorkspaceSSOModule,
     FeatureFlagModule,
+    WorkspaceInvitationModule,
   ],
   controllers: [
     GoogleAuthController,
     MicrosoftAuthController,
     GoogleAPIsAuthController,
     MicrosoftAPIsAuthController,
-    VerifyAuthController,
     SSOAuthController,
   ],
   providers: [
