@@ -21,7 +21,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 @Controller('auth/microsoft')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -29,7 +29,7 @@ export class MicrosoftAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
-    private readonly urlManagerService: UrlManagerService,
+    private readonly domainManagerService: DomainManagerService,
     private readonly environmentService: EnvironmentService,
   ) {}
 
@@ -88,7 +88,7 @@ export class MicrosoftAuthController {
     } catch (err) {
       if (err instanceof AuthException) {
         return res.redirect(
-          this.urlManagerService.computeRedirectErrorUrl({
+          this.domainManagerService.computeRedirectErrorUrl({
             subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
             errorMessage: err.message,
           }),

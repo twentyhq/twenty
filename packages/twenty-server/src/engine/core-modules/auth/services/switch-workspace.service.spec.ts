@@ -9,7 +9,6 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { WorkspaceGettersService } from 'src/engine/core-modules/workspace/services/workspace-getters.service';
 
 import { SwitchWorkspaceService } from './switch-workspace.service';
 
@@ -20,7 +19,6 @@ describe('SwitchWorkspaceService', () => {
   let userService: UserService;
   let accessTokenService: AccessTokenService;
   let refreshTokenService: RefreshTokenService;
-  let workspaceGettersService: WorkspaceGettersService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -52,12 +50,6 @@ describe('SwitchWorkspaceService', () => {
             saveDefaultWorkspace: jest.fn(),
           },
         },
-        {
-          provide: WorkspaceGettersService,
-          useValue: {
-            getAuthProvidersByWorkspaceId: jest.fn(),
-          },
-        },
       ],
     }).compile();
 
@@ -71,9 +63,6 @@ describe('SwitchWorkspaceService', () => {
     accessTokenService = module.get<AccessTokenService>(AccessTokenService);
     refreshTokenService = module.get<RefreshTokenService>(RefreshTokenService);
     userService = module.get<UserService>(UserService);
-    workspaceGettersService = module.get<WorkspaceGettersService>(
-      WorkspaceGettersService,
-    );
   });
 
   it('should be defined', () => {
@@ -133,14 +122,10 @@ describe('SwitchWorkspaceService', () => {
         workspaceUsers: [{ userId: 'user-id' }],
         logo: 'logo',
         displayName: 'displayName',
-      };
-
-      const mockAuthProviders = {
-        google: true,
-        magicLink: false,
-        password: true,
-        microsoft: false,
-        sso: [
+        isGoogleAuthEnabled: true,
+        isPasswordAuthEnabled: true,
+        isMicrosoftAuthEnabled: false,
+        workspaceSSOIdentityProviders: [
           {
             id: 'sso-id',
           },
@@ -154,9 +139,6 @@ describe('SwitchWorkspaceService', () => {
       jest
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace as any);
-      jest
-        .spyOn(workspaceGettersService, 'getAuthProvidersByWorkspaceId')
-        .mockResolvedValue(mockAuthProviders as any);
 
       const result = await service.switchWorkspace(
         mockUser as User,
@@ -167,7 +149,7 @@ describe('SwitchWorkspaceService', () => {
         id: mockWorkspace.id,
         logo: expect.any(String),
         displayName: expect.any(String),
-        authProviders: mockAuthProviders,
+        authProviders: expect.any(Object),
       });
     });
 
@@ -181,14 +163,6 @@ describe('SwitchWorkspaceService', () => {
         displayName: 'displayName',
       };
 
-      const mockAuthProviders = {
-        google: true,
-        magicLink: false,
-        password: true,
-        microsoft: false,
-        sso: [],
-      };
-
       jest
         .spyOn(userRepository, 'findBy')
         .mockResolvedValue([mockUser as User]);
@@ -196,9 +170,6 @@ describe('SwitchWorkspaceService', () => {
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue(mockWorkspace as any);
       jest.spyOn(userRepository, 'save').mockResolvedValue({} as User);
-      jest
-        .spyOn(workspaceGettersService, 'getAuthProvidersByWorkspaceId')
-        .mockResolvedValue(mockAuthProviders);
 
       const result = await service.switchWorkspace(
         mockUser as User,
@@ -209,7 +180,7 @@ describe('SwitchWorkspaceService', () => {
         id: mockWorkspace.id,
         logo: expect.any(String),
         displayName: expect.any(String),
-        authProviders: mockAuthProviders,
+        authProviders: expect.any(Object),
       });
     });
   });

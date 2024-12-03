@@ -4,10 +4,10 @@ import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core/query-builder/
 import { coreQueryBuilderFactories } from 'src/engine/api/rest/core/query-builder/factories/factories';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
-import { UrlManagerModule } from 'src/engine/core-modules/url-manager/url-manager.module';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 
 @Module({
-  imports: [ObjectMetadataModule, AuthModule, UrlManagerModule],
+  imports: [ObjectMetadataModule, AuthModule, DomainManagerModule],
   providers: [...coreQueryBuilderFactories, CoreQueryBuilderFactory],
   exports: [CoreQueryBuilderFactory],
 })

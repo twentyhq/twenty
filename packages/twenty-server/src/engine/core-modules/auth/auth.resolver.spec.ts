@@ -7,8 +7,7 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
-import { WorkspaceGettersService } from 'src/engine/core-modules/workspace/services/workspace-getters.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -46,16 +45,12 @@ describe('AuthResolver', () => {
           useValue: {},
         },
         {
-          provide: UrlManagerService,
+          provide: DomainManagerService,
           useValue: {
             buildWorkspaceURL: jest
               .fn()
               .mockResolvedValue(new URL('http://localhost:3001')),
           },
-        },
-        {
-          provide: WorkspaceGettersService,
-          useValue: {},
         },
         {
           provide: UserWorkspaceService,

@@ -1,17 +1,25 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-import { UrlManagerService } from './url-manager.service';
+import { DomainManagerService } from './domain-manager.service';
 
-describe('UrlManagerService', () => {
-  let urlManagerService: UrlManagerService;
+describe('DomainManagerService', () => {
+  let domainManagerService: DomainManagerService;
   let environmentService: EnvironmentService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        UrlManagerService,
+        DomainManagerService,
+        {
+          provide: getRepositoryToken(Workspace, 'core'),
+          useClass: Repository,
+        },
         {
           provide: EnvironmentService,
           useValue: {
@@ -21,7 +29,8 @@ describe('UrlManagerService', () => {
       ],
     }).compile();
 
-    urlManagerService = module.get<UrlManagerService>(UrlManagerService);
+    domainManagerService =
+      module.get<DomainManagerService>(DomainManagerService);
     environmentService = module.get<EnvironmentService>(EnvironmentService);
   });
 
@@ -38,7 +47,7 @@ describe('UrlManagerService', () => {
           return env[key];
         });
 
-      const result = urlManagerService.getBaseUrl();
+      const result = domainManagerService.getBaseUrl();
 
       expect(result.toString()).toBe('https://example.com/');
     });
@@ -57,7 +66,7 @@ describe('UrlManagerService', () => {
           return env[key];
         });
 
-      const result = urlManagerService.getBaseUrl();
+      const result = domainManagerService.getBaseUrl();
 
       expect(result.toString()).toBe('https://test.example.com/');
     });
@@ -75,7 +84,7 @@ describe('UrlManagerService', () => {
           return env[key];
         });
 
-      const result = urlManagerService.getBaseUrl();
+      const result = domainManagerService.getBaseUrl();
 
       expect(result.toString()).toBe('https://example.com:8080/');
     });
@@ -96,7 +105,9 @@ describe('UrlManagerService', () => {
           return env[key];
         });
 
-      const result = urlManagerService.buildWorkspaceURL({ subdomain: 'test' });
+      const result = domainManagerService.buildWorkspaceURL({
+        subdomain: 'test',
+      });
 
       expect(result.toString()).toBe('https://test.example.com/');
     });
@@ -113,7 +124,7 @@ describe('UrlManagerService', () => {
           return env[key];
         });
 
-      const result = urlManagerService.buildWorkspaceURL({
+      const result = domainManagerService.buildWorkspaceURL({
         pathname: '/path/to/resource',
       });
 
@@ -132,7 +143,7 @@ describe('UrlManagerService', () => {
           return env[key];
         });
 
-      const result = urlManagerService.buildWorkspaceURL({
+      const result = domainManagerService.buildWorkspaceURL({
         searchParams: {
           foo: 'bar',
           baz: 123,

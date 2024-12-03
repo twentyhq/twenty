@@ -13,7 +13,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { WorkspaceGettersService } from 'src/engine/core-modules/workspace/services/workspace-getters.service';
+import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/getAuthProvidersByWorkspace';
 
 @Injectable()
 export class SwitchWorkspaceService {
@@ -23,7 +23,6 @@ export class SwitchWorkspaceService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly userService: UserService,
-    private readonly workspaceGetterService: WorkspaceGettersService,
     private readonly accessTokenService: AccessTokenService,
     private readonly refreshTokenService: RefreshTokenService,
   ) {}
@@ -71,10 +70,7 @@ export class SwitchWorkspaceService {
       subdomain: workspace.subdomain,
       logo: workspace.logo,
       displayName: workspace.displayName,
-      authProviders:
-        await this.workspaceGetterService.getAuthProvidersByWorkspaceId(
-          workspace.id,
-        ),
+      authProviders: getAuthProvidersByWorkspace(workspace),
     };
   }
 

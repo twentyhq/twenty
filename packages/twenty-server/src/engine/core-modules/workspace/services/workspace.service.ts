@@ -18,9 +18,6 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
-import { isWorkEmail } from 'src/utils/is-work-email';
-import { isDefined } from 'src/utils/is-defined';
-import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -38,106 +35,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly userWorkspaceService: UserWorkspaceService,
   ) {
     super(workspaceRepository);
-  }
-
-  private generateRandomSubdomain(): string {
-    const prefixes = [
-      'cool',
-      'smart',
-      'fast',
-      'bright',
-      'shiny',
-      'happy',
-      'funny',
-      'clever',
-      'brave',
-      'kind',
-      'gentle',
-      'quick',
-      'sharp',
-      'calm',
-      'silent',
-      'lucky',
-      'fierce',
-      'swift',
-      'mighty',
-      'noble',
-      'bold',
-      'wise',
-      'eager',
-      'joyful',
-      'glad',
-      'zany',
-      'witty',
-      'bouncy',
-      'graceful',
-      'colorful',
-    ];
-    const suffixes = [
-      'raccoon',
-      'panda',
-      'whale',
-      'tiger',
-      'dolphin',
-      'eagle',
-      'penguin',
-      'owl',
-      'fox',
-      'wolf',
-      'lion',
-      'bear',
-      'hawk',
-      'shark',
-      'sparrow',
-      'moose',
-      'lynx',
-      'falcon',
-      'rabbit',
-      'hedgehog',
-      'monkey',
-      'horse',
-      'koala',
-      'kangaroo',
-      'elephant',
-      'giraffe',
-      'panther',
-      'crocodile',
-      'seal',
-      'octopus',
-    ];
-
-    const randomPrefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-    const randomSuffix = suffixes[Math.floor(Math.random() * suffixes.length)];
-
-    return `${randomPrefix}-${randomSuffix}`;
-  }
-
-  private getSubdomainNameByEmail(email?: string) {
-    if (!isDefined(email) || !isWorkEmail(email)) return;
-
-    return getDomainNameByEmail(email);
-  }
-
-  private getSubdomainNameByDisplayName(displayName?: string) {
-    if (!isDefined(displayName)) return;
-    const displayNameWords = displayName.match(/(\w| |\d)+/g);
-
-    if (displayNameWords) {
-      return displayNameWords.join('-').replace(/ /g, '').toLowerCase();
-    }
-  }
-
-  async generateSubdomain(params?: { email?: string; displayName?: string }) {
-    const subdomain =
-      this.getSubdomainNameByEmail(params?.email) ??
-      this.getSubdomainNameByDisplayName(params?.displayName) ??
-      this.generateRandomSubdomain();
-
-    const existingWorkspaceCount = await this.workspaceRepository.countBy({
-      subdomain,
-    });
-
-    return `${subdomain}${existingWorkspaceCount > 0 ? `-${Math.random().toString(36).substring(2, 10)}` : ''}`;
   }
 
   async activateWorkspace(user: User, data: ActivateWorkspaceInput) {

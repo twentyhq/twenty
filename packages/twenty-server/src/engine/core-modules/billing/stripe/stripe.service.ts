@@ -7,7 +7,7 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 @Injectable()
 export class StripeService {
@@ -16,7 +16,7 @@ export class StripeService {
 
   constructor(
     private readonly environmentService: EnvironmentService,
-    private readonly urlManagerService: UrlManagerService,
+    private readonly domainManagerService: DomainManagerService,
   ) {
     if (!this.environmentService.get('IS_BILLING_ENABLED')) {
       return;
@@ -77,7 +77,8 @@ export class StripeService {
   ): Promise<Stripe.BillingPortal.Session> {
     return await this.stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
-      return_url: returnUrl ?? this.urlManagerService.getBaseUrl().toString(),
+      return_url:
+        returnUrl ?? this.domainManagerService.getBaseUrl().toString(),
     });
   }
 

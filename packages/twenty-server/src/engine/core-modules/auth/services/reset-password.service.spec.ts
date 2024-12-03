@@ -13,7 +13,7 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 import { ResetPasswordService } from './reset-password.service';
 
@@ -47,7 +47,7 @@ describe('ResetPasswordService', () => {
           },
         },
         {
-          provide: UrlManagerService,
+          provide: DomainManagerService,
           useValue: {
             getBaseUrl: jest
               .fn()

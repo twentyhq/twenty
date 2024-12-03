@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 
 import { NestjsQueryGraphQLModule } from '@ptc-org/nestjs-query-graphql';
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
@@ -17,8 +17,7 @@ import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.r
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceMetadataCacheModule } from 'src/engine/metadata-modules/workspace-metadata-cache/workspace-metadata-cache.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
-import { UrlManagerModule } from 'src/engine/core-modules/url-manager/url-manager.module';
-import { WorkspaceGettersService } from 'src/engine/core-modules/workspace/services/workspace-getters.service';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
@@ -29,12 +28,12 @@ import { WorkspaceService } from './services/workspace.service';
 @Module({
   imports: [
     TypeORMModule,
-    forwardRef(() => TokenModule),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        UrlManagerModule,
+        DomainManagerModule,
         BillingModule,
         FileModule,
+        TokenModule,
         FileUploadModule,
         WorkspaceMetadataCacheModule,
         NestjsQueryTypeOrmModule.forFeature(
@@ -52,11 +51,10 @@ import { WorkspaceService } from './services/workspace.service';
       resolvers: workspaceAutoResolverOpts,
     }),
   ],
-  exports: [WorkspaceService, WorkspaceGettersService],
+  exports: [WorkspaceService],
   providers: [
     WorkspaceResolver,
     WorkspaceService,
-    WorkspaceGettersService,
     WorkspaceWorkspaceMemberListener,
   ],
 })

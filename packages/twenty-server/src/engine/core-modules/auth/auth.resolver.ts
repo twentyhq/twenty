@@ -39,8 +39,7 @@ import {
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
-import { WorkspaceGettersService } from 'src/engine/core-modules/workspace/services/workspace-getters.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { LoginToken } from './dto/login-token.entity';
@@ -62,13 +61,12 @@ export class AuthResolver {
     private renewTokenService: RenewTokenService,
     private userService: UserService,
     private apiKeyService: ApiKeyService,
-    private workspaceGetterService: WorkspaceGettersService,
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
     private switchWorkspaceService: SwitchWorkspaceService,
     private transientTokenService: TransientTokenService,
     private oauthService: OAuthService,
-    private urlManagementService: UrlManagerService,
+    private domainManagerService: DomainManagerService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -104,7 +102,7 @@ export class AuthResolver {
     @OriginHeader() origin: string,
   ): Promise<LoginToken> {
     const workspace =
-      await this.workspaceGetterService.getWorkspaceByOrigin(origin);
+      await this.domainManagerService.getWorkspaceByOrigin(origin);
 
     if (!workspace) {
       throw new AuthException(
@@ -129,7 +127,7 @@ export class AuthResolver {
     const user = await this.authService.signInUp({
       ...signUpInput,
       targetWorkspaceSubdomain:
-        this.urlManagementService.getWorkspaceSubdomainByOrigin(origin),
+        this.domainManagerService.getWorkspaceSubdomainByOrigin(origin),
       fromSSO: false,
       isAuthEnabled: workspaceValidator.isAuthEnabled(
         'password',
@@ -186,7 +184,7 @@ export class AuthResolver {
     @OriginHeader() origin: string,
   ): Promise<Verify> {
     const workspace =
-      await this.workspaceGetterService.getWorkspaceByOrigin(origin);
+      await this.domainManagerService.getWorkspaceByOrigin(origin);
 
     const { sub: email } = await this.loginTokenService.verifyLoginToken(
       verifyInput.loginToken,

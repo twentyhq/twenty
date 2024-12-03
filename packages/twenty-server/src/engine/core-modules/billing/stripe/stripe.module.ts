@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
-import { UrlManagerModule } from 'src/engine/core-modules/url-manager/url-manager.module';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 
 @Module({
-  imports: [UrlManagerModule],
+  imports: [DomainManagerModule],
   providers: [StripeService],
   exports: [StripeService],
 })

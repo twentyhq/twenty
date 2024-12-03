@@ -37,8 +37,9 @@ import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dto
 import { ActivateWorkspaceOutput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-output';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { WorkspaceGettersService } from 'src/engine/core-modules/workspace/services/workspace-getters.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/getAuthProvidersByWorkspace';
 
 import { Workspace } from './workspace.entity';
 
@@ -49,7 +50,7 @@ export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
     private readonly loginTokenService: LoginTokenService,
-    private readonly workspaceGettersService: WorkspaceGettersService,
+    private readonly domainManagerService: DomainManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
@@ -170,7 +171,7 @@ export class WorkspaceResolver {
   @Query(() => PublicWorkspaceDataOutput)
   async getPublicWorkspaceDataBySubdomain(@OriginHeader() origin: string) {
     const workspace =
-      await this.workspaceGettersService.getWorkspaceByOrigin(origin);
+      await this.domainManagerService.getWorkspaceByOrigin(origin);
 
     workspaceValidator.assertIsExist(
       workspace,
@@ -185,10 +186,7 @@ export class WorkspaceResolver {
       logo: workspace.logo,
       displayName: workspace.displayName,
       subdomain: workspace.subdomain,
-      authProviders:
-        await this.workspaceGettersService.getAuthProvidersByWorkspaceId(
-          workspace.id,
-        ),
+      authProviders: getAuthProvidersByWorkspace(workspace),
     };
   }
 }
