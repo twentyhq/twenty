@@ -17,11 +17,9 @@ import { ENV_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/consta
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
 import { LAST_LAYER_VERSION } from 'src/engine/core-modules/serverless/drivers/layers/last-layer-version';
 import { getBaseTypescriptProjectFiles } from 'src/engine/core-modules/serverless/drivers/utils/get-base-typescript-project-files';
-import { getLastLayerDependencies } from 'src/engine/core-modules/serverless/drivers/utils/get-last-layer-dependencies';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
 import { getServerlessFolder } from 'src/engine/core-modules/serverless/utils/serverless-get-folder.utils';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { SERVERLESS_FUNCTION_PUBLISHED } from 'src/engine/metadata-modules/serverless-function/constants/serverless-function-published';
 import { CreateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/create-serverless-function.input';
 import { UpdateServerlessFunctionInput } from 'src/engine/metadata-modules/serverless-function/dtos/update-serverless-function.input';
 import {
@@ -32,8 +30,8 @@ import {
   ServerlessFunctionException,
   ServerlessFunctionExceptionCode,
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { isDefined } from 'src/utils/is-defined';
+import { getLayerDependencies } from 'src/engine/core-modules/serverless/drivers/utils/get-last-layer-dependencies';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -45,7 +43,6 @@ export class ServerlessFunctionService {
     private readonly throttlerService: ThrottlerService,
     private readonly environmentService: EnvironmentService,
     private readonly analyticsService: AnalyticsService,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async findManyServerlessFunctions(where) {
@@ -194,17 +191,6 @@ export class ServerlessFunctionService {
       },
     );
 
-    this.workspaceEventEmitter.emitCustomBatchEvent(
-      SERVERLESS_FUNCTION_PUBLISHED,
-      [
-        {
-          serverlessFunctionId: existingServerlessFunction.id,
-          serverlessFunctionVersion: newVersion,
-        },
-      ],
-      workspaceId,
-    );
-
     return this.serverlessFunctionRepository.findOneBy({
       id: existingServerlessFunction.id,
     });
@@ -290,8 +276,14 @@ export class ServerlessFunctionService {
     });
   }
 
-  async getAvailablePackages() {
-    const { packageJson, yarnLock } = await getLastLayerDependencies();
+  async getAvailablePackages(serverlessFunctionId: string) {
+    const serverlessFunction =
+      await this.serverlessFunctionRepository.findOneBy({
+        id: serverlessFunctionId,
+      });
+    const { packageJson, yarnLock } = await getLayerDependencies(
+      serverlessFunction?.layerVersion || 'latest',
+    );
 
     const packageVersionRegex = /^"([^@]+)@.*?":\n\s+version: (.+)$/gm;
     const versions: Record<string, string> = {};

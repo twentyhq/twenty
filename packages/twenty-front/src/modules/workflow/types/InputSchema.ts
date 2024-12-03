@@ -9,7 +9,7 @@ export type InputSchemaPropertyType =
   | 'unknown'
   | FieldMetadataType;
 
-type InputSchemaProperty = {
+export type InputSchemaProperty = {
   type: InputSchemaPropertyType;
   enum?: string[];
   items?: InputSchemaProperty;

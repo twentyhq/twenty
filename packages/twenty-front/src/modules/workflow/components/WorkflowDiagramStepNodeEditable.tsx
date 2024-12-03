@@ -1,5 +1,5 @@
 import { WorkflowDiagramStepNodeBase } from '@/workflow/components/WorkflowDiagramStepNodeBase';
-import { useDeleteOneStep } from '@/workflow/hooks/useDeleteOneStep';
+import { useDeleteStep } from '@/workflow/hooks/useDeleteStep';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowDiagramStepNodeData } from '@/workflow/types/WorkflowDiagram';
@@ -21,9 +21,8 @@ export const WorkflowDiagramStepNodeEditable = ({
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
   assertWorkflowWithCurrentVersionIsDefined(workflowWithCurrentVersion);
 
-  const { deleteOneStep } = useDeleteOneStep({
+  const { deleteStep } = useDeleteStep({
     workflow: workflowWithCurrentVersion,
-    stepId: id,
   });
 
   return (
@@ -35,7 +34,7 @@ export const WorkflowDiagramStepNodeEditable = ({
             size="medium"
             Icon={IconTrash}
             onClick={() => {
-              return deleteOneStep();
+              deleteStep(id);
             }}
           />
         ) : undefined

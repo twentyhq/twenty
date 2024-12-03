@@ -1,9 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import {
   Workflow,
-  WorkflowVersion,
   WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useMemo } from 'react';
@@ -20,40 +18,25 @@ export const useWorkflowWithCurrentVersion = (
       name: true,
       statuses: true,
       lastPublishedVersionId: true,
-      versions: {
-        totalCount: true,
-      },
+      versions: true,
     },
     skip: !isDefined(workflowId),
   });
 
-  const {
-    records: mostRecentWorkflowVersions,
-    loading: loadingMostRecentWorkflowVersions,
-  } = useFindManyRecords<WorkflowVersion>({
-    objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-    filter: {
-      workflowId: {
-        eq: workflowId,
-      },
-    },
-    orderBy: [
-      {
-        createdAt: 'DescNullsLast',
-      },
-    ],
-    skip: !isDefined(workflowId),
-  });
-
-  const workflowWithCurrentVersion = useMemo(() => {
-    if (!isDefined(workflow) || loadingMostRecentWorkflowVersions) {
+  return useMemo(() => {
+    if (!isDefined(workflow)) {
       return undefined;
     }
 
-    const draftVersion = mostRecentWorkflowVersions.find(
+    const draftVersion = workflow.versions.find(
       (workflowVersion) => workflowVersion.status === 'DRAFT',
     );
-    const latestVersion = mostRecentWorkflowVersions[0];
+
+    const workflowVersions = [...workflow.versions];
+
+    workflowVersions.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
+
+    const latestVersion = workflowVersions[0];
 
     const currentVersion = draftVersion ?? latestVersion;
 
@@ -65,7 +48,5 @@ export const useWorkflowWithCurrentVersion = (
       ...workflow,
       currentVersion,
     };
-  }, [loadingMostRecentWorkflowVersions, mostRecentWorkflowVersions, workflow]);
-
-  return workflowWithCurrentVersion;
+  }, [workflow]);
 };

@@ -57,11 +57,12 @@ export const useWorkflowRunRecordActions = ({
       if (!isDefined(activeWorkflowVersion.workflow)) {
         continue;
       }
+      const name = capitalize(activeWorkflowVersion.workflow.name);
       addActionMenuEntry({
         type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
         scope: ActionMenuEntryScope.RecordSelection,
-        label: capitalize(activeWorkflowVersion.workflow.name),
+        label: name,
         position: index,
         Icon: IconSettingsAutomation,
         onClick: async () => {
@@ -71,7 +72,7 @@ export const useWorkflowRunRecordActions = ({
 
           await runWorkflowVersion({
             workflowVersionId: activeWorkflowVersion.id,
-            workflowName: activeWorkflowVersion.workflow.name,
+            workflowName: name,
             payload: selectedRecord,
           });
         },
