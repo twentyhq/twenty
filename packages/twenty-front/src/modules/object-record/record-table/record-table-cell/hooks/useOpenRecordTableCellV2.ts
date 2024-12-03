@@ -22,6 +22,7 @@ import { isDefined } from '~/utils/isDefined';
 
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
+import { focusedDropdownIdState } from '@/ui/layout/dropdown/states/focusedDropdownIdState';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -142,6 +143,11 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
             DEFAULT_CELL_SCOPE.customScopes,
           );
         }
+
+        set(
+          focusedDropdownIdState,
+          `dropdown-${recordId}-cell-${fieldDefinition.fieldMetadataId}`,
+        );
       },
     [
       getClickOutsideListenerIsActivatedState,

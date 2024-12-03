@@ -37,9 +37,6 @@ export const MultiItemFieldMenuItem = <T,>({
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => {
     setIsHovered(false);
-    if (isDropdownOpen) {
-      closeDropdown();
-    }
   };
 
   const handleDeleteClick = (event: React.MouseEvent<HTMLDivElement>) => {

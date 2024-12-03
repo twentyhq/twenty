@@ -78,7 +78,10 @@ export const FieldInput = ({
       ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
         <RelationFromManyFieldInput onSubmit={onSubmit} />
       ) : isFieldPhones(fieldDefinition) ? (
-        <PhonesFieldInput onCancel={onCancel} />
+        <PhonesFieldInput
+          onCancel={onCancel}
+          onClickOutside={() => onClickOutside?.(() => {})}
+        />
       ) : isFieldText(fieldDefinition) ? (
         <TextFieldInput
           onEnter={onEnter}
@@ -88,7 +91,10 @@ export const FieldInput = ({
           onShiftTab={onShiftTab}
         />
       ) : isFieldEmails(fieldDefinition) ? (
-        <EmailsFieldInput onCancel={onCancel} />
+        <EmailsFieldInput
+          onCancel={onCancel}
+          onClickOutside={() => onClickOutside?.(() => {})}
+        />
       ) : isFieldFullName(fieldDefinition) ? (
         <FullNameFieldInput
           onEnter={onEnter}
@@ -122,7 +128,10 @@ export const FieldInput = ({
           onShiftTab={onShiftTab}
         />
       ) : isFieldLinks(fieldDefinition) ? (
-        <LinksFieldInput onCancel={onCancel} />
+        <LinksFieldInput
+          onCancel={onCancel}
+          onClickOutside={() => onClickOutside?.(() => {})}
+        />
       ) : isFieldCurrency(fieldDefinition) ? (
         <CurrencyFieldInput
           onEnter={onEnter}
@@ -158,7 +167,10 @@ export const FieldInput = ({
       ) : isFieldRichText(fieldDefinition) ? (
         <RichTextFieldInput />
       ) : isFieldArray(fieldDefinition) ? (
-        <ArrayFieldInput onCancel={onCancel} />
+        <ArrayFieldInput
+          onCancel={onCancel}
+          onClickOutside={() => onClickOutside?.(() => {})}
+        />
       ) : (
         <></>
       )}

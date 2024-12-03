@@ -7,8 +7,9 @@ import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEv
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { focusedDropdownIdState } from '@/ui/layout/dropdown/states/focusedDropdownIdState';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
   const { getClickOutsideListenerIsActivatedState } =
@@ -48,17 +49,31 @@ export const RecordTableCellFieldInput = () => {
     onCloseTableCell();
   };
 
-  const handleClickOutside: FieldInputEvent = (persistField) => {
-    setClickOutsideListenerIsActivated(false);
+  const handleClickOutside: FieldInputEvent = useRecoilCallback(
+    ({ snapshot }) =>
+      (persistField) => {
+        // Check if dropdown is focused
+        const dropdownId = `dropdown-${recordId}-cell-${fieldDefinition.fieldMetadataId}`;
+        console.log('handleClickOutside close table cell', dropdownId);
 
-    onUpsertRecord({
-      persistField,
-      recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-    });
+        const focusedDropdownId = snapshot
+          .getLoadable(focusedDropdownIdState)
+          .getValue();
 
-    onCloseTableCell();
-  };
+        if (focusedDropdownId !== dropdownId) {
+          return;
+        }
+
+        onUpsertRecord({
+          persistField,
+          recordId,
+          fieldName: fieldDefinition.metadata.fieldName,
+        });
+
+        onCloseTableCell();
+      },
+    [fieldDefinition, onCloseTableCell, onUpsertRecord, recordId],
+  );
 
   const handleEscape: FieldInputEvent = (persistField) => {
     onUpsertRecord({

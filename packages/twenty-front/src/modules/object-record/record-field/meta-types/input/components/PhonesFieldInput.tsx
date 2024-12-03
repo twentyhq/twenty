@@ -47,9 +47,13 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
 
 type PhonesFieldInputProps = {
   onCancel?: () => void;
+  onClickOutside?: () => void;
 };
 
-export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
+export const PhonesFieldInput = ({
+  onCancel,
+  onClickOutside,
+}: PhonesFieldInputProps) => {
   const { persistPhonesField, hotkeyScope, draftValue, fieldDefinition } =
     usePhonesField();
 
@@ -95,6 +99,7 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
     <MultiItemFieldInput
       items={phones}
       onPersist={handlePersistPhones}
+      onClickOutside={onClickOutside}
       onCancel={onCancel}
       placeholder="Phone"
       fieldMetadataType={FieldMetadataType.Phones}
