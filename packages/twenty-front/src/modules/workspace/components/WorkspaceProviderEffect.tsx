@@ -1,63 +1,39 @@
-import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
-
-import { useGetPublicWorkspaceDataBySubdomainQuery } from '~/generated/graphql';
+import { useRecoilValue } from 'recoil';
 
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { useEffect } from 'react';
 import { isDefined } from '~/utils/isDefined';
 import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
+import { useDomainBackToWorkspace } from '@/domain-manager/hooks/useDomainBackToWorkspace';
+import { useDefaultDomain } from '@/domain-manager/hooks/useDefaultDomain';
+import { useWorkspaceSubdomain } from '@/domain-manager/hooks/useWorkspaceSubdomain';
 
 export const WorkspaceProviderEffect = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
-  const setAuthProviders = useSetRecoilState(authProvidersState);
-  const setWorkspacePublicDataState = useSetRecoilState(
-    workspacePublicDataState,
+  const lastAuthenticateWorkspace = useRecoilValue(
+    lastAuthenticateWorkspaceState,
   );
 
-  const [lastAuthenticateWorkspace, setLastAuthenticateWorkspace] =
-    useRecoilState(lastAuthenticateWorkspaceState);
-
-  const {
-    redirectToHome,
-    getWorkspaceSubdomain,
-    redirectToWorkspace,
-    isTwentyHomePage,
-  } = useUrlManager();
+  const backToWorkspace = useDomainBackToWorkspace();
+  const { isDefaultDomain } = useDefaultDomain();
+  const { workspaceSubdomain } = useWorkspaceSubdomain();
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-
-  useGetPublicWorkspaceDataBySubdomainQuery({
-    skip:
-      (isMultiWorkspaceEnabled && isTwentyHomePage) ||
-      isDefined(workspacePublicData),
-    onCompleted: (data) => {
-      setAuthProviders(data.getPublicWorkspaceDataBySubdomain.authProviders);
-      setWorkspacePublicDataState(data.getPublicWorkspaceDataBySubdomain);
-    },
-    onError: (error) => {
-      // eslint-disable-next-line no-console
-      console.error(error);
-      setLastAuthenticateWorkspace(null);
-      redirectToHome();
-    },
-  });
 
   useEffect(() => {
     if (
       isMultiWorkspaceEnabled &&
       isDefined(workspacePublicData?.subdomain) &&
-      workspacePublicData.subdomain !== getWorkspaceSubdomain
+      workspacePublicData.subdomain !== workspaceSubdomain()
     ) {
-      redirectToWorkspace(workspacePublicData.subdomain);
+      backToWorkspace(workspacePublicData.subdomain);
     }
   }, [
-    getWorkspaceSubdomain,
+    workspaceSubdomain,
     isMultiWorkspaceEnabled,
-    redirectToWorkspace,
+    backToWorkspace,
     workspacePublicData,
   ]);
 
@@ -65,15 +41,15 @@ export const WorkspaceProviderEffect = () => {
     if (
       isMultiWorkspaceEnabled &&
       isDefined(lastAuthenticateWorkspace?.subdomain) &&
-      isTwentyHomePage
+      isDefaultDomain
     ) {
-      redirectToWorkspace(lastAuthenticateWorkspace.subdomain);
+      backToWorkspace(lastAuthenticateWorkspace.subdomain);
     }
   }, [
     isMultiWorkspaceEnabled,
-    isTwentyHomePage,
+    isDefaultDomain,
     lastAuthenticateWorkspace,
-    redirectToWorkspace,
+    backToWorkspace,
   ]);
 
   useEffect(() => {

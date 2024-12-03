@@ -1,8 +1,11 @@
-import { GithubVersionLink, H2Title, Section, IconWorld } from 'twenty-ui';
-import { Link } from 'react-router-dom';
+import {
+  GithubVersionLink,
+  H2Title,
+  Section,
+  IconWorld,
+  UndecoratedLink,
+} from 'twenty-ui';
 import { useRecoilValue } from 'recoil';
-
-import styled from '@emotion/styled';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
@@ -15,10 +18,6 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import packageJson from '../../../package.json';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-`;
 
 export const SettingsWorkspace = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
@@ -48,9 +47,9 @@ export const SettingsWorkspace = () => {
               title="Domain"
               description="Edit your subdomain name or set a custom domain."
             />
-            <StyledLink to={getSettingsPagePath(SettingsPath.Domain)}>
+            <UndecoratedLink to={getSettingsPagePath(SettingsPath.Domain)}>
               <SettingsCard title="Customize Domain" Icon={<IconWorld />} />
-            </StyledLink>
+            </UndecoratedLink>
           </Section>
         )}
 
