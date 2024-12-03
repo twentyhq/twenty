@@ -1,15 +1,8 @@
-import {
-  ArgumentsHost,
-  BadRequestException,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-} from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 
-import {
-  InternalServerErrorExceptionError,
-  NotFoundExceptionError,
-} from 'src/engine/core-modules/auth/auth-errors.util';
+import { Response } from 'express';
+
+import { ErrorHandlerService } from 'src/engine/core-modules/auth/auth-errors.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -22,24 +15,26 @@ export class AuthRestApiExceptionFilter implements ExceptionFilter {
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
-  catch(exception: AuthException, _: ArgumentsHost) {
-    this.exceptionHandlerService.captureExceptions([exception], {});
+  catch(exception: AuthException, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+
+    const errorHandlerService = new ErrorHandlerService(
+      this.exceptionHandlerService,
+    );
 
     switch (exception.code) {
       case AuthExceptionCode.USER_NOT_FOUND:
       case AuthExceptionCode.CLIENT_NOT_FOUND:
-        throw new NotFoundExceptionError(exception.message);
+        return errorHandlerService.handleError(exception, response, 404);
       case AuthExceptionCode.INVALID_INPUT:
-        throw new BadRequestException(exception.message);
+        return errorHandlerService.handleError(exception, response, 400);
       case AuthExceptionCode.FORBIDDEN_EXCEPTION:
-        // throw new UnauthorizedException(exception.message);
-        console.log('AuthRestApiExceptionFilter', exception);
-        // throw new UnauthorizedExceptionError(exception.message);
-        throw new HttpException(exception.message, 401);
+        return errorHandlerService.handleError(exception, response, 401);
       case AuthExceptionCode.INVALID_DATA:
       case AuthExceptionCode.INTERNAL_SERVER_ERROR:
       default:
-        throw new InternalServerErrorExceptionError(exception.message);
+        return errorHandlerService.handleError(exception, response, 500);
     }
   }
 }
