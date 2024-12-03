@@ -11,6 +11,9 @@ export type GraphQLView = {
   name: string;
   type: ViewType;
   key: ViewKey | null;
+  /**
+   * @deprecated Use `viewGroups.fieldMetadataId` instead.
+   */
   kanbanFieldMetadataId: string;
   objectMetadataId: string;
   isCompact: boolean;

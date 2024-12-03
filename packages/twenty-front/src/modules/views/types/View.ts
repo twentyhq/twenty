@@ -18,6 +18,9 @@ export type View = {
   viewFilters: ViewFilter[];
   viewFilterGroups?: ViewFilterGroup[];
   viewSorts: ViewSort[];
+  /**
+   * @deprecated Use `viewGroups.fieldMetadataId` instead.
+   */
   kanbanFieldMetadataId: string;
   position: number;
   icon: string;
