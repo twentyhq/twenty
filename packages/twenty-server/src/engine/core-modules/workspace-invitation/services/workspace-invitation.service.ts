@@ -28,9 +28,8 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
-import { WorkspaceGettersService } from 'src/engine/core-modules/workspace/services/workspace-getters.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -45,8 +44,7 @@ export class WorkspaceInvitationService {
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
-    private readonly urlManagerService: UrlManagerService,
-    private readonly workspaceGettersService: WorkspaceGettersService,
+    private readonly domainManagerService: DomainManagerService,
   ) {}
 
   // VALIDATIONS METHODS
@@ -148,7 +146,7 @@ export class WorkspaceInvitationService {
       ? await this.workspaceRepository.findOneBy({
           subdomain,
         })
-      : await this.workspaceGettersService.getDefaultWorkspace();
+      : await this.domainManagerService.getDefaultWorkspace();
 
     if (!workspace) return;
 
@@ -333,7 +331,7 @@ export class WorkspaceInvitationService {
 
     for (const invitation of invitationsPr) {
       if (invitation.status === 'fulfilled') {
-        const link = this.urlManagerService.buildWorkspaceURL({
+        const link = this.domainManagerService.buildWorkspaceURL({
           subdomain: workspace.subdomain,
           pathname: `invite/${workspace?.inviteHash}`,
           searchParams: invitation.value.isPersonalInvitation

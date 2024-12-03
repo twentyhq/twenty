@@ -18,7 +18,6 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { getDomainNameByEmail, isWorkEmail } from 'src/utils/is-work-email';
 import { isDefined } from 'src/utils/is-defined';
 
@@ -34,7 +33,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly environmentService: EnvironmentService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly userWorkspaceService: UserWorkspaceService,
   ) {

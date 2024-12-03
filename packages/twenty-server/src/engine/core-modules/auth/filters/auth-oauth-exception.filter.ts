@@ -11,11 +11,11 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 @Catch(AuthException)
 export class AuthOAuthExceptionFilter implements ExceptionFilter {
-  constructor(private readonly urlManagerService: UrlManagerService) {}
+  constructor(private readonly domainManagerService: DomainManagerService) {}
 
   catch(exception: AuthException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -25,7 +25,7 @@ export class AuthOAuthExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.OAUTH_ACCESS_DENIED:
         response
           .status(403)
-          .redirect(this.urlManagerService.getBaseUrl().toString());
+          .redirect(this.domainManagerService.getBaseUrl().toString());
         break;
       default:
         throw new InternalServerErrorException(exception.message);

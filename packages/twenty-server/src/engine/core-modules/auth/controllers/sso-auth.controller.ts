@@ -31,7 +31,7 @@ import {
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Controller('auth')
@@ -40,7 +40,7 @@ export class SSOAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
-    private readonly urlManagerService: UrlManagerService,
+    private readonly domainManagerService: DomainManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
     private readonly ssoService: SSOService,
@@ -94,7 +94,7 @@ export class SSOAuthController {
     } catch (err) {
       if (err instanceof AuthException) {
         return res.redirect(
-          this.urlManagerService.computeRedirectErrorUrl({
+          this.domainManagerService.computeRedirectErrorUrl({
             subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
             errorMessage: err.message,
           }),
@@ -121,7 +121,7 @@ export class SSOAuthController {
     } catch (err) {
       if (err instanceof AuthException) {
         return res.redirect(
-          this.urlManagerService.computeRedirectErrorUrl({
+          this.domainManagerService.computeRedirectErrorUrl({
             subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
             errorMessage: err.message,
           }),

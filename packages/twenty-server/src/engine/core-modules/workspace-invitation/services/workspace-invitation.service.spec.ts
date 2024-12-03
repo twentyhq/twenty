@@ -14,9 +14,8 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationException } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
-import { WorkspaceGettersService } from 'src/engine/core-modules/workspace/services/workspace-getters.service';
 
 import { WorkspaceInvitationService } from './workspace-invitation.service';
 
@@ -48,11 +47,7 @@ describe('WorkspaceInvitationService', () => {
           useClass: Repository,
         },
         {
-          provide: WorkspaceGettersService,
-          useValue: {},
-        },
-        {
-          provide: UrlManagerService,
+          provide: DomainManagerService,
           useValue: {
             buildWorkspaceURL: jest
               .fn()

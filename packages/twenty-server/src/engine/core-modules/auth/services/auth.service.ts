@@ -47,14 +47,14 @@ import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/avail
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
-import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
-    private readonly urlManagerService: UrlManagerService,
+    private readonly domainManagerService: DomainManagerService,
     private readonly refreshTokenService: RefreshTokenService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userService: UserService,
@@ -398,7 +398,7 @@ export class AuthService {
     const emailTemplate = PasswordUpdateNotifyEmail({
       userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
-      link: this.urlManagerService.getBaseUrl().toString(),
+      link: this.domainManagerService.getBaseUrl().toString(),
     });
 
     const html = render(emailTemplate, {
@@ -439,7 +439,7 @@ export class AuthService {
   }
 
   async computeRedirectURI(loginToken: string, subdomain?: string) {
-    const url = this.urlManagerService.buildWorkspaceURL({
+    const url = this.domainManagerService.buildWorkspaceURL({
       subdomain,
       pathname: '/verify',
       searchParams: { loginToken },

@@ -23,7 +23,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { UrlManagerService } from 'src/engine/core-modules/url-manager/service/url-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -33,7 +33,7 @@ export class GoogleAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
-    private readonly urlManagerService: UrlManagerService,
+    private readonly domainManagerService: DomainManagerService,
     private readonly environmentService: EnvironmentService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -118,7 +118,7 @@ export class GoogleAuthController {
     } catch (err) {
       if (err instanceof AuthException) {
         return res.redirect(
-          this.urlManagerService.computeRedirectErrorUrl({
+          this.domainManagerService.computeRedirectErrorUrl({
             subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
             errorMessage: err.message,
           }),

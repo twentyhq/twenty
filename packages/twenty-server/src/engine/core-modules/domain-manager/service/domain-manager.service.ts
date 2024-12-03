@@ -1,12 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { isDefined } from 'src/utils/is-defined';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+} from 'src/engine/core-modules/workspace/workspace.exception';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
-export class UrlManagerService {
-  constructor(private readonly environmentService: EnvironmentService) {}
+export class DomainManagerService {
+  constructor(
+    @InjectRepository(Workspace, 'core')
+    private readonly workspaceRepository: Repository<Workspace>,
+    private readonly environmentService: EnvironmentService,
+  ) {}
 
   getBaseUrl() {
     const baseUrl = new URL(
@@ -104,5 +116,47 @@ export class UrlManagerService {
     });
 
     return url.toString();
+  }
+
+  async getDefaultWorkspace() {
+    if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+      const workspaces = await this.workspaceRepository.find({
+        order: {
+          createdAt: 'DESC',
+        },
+      });
+
+      if (workspaces.length > 1) {
+        // TODO AMOREAUX: this logger is trigger twice and the second time the message is undefined for an unknown reason
+        Logger.warn(
+          `In single-workspace mode, there should be only one workspace. Today there are ${workspaces.length} workspaces`,
+        );
+      }
+
+      return workspaces[0];
+    }
+
+    throw new Error(
+      'Default workspace not exist when multi-workspace is enabled',
+    );
+  }
+
+  async getWorkspaceByOrigin(origin: string) {
+    try {
+      if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
+        return this.getDefaultWorkspace();
+      }
+
+      const subdomain = this.getWorkspaceSubdomainByOrigin(origin);
+
+      if (!isDefined(subdomain)) return;
+
+      return this.workspaceRepository.findOneBy({ subdomain });
+    } catch (e) {
+      throw new WorkspaceException(
+        'Workspace not found',
+        WorkspaceExceptionCode.SUBDOMAIN_NOT_FOUND,
+      );
+    }
   }
 }
