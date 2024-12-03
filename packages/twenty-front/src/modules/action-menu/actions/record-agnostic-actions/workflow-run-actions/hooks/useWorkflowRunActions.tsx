@@ -3,14 +3,11 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAllActiveWorkflowVersions } from '@/workflow/hooks/useAllActiveWorkflowVersions';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-import { useTheme } from '@emotion/react';
-import { IconSettingsAutomation } from 'twenty-ui';
+import { IconSettingsAutomation, isDefined } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useWorkflowRunActions = () => {
@@ -24,10 +21,6 @@ export const useWorkflowRunActions = () => {
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
-  const { enqueueSnackBar } = useSnackBar();
-
-  const theme = useTheme();
-
   const addWorkflowRunActions = () => {
     if (!isWorkflowEnabled) {
       return;
@@ -37,7 +30,12 @@ export const useWorkflowRunActions = () => {
       index,
       activeWorkflowVersion,
     ] of activeWorkflowVersions.entries()) {
+      if (!isDefined(activeWorkflowVersion.workflow)) {
+        continue;
+      }
+
       const name = capitalize(activeWorkflowVersion.workflow.name);
+
       addActionMenuEntry({
         type: ActionMenuEntryType.WorkflowRun,
         key: `workflow-run-${activeWorkflowVersion.id}`,
@@ -48,17 +46,7 @@ export const useWorkflowRunActions = () => {
         onClick: async () => {
           await runWorkflowVersion({
             workflowVersionId: activeWorkflowVersion.id,
-          });
-
-          enqueueSnackBar('', {
-            variant: SnackBarVariant.Success,
-            title: `${name} starting...`,
-            icon: (
-              <IconSettingsAutomation
-                size={16}
-                color={theme.snackBar.success.color}
-              />
-            ),
+            workflowName: name,
           });
         },
       });

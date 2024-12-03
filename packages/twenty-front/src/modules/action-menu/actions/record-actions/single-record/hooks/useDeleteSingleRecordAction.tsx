@@ -4,7 +4,6 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -12,15 +11,14 @@ import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useContext, useState } from 'react';
 import { IconTrash, isDefined } from 'twenty-ui';
 
 export const useDeleteSingleRecordAction = ({
-  position,
+  recordId,
   objectMetadataItem,
 }: {
-  position: number;
+  recordId: string;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
@@ -39,39 +37,26 @@ export const useDeleteSingleRecordAction = ({
   const { sortedFavorites: favorites } = useFavorites();
   const { deleteFavorite } = useDeleteFavorite();
 
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
-    contextStoreTargetedRecordsRuleComponentState,
-  );
-
   const { closeRightDrawer } = useRightDrawer();
 
-  const recordIdToDelete =
-    contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds?.[0]
-      : undefined;
-
   const handleDeleteClick = useCallback(async () => {
-    if (!isDefined(recordIdToDelete)) {
-      return;
-    }
-
     resetTableRowSelection();
 
     const foundFavorite = favorites?.find(
-      (favorite) => favorite.recordId === recordIdToDelete,
+      (favorite) => favorite.recordId === recordId,
     );
 
     if (isDefined(foundFavorite)) {
       deleteFavorite(foundFavorite.id);
     }
 
-    await deleteOneRecord(recordIdToDelete);
+    await deleteOneRecord(recordId);
   }, [
     deleteFavorite,
     deleteOneRecord,
     favorites,
-    recordIdToDelete,
     resetTableRowSelection,
+    recordId,
   ]);
 
   const isRemoteObject = objectMetadataItem.isRemote;
@@ -79,8 +64,12 @@ export const useDeleteSingleRecordAction = ({
   const { isInRightDrawer, onActionExecutedCallback } =
     useContext(ActionMenuContext);
 
-  const registerDeleteSingleRecordAction = () => {
-    if (isRemoteObject || !isDefined(recordIdToDelete)) {
+  const registerDeleteSingleRecordAction = ({
+    position,
+  }: {
+    position: number;
+  }) => {
+    if (isRemoteObject) {
       return;
     }
 

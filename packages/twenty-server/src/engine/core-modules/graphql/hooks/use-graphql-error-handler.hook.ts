@@ -8,10 +8,10 @@ import { GraphQLError, Kind, OperationDefinitionNode, print } from 'graphql';
 
 import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces/graphql-context.interface';
 
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { generateGraphQLErrorFromError } from 'src/engine/core-modules/graphql/utils/generate-graphql-error-from-error.util';
 import { BaseGraphQLError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { shouldCaptureException } from 'src/engine/core-modules/graphql/utils/should-capture-exception.util';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 
 type GraphQLErrorHandlerHookOptions = {
   /**
@@ -93,6 +93,14 @@ export const useGraphQLErrorHandlerHook = <
                     },
                     document,
                     user,
+                    workspace: {
+                      id: args.contextValue.req.workspace?.id,
+                      displayName: args.contextValue.req.workspace?.displayName,
+                      createdAt:
+                        args.contextValue.req.workspace?.createdAt.toISOString(),
+                      activationStatus:
+                        args.contextValue.req.workspace?.activationStatus,
+                    },
                   },
                 );
 

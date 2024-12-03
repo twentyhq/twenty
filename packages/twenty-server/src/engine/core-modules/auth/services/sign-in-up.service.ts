@@ -2,10 +2,10 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'class-validator';
 import FileType from 'file-type';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
-import { isDefined } from 'class-validator';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -18,6 +18,8 @@ import {
   hashPassword,
   PASSWORD_REGEX,
 } from 'src/engine/core-modules/auth/auth.util';
+
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -26,7 +28,6 @@ import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
@@ -295,9 +296,9 @@ export class SignInUpService {
 
       // let the creation of the first workspace
       if (workspacesCount > 0) {
-        throw new AuthException(
+        throw new EnvironmentException(
           'New workspace setup is disabled',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+          EnvironmentExceptionCode.ENVIRONMENT_VARIABLES_NOT_FOUND,
         );
       }
     }
