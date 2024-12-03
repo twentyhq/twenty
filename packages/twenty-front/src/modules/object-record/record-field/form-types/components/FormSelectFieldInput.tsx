@@ -138,7 +138,7 @@ export const FormSelectFieldInput = ({
   };
 
   const handleSubmit = (option: SelectOption) => {
-    onSubmit(option?.value);
+    onSubmit(option.value);
 
     resetSelectedItem();
   };
