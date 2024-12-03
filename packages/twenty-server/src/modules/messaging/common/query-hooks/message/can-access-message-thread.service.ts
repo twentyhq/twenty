@@ -1,12 +1,12 @@
 import { ForbiddenException } from '@nestjs/common';
 
-import groupBy from 'lodash.groupby';
-import { Any } from 'typeorm';
+import { In } from 'typeorm';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -20,31 +20,11 @@ export class CanAccessMessageThreadService {
   public async canAccessMessageThread(
     userId: string,
     workspaceId: string,
-    messageChannelMessageAssociations: any[],
+    messageChannelMessageAssociations: MessageChannelMessageAssociationWorkspaceEntity[],
   ) {
-    const messageChannelRepository =
-      await this.twentyORMManager.getRepository<MessageChannelWorkspaceEntity>(
-        'messageChannel',
-      );
-    const messageChannels = await messageChannelRepository.find({
-      select: ['id', 'visibility'],
-      where: {
-        id: Any(
-          messageChannelMessageAssociations.map(
-            (association) => association.messageChannelId,
-          ),
-        ),
-      },
-    });
-
-    const messageChannelsGroupByVisibility = groupBy(
-      messageChannels,
-      (channel) => channel.visibility,
+    const messageChannelIds = messageChannelMessageAssociations.map(
+      (association) => association.messageChannelId,
     );
-
-    if (messageChannelsGroupByVisibility.SHARE_EVERYTHING) {
-      return;
-    }
 
     const currentWorkspaceMember =
       await this.workspaceMemberRepository.getByIdOrFail(userId, workspaceId);
@@ -55,17 +35,28 @@ export class CanAccessMessageThreadService {
       );
 
     const connectedAccounts = await connectedAccountRepository.find({
-      select: ['id'],
-      where: {
-        messageChannels: Any(messageChannels.map((channel) => channel.id)),
-        accountOwnerId: currentWorkspaceMember.id,
+      select: {
+        id: true,
       },
+      where: [
+        {
+          messageChannels: {
+            id: In(messageChannelIds),
+            visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+          },
+        },
+        {
+          messageChannels: {
+            id: In(messageChannelIds),
+          },
+          accountOwnerId: currentWorkspaceMember.id,
+        },
+      ],
+      take: 1,
     });
 
-    if (connectedAccounts.length > 0) {
-      return;
+    if (connectedAccounts.length === 0) {
+      throw new ForbiddenException();
     }
-
-    throw new ForbiddenException();
   }
 }

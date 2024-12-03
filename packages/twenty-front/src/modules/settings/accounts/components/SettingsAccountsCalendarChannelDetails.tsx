@@ -2,11 +2,10 @@ import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
-import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
-import { Card } from '@/ui/layout/card/components/Card';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
-import { H2Title, Toggle } from 'twenty-ui';
+import { Card, H2Title, IconUserPlus } from 'twenty-ui';
 import { CalendarChannelVisibility } from '~/generated-metadata/graphql';
 
 const StyledDetailsContainer = styled.div`
@@ -21,10 +20,6 @@ type SettingsAccountsCalendarChannelDetailsProps = {
     'id' | 'visibility' | 'isContactAutoCreationEnabled' | 'isSyncEnabled'
   >;
 };
-
-const StyledToggle = styled(Toggle)`
-  margin-left: auto;
-`;
 
 export const SettingsAccountsCalendarChannelDetails = ({
   calendarChannel,
@@ -68,20 +63,18 @@ export const SettingsAccountsCalendarChannelDetails = ({
           title="Contact auto-creation"
           description="Automatically create contacts for people you've participated in an event with."
         />
-        <Card>
-          <SettingsOptionCardContent
+        <Card rounded>
+          <SettingsOptionCardContentToggle
+            Icon={IconUserPlus}
             title="Auto-creation"
             description="Automatically create contacts for people."
-            onClick={() =>
+            checked={calendarChannel.isContactAutoCreationEnabled}
+            onChange={() => {
               handleContactAutoCreationToggle(
                 !calendarChannel.isContactAutoCreationEnabled,
-              )
-            }
-          >
-            <StyledToggle
-              value={calendarChannel.isContactAutoCreationEnabled}
-            />
-          </SettingsOptionCardContent>
+              );
+            }}
+          />
         </Card>
       </Section>
     </StyledDetailsContainer>

@@ -1,5 +1,11 @@
-import { Section } from '@/ui/layout/section/components/Section';
-import { H2Title, IconPlayerPlay } from 'twenty-ui';
+import {
+  Button,
+  CodeEditor,
+  CoreEditorHeader,
+  H2Title,
+  IconPlayerPlay,
+  Section,
+} from 'twenty-ui';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { SettingsServerlessFunctionCodeEditorContainer } from '@/settings/serverless-functions/components/SettingsServerlessFunctionCodeEditorContainer';
@@ -10,9 +16,6 @@ import { settingsServerlessFunctionOutputState } from '@/settings/serverless-fun
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Button } from '@/ui/input/button/components/Button';
-import { CodeEditor } from '@/ui/input/code-editor/components/CodeEditor';
-import { CoreEditorHeader } from '@/ui/input/code-editor/components/CodeEditorHeader';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';

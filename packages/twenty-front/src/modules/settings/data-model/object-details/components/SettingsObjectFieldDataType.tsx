@@ -5,13 +5,14 @@ import { IconComponent, IconTwentyStar } from 'twenty-ui';
 
 import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsObjectFieldDataTypeProps = {
   to?: string;
   Icon?: IconComponent;
   label?: string;
+  labelDetail?: string;
   value: SettingsFieldType;
+  onClick?: (event: React.MouseEvent) => void;
 };
 
 const StyledDataType = styled.div<{
@@ -27,19 +28,16 @@ const StyledDataType = styled.div<{
   height: 20px;
   overflow: hidden;
   text-decoration: none;
-
-  ${({ to }) =>
+  ${({ to, theme }) =>
     to
       ? css`
           cursor: pointer;
-        `
-      : ''}
-
-  ${({ value, theme }) =>
-    value === FieldMetadataType.Relation
-      ? css`
           color: ${theme.font.color.secondary};
           text-decoration: underline;
+
+          &:hover {
+            color: ${theme.font.color.primary};
+          }
         `
       : ''}
 `;
@@ -50,11 +48,16 @@ const StyledLabelContainer = styled.div`
   white-space: nowrap;
 `;
 
+const StyledSpan = styled.span`
+  color: ${({ theme }) => theme.font.color.extraLight};
+`;
 export const SettingsObjectFieldDataType = ({
   to,
   value,
   Icon: IconFromProps,
   label: labelFromProps,
+  labelDetail,
+  onClick,
 }: SettingsObjectFieldDataTypeProps) => {
   const theme = useTheme();
 
@@ -68,9 +71,16 @@ export const SettingsObjectFieldDataType = ({
   `;
 
   return (
-    <StyledDataType as={to ? Link : 'div'} to={to} value={value}>
+    <StyledDataType
+      as={to ? Link : 'div'}
+      to={to}
+      value={value}
+      onClick={onClick}
+    >
       <StyledIcon size={theme.icon.size.sm} />
-      <StyledLabelContainer>{label}</StyledLabelContainer>
+      <StyledLabelContainer>
+        {label} <StyledSpan>{labelDetail && `· ${labelDetail}`}</StyledSpan>
+      </StyledLabelContainer>
     </StyledDataType>
   );
 };

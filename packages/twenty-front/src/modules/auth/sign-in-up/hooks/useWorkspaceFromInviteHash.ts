@@ -3,11 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { AppPath } from '@/types/AppPath';
+
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 
+import { AppPath } from '@/types/AppPath';
 import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 

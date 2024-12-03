@@ -28,6 +28,7 @@ export const DateTimeSettingsDateFormatSelect = ({
       dropdownWidth={218}
       label="Date format"
       fullWidth
+      dropdownWidthAuto
       value={value}
       options={[
         {

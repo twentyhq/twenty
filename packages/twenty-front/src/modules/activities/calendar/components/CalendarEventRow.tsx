@@ -9,6 +9,8 @@ import {
   IconArrowRight,
   IconLock,
   isDefined,
+  Card,
+  CardContent,
 } from 'twenty-ui';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
@@ -18,8 +20,6 @@ import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendar
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
 import {
   CalendarChannelVisibility,
   TimelineCalendarEvent,

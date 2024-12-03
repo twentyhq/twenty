@@ -1,7 +1,14 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
 import { Controller, useFormContext } from 'react-hook-form';
-import { IconPlus, IconTool, MAIN_COLORS } from 'twenty-ui';
+import {
+  CardContent,
+  CardFooter,
+  IconPlus,
+  IconTool,
+  LightButton,
+  MAIN_COLORS,
+} from 'twenty-ui';
 import { z } from 'zod';
 
 import {
@@ -14,9 +21,6 @@ import { selectFieldDefaultValueSchema } from '@/object-record/record-field/vali
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import { generateNewSelectOption } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOption';
 import { isSelectOptionDefaultValue } from '@/settings/data-model/utils/isSelectOptionDefaultValue';
-import { LightButton } from '@/ui/input/button/components/LightButton';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { CardFooter } from '@/ui/layout/card/components/CardFooter';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -24,9 +28,8 @@ import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
-import { EXPANDED_WIDTH_ANIMATION_VARIANTS } from '@/settings/constants/ExpandedWidthAnimationVariants';
+import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
@@ -247,26 +250,14 @@ export const SettingsDataModelFieldSelectForm = ({
           <>
             <StyledContainer>
               <StyledLabelContainer>
-                <AnimatePresence>
-                  {isAdvancedModeEnabled && (
-                    <motion.div
-                      initial="initial"
-                      animate="animate"
-                      exit="exit"
-                      variants={EXPANDED_WIDTH_ANIMATION_VARIANTS}
-                    >
-                      <StyledApiKeyContainer>
-                        <StyledIconContainer>
-                          <StyledIconTool
-                            size={12}
-                            color={MAIN_COLORS.yellow}
-                          />
-                        </StyledIconContainer>
-                        <StyledApiKey>API keys</StyledApiKey>
-                      </StyledApiKeyContainer>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <AdvancedSettingsWrapper dimension="width" hideIcon={true}>
+                  <StyledApiKeyContainer>
+                    <StyledIconContainer>
+                      <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
+                    </StyledIconContainer>
+                    <StyledApiKey>API values</StyledApiKey>
+                  </StyledApiKeyContainer>
+                </AdvancedSettingsWrapper>
                 <StyledOptionsLabel
                   isAdvancedModeEnabled={isAdvancedModeEnabled}
                 >

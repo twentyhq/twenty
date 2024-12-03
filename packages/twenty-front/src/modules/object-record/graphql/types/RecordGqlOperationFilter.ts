@@ -21,17 +21,19 @@ export type BooleanFilter = {
 
 export type StringFilter = {
   eq?: string;
-  gt?: string;
-  gte?: string;
   in?: string[];
-  lt?: string;
-  lte?: string;
   neq?: string;
   startsWith?: string;
   like?: string;
   ilike?: string;
   regex?: string;
   iregex?: string;
+  is?: IsFilter;
+};
+
+export type RatingFilter = {
+  eq?: string;
+  in?: string[];
   is?: IsFilter;
 };
 
@@ -104,10 +106,22 @@ export type PhonesFilter = {
   primaryPhoneCountryCode?: StringFilter;
 };
 
-export type ArrayFilter = {
-  contains?: string[];
-  not_contains?: string[];
+export type SelectFilter = {
   is?: IsFilter;
+  in?: string[];
+  eq?: string;
+};
+
+export type MultiSelectFilter = {
+  is?: IsFilter;
+  isEmptyArray?: boolean;
+  containsAny?: string[];
+};
+
+export type ArrayFilter = {
+  is?: IsFilter;
+  isEmptyArray?: boolean;
+  containsIlike?: string;
 };
 
 export type RawJsonFilter = {

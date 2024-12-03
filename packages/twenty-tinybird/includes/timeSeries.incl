@@ -1,0 +1,41 @@
+DESCRIPTION >
+    Inspired by DUB implementation
+
+NODE dayIntervals
+SQL >
+    %
+    WITH
+        toStartOfDay(
+            parseDateTime64BestEffort({{ String(start, '2024-11-01T00:00:00.000Z') }}, 3)
+        ) AS start,
+        toStartOfDay(parseDateTime64BestEffort({{ String(end, '2024-11-02T00:00:00.000Z') }}, 3)) AS
+    end
+    SELECT
+        arrayJoin(
+            arrayMap(
+                x -> toDateTime64(toStartOfDay(toDateTime64(x, 3)), 3),
+                range(toUInt32(start + 86400), toUInt32(end + 86400),
+                86400
+            )
+        )
+    ) as interval
+
+NODE hourIntervals
+SQL >
+    %
+    WITH
+        toStartOfHour(
+            parseDateTime64BestEffort({{ String(start, '2024-11-01T00:00:00.000Z') }}, 3)
+        ) AS start,
+        toStartOfHour(parseDateTime64BestEffort({{ String(end, '2024-11-02T00:00:00.000Z') }}, 3)) AS
+    end
+    SELECT
+        arrayJoin(
+            arrayMap(x -> toDateTime64(x, 3), range(toUInt32(start + 3600), toUInt32(end + 3600), 3600)
+        )
+    ) as interval
+
+NODE selectIntervalByGranularity
+SQL >
+    %
+    SELECT * FROM {% if granularity == "hour" %} hourIntervals {% else %} dayIntervals {% end %}

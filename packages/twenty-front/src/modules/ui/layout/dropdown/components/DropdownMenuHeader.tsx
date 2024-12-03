@@ -1,16 +1,15 @@
-import { ComponentProps, MouseEvent } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
-
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { ComponentProps, MouseEvent } from 'react';
+import { IconComponent, LightIconButton } from 'twenty-ui';
 
 const StyledHeader = styled.li`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
   cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme, onClick }) =>
+    onClick ? theme.font.size.sm : theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
   border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
@@ -19,6 +18,7 @@ const StyledHeader = styled.li`
   padding: ${({ theme }) => theme.spacing(1)};
 
   user-select: none;
+  width: inherit;
 
   &:hover {
     background: ${({ theme, onClick }) =>
@@ -40,6 +40,7 @@ const StyledEndIcon = styled.div`
 `;
 
 const StyledChildrenWrapper = styled.span`
+  overflow: hidden;
   padding: 0 ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -48,6 +49,7 @@ type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   EndIcon?: IconComponent;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   testId?: string;
+  className?: string;
 };
 
 export const DropdownMenuHeader = ({
@@ -56,12 +58,17 @@ export const DropdownMenuHeader = ({
   EndIcon,
   onClick,
   testId,
+  className,
 }: DropdownMenuHeaderProps) => {
   const theme = useTheme();
   return (
     <>
       {EndIcon && (
-        <StyledHeader data-testid={testId} onClick={onClick}>
+        <StyledHeader
+          data-testid={testId}
+          onClick={onClick}
+          className={className}
+        >
           <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
           <StyledEndIcon>
             <EndIcon size={theme.icon.size.md} />
@@ -69,7 +76,7 @@ export const DropdownMenuHeader = ({
         </StyledHeader>
       )}
       {StartIcon && (
-        <StyledHeader data-testid={testId}>
+        <StyledHeader data-testid={testId} className={className}>
           <LightIconButton
             testId="dropdown-menu-header-end-icon"
             Icon={StartIcon}

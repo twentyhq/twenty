@@ -1,3 +1,4 @@
+import { useAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterDropdown';
 import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdown/constants/ObjectFilterDropdownId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
@@ -12,11 +13,10 @@ import { getOperandsForFilterDefinition } from '@/object-record/object-filter-dr
 import { isCompositeField } from '@/object-record/object-filter-dropdown/utils/isCompositeField';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilValue } from 'recoil';
-import { useIcons } from 'twenty-ui';
+import { MenuItemSelect, useIcons } from 'twenty-ui';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {
   filterDefinition: FilterDefinition;
@@ -59,11 +59,23 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
     setObjectFilterDropdownSearchInput,
+    advancedFilterViewFilterIdState,
   } = useFilterDropdown();
 
   const setHotkeyScope = useSetHotkeyScope();
 
+  const advancedFilterViewFilterId = useRecoilValue(
+    advancedFilterViewFilterIdState,
+  );
+
+  const { closeAdvancedFilterDropdown } = useAdvancedFilterDropdown(
+    advancedFilterViewFilterId,
+  );
+
   const handleSelectFilter = (availableFilterDefinition: FilterDefinition) => {
+    closeAdvancedFilterDropdown();
+    selectFilter({ filterDefinition: availableFilterDefinition });
+
     setFilterDefinitionUsedInDropdown(availableFilterDefinition);
 
     if (
@@ -86,8 +98,6 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
 
   const handleClick = () => {
     resetSelectedItem();
-
-    selectFilter({ filterDefinition });
 
     if (isACompositeField) {
       // TODO: create isCompositeFilterableFieldType type guard

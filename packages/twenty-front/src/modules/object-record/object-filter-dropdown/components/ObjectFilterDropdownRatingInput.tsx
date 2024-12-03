@@ -64,6 +64,7 @@ export const ObjectFilterDropdownRatingInput = () => {
               operand: selectedOperandInDropdown,
               displayValue: convertFieldRatingValueToNumber(newValue),
               definition: filterDefinitionUsedInDropdown,
+              viewFilterGroupId: selectedFilter?.viewFilterGroupId,
             });
           }}
         />

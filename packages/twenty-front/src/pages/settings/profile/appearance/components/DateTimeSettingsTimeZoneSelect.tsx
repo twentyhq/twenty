@@ -19,9 +19,10 @@ export const DateTimeSettingsTimeZoneSelect = ({
 
   return (
     <Select
+      disableBlur
       dropdownId="settings-accounts-calendar-time-zone"
-      dropdownWidth={416}
       label="Time zone"
+      dropdownWidthAuto
       fullWidth
       value={value}
       options={[

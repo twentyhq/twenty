@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { useIcons } from 'twenty-ui';
 
+import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
+import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -34,7 +36,9 @@ export const useRecordShowPage = (
   const { objectMetadataItems } = useObjectMetadataItems();
   const { labelIdentifierFieldMetadataItem } =
     useLabelIdentifierFieldMetadataItem({ objectNameSingular });
-  const { favorites, createFavorite, deleteFavorite } = useFavorites();
+  const { sortedFavorites: favorites } = useFavorites();
+  const { createFavorite } = useCreateFavorite();
+  const { deleteFavorite } = useDeleteFavorite();
   const setEntityFields = useSetRecoilState(
     recordStoreFamilyState(objectRecordId),
   );
@@ -98,8 +102,8 @@ export const useRecordShowPage = (
     pageTitle,
     pageName,
     isFavorite,
-    handleFavoriteButtonClick,
     record,
     objectMetadataItem,
+    handleFavoriteButtonClick,
   };
 };

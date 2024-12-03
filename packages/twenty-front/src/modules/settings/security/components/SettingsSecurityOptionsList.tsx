@@ -1,16 +1,10 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsOptionCardContent } from '@/settings/components/SettingsOptionCardContent';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Card } from '@/ui/layout/card/components/Card';
-import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
-import { IconLink, Toggle } from 'twenty-ui';
+import { Card, IconLink, isDefined } from 'twenty-ui';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
-
-const StyledToggle = styled(Toggle)`
-  margin-left: auto;
-`;
 
 export const SettingsSecurityOptionsList = () => {
   const { enqueueSnackBar } = useSnackBar();
@@ -18,6 +12,11 @@ export const SettingsSecurityOptionsList = () => {
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
+  if (!isDefined(currentWorkspace)) {
+    throw new Error(
+      'The current workspace must be defined to edit its security options.',
+    );
+  }
 
   const [updateWorkspace] = useUpdateWorkspaceMutation();
 
@@ -45,17 +44,17 @@ export const SettingsSecurityOptionsList = () => {
   };
 
   return (
-    <Card>
-      <SettingsOptionCardContent
+    <Card rounded>
+      <SettingsOptionCardContentToggle
         Icon={IconLink}
         title="Invite by Link"
         description="Allow the invitation of new users by sharing an invite link."
-        onClick={() =>
-          handleChange(!currentWorkspace?.isPublicInviteLinkEnabled)
+        checked={currentWorkspace.isPublicInviteLinkEnabled}
+        advancedMode
+        onChange={() =>
+          handleChange(!currentWorkspace.isPublicInviteLinkEnabled)
         }
-      >
-        <StyledToggle value={currentWorkspace?.isPublicInviteLinkEnabled} />
-      </SettingsOptionCardContent>
+      />
     </Card>
   );
 };

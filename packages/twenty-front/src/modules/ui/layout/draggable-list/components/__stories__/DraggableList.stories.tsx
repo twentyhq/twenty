@@ -1,10 +1,8 @@
-import { action } from '@storybook/addon-actions';
-import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator, IconBell } from 'twenty-ui';
-
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
+import { action } from '@storybook/addon-actions';
+import { Meta, StoryObj } from '@storybook/react';
+import { ComponentDecorator, IconBell, MenuItemDraggable } from 'twenty-ui';
 
 const meta: Meta<typeof DraggableList> = {
   title: 'UI/Layout/DraggableList/DraggableList',

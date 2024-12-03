@@ -1,9 +1,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
-import { IconArrowUpRight, IconComponent } from 'twenty-ui';
+import { IconArrowUpRight, IconComponent, MenuItemCommand } from 'twenty-ui';
 
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { MenuItemCommand } from '@/ui/navigation/menu-item/components/MenuItemCommand';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
 

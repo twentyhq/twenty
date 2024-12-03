@@ -9,7 +9,6 @@
 
 .nx/installation
 .nx/cache
-projectStructure.cache.json
 
 .pnp.*
 .yarn/*
@@ -30,3 +29,14 @@ storybook-static
 .nyc_output
 test-results/
 dump.rdb
+.tinyb
+
+.notes
+/data/
+/.devenv/
+/.direnv/
+/.pre-commit-config.yaml
+/.envrc
+/devenv.nix
+/flake.lock
+/flake.nix

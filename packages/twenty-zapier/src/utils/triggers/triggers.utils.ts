@@ -1,26 +1,23 @@
 import { Bundle, ZObject } from 'zapier-platform-core';
 
-import { ObjectData } from '../../utils/data.types';
 import handleQueryParams from '../../utils/handleQueryParams';
 import requestDb, {
   requestDbViaRestApi,
   requestSchema,
 } from '../../utils/requestDb';
 
-export enum Operation {
-  create = 'create',
-  update = 'update',
-  delete = 'delete',
+export enum DatabaseEventAction {
+  CREATED = 'created',
+  UPDATED = 'updated',
+  DELETED = 'deleted',
 }
 
-export const subscribe = async (
-  z: ZObject,
-  bundle: Bundle,
-  operation: Operation,
-) => {
+export const performSubscribe = async (z: ZObject, bundle: Bundle) => {
   const data = {
     targetUrl: bundle.targetUrl,
-    operation: `${operation}.${bundle.inputData.nameSingular}`,
+    operations: [
+      `${bundle.inputData.nameSingular}.${bundle.inputData.operation}`,
+    ],
   };
   const result = await requestDb(
     z,
@@ -43,20 +40,26 @@ export const performUnsubscribe = async (z: ZObject, bundle: Bundle) => {
 };
 
 export const perform = (z: ZObject, bundle: Bundle) => {
-  const record = bundle.cleanedRequest.record;
-  if (record.createdAt) {
-    record.createdAt = record.createdAt + 'Z';
+  const data = {
+    record: bundle.cleanedRequest.record,
+    ...(bundle.cleanedRequest.updatedFields && {
+      updatedFields: bundle.cleanedRequest.updatedFields,
+    }),
+  };
+  if (data.record.createdAt) {
+    data.record.createdAt = data.record.createdAt + 'Z';
   }
-  if (record.updatedAt) {
-    record.updatedAt = record.updatedAt + 'Z';
+  if (data.record.updatedAt) {
+    data.record.updatedAt = data.record.updatedAt + 'Z';
   }
-  if (record.revokedAt) {
-    record.revokedAt = record.revokedAt + 'Z';
+  if (data.record.revokedAt) {
+    data.record.revokedAt = data.record.revokedAt + 'Z';
   }
-  if (record.expiresAt) {
-    record.expiresAt = record.expiresAt + 'Z';
+  if (data.record.expiresAt) {
+    data.record.expiresAt = data.record.expiresAt + 'Z';
   }
-  return [record];
+
+  return [data];
 };
 
 const getNamePluralFromNameSingular = async (
@@ -73,30 +76,23 @@ const getNamePluralFromNameSingular = async (
   throw new Error(`Unknown Object Name Singular ${nameSingular}`);
 };
 
-export const listSample = async (
+export const performList = async (
   z: ZObject,
   bundle: Bundle,
-  onlyIds = false,
-): Promise<ObjectData[]> => {
+): Promise<{ record: Record<string, any>; updatedFields?: string[] }[]> => {
   const nameSingular = bundle.inputData.nameSingular;
   const namePlural = await getNamePluralFromNameSingular(
     z,
     bundle,
     nameSingular,
   );
-  const result: { [key: string]: string }[] = await requestDbViaRestApi(
-    z,
-    bundle,
-    namePlural,
-  );
-
-  if (onlyIds) {
-    return result.map((res) => {
-      return {
-        id: res.id,
-      };
-    });
-  }
-
-  return result;
+  const results = await requestDbViaRestApi(z, bundle, namePlural);
+  return results.map((result) => ({
+    record: result,
+    ...(bundle.inputData.operation === DatabaseEventAction.UPDATED && {
+      updatedFields: [
+        Object.keys(result).filter((key) => key !== 'id')?.[0],
+      ] || ['updatedField'],
+    }),
+  }));
 };

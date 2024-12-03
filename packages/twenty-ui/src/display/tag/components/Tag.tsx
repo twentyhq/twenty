@@ -41,12 +41,13 @@ const StyledTag = styled.h3<{
   overflow: hidden;
   padding: 0 ${spacing2};
   border: ${({ variant, theme }) =>
-    variant === 'outline' ? `1px dashed ${theme.border.color.strong}` : ''};
+    variant === 'outline' || variant === 'border'
+      ? `1px ${variant === 'border' ? 'solid' : 'dashed'} ${theme.border.color.strong}`
+      : 'none'};
 
   gap: ${spacing1};
 
-  min-width: ${({ preventShrink }) =>
-    preventShrink ? 'fit-content' : 'none;'};
+  min-width: ${({ preventShrink }) => (preventShrink ? 'fit-content' : 'none')};
 `;
 
 const StyledContent = styled.span`
@@ -65,7 +66,7 @@ const StyledIconContainer = styled.div`
 `;
 
 type TagWeight = 'regular' | 'medium';
-type TagVariant = 'solid' | 'outline';
+type TagVariant = 'solid' | 'outline' | 'border';
 export type TagColor = ThemeColor | 'transparent';
 
 type TagProps = {

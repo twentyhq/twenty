@@ -12,6 +12,7 @@ type ContainerProps = {
 };
 
 const StyledContainer = styled.label<ContainerProps>`
+  flex-shrink: 0;
   align-items: center;
   background-color: ${({ theme, isOn, color }) =>
     isOn ? (color ?? theme.color.blue) : theme.background.transparent.medium};

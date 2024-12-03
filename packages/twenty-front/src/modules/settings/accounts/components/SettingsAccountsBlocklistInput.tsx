@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
-import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { Button } from 'twenty-ui';
 import { isDomain } from '~/utils/is-domain';
 
 const StyledContainer = styled.div`

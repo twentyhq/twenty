@@ -75,7 +75,10 @@ export const ViewBarFilterEffect = ({
         ? JSON.parse(viewFilterUsedInDropdown.value)
         : [];
       setObjectFilterDropdownSelectedRecordIds(viewFilterSelectedRecords);
-    } else if (filterDefinitionUsedInDropdown?.type === 'SELECT') {
+    } else if (
+      isDefined(filterDefinitionUsedInDropdown) &&
+      ['SELECT', 'MULTI_SELECT'].includes(filterDefinitionUsedInDropdown.type)
+    ) {
       const viewFilterUsedInDropdown =
         currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
           (filter) =>

@@ -16,25 +16,9 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-
-export enum SubscriptionStatus {
-  Active = 'active',
-  Canceled = 'canceled',
-  Incomplete = 'incomplete',
-  IncompleteExpired = 'incomplete_expired',
-  PastDue = 'past_due',
-  Paused = 'paused',
-  Trialing = 'trialing',
-  Unpaid = 'unpaid',
-}
-
-export enum SubscriptionInterval {
-  Day = 'day',
-  Month = 'month',
-  Week = 'week',
-  Year = 'year',
-}
 
 registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
 registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });

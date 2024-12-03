@@ -8,7 +8,14 @@ export const USER_QUERY_FRAGMENT = gql`
     email
     canImpersonate
     supportUserHash
-    analyticsTinybirdJwt
+    analyticsTinybirdJwts {
+      getWebhookAnalytics
+      getPageviewsAnalytics
+      getUsersAnalytics
+      getServerlessFunctionDuration
+      getServerlessFunctionSuccessRate
+      getServerlessFunctionErrorCount
+    }
     onboardingStatus
     workspaceMember {
       ...WorkspaceMemberQueryFragment
@@ -25,6 +32,7 @@ export const USER_QUERY_FRAGMENT = gql`
       allowImpersonation
       activationStatus
       isPublicInviteLinkEnabled
+      hasValidEntrepriseKey
       featureFlags {
         id
         key

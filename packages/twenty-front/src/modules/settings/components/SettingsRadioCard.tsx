@@ -1,8 +1,6 @@
-import styled from '@emotion/styled';
-import { Radio } from '@/ui/input/components/Radio';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { IconComponent } from 'twenty-ui';
 import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
+import { CardContent, IconComponent, Radio } from 'twenty-ui';
 
 const StyledRadioCardContent = styled(CardContent)`
   display: flex;

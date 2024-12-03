@@ -1,10 +1,9 @@
 import { useRecoilValue } from 'recoil';
-import { H2Title } from 'twenty-ui';
+import { Button, H2Title } from 'twenty-ui';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Button } from '@/ui/input/button/components/Button';
 import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
 
 export const ChangePassword = () => {

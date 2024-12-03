@@ -1,7 +1,5 @@
 export type InputData = { [x: string]: any };
 
-export type ObjectData = { id: string } | { [x: string]: any };
-
 export type NodeField = {
   type: FieldMetadataType;
   name: string;

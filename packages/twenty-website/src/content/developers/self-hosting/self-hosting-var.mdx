@@ -14,6 +14,8 @@ Twenty offers integrations with Gmail and Google Calendar. To enable these featu
 yarn command:prod cron:messaging:messages-import
 yarn command:prod cron:messaging:message-list-fetch
 yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
 ```
 
 # Setup Environment Variables
@@ -51,16 +53,12 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
 ### Tokens
 
 <ArticleTable options={[
-    ['ACCESS_TOKEN_SECRET', '<random>', 'Secret used for the access tokens'],
+    ['APP_SECRET', '<random>', 'Secret used for encryption across the app'],
     ['ACCESS_TOKEN_EXPIRES_IN', '30m', 'Access token expiration time'],
-    ['LOGIN_TOKEN_SECRET', '<random>', 'Secret used for the login tokens'],
     ['LOGIN_TOKEN_EXPIRES_IN', '15m', 'Login token expiration time'],
-    ['REFRESH_TOKEN_SECRET', '<random>', 'Secret used for the refresh tokens'],
     ['REFRESH_TOKEN_EXPIRES_IN', '90d', 'Refresh token expiration time'],
     ['REFRESH_TOKEN_COOL_DOWN', '1m', 'Refresh token cooldown'],
-    ['FILE_TOKEN_SECRET', '<random>', 'Secret used for the file tokens'],
     ['FILE_TOKEN_EXPIRES_IN', '1d', 'File token expiration time'],
-    ['API_TOKEN_EXPIRES_IN', '1000y', 'API token expiration time'],
     ]}></ArticleTable>
 
 ### Auth
@@ -68,18 +66,18 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
 <ArticleTable options={[
     ['MESSAGING_PROVIDER_GMAIL_ENABLED', 'false', 'Enable Gmail API connection'],
     ['CALENDAR_PROVIDER_GOOGLE_ENABLED', 'false', 'Enable Google Calendar API connection'],
-    ['AUTH_GOOGLE_APIS_CALLBACK_URL', 'http://[YourDomain]/auth/google/redirect', 'Google APIs auth callback'],
+    ['AUTH_GOOGLE_APIS_CALLBACK_URL', 'https://[YourDomain]/auth/google-apis/get-access-token', 'Google APIs auth callback'],
     ['AUTH_PASSWORD_ENABLED', 'false', 'Enable Email/Password login'],
     ['AUTH_GOOGLE_ENABLED', 'false', 'Enable Google SSO login'],
-    ['AUTH_GOOGLE_CLIENT_ID', '', 'Google client ID'],
+    ['AUTH_GOOGLE_CLIENT_ID', '123456789012-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com', 'Google client ID'],
     ['AUTH_GOOGLE_CLIENT_SECRET', '', 'Google client secret'],
-    ['AUTH_GOOGLE_CALLBACK_URL', '', 'Google auth callback'],
+    ['AUTH_GOOGLE_CALLBACK_URL', 'https://[YourDomain]/auth/google/redirect', 'Google auth callback'],
     ['AUTH_MICROSOFT_ENABLED', 'false', 'Enable Microsoft SSO login'],
     ['AUTH_MICROSOFT_CLIENT_ID', '', 'Microsoft client ID'],
     ['AUTH_MICROSOFT_TENANT_ID', '', 'Microsoft tenant ID'],
     ['AUTH_MICROSOFT_CLIENT_SECRET', '', 'Microsoft client secret'],
     ['AUTH_MICROSOFT_CALLBACK_URL', 'http://[YourDomain]/auth/microsoft/redirect', 'Microsoft auth callback'],
-    ['FRONT_AUTH_CALLBACK_URL', 'http://localhost:3001/verify ', 'Callback used for Login page'],
+    ['AUTH_MICROSOFT_APIS_CALLBACK_URL', 'http://[YourDomain]/auth/microsoft-apis/get-access-token', 'Microsoft APIs auth callback'],
     ['IS_SIGN_UP_DISABLED', 'false', 'Disable sign-up'],
     ['PASSWORD_RESET_TOKEN_EXPIRES_IN', '5m', 'Password reset token expiration time'],
     ]}></ArticleTable>
@@ -104,6 +102,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
   <ArticleTab>
 
   You will need to provision an [App Password](https://support.google.com/accounts/answer/185833).
+  - EMAIL_DRIVER=smtp
   - EMAIL_SMTP_HOST=smtp.gmail.com
   - EMAIL_SMTP_PORT=465
   - EMAIL_SMTP_USER=gmail_email_address
@@ -114,6 +113,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
   <ArticleTab>
 
     Keep in mind that if you have 2FA enabled, you will need to provision an [App Password](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
+    - EMAIL_DRIVER=smtp
     - EMAIL_SMTP_HOST=smtp.office365.com
     - EMAIL_SMTP_PORT=587
     - EMAIL_SMTP_USER=office365_email_address
@@ -127,6 +127,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
     - Run the smtp4dev image: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
     - Access the smtp4dev ui here: [http://localhost:8090](http://localhost:8090)
     - Set the following env variables:
+      - EMAIL_DRIVER=smtp
       - EMAIL_SMTP_HOST=localhost
       - EMAIL_SMTP_PORT=2525
 
@@ -159,7 +160,7 @@ yarn command:prod cron:calendar:calendar-event-list-fetch
 ### Message Queue
 
 <ArticleTable options={[
-    ['MESSAGE_QUEUE_TYPE', 'bull-mq', "Queue driver: 'pg-boss' or 'bull-mq'"],
+    ['MESSAGE_QUEUE_TYPE', 'bull-mq', "Queue driver: 'bull-mq'"],
     ]}></ArticleTable>
 
 ### Logging
@@ -216,7 +217,7 @@ This feature is WIP and is not yet useful for most users.
 
 <ArticleTable options={[
     ['DEBUG_MODE', 'true', 'Activate debug mode'],
-    ['SIGN_IN_PREFILLED', 'true', 'Prefill the Signin form for usage in a demo or dev environment'],
+    ['SIGN_IN_PREFILLED', 'true', 'Prefill the Sign in form for usage in a demo or dev environment'],
     ]}></ArticleTable>
 
 ### Workspace Cleaning

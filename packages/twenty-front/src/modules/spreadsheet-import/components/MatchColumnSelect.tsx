@@ -1,5 +1,3 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -9,7 +7,9 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import { AppTooltip } from 'twenty-ui';
+import React, { useCallback, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { AppTooltip, MenuItem, MenuItemSelect } from 'twenty-ui';
 import { ReadonlyDeep } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -18,8 +18,6 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemSelect } from '@/ui/navigation/menu-item/components/MenuItemSelect';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 

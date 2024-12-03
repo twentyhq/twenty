@@ -108,7 +108,6 @@
     "storybook:build": {
       "executor": "nx:run-commands",
       "cache": true,
-      "dependsOn": ["^build"],
       "inputs": ["^default", "excludeTests"],
       "outputs": ["{projectRoot}/{options.output-dir}"],
       "options": {
@@ -192,16 +191,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:serve:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port}'"
-        ],
-        "port": 6006
-      }
-    },
-    "storybook:serve-and-test:static:performance": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:serve:dev {projectName} --configuration=performance --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test:no-coverage {projectName} --port={args.port} --configuration=performance'"
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:serve:static {projectName} --port={args.port} --configuration={args.performance}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
         ],
         "port": 6006
       }

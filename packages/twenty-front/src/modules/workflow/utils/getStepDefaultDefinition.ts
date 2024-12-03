@@ -1,9 +1,27 @@
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { WorkflowStep, WorkflowStepType } from '@/workflow/types/Workflow';
+import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { v4 } from 'uuid';
 
-export const getStepDefaultDefinition = (
-  type: WorkflowStepType,
-): WorkflowStep => {
+const BASE_DEFAULT_STEP_SETTINGS = {
+  outputSchema: {},
+  errorHandlingOptions: {
+    continueOnFailure: {
+      value: false,
+    },
+    retryOnFailure: {
+      value: false,
+    },
+  },
+};
+
+export const getStepDefaultDefinition = ({
+  type,
+  activeObjectMetadataItems,
+}: {
+  type: WorkflowStepType;
+  activeObjectMetadataItems: ObjectMetadataItem[];
+}): WorkflowStep => {
   const newStepId = v4();
 
   switch (type) {
@@ -16,15 +34,10 @@ export const getStepDefaultDefinition = (
         settings: {
           input: {
             serverlessFunctionId: '',
+            serverlessFunctionVersion: '',
+            serverlessFunctionInput: {},
           },
-          errorHandlingOptions: {
-            continueOnFailure: {
-              value: false,
-            },
-            retryOnFailure: {
-              value: false,
-            },
-          },
+          ...BASE_DEFAULT_STEP_SETTINGS,
         },
       };
     }
@@ -41,19 +54,47 @@ export const getStepDefaultDefinition = (
             subject: '',
             body: '',
           },
-          errorHandlingOptions: {
-            continueOnFailure: {
-              value: false,
-            },
-            retryOnFailure: {
-              value: false,
-            },
-          },
+          ...BASE_DEFAULT_STEP_SETTINGS,
         },
       };
     }
+    case 'RECORD_CRUD.CREATE': {
+      return {
+        id: newStepId,
+        name: 'Create Record',
+        type: 'RECORD_CRUD',
+        valid: false,
+        settings: {
+          input: {
+            type: 'CREATE',
+            objectName: activeObjectMetadataItems[0].nameSingular,
+            objectRecord: {},
+          },
+          ...BASE_DEFAULT_STEP_SETTINGS,
+        },
+      };
+    }
+    case 'RECORD_CRUD.UPDATE':
+      return {
+        id: newStepId,
+        name: 'Update Record',
+        type: 'RECORD_CRUD',
+        valid: false,
+        settings: {
+          input: {
+            type: 'UPDATE',
+            objectName: activeObjectMetadataItems[0].nameSingular,
+            objectRecordId: '',
+            objectRecord: {},
+          },
+          ...BASE_DEFAULT_STEP_SETTINGS,
+        },
+      };
+    case 'RECORD_CRUD.DELETE': {
+      throw new Error('Not implemented yet');
+    }
     default: {
-      throw new Error(`Unknown type: ${type}`);
+      return assertUnreachable(type, `Unknown type: ${type}`);
     }
   }
 };

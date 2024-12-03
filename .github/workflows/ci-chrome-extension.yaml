@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   chrome-extension-build:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     env:
       VITE_SERVER_BASE_URL: http://localhost:3000

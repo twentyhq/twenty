@@ -18,7 +18,7 @@ import { computeDepth } from 'src/engine/api/rest/core/query-builder/utils/compu
 import { parseCoreBatchPath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-batch-path.utils';
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { Query } from 'src/engine/api/rest/core/types/query.type';
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -39,7 +39,7 @@ export class CoreQueryBuilderFactory {
     private readonly getVariablesFactory: GetVariablesFactory,
     private readonly findDuplicatesVariablesFactory: FindDuplicatesVariablesFactory,
     private readonly objectMetadataService: ObjectMetadataService,
-    private readonly tokenService: TokenService,
+    private readonly accessTokenService: AccessTokenService,
     private readonly environmentService: EnvironmentService,
   ) {}
 
@@ -50,7 +50,7 @@ export class CoreQueryBuilderFactory {
     objectMetadataItems: ObjectMetadataEntity[];
     objectMetadataItem: ObjectMetadataEntity;
   }> {
-    const { workspace } = await this.tokenService.validateToken(request);
+    const { workspace } = await this.accessTokenService.validateToken(request);
 
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspace.id);

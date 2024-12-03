@@ -1,16 +1,16 @@
-import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
+import { settingsDataModelObjectAboutFormSchema } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
 import { CreateObjectInput } from '~/generated-metadata/graphql';
-import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
-export const settingsCreateObjectInputSchema = objectMetadataItemSchema
-  .pick({
-    description: true,
-    icon: true,
-    labelPlural: true,
-    labelSingular: true,
-  })
-  .transform<CreateObjectInput>((value) => ({
-    ...value,
-    nameSingular: computeMetadataNameFromLabelOrThrow(value.labelSingular),
-    namePlural: computeMetadataNameFromLabelOrThrow(value.labelPlural),
-  }));
+export const settingsCreateObjectInputSchema =
+  settingsDataModelObjectAboutFormSchema.transform<CreateObjectInput>(
+    (values) => ({
+      ...values,
+      nameSingular:
+        values.nameSingular ??
+        computeMetadataNameFromLabel(values.labelSingular),
+      namePlural:
+        values.namePlural ?? computeMetadataNameFromLabel(values.labelPlural),
+      isLabelSyncedWithName: values.isLabelSyncedWithName ?? true,
+    }),
+  );

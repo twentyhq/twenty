@@ -7,9 +7,12 @@ import {
   AppTooltip,
   Avatar,
   H2Title,
+  IconButton,
   IconMail,
   IconReload,
   IconTrash,
+  Section,
+  Status,
   TooltipDelay,
 } from 'twenty-ui';
 
@@ -23,10 +26,8 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { IconButton } from '@/ui/input/button/components/IconButton';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
@@ -35,7 +36,6 @@ import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam'
 import { formatDistanceToNow } from 'date-fns';
 import { useGetWorkspaceInvitationsQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { Status } from '../../modules/ui/display/status/components/Status';
 import { TableCell } from '../../modules/ui/layout/table/components/TableCell';
 import { TableRow } from '../../modules/ui/layout/table/components/TableRow';
 import { useDeleteWorkspaceInvitation } from '../../modules/workspace-invitation/hooks/useDeleteWorkspaceInvitation';

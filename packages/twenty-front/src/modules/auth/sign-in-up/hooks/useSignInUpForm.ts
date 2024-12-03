@@ -1,13 +1,15 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { useSearchParams } from 'react-router-dom';
+import { isDefined } from '~/utils/isDefined';
 
-const validationSchema = z
+export const validationSchema = z
   .object({
     exist: z.boolean(),
     email: z.string().trim().email('Email must be a valid email'),
@@ -20,20 +22,30 @@ const validationSchema = z
 
 export type Form = z.infer<typeof validationSchema>;
 export const useSignInUpForm = () => {
-  const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
+  const isDeveloperDefaultSignInPrefilled = useRecoilValue(
+    isDeveloperDefaultSignInPrefilledState,
+  );
+  const [searchParams] = useSearchParams();
+  const invitationPrefilledEmail = searchParams.get('email');
+
   const form = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
       exist: false,
+      email: '',
+      password: '',
+      captchaToken: '',
     },
     resolver: zodResolver(validationSchema),
   });
 
   useEffect(() => {
-    if (isSignInPrefilled === true) {
+    if (isDefined(invitationPrefilledEmail)) {
+      form.setValue('email', invitationPrefilledEmail);
+    } else if (isDeveloperDefaultSignInPrefilled === true) {
       form.setValue('email', 'tim@apple.dev');
       form.setValue('password', 'Applecar2025');
     }
-  }, [form, isSignInPrefilled]);
+  }, [form, isDeveloperDefaultSignInPrefilled, invitationPrefilledEmail]);
   return { form: form };
 };

@@ -16,7 +16,7 @@ export const responseData = {
   xLink: {
     primaryLinkUrl: '',
     primaryLinkLabel: '',
-    secondaryLinks: null,
+    secondaryLinks: [],
   },
   pointOfContactForOpportunities: {
     edges: [],
@@ -48,7 +48,7 @@ export const responseData = {
   linkedinLink: {
     primaryLinkUrl: '',
     primaryLinkLabel: '',
-    secondaryLinks: null,
+    secondaryLinks: [],
   },
   updatedAt: '',
   avatarUrl: '',

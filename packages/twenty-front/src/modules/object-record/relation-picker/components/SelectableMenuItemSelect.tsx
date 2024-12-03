@@ -1,16 +1,16 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { Avatar } from 'twenty-ui';
+import { Avatar, MenuItemSelectAvatar } from 'twenty-ui';
 
-import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { SINGLE_RECORD_SELECT_BASE_LIST } from '@/object-record/relation-picker/constants/SingleRecordSelectBaseList';
+import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
 
 type SelectableMenuItemSelectProps = {
-  entity: EntityForSelect;
-  onEntitySelected: (entitySelected?: EntityForSelect) => void;
-  selectedEntity?: EntityForSelect;
+  record: RecordForSelect;
+  onRecordSelected: (recordSelected?: RecordForSelect) => void;
+  selectedRecord?: RecordForSelect;
 };
 
 const StyledSelectableItem = styled(SelectableItem)`
@@ -18,31 +18,31 @@ const StyledSelectableItem = styled(SelectableItem)`
 `;
 
 export const SelectableMenuItemSelect = ({
-  entity,
-  onEntitySelected,
-  selectedEntity,
+  record,
+  onRecordSelected,
+  selectedRecord,
 }: SelectableMenuItemSelectProps) => {
   const { isSelectedItemIdSelector } = useSelectableList(
-    'single-entity-select-base-list',
+    SINGLE_RECORD_SELECT_BASE_LIST,
   );
 
-  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector(entity.id));
+  const isSelectedItemId = useRecoilValue(isSelectedItemIdSelector(record.id));
   return (
-    <StyledSelectableItem itemId={entity.id} key={entity.id}>
+    <StyledSelectableItem itemId={record.id} key={record.id}>
       <MenuItemSelectAvatar
-        key={entity.id}
+        key={record.id}
         testId="menu-item"
-        onClick={() => onEntitySelected(entity)}
-        text={entity.name}
-        selected={selectedEntity?.id === entity.id}
+        onClick={() => onRecordSelected(record)}
+        text={record.name}
+        selected={selectedRecord?.id === record.id}
         hovered={isSelectedItemId}
         avatar={
           <Avatar
-            avatarUrl={entity.avatarUrl}
-            placeholderColorSeed={entity.id}
-            placeholder={entity.name}
+            avatarUrl={record.avatarUrl}
+            placeholderColorSeed={record.id}
+            placeholder={record.name}
             size="md"
-            type={entity.avatarType ?? 'rounded'}
+            type={record.avatarType ?? 'rounded'}
           />
         }
       />

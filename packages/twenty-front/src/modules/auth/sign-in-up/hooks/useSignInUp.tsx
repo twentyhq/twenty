@@ -5,20 +5,20 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
-import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { isDefined } from '~/utils/isDefined';
 
-import { useAuth } from '../../hooks/useAuth';
+import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
+import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
-import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
+import { AppPath } from '@/types/AppPath';
+import { useAuth } from '../../hooks/useAuth';
 
 export enum SignInUpMode {
   SignIn = 'sign-in',

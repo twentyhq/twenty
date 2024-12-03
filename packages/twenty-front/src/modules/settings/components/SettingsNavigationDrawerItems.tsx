@@ -10,20 +10,22 @@ import {
   IconDoorEnter,
   IconFunction,
   IconHierarchy2,
+  IconKey,
   IconMail,
   IconRocket,
+  IconServer,
   IconSettings,
   IconTool,
   IconUserCircle,
   IconUsers,
-  IconKey,
   MAIN_COLORS,
 } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
-import { useExpandedHeightAnimation } from '@/settings/hooks/useExpandedHeightAnimation';
+import { useExpandedAnimation } from '@/settings/hooks/useExpandedAnimation';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import {
@@ -34,7 +36,7 @@ import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/com
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { getNavigationSubItemState } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemState';
+import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -69,7 +71,7 @@ const StyledIconTool = styled(IconTool)`
 
 export const SettingsNavigationDrawerItems = () => {
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
-  const { contentRef, motionAnimationVariants } = useExpandedHeightAnimation(
+  const { contentRef, motionAnimationVariants } = useExpandedAnimation(
     isAdvancedModeEnabled,
   );
   const { signOut } = useAuth();
@@ -84,6 +86,8 @@ export const SettingsNavigationDrawerItems = () => {
   const isBillingPageEnabled =
     billing?.isBillingEnabled && !isFreeAccessEnabled;
 
+  const currentUser = useRecoilValue(currentUserState);
+  const isAdminPageEnabled = currentUser?.canImpersonate;
   // TODO: Refactor this part to only have arrays of navigation items
   const currentPathName = useLocation().pathname;
 
@@ -143,7 +147,7 @@ export const SettingsNavigationDrawerItems = () => {
               path={navigationItem.path}
               Icon={navigationItem.Icon}
               indentationLevel={navigationItem.indentationLevel}
-              subItemState={getNavigationSubItemState({
+              subItemState={getNavigationSubItemLeftAdornment({
                 arrayLength: accountSubSettings.length,
                 index,
                 selectedIndex,
@@ -230,6 +234,13 @@ export const SettingsNavigationDrawerItems = () => {
       </AnimatePresence>
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Other" />
+        {isAdminPageEnabled && (
+          <SettingsNavigationDrawerItem
+            label="Server Admin Panel"
+            path={SettingsPath.AdminPanel}
+            Icon={IconServer}
+          />
+        )}
         <SettingsNavigationDrawerItem
           label="Releases"
           path={SettingsPath.Releases}

@@ -1,5 +1,6 @@
 import {
   FieldMetadataDefaultActor,
+  FieldMetadataDefaultArray,
   FieldMetadataDefaultValueAddress,
   FieldMetadataDefaultValueBoolean,
   FieldMetadataDefaultValueCurrency,
@@ -48,6 +49,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
   [FieldMetadataType.RICH_TEXT]: FieldMetadataDefaultValueRichText;
   [FieldMetadataType.ACTOR]: FieldMetadataDefaultActor;
+  [FieldMetadataType.ARRAY]: FieldMetadataDefaultArray;
 };
 
 export type FieldMetadataClassValidation =

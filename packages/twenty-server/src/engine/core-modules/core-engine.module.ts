@@ -3,6 +3,7 @@ import { HttpAdapterHost } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
+import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -39,7 +40,7 @@ import { ServerlessModule } from 'src/engine/core-modules/serverless/serverless.
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
-import { WorkflowTriggerApiModule } from 'src/engine/core-modules/workflow/workflow-trigger-api.module';
+import { WorkflowApiModule } from 'src/engine/core-modules/workflow/workflow-api.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
@@ -66,10 +67,11 @@ import { FileModule } from './file/file.module';
     WorkspaceInvitationModule,
     WorkspaceSSOModule,
     PostgresCredentialsModule,
-    WorkflowTriggerApiModule,
+    WorkflowApiModule,
     WorkspaceEventEmitterModule,
     ActorModule,
     TelemetryModule,
+    AdminPanelModule,
     EnvironmentModule.forRoot({}),
     RedisClientModule,
     FileStorageModule.forRootAsync({

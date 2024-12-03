@@ -3,13 +3,13 @@ import { RecoilRoot } from 'recoil';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
-import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
+import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
 
-const scopeId = 'scopeId';
+const instanceId = 'instanceId';
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RelationPickerScopeInternalContext.Provider value={{ scopeId }}>
+  <RecordPickerComponentInstanceContext.Provider value={{ instanceId }}>
     <RecoilRoot>{children}</RecoilRoot>
-  </RelationPickerScopeInternalContext.Provider>
+  </RecordPickerComponentInstanceContext.Provider>
 );
 
 describe('useLimitPerMetadataItem', () => {
@@ -26,6 +26,7 @@ describe('useLimitPerMetadataItem', () => {
       namePlural: 'namePlural',
       nameSingular: 'nameSingular',
       updatedAt: 'updatedAt',
+      isLabelSyncedWithName: false,
       fields: [],
       indexMetadatas: [],
     },

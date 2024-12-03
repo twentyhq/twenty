@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { H2Title } from 'twenty-ui';
+import { Button, H2Title } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
-import { Button } from '@/ui/input/button/components/Button';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useDeleteUserAccountMutation } from '~/generated/graphql';
 

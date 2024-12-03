@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { CodeIntrospectionException } from 'src/modules/code-introspection/code-introspection.exception';
 import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
 
 describe('CodeIntrospectionService', () => {
@@ -18,89 +17,122 @@ describe('CodeIntrospectionService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('analyze', () => {
-    it('should analyze a function declaration correctly', () => {
+  describe('getFunctionInputSchema', () => {
+    it('should analyze a simple function correctly', () => {
       const fileContent = `
         function testFunction(param1: string, param2: number): void {
-          console.log(param1, param2);
+          return;
         }
       `;
+      const result = service.getFunctionInputSchema(fileContent);
 
-      const result = service.analyze(fileContent);
-
-      expect(result).toEqual([
-        { name: 'param1', type: 'string' },
-        { name: 'param2', type: 'number' },
-      ]);
+      expect(result).toEqual({
+        param1: { type: 'string' },
+        param2: { type: 'number' },
+      });
     });
 
-    it('should analyze an arrow function correctly', () => {
+    it('should analyze a arrow function correctly', () => {
       const fileContent = `
-        const testArrowFunction = (param1: string, param2: number): void => {
-          console.log(param1, param2);
+        export const main = async (
+          param1: string,
+          param2: number,
+        ): Promise<object> => {
+          return params;
         };
       `;
+      const result = service.getFunctionInputSchema(fileContent);
 
-      const result = service.analyze(fileContent);
-
-      expect(result).toEqual([
-        { name: 'param1', type: 'string' },
-        { name: 'param2', type: 'number' },
-      ]);
+      expect(result).toEqual({
+        param1: { type: 'string' },
+        param2: { type: 'number' },
+      });
     });
 
-    it('should return an empty array for files without functions', () => {
+    it('should analyze a complex function correctly', () => {
       const fileContent = `
-        const x = 5;
-        console.log(x);
+        function testFunction(
+          params: {
+            param1: string;
+            param2: number;
+            param3: boolean;
+            param4: object;
+            param5: { subParam1: string };
+            param6: "my" | "enum";
+            param7: string[];
+          }
+        ): void {
+          return
+        }
       `;
+      const result = service.getFunctionInputSchema(fileContent);
 
-      const result = service.analyze(fileContent);
-
-      expect(result).toEqual([]);
+      expect(result).toEqual({
+        params: {
+          type: 'object',
+          properties: {
+            param1: { type: 'string' },
+            param2: { type: 'number' },
+            param3: { type: 'boolean' },
+            param4: { type: 'object' },
+            param5: {
+              type: 'object',
+              properties: {
+                subParam1: { type: 'string' },
+              },
+            },
+            param6: { type: 'string', enum: ['my', 'enum'] },
+            param7: { type: 'array', items: { type: 'string' } },
+          },
+        },
+      });
     });
+  });
 
-    it('should throw an exception for multiple function declarations', () => {
+  describe('generateInputData', () => {
+    it('should generate fake data for simple function', () => {
       const fileContent = `
-        function func1(param1: string) {}
-        function func2(param2: number) {}
+        function testFunction(param1: string, param2: number): void {
+          return;
+        }
       `;
+      const inputSchema = service.getFunctionInputSchema(fileContent);
+      const result = service.generateInputData(inputSchema);
 
-      expect(() => service.analyze(fileContent)).toThrow(
-        CodeIntrospectionException,
-      );
-      expect(() => service.analyze(fileContent)).toThrow(
-        'Only one function is allowed',
-      );
+      expect(result).toEqual({ param1: 'generated-string-value', param2: 1 });
     });
 
-    it('should throw an exception for multiple arrow functions', () => {
+    it('should generate fake data for complex function', () => {
       const fileContent = `
-        const func1 = (param1: string) => {};
-        const func2 = (param2: number) => {};
-      `;
-
-      expect(() => service.analyze(fileContent)).toThrow(
-        CodeIntrospectionException,
-      );
-      expect(() => service.analyze(fileContent)).toThrow(
-        'Only one arrow function is allowed',
-      );
-    });
-
-    it('should correctly analyze complex types', () => {
-      const fileContent = `
-        function complexFunction(param1: string[], param2: { key: number }): Promise<boolean> {
-          return Promise.resolve(true);
+        function testFunction(
+          params: {
+            param1: string;
+            param2: number;
+            param3: boolean;
+            param4: object;
+            param5: { subParam1: string };
+            param6: "my" | "enum";
+            param7: string[];
+          }
+        ): void {
+          return
         }
       `;
 
-      const result = service.analyze(fileContent);
+      const inputSchema = service.getFunctionInputSchema(fileContent);
+      const result = service.generateInputData(inputSchema);
 
-      expect(result).toEqual([
-        { name: 'param1', type: 'string[]' },
-        { name: 'param2', type: '{ key: number; }' },
-      ]);
+      expect(result).toEqual({
+        params: {
+          param1: 'generated-string-value',
+          param2: 1,
+          param3: true,
+          param4: {},
+          param5: { subParam1: 'generated-string-value' },
+          param6: 'my',
+          param7: ['generated-string-value'],
+        },
+      });
     });
   });
 });

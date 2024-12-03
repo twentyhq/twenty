@@ -26,12 +26,12 @@ import { WorkspaceIsUnique } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { PERSON_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import {
   FieldTypeAndNameMetadata,
   getTsVectorColumnExpressionFromFields,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/get-ts-vector-column-expression.util';
-import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
@@ -58,7 +58,8 @@ export const SEARCH_FIELDS_FOR_PERSON: FieldTypeAndNameMetadata[] = [
   labelSingular: 'Person',
   labelPlural: 'People',
   description: 'A person',
-  icon: 'IconUser',
+  icon: STANDARD_OBJECT_ICONS.person,
+  shortcut: 'P',
   labelIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.name,
   imageIdentifierStandardId: PERSON_STANDARD_FIELD_IDS.avatarUrl,
 })
@@ -202,18 +203,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   pointOfContactForOpportunities: Relation<OpportunityWorkspaceEntity[]>;
-
-  @WorkspaceRelation({
-    standardId: PERSON_STANDARD_FIELD_IDS.activityTargets,
-    type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Activities',
-    description: 'Activities tied to the contact',
-    icon: 'IconCheckbox',
-    inverseSideTarget: () => ActivityTargetWorkspaceEntity,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @WorkspaceIsSystem()
-  activityTargets: Relation<ActivityTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.taskTargets,

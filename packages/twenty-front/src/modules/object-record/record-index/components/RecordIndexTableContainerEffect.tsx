@@ -1,7 +1,5 @@
 import { useContext, useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { contextStoreTargetedRecordsRuleState } from '@/context-store/states/contextStoreTargetedRecordsRuleState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
@@ -20,11 +18,8 @@ export const RecordIndexTableContainerEffect = () => {
   const {
     setAvailableTableColumns,
     setOnEntityCountChange,
-    selectedRowIdsSelector,
     setOnToggleColumnFilter,
     setOnToggleColumnSort,
-    hasUserSelectedAllRowsState,
-    unselectedRowIdsSelector,
   } = useRecordTable({
     recordTableId: recordIndexId,
   });
@@ -72,40 +67,6 @@ export const RecordIndexTableContainerEffect = () => {
       () => (entityCount: number) => setRecordCountInCurrentView(entityCount),
     );
   }, [setRecordCountInCurrentView, setOnEntityCountChange]);
-
-  const setContextStoreTargetedRecords = useSetRecoilState(
-    contextStoreTargetedRecordsRuleState,
-  );
-  const hasUserSelectedAllRows = useRecoilValue(hasUserSelectedAllRowsState);
-  const selectedRowIds = useRecoilValue(selectedRowIdsSelector());
-  const unselectedRowIds = useRecoilValue(unselectedRowIdsSelector());
-
-  useEffect(() => {
-    if (hasUserSelectedAllRows) {
-      setContextStoreTargetedRecords({
-        mode: 'exclusion',
-        excludedRecordIds: unselectedRowIds,
-        filters: [],
-      });
-    } else {
-      setContextStoreTargetedRecords({
-        mode: 'selection',
-        selectedRecordIds: selectedRowIds,
-      });
-    }
-
-    return () => {
-      setContextStoreTargetedRecords({
-        mode: 'selection',
-        selectedRecordIds: [],
-      });
-    };
-  }, [
-    hasUserSelectedAllRows,
-    selectedRowIds,
-    setContextStoreTargetedRecords,
-    unselectedRowIds,
-  ]);
 
   return <></>;
 };

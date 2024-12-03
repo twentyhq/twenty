@@ -4,5 +4,5 @@ export const dropdownWidthComponentState = createComponentState<
   number | undefined
 >({
   key: 'dropdownWidthComponentState',
-  defaultValue: 160,
+  defaultValue: 200,
 });

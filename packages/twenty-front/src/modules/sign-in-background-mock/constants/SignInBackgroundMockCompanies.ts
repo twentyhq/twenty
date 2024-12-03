@@ -45,7 +45,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             xLink: {
               primaryLinkLabel: 'asd',
               primaryLinkUrl: 'asd.com',
-              secondaryLinks: null,
+              secondaryLinks: [],
               __typename: 'Links',
             },
             name: {
@@ -58,7 +58,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             linkedinLink: {
               primaryLinkLabel: 'asd',
               primaryLinkUrl: 'asd.com',
-              secondaryLinks: null,
+              secondaryLinks: [],
               __typename: 'Links',
             },
           },
@@ -85,37 +85,8 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     xLink: {
       primaryLinkLabel: null,
       primaryLinkUrl: null,
-      secondaryLinks: null,
+      secondaryLinks: [],
       __typename: 'Links',
-    },
-    activityTargets: {
-      __typename: 'ActivityTargetConnection',
-      edges: [
-        {
-          __typename: 'ActivityTargetEdge',
-          node: {
-            __typename: 'ActivityTarget',
-            id: '97114d7e-2a80-4401-af58-36c88e13e852',
-            activityId: '737a6c31-610a-457b-b087-791ac700fa46',
-            createdAt: '2023-11-24T13:15:03.523Z',
-            updatedAt: '2023-11-24T13:15:03.523Z',
-            companyId: '04b2e9f5-0713-40a5-8216-82802401d33e',
-            personId: null,
-          },
-        },
-        {
-          __typename: 'ActivityTargetEdge',
-          node: {
-            __typename: 'ActivityTarget',
-            id: 'cb29d37a-3d5e-4efb-afa3-38f4bff69912',
-            activityId: '3c6ea4a3-f71d-4c31-9dfa-f868a5de4091',
-            createdAt: '2023-11-24T13:14:57.628Z',
-            updatedAt: '2023-11-24T13:14:57.628Z',
-            companyId: '04b2e9f5-0713-40a5-8216-82802401d33e',
-            personId: null,
-          },
-        },
-      ],
     },
     annualRecurringRevenue: {
       __typename: 'Currency',
@@ -339,10 +310,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    activityTargets: {
-      __typename: 'ActivityTargetConnection',
-      edges: [],
-    },
     annualRecurringRevenue: {
       __typename: 'Currency',
       amountMicros: null,
@@ -489,10 +456,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    activityTargets: {
-      __typename: 'ActivityTargetConnection',
-      edges: [],
-    },
     annualRecurringRevenue: {
       __typename: 'Currency',
       amountMicros: null,
@@ -553,10 +516,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       primaryLinkUrl: null,
       secondaryLinks: [],
       __typename: 'Links',
-    },
-    activityTargets: {
-      __typename: 'ActivityTargetConnection',
-      edges: [],
     },
     annualRecurringRevenue: {
       __typename: 'Currency',
@@ -755,10 +714,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    activityTargets: {
-      __typename: 'ActivityTargetConnection',
-      edges: [],
-    },
     annualRecurringRevenue: {
       __typename: 'Currency',
       amountMicros: null,
@@ -819,10 +774,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       primaryLinkUrl: null,
       secondaryLinks: [],
       __typename: 'Links',
-    },
-    activityTargets: {
-      __typename: 'ActivityTargetConnection',
-      edges: [],
     },
     annualRecurringRevenue: {
       __typename: 'Currency',
@@ -885,10 +836,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    activityTargets: {
-      __typename: 'ActivityTargetConnection',
-      edges: [],
-    },
     annualRecurringRevenue: {
       __typename: 'Currency',
       amountMicros: null,
@@ -949,10 +896,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       primaryLinkUrl: null,
       secondaryLinks: [],
       __typename: 'Links',
-    },
-    activityTargets: {
-      __typename: 'ActivityTargetConnection',
-      edges: [],
     },
     annualRecurringRevenue: {
       __typename: 'Currency',
@@ -1048,10 +991,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    activityTargets: {
-      __typename: 'ActivityTargetConnection',
-      edges: [],
-    },
     annualRecurringRevenue: {
       __typename: 'Currency',
       amountMicros: null,
@@ -1146,10 +1085,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    activityTargets: {
-      __typename: 'ActivityTargetConnection',
-      edges: [],
-    },
     annualRecurringRevenue: {
       __typename: 'Currency',
       amountMicros: null,
@@ -1211,10 +1146,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       secondaryLinks: [],
       __typename: 'Links',
     },
-    activityTargets: {
-      __typename: 'ActivityTargetConnection',
-      edges: [],
-    },
     annualRecurringRevenue: {
       __typename: 'Currency',
       amountMicros: null,
@@ -1275,10 +1206,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       primaryLinkUrl: null,
       secondaryLinks: [],
       __typename: 'Links',
-    },
-    activityTargets: {
-      __typename: 'ActivityTargetConnection',
-      edges: [],
     },
     annualRecurringRevenue: {
       __typename: 'Currency',
@@ -1425,10 +1352,6 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
       primaryLinkUrl: null,
       secondaryLinks: [],
       __typename: 'Links',
-    },
-    activityTargets: {
-      __typename: 'ActivityTargetConnection',
-      edges: [],
     },
     annualRecurringRevenue: {
       __typename: 'Currency',

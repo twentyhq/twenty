@@ -15,6 +15,6 @@ describe('triggers.list_record_ids', () => {
     );
     expect(result).toBeDefined();
     expect(result.length).toBeGreaterThan(1);
-    expect(result[0].id).toBeDefined();
+    expect(result[0].record.id).toBeDefined();
   });
 });

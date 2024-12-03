@@ -126,6 +126,33 @@ export const viewPrefillData = async (
         )
         .execute();
     }
+
+    if (
+      'groups' in viewDefinition &&
+      viewDefinition.groups &&
+      viewDefinition.groups.length > 0
+    ) {
+      await entityManager
+        .createQueryBuilder()
+        .insert()
+        .into(`${schemaName}.viewGroup`, [
+          'fieldMetadataId',
+          'isVisible',
+          'fieldValue',
+          'position',
+          'viewId',
+        ])
+        .values(
+          viewDefinition.groups.map((group: any) => ({
+            fieldMetadataId: group.fieldMetadataId,
+            isVisible: group.isVisible,
+            fieldValue: group.fieldValue,
+            position: group.position,
+            viewId: viewDefinition.id,
+          })),
+        )
+        .execute();
+    }
   }
 
   return viewDefinitionsWithId;

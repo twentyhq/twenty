@@ -1,18 +1,21 @@
 /* @license Enterprise */
 
-import { IconArchive, IconDotsVertical, IconTrash } from 'twenty-ui';
+import {
+  IconArchive,
+  IconDotsVertical,
+  IconTrash,
+  LightIconButton,
+  MenuItem,
+} from 'twenty-ui';
 
 import { useDeleteSSOIdentityProvider } from '@/settings/security/hooks/useDeleteSSOIdentityProvider';
 import { useUpdateSSOIdentityProvider } from '@/settings/security/hooks/useUpdateSSOIdentityProvider';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { UnwrapRecoilValue } from 'recoil';
 import { SsoIdentityProviderStatus } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -73,29 +76,28 @@ export const SettingsSecuritySSORowDropdownMenu = ({
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }
+      dropdownMenuWidth={160}
       dropdownComponents={
-        <DropdownMenu>
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              accent="default"
-              LeftIcon={IconArchive}
-              text={SSOIdp.status === 'Active' ? 'Deactivate' : 'Activate'}
-              onClick={() => {
-                toggleSSOIdentityProviderStatus(SSOIdp.id);
-                closeDropdown();
-              }}
-            />
-            <MenuItem
-              accent="danger"
-              LeftIcon={IconTrash}
-              text="Delete"
-              onClick={() => {
-                handleDeleteSSOIdentityProvider(SSOIdp.id);
-                closeDropdown();
-              }}
-            />
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
+        <DropdownMenuItemsContainer>
+          <MenuItem
+            accent="default"
+            LeftIcon={IconArchive}
+            text={SSOIdp.status === 'Active' ? 'Deactivate' : 'Activate'}
+            onClick={() => {
+              toggleSSOIdentityProviderStatus(SSOIdp.id);
+              closeDropdown();
+            }}
+          />
+          <MenuItem
+            accent="danger"
+            LeftIcon={IconTrash}
+            text="Delete"
+            onClick={() => {
+              handleDeleteSSOIdentityProvider(SSOIdp.id);
+              closeDropdown();
+            }}
+          />
+        </DropdownMenuItemsContainer>
       }
     />
   );

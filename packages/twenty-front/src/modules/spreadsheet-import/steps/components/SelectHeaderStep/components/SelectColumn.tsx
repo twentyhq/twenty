@@ -2,7 +2,7 @@
 import { Column, FormatterProps, useRowSelection } from 'react-data-grid';
 
 import { ImportedRow } from '@/spreadsheet-import/types';
-import { Radio } from '@/ui/input/components/Radio';
+import { Radio } from 'twenty-ui';
 
 const SELECT_COLUMN_KEY = 'select-row';
 

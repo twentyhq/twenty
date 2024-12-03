@@ -1,6 +1,6 @@
+import { WatchQueryFetchPolicy } from '@apollo/client';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { WatchQueryFetchPolicy } from '@apollo/client';
 
 import { useGetDatabaseConnection } from '@/databases/hooks/useGetDatabaseConnection';
 import { useGetDatabaseConnectionTables } from '@/databases/hooks/useGetDatabaseConnectionTables';

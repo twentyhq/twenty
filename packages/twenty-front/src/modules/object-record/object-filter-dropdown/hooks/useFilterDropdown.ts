@@ -7,11 +7,14 @@ import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotV
 import { objectFilterDropdownFilterIsSelectedComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownFilterIsSelectedComponentState';
 import { objectFilterDropdownIsSelectingCompositeFieldComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownIsSelectingCompositeFieldComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useUpsertCombinedViewFilters } from '@/views/hooks/useUpsertCombinedViewFilters';
+import { isDefined } from 'twenty-ui';
 import { ObjectFilterDropdownScopeInternalContext } from '../scopes/scope-internal-context/ObjectFilterDropdownScopeInternalContext';
 import { Filter } from '../types/Filter';
 
 type UseFilterDropdownProps = {
   filterDropdownId?: string;
+  advancedFilterViewFilterId?: string;
 };
 
 export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
@@ -25,12 +28,14 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     objectFilterDropdownSearchInputState,
     objectFilterDropdownSelectedRecordIdsState,
     objectFilterDropdownSelectedOptionValuesState,
-    isObjectFilterDropdownOperandSelectUnfoldedState,
-    isObjectFilterDropdownUnfoldedState,
     selectedFilterState,
     selectedOperandInDropdownState,
     onFilterSelectState,
+    advancedFilterViewFilterGroupIdState,
+    advancedFilterViewFilterIdState,
   } = useFilterDropdownStates(scopeId);
+
+  const { upsertCombinedViewFilter } = useUpsertCombinedViewFilters();
 
   const selectFilter = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -38,9 +43,13 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
         set(selectedFilterState, filter);
         const onFilterSelect = getSnapshotValue(snapshot, onFilterSelectState);
 
+        if (isDefined(filter)) {
+          upsertCombinedViewFilter(filter);
+        }
+
         onFilterSelect?.(filter);
       },
-    [selectedFilterState, onFilterSelectState],
+    [selectedFilterState, onFilterSelectState, upsertCombinedViewFilter],
   );
 
   const emptyFilterButKeepDefinition = useRecoilCallback(
@@ -110,13 +119,14 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
   const setObjectFilterDropdownSelectedOptionValues = useSetRecoilState(
     objectFilterDropdownSelectedOptionValuesState,
   );
-  const setIsObjectFilterDropdownOperandSelectUnfolded = useSetRecoilState(
-    isObjectFilterDropdownOperandSelectUnfoldedState,
-  );
-  const setIsObjectFilterDropdownUnfolded = useSetRecoilState(
-    isObjectFilterDropdownUnfoldedState,
-  );
+
   const setOnFilterSelect = useSetRecoilState(onFilterSelectState);
+  const setAdvancedFilterViewFilterGroupId = useSetRecoilState(
+    advancedFilterViewFilterGroupIdState,
+  );
+  const setAdvancedFilterViewFilterId = useSetRecoilState(
+    advancedFilterViewFilterIdState,
+  );
 
   return {
     scopeId,
@@ -126,22 +136,20 @@ export const useFilterDropdown = (props?: UseFilterDropdownProps) => {
     setSelectedOperandInDropdown,
     setFilterDefinitionUsedInDropdown,
     setObjectFilterDropdownSearchInput,
-    // setObjectFilterDropdownSelectedEntityId,
     setObjectFilterDropdownSelectedRecordIds,
     setObjectFilterDropdownSelectedOptionValues,
-    setIsObjectFilterDropdownOperandSelectUnfolded,
-    setIsObjectFilterDropdownUnfolded,
     setOnFilterSelect,
+    setAdvancedFilterViewFilterGroupId,
+    setAdvancedFilterViewFilterId,
     emptyFilterButKeepDefinition,
     filterDefinitionUsedInDropdownState,
     objectFilterDropdownSearchInputState,
-    // objectFilterDropdownSelectedEntityIdState,
     objectFilterDropdownSelectedRecordIdsState,
     objectFilterDropdownSelectedOptionValuesState,
-    isObjectFilterDropdownOperandSelectUnfoldedState,
-    isObjectFilterDropdownUnfoldedState,
     selectedFilterState,
     selectedOperandInDropdownState,
     onFilterSelectState,
+    advancedFilterViewFilterGroupIdState,
+    advancedFilterViewFilterIdState,
   };
 };

@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { Card, CardContent } from 'twenty-ui';
 
 import PreviewBackgroundImage from '../assets/preview-background.svg';
 import SyncImage from '../assets/sync.svg?react';

@@ -3,7 +3,6 @@ import { Meta, StoryObj } from '@storybook/react';
 import { fireEvent, within } from '@storybook/test';
 import { HttpResponse, graphql } from 'msw';
 
-import { AppPath } from '@/types/AppPath';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { GET_WORKSPACE_FROM_INVITE_HASH } from '@/workspace/graphql/queries/getWorkspaceFromInviteHash';
 import {
@@ -12,6 +11,7 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
+import { AppPath } from '@/types/AppPath';
 import { Invite } from '../Invite';
 
 const meta: Meta<PageDecoratorArgs> = {

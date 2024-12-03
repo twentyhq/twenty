@@ -22,10 +22,10 @@ services:
       - "3000:3000"
     environment:
       PORT: 3000
-      PG_DATABASE_URL: postgres://twenty:twenty@${PG_DATABASE_HOST}/default
+      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
       SERVER_URL: ${SERVER_URL}
       FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
-      REDIS_URL: ${REDIS_URL:-redis://localhost:6379}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
       ENABLE_DB_MIGRATIONS: "true"
 
@@ -35,10 +35,7 @@ services:
       STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
-      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
-      LOGIN_TOKEN_SECRET: ${LOGIN_TOKEN_SECRET}
-      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
-      FILE_TOKEN_SECRET: ${FILE_TOKEN_SECRET}
+      APP_SECRET: ${APP_SECRET}
     depends_on:
       change-vol-ownership:
         condition: service_completed_successfully
@@ -55,10 +52,10 @@ services:
     image: twentycrm/twenty:${TAG}
     command: ["yarn", "worker:prod"]
     environment:
-      PG_DATABASE_URL: postgres://twenty:twenty@${PG_DATABASE_HOST}/default
+      PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
       SERVER_URL: ${SERVER_URL}
       FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
-      REDIS_URL: ${REDIS_URL:-redis://localhost:6379}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
       ENABLE_DB_MIGRATIONS: "false" # it already runs on the server
 
@@ -67,10 +64,7 @@ services:
       STORAGE_S3_NAME: ${STORAGE_S3_NAME}
       STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
 
-      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
-      LOGIN_TOKEN_SECRET: ${LOGIN_TOKEN_SECRET}
-      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
-      FILE_TOKEN_SECRET: ${FILE_TOKEN_SECRET}
+      APP_SECRET: ${APP_SECRET}
     depends_on:
       db:
         condition: service_healthy
@@ -79,13 +73,16 @@ services:
     restart: always
 
   db:
-    image: twentycrm/twenty-postgres:${TAG}
+    image: twentycrm/twenty-postgres-spilo:${TAG}
     volumes:
-      - db-data:/bitnami/postgresql
+      - db-data:/home/postgres/pgdata
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+      PGUSER_SUPERUSER: ${PGUSER_SUPERUSER:-postgres}
+      PGPASSWORD_SUPERUSER: ${PGPASSWORD_SUPERUSER:-postgres}
+      ALLOW_NOSSL: "true"
+      SPILO_PROVIDER: "local"
     healthcheck:
-      test: pg_isready -U twenty -d default
+      test: pg_isready -U ${PGUSER_SUPERUSER:-postgres} -h localhost -d postgres
       interval: 5s
       timeout: 5s
       retries: 10
@@ -93,8 +90,6 @@ services:
 
   redis:
     image: redis
-    ports:
-      - "6379:6379"
     restart: always
 
 volumes:

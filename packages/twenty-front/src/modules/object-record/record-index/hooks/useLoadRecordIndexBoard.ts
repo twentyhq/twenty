@@ -1,17 +1,21 @@
 import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
-import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
-import { turnFiltersIntoQueryFilter } from '@/object-record/record-filter/utils/turnFiltersIntoQueryFilter';
+import { useSetRecordBoardRecordIds } from '@/object-record/record-board/hooks/useSetRecordBoardRecordIds';
+import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
+import { recordBoardFieldDefinitionsComponentState } from '@/object-record/record-board/states/recordBoardFieldDefinitionsComponentState';
+import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
+import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 
 type UseLoadRecordIndexBoardProps = {
@@ -28,25 +32,34 @@ export const useLoadRecordIndexBoard = ({
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-  const {
-    setRecordIds: setRecordIdsInBoard,
-    setFieldDefinitions,
-    isCompactModeActiveState,
-  } = useRecordBoard(recordBoardId);
+
+  const setRecordBoardFieldDefinitions = useSetRecoilComponentStateV2(
+    recordBoardFieldDefinitionsComponentState,
+    recordBoardId,
+  );
+
+  const { setRecordIds: setRecordIdsInBoard } =
+    useSetRecordBoardRecordIds(recordBoardId);
+
   const { upsertRecords: upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const recordIndexFieldDefinitions = useRecoilValue(
     recordIndexFieldDefinitionsState,
   );
   useEffect(() => {
-    setFieldDefinitions(recordIndexFieldDefinitions);
-  }, [recordIndexFieldDefinitions, setFieldDefinitions]);
+    setRecordBoardFieldDefinitions(recordIndexFieldDefinitions);
+  }, [recordIndexFieldDefinitions, setRecordBoardFieldDefinitions]);
+
+  const recordIndexViewFilterGroups = useRecoilValue(
+    recordIndexViewFilterGroupsState,
+  );
 
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
   const recordIndexSorts = useRecoilValue(recordIndexSortsState);
-  const requestFilters = turnFiltersIntoQueryFilter(
+  const requestFilters = computeViewRecordGqlOperationFilter(
     recordIndexFilters,
     objectMetadataItem?.fields ?? [],
+    recordIndexViewFilterGroups,
   );
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, recordIndexSorts);
 
@@ -75,7 +88,10 @@ export const useLoadRecordIndexBoard = ({
   const { setRecordCountInCurrentView } =
     useSetRecordCountInCurrentView(viewBarId);
 
-  const setIsCompactModeActive = useSetRecoilState(isCompactModeActiveState);
+  const setIsCompactModeActive = useSetRecoilComponentStateV2(
+    isRecordBoardCompactModeActiveComponentState,
+    recordBoardId,
+  );
 
   useEffect(() => {
     setRecordIdsInBoard(records);

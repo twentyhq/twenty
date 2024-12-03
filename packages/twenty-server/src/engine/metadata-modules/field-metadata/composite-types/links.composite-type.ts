@@ -27,8 +27,13 @@ export const linksCompositeType: CompositeType = {
   ],
 };
 
+export type LinkMetadata = {
+  label: string;
+  url: string;
+};
+
 export type LinksMetadata = {
   primaryLinkLabel: string;
   primaryLinkUrl: string;
-  secondaryLinks: object | null;
+  secondaryLinks: LinkMetadata[] | null;
 };

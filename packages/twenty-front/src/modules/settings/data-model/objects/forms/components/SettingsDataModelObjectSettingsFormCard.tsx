@@ -11,8 +11,7 @@ import {
   SettingsDataModelObjectIdentifiersForm,
   SettingsDataModelObjectIdentifiersFormValues,
 } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectIdentifiersForm';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { Card, CardContent } from 'twenty-ui';
 
 type SettingsDataModelObjectSettingsFormCardProps = {
   objectMetadataItem: ObjectMetadataItem;

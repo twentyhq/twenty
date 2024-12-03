@@ -10,9 +10,10 @@ import {
   useRef,
   useState,
 } from 'react';
-import { IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
+import { IconComponent, IconEye, IconEyeOff, RGBA } from 'twenty-ui';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
+import { InputLabel } from './InputLabel';
 
 const StyledContainer = styled.div<
   Pick<TextInputV2ComponentProps, 'fullWidth'>
@@ -22,17 +23,11 @@ const StyledContainer = styled.div<
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};
 `;
 
-const StyledLabel = styled.label`
-  color: ${({ theme }) => theme.font.color.light};
-  font-size: ${({ theme }) => theme.font.size.xs};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
-  margin-bottom: ${({ theme }) => theme.spacing(1)};
-`;
-
 const StyledInputContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
+  position: relative;
 `;
 
 const StyledInput = styled.input<
@@ -42,12 +37,7 @@ const StyledInput = styled.input<
   border: 1px solid
     ${({ theme, error }) =>
       error ? theme.border.color.danger : theme.border.color.medium};
-  border-bottom-left-radius: ${({ theme, LeftIcon }) =>
-    !LeftIcon && theme.border.radius.sm};
-  border-right: none;
-  border-left: ${({ LeftIcon }) => LeftIcon && 'none'};
-  border-top-left-radius: ${({ theme, LeftIcon }) =>
-    !LeftIcon && theme.border.radius.sm};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   box-sizing: border-box;
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
@@ -57,6 +47,8 @@ const StyledInput = styled.input<
   height: 32px;
   outline: none;
   padding: ${({ theme }) => theme.spacing(2)};
+  padding-left: ${({ theme, LeftIcon }) =>
+    LeftIcon ? `calc(${theme.spacing(4)} + 16px)` : theme.spacing(2)};
   width: 100%;
 
   &::placeholder,
@@ -69,6 +61,13 @@ const StyledInput = styled.input<
   &:disabled {
     color: ${({ theme }) => theme.font.color.tertiary};
   }
+
+  &:focus {
+    ${({ theme }) => {
+      return `box-shadow: 0px 0px 0px 3px ${RGBA(theme.color.blue, 0.1)};
+      border-color: ${theme.color.blue};`;
+    }};
+  }
 `;
 
 const StyledErrorHelper = styled.div`
@@ -79,30 +78,27 @@ const StyledErrorHelper = styled.div`
 
 const StyledLeftIconContainer = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-bottom-left-radius: ${({ theme }) => theme.border.radius.sm};
-  border-right: none;
-  border-top-left-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   justify-content: center;
   padding-left: ${({ theme }) => theme.spacing(2)};
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
 `;
 
 const StyledTrailingIconContainer = styled.div<
   Pick<TextInputV2ComponentProps, 'error'>
 >`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid
-    ${({ theme, error }) =>
-      error ? theme.border.color.danger : theme.border.color.medium};
-  border-bottom-right-radius: ${({ theme }) => theme.border.radius.sm};
-  border-left: none;
-  border-top-right-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   justify-content: center;
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto 0;
 `;
 
 const StyledTrailingIcon = styled.div`
@@ -175,9 +171,9 @@ const TextInputV2Component = (
   return (
     <StyledContainer className={className} fullWidth={fullWidth ?? false}>
       {label && (
-        <StyledLabel htmlFor={inputId}>
+        <InputLabel htmlFor={inputId}>
           {label + (required ? '*' : '')}
-        </StyledLabel>
+        </InputLabel>
       )}
       <StyledInputContainer>
         {!!LeftIcon && (

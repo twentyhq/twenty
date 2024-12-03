@@ -1,5 +1,5 @@
-import { CardContent } from '@/ui/layout/card/components/CardContent';
 import styled from '@emotion/styled';
+import { CardContent } from 'twenty-ui';
 import React from 'react';
 
 const StyledRowContent = styled(CardContent)<{

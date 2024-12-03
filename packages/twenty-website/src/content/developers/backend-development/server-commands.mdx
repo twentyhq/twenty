@@ -6,39 +6,58 @@ image: /images/user-guide/kanban-views/kanban.png
 
 ## Useful commands
 
-These commands should be exectued from packages/twenty-server folder.
-From any other folder you can run `npx nx <command>` twenty-server.
+These commands should be executed from packages/twenty-server folder.
+From any other folder you can run `npx nx <command> twenty-server` (or `npx nx run twenty-server:<command>`).
 
 ### First time setup
 
 ```
-npx nx database:reset # setup the database with dev seeds
+npx nx database:reset twenty-server # setup the database with dev seeds
 ```
 
-###  Starting the app
+### Starting the server
 
 ```
-npx nx start
+npx nx run twenty-server:start
 ```
 
 ### Lint
 
 ```
-npx nx lint
+npx nx run twenty-server:lint # pass --fix to fix lint errors
 ```
 
 ### Test
 
 ```
-npx nx test:unit
+npx nx run twenty-server:test:unit          # run unit tests
+npx nx run twenty-server:test:integration   # run integration tests
 ```
+Note : you can run `npx nx run twenty-server:test:integration:with-db-reset` in case you need to reset the database before running the integration tests.
 
 ### Resetting the database
 
 If you want to reset the database, you can run the following command:
 
 ```bash
-npx nx database:reset
+npx nx run twenty-server:database:reset
+```
+
+### Migrations
+
+#### For objects in Core/Metadata schemas (TypeORM)
+
+```bash
+npx nx run twenty-server:typeorm --migration:generate src/database/typeorm/metadata/migrations/nameOfYourMigration -d src/database/typeorm/metadata/metadata.datasource.ts # replace by core data source if necessary
+```
+
+#### For Workspace objects
+
+There are no migrations files, migration are generated automatically for each workspace,
+stored in the database, and applied with this command
+
+```bash
+npx nx run twenty-server:command workspace:sync-metadata -f
 ```
 
 <ArticleWarning>

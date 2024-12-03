@@ -3,10 +3,10 @@ ARG SPILO_VERSION=3.2-p1
 ARG WRAPPERS_VERSION=0.2.0
 
 # Build the mysql_fdw extension
-FROM debian:bookworm as build-mysql_fdw
+FROM debian:bookworm AS build-mysql_fdw
 ARG POSTGRES_VERSION
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt install -y \
     build-essential \
@@ -17,14 +17,14 @@ RUN apt update && \
 
 # Install mysql_fdw
 RUN git clone https://github.com/EnterpriseDB/mysql_fdw.git
-WORKDIR mysql_fdw
+WORKDIR /mysql_fdw
 RUN make USE_PGXS=1
 
 
 # Build libssl for wrappers
-FROM ubuntu:22.04 as build-libssl
+FROM ubuntu:22.04 AS build-libssl
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update && \
     apt install -y \
     build-essential \

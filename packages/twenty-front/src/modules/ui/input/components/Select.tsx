@@ -1,23 +1,24 @@
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { MouseEvent, useMemo, useRef, useState } from 'react';
-import { IconChevronDown, IconComponent } from 'twenty-ui';
+import { IconComponent, MenuItem } from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
+import { SelectControl } from '@/ui/input/components/SelectControl';
 import { isDefined } from '~/utils/isDefined';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
-export type SelectOption<Value extends string | number | null> = {
+export type SelectOption<Value extends string | number | boolean | null> = {
   value: Value;
   label: string;
   Icon?: IconComponent;
 };
+
+export type SelectSizeVariant = 'small' | 'default';
 
 type CallToActionButton = {
   text: string;
@@ -25,12 +26,16 @@ type CallToActionButton = {
   Icon?: IconComponent;
 };
 
-export type SelectProps<Value extends string | number | null> = {
+export type SelectValue = string | number | boolean | null;
+
+export type SelectProps<Value extends SelectValue> = {
   className?: string;
   disabled?: boolean;
+  selectSizeVariant?: SelectSizeVariant;
   disableBlur?: boolean;
   dropdownId: string;
   dropdownWidth?: `${string}px` | 'auto' | number;
+  dropdownWidthAuto?: boolean;
   emptyOption?: SelectOption<Value>;
   fullWidth?: boolean;
   label?: string;
@@ -46,22 +51,6 @@ const StyledContainer = styled.div<{ fullWidth?: boolean }>`
   width: ${({ fullWidth }) => (fullWidth ? '100%' : 'auto')};
 `;
 
-const StyledControlContainer = styled.div<{ disabled?: boolean }>`
-  align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  box-sizing: border-box;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ disabled, theme }) =>
-    disabled ? theme.font.color.tertiary : theme.font.color.primary};
-  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(8)};
-  justify-content: space-between;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledLabel = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   display: block;
@@ -70,25 +59,14 @@ const StyledLabel = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledControlLabel = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledIconChevronDown = styled(IconChevronDown)<{
-  disabled?: boolean;
-}>`
-  color: ${({ disabled, theme }) =>
-    disabled ? theme.font.color.extraLight : theme.font.color.tertiary};
-`;
-
-export const Select = <Value extends string | number | null>({
+export const Select = <Value extends SelectValue>({
   className,
   disabled: disabledFromProps,
+  selectSizeVariant,
   disableBlur = false,
   dropdownId,
   dropdownWidth = 176,
+  dropdownWidthAuto = false,
   emptyOption,
   fullWidth,
   label,
@@ -101,7 +79,6 @@ export const Select = <Value extends string | number | null>({
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
-  const theme = useTheme();
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const selectedOption =
@@ -120,27 +97,16 @@ export const Select = <Value extends string | number | null>({
 
   const isDisabled =
     disabledFromProps ||
-    (options.length <= 1 && !isDefined(callToActionButton));
+    (options.length <= 1 &&
+      !isDefined(callToActionButton) &&
+      (!isDefined(emptyOption) || selectedOption !== emptyOption));
 
   const { closeDropdown } = useDropdown(dropdownId);
 
-  const selectControl = (
-    <StyledControlContainer disabled={isDisabled}>
-      <StyledControlLabel>
-        {!!selectedOption?.Icon && (
-          <selectedOption.Icon
-            color={
-              isDisabled ? theme.font.color.light : theme.font.color.primary
-            }
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        )}
-        {selectedOption?.label}
-      </StyledControlLabel>
-      <StyledIconChevronDown disabled={isDisabled} size={theme.icon.size.md} />
-    </StyledControlContainer>
-  );
+  const dropDownMenuWidth =
+    dropdownWidthAuto && selectContainerRef.current?.clientWidth
+      ? selectContainerRef.current?.clientWidth
+      : dropdownWidth;
 
   return (
     <StyledContainer
@@ -152,13 +118,23 @@ export const Select = <Value extends string | number | null>({
     >
       {!!label && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
-        selectControl
+        <SelectControl
+          selectedOption={selectedOption}
+          isDisabled={isDisabled}
+          selectSizeVariant={selectSizeVariant}
+        />
       ) : (
         <Dropdown
           dropdownId={dropdownId}
-          dropdownMenuWidth={dropdownWidth}
+          dropdownMenuWidth={dropDownMenuWidth}
           dropdownPlacement="bottom-start"
-          clickableComponent={selectControl}
+          clickableComponent={
+            <SelectControl
+              selectedOption={selectedOption}
+              isDisabled={isDisabled}
+              selectSizeVariant={selectSizeVariant}
+            />
+          }
           disableBlur={disableBlur}
           dropdownComponents={
             <>
@@ -176,7 +152,7 @@ export const Select = <Value extends string | number | null>({
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {filteredOptions.map((option) => (
                     <MenuItem
-                      key={option.value}
+                      key={`${option.value}-${option.label}`}
                       LeftIcon={option.Icon}
                       text={option.label}
                       onClick={() => {

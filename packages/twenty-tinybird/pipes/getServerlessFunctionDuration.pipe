@@ -1,0 +1,29 @@
+INCLUDE "../includes/timeSeries.incl"
+
+NODE timeSeriesServerlessFunctionDurationData
+SQL >
+    %
+    SELECT
+        {% if granularity == "hour" %} toStartOfHour(timestamp)
+        {% else %} toDateTime64(toStartOfDay(timestamp), 3)
+        {% end %} AS interval,
+        avg(CAST(durationInMs AS Float64)) as average,
+        min(durationInMs) as minimum,
+        max(durationInMs) as maximum
+    FROM serverlessFunctionEventMV
+    WHERE
+        true
+        AND workspaceId
+        ={{ String(workspaceId, '20202020-1c25-4d02-bf25-6aeccf7ea419', required=True) }}
+        AND functionId = {{ String(functionId, 'a9fd87c0-af86-4e17-be3a-a6d3d961678a', required=True) }}
+        AND timestamp >= parseDateTime64BestEffort({{ String(start, '2024-11-01T00:00:00.000Z') }}, 3)
+        AND timestamp < parseDateTime64BestEffort({{ String(end, '2024-11-02T00:00:00.000Z') }}, 3)
+    GROUP BY interval
+    ORDER BY interval
+
+NODE endpoint
+SQL >
+    %
+    SELECT formatDateTime(interval, '%FT%T.000%z') as start, minimum, maximum, average
+    FROM selectIntervalByGranularity
+    LEFT JOIN timeSeriesServerlessFunctionDurationData USING interval

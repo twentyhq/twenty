@@ -1,8 +1,9 @@
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { SettingsPath } from '@/types/SettingsPath';
 import { apiKeyTokenState } from '@/settings/developers/states/generatedApiKeyTokenState';
-import { useRecoilValue, useResetRecoilState } from 'recoil';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
+import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+
 import { isDefined } from '~/utils/isDefined';
 
 export const useCleanRecoilState = () => {

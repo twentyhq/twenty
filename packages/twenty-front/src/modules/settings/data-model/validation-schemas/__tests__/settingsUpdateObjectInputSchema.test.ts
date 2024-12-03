@@ -12,6 +12,8 @@ describe('settingsUpdateObjectInputSchema', () => {
       icon: 'IconName',
       labelPlural: 'Labels Plural    ',
       labelSingular: '   Label Singular',
+      namePlural: 'namePlural',
+      nameSingular: 'nameSingular',
       labelIdentifierFieldMetadataId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
     };
 
@@ -26,8 +28,8 @@ describe('settingsUpdateObjectInputSchema', () => {
       labelIdentifierFieldMetadataId: validInput.labelIdentifierFieldMetadataId,
       labelPlural: 'Labels Plural',
       labelSingular: 'Label Singular',
-      namePlural: 'labelsPlural',
-      nameSingular: 'labelSingular',
+      namePlural: 'namePlural',
+      nameSingular: 'nameSingular',
     });
   });
 

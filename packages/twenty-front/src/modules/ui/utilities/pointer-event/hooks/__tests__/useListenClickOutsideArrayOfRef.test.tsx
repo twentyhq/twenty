@@ -1,13 +1,12 @@
+import { fireEvent, renderHook } from '@testing-library/react';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
-import { fireEvent, render, renderHook } from '@testing-library/react';
 
 import { isDefined } from '~/utils/isDefined';
 
 import {
   ClickOutsideMode,
   useListenClickOutside,
-  useListenClickOutsideByClassName,
 } from '../useListenClickOutside';
 
 const containerRef = React.createRef<HTMLDivElement>();
@@ -75,61 +74,5 @@ describe('useListenClickOutside', () => {
     });
 
     expect(callback).toHaveBeenCalled();
-  });
-});
-
-describe('useListenClickOutsideByClassName', () => {
-  it('should trigger the callback when clicking outside the specified class names', () => {
-    const callback = jest.fn();
-    const { container } = render(
-      <div>
-        <div className="wont-trigger other-class">Inside</div>
-        <div className="will-trigger">Outside</div>
-      </div>,
-    );
-
-    renderHook(() =>
-      useListenClickOutsideByClassName({
-        classNames: ['wont-trigger'],
-        callback,
-      }),
-    );
-
-    act(() => {
-      const notClickableElement = container.querySelector('.will-trigger');
-      if (isDefined(notClickableElement)) {
-        fireEvent.mouseDown(notClickableElement);
-        fireEvent.click(notClickableElement);
-      }
-    });
-
-    expect(callback).toHaveBeenCalled();
-  });
-
-  it('should not trigger the callback when clicking inside the specified class names', () => {
-    const callback = jest.fn();
-    const { container } = render(
-      <div>
-        <div className="wont-trigger other-class">Inside</div>
-        <div className="will-trigger">Outside</div>
-      </div>,
-    );
-
-    renderHook(() =>
-      useListenClickOutsideByClassName({
-        classNames: ['wont-trigger'],
-        callback,
-      }),
-    );
-
-    act(() => {
-      const notClickableElement = container.querySelector('.wont-trigger');
-      if (isDefined(notClickableElement)) {
-        fireEvent.mouseDown(notClickableElement);
-        fireEvent.click(notClickableElement);
-      }
-    });
-
-    expect(callback).not.toHaveBeenCalled();
   });
 });

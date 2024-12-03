@@ -18,7 +18,9 @@ export class RedisClientService implements OnModuleDestroy {
         throw new Error('REDIS_URL must be defined');
       }
 
-      this.redisClient = new IORedis(redisUrl);
+      this.redisClient = new IORedis(redisUrl, {
+        maxRetriesPerRequest: null,
+      });
     }
 
     return this.redisClient;

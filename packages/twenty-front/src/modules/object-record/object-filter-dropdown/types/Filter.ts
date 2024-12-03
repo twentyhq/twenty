@@ -7,7 +7,9 @@ export type Filter = {
   fieldMetadataId: string;
   value: string;
   displayValue: string;
+  viewFilterGroupId?: string;
   displayAvatarUrl?: string;
   operand: ViewFilterOperand;
+  positionInViewFilterGroup?: number | null;
   definition: FilterDefinition;
 };

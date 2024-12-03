@@ -22,7 +22,7 @@ export class LinksMetadata {
   primaryLinkUrl: string;
 
   @Field(() => [LinkMetadata], { nullable: true })
-  secondaryLinks: object | null;
+  secondaryLinks: LinkMetadata[] | null;
 }
 
 @ObjectType('TimelineCalendarEvent')

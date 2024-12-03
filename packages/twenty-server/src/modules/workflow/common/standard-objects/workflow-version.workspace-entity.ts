@@ -15,12 +15,13 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WORKFLOW_VERSION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowStep } from 'src/modules/workflow/workflow-executor/types/workflow-action.type';
+import { WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 export enum WorkflowVersionStatus {
@@ -47,13 +48,13 @@ const WorkflowVersionStatusOptions = [
     value: WorkflowVersionStatus.DEACTIVATED,
     label: 'Deactivated',
     position: 2,
-    color: 'red',
+    color: 'orange',
   },
   {
     value: WorkflowVersionStatus.ARCHIVED,
     label: 'Archived',
     position: 3,
-    color: 'grey',
+    color: 'gray',
   },
 ];
 
@@ -63,7 +64,7 @@ const WorkflowVersionStatusOptions = [
   labelSingular: 'Workflow Version',
   labelPlural: 'Workflow Versions',
   description: 'A workflow version',
-  icon: 'IconSettingsAutomation',
+  icon: STANDARD_OBJECT_ICONS.workflowVersion,
   labelIdentifierStandardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceGate({
@@ -97,7 +98,7 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconSettingsAutomation',
   })
   @WorkspaceIsNullable()
-  steps: WorkflowStep[] | null;
+  steps: WorkflowAction[] | null;
 
   @WorkspaceField({
     standardId: WORKFLOW_VERSION_STANDARD_FIELD_IDS.status,

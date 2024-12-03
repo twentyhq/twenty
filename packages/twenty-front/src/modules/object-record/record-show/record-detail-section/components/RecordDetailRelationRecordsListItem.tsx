@@ -9,6 +9,8 @@ import {
   IconDotsVertical,
   IconTrash,
   IconUnlink,
+  LightIconButton,
+  MenuItem,
 } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -23,9 +25,9 @@ import {
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
+import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { isFieldMetadataReadOnly } from '@/object-record/record-field/utils/isFieldMetadataReadOnly';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
@@ -33,12 +35,10 @@ import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
 
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
@@ -60,6 +60,14 @@ const StyledListItem = styled(RecordDetailRecordsListItem)<{
       pointer-events: auto;
     }
   }
+`;
+
+const StyledPropertyBox = styled(PropertyBox)`
+  align-items: flex-start;
+  display: flex;
+  padding-left: ${({ theme }) => theme.spacing(0)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(0)};
 `;
 
 const StyledClickableZone = styled.div`
@@ -181,7 +189,7 @@ export const RecordDetailRelationRecordsListItem = ({
     [isExpanded],
   );
 
-  const canEdit = !isFieldMetadataReadOnly(fieldDefinition.metadata);
+  const isReadOnly = useIsFieldValueReadOnly();
 
   return (
     <>
@@ -198,7 +206,7 @@ export const RecordDetailRelationRecordsListItem = ({
             accent="tertiary"
           />
         </StyledClickableZone>
-        {canEdit && (
+        {!isReadOnly && (
           <DropdownScope dropdownScopeId={dropdownScopeId}>
             <Dropdown
               dropdownId={dropdownScopeId}
@@ -233,7 +241,7 @@ export const RecordDetailRelationRecordsListItem = ({
         )}
       </StyledListItem>
       <AnimatedEaseInOut isOpen={isExpanded}>
-        <PropertyBox>
+        <StyledPropertyBox>
           {availableRelationFieldMetadataItems.map(
             (fieldMetadataItem, index) => (
               <FieldContext.Provider
@@ -258,7 +266,7 @@ export const RecordDetailRelationRecordsListItem = ({
               </FieldContext.Provider>
             ),
           )}
-        </PropertyBox>
+        </StyledPropertyBox>
       </AnimatedEaseInOut>
     </>
   );

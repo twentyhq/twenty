@@ -1,3 +1,5 @@
+import { slugify } from 'transliteration';
+
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import {
@@ -38,6 +40,13 @@ const reservedKeywords = [
   'fullNames',
   'address',
   'addresses',
+  'type',
+  'types',
+  'object',
+  'objects',
+  'index',
+  'relation',
+  'relations',
 ];
 
 export const validateObjectMetadataInputOrThrow = <
@@ -70,24 +79,20 @@ const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
 };
 
 const validateNameCamelCasedOrThrow = (name?: string) => {
-  if (name) {
-    if (name !== camelCase(name)) {
-      throw new ObjectMetadataException(
-        `Name should be in camelCase: ${name}`,
-        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      );
-    }
+  if (name && name !== camelCase(name)) {
+    throw new ObjectMetadataException(
+      `Name should be in camelCase: ${name}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
   }
 };
 
 const validateNameIsNotTooLongThrow = (name?: string) => {
-  if (name) {
-    if (exceedsDatabaseIdentifierMaximumLength(name)) {
-      throw new ObjectMetadataException(
-        `Name exceeds 63 characters: ${name}`,
-        ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
-      );
-    }
+  if (name && exceedsDatabaseIdentifierMaximumLength(name)) {
+    throw new ObjectMetadataException(
+      `Name exceeds 63 characters: ${name}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
   }
 };
 
@@ -105,5 +110,61 @@ const validateNameCharactersOrThrow = (name?: string) => {
     } else {
       throw error;
     }
+  }
+};
+
+export const computeMetadataNameFromLabel = (label: string): string => {
+  if (!label) {
+    throw new ObjectMetadataException(
+      'Label is required',
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
+
+  const prefixedLabel = /^\d/.test(label) ? `n${label}` : label;
+
+  if (prefixedLabel === '') {
+    return '';
+  }
+
+  const formattedString = slugify(prefixedLabel, {
+    trim: true,
+    separator: '_',
+    allowedChars: 'a-zA-Z0-9',
+  });
+
+  if (formattedString === '') {
+    throw new ObjectMetadataException(
+      `Invalid label: "${label}"`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
+
+  return camelCase(formattedString);
+};
+
+export const validateNameAndLabelAreSyncOrThrow = (
+  label: string,
+  name: string,
+) => {
+  const computedName = computeMetadataNameFromLabel(label);
+
+  if (name !== computedName) {
+    throw new ObjectMetadataException(
+      `Name is not synced with label. Expected name: "${computedName}", got ${name}`,
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
+  }
+};
+
+export const validateNameSingularAndNamePluralAreDifferentOrThrow = (
+  nameSingular: string,
+  namePlural: string,
+) => {
+  if (nameSingular === namePlural) {
+    throw new ObjectMetadataException(
+      'The singular and plural name cannot be the same for an object',
+      ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
+    );
   }
 };

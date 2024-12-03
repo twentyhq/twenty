@@ -2,6 +2,7 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
+
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 
@@ -232,17 +233,6 @@ const testCases = [
   { loc: AppPath.DevelopersCatchAll, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.SyncEmail, res: AppPath.SyncEmails },
   { loc: AppPath.DevelopersCatchAll, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.InviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.DevelopersCatchAll, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.Completed, res: undefined },
-
-  { loc: AppPath.Impersonate, isLoggedIn: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PlanRequired, res: AppPath.PlanRequired },
-  { loc: AppPath.Impersonate, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },
-  { loc: AppPath.Impersonate, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },
-  { loc: AppPath.Impersonate, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.PastDue, onboardingStatus: OnboardingStatus.Completed, res: undefined },
-  { loc: AppPath.Impersonate, isLoggedIn: false, subscriptionStatus: undefined, onboardingStatus: undefined, res: AppPath.SignInUp },
-  { loc: AppPath.Impersonate, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.WorkspaceActivation, res: AppPath.CreateWorkspace },
-  { loc: AppPath.Impersonate, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.ProfileCreation, res: AppPath.CreateProfile },
-  { loc: AppPath.Impersonate, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.SyncEmail, res: AppPath.SyncEmails },
-  { loc: AppPath.Impersonate, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.InviteTeam, res: AppPath.InviteTeam },
-  { loc: AppPath.Impersonate, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.Completed, res: undefined },
 
   { loc: AppPath.Authorize, isLoggedIn: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PlanRequired, res: AppPath.PlanRequired },
   { loc: AppPath.Authorize, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },

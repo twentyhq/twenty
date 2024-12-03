@@ -75,8 +75,9 @@ const getColumnExpression = (
 ): string => {
   const quotedColumnName = `"${columnName}"`;
 
-  if (fieldType === FieldMetadataType.EMAILS) {
-    return `
+  switch (fieldType) {
+    case FieldMetadataType.EMAILS:
+      return `
       COALESCE(
         replace(
           ${quotedColumnName},
@@ -86,7 +87,7 @@ const getColumnExpression = (
         ''
       )
     `;
-  } else {
-    return `COALESCE(${quotedColumnName}, '')`;
+    default:
+      return `COALESCE(${quotedColumnName}, '')`;
   }
 };

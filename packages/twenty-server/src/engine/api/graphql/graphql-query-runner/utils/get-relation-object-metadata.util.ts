@@ -1,7 +1,7 @@
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { ObjectMetadataMap } from 'src/engine/metadata-modules/utils/generate-object-metadata-map.util';
+import { ObjectMetadataMaps } from 'src/engine/metadata-modules/types/object-metadata-maps';
 import {
   deduceRelationDirection,
   RelationDirection,
@@ -9,7 +9,7 @@ import {
 
 export const getRelationObjectMetadata = (
   fieldMetadata: FieldMetadataInterface,
-  objectMetadataMap: ObjectMetadataMap,
+  objectMetadataMaps: ObjectMetadataMaps,
 ) => {
   const relationMetadata = getRelationMetadata(fieldMetadata);
 
@@ -20,8 +20,8 @@ export const getRelationObjectMetadata = (
 
   const referencedObjectMetadata =
     relationDirection === RelationDirection.TO
-      ? objectMetadataMap[relationMetadata.fromObjectMetadataId]
-      : objectMetadataMap[relationMetadata.toObjectMetadataId];
+      ? objectMetadataMaps.byId[relationMetadata.fromObjectMetadataId]
+      : objectMetadataMaps.byId[relationMetadata.toObjectMetadataId];
 
   if (!referencedObjectMetadata) {
     throw new Error(

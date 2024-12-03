@@ -25,6 +25,7 @@ const StyledContainer = styled.div`
   width: 300px;
   min-width: 300px;
   overflow: scroll;
+  overflow-x: hidden;
   height: calc(100vh - 60px);
   position: sticky;
   top: 64px;

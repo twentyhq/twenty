@@ -25,3 +25,7 @@ export const assert: Assert = (condition, message, ErrorType) => {
 
 export const assertNotNull = <T>(item: T): item is NonNullable<T> =>
   item !== null && item !== undefined;
+
+export const assertNever = (_value: never, message?: string): never => {
+  throw new Error(message ?? "Didn't expect to get here.");
+};

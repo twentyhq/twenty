@@ -1,13 +1,13 @@
-import { contextStoreCurrentObjectMetadataIdState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdState';
+import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useContext, useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
 
 export const RecordIndexContainerContextStoreObjectMetadataEffect = () => {
-  const setContextStoreCurrentObjectMetadataItem = useSetRecoilState(
-    contextStoreCurrentObjectMetadataIdState,
+  const setContextStoreCurrentObjectMetadataItem = useSetRecoilComponentStateV2(
+    contextStoreCurrentObjectMetadataIdComponentState,
   );
   const { objectNamePlural } = useContext(RecordIndexRootPropsContext);
 

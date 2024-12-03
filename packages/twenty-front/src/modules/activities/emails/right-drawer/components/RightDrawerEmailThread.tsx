@@ -9,12 +9,11 @@ import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMe
 import { IntermediaryMessages } from '@/activities/emails/right-drawer/components/IntermediaryMessages';
 import { useRightDrawerEmailThread } from '@/activities/emails/right-drawer/hooks/useRightDrawerEmailThread';
 import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
-import { Button } from '@/ui/input/button/components/Button';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThreadState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { IconArrowBackUp } from 'twenty-ui';
+import { Button, IconArrowBackUp } from 'twenty-ui';
 
 const StyledWrapper = styled.div`
   display: flex;

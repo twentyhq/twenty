@@ -1,57 +1,45 @@
 {
   "$schema": "../../node_modules/eslint-plugin-project-structure/folderStructure.schema.json",
+  "projectRoot": "packages/twenty-front",
+  "structureRoot": "src",
   "regexParameters": {
-    "camelCase": "^[a-z]+[A-Za-z0-9]+"
+    "camelCase": "^[a-z]+([A-Za-z0-9]+)+",
+    "kebab-case": "[a-z][a-z0-9]*(?:-[a-z0-9]+)*"
   },
   "structure": [
-    {
-      "name": "packages",
-      "children": [
-        {
-          "name": "twenty-front",
-          "children": [
-            { "name": "*", "children": [] },
-            { "name": "*" },
-            {
-              "name": "src",
-              "children": [
-                { "name": "*", "children": [] },
-                { "name": "*" },
-                {
-                  "name": "modules",
-                  "children": [
-                    { "ruleId": "moduleFolderRule" },
-                    { "name": "types", "ruleId": "doNotCheckLeafFolderRule" }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
+    { "name": "*" },
+    { "name": "*", "children": [] },
+    { "name": "modules", "ruleId": "modulesFolderRule" }
   ],
   "rules": {
+    "modulesFolderRule": {
+      "children": [
+        { "ruleId": "moduleFolderRule" },
+        { "name": "types", "children": [] }
+      ]
+    },
+
     "moduleFolderRule": {
-      "name": "^(?!utils$|hooks$|states$|types$|graphql$|components$|effect-components$|constants$|validation-schemas$|contexts$|scopes$|services$|errors$)[a-z][a-z0-9]**(?:-[a-z0-9]+)**$",
+      "name": "{kebab-case}",
       "folderRecursionLimit": 6,
       "children": [
         { "ruleId": "moduleFolderRule" },
         { "name": "hooks", "ruleId": "hooksLeafFolderRule" },
         { "name": "utils", "ruleId": "utilsLeafFolderRule" },
-        { "name": "states", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "types", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "graphql", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "components", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "effect-components", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "constants", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "validation-schemas", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "contexts", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "scopes", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "services", "ruleId": "doNotCheckLeafFolderRule" },
-        { "name": "errors", "ruleId": "doNotCheckLeafFolderRule" }
+        { "name": "states", "children": [] },
+        { "name": "types", "children": [] },
+        { "name": "graphql", "children": [] },
+        { "name": "components", "children": [] },
+        { "name": "effect-components", "children": [] },
+        { "name": "constants", "children": [] },
+        { "name": "validation-schemas", "children": [] },
+        { "name": "contexts", "children": [] },
+        { "name": "scopes", "children": [] },
+        { "name": "services", "children": [] },
+        { "name": "errors", "children": [] }
       ]
     },
+
     "hooksLeafFolderRule": {
       "folderRecursionLimit": 2,
       "children": [
@@ -63,12 +51,8 @@
         { "name": "internal", "ruleId": "hooksLeafFolderRule" }
       ]
     },
-    "doNotCheckLeafFolderRule": {
-      "folderRecursionLimit": 1,
-      "children": [{ "name": "*" }, { "name": "*", "children": [] }]
-    },
+
     "utilsLeafFolderRule": {
-      "folderRecursionLimit": 1,
       "children": [
         { "name": "{camelCase}.ts" },
         {

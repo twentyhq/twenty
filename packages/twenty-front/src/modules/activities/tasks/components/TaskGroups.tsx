@@ -6,6 +6,7 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
+  Button,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   IconPlus,
 } from 'twenty-ui';
@@ -15,11 +16,9 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/TasksTabListComponentId';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { Button } from '@/ui/input/button/components/Button';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import groupBy from 'lodash.groupby';
 import { AddTaskButton } from './AddTaskButton';
 import { TaskList } from './TaskList';

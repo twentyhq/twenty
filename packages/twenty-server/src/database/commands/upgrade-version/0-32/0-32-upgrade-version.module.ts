@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { EnforceUniqueConstraintsCommand } from 'src/database/commands/upgrade-version/0-32/0-32-enforce-unique-constraints.command';
+import { CopyWebhookOperationIntoOperationsCommand } from 'src/database/commands/upgrade-version/0-32/0-32-copy-webhook-operation-into-operations-command';
 import { SimplifySearchVectorExpressionCommand } from 'src/database/commands/upgrade-version/0-32/0-32-simplify-search-vector-expression';
 import { UpgradeTo0_32Command } from 'src/database/commands/upgrade-version/0-32/0-32-upgrade-version.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -10,6 +10,8 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { SearchModule } from 'src/engine/metadata-modules/search/search.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/workspace-sync-metadata-commands.module';
+
+import { BackfillViewGroupsCommand } from './0-32-backfill-view-groups.command';
 
 @Module({
   imports: [
@@ -24,7 +26,8 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
   ],
   providers: [
     UpgradeTo0_32Command,
-    EnforceUniqueConstraintsCommand,
+    BackfillViewGroupsCommand,
+    CopyWebhookOperationIntoOperationsCommand,
     SimplifySearchVectorExpressionCommand,
   ],
 })

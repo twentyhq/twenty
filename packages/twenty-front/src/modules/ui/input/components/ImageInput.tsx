@@ -1,8 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import React, { useMemo } from 'react';
-import { IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui';
-import { Button } from '@/ui/input/button/components/Button';
+import { Button, IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui';
 import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 import { isDefined } from '~/utils/isDefined';
 

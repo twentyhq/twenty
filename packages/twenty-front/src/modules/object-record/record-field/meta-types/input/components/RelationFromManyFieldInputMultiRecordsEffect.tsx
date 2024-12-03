@@ -5,28 +5,28 @@ import { useObjectRecordMultiSelectScopedStates } from '@/activities/hooks/useOb
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRelationField } from '@/object-record/record-field/meta-types/hooks/useRelationField';
 import { objectRecordMultiSelectComponentFamilyState } from '@/object-record/record-field/states/objectRecordMultiSelectComponentFamilyState';
-import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
-import { useRelationPickerEntitiesOptions } from '@/object-record/relation-picker/hooks/useRelationPickerEntitiesOptions';
-import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
-import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { useRecordPickerRecordsOptions } from '@/object-record/relation-picker/hooks/useRecordPickerRecordsOptions';
+import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
+import { ObjectRecordForSelect } from '@/object-record/types/ObjectRecordForSelect';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const RelationFromManyFieldInputMultiRecordsEffect = () => {
-  const { fieldValue, fieldDefinition } = useRelationField<EntityForSelect[]>();
-  const scopeId = useAvailableScopeIdOrThrow(
-    RelationPickerScopeInternalContext,
+  const { fieldValue, fieldDefinition } = useRelationField<RecordForSelect[]>();
+  const instanceId = useAvailableComponentInstanceIdOrThrow(
+    RecordPickerComponentInstanceContext,
   );
   const {
     objectRecordsIdsMultiSelectState,
     objectRecordMultiSelectCheckedRecordsIdsState,
     recordMultiSelectIsLoadingState,
-  } = useObjectRecordMultiSelectScopedStates(scopeId);
+  } = useObjectRecordMultiSelectScopedStates(instanceId);
   const [objectRecordsIdsMultiSelect, setObjectRecordsIdsMultiSelect] =
     useRecoilState(objectRecordsIdsMultiSelectState);
 
-  const { entities } = useRelationPickerEntitiesOptions({
-    relationObjectNameSingular:
+  const { records } = useRecordPickerRecordsOptions({
+    objectNameSingular:
       fieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
 
@@ -41,7 +41,7 @@ export const RelationFromManyFieldInputMultiRecordsEffect = () => {
 
   const allRecords = useMemo(
     () => [
-      ...entities.entitiesToSelect.map((entity) => {
+      ...records.recordsToSelect.map((entity) => {
         const { record, ...recordIdentifier } = entity;
         return {
           objectMetadataItem: objectMetadataItem,
@@ -50,7 +50,7 @@ export const RelationFromManyFieldInputMultiRecordsEffect = () => {
         };
       }),
     ],
-    [entities.entitiesToSelect, objectMetadataItem],
+    [records.recordsToSelect, objectMetadataItem],
   );
 
   const [
@@ -65,7 +65,7 @@ export const RelationFromManyFieldInputMultiRecordsEffect = () => {
           const currentRecord = snapshot
             .getLoadable(
               objectRecordMultiSelectComponentFamilyState({
-                scopeId: scopeId,
+                scopeId: instanceId,
                 familyKey: newRecord.record.id,
               }),
             )
@@ -86,7 +86,7 @@ export const RelationFromManyFieldInputMultiRecordsEffect = () => {
           ) {
             set(
               objectRecordMultiSelectComponentFamilyState({
-                scopeId: scopeId,
+                scopeId: instanceId,
                 familyKey: newRecordWithSelected.record.id,
               }),
               newRecordWithSelected,
@@ -94,7 +94,7 @@ export const RelationFromManyFieldInputMultiRecordsEffect = () => {
           }
         }
       },
-    [objectRecordMultiSelectCheckedRecordsIds, scopeId],
+    [objectRecordMultiSelectCheckedRecordsIds, instanceId],
   );
 
   useEffect(() => {
@@ -113,14 +113,14 @@ export const RelationFromManyFieldInputMultiRecordsEffect = () => {
   useEffect(() => {
     setObjectRecordMultiSelectCheckedRecordsIds(
       fieldValue
-        ? fieldValue.map((fieldValueItem: EntityForSelect) => fieldValueItem.id)
+        ? fieldValue.map((fieldValueItem: RecordForSelect) => fieldValueItem.id)
         : [],
     );
   }, [fieldValue, setObjectRecordMultiSelectCheckedRecordsIds]);
 
   useEffect(() => {
-    setRecordMultiSelectIsLoading(entities.loading);
-  }, [entities.loading, setRecordMultiSelectIsLoading]);
+    setRecordMultiSelectIsLoading(records.loading);
+  }, [records.loading, setRecordMultiSelectIsLoading]);
 
   return <></>;
 };

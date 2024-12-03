@@ -8,6 +8,7 @@ import {
   AnimatedPlaceholderEmptyTitle,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   H3Title,
+  Section,
 } from 'twenty-ui';
 
 import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
@@ -21,7 +22,6 @@ import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { Section } from '@/ui/layout/section/components/Section';
 import { TimelineCalendarEventsWithTotal } from '~/generated/graphql';
 
 const StyledContainer = styled.div`
@@ -36,6 +36,10 @@ const StyledContainer = styled.div`
 
 const StyledYear = styled.span`
   color: ${({ theme }) => theme.font.color.light};
+`;
+
+const StyledTitleContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
 `;
 
 export const Calendar = ({
@@ -131,14 +135,16 @@ export const Calendar = ({
 
           return (
             <Section key={monthTime}>
-              <H3Title
-                title={
-                  <>
-                    {monthLabel}
-                    {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
-                  </>
-                }
-              />
+              <StyledTitleContainer>
+                <H3Title
+                  title={
+                    <>
+                      {monthLabel}
+                      {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
+                    </>
+                  }
+                />
+              </StyledTitleContainer>
               <CalendarMonthCard dayTimes={monthDayTimes} />
             </Section>
           );

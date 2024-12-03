@@ -1,9 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronRight, Pill } from 'twenty-ui';
+import { IconChevronRight, Pill, Card, CardContent } from 'twenty-ui';
 
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { ReactNode } from 'react';
 
 type SettingsCardProps = {

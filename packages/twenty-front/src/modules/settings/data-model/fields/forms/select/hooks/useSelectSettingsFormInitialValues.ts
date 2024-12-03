@@ -7,14 +7,14 @@ import {
   FieldMetadataItemOption,
 } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
-import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/select/utils/getOptionValueFromLabel';
+import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 
 const DEFAULT_OPTION: FieldMetadataItemOption = {
   color: 'green',
   id: v4(),
   label: 'Option 1',
   position: 0,
-  value: getOptionValueFromLabel('Option 1'),
+  value: computeOptionValueFromLabel('Option 1'),
 };
 
 export const useSelectSettingsFormInitialValues = ({

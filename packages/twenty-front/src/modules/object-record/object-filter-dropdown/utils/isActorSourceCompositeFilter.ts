@@ -2,7 +2,7 @@ import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/F
 import { FieldActorValue } from '@/object-record/record-field/types/FieldMetadata';
 
 export const isActorSourceCompositeFilter = (
-  filterDefinition: FilterDefinition,
+  filterDefinition: Pick<FilterDefinition, 'compositeFieldName'>,
 ) => {
   return (
     filterDefinition.compositeFieldName ===

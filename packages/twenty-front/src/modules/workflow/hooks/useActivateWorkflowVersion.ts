@@ -1,10 +1,10 @@
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
-import { ApolloClient, useApolloClient, useMutation } from '@apollo/client';
+import { useApolloClient, useMutation } from '@apollo/client';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
-import { ACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/activateWorkflowVersion';
+import { ACTIVATE_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/activateWorkflowVersion';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
 import {
   ActivateWorkflowVersionMutation,
@@ -18,7 +18,7 @@ export const useActivateWorkflowVersion = () => {
     ActivateWorkflowVersionMutation,
     ActivateWorkflowVersionMutationVariables
   >(ACTIVATE_WORKFLOW_VERSION, {
-    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient,
   });
 
   const { objectMetadataItem: objectMetadataItemWorkflowVersion } =

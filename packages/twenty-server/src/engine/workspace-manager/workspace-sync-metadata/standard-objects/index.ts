@@ -1,6 +1,3 @@
-import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
-import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
-import { CommentWorkspaceEntity } from 'src/modules/activity/standard-objects/comment.workspace-entity';
 import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
 import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
@@ -10,6 +7,7 @@ import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/co
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { FavoriteFolderWorkspaceEntity } from 'src/modules/favorite-folder/standard-objects/favorite-folder.workspace-entity';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
@@ -27,7 +25,9 @@ import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/a
 import { BehavioralEventWorkspaceEntity } from 'src/modules/timeline/standard-objects/behavioral-event.workspace-entity';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
+import { ViewFilterGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter-group.workspace-entity';
 import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
+import { ViewGroupWorkspaceEntity } from 'src/modules/view/standard-objects/view-group.workspace-entity';
 import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
@@ -39,8 +39,6 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 
 // TODO: Maybe we should automate this with the DiscoverService of Nest.JS
 export const standardObjectMetadataDefinitions = [
-  ActivityTargetWorkspaceEntity,
-  ActivityWorkspaceEntity,
   ApiKeyWorkspaceEntity,
   AuditLogWorkspaceEntity,
   AttachmentWorkspaceEntity,
@@ -50,13 +48,15 @@ export const standardObjectMetadataDefinitions = [
   CalendarChannelWorkspaceEntity,
   CalendarChannelEventAssociationWorkspaceEntity,
   CalendarEventParticipantWorkspaceEntity,
-  CommentWorkspaceEntity,
   CompanyWorkspaceEntity,
   ConnectedAccountWorkspaceEntity,
   FavoriteWorkspaceEntity,
+  FavoriteFolderWorkspaceEntity,
   TimelineActivityWorkspaceEntity,
   ViewFieldWorkspaceEntity,
+  ViewGroupWorkspaceEntity,
   ViewFilterWorkspaceEntity,
+  ViewFilterGroupWorkspaceEntity,
   ViewSortWorkspaceEntity,
   ViewWorkspaceEntity,
   WebhookWorkspaceEntity,

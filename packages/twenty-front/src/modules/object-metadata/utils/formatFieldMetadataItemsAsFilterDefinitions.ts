@@ -8,10 +8,10 @@ import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
 export const formatFieldMetadataItemsAsFilterDefinitions = ({
   fields,
-  isArrayAndJsonFilterEnabled,
+  isJsonFilterEnabled,
 }: {
   fields: Array<ObjectMetadataItem['fields'][0]>;
-  isArrayAndJsonFilterEnabled: boolean;
+  isJsonFilterEnabled: boolean;
 }): FilterDefinition[] => {
   return fields.reduce((acc, field) => {
     if (
@@ -25,6 +25,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
 
     if (
       ![
+        FieldMetadataType.Boolean,
         FieldMetadataType.DateTime,
         FieldMetadataType.Date,
         FieldMetadataType.Text,
@@ -35,13 +36,13 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Address,
         FieldMetadataType.Relation,
         FieldMetadataType.Select,
+        FieldMetadataType.MultiSelect,
         FieldMetadataType.Currency,
         FieldMetadataType.Rating,
         FieldMetadataType.Actor,
         FieldMetadataType.Phones,
-        ...(isArrayAndJsonFilterEnabled
-          ? [FieldMetadataType.Array, FieldMetadataType.RawJson]
-          : []),
+        FieldMetadataType.Array,
+        ...(isJsonFilterEnabled ? [FieldMetadataType.RawJson] : []),
       ].includes(field.type)
     ) {
       return acc;
@@ -100,6 +101,8 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
       return 'ARRAY';
     case FieldMetadataType.RawJson:
       return 'RAW_JSON';
+    case FieldMetadataType.Boolean:
+      return 'BOOLEAN';
     default:
       return 'TEXT';
   }

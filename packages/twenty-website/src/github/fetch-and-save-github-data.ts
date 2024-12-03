@@ -14,7 +14,7 @@ export const fetchAndSaveGithubData = async () => {
     return new Error('No GitHub token provided');
   }
 
-  console.log('Synching data..');
+  console.log('Syncing data...');
 
   const query = graphql.defaults({
     headers: {

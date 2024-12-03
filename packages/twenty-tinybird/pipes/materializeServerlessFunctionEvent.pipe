@@ -1,0 +1,15 @@
+NODE mv
+SQL >
+    SELECT
+        timestamp,
+        workspaceId,
+        JSONExtractString(payload, 'functionId') as functionId,
+        JSONExtractInt(payload, 'duration') as durationInMs,
+        if(JSONExtractString(payload, 'status') = 'SUCCESS', TRUE, FALSE) as success,
+        JSONExtractString(payload, 'errorType') as errorType,
+        version
+    FROM event
+    WHERE action = 'serverlessFunction.executed'
+
+TYPE MATERIALIZED
+DATASOURCE serverlessFunctionEventMV

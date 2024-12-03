@@ -1,3 +1,9 @@
+import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
+import { NoteList } from '@/activities/notes/components/NoteList';
+import { useNotes } from '@/activities/notes/hooks/useNotes';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import styled from '@emotion/styled';
 import {
   AnimatedPlaceholder,
@@ -5,17 +11,10 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
+  Button,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   IconPlus,
 } from 'twenty-ui';
-
-import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { NoteList } from '@/activities/notes/components/NoteList';
-import { useNotes } from '@/activities/notes/hooks/useNotes';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { Button } from '@/ui/input/button/components/Button';
 
 const StyledNotesContainer = styled.div`
   display: flex;

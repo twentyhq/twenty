@@ -21,7 +21,6 @@ export const ObjectFilterDropdownDateInput = () => {
     filterDefinitionUsedInDropdownState,
     selectedOperandInDropdownState,
     selectedFilterState,
-    setIsObjectFilterDropdownUnfolded,
     selectFilter,
   } = useFilterDropdown();
 
@@ -63,9 +62,8 @@ export const ObjectFilterDropdownDateInput = () => {
           : newDate.toLocaleDateString()
         : '',
       definition: filterDefinitionUsedInDropdown,
+      viewFilterGroupId: selectedFilter?.viewFilterGroupId,
     });
-
-    setIsObjectFilterDropdownUnfolded(false);
   };
 
   const handleRelativeDateChange = (
@@ -92,9 +90,8 @@ export const ObjectFilterDropdownDateInput = () => {
       operand: selectedOperandInDropdown,
       displayValue: getRelativeDateDisplayValue(relativeDate),
       definition: filterDefinitionUsedInDropdown,
+      viewFilterGroupId: selectedFilter?.viewFilterGroupId,
     });
-
-    setIsObjectFilterDropdownUnfolded(false);
   };
 
   const isRelativeOperand =

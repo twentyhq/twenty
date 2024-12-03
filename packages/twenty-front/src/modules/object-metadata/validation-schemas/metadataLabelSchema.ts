@@ -2,7 +2,7 @@ import { errors } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import { z } from 'zod';
 
 import { METADATA_LABEL_VALID_PATTERN } from '~/pages/settings/data-model/constants/MetadataLabelValidPattern';
-import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 export const metadataLabelSchema = (existingLabels?: string[]) => {
   return z
     .string()
@@ -12,7 +12,7 @@ export const metadataLabelSchema = (existingLabels?: string[]) => {
     .refine(
       (label) => {
         try {
-          computeMetadataNameFromLabelOrThrow(label);
+          computeMetadataNameFromLabel(label);
           return true;
         } catch (error) {
           return false;
@@ -28,9 +28,7 @@ export const metadataLabelSchema = (existingLabels?: string[]) => {
           if (!existingLabels || !label?.length) {
             return true;
           }
-          return !existingLabels.includes(
-            computeMetadataNameFromLabelOrThrow(label),
-          );
+          return !existingLabels.includes(computeMetadataNameFromLabel(label));
         } catch (error) {
           return false;
         }

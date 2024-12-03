@@ -1,4 +1,7 @@
-import { WorkflowActionType } from '@/workflow/types/Workflow';
+import {
+  WorkflowActionType,
+  WorkflowTriggerType,
+} from '@/workflow/types/Workflow';
 import { Edge, Node } from '@xyflow/react';
 
 export type WorkflowDiagramNode = Node<WorkflowDiagramNodeData>;
@@ -11,13 +14,14 @@ export type WorkflowDiagram = {
 
 export type WorkflowDiagramStepNodeData =
   | {
-      nodeType: 'trigger' | 'condition';
-      label: string;
+      nodeType: 'trigger';
+      triggerType: WorkflowTriggerType;
+      name: string;
     }
   | {
       nodeType: 'action';
       actionType: WorkflowActionType;
-      label: string;
+      name: string;
     };
 
 export type WorkflowDiagramCreateStepNodeData = {

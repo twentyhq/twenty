@@ -3,7 +3,7 @@ import { isActorSourceCompositeFilter } from '@/object-record/object-filter-drop
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
 export const getOperandsForFilterDefinition = (
-  filterDefinition: FilterDefinition,
+  filterDefinition: Pick<FilterDefinition, 'type' | 'compositeFieldName'>,
 ): ViewFilterOperand[] => {
   const emptyOperands = [
     ViewFilterOperand.IsEmpty,
@@ -58,8 +58,14 @@ export const getOperandsForFilterDefinition = (
       ];
     case 'RELATION':
       return [...relationOperands, ...emptyOperands];
+    case 'MULTI_SELECT':
+      return [
+        ViewFilterOperand.Contains,
+        ViewFilterOperand.DoesNotContain,
+        ...emptyOperands,
+      ];
     case 'SELECT':
-      return [...relationOperands];
+      return [ViewFilterOperand.Is, ViewFilterOperand.IsNot, ...emptyOperands];
     case 'ACTOR': {
       if (isActorSourceCompositeFilter(filterDefinition)) {
         return [
@@ -81,6 +87,8 @@ export const getOperandsForFilterDefinition = (
         ViewFilterOperand.DoesNotContain,
         ...emptyOperands,
       ];
+    case 'BOOLEAN':
+      return [ViewFilterOperand.Is];
     default:
       return [];
   }

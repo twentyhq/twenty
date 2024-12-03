@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { AxiosRequestConfig } from 'axios';
 
+import { AnalyticsTinybirdJwtMap } from 'src/engine/core-modules/analytics/entities/analytics-tinybird-jwts.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
@@ -89,24 +90,56 @@ export class AnalyticsService {
     return { success: true };
   }
 
-  async generateWorkspaceJwt(workspaceId: string | undefined) {
-    const pipeId = 't_b49e0fe60f9e438eae81cb31c5260df2'; // refactor this pass as params
-    //perhaps a constant of name:pipeId??? better typing in this func^
-    const payload = {
-      name: 'my_demo_jwt',
+  generateWorkspaceJwt(
+    workspaceId: string | undefined,
+  ): AnalyticsTinybirdJwtMap | null {
+    if (!this.environmentService.get('ANALYTICS_ENABLED')) {
+      return null;
+    }
+
+    const jwtPayload = {
+      name: 'analytics_jwt',
       workspace_id: this.environmentService.get('TINYBIRD_WORKSPACE_UUID'),
       scopes: [
         {
           type: 'PIPES:READ',
-          resource: pipeId,
-          fixed_params: { workspaceId: workspaceId },
+          resource: '',
+          fixed_params: { workspaceId },
         },
       ],
     };
 
-    return this.jwtWrapperService.sign(payload, {
+    const jwtOptions = {
       secret: this.environmentService.get('TINYBIRD_GENERATE_JWT_TOKEN'),
       expiresIn: '7d',
-    });
+    };
+
+    const analyticsProperties = [
+      'getWebhookAnalytics',
+      'getPageviewsAnalytics',
+      'getUsersAnalytics',
+      'getServerlessFunctionDuration',
+      'getServerlessFunctionSuccessRate',
+      'getServerlessFunctionErrorCount',
+    ];
+
+    return analyticsProperties.reduce(
+      (acc, property) => ({
+        ...acc,
+        [property]: this.jwtWrapperService.sign(
+          {
+            ...jwtPayload,
+            scopes: [
+              {
+                ...jwtPayload.scopes[0],
+                resource: property,
+              },
+            ],
+          },
+          jwtOptions,
+        ),
+      }),
+      {},
+    ) as AnalyticsTinybirdJwtMap;
   }
 }

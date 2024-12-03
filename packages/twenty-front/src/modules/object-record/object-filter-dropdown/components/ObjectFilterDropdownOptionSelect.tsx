@@ -13,9 +13,10 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/internal/useSelectableListStates';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemMultiSelect } from '@/ui/navigation/menu-item/components/MenuItemMultiSelect';
+
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { MenuItem, MenuItemMultiSelect } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
 export const EMPTY_FILTER_VALUE = '';
@@ -135,6 +136,7 @@ export const ObjectFilterDropdownOptionSelect = () => {
         displayValue: filterDisplayValue,
         fieldMetadataId: filterDefinitionUsedInDropdown.fieldMetadataId,
         value: newFilterValue,
+        viewFilterGroupId: selectedFilter?.viewFilterGroupId,
       });
     }
     resetSelectedItem();
@@ -161,21 +163,23 @@ export const ObjectFilterDropdownOptionSelect = () => {
         }
       }}
     >
-      <DropdownMenuItemsContainer hasMaxHeight>
-        {optionsInDropdown?.map((option) => (
-          <MenuItemMultiSelect
-            key={option.id}
-            selected={option.isSelected}
-            isKeySelected={option.id === selectedItemId}
-            onSelectChange={(selected) =>
-              handleMultipleOptionSelectChange(option, selected)
-            }
-            text={option.label}
-            color={option.color}
-            className=""
-          />
-        ))}
-      </DropdownMenuItemsContainer>
+      <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
+        <DropdownMenuItemsContainer hasMaxHeight>
+          {optionsInDropdown?.map((option) => (
+            <MenuItemMultiSelect
+              key={option.id}
+              selected={option.isSelected}
+              isKeySelected={option.id === selectedItemId}
+              onSelectChange={(selected) =>
+                handleMultipleOptionSelectChange(option, selected)
+              }
+              text={option.label}
+              color={option.color}
+              className=""
+            />
+          ))}
+        </DropdownMenuItemsContainer>
+      </ScrollWrapper>
       {showNoResult && <MenuItem text="No result" />}
     </SelectableList>
   );

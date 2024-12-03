@@ -1,8 +1,13 @@
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
+import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
 import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/states/workflowCreateStepFromParentStepIdState';
 import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/states/workflowDiagramTriggerNodeSelectionState';
+import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
 import {
   WorkflowStep,
   WorkflowStepType,
@@ -19,6 +24,9 @@ export const useCreateStep = ({
 }: {
   workflow: WorkflowWithCurrentVersion;
 }) => {
+  const { openRightDrawer } = useRightDrawer();
+  const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
+
   const workflowCreateStepFromParentStepId = useRecoilValue(
     workflowCreateStepFromParentStepIdState,
   );
@@ -33,6 +41,10 @@ export const useCreateStep = ({
     });
 
   const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
+
+  const { computeStepOutputSchema } = useComputeStepOutputSchema();
+
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
   const insertNodeAndSave = async ({
     parentNodeId,
@@ -77,12 +89,29 @@ export const useCreateStep = ({
       throw new Error('Select a step to create a new step from first.');
     }
 
-    const newStep = getStepDefaultDefinition(newStepType);
+    const newStep = getStepDefaultDefinition({
+      type: newStepType,
+      activeObjectMetadataItems,
+    });
+
+    const outputSchema = (
+      await computeStepOutputSchema({
+        step: newStep,
+      })
+    )?.data?.computeStepOutputSchema;
+
+    newStep.settings = {
+      ...newStep.settings,
+      outputSchema: outputSchema || {},
+    };
 
     await insertNodeAndSave({
       parentNodeId: workflowCreateStepFromParentStepId,
       nodeToAdd: newStep,
     });
+
+    setWorkflowSelectedNode(newStep.id);
+    openRightDrawer(RightDrawerPages.WorkflowStepEdit);
 
     /**
      * After the step has been created, select it.

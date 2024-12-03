@@ -8,14 +8,13 @@ export const recordTableRow: RecordTableRowContextProps = {
   recordId: 'recordId',
   pathToShowPage: '/',
   objectNameSingular: 'objectNameSingular',
-  isReadOnly: false,
   dragHandleProps: {} as any,
   isDragging: false,
   inView: true,
   isPendingRow: false,
 };
 
-export const recordTableCell:RecordTableCellContextProps= {
+export const recordTableCell: RecordTableCellContextProps = {
   columnIndex: 3,
   columnDefinition: {
     size: 1,

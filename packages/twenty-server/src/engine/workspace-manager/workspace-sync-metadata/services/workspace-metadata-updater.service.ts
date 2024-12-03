@@ -6,6 +6,7 @@ import {
   FindOptionsWhere,
   In,
   ObjectLiteral,
+  Repository,
 } from 'typeorm';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { v4 as uuidV4 } from 'uuid';
@@ -127,6 +128,11 @@ export class WorkspaceMetadataUpdaterService {
     updatedFieldMetadataCollection: FieldMetadataUpdate[];
   }> {
     const fieldMetadataRepository = manager.getRepository(FieldMetadataEntity);
+    const indexFieldMetadataRepository = manager.getRepository(
+      IndexFieldMetadataEntity,
+    );
+    const indexMetadataRepository = manager.getRepository(IndexMetadataEntity);
+
     /**
      * Update field metadata
      */
@@ -157,6 +163,12 @@ export class WorkspaceMetadataUpdaterService {
       );
 
     if (fieldMetadataDeleteCollectionWithoutRelationType.length > 0) {
+      await this.deleteIndexFieldMetadata(
+        fieldMetadataDeleteCollectionWithoutRelationType,
+        indexFieldMetadataRepository,
+        indexMetadataRepository,
+      );
+
       await fieldMetadataRepository.delete(
         fieldMetadataDeleteCollectionWithoutRelationType.map(
           (field) => field.id,
@@ -169,6 +181,33 @@ export class WorkspaceMetadataUpdaterService {
         createdFieldMetadataCollection as FieldMetadataEntity[],
       updatedFieldMetadataCollection,
     };
+  }
+
+  async deleteIndexFieldMetadata(
+    fieldMetadataDeleteCollectionWithoutRelationType: Partial<FieldMetadataEntity>[],
+    indexFieldMetadataRepository: Repository<IndexFieldMetadataEntity>,
+    indexMetadataRepository: Repository<IndexMetadataEntity>,
+  ) {
+    const indexFieldMetadatas = await indexFieldMetadataRepository.find({
+      where: {
+        fieldMetadataId: In(
+          fieldMetadataDeleteCollectionWithoutRelationType.map(
+            (field) => field.id,
+          ),
+        ),
+      },
+      relations: {
+        indexMetadata: true,
+      },
+    });
+
+    const uniqueIndexMetadataIds = [
+      ...new Set(indexFieldMetadatas.map((field) => field.indexMetadataId)),
+    ];
+
+    if (uniqueIndexMetadataIds.length > 0) {
+      await indexMetadataRepository.delete(uniqueIndexMetadataIds);
+    }
   }
 
   async updateRelationMetadata(

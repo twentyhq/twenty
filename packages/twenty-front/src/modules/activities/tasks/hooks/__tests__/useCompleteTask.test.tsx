@@ -51,7 +51,6 @@ const mocks: MockedResponse[] = [
               edges {
                 node {
                   __typename
-                  activityId
                   authorId
                   companyId
                   createdAt
@@ -85,6 +84,7 @@ const mocks: MockedResponse[] = [
                   companyId
                   createdAt
                   deletedAt
+                  favoriteFolderId
                   id
                   noteId
                   opportunityId
@@ -95,6 +95,8 @@ const mocks: MockedResponse[] = [
                   updatedAt
                   viewId
                   workflowId
+                  workflowRunId
+                  workflowVersionId
                   workspaceMemberId
                 }
               }
@@ -138,6 +140,9 @@ const mocks: MockedResponse[] = [
                   rocketId
                   taskId
                   updatedAt
+                  workflowId
+                  workflowRunId
+                  workflowVersionId
                   workspaceMemberId
                 }
               }

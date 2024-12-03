@@ -18,13 +18,7 @@ services:
         name: server
         type: web
         envVarKey: RENDER_EXTERNAL_URL
-    - key: ACCESS_TOKEN_SECRET
-      generateValue: true
-    - key: LOGIN_TOKEN_SECRET
-      generateValue: true
-    - key: REFRESH_TOKEN_SECRET
-      generateValue: true
-    - key: FILE_TOKEN_SECRET
+    - key: APP_SECRET
       generateValue: true
     - key: PG_DATABASE_HOST
       fromService:
@@ -55,13 +49,7 @@ services:
         name: server
         type: web
         envVarKey: RENDER_EXTERNAL_URL
-    - key: ACCESS_TOKEN_SECRET
-      generateValue: true
-    - key: LOGIN_TOKEN_SECRET
-      generateValue: true
-    - key: REFRESH_TOKEN_SECRET
-      generateValue: true
-    - key: FILE_TOKEN_SECRET
+    - key: APP_SECRET
       generateValue: true
     - key: PG_DATABASE_HOST
       fromService:
@@ -93,5 +81,3 @@ services:
     value: postgres
   - key: POSTGRES_PASSWORD
     value: postgres
-  - key: POSTGRES_DB
-    value: default

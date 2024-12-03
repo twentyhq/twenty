@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 
 import {
   UpdateSubscriptionJob,
@@ -10,8 +9,10 @@ import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/t
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/workspace-event.type';
+import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class BillingWorkspaceMemberListener {
@@ -21,8 +22,8 @@ export class BillingWorkspaceMemberListener {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  @OnEvent('workspaceMember.created')
-  @OnEvent('workspaceMember.deleted')
+  @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.CREATED)
+  @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.DELETED)
   async handleCreateOrDeleteEvent(
     payload: WorkspaceEventBatch<
       ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>

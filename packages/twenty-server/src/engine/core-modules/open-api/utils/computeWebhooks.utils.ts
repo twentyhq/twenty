@@ -2,17 +2,24 @@ import { OpenAPIV3_1 } from 'openapi-types';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { capitalize } from 'src/utils/capitalize';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 export const computeWebhooks = (
-  type: 'create' | 'update' | 'delete',
+  type: DatabaseEventAction,
   item: ObjectMetadataEntity,
 ): OpenAPIV3_1.PathItemObject => {
+  const updatedFields = {
+    type: 'array',
+    items: {
+      type: 'string',
+    },
+  };
+
   return {
     post: {
       tags: [item.nameSingular],
       security: [],
       requestBody: {
-        description: `*${type}*.**${item.nameSingular}**, *&#42;*.**${item.nameSingular}**, *&#42;*.**&#42;**`,
         content: {
           'application/json': {
             schema: {
@@ -22,17 +29,9 @@ export const computeWebhooks = (
                   type: 'string',
                   example: 'https://example.com/incomingWebhook',
                 },
-                description: {
+                eventName: {
                   type: 'string',
-                  example: 'A sample description',
-                },
-                eventType: {
-                  type: 'string',
-                  enum: [
-                    '*.*',
-                    '*.' + item.nameSingular,
-                    type + '.' + item.nameSingular,
-                  ],
+                  example: `${item.nameSingular}.${type}`,
                 },
                 objectMetadata: {
                   type: 'object',
@@ -60,8 +59,9 @@ export const computeWebhooks = (
                   example: '2024-02-14T11:27:01.779Z',
                 },
                 record: {
-                  $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+                  $ref: `#/components/schemas/${capitalize(item.nameSingular)} for Response`,
                 },
+                ...(type === DatabaseEventAction.UPDATED && { updatedFields }),
               },
             },
           },

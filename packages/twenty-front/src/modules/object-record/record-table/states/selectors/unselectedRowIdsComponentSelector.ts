@@ -1,23 +1,31 @@
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
-import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
-import { createComponentReadOnlySelector } from '@/ui/utilities/state/component-state/utils/createComponentReadOnlySelector';
+import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
+import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 
-export const unselectedRowIdsComponentSelector =
-  createComponentReadOnlySelector<string[]>({
-    key: 'unselectedRowIdsComponentSelector',
-    get:
-      ({ scopeId }) =>
-      ({ get }) => {
-        const rowIds = get(tableRowIdsComponentState({ scopeId }));
+export const unselectedRowIdsComponentSelector = createComponentSelectorV2<
+  string[]
+>({
+  key: 'unselectedRowIdsComponentSelector',
+  componentInstanceContext: RecordTableComponentInstanceContext,
+  get:
+    ({ instanceId }) =>
+    ({ get }) => {
+      const allRecordIds = get(
+        // TODO: Working because instanceId is the same, but we're not in the same context, should be changed !
+        recordIndexAllRecordIdsComponentSelector.selectorFamily({
+          instanceId,
+        }),
+      );
 
-        return rowIds.filter(
-          (rowId) =>
-            get(
-              isRowSelectedComponentFamilyState({
-                scopeId,
-                familyKey: rowId,
-              }),
-            ) === false,
-        );
-      },
-  });
+      return allRecordIds.filter(
+        (recordId) =>
+          get(
+            isRowSelectedComponentFamilyState.atomFamily({
+              instanceId,
+              familyKey: recordId,
+            }),
+          ) === false,
+      );
+    },
+});

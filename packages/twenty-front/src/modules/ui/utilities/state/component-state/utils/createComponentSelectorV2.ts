@@ -1,3 +1,5 @@
+/* eslint-disable no-redeclare */
+/* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { selectorFamily } from 'recoil';
 
 import { ComponentInstanceStateContext } from '@/ui/utilities/state/component-state/types/ComponentInstanceStateContext';
@@ -9,19 +11,33 @@ import { SelectorGetter } from '@/ui/utilities/state/types/SelectorGetter';
 import { SelectorSetter } from '@/ui/utilities/state/types/SelectorSetter';
 import { isDefined } from 'twenty-ui';
 
-export const createComponentSelectorV2 = <ValueType>({
+export function createComponentSelectorV2<ValueType>(options: {
+  key: string;
+  get: SelectorGetter<ValueType, ComponentStateKeyV2>;
+  set?: never;
+  componentInstanceContext: ComponentInstanceStateContext<any> | null;
+}): ComponentReadOnlySelectorV2<ValueType>;
+
+export function createComponentSelectorV2<ValueType>(options: {
+  key: string;
+  get: SelectorGetter<ValueType, ComponentStateKeyV2>;
+  set: SelectorSetter<ValueType, ComponentStateKeyV2>;
+  componentInstanceContext: ComponentInstanceStateContext<any> | null;
+}): ComponentSelectorV2<ValueType>;
+
+export function createComponentSelectorV2<ValueType>({
   key,
   get,
   set,
-  instanceContext,
+  componentInstanceContext,
 }: {
   key: string;
   get: SelectorGetter<ValueType, ComponentStateKeyV2>;
   set?: SelectorSetter<ValueType, ComponentStateKeyV2>;
-  instanceContext: ComponentInstanceStateContext<any> | null;
-}): ComponentSelectorV2<ValueType> | ComponentReadOnlySelectorV2<ValueType> => {
-  if (isDefined(instanceContext)) {
-    globalComponentInstanceContextMap.set(key, instanceContext);
+  componentInstanceContext: ComponentInstanceStateContext<any> | null;
+}): ComponentSelectorV2<ValueType> | ComponentReadOnlySelectorV2<ValueType> {
+  if (isDefined(componentInstanceContext)) {
+    globalComponentInstanceContextMap.set(key, componentInstanceContext);
   }
 
   if (isDefined(set)) {
@@ -44,4 +60,4 @@ export const createComponentSelectorV2 = <ValueType>({
       }),
     } satisfies ComponentReadOnlySelectorV2<ValueType>;
   }
-};
+}

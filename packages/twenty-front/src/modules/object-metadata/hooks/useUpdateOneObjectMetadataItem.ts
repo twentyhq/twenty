@@ -16,7 +16,7 @@ import { useApolloMetadataClient } from './useApolloMetadataClient';
 export const useUpdateOneObjectMetadataItem = () => {
   const apolloClientMetadata = useApolloMetadataClient();
 
-  const [mutate] = useMutation<
+  const [mutate, { loading }] = useMutation<
     UpdateOneObjectMetadataItemMutation,
     UpdateOneObjectMetadataItemMutationVariables
   >(UPDATE_ONE_OBJECT_METADATA_ITEM, {
@@ -42,5 +42,6 @@ export const useUpdateOneObjectMetadataItem = () => {
 
   return {
     updateOneObjectMetadataItem,
+    loading,
   };
 };

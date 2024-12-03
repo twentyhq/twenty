@@ -73,5 +73,52 @@ export const opportunitiesByStageView = (
         size: 150,
       },
     ],
+    groups: [
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
+            OPPORTUNITY_STANDARD_FIELD_IDS.stage
+          ],
+        isVisible: true,
+        fieldValue: 'NEW',
+        position: 0,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
+            OPPORTUNITY_STANDARD_FIELD_IDS.stage
+          ],
+        isVisible: true,
+        fieldValue: 'SCREENING',
+        position: 1,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
+            OPPORTUNITY_STANDARD_FIELD_IDS.stage
+          ],
+        isVisible: true,
+        fieldValue: 'MEETING',
+        position: 2,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
+            OPPORTUNITY_STANDARD_FIELD_IDS.stage
+          ],
+        isVisible: true,
+        fieldValue: 'PROPOSAL',
+        position: 3,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
+            OPPORTUNITY_STANDARD_FIELD_IDS.stage
+          ],
+        isVisible: true,
+        fieldValue: 'CUSTOMER',
+        position: 4,
+      },
+    ],
   };
 };

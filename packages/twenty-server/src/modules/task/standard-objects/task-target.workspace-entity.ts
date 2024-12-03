@@ -10,6 +10,7 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { TASK_TARGET_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
@@ -22,7 +23,7 @@ import { TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.work
   labelSingular: 'Task Target',
   labelPlural: 'Task Targets',
   description: 'An task target',
-  icon: 'IconCheckbox',
+  icon: STANDARD_OBJECT_ICONS.taskTarget,
 })
 @WorkspaceIsSystem()
 export class TaskTargetWorkspaceEntity extends BaseWorkspaceEntity {

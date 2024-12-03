@@ -5,12 +5,12 @@ import {
   SettingsDataModelFieldPreviewProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreview';
 import { SettingsDataModelObjectSummary } from '@/settings/data-model/objects/components/SettingsDataModelObjectSummary';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { Card, CardContent } from 'twenty-ui';
 
 export type SettingsDataModelFieldPreviewCardProps =
   SettingsDataModelFieldPreviewProps & {
     className?: string;
+    pluralizeLabel?: boolean;
   };
 
 const StyledCard = styled(Card)`
@@ -29,17 +29,23 @@ export const SettingsDataModelFieldPreviewCard = ({
   relationObjectMetadataItem,
   shrink,
   withFieldLabel = true,
-}: SettingsDataModelFieldPreviewCardProps) => (
-  <StyledCard className={className} fullWidth>
-    <StyledCardContent>
-      <SettingsDataModelObjectSummary objectMetadataItem={objectMetadataItem} />
-      <SettingsDataModelFieldPreview
-        objectMetadataItem={objectMetadataItem}
-        fieldMetadataItem={fieldMetadataItem}
-        relationObjectMetadataItem={relationObjectMetadataItem}
-        shrink={shrink}
-        withFieldLabel={withFieldLabel}
-      />
-    </StyledCardContent>
-  </StyledCard>
-);
+  pluralizeLabel = false,
+}: SettingsDataModelFieldPreviewCardProps) => {
+  return (
+    <StyledCard className={className} fullWidth>
+      <StyledCardContent>
+        <SettingsDataModelObjectSummary
+          objectMetadataItem={objectMetadataItem}
+          pluralizeLabel={pluralizeLabel}
+        />
+        <SettingsDataModelFieldPreview
+          objectMetadataItem={objectMetadataItem}
+          fieldMetadataItem={fieldMetadataItem}
+          relationObjectMetadataItem={relationObjectMetadataItem}
+          shrink={shrink}
+          withFieldLabel={withFieldLabel}
+        />
+      </StyledCardContent>
+    </StyledCard>
+  );
+};

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { OpenAPIV3_1 } from 'openapi-types';
 
-import { TokenService } from 'src/engine/core-modules/auth/token/services/token.service';
+import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
 import {
@@ -37,11 +37,12 @@ import {
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { capitalize } from 'src/utils/capitalize';
 import { getServerUrl } from 'src/utils/get-server-url';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class OpenApiService {
   constructor(
-    private readonly tokenService: TokenService,
+    private readonly accessTokenService: AccessTokenService,
     private readonly environmentService: EnvironmentService,
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}
@@ -57,7 +58,8 @@ export class OpenApiService {
     let objectMetadataItems;
 
     try {
-      const { workspace } = await this.tokenService.validateToken(request);
+      const { workspace } =
+        await this.accessTokenService.validateToken(request);
 
       objectMetadataItems =
         await this.objectMetadataService.findManyWithinWorkspace(workspace.id);
@@ -80,9 +82,18 @@ export class OpenApiService {
 
     schema.webhooks = objectMetadataItems.reduce(
       (paths, item) => {
-        paths[`Create ${item.nameSingular}`] = computeWebhooks('create', item);
-        paths[`Update ${item.nameSingular}`] = computeWebhooks('update', item);
-        paths[`Delete ${item.nameSingular}`] = computeWebhooks('delete', item);
+        paths[`Create ${item.nameSingular}`] = computeWebhooks(
+          DatabaseEventAction.CREATED,
+          item,
+        );
+        paths[`Update ${item.nameSingular}`] = computeWebhooks(
+          DatabaseEventAction.UPDATED,
+          item,
+        );
+        paths[`Delete ${item.nameSingular}`] = computeWebhooks(
+          DatabaseEventAction.DELETED,
+          item,
+        );
 
         return paths;
       },

@@ -99,20 +99,6 @@ export const query = gql`
           }
           city
           email
-          activityTargets {
-            edges {
-              node {
-                __typename
-                id
-                updatedAt
-                createdAt
-                personId
-                activityId
-                companyId
-                id
-              }
-            }
-          }
           jobTitle
           favorites {
             edges {
@@ -137,7 +123,6 @@ export const query = gql`
                 createdAt
                 name
                 personId
-                activityId
                 companyId
                 id
                 authorId

@@ -1,5 +1,5 @@
+import { useMutation } from '@apollo/client';
 import { useCallback } from 'react';
-import { ApolloClient, useMutation } from '@apollo/client';
 
 import { UNSYNC_REMOTE_TABLE } from '@/databases/graphql/mutations/unsyncRemoteTable';
 import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRemoteTableFromCache';
@@ -21,7 +21,7 @@ export const useUnsyncRemoteTable = () => {
     UnsyncRemoteTableMutation,
     UnsyncRemoteTableMutationVariables
   >(UNSYNC_REMOTE_TABLE, {
-    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient,
   });
 
   const unsyncRemoteTable = useCallback(

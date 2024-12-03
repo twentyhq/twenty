@@ -1,6 +1,5 @@
-import { WorkflowEditActionFormSendEmail } from '@/workflow/components/WorkflowEditActionFormSendEmail';
-import { WorkflowEditActionFormServerlessFunction } from '@/workflow/components/WorkflowEditActionFormServerlessFunction';
-import { WorkflowEditTriggerForm } from '@/workflow/components/WorkflowEditTriggerForm';
+import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/components/WorkflowEditTriggerDatabaseEventForm';
+import { WorkflowEditTriggerManualForm } from '@/workflow/components/WorkflowEditTriggerManualForm';
 import {
   WorkflowAction,
   WorkflowTrigger,
@@ -8,6 +7,12 @@ import {
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
+import { isWorkflowRecordCreateAction } from '@/workflow/utils/isWorkflowRecordCreateAction';
+import { isWorkflowRecordUpdateAction } from '@/workflow/utils/isWorkflowRecordUpdateAction';
+import { WorkflowEditActionFormRecordCreate } from '@/workflow/workflow-actions/components/WorkflowEditActionFormRecordCreate';
+import { WorkflowEditActionFormRecordUpdate } from '@/workflow/workflow-actions/components/WorkflowEditActionFormRecordUpdate';
+import { WorkflowEditActionFormSendEmail } from '@/workflow/workflow-actions/components/WorkflowEditActionFormSendEmail';
+import { WorkflowEditActionFormServerlessFunction } from '@/workflow/workflow-actions/components/WorkflowEditActionFormServerlessFunction';
 import { isDefined } from 'twenty-ui';
 
 type WorkflowStepDetailProps =
@@ -41,12 +46,34 @@ export const WorkflowStepDetail = ({
 
   switch (stepDefinition.type) {
     case 'trigger': {
-      return (
-        <WorkflowEditTriggerForm
-          trigger={stepDefinition.definition}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...props}
-        />
+      if (!isDefined(stepDefinition.definition)) {
+        throw new Error(
+          'Expected the trigger to be defined at this point. Ensure the trigger has been set with a default value before trying to edit it.',
+        );
+      }
+
+      switch (stepDefinition.definition.type) {
+        case 'DATABASE_EVENT': {
+          return (
+            <WorkflowEditTriggerDatabaseEventForm
+              trigger={stepDefinition.definition}
+              triggerOptions={props}
+            />
+          );
+        }
+        case 'MANUAL': {
+          return (
+            <WorkflowEditTriggerManualForm
+              trigger={stepDefinition.definition}
+              triggerOptions={props}
+            />
+          );
+        }
+      }
+
+      return assertUnreachable(
+        stepDefinition.definition,
+        `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
       );
     }
     case 'action': {
@@ -55,8 +82,7 @@ export const WorkflowStepDetail = ({
           return (
             <WorkflowEditActionFormServerlessFunction
               action={stepDefinition.definition}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              actionOptions={props}
             />
           );
         }
@@ -64,12 +90,37 @@ export const WorkflowStepDetail = ({
           return (
             <WorkflowEditActionFormSendEmail
               action={stepDefinition.definition}
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...props}
+              actionOptions={props}
             />
           );
         }
+        case 'RECORD_CRUD': {
+          if (isWorkflowRecordCreateAction(stepDefinition.definition)) {
+            return (
+              <WorkflowEditActionFormRecordCreate
+                action={stepDefinition.definition}
+                actionOptions={props}
+              />
+            );
+          }
+
+          if (isWorkflowRecordUpdateAction(stepDefinition.definition)) {
+            return (
+              <WorkflowEditActionFormRecordUpdate
+                action={stepDefinition.definition}
+                actionOptions={props}
+              />
+            );
+          }
+
+          return null;
+        }
       }
+
+      return assertUnreachable(
+        stepDefinition.definition,
+        `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
+      );
     }
   }
 

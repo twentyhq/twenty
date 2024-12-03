@@ -1,6 +1,4 @@
-import { IconPlus } from 'twenty-ui';
-
-import { IconButton } from '@/ui/input/button/components/IconButton';
+import { IconButton, IconPlus } from 'twenty-ui';
 
 type PageAddButtonProps = {
   onClick: () => void;

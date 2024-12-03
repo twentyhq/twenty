@@ -1,9 +1,10 @@
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
+import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
 import { RecordIndexBoardColumnLoaderEffect } from '@/object-record/record-index/components/RecordIndexBoardColumnLoaderEffect';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 type RecordIndexBoardDataLoaderProps = {
   objectNameSingular: string;
@@ -18,6 +19,10 @@ export const RecordIndexBoardDataLoader = ({
     objectNameSingular,
   });
 
+  const visibleRecordGroupIds = useRecoilComponentValueV2(
+    visibleRecordGroupIdsComponentSelector,
+  );
+
   const recordIndexKanbanFieldMetadataId = useRecoilValue(
     recordIndexKanbanFieldMetadataIdState,
   );
@@ -26,23 +31,14 @@ export const RecordIndexBoardDataLoader = ({
     (field) => field.id === recordIndexKanbanFieldMetadataId,
   );
 
-  const possibleKanbanSelectFieldValues =
-    recordIndexKanbanFieldMetadataItem?.options ?? [];
-
-  const { columnIdsState } = useRecordBoardStates(recordBoardId);
-
-  // TODO: we should make sure there's no way to have a mismatch between columnIds and possibleKanbanSelectFieldValues order
-  const columnIds = useRecoilValue(columnIdsState);
-
   return (
     <>
-      {possibleKanbanSelectFieldValues.map((option, index) => (
+      {visibleRecordGroupIds.map((recordGroupId, index) => (
         <RecordIndexBoardColumnLoaderEffect
           objectNameSingular={objectNameSingular}
           boardFieldMetadataId={recordIndexKanbanFieldMetadataId}
-          boardFieldSelectValue={option.value}
           recordBoardId={recordBoardId}
-          columnId={columnIds[index]}
+          columnId={recordGroupId}
           key={index}
         />
       ))}
@@ -50,7 +46,6 @@ export const RecordIndexBoardDataLoader = ({
         <RecordIndexBoardColumnLoaderEffect
           objectNameSingular={objectNameSingular}
           boardFieldMetadataId={recordIndexKanbanFieldMetadataId}
-          boardFieldSelectValue={null}
           recordBoardId={recordBoardId}
           columnId={'no-value'}
         />

@@ -1,10 +1,15 @@
 import { useRecoilCallback } from 'recoil';
 
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
+import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
+import { isDefined } from '~/utils/isDefined';
 
 type useSetRecordTableDataProps = {
   recordTableId?: string;
@@ -15,17 +20,39 @@ export const useSetRecordTableData = ({
   recordTableId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const {
-    tableRowIdsState,
-    numberOfTableRowsState,
-    isRowSelectedFamilyState,
-    hasUserSelectedAllRowsState,
-  } = useRecordTableStates(recordTableId);
+  const recordIndexRecordIdsByGroupFamilyState =
+    useRecoilComponentCallbackStateV2(
+      recordIndexRecordIdsByGroupComponentFamilyState,
+      recordTableId,
+    );
+
+  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackStateV2(
+    recordIndexAllRecordIdsComponentSelector,
+    recordTableId,
+  );
+
+  const isRowSelectedFamilyState = useRecoilComponentCallbackStateV2(
+    isRowSelectedComponentFamilyState,
+    recordTableId,
+  );
+
+  const hasUserSelectedAllRowsState = useRecoilComponentCallbackStateV2(
+    hasUserSelectedAllRowsComponentState,
+    recordTableId,
+  );
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends ObjectRecord>(newRecords: T[], totalCount?: number) => {
-        for (const record of newRecords) {
+      <T extends ObjectRecord>({
+        records,
+        currentRecordGroupId,
+        totalCount,
+      }: {
+        records: T[];
+        currentRecordGroupId?: string;
+        totalCount?: number;
+      }) => {
+        for (const record of records) {
           // TODO: refactor with scoped state later
           const currentRecord = snapshot
             .getLoadable(recordStoreFamilyState(record.id))
@@ -36,14 +63,19 @@ export const useSetRecordTableData = ({
           }
         }
 
-        const currentRowIds = getSnapshotValue(snapshot, tableRowIdsState);
+        const currentRowIds = getSnapshotValue(
+          snapshot,
+          currentRecordGroupId
+            ? recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId)
+            : recordIndexAllRecordIdsSelector,
+        );
 
         const hasUserSelectedAllRows = getSnapshotValue(
           snapshot,
           hasUserSelectedAllRowsState,
         );
 
-        const recordIds = newRecords.map((record) => record.id);
+        const recordIds = records.map((record) => record.id);
 
         if (!isDeeplyEqual(currentRowIds, recordIds)) {
           if (hasUserSelectedAllRows) {
@@ -52,17 +84,24 @@ export const useSetRecordTableData = ({
             }
           }
 
-          set(tableRowIdsState, recordIds);
-          set(numberOfTableRowsState, totalCount ?? 0);
+          if (isDefined(currentRecordGroupId)) {
+            set(
+              recordIndexRecordIdsByGroupFamilyState(currentRecordGroupId),
+              recordIds,
+            );
+          } else {
+            set(recordIndexAllRecordIdsSelector, recordIds);
+          }
+
           onEntityCountChange(totalCount);
         }
       },
     [
-      numberOfTableRowsState,
-      tableRowIdsState,
+      recordIndexRecordIdsByGroupFamilyState,
+      recordIndexAllRecordIdsSelector,
+      hasUserSelectedAllRowsState,
       onEntityCountChange,
       isRowSelectedFamilyState,
-      hasUserSelectedAllRowsState,
     ],
   );
 };

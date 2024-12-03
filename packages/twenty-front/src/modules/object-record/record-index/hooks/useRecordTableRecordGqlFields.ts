@@ -1,11 +1,10 @@
-import { useRecoilValue } from 'recoil';
-
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectMetadataIdentifierFields } from '@/object-metadata/utils/getObjectMetadataIdentifierFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from '~/utils/isDefined';
 
 export const useRecordTableRecordGqlFields = ({
@@ -13,12 +12,12 @@ export const useRecordTableRecordGqlFields = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const { visibleTableColumnsSelector } = useRecordTableStates();
-
   const { imageIdentifierFieldMetadataItem, labelIdentifierFieldMetadataItem } =
     getObjectMetadataIdentifierFields({ objectMetadataItem });
 
-  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const visibleTableColumns = useRecoilComponentValueV2(
+    visibleTableColumnsComponentSelector,
+  );
 
   const identifierQueryFields: Record<string, boolean> = {};
 
@@ -42,6 +41,7 @@ export const useRecordTableRecordGqlFields = ({
 
   const recordGqlFields: Record<string, any> = {
     id: true,
+    deletedAt: true,
     ...Object.fromEntries(
       visibleTableColumns.map((column) => [column.metadata.fieldName, true]),
     ),

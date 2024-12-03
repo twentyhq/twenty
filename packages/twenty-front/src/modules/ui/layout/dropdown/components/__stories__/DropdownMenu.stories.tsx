@@ -3,13 +3,16 @@ import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from '@storybook/test';
 import { PlayFunction } from '@storybook/types';
 import { useState } from 'react';
-import { Avatar, ComponentDecorator } from 'twenty-ui';
+import {
+  Avatar,
+  Button,
+  ComponentDecorator,
+  MenuItem,
+  MenuItemMultiSelectAvatar,
+  MenuItemSelectAvatar,
+} from 'twenty-ui';
 
-import { Button } from '@/ui/input/button/components/Button';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
-import { MenuItemSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemSelectAvatar';
 
 import { Dropdown } from '../Dropdown';
 import { DropdownMenuHeader } from '../DropdownMenuHeader';

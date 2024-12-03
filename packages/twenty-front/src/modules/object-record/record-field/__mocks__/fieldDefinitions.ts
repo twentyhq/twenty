@@ -5,7 +5,7 @@ import {
   FieldFullNameMetadata,
   FieldRatingMetadata,
   FieldSelectMetadata,
-  FieldTextMetadata
+  FieldTextMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
@@ -28,7 +28,6 @@ const mockedPersonObjectMetadataItem = generatedMockObjectMetadataItems.find(
 if (!mockedPersonObjectMetadataItem) {
   throw new Error('Person object metadata item not found');
 }
-
 
 const relationFieldMetadataItem = mockedPersonObjectMetadataItem?.fields?.find(
   ({ name }) => name === 'company',
@@ -109,5 +108,6 @@ export const actorFieldDefinition: FieldDefinition<FieldActorMetadata> = {
   defaultValue: { source: 'MANUAL', name: '' },
   metadata: {
     fieldName: 'actor',
+    objectMetadataNameSingular: 'person',
   },
 };

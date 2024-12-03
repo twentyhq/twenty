@@ -37,6 +37,11 @@ export interface WorkspaceEntityMetadataArgs {
   readonly icon?: string;
 
   /**
+   * Entity shortcut.
+   */
+  readonly shortcut?: string;
+
+  /**
    * Is audit logged.
    */
   readonly isAuditLogged: boolean;

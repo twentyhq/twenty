@@ -1,19 +1,28 @@
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
-import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
-import { createComponentReadOnlySelector } from '@/ui/utilities/state/component-state/utils/createComponentReadOnlySelector';
 
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
+import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 import { AllRowsSelectedStatus } from '../../types/AllRowSelectedStatus';
 
 export const allRowsSelectedStatusComponentSelector =
-  createComponentReadOnlySelector<AllRowsSelectedStatus>({
+  createComponentSelectorV2<AllRowsSelectedStatus>({
     key: 'allRowsSelectedStatusComponentSelector',
+    componentInstanceContext: RecordTableComponentInstanceContext,
     get:
-      ({ scopeId }) =>
+      ({ instanceId }) =>
       ({ get }) => {
-        const tableRowIds = get(tableRowIdsComponentState({ scopeId }));
+        const allRecordIds = get(
+          // TODO: Working because instanceId is the same, but we're not in the same context, should be changed !
+          recordIndexAllRecordIdsComponentSelector.selectorFamily({
+            instanceId,
+          }),
+        );
 
         const selectedRowIds = get(
-          selectedRowIdsComponentSelector({ scopeId }),
+          selectedRowIdsComponentSelector.selectorFamily({
+            instanceId,
+          }),
         );
 
         const numberOfSelectedRows = selectedRowIds.length;
@@ -21,7 +30,7 @@ export const allRowsSelectedStatusComponentSelector =
         const allRowsSelectedStatus =
           numberOfSelectedRows === 0
             ? 'none'
-            : selectedRowIds.length === tableRowIds.length
+            : selectedRowIds.length === allRecordIds.length
               ? 'all'
               : 'some';
 

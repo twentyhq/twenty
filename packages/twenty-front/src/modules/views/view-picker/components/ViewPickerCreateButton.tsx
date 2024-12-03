@@ -1,4 +1,3 @@
-import { Button } from '@/ui/input/button/components/Button';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
@@ -8,6 +7,7 @@ import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
+import { Button } from 'twenty-ui';
 
 export const ViewPickerCreateButton = () => {
   const { availableFieldsForKanban, navigateToSelectSettings } =

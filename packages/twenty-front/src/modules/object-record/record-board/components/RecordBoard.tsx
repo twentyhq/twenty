@@ -1,46 +1,58 @@
 import styled from '@emotion/styled';
 import { DragDropContext, OnDragEndResponder } from '@hello-pangea/dnd'; // Atlassian dnd does not support StrictMode from RN 18, so we use a fork @hello-pangea/dnd https://github.com/atlassian/react-beautiful-dnd/issues/2350
 import { useContext, useRef } from 'react';
-import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { Key } from 'ts-key-enum';
 
+import { ActionBarHotkeyScope } from '@/action-menu/types/ActionBarHotKeyScope';
 import { RecordBoardHeader } from '@/object-record/record-board/components/RecordBoardHeader';
 import { RecordBoardStickyHeaderEffect } from '@/object-record/record-board/components/RecordBoardStickyHeaderEffect';
+import { RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-board/constants/RecordBoardClickOutsideListenerId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
 import { RecordBoardColumn } from '@/object-record/record-board/record-board-column/components/RecordBoardColumn';
 import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoardScope';
+import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
+import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
+import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 
 const StyledContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
-  min-height: calc(100% - 1px);
-  height: 100%;
 `;
 
 const StyledColumnContainer = styled.div`
   display: flex;
+  & > *:not(:first-of-type) {
+    border-left: 1px solid ${({ theme }) => theme.border.color.light};
+  }
 `;
 
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: 100%;
 `;
 
 const StyledBoardContentContainer = styled.div`
   display: flex;
   flex-direction: column;
+  height: calc(100% - 48px);
 `;
 
 const RecordBoardScrollRestoreEffect = () => {
@@ -53,24 +65,57 @@ export const RecordBoard = () => {
     useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
 
-  const {
-    columnIdsState,
-    columnsFamilySelector,
-    recordIdsByColumnIdFamilyState,
-  } = useRecordBoardStates(recordBoardId);
+  const visibleRecordGroupIds = useRecoilComponentValueV2(
+    visibleRecordGroupIdsComponentSelector,
+  );
 
-  const columnIds = useRecoilValue(columnIdsState);
+  const recordIndexRecordIdsByGroupFamilyState =
+    useRecoilComponentCallbackStateV2(
+      recordIndexRecordIdsByGroupComponentFamilyState,
+    );
+
+  const recordIndexAllRecordIdsState = useRecoilComponentCallbackStateV2(
+    recordIndexAllRecordIdsComponentSelector,
+  );
 
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);
 
-  useListenClickOutsideByClassName({
-    classNames: ['record-board-card'],
-    excludeClassNames: ['bottom-bar', 'action-menu-dropdown'],
+  useListenClickOutsideV2({
+    excludeClassNames: [
+      'bottom-bar',
+      'action-menu-dropdown',
+      'command-menu',
+      'modal-backdrop',
+    ],
+    listenerId: RECORD_BOARD_CLICK_OUTSIDE_LISTENER_ID,
+    refs: [boardRef],
     callback: resetRecordSelection,
   });
 
-  useScopedHotkeys([Key.Escape], resetRecordSelection, TableHotkeyScope.Table);
+  const selectAll = useRecoilCallback(
+    ({ snapshot }) =>
+      () => {
+        const allRecordIds = getSnapshotValue(
+          snapshot,
+          recordIndexAllRecordIdsState,
+        );
+
+        for (const recordId of allRecordIds) {
+          setRecordAsSelected(recordId, true);
+        }
+      },
+    [recordIndexAllRecordIdsState, setRecordAsSelected],
+  );
+
+  useScopedHotkeys('ctrl+a,meta+a', selectAll, TableHotkeyScope.Table);
+  useScopedHotkeys('ctrl+a,meta+a', selectAll, ActionBarHotkeyScope.ActionBar);
+
+  useScopedHotkeys(
+    Key.Escape,
+    resetRecordSelection,
+    ActionBarHotkeyScope.ActionBar,
+  );
 
   const handleDragEnd: OnDragEndResponder = useRecoilCallback(
     ({ snapshot }) =>
@@ -78,42 +123,40 @@ export const RecordBoard = () => {
         if (!result.destination) return;
 
         const draggedRecordId = result.draggableId;
-        const sourceColumnId = result.source.droppableId;
-        const destinationColumnId = result.destination.droppableId;
+        const sourceRecordGroupId = result.source.droppableId;
+        const destinationRecordGroupId = result.destination.droppableId;
         const destinationIndexInColumn = result.destination.index;
 
-        if (!destinationColumnId || !selectFieldMetadataItem) return;
+        if (!destinationRecordGroupId || !selectFieldMetadataItem) return;
 
-        const column = snapshot
-          .getLoadable(columnsFamilySelector(destinationColumnId))
-          .getValue();
+        const recordGroup = getSnapshotValue(
+          snapshot,
+          recordGroupDefinitionFamilyState(destinationRecordGroupId),
+        );
 
-        if (!column) return;
+        if (!recordGroup) return;
 
-        const destinationColumnRecordIds = snapshot
-          .getLoadable(recordIdsByColumnIdFamilyState(destinationColumnId))
-          .getValue();
-        const otherRecordsInDestinationColumn =
-          sourceColumnId === destinationColumnId
-            ? destinationColumnRecordIds.filter(
+        const destinationRecordByGroupIds = getSnapshotValue(
+          snapshot,
+          recordIndexRecordIdsByGroupFamilyState(destinationRecordGroupId),
+        );
+        const otherRecordIdsInDestinationColumn =
+          sourceRecordGroupId === destinationRecordGroupId
+            ? destinationRecordByGroupIds.filter(
                 (recordId) => recordId !== draggedRecordId,
               )
-            : destinationColumnRecordIds;
+            : destinationRecordByGroupIds;
 
         const recordBeforeId =
-          otherRecordsInDestinationColumn[destinationIndexInColumn - 1];
+          otherRecordIdsInDestinationColumn[destinationIndexInColumn - 1];
         const recordBefore = recordBeforeId
-          ? snapshot
-              .getLoadable(recordStoreFamilyState(recordBeforeId))
-              .getValue()
+          ? getSnapshotValue(snapshot, recordStoreFamilyState(recordBeforeId))
           : null;
 
         const recordAfterId =
-          otherRecordsInDestinationColumn[destinationIndexInColumn];
+          otherRecordIdsInDestinationColumn[destinationIndexInColumn];
         const recordAfter = recordAfterId
-          ? snapshot
-              .getLoadable(recordStoreFamilyState(recordAfterId))
-              .getValue()
+          ? getSnapshotValue(snapshot, recordStoreFamilyState(recordAfterId))
           : null;
 
         const draggedRecordPosition = getDraggedRecordPosition(
@@ -124,18 +167,23 @@ export const RecordBoard = () => {
         updateOneRecord({
           idToUpdate: draggedRecordId,
           updateOneRecordInput: {
-            [selectFieldMetadataItem.name]: column.value,
+            [selectFieldMetadataItem.name]: recordGroup.value,
             position: draggedRecordPosition,
           },
         });
       },
     [
-      columnsFamilySelector,
-      recordIdsByColumnIdFamilyState,
+      recordIndexRecordIdsByGroupFamilyState,
       selectFieldMetadataItem,
       updateOneRecord,
     ],
   );
+
+  // FixMe: Check if we really need this as it depends on the times it takes to update the view groups
+  // if (isPersistingViewGroups) {
+  //   // TODO: Add skeleton state
+  //   return null;
+  // }
 
   return (
     <RecordBoardScope
@@ -143,32 +191,36 @@ export const RecordBoard = () => {
       onColumnsChange={() => {}}
       onFieldsChange={() => {}}
     >
-      <ScrollWrapper contextProviderName="recordBoard">
-        <RecordBoardStickyHeaderEffect />
-        <StyledContainerContainer>
-          <RecordBoardHeader />
-          <StyledBoardContentContainer>
-            <StyledContainer ref={boardRef}>
-              <DragDropContext onDragEnd={handleDragEnd}>
-                <StyledColumnContainer>
-                  {columnIds.map((columnId) => (
-                    <RecordBoardColumn
-                      key={columnId}
-                      recordBoardColumnId={columnId}
-                    />
-                  ))}
-                </StyledColumnContainer>
-              </DragDropContext>
-            </StyledContainer>
-            <RecordBoardScrollRestoreEffect />
-            <DragSelect
-              dragSelectable={boardRef}
-              onDragSelectionStart={resetRecordSelection}
-              onDragSelectionChange={setRecordAsSelected}
-            />
-          </StyledBoardContentContainer>
-        </StyledContainerContainer>
-      </ScrollWrapper>
+      <RecordBoardComponentInstanceContext.Provider
+        value={{ instanceId: recordBoardId }}
+      >
+        <ScrollWrapper contextProviderName="recordBoard">
+          <RecordBoardStickyHeaderEffect />
+          <StyledContainerContainer>
+            <RecordBoardHeader />
+            <StyledBoardContentContainer>
+              <StyledContainer ref={boardRef}>
+                <DragDropContext onDragEnd={handleDragEnd}>
+                  <StyledColumnContainer>
+                    {visibleRecordGroupIds.map((recordGroupId) => (
+                      <RecordBoardColumn
+                        key={recordGroupId}
+                        recordBoardColumnId={recordGroupId}
+                      />
+                    ))}
+                  </StyledColumnContainer>
+                </DragDropContext>
+              </StyledContainer>
+              <RecordBoardScrollRestoreEffect />
+              <DragSelect
+                dragSelectable={boardRef}
+                onDragSelectionStart={resetRecordSelection}
+                onDragSelectionChange={setRecordAsSelected}
+              />
+            </StyledBoardContentContainer>
+          </StyledContainerContainer>
+        </ScrollWrapper>
+      </RecordBoardComponentInstanceContext.Provider>
     </RecordBoardScope>
   );
 };

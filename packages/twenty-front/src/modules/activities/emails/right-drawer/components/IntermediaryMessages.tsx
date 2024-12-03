@@ -1,10 +1,9 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { IconArrowsVertical } from 'twenty-ui';
+import { Button, IconArrowsVertical } from 'twenty-ui';
 
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
 import { EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
-import { Button } from '@/ui/input/button/components/Button';
 
 const StyledButtonContainer = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};

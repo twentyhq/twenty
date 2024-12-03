@@ -1,9 +1,7 @@
-import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
-
-import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { ReactNode } from 'react';
+import { IconComponent, CardContent } from 'twenty-ui';
 
 const StyledRow = styled(CardContent)`
   align-items: center;

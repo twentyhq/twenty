@@ -20,11 +20,15 @@ import { SupportDriver } from 'src/engine/core-modules/environment/interfaces/su
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
 import { AnalyticsService } from 'src/engine/core-modules/analytics/analytics.service';
+import { AnalyticsTinybirdJwtMap } from 'src/engine/core-modules/analytics/entities/analytics-tinybird-jwts.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
-import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import {
+  OnboardingService,
+  OnboardingStepKeys,
+} from 'src/engine/core-modules/onboarding/onboarding.service';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
@@ -35,6 +39,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -74,20 +79,17 @@ export class UserResolver {
   }
 
   @ResolveField(() => GraphQLJSONObject)
-  async userVars(
-    @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<Record<string, any>> {
+  async userVars(@Parent() user: User): Promise<Record<string, any>> {
     const userVars = await this.userVarService.getAll({
       userId: user.id,
-      workspaceId: workspace?.id ?? user.defaultWorkspaceId,
+      workspaceId: user.defaultWorkspaceId,
     });
 
     const userVarAllowList = [
-      'SYNC_EMAIL_ONBOARDING_STEP',
-      'ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS',
-      'ACCOUNTS_TO_RECONNECT_EMAIL_ALIASES',
-    ];
+      OnboardingStepKeys.ONBOARDING_CONNECT_ACCOUNT_PENDING,
+      AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_INSUFFICIENT_PERMISSIONS,
+      AccountsToReconnectKeys.ACCOUNTS_TO_RECONNECT_EMAIL_ALIASES,
+    ] as string[];
 
     const filteredMap = new Map(
       [...userVars].filter(([key]) => userVarAllowList.includes(key)),
@@ -110,8 +112,8 @@ export class UserResolver {
 
     if (workspaceMember && workspaceMember.avatarUrl) {
       const avatarUrlToken = await this.fileService.encodeFileToken({
-        workspace_member_id: workspaceMember.id,
-        workspace_id: user.defaultWorkspaceId,
+        workspaceMemberId: workspaceMember.id,
+        workspaceId: user.defaultWorkspaceId,
       });
 
       workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
@@ -132,8 +134,8 @@ export class UserResolver {
     for (const workspaceMember of workspaceMembers) {
       if (workspaceMember.avatarUrl) {
         const avatarUrlToken = await this.fileService.encodeFileToken({
-          workspace_member_id: workspaceMember.id,
-          workspace_id: user.defaultWorkspaceId,
+          workspaceMemberId: workspaceMember.id,
+          workspaceId: user.defaultWorkspaceId,
         });
 
         workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
@@ -156,13 +158,9 @@ export class UserResolver {
     return getHMACKey(parent.email, key);
   }
 
-  @ResolveField(() => String, {
-    nullable: true,
-  })
-  async analyticsTinybirdJwt(
-    @AuthWorkspace() workspace: Workspace | undefined,
-  ): Promise<string> {
-    return await this.analyticsService.generateWorkspaceJwt(workspace?.id);
+  @ResolveField(() => AnalyticsTinybirdJwtMap, { nullable: true })
+  analyticsTinybirdJwts(@AuthWorkspace() workspace: Workspace | undefined) {
+    return this.analyticsService.generateWorkspaceJwt(workspace?.id);
   }
 
   @Mutation(() => String)
@@ -189,7 +187,7 @@ export class UserResolver {
     });
 
     const fileToken = await this.fileService.encodeFileToken({
-      workspace_id: workspaceId,
+      workspaceId: workspaceId,
     });
 
     return `${paths[0]}?token=${fileToken}`;

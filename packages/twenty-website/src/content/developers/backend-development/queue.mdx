@@ -7,9 +7,9 @@ image: /images/user-guide/emails/emails_header.png
 Queues facilitate async operations to be performed. They can be used for performing background tasks such as sending a welcome email on register.
 Each use case will have its own queue class extended from `MessageQueueServiceBase`.
 
-Currently, queue supports two drivers which can be configurred by env variable `MESSAGE_QUEUE_TYPE`.
-1. `pg-boss`: this is the default driver, which uses [pg-boss](https://github.com/timgit/pg-boss) under the hood.
-2. `bull-mq`: this uses [bull-mq](https://bullmq.io/) under the hood.
+Currently, queue supports two drivers which can be configured by env variable `MESSAGE_QUEUE_TYPE`.
+1. `bull-mq`: this is the default driver, which uses [bull-mq](https://bullmq.io/) under the hood.
+2. `pg-boss`: this uses [pg-boss](https://github.com/timgit/pg-boss) under the hood.
 
 ## Steps to create and use a new queue
 

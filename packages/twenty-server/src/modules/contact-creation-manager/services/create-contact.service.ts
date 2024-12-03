@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
+import { DeepPartial, EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';

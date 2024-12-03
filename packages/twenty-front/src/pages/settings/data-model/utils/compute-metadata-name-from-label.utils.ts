@@ -1,6 +1,22 @@
-import { METADATA_NAME_VALID_PATTERN } from '~/pages/settings/data-model/constants/MetadataNameValidPattern';
-import { transliterateAndFormatOrThrow } from '~/pages/settings/data-model/utils/transliterate-and-format.utils';
+import camelCase from 'lodash.camelcase';
+import { slugify } from 'transliteration';
 
-export const computeMetadataNameFromLabelOrThrow = (label: string): string => {
-  return transliterateAndFormatOrThrow(label, METADATA_NAME_VALID_PATTERN);
+export const computeMetadataNameFromLabel = (label: string): string => {
+  const prefixedLabel = /^\d/.test(label) ? `n${label}` : label;
+
+  if (prefixedLabel === '') {
+    return '';
+  }
+
+  const formattedString = slugify(prefixedLabel, {
+    trim: true,
+    separator: '_',
+    allowedChars: 'a-zA-Z0-9',
+  });
+
+  if (formattedString === '') {
+    throw new Error('Invalid label');
+  }
+
+  return camelCase(formattedString);
 };

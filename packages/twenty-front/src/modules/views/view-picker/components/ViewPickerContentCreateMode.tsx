@@ -4,8 +4,8 @@ import { IconLayoutKanban, IconTable, IconX } from 'twenty-ui';
 
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -120,11 +120,11 @@ export const ViewPickerContentCreateMode = () => {
             disableBlur
             onClose={() => setHotkeyScope(ViewsHotkeyScope.ListDropdown)}
           />
-          <DropdownMenuInput
+          <TextInputV2
             value={viewPickerInputName}
-            onChange={(event) => {
+            onChange={(value) => {
               setViewPickerIsDirty(true);
-              setViewPickerInputName(event.target.value);
+              setViewPickerInputName(value);
             }}
             autoFocus
           />

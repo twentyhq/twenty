@@ -47,6 +47,11 @@ export class UpdateObjectPayload {
   @Field({ nullable: true })
   icon?: string;
 
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  shortcut?: string;
+
   @IsBoolean()
   @IsOptional()
   @Field({ nullable: true })
@@ -61,6 +66,11 @@ export class UpdateObjectPayload {
   @IsOptional()
   @Field({ nullable: true })
   imageIdentifierFieldMetadataId?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isLabelSyncedWithName?: boolean;
 }
 
 @InputType()

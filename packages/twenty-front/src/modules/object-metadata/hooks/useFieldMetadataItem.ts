@@ -40,15 +40,23 @@ export const useFieldMetadataItem = () => {
     });
   };
 
-  const activateMetadataField = (metadataField: FieldMetadataItem) =>
+  const activateMetadataField = (
+    fieldMetadataId: string,
+    objectMetadataId: string,
+  ) =>
     updateOneFieldMetadataItem({
-      fieldMetadataIdToUpdate: metadataField.id,
+      objectMetadataId: objectMetadataId,
+      fieldMetadataIdToUpdate: fieldMetadataId,
       updatePayload: { isActive: true },
     });
 
-  const deactivateMetadataField = (metadataField: FieldMetadataItem) =>
+  const deactivateMetadataField = (
+    fieldMetadataId: string,
+    objectMetadataId: string,
+  ) =>
     updateOneFieldMetadataItem({
-      fieldMetadataIdToUpdate: metadataField.id,
+      objectMetadataId: objectMetadataId,
+      fieldMetadataIdToUpdate: fieldMetadataId,
       updatePayload: { isActive: false },
     });
 

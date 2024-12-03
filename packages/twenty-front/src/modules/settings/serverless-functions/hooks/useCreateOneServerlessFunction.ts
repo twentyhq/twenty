@@ -1,14 +1,14 @@
-import { ApolloClient, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
+import { CREATE_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/mutations/createOneServerlessFunction';
+import { FIND_MANY_SERVERLESS_FUNCTIONS } from '@/settings/serverless-functions/graphql/queries/findManyServerlessFunctions';
+import { getOperationName } from '@apollo/client/utilities';
 import {
-  CreateServerlessFunctionInput,
   CreateOneServerlessFunctionItemMutation,
   CreateOneServerlessFunctionItemMutationVariables,
+  CreateServerlessFunctionInput,
 } from '~/generated-metadata/graphql';
-import { getOperationName } from '@apollo/client/utilities';
-import { FIND_MANY_SERVERLESS_FUNCTIONS } from '@/settings/serverless-functions/graphql/queries/findManyServerlessFunctions';
-import { CREATE_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/mutations/createOneServerlessFunction';
 
 export const useCreateOneServerlessFunction = () => {
   const apolloMetadataClient = useApolloMetadataClient();
@@ -16,7 +16,7 @@ export const useCreateOneServerlessFunction = () => {
     CreateOneServerlessFunctionItemMutation,
     CreateOneServerlessFunctionItemMutationVariables
   >(CREATE_ONE_SERVERLESS_FUNCTION, {
-    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient,
   });
 
   const createOneServerlessFunction = async (

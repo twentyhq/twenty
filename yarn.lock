@@ -6682,6 +6682,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@microsoft/microsoft-graph-client@npm:^3.0.7":
+  version: 3.0.7
+  resolution: "@microsoft/microsoft-graph-client@npm:3.0.7"
+  dependencies:
+    "@babel/runtime": "npm:^7.12.5"
+    tslib: "npm:^2.2.0"
+  peerDependenciesMeta:
+    "@azure/identity":
+      optional: true
+    "@azure/msal-browser":
+      optional: true
+    buffer:
+      optional: true
+    stream-browserify:
+      optional: true
+  checksum: 10c0/0e5b3dd469be0606ba34a82464d18a8c919f396adf65756612e9ec0bb47c99c4c3eaf5d65eec953e2c6f5b79e48e003efe914adbfc8b741d098e8e8f7084ea8b
+  languageName: node
+  linkType: hard
+
+"@microsoft/microsoft-graph-types@npm:^2.40.0":
+  version: 2.40.0
+  resolution: "@microsoft/microsoft-graph-types@npm:2.40.0"
+  checksum: 10c0/c6f69a0fe136579d735efafc1375e4540e01d34ea488d987a9b651f7206c40c76991fff56df31e8b2593f16846bd748d0ffcf249d1f2629bb0298e6214fe2fdc
+  languageName: node
+  linkType: hard
+
 "@microsoft/tsdoc-config@npm:~0.16.1":
   version: 0.16.2
   resolution: "@microsoft/tsdoc-config@npm:0.16.2"
@@ -14861,6 +14887,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tiptap/extension-bubble-menu@npm:^2.8.0":
+  version: 2.8.0
+  resolution: "@tiptap/extension-bubble-menu@npm:2.8.0"
+  dependencies:
+    tippy.js: "npm:^6.3.7"
+  peerDependencies:
+    "@tiptap/core": ^2.7.0
+    "@tiptap/pm": ^2.7.0
+  checksum: 10c0/8c05bf1a1ea3a72c290e69f64b5e165e1af740a5b1434d8da2ab457def27793ece75680f5ab7c6c5f264d69be75a2f42c104acb07f4338fd55a70028cd8a4ad1
+  languageName: node
+  linkType: hard
+
 "@tiptap/extension-code@npm:^2.5.0":
   version: 2.5.9
   resolution: "@tiptap/extension-code@npm:2.5.9"
@@ -14891,6 +14929,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tiptap/extension-document@npm:^2.9.0":
+  version: 2.9.0
+  resolution: "@tiptap/extension-document@npm:2.9.0"
+  peerDependencies:
+    "@tiptap/core": ^2.7.0
+  checksum: 10c0/2cc551050f0d4507b0c8be93c2d17a11cb9649d9b667e9d0923d197ed686e16b7dedd9582538dd7e4d04c33a3ba91145809623fcda63cfdbc3ddf7f5066dca6e
+  languageName: node
+  linkType: hard
+
 "@tiptap/extension-dropcursor@npm:^2.5.0":
   version: 2.5.9
   resolution: "@tiptap/extension-dropcursor@npm:2.5.9"
@@ -14913,6 +14960,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tiptap/extension-floating-menu@npm:^2.8.0":
+  version: 2.8.0
+  resolution: "@tiptap/extension-floating-menu@npm:2.8.0"
+  dependencies:
+    tippy.js: "npm:^6.3.7"
+  peerDependencies:
+    "@tiptap/core": ^2.7.0
+    "@tiptap/pm": ^2.7.0
+  checksum: 10c0/d9895b0c78d40dca295fe17bf2d3c1a181a2aeb1e9fec958ef7df8bac1fe59345f4f22a1bc3a5f7cfe54ff472c6ebea725c71b8db8f5082ec3e350e5da7f4a7d
+  languageName: node
+  linkType: hard
+
 "@tiptap/extension-gapcursor@npm:^2.5.0":
   version: 2.5.9
   resolution: "@tiptap/extension-gapcursor@npm:2.5.9"
@@ -14929,6 +14988,15 @@ __metadata:
   peerDependencies:
     "@tiptap/core": ^2.5.9
   checksum: 10c0/5d6b36a35ef2abcece3239543772e93f5f98bce02c105d7ccfc0b52ff8c31af7a8a2ad939af43d1fd3f5c7008fbc35f171fa4c663c3c29213ccfbe99012019dc
+  languageName: node
+  linkType: hard
+
+"@tiptap/extension-hard-break@npm:^2.9.1":
+  version: 2.9.1
+  resolution: "@tiptap/extension-hard-break@npm:2.9.1"
+  peerDependencies:
+    "@tiptap/core": ^2.7.0
+  checksum: 10c0/1a9beac209d3df229ac8db5364b34db54ca34c77db413fb5acfaa5380cb19bc7b322739bd8f975ec0fbbf15f69f1c6fdd85cee744f488595c07a0877fcf253da
   languageName: node
   linkType: hard
 
@@ -14982,6 +15050,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tiptap/extension-paragraph@npm:^2.9.0":
+  version: 2.9.0
+  resolution: "@tiptap/extension-paragraph@npm:2.9.0"
+  peerDependencies:
+    "@tiptap/core": ^2.7.0
+  checksum: 10c0/23c36c28d76356a139fd113119d17df11dacda03e9f5b926d623bb2c0267e14505a4ba9eaa674094d38a766535abefa14cd2542797ad44f313a53587bd8893e6
+  languageName: node
+  linkType: hard
+
+"@tiptap/extension-placeholder@npm:^2.9.0":
+  version: 2.9.0
+  resolution: "@tiptap/extension-placeholder@npm:2.9.0"
+  peerDependencies:
+    "@tiptap/core": ^2.7.0
+    "@tiptap/pm": ^2.7.0
+  checksum: 10c0/e8e978a50af1d89e302e3086990f48a1d2fd8754a178faa42444788a4208d72e6f09ccd529eaa37705c1e3dfd15ffd54d063f5cc023a3533dadb34e9babf1cec
+  languageName: node
+  linkType: hard
+
 "@tiptap/extension-strike@npm:^2.5.0":
   version: 2.5.9
   resolution: "@tiptap/extension-strike@npm:2.5.9"
@@ -15018,12 +15105,30 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tiptap/extension-text-style@npm:^2.8.0":
+  version: 2.8.0
+  resolution: "@tiptap/extension-text-style@npm:2.8.0"
+  peerDependencies:
+    "@tiptap/core": ^2.7.0
+  checksum: 10c0/92abcb01139331aee8ed41170450ae6327017fe654b7e057394bbac2624a38351114de811f996b65a362fca6835015b160a32ea2a80efd175384b76f951ac181
+  languageName: node
+  linkType: hard
+
 "@tiptap/extension-text@npm:^2.5.0":
   version: 2.5.9
   resolution: "@tiptap/extension-text@npm:2.5.9"
   peerDependencies:
     "@tiptap/core": ^2.5.9
   checksum: 10c0/0a6d594fd5a020d1cb2fed42f76392566d982f1b9659365aade48bc2c86bf9ed1437ef4b45e4aa748c659f9207556580996b249641177ebe78f021c5874fdc5b
+  languageName: node
+  linkType: hard
+
+"@tiptap/extension-text@npm:^2.9.0":
+  version: 2.9.0
+  resolution: "@tiptap/extension-text@npm:2.9.0"
+  peerDependencies:
+    "@tiptap/core": ^2.7.0
+  checksum: 10c0/049a1ce42df566de647632461344414c59a52930cf6a530b987f51857df4373d41f83d8feea304f95a077617fd605b62503adc4cbcd28e688c564e24d4139391
   languageName: node
   linkType: hard
 
@@ -15076,6 +15181,24 @@ __metadata:
     react: ^17.0.0 || ^18.0.0
     react-dom: ^17.0.0 || ^18.0.0
   checksum: 10c0/39260e0d3753b2bf5ed33489b794950ee26b17b4dd1842175b5ccc5cec5fff9ccb5edf1791e98c869b6425bfd3f767ee6ce1c437d96af727a4375940380bfe39
+  languageName: node
+  linkType: hard
+
+"@tiptap/react@npm:^2.8.0":
+  version: 2.8.0
+  resolution: "@tiptap/react@npm:2.8.0"
+  dependencies:
+    "@tiptap/extension-bubble-menu": "npm:^2.8.0"
+    "@tiptap/extension-floating-menu": "npm:^2.8.0"
+    "@types/use-sync-external-store": "npm:^0.0.6"
+    fast-deep-equal: "npm:^3"
+    use-sync-external-store: "npm:^1.2.2"
+  peerDependencies:
+    "@tiptap/core": ^2.7.0
+    "@tiptap/pm": ^2.7.0
+    react: ^17.0.0 || ^18.0.0
+    react-dom: ^17.0.0 || ^18.0.0
+  checksum: 10c0/a925761dd9fa778fc7a3f32a502ee9874fa785c167ad6d37e2744d0c5b7d1e72bc0c7fafbf1c7f50f04a65d01d00435361a9aa2a44110d67836fbc43e8cd0f9e
   languageName: node
   linkType: hard
 
@@ -25738,16 +25861,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-project-structure@npm:^3.7.2":
-  version: 3.7.2
-  resolution: "eslint-plugin-project-structure@npm:3.7.2"
+"eslint-plugin-project-structure@npm:^3.9.1":
+  version: 3.9.1
+  resolution: "eslint-plugin-project-structure@npm:3.9.1"
   dependencies:
     "@typescript-eslint/utils": "npm:^8.8.0"
     comment-json: "npm:^4.2.5"
     js-yaml: "npm:^4.1.0"
     jsonschema: "npm:^1.4.1"
     micromatch: "npm:^4.0.8"
-  checksum: 10c0/bb5d972cb2f24eceae0b5eefc7ccfaed1e0802977bc5ea33d3eb105521b590b5a69b36adcd3124ae67367af6b7798a05b17f06d085deaf9059e53b0839e3621e
+  checksum: 10c0/be37a67298568931ae7fa29b4afe2ad97f945652ea0e595fcc2dd6ce2e09d9e5bb981a99b6b5e1e9a807655a26924c19b640b69a72828ba5bf0aa2ebbfa79df4
   languageName: node
   linkType: hard
 
@@ -26521,7 +26644,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-deep-equal@npm:^3.1.1, fast-deep-equal@npm:^3.1.3":
+"fast-deep-equal@npm:^3, fast-deep-equal@npm:^3.1.1, fast-deep-equal@npm:^3.1.3":
   version: 3.1.3
   resolution: "fast-deep-equal@npm:3.1.3"
   checksum: 10c0/40dedc862eb8992c54579c66d914635afbec43350afbbe991235fdcb4e3a8d5af1b23ae7e79bef7d4882d0ecee06c3197488026998fb19f72dc95acff1d1b1d0
@@ -42745,13 +42868,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stripe@npm:^14.17.0":
-  version: 14.25.0
-  resolution: "stripe@npm:14.25.0"
+"stripe@npm:^17.3.1":
+  version: 17.3.1
+  resolution: "stripe@npm:17.3.1"
   dependencies:
     "@types/node": "npm:>=8.1.0"
     qs: "npm:^6.11.0"
-  checksum: 10c0/3f98230d537bdcb9e31775576743e9f2e2137d45021b3a59afe5af17dc54397e8f27bab7abce6fbb81545f69dc73f4c1325c987d2e0c88c2149e135c783d14ff
+  checksum: 10c0/96c9595428775d3bb5d619f770dd4775357ec778be4033915d629ef6033d29a70ec4d916311cc2e1e5e5e45646d9b53fcef6215e60e1ea183d89554bd61e7055
   languageName: node
   linkType: hard
 
@@ -44086,6 +44209,12 @@ __metadata:
     "@nivo/calendar": "npm:^0.87.0"
     "@nivo/core": "npm:^0.87.0"
     "@nivo/line": "npm:^0.87.0"
+    "@tiptap/extension-document": "npm:^2.9.0"
+    "@tiptap/extension-paragraph": "npm:^2.9.0"
+    "@tiptap/extension-placeholder": "npm:^2.9.0"
+    "@tiptap/extension-text": "npm:^2.9.0"
+    "@tiptap/extension-text-style": "npm:^2.8.0"
+    "@tiptap/react": "npm:^2.8.0"
     "@xyflow/react": "npm:^12.0.4"
     transliteration: "npm:^2.3.5"
   languageName: unknown
@@ -44228,6 +44357,8 @@ __metadata:
     "@linaria/core": "npm:^6.2.0"
     "@linaria/react": "npm:^6.2.1"
     "@mdx-js/react": "npm:^3.0.0"
+    "@microsoft/microsoft-graph-client": "npm:^3.0.7"
+    "@microsoft/microsoft-graph-types": "npm:^2.40.0"
     "@nestjs/apollo": "npm:^11.0.5"
     "@nestjs/axios": "npm:^3.0.1"
     "@nestjs/cli": "npm:^9.0.0"
@@ -44288,6 +44419,7 @@ __metadata:
     "@tabler/icons-react": "npm:^2.44.0"
     "@testing-library/jest-dom": "npm:^6.1.5"
     "@testing-library/react": "npm:14.0.0"
+    "@tiptap/extension-hard-break": "npm:^2.9.1"
     "@types/addressparser": "npm:^1.0.3"
     "@types/apollo-upload-client": "npm:^17.0.2"
     "@types/bcrypt": "npm:^5.0.0"
@@ -44380,7 +44512,7 @@ __metadata:
     eslint-plugin-jsx-a11y: "npm:^6.8.0"
     eslint-plugin-prefer-arrow: "npm:^1.2.3"
     eslint-plugin-prettier: "npm:^5.1.2"
-    eslint-plugin-project-structure: "npm:^3.7.2"
+    eslint-plugin-project-structure: "npm:^3.9.1"
     eslint-plugin-react: "npm:^7.33.2"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-react-refresh: "npm:^0.4.4"
@@ -44497,7 +44629,7 @@ __metadata:
     storybook-addon-cookie: "npm:^3.2.0"
     storybook-addon-pseudo-states: "npm:^2.1.2"
     storybook-dark-mode: "npm:^3.0.3"
-    stripe: "npm:^14.17.0"
+    stripe: "npm:^17.3.1"
     supertest: "npm:^6.1.3"
     ts-jest: "npm:^29.1.1"
     ts-key-enum: "npm:^2.0.12"

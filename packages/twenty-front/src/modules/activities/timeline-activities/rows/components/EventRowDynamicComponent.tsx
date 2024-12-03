@@ -35,9 +35,7 @@ export const EventRowDynamicComponent = ({
   linkedObjectMetadataItem,
   authorFullName,
 }: EventRowDynamicComponentProps) => {
-  const [eventName] = event.name.split('.');
-
-  switch (eventName) {
+  switch (linkedObjectMetadataItem?.nameSingular) {
     case 'calendarEvent':
       return (
         <EventRowCalendarEvent
@@ -58,7 +56,7 @@ export const EventRowDynamicComponent = ({
           authorFullName={authorFullName}
         />
       );
-    case 'linked-task':
+    case 'task':
       return (
         <EventRowActivity
           labelIdentifierValue={labelIdentifierValue}
@@ -69,7 +67,7 @@ export const EventRowDynamicComponent = ({
           objectNameSingular={CoreObjectNameSingular.Task}
         />
       );
-    case 'linked-note':
+    case 'note':
       return (
         <EventRowActivity
           labelIdentifierValue={labelIdentifierValue}
@@ -80,7 +78,7 @@ export const EventRowDynamicComponent = ({
           objectNameSingular={CoreObjectNameSingular.Note}
         />
       );
-    case mainObjectMetadataItem?.nameSingular:
+    default:
       return (
         <EventRowMainObject
           labelIdentifierValue={labelIdentifierValue}
@@ -89,10 +87,6 @@ export const EventRowDynamicComponent = ({
           linkedObjectMetadataItem={linkedObjectMetadataItem}
           authorFullName={authorFullName}
         />
-      );
-    default:
-      throw new Error(
-        `Cannot find event component for event name ${eventName}`,
       );
   }
 };

@@ -25,10 +25,6 @@
       "path": "../packages/twenty-emails"
     },
     {
-      "name": "packages/twenty-postgres",
-      "path": "../packages/twenty-postgres"
-    },
-    {
       "name": "packages/twenty-server",
       "path": "../packages/twenty-server"
     },

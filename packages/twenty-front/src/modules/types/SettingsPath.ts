@@ -11,7 +11,6 @@ export enum SettingsPath {
   Objects = 'objects',
   ObjectOverview = 'objects/overview',
   ObjectDetail = 'objects/:objectSlug',
-  ObjectEdit = 'objects/:objectSlug/edit',
   ObjectNewFieldSelect = 'objects/:objectSlug/new-field/select',
   ObjectNewFieldConfigure = 'objects/:objectSlug/new-field/configure',
   ObjectFieldEdit = 'objects/:objectSlug/:fieldSlug',
@@ -36,4 +35,6 @@ export enum SettingsPath {
   DevelopersNewWebhook = 'webhooks/new',
   DevelopersNewWebhookDetail = 'webhooks/:webhookId',
   Releases = 'releases',
+  AdminPanel = 'admin-panel',
+  FeatureFlags = 'admin-panel/feature-flags',
 }

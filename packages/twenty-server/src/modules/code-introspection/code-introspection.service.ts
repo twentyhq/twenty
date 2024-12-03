@@ -1,92 +1,157 @@
 import { Injectable } from '@nestjs/common';
 
 import {
+  ArrayTypeNode,
+  createSourceFile,
+  LiteralTypeNode,
+  PropertySignature,
+  ScriptTarget,
+  StringLiteral,
+  SyntaxKind,
+  TypeNode,
+  UnionTypeNode,
+  VariableStatement,
   ArrowFunction,
   FunctionDeclaration,
-  ParameterDeclaration,
-  Project,
-  SyntaxKind,
-} from 'ts-morph';
+} from 'typescript';
 
+import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
+import { isDefined } from 'src/utils/is-defined';
 import {
-  CodeIntrospectionException,
-  CodeIntrospectionExceptionCode,
-} from 'src/modules/code-introspection/code-introspection.exception';
-
-type FunctionParameter = {
-  name: string;
-  type: string;
-};
+  InputSchema,
+  InputSchemaProperty,
+} from 'src/modules/code-introspection/types/input-schema.type';
 
 @Injectable()
 export class CodeIntrospectionService {
-  private project: Project;
+  public generateInputData(inputSchema: InputSchema) {
+    return Object.entries(inputSchema).reduce((acc, [key, value]) => {
+      if (isDefined(value.enum)) {
+        acc[key] = value.enum?.[0];
+      } else if (['string', 'number', 'boolean'].includes(value.type)) {
+        acc[key] = generateFakeValue(value.type);
+      } else if (value.type === 'object') {
+        acc[key] = isDefined(value.properties)
+          ? this.generateInputData(value.properties)
+          : {};
+      } else if (value.type === 'array' && isDefined(value.items)) {
+        acc[key] = [generateFakeValue(value.items.type)];
+      }
 
-  constructor() {
-    this.project = new Project();
+      return acc;
+    }, {});
   }
 
-  public analyze(
-    fileContent: string,
-    fileName = 'temp.ts',
-  ): FunctionParameter[] {
-    const sourceFile = this.project.createSourceFile(fileName, fileContent, {
-      overwrite: true,
-    });
-
-    const functionDeclarations = sourceFile.getFunctions();
-
-    if (functionDeclarations.length > 0) {
-      return this.analyzeFunctions(functionDeclarations);
-    }
-
-    const arrowFunctions = sourceFile.getDescendantsOfKind(
-      SyntaxKind.ArrowFunction,
+  public getFunctionInputSchema(fileContent: string): InputSchema {
+    const sourceFile = createSourceFile(
+      'temp.ts',
+      fileContent,
+      ScriptTarget.ESNext,
+      true,
     );
 
-    if (arrowFunctions.length > 0) {
-      return this.analyzeArrowFunctions(arrowFunctions);
-    }
+    const schema: InputSchema = {};
 
-    return [];
+    sourceFile.forEachChild((node) => {
+      if (node.kind === SyntaxKind.FunctionDeclaration) {
+        const funcNode = node as FunctionDeclaration;
+        const params = funcNode.parameters;
+
+        params.forEach((param) => {
+          const paramName = param.name.getText();
+          const typeNode = param.type;
+
+          if (typeNode) {
+            schema[paramName] = this.getTypeString(typeNode);
+          } else {
+            schema[paramName] = { type: 'unknown' };
+          }
+        });
+      } else if (node.kind === SyntaxKind.VariableStatement) {
+        const varStatement = node as VariableStatement;
+
+        varStatement.declarationList.declarations.forEach((declaration) => {
+          if (
+            declaration.initializer &&
+            declaration.initializer.kind === SyntaxKind.ArrowFunction
+          ) {
+            const arrowFunction = declaration.initializer as ArrowFunction;
+            const params = arrowFunction.parameters;
+
+            params.forEach((param: any) => {
+              const paramName = param.name.text;
+              const typeNode = param.type;
+
+              if (typeNode) {
+                schema[paramName] = this.getTypeString(typeNode);
+              } else {
+                schema[paramName] = { type: 'unknown' };
+              }
+            });
+          }
+        });
+      }
+    });
+
+    return schema;
   }
 
-  private analyzeFunctions(
-    functionDeclarations: FunctionDeclaration[],
-  ): FunctionParameter[] {
-    if (functionDeclarations.length > 1) {
-      throw new CodeIntrospectionException(
-        'Only one function is allowed',
-        CodeIntrospectionExceptionCode.ONLY_ONE_FUNCTION_ALLOWED,
-      );
+  private getTypeString(typeNode: TypeNode): InputSchemaProperty {
+    switch (typeNode.kind) {
+      case SyntaxKind.NumberKeyword:
+        return { type: 'number' };
+      case SyntaxKind.StringKeyword:
+        return { type: 'string' };
+      case SyntaxKind.BooleanKeyword:
+        return { type: 'boolean' };
+      case SyntaxKind.ArrayType:
+        return {
+          type: 'array',
+          items: this.getTypeString((typeNode as ArrayTypeNode).elementType),
+        };
+      case SyntaxKind.ObjectKeyword:
+        return { type: 'object' };
+      case SyntaxKind.TypeLiteral: {
+        const properties: InputSchema = {};
+
+        (typeNode as any).members.forEach((member: PropertySignature) => {
+          if (member.name && member.type) {
+            const memberName = (member.name as any).text;
+
+            properties[memberName] = this.getTypeString(member.type);
+          }
+        });
+
+        return { type: 'object', properties };
+      }
+      case SyntaxKind.UnionType: {
+        const unionNode = typeNode as UnionTypeNode;
+        const enumValues: string[] = [];
+
+        let isEnum = true;
+
+        unionNode.types.forEach((subType) => {
+          if (subType.kind === SyntaxKind.LiteralType) {
+            const literal = (subType as LiteralTypeNode).literal;
+
+            if (literal.kind === SyntaxKind.StringLiteral) {
+              enumValues.push((literal as StringLiteral).text);
+            } else {
+              isEnum = false;
+            }
+          } else {
+            isEnum = false;
+          }
+        });
+
+        if (isEnum) {
+          return { type: 'string', enum: enumValues };
+        }
+
+        return { type: 'unknown' };
+      }
+      default:
+        return { type: 'unknown' };
     }
-
-    const functionDeclaration = functionDeclarations[0];
-
-    return functionDeclaration.getParameters().map(this.buildFunctionParameter);
-  }
-
-  private analyzeArrowFunctions(
-    arrowFunctions: ArrowFunction[],
-  ): FunctionParameter[] {
-    if (arrowFunctions.length > 1) {
-      throw new CodeIntrospectionException(
-        'Only one arrow function is allowed',
-        CodeIntrospectionExceptionCode.ONLY_ONE_FUNCTION_ALLOWED,
-      );
-    }
-
-    const arrowFunction = arrowFunctions[0];
-
-    return arrowFunction.getParameters().map(this.buildFunctionParameter);
-  }
-
-  private buildFunctionParameter(
-    parameter: ParameterDeclaration,
-  ): FunctionParameter {
-    return {
-      name: parameter.getName(),
-      type: parameter.getType().getText(),
-    };
   }
 }

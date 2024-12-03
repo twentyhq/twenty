@@ -68,6 +68,8 @@ function assertTriggerSettingsAreValid(
     case WorkflowTriggerType.DATABASE_EVENT:
       assertDatabaseEventTriggerSettingsAreValid(settings);
       break;
+    case WorkflowTriggerType.MANUAL:
+      break;
     default:
       throw new WorkflowTriggerException(
         'Invalid trigger type for enabling workflow trigger',

@@ -1,13 +1,13 @@
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
-import { ApolloClient, useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 import { DELETE_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/mutations/deleteOneServerlessFunction';
+import { FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE } from '@/settings/serverless-functions/graphql/queries/findOneServerlessFunctionSourceCode';
+import { useMutation } from '@apollo/client';
+import { getOperationName } from '@apollo/client/utilities';
 import {
-  ServerlessFunctionIdInput,
   DeleteOneServerlessFunctionMutation,
   DeleteOneServerlessFunctionMutationVariables,
+  ServerlessFunctionIdInput,
 } from '~/generated-metadata/graphql';
-import { FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE } from '@/settings/serverless-functions/graphql/queries/findOneServerlessFunctionSourceCode';
 
 export const useDeleteOneServerlessFunction = () => {
   const apolloMetadataClient = useApolloMetadataClient();
@@ -15,7 +15,7 @@ export const useDeleteOneServerlessFunction = () => {
     DeleteOneServerlessFunctionMutation,
     DeleteOneServerlessFunctionMutationVariables
   >(DELETE_ONE_SERVERLESS_FUNCTION, {
-    client: apolloMetadataClient ?? ({} as ApolloClient<any>),
+    client: apolloMetadataClient,
   });
 
   const deleteOneServerlessFunction = async (

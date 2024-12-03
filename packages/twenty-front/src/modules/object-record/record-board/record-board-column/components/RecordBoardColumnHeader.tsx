@@ -1,19 +1,16 @@
 import styled from '@emotion/styled';
 import { useContext, useState } from 'react';
-import { IconDotsVertical, IconPlus, Tag } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { RecordBoardCard } from '@/object-record/record-board/record-board-card/components/RecordBoardCard';
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
 import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
-import { RecordBoardColumnDefinitionType } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
-import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { IconDotsVertical, IconPlus, LightIconButton, Tag } from 'twenty-ui';
 
 const StyledHeader = styled.div`
   align-items: center;
@@ -36,7 +33,7 @@ const StyledNumChildren = styled.div`
   height: 24px;
   justify-content: center;
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
-  width: 16px;
+  width: 22px;
 `;
 
 const StyledHeaderActions = styled.div`
@@ -60,11 +57,8 @@ const StyledRightContainer = styled.div`
   display: flex;
 `;
 
-const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
+const StyledColumn = styled.div`
   background-color: ${({ theme }) => theme.background.primary};
-  border-left: 1px solid
-    ${({ theme, isFirstColumn }) =>
-      isFirstColumn ? 'none' : theme.border.color.light};
   display: flex;
   flex-direction: column;
   max-width: 200px;
@@ -76,7 +70,7 @@ const StyledColumn = styled.div<{ isFirstColumn: boolean }>`
 `;
 
 export const RecordBoardColumnHeader = () => {
-  const { columnDefinition, isFirstColumn, recordCount } = useContext(
+  const { columnDefinition, recordCount } = useContext(
     RecordBoardColumnContext,
   );
   const [isBoardColumnMenuOpen, setIsBoardColumnMenuOpen] = useState(false);
@@ -106,12 +100,9 @@ export const RecordBoardColumnHeader = () => {
 
   const boardColumnTotal = 0;
 
-  const {
-    newRecord,
-    handleNewButtonClick,
-    handleCreateSuccess,
-    handleEntitySelect,
-  } = useColumnNewCardActions(columnDefinition?.id ?? '');
+  const { handleNewButtonClick } = useColumnNewCardActions(
+    columnDefinition?.id ?? '',
+  );
 
   const { isOpportunitiesCompanyFieldDisabled } =
     useIsOpportunitiesCompanyFieldDisabled();
@@ -121,7 +112,7 @@ export const RecordBoardColumnHeader = () => {
     !isOpportunitiesCompanyFieldDisabled;
 
   return (
-    <StyledColumn isFirstColumn={isFirstColumn}>
+    <StyledColumn>
       <StyledHeader
         onMouseEnter={() => setIsHeaderHovered(true)}
         onMouseLeave={() => setIsHeaderHovered(false)}
@@ -131,18 +122,18 @@ export const RecordBoardColumnHeader = () => {
             <Tag
               onClick={handleBoardColumnMenuOpen}
               variant={
-                columnDefinition.type === RecordBoardColumnDefinitionType.Value
+                columnDefinition.type === RecordGroupDefinitionType.Value
                   ? 'solid'
                   : 'outline'
               }
               color={
-                columnDefinition.type === RecordBoardColumnDefinitionType.Value
+                columnDefinition.type === RecordGroupDefinitionType.Value
                   ? columnDefinition.color
                   : 'transparent'
               }
               text={columnDefinition.title}
               weight={
-                columnDefinition.type === RecordBoardColumnDefinitionType.Value
+                columnDefinition.type === RecordGroupDefinitionType.Value
                   ? 'regular'
                   : 'medium'
               }
@@ -155,13 +146,11 @@ export const RecordBoardColumnHeader = () => {
           <StyledRightContainer>
             {isHeaderHovered && (
               <StyledHeaderActions>
-                {columnDefinition.actions.length > 0 && (
-                  <LightIconButton
-                    accent="tertiary"
-                    Icon={IconDotsVertical}
-                    onClick={handleBoardColumnMenuOpen}
-                  />
-                )}
+                <LightIconButton
+                  accent="tertiary"
+                  Icon={IconDotsVertical}
+                  onClick={handleBoardColumnMenuOpen}
+                />
 
                 <LightIconButton
                   accent="tertiary"
@@ -173,32 +162,12 @@ export const RecordBoardColumnHeader = () => {
           </StyledRightContainer>
         </StyledHeaderContainer>
       </StyledHeader>
-      {isBoardColumnMenuOpen && columnDefinition.actions.length > 0 && (
+      {isBoardColumnMenuOpen && (
         <RecordBoardColumnDropdownMenu
           onClose={handleBoardColumnMenuClose}
           stageId={columnDefinition.id}
         />
       )}
-      {newRecord?.isCreating &&
-        newRecord.position === 'first' &&
-        (newRecord.isOpportunity ? (
-          <SingleEntitySelect
-            disableBackgroundBlur
-            onCancel={() => handleCreateSuccess('first', columnDefinition.id)}
-            onEntitySelected={(company) =>
-              company && handleEntitySelect('first', company)
-            }
-            relationObjectNameSingular={CoreObjectNameSingular.Company}
-            relationPickerScopeId="relation-picker"
-            selectedRelationRecordIds={[]}
-          />
-        ) : (
-          <RecordBoardCard
-            isCreating={true}
-            onCreateSuccess={() => handleCreateSuccess('first')}
-            position="first"
-          />
-        ))}
     </StyledColumn>
   );
 };

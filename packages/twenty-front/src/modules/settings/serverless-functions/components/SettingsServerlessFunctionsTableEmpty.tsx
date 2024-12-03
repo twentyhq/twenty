@@ -1,6 +1,5 @@
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { Button } from '@/ui/input/button/components/Button';
 import styled from '@emotion/styled';
 import {
   AnimatedPlaceholder,
@@ -8,6 +7,7 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
+  Button,
   EMPTY_PLACEHOLDER_TRANSITION_PROPS,
   IconPlus,
 } from 'twenty-ui';

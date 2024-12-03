@@ -16,6 +16,7 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
       featureFlags: [],
       allowImpersonation: false,
       activationStatus: WorkspaceActivationStatus.Active,
+      hasValidEntrepriseKey: false,
       metadataVersion: 1,
       isPublicInviteLinkEnabled: false,
     });
@@ -60,7 +61,7 @@ describe('useColumnDefinitionsFromFieldMetadata', () => {
       result.current;
 
     expect(columnDefinitions.length).toBe(21);
-    expect(filterDefinitions.length).toBe(14);
+    expect(filterDefinitions.length).toBe(17);
     expect(sortDefinitions.length).toBe(14);
   });
 });

@@ -1,0 +1,25 @@
+
+############################################################################################################################
+###   Visit https://www.tinybird.co/docs/production/implementing-test-strategies.html#regression-tests              ###
+###   for more details on Regression tests                                                                               ###
+############################################################################################################################
+
+###
+### New pipes are covered by this rule, rules below this one supersede this setting
+###
+- pipe: '.*'
+  tests:
+    - coverage:
+
+
+
+###
+### These are rules to customize regression testing by pipe using regular expressions
+### For instance skip regression tests for the pipes matching `endpoint_name.*`
+###
+- pipe: 'endpoint_name.*'
+  tests:
+    - coverage:
+        config:
+          skip: True
+

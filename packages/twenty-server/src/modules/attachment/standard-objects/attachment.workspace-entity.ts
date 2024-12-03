@@ -13,8 +13,8 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceJoinColumn } from 'src/engine/twenty-orm/decorators/workspace-join-column.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { ATTACHMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
 import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
@@ -28,7 +28,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   labelSingular: 'Attachment',
   labelPlural: 'Attachments',
   description: 'An attachment',
-  icon: 'IconFileImport',
+  icon: STANDARD_OBJECT_ICONS.attachment,
   labelIdentifierStandardId: ATTACHMENT_STANDARD_FIELD_IDS.name,
 })
 @WorkspaceIsSystem()
@@ -74,21 +74,6 @@ export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceJoinColumn('author')
   authorId: string;
-
-  @WorkspaceRelation({
-    standardId: ATTACHMENT_STANDARD_FIELD_IDS.activity,
-    type: RelationMetadataType.MANY_TO_ONE,
-    label: 'Activity',
-    description: 'Attachment activity',
-    icon: 'IconNotes',
-    inverseSideTarget: () => ActivityWorkspaceEntity,
-    inverseSideFieldKey: 'attachments',
-  })
-  @WorkspaceIsNullable()
-  activity: Relation<ActivityWorkspaceEntity> | null;
-
-  @WorkspaceJoinColumn('activity')
-  activityId: string | null;
 
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.task,

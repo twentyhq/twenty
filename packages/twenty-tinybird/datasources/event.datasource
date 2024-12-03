@@ -1,0 +1,11 @@
+SCHEMA >
+    `action` LowCardinality(String) `json:$.action`,
+    `timestamp` DateTime64(3) `json:$.timestamp`,
+    `version` LowCardinality(String) `json:$.version`,
+    `userId` String `json:$.userId` DEFAULT '',
+    `workspaceId` String `json:$.workspaceId` DEFAULT '',
+    `payload` String `json:$.payload`
+
+ENGINE MergeTree
+ENGINE_PARTITION_KEY toYear(timestamp)
+ENGINE_SORTING_KEY action, workspaceId, timestamp

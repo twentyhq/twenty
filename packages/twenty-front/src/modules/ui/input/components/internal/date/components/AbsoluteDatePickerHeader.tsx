@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
-import { IconChevronLeft, IconChevronRight } from 'twenty-ui';
+import { IconChevronLeft, IconChevronRight, LightIconButton } from 'twenty-ui';
 
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Select } from '@/ui/input/components/Select';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 

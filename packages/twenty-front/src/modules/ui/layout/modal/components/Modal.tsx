@@ -15,9 +15,14 @@ const StyledModalDiv = styled(motion.div)<{
   size?: ModalSize;
   padding?: ModalPadding;
   isMobile: boolean;
+  modalVariant: ModalVariants;
 }>`
   display: flex;
   flex-direction: column;
+  box-shadow: ${({ theme, modalVariant }) =>
+    modalVariant === 'primary'
+      ? theme.boxShadow.superHeavy
+      : theme.boxShadow.strong};
   background: ${({ theme }) => theme.background.primary};
   color: ${({ theme }) => theme.font.color.primary};
   border-radius: ${({ theme, isMobile }) => {
@@ -94,7 +99,9 @@ const StyledBackDrop = styled(motion.div)<{
   background: ${({ theme, modalVariant }) =>
     modalVariant === 'primary'
       ? theme.background.overlayPrimary
-      : theme.background.overlaySecondary};
+      : modalVariant === 'secondary'
+        ? theme.background.overlaySecondary
+        : theme.background.overlayTertiary};
   display: flex;
   height: 100%;
   justify-content: center;
@@ -132,7 +139,7 @@ const ModalFooter = ({ children, className }: ModalFooterProps) => (
 
 export type ModalSize = 'small' | 'medium' | 'large';
 export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
-export type ModalVariants = 'primary' | 'secondary';
+export type ModalVariants = 'primary' | 'secondary' | 'tertiary';
 
 export type ModalProps = React.PropsWithChildren & {
   size?: ModalSize;
@@ -217,6 +224,7 @@ export const Modal = ({
 
   return (
     <StyledBackDrop
+      className="modal-backdrop"
       onMouseDown={stopEventPropagation}
       modalVariant={modalVariant}
     >
@@ -228,6 +236,7 @@ export const Modal = ({
         animate="visible"
         exit="exit"
         layout
+        modalVariant={modalVariant}
         variants={modalAnimation}
         className={className}
         isMobile={isMobile}

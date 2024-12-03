@@ -2,13 +2,11 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Key } from 'ts-key-enum';
-import { IconSend } from 'twenty-ui';
+import { Button, IconSend } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
 import { isDefined } from '~/utils/isDefined';
@@ -106,12 +104,6 @@ export const WorkspaceInviteTeam = () => {
     }
   });
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === Key.Enter) {
-      submit();
-    }
-  };
-
   const { isSubmitSuccessful, errors } = formState;
 
   useEffect(() => {
@@ -134,7 +126,6 @@ export const WorkspaceInviteTeam = () => {
                   value={value}
                   onChange={onChange}
                   error={error?.message}
-                  onKeyDown={handleKeyDown}
                   fullWidth
                 />
               );

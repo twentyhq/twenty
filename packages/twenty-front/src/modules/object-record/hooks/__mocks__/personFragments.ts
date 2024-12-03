@@ -17,7 +17,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
       id
       intro
       jobTitle
-      linkedinLink{
+      linkedinLink {
         primaryLinkUrl
         primaryLinkLabel
         secondaryLinks
@@ -45,31 +45,14 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS = `
         primaryLinkLabel
         secondaryLinks
       }
-`
+`;
 
 export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
       __typename
-      activityTargets {
-        edges {
-          node {
-            __typename
-            activityId
-            companyId
-            createdAt
-            deletedAt
-            id
-            opportunityId
-            personId
-            rocketId
-            updatedAt
-          }
-        }
-      }
       attachments {
         edges {
           node {
             __typename
-            activityId
             authorId
             companyId
             createdAt
@@ -180,6 +163,7 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             companyId
             createdAt
             deletedAt
+            favoriteFolderId
             id
             noteId
             opportunityId
@@ -190,6 +174,8 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             updatedAt
             viewId
             workflowId
+            workflowRunId
+            workflowVersionId
             workspaceMemberId
           }
         }
@@ -308,6 +294,9 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
             rocketId
             taskId
             updatedAt
+            workflowId
+            workflowRunId
+            workflowVersionId
             workspaceMemberId
           }
         }
@@ -324,4 +313,4 @@ export const PERSON_FRAGMENT_WITH_DEPTH_ONE_RELATIONS = `
         primaryLinkLabel
         secondaryLinks
       }
-`
+`;

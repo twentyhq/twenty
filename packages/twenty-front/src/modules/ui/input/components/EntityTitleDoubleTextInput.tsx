@@ -1,10 +1,10 @@
-import { ChangeEvent } from 'react';
 import styled from '@emotion/styled';
+import { ChangeEvent } from 'react';
 
 import { StyledTextInput as UIStyledTextInput } from '@/ui/field/input/components/TextInput';
-import { ComputeNodeDimensions } from '@/ui/utilities/dimensions/components/ComputeNodeDimensions';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
+import { ComputeNodeDimensions } from 'twenty-ui';
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
 export type EntityTitleDoubleTextInputProps = {

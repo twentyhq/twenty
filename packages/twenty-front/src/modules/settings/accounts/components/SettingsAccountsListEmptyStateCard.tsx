@@ -1,11 +1,14 @@
+import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import styled from '@emotion/styled';
-import { IconGoogle } from 'twenty-ui';
-
-import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
-import { Button } from '@/ui/input/button/components/Button';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { CardHeader } from '@/ui/layout/card/components/CardHeader';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  IconGoogle,
+  IconMicrosoft,
+} from 'twenty-ui';
 
 const StyledHeader = styled(CardHeader)`
   align-items: center;
@@ -16,6 +19,7 @@ const StyledHeader = styled(CardHeader)`
 const StyledBody = styled(CardContent)`
   display: flex;
   justify-content: center;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 type SettingsAccountsListEmptyStateCardProps = {
@@ -25,11 +29,10 @@ type SettingsAccountsListEmptyStateCardProps = {
 export const SettingsAccountsListEmptyStateCard = ({
   label,
 }: SettingsAccountsListEmptyStateCardProps) => {
-  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
-
-  const handleOnClick = async () => {
-    await triggerGoogleApisOAuth();
-  };
+  const { triggerApisOAuth } = useTriggerApisOAuth();
+  const isMicrosoftSyncEnabled = useIsFeatureEnabled(
+    'IS_MICROSOFT_SYNC_ENABLED',
+  );
 
   return (
     <Card>
@@ -39,8 +42,16 @@ export const SettingsAccountsListEmptyStateCard = ({
           Icon={IconGoogle}
           title="Connect with Google"
           variant="secondary"
-          onClick={handleOnClick}
+          onClick={() => triggerApisOAuth('google')}
         />
+        {isMicrosoftSyncEnabled && (
+          <Button
+            Icon={IconMicrosoft}
+            title="Connect with Microsoft"
+            variant="secondary"
+            onClick={() => triggerApisOAuth('microsoft')}
+          />
+        )}
       </StyledBody>
     </Card>
   );

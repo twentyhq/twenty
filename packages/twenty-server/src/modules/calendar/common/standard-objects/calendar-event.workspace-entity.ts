@@ -14,6 +14,7 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { CALENDAR_EVENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -24,7 +25,7 @@ import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/co
   labelSingular: 'Calendar event',
   labelPlural: 'Calendar events',
   description: 'Calendar events',
-  icon: 'IconCalendar',
+  icon: STANDARD_OBJECT_ICONS.calendarEvent,
   labelIdentifierStandardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.title,
 })
 @WorkspaceIsSystem()

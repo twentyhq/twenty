@@ -1,5 +1,5 @@
 import { useGetDatabaseConnectionTables } from '@/databases/hooks/useGetDatabaseConnectionTables';
-import { Status } from '@/ui/display/status/components/Status';
+import { Status } from 'twenty-ui';
 import { RemoteTableStatus } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 

@@ -5,42 +5,33 @@ import { isRecordBoardFetchingRecordsByColumnFamilyState } from '@/object-record
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { useLoadRecordIndexBoardColumn } from '@/object-record/record-index/hooks/useLoadRecordIndexBoardColumn';
 import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
+import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 
 export const RecordIndexBoardColumnLoaderEffect = ({
   objectNameSingular,
-  boardFieldSelectValue,
   boardFieldMetadataId,
   recordBoardId,
   columnId,
 }: {
   recordBoardId: string;
   objectNameSingular: string;
-  boardFieldSelectValue: string | null;
   boardFieldMetadataId: string | null;
   columnId: string;
 }) => {
-  const [shouldFetchMore, setShouldFetchMore] = useRecoilState(
-    recordBoardShouldFetchMoreInColumnComponentFamilyState({
-      scopeId: getScopeIdFromComponentId(recordBoardId),
-      familyKey: columnId,
-    }),
+  const [shouldFetchMore, setShouldFetchMore] = useRecoilComponentFamilyStateV2(
+    recordBoardShouldFetchMoreInColumnComponentFamilyState,
+    columnId,
+    recordBoardId,
   );
 
   const [loadingRecordsForThisColumn, setLoadingRecordsForThisColumn] =
-    useRecoilState(
-      isRecordBoardFetchingRecordsByColumnFamilyState({
-        scopeId: getScopeIdFromComponentId(recordBoardId),
-        familyKey: { columnId },
-      }),
-    );
+    useRecoilState(isRecordBoardFetchingRecordsByColumnFamilyState(columnId));
 
   const { fetchMoreRecords, loading, records, hasNextPage } =
     useLoadRecordIndexBoardColumn({
       objectNameSingular,
       recordBoardId,
       boardFieldMetadataId,
-      columnFieldSelectValue: boardFieldSelectValue,
       columnId,
     });
 
@@ -70,7 +61,6 @@ export const RecordIndexBoardColumnLoaderEffect = ({
     fetchMoreRecords,
     loading,
     shouldFetchMore,
-    boardFieldSelectValue,
     setLoadingRecordsForThisColumn,
     loadingRecordsForThisColumn,
 
