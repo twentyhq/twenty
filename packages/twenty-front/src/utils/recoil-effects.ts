@@ -22,15 +22,18 @@ export const localStorageEffect =
   };
 
 const customCookieAttributeZodSchema = z.object({
-  cookieAttributes: z
-    .object({
-      expires: z.union([z.number(), z.instanceof(Date)]).optional(),
-      path: z.string().optional(),
-      domain: z.string().optional(),
-      secure: z.boolean().optional(),
-    })
-    .default({}),
+  cookieAttributes: z.object({
+    expires: z.union([z.number(), z.instanceof(Date)]).optional(),
+    path: z.string().optional(),
+    domain: z.string().optional(),
+    secure: z.boolean().optional(),
+  }),
 });
+
+export const isCustomCookiesAttributesValue = (
+  value: unknown,
+): value is Cookies.CookieAttributes =>
+  customCookieAttributeZodSchema.safeParse(value).success;
 
 export const cookieStorageEffect =
   <T>(
@@ -62,11 +65,11 @@ export const cookieStorageEffect =
         return;
       }
 
-      const { data } = customCookieAttributeZodSchema.safeParse(newValue);
-
       const cookieAttributes = {
         ...defaultAttributes,
-        ...(data ? data.cookieAttributes : {}),
+        ...(isCustomCookiesAttributesValue(newValue)
+          ? newValue.cookieAttributes
+          : {}),
       };
 
       isReset
