@@ -21176,9 +21176,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bullmq@npm:^4.14.0":
-  version: 4.17.0
-  resolution: "bullmq@npm:4.17.0"
+"bullmq@npm:^4.15.0":
+  version: 4.18.2
+  resolution: "bullmq@npm:4.18.2"
   dependencies:
     cron-parser: "npm:^4.6.0"
     glob: "npm:^8.0.3"
@@ -21189,7 +21189,7 @@ __metadata:
     semver: "npm:^7.5.4"
     tslib: "npm:^2.0.0"
     uuid: "npm:^9.0.0"
-  checksum: 10c0/7dde2fcc2a6432aa52fb255ac470fbc6c01530d2825bad1b48549706de2d3af90b1895954db16a753f60a3e6f2755d9e9987b422597dbf74762932e98bc8fbd2
+  checksum: 10c0/09371a6d53377e556a37e3e046576bb20056a14ac26d29528bd0a4054c33f458f1764ae696ae6a39fda688e8215ef34f1ba94fe56ba89db5b9ad2c9aa0082f2f
   languageName: node
   linkType: hard
 
@@ -44483,7 +44483,7 @@ __metadata:
     bcrypt: "npm:^5.1.1"
     better-sqlite3: "npm:^9.2.2"
     body-parser: "npm:^1.20.2"
-    bullmq: "npm:^4.14.0"
+    bullmq: "npm:^4.15.0"
     bytes: "npm:^3.1.2"
     chromatic: "npm:^6.18.0"
     class-transformer: "npm:^0.5.1"
