@@ -28,9 +28,12 @@ export const ObjectFilterDropdownOperandDropdown = ({
 
   const theme = useTheme();
 
+  const dropdownId = `${filterDropdownId}-operand-dropdown`;
+
   return (
     <Dropdown
-      dropdownId={`${filterDropdownId}-operand-dropdown`}
+      dropdownId={dropdownId}
+      parentDropdownId={filterDropdownId}
       clickableComponent={
         <StyledDropdownMenuHeader
           key={'selected-filter-operand'}
