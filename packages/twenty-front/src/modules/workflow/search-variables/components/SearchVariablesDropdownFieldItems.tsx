@@ -1,37 +1,38 @@
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
+
+import { useState } from 'react';
 import {
-  OverflowingTextWithTooltip,
   IconChevronLeft,
   MenuItemSelect,
+  OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui';
-import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
-import {
-  OutputSchema,
-  StepOutputSchema,
-} from '@/workflow/search-variables/types/StepOutputSchema';
-import { useState } from 'react';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 
-type SearchVariablesDropdownStepSubItemProps = {
+type SearchVariablesDropdownFieldItemsProps = {
   step: StepOutputSchema;
   onSelect: (value: string) => void;
   onBack: () => void;
 };
 
-const SearchVariablesDropdownStepSubItem = ({
+export const SearchVariablesDropdownFieldItems = ({
   step,
   onSelect,
   onBack,
-}: SearchVariablesDropdownStepSubItemProps) => {
+}: SearchVariablesDropdownFieldItemsProps) => {
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [searchInputValue, setSearchInputValue] = useState('');
   const { getIcon } = useIcons();
 
-  const getSelectedObject = (): OutputSchema => {
-    let selected = step.outputSchema;
+  const getSelectedObject = () => {
+    let selected = step.outputSchema.fields;
+
     for (const key of currentPath) {
       selected = selected[key]?.value;
     }
+
     return selected;
   };
 
@@ -59,13 +60,15 @@ const SearchVariablesDropdownStepSubItem = ({
   const options = Object.entries(getSelectedObject());
 
   const filteredOptions = searchInputValue
-    ? options.filter(([key]) =>
-        key.toLowerCase().includes(searchInputValue.toLowerCase()),
+    ? options.filter(
+        ([_, value]) =>
+          value.label &&
+          value.label.toLowerCase().includes(searchInputValue.toLowerCase()),
       )
     : options;
 
   return (
-    <>
+    <DropdownMenuItemsContainer>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={goBack}>
         <OverflowingTextWithTooltip text={headerLabel} />
       </DropdownMenuHeader>
@@ -80,13 +83,11 @@ const SearchVariablesDropdownStepSubItem = ({
           selected={false}
           hovered={false}
           onClick={() => handleSelect(key)}
-          text={key}
+          text={value.label || key}
           hasSubMenu={!value.isLeaf}
           LeftIcon={value.icon ? getIcon(value.icon) : undefined}
         />
       ))}
-    </>
+    </DropdownMenuItemsContainer>
   );
 };
-
-export default SearchVariablesDropdownStepSubItem;

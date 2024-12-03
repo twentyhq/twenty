@@ -1,16 +1,16 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { SearchVariablesDropdownStepItem } from '@/workflow/search-variables/components/SearchVariablesDropdownStepItem';
-import SearchVariablesDropdownStepSubItem from '@/workflow/search-variables/components/SearchVariablesDropdownStepSubItem';
+import { SearchVariablesDropdownFieldItems } from '@/workflow/search-variables/components/SearchVariablesDropdownFieldItems';
+import { SearchVariablesDropdownObjectItems } from '@/workflow/search-variables/components/SearchVariablesDropdownObjectItems';
+import { SearchVariablesDropdownWorkflowStepItems } from '@/workflow/search-variables/components/SearchVariablesDropdownWorkflowStepItems';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/search-variables/constants/SearchVariablesDropdownId';
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/search-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { IconVariablePlus } from 'twenty-ui';
+import { IconVariablePlus, isDefined } from 'twenty-ui';
 
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
@@ -30,15 +30,17 @@ const SearchVariablesDropdown = ({
   inputId,
   onVariableSelect,
   disabled,
+  objectNameSingularToSelect,
 }: {
   inputId: string;
   onVariableSelect: (variableName: string) => void;
   disabled?: boolean;
+  objectNameSingularToSelect?: string;
 }) => {
   const theme = useTheme();
 
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${inputId}`;
-  const { isDropdownOpen } = useDropdown(dropdownId);
+  const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
   const availableVariablesInWorkflowStep =
     useAvailableVariablesInWorkflowStep();
 
@@ -59,10 +61,42 @@ const SearchVariablesDropdown = ({
 
   const handleSubItemSelect = (subItem: string) => {
     onVariableSelect(subItem);
+    setSelectedStep(undefined);
+    closeDropdown();
   };
 
   const handleBack = () => {
     setSelectedStep(undefined);
+  };
+
+  const getSearchVariablesDropdownComponents = () => {
+    if (isDefined(selectedStep) && isDefined(objectNameSingularToSelect)) {
+      return (
+        <SearchVariablesDropdownObjectItems
+          step={selectedStep}
+          onSelect={handleSubItemSelect}
+          onBack={handleBack}
+        />
+      );
+    }
+
+    if (isDefined(selectedStep)) {
+      return (
+        <SearchVariablesDropdownFieldItems
+          step={selectedStep}
+          onSelect={handleSubItemSelect}
+          onBack={handleBack}
+        />
+      );
+    }
+
+    return (
+      <SearchVariablesDropdownWorkflowStepItems
+        steps={availableVariablesInWorkflowStep}
+        onSelect={handleStepSelect}
+        objectNameSingularToSelect={objectNameSingularToSelect}
+      />
+    );
   };
 
   if (disabled === true) {
@@ -96,22 +130,7 @@ const SearchVariablesDropdown = ({
           <IconVariablePlus size={theme.icon.size.sm} />
         </StyledDropdownVariableButtonContainer>
       }
-      dropdownComponents={
-        <DropdownMenuItemsContainer hasMaxHeight>
-          {selectedStep ? (
-            <SearchVariablesDropdownStepSubItem
-              step={selectedStep}
-              onSelect={handleSubItemSelect}
-              onBack={handleBack}
-            />
-          ) : (
-            <SearchVariablesDropdownStepItem
-              steps={availableVariablesInWorkflowStep}
-              onSelect={handleStepSelect}
-            />
-          )}
-        </DropdownMenuItemsContainer>
-      }
+      dropdownComponents={getSearchVariablesDropdownComponents()}
       dropdownPlacement="bottom-end"
       dropdownOffset={{ x: 0, y: 4 }}
     />

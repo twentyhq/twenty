@@ -2,13 +2,16 @@ import { v4 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import {
+  Leaf,
+  Node,
+} from 'src/modules/workflow/workflow-builder/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
-import { OutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
 
 export const generateFakeObjectRecordEvent = (
   objectMetadataEntity: ObjectMetadataEntity,
   action: DatabaseEventAction,
-): OutputSchema => {
+): Record<string, Leaf | Node> => {
   const recordId = v4();
   const userId = v4();
   const workspaceMemberId = v4();
@@ -16,13 +19,13 @@ export const generateFakeObjectRecordEvent = (
   const after = generateFakeObjectRecord(objectMetadataEntity);
   const formattedObjectMetadataEntity = Object.entries(
     objectMetadataEntity,
-  ).reduce((acc: OutputSchema, [key, value]) => {
+  ).reduce((acc: Record<string, Leaf | Node>, [key, value]) => {
     acc[key] = { isLeaf: true, value };
 
     return acc;
   }, {});
 
-  const baseResult: OutputSchema = {
+  const baseResult: Record<string, Leaf | Node> = {
     recordId: { isLeaf: true, type: 'string', value: recordId },
     userId: { isLeaf: true, type: 'string', value: userId },
     workspaceMemberId: {
