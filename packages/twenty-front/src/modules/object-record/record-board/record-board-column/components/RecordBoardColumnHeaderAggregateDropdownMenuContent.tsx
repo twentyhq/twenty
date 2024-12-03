@@ -14,7 +14,7 @@ import { getAggregateOperationLabel } from '@/object-record/record-board/record-
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { AvailableFieldsForAggregateOperation } from '@/object-record/types/AvailableFieldsForAggregateOperation';
-import { getAvailableFieldsForAggregationFromObjectFields } from '@/object-record/utils/getAvailableFieldsForAggregationFromObjectFields';
+import { getAvailableFieldsIdsForAggregationFromObjectFields } from '@/object-record/utils/getAvailableFieldsIdsForAggregationFromObjectFields';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -38,7 +38,7 @@ export const RecordBoardColumnHeaderAggregateDropdownMenuContent = () => {
 
   const availableAggregations: AvailableFieldsForAggregateOperation = useMemo(
     () =>
-      getAvailableFieldsForAggregationFromObjectFields(
+      getAvailableFieldsIdsForAggregationFromObjectFields(
         objectMetadataItem.fields,
       ),
     [objectMetadataItem.fields],
