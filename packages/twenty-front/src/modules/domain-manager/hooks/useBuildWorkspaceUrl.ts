@@ -1,5 +1,5 @@
 import { isDefined } from '~/utils/isDefined';
-import { domainConfigurationState } from '@/domain-manager/states/domain-configuration.state';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useRecoilValue } from 'recoil';
 
 export const useBuildWorkspaceUrl = () => {

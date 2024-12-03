@@ -42,16 +42,15 @@ import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDa
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
-import { workspaceDomainState } from '@/auth/states/workspaceDomainState';
 
-import { domainConfigurationState } from '@/domain-manager/states/domain-configuration.state';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useWorkspaceSubdomain } from '@/domain-manager/hooks/useWorkspaceSubdomain';
+import { useLastAuthenticateWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticateWorkspaceDomain';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setCurrentUser = useSetRecoilState(currentUserState);
   const domainConfiguration = useRecoilValue(domainConfigurationState);
-  const setWorkspaceDomainState = useSetRecoilState(workspaceDomainState);
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
@@ -67,6 +66,8 @@ export const useAuth = () => {
   const [signUp] = useSignUpMutation();
   const [verify] = useVerifyMutation();
   const { isWorkspaceSubdomain, workspaceSubdomain } = useWorkspaceSubdomain();
+  const { setLastAuthenticateWorkspaceDomain } =
+    useLastAuthenticateWorkspaceDomain();
   const [checkUserExistsQuery, { data: checkUserExistsData }] =
     useCheckUserExistsLazyQuery();
 
@@ -208,12 +209,9 @@ export const useAuth = () => {
 
       setCurrentWorkspace(workspace);
       if (isDefined(workspace) && isWorkspaceSubdomain()) {
-        setWorkspaceDomainState({
+        setLastAuthenticateWorkspaceDomain({
           id: workspace.id,
           subdomain: workspace.subdomain,
-          cookieAttributes: {
-            domain: `.${domainConfiguration.frontDomain}`,
-          },
         });
       }
 
@@ -244,8 +242,7 @@ export const useAuth = () => {
       setCurrentWorkspaceMembers,
       setCurrentWorkspaceMember,
       setDateTimeFormat,
-      setWorkspaceDomainState,
-      domainConfiguration.frontDomain,
+      setLastAuthenticateWorkspaceDomain,
       setWorkspaces,
     ],
   );

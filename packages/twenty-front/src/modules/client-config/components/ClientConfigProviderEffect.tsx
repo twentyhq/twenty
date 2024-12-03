@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { domainConfigurationState } from '@/domain-manager/states/domain-configuration.state';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isSSOEnabledState } from '@/client-config/states/isSSOEnabledState';
 
 export const ClientConfigProviderEffect = () => {

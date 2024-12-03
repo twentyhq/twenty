@@ -2,13 +2,13 @@ import { cookieStorageEffect } from '~/utils/recoil-effects';
 import { Workspace } from '~/generated/graphql';
 import { createState } from 'twenty-ui';
 
-export const workspaceDomainState = createState<
+export const lastAuthenticateWorkspaceDomainState = createState<
   | (Pick<Workspace, 'id' | 'subdomain'> & {
       cookieAttributes?: Cookies.CookieAttributes;
     })
   | null
 >({
-  key: 'workspaceDomainState',
+  key: 'lastAuthenticateWorkspaceDomain',
   defaultValue: null,
   effects: [
     cookieStorageEffect('lastWorkspaceDomainState', {
