@@ -22,6 +22,8 @@ type SendInviteLinkEmailProps = {
   serverUrl?: string;
 };
 
+
+//work from here
 export const SendInviteLinkEmail = ({
   link,
   workspace,
@@ -29,13 +31,14 @@ export const SendInviteLinkEmail = ({
   serverUrl,
 }: SendInviteLinkEmailProps) => {
   const workspaceLogo = getImageAbsoluteURI(workspace.logo, serverUrl);
+  const senderFullName = `${capitalize(sender.firstName)} (via Twenty)`; //restructuring and adding via Twenty (per requirement)
   return (
     <BaseEmail width={333}>
       <Title value="Join your team on Twenty" />
       <MainText>
-        {capitalize(sender.firstName)} (
-        <Link
-          href={sender.email}
+        <b>{senderFullName}</b>> (
+          <Link
+          href={`mailto:${sender.email}`}
           value={sender.email}
           color={emailTheme.font.colors.blue}
         />
@@ -51,3 +54,4 @@ export const SendInviteLinkEmail = ({
     </BaseEmail>
   );
 };
+
