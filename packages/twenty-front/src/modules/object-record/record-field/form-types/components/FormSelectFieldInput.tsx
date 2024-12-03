@@ -123,6 +123,8 @@ export const FormSelectFieldInput = ({
       editingMode: 'view',
       value: '',
     });
+
+    onPersist(null);
   };
 
   const selectedOption = field.metadata.options.find(
