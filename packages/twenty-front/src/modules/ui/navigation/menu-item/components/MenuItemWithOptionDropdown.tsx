@@ -1,6 +1,7 @@
 import { SelectHotkeyScope } from '@/ui/input/types/SelectHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useTheme } from '@emotion/react';
+import { Placement } from '@floating-ui/react';
 import { FunctionComponent, MouseEvent, ReactElement, ReactNode } from 'react';
 import {
   IconChevronRight,
@@ -36,6 +37,7 @@ export type MenuItemWithOptionDropdownProps = {
   testId?: string;
   text: ReactNode;
   hasSubMenu?: boolean;
+  dropdownPlacement?: Placement;
 };
 
 // TODO: refactor this
@@ -53,6 +55,7 @@ export const MenuItemWithOptionDropdown = ({
   testId,
   text,
   hasSubMenu = false,
+  dropdownPlacement = 'bottom-end',
 }: MenuItemWithOptionDropdownProps) => {
   const theme = useTheme();
 
@@ -86,6 +89,7 @@ export const MenuItemWithOptionDropdown = ({
               accent="tertiary"
             />
           }
+          dropdownPlacement={dropdownPlacement}
           dropdownComponents={dropdownContent}
           dropdownId={dropdownId}
           dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
