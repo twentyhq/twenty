@@ -11,9 +11,9 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/getAuthProvidersByWorkspace';
 
 @Injectable()
 export class SwitchWorkspaceService {
@@ -23,7 +23,6 @@ export class SwitchWorkspaceService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly userService: UserService,
-    private readonly workspaceService: WorkspaceService,
     private readonly accessTokenService: AccessTokenService,
     private readonly refreshTokenService: RefreshTokenService,
   ) {}
@@ -61,15 +60,17 @@ export class SwitchWorkspaceService {
       );
     }
 
-    await this.userService.saveDefaultWorkspace(user.id, workspace.id);
+    await this.userRepository.save({
+      id: user.id,
+      defaultWorkspace: workspace,
+    });
 
     return {
       id: workspace.id,
+      subdomain: workspace.subdomain,
       logo: workspace.logo,
       displayName: workspace.displayName,
-      authProviders: await this.workspaceService.getAuthProvidersByWorkspaceId(
-        workspace.id,
-      ),
+      authProviders: getAuthProvidersByWorkspace(workspace),
     };
   }
 

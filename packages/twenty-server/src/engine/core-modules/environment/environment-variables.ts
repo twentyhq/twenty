@@ -127,8 +127,22 @@ export class EnvironmentVariables {
   PG_SSL_ALLOW_SELF_SIGNED = false;
 
   // Frontend URL
-  @IsUrl({ require_tld: false, require_protocol: true })
-  FRONT_BASE_URL: string;
+  @IsString()
+  @IsOptional()
+  FRONT_DOMAIN = 'localhost';
+
+  @IsString()
+  @ValidateIf((env) => env.IS_MULTIWORKSPACE_ENABLED)
+  DEFAULT_SUBDOMAIN = 'app';
+
+  @IsString()
+  @IsOptional()
+  FRONT_PROTOCOL: 'http' | 'https' = 'http';
+
+  @CastToPositiveNumber()
+  @IsNumber()
+  @IsOptional()
+  FRONT_PORT = 3001;
 
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
@@ -473,11 +487,11 @@ export class EnvironmentVariables {
 
   // SSL
   @IsString()
-  @ValidateIf((env) => env.SERVER_URL.startsWith('https'))
+  @IsOptional()
   SSL_KEY_PATH: string;
 
   @IsString()
-  @ValidateIf((env) => env.SERVER_URL.startsWith('https'))
+  @IsOptional()
   SSL_CERT_PATH: string;
 }
 

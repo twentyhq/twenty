@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import {
-  HorizontalSeparator,
   IconGoogle,
   IconMicrosoft,
   Loader,
   MainButton,
+  HorizontalSeparator,
 } from 'twenty-ui';
 import { useTheme } from '@emotion/react';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
@@ -13,12 +13,13 @@ import { FormProvider } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useLocation } from 'react-router-dom';
+
 import { isDefined } from '~/utils/isDefined';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
@@ -29,6 +30,7 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
 import { SignInUpMode } from '@/auth/types/signInUpMode.type';
 
 const StyledContentContainer = styled(motion.div)`
@@ -45,13 +47,13 @@ const StyledForm = styled.form`
 
 export const SignInUpGlobalScopeForm = () => {
   const theme = useTheme();
-  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
   const signInUpStep = useRecoilValue(signInUpStepState);
 
   const { signInWithGoogle } = useSignInWithGoogle();
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
   const { checkUserExists } = useAuth();
   const { readCaptchaToken } = useReadCaptchaToken();
+  const { redirectToWorkspace } = useUrlManager();
 
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
@@ -62,6 +64,7 @@ export const SignInUpGlobalScopeForm = () => {
   const [showErrors, setShowErrors] = useState(false);
 
   const { form } = useSignInUpForm();
+  const { pathname } = useLocation();
 
   const { submitCredentials } = useSignInUp(form);
 
@@ -89,31 +92,21 @@ export const SignInUpGlobalScopeForm = () => {
       },
       onCompleted: (data) => {
         requestFreshCaptchaToken();
-        if (
-          data?.checkUserExists.exists &&
-          data.checkUserExists.__typename === 'UserExists'
-        ) {
+        if (data.checkUserExists.__typename === 'UserExists') {
           if (
             isDefined(data?.checkUserExists.availableWorkspaces) &&
             data.checkUserExists.availableWorkspaces.length >= 1
           ) {
-            // return redirectToWorkspace(
-            //   data?.checkUserExists.availableWorkspaces[0].subdomain,
-            //   {
-            //     email: form.getValues('email'),
-            //   },
-            // );
+            return redirectToWorkspace(
+              data?.checkUserExists.availableWorkspaces[0].subdomain,
+              pathname,
+              {
+                email: form.getValues('email'),
+              },
+            );
           }
         }
-        if (
-          isDefined(data?.checkUserExists.exists) &&
-          data.checkUserExists.__typename === 'UserNotExists'
-        ) {
-          if (!isMultiWorkspaceEnabled) {
-            return enqueueSnackBar('User not found', {
-              variant: SnackBarVariant.Error,
-            });
-          }
+        if (data.checkUserExists.__typename === 'UserNotExists') {
           setSignInUpMode(SignInUpMode.SignUp);
           setSignInUpStep(SignInUpStep.Password);
         }

@@ -41,18 +41,24 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { buildWorkspaceURL } from 'src/utils/workspace-url.util';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 @Injectable()
+// eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class AuthService {
   constructor(
     private readonly accessTokenService: AccessTokenService,
+    private readonly domainManagerService: DomainManagerService,
     private readonly refreshTokenService: RefreshTokenService,
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly userService: UserService,
+    private readonly workspaceInvitationService: WorkspaceInvitationService,
     private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -64,11 +70,54 @@ export class AuthService {
     private readonly appTokenRepository: Repository<AppToken>,
   ) {}
 
-  async challenge(challengeInput: ChallengeInput) {
+  private async checkAccessAndUseInvitationOrThrow(
+    workspace: Workspace,
+    user: User,
+  ) {
+    if (
+      await this.userWorkspaceService.checkUserWorkspaceExists(
+        user.id,
+        workspace.id,
+      )
+    ) {
+      return;
+    }
+
+    const invitation =
+      await this.workspaceInvitationService.getOneWorkspaceInvitation(
+        workspace.id,
+        user.email,
+      );
+
+    if (invitation) {
+      await this.workspaceInvitationService.validateInvitation({
+        workspacePersonalInviteToken: invitation.value,
+        email: user.email,
+      });
+      await this.userWorkspaceService.addUserToWorkspace(user, workspace);
+
+      return;
+    }
+
+    throw new AuthException(
+      "You're not member of this workspace.",
+      AuthExceptionCode.FORBIDDEN_EXCEPTION,
+    );
+  }
+
+  async challenge(challengeInput: ChallengeInput, targetWorkspace: Workspace) {
+    if (!targetWorkspace.isPasswordAuthEnabled) {
+      throw new AuthException(
+        'Email/Password auth is not enabled for this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     const user = await this.userRepository.findOne({
       where: {
         email: challengeInput.email,
       },
+      relations: ['workspaces'],
     });
 
     if (!user) {
@@ -77,6 +126,8 @@ export class AuthService {
         AuthExceptionCode.USER_NOT_FOUND,
       );
     }
+
+    await this.checkAccessAndUseInvitationOrThrow(targetWorkspace, user);
 
     if (!user.passwordHash) {
       throw new AuthException(
@@ -105,6 +156,7 @@ export class AuthService {
     password,
     workspaceInviteHash,
     workspacePersonalInviteToken,
+    targetWorkspaceSubdomain,
     firstName,
     lastName,
     picture,
@@ -119,6 +171,7 @@ export class AuthService {
     workspacePersonalInviteToken?: string;
     picture?: string | null;
     fromSSO: boolean;
+    targetWorkspaceSubdomain?: string;
     isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
   }) {
     return await this.signInUpService.signInUp({
@@ -128,6 +181,7 @@ export class AuthService {
       lastName,
       workspaceInviteHash,
       workspacePersonalInviteToken,
+      targetWorkspaceSubdomain,
       picture,
       fromSSO,
       isAuthEnabled,
@@ -344,7 +398,7 @@ export class AuthService {
     const emailTemplate = PasswordUpdateNotifyEmail({
       userName: `${user.firstName} ${user.lastName}`,
       email: user.email,
-      link: this.environmentService.get('FRONT_BASE_URL'),
+      link: this.domainManagerService.getBaseUrl().toString(),
     });
 
     const html = render(emailTemplate, {
@@ -384,15 +438,12 @@ export class AuthService {
     return workspace;
   }
 
-  computeRedirectURI(loginToken: string) {
-    const url = buildWorkspaceURL(
-      this.environmentService.get('FRONT_BASE_URL'),
-      null,
-      {
-        withPathname: '/verify',
-        withSearchParams: { loginToken },
-      },
-    );
+  async computeRedirectURI(loginToken: string, subdomain?: string) {
+    const url = this.domainManagerService.buildWorkspaceURL({
+      subdomain,
+      pathname: '/verify',
+      searchParams: { loginToken },
+    });
 
     return url.toString();
   }
@@ -417,6 +468,7 @@ export class AuthService {
     return user.workspaces.map<AvailableWorkspaceOutput>((userWorkspace) => ({
       id: userWorkspace.workspaceId,
       displayName: userWorkspace.workspace.displayName,
+      subdomain: userWorkspace.workspace.subdomain,
       logo: userWorkspace.workspace.logo,
       sso: userWorkspace.workspace.workspaceSSOIdentityProviders.reduce(
         (acc, identityProvider) =>

@@ -19,9 +19,9 @@ import { parseCoreBatchPath } from 'src/engine/api/rest/core/query-builder/utils
 import { parseCorePath } from 'src/engine/api/rest/core/query-builder/utils/path-parsers/parse-core-path.utils';
 import { Query } from 'src/engine/api/rest/core/types/query.type';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 @Injectable()
 export class CoreQueryBuilderFactory {
@@ -40,7 +40,7 @@ export class CoreQueryBuilderFactory {
     private readonly findDuplicatesVariablesFactory: FindDuplicatesVariablesFactory,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly accessTokenService: AccessTokenService,
-    private readonly environmentService: EnvironmentService,
+    private readonly domainManagerService: DomainManagerService,
   ) {}
 
   async getObjectMetadata(
@@ -50,16 +50,20 @@ export class CoreQueryBuilderFactory {
     objectMetadataItems: ObjectMetadataEntity[];
     objectMetadataItem: ObjectMetadataEntity;
   }> {
-    const { workspace } = await this.accessTokenService.validateToken(request);
+    const { workspace } =
+      await this.accessTokenService.validateTokenByRequest(request);
 
     const objectMetadataItems =
       await this.objectMetadataService.findManyWithinWorkspace(workspace.id);
 
     if (!objectMetadataItems.length) {
       throw new BadRequestException(
-        `No object was found for the workspace associated with this API key. You may generate a new one here ${this.environmentService.get(
-          'FRONT_BASE_URL',
-        )}/settings/developers`,
+        `No object was found for the workspace associated with this API key. You may generate a new one here ${this.domainManagerService
+          .buildWorkspaceURL({
+            subdomain: workspace.subdomain,
+            pathname: '/settings/developers',
+          })
+          .toString()}`,
       );
     }
 

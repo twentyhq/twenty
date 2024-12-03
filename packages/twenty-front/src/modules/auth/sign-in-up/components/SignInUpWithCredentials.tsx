@@ -6,10 +6,7 @@ import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { Loader, MainButton } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailField';
-import {
-  useSignInUpForm,
-  validationSchema,
-} from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useRecoilValue } from 'recoil';
 import styled from '@emotion/styled';
 import { SignInUpPasswordField } from '@/auth/sign-in-up/components/SignInUpPasswordField';
@@ -27,7 +24,7 @@ const StyledForm = styled.form`
 `;
 
 export const SignInUpWithCredentials = () => {
-  const { form } = useSignInUpForm();
+  const { form, validationSchema } = useSignInUpForm();
 
   const signInUpStep = useRecoilValue(signInUpStepState);
   const [showErrors, setShowErrors] = useState(false);

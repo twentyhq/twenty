@@ -35,6 +35,7 @@ export const USER_QUERY_FRAGMENT = gql`
       isGoogleAuthEnabled
       isMicrosoftAuthEnabled
       isPasswordAuthEnabled
+      subdomain
       hasValidEntrepriseKey
       featureFlags {
         id
@@ -56,6 +57,7 @@ export const USER_QUERY_FRAGMENT = gql`
         logo
         displayName
         domainName
+        subdomain
       }
     }
     userVars

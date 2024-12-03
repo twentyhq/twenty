@@ -28,9 +28,10 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -41,6 +42,7 @@ export type SignInUpServiceInput = {
   workspacePersonalInviteToken?: string;
   picture?: string | null;
   fromSSO: boolean;
+  targetWorkspaceSubdomain?: string;
   isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
 };
 
@@ -58,6 +60,7 @@ export class SignInUpService {
     private readonly onboardingService: OnboardingService,
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
+    private readonly domainManagerService: DomainManagerService,
   ) {}
 
   async signInUp({
@@ -69,6 +72,7 @@ export class SignInUpService {
     lastName,
     picture,
     fromSSO,
+    targetWorkspaceSubdomain,
     isAuthEnabled,
   }: SignInUpServiceInput) {
     if (!firstName) firstName = '';
@@ -113,13 +117,30 @@ export class SignInUpService {
       }
     }
 
-    if (workspacePersonalInviteToken || workspaceInviteHash) {
+    const maybeInvitation =
+      fromSSO && !workspacePersonalInviteToken && !workspaceInviteHash
+        ? await this.workspaceInvitationService.findInvitationByWorkspaceSubdomainAndUserEmail(
+            {
+              subdomain: targetWorkspaceSubdomain,
+              email,
+            },
+          )
+        : undefined;
+
+    if (
+      workspacePersonalInviteToken ||
+      workspaceInviteHash ||
+      maybeInvitation
+    ) {
       const invitationValidation =
-        await this.workspaceInvitationService.validateInvitation({
-          workspacePersonalInviteToken: workspacePersonalInviteToken,
-          workspaceInviteHash,
-          email,
-        });
+        workspacePersonalInviteToken || workspaceInviteHash || maybeInvitation
+          ? await this.workspaceInvitationService.validateInvitation({
+              workspacePersonalInviteToken:
+                workspacePersonalInviteToken ?? maybeInvitation?.value,
+              workspaceInviteHash,
+              email,
+            })
+          : null;
 
       if (
         invitationValidation?.isValid === true &&
@@ -282,6 +303,7 @@ export class SignInUpService {
     }
 
     const workspaceToCreate = this.workspaceRepository.create({
+      subdomain: await this.domainManagerService.generateSubdomain(),
       displayName: '',
       domainName: '',
       inviteHash: v4(),

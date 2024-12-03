@@ -32,12 +32,14 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { SwitchWorkspaceInput } from 'src/engine/core-modules/auth/dto/switch-workspace.input';
 import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
-import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 import { ChallengeInput } from './dto/challenge.input';
 import { LoginToken } from './dto/login-token.entity';
@@ -64,6 +66,7 @@ export class AuthResolver {
     private switchWorkspaceService: SwitchWorkspaceService,
     private transientTokenService: TransientTokenService,
     private oauthService: OAuthService,
+    private domainManagerService: DomainManagerService,
   ) {}
 
   @UseGuards(CaptchaGuard)
@@ -94,8 +97,20 @@ export class AuthResolver {
 
   @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
-  async challenge(@Args() challengeInput: ChallengeInput): Promise<LoginToken> {
-    const user = await this.authService.challenge(challengeInput);
+  async challenge(
+    @Args() challengeInput: ChallengeInput,
+    @OriginHeader() origin: string,
+  ): Promise<LoginToken> {
+    const workspace =
+      await this.domainManagerService.getWorkspaceByOrigin(origin);
+
+    if (!workspace) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+    const user = await this.authService.challenge(challengeInput, workspace);
     const loginToken = await this.loginTokenService.generateLoginToken(
       user.email,
     );
@@ -105,9 +120,14 @@ export class AuthResolver {
 
   @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
-  async signUp(@Args() signUpInput: SignUpInput): Promise<LoginToken> {
+  async signUp(
+    @Args() signUpInput: SignUpInput,
+    @OriginHeader() origin: string,
+  ): Promise<LoginToken> {
     const user = await this.authService.signInUp({
       ...signUpInput,
+      targetWorkspaceSubdomain:
+        this.domainManagerService.getWorkspaceSubdomainByOrigin(origin),
       fromSSO: false,
       isAuthEnabled: workspaceValidator.isAuthEnabled(
         'password',
@@ -159,14 +179,18 @@ export class AuthResolver {
   }
 
   @Mutation(() => Verify)
-  async verify(@Args() verifyInput: VerifyInput): Promise<Verify> {
-    const email = await this.loginTokenService.verifyLoginToken(
+  async verify(
+    @Args() verifyInput: VerifyInput,
+    @OriginHeader() origin: string,
+  ): Promise<Verify> {
+    const workspace =
+      await this.domainManagerService.getWorkspaceByOrigin(origin);
+
+    const { sub: email } = await this.loginTokenService.verifyLoginToken(
       verifyInput.loginToken,
     );
 
-    const result = await this.authService.verify(email);
-
-    return result;
+    return await this.authService.verify(email, workspace?.id);
   }
 
   @Mutation(() => AuthorizeApp)

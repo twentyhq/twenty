@@ -18,7 +18,7 @@ class GraphqlTokenValidationProxy {
 
   async validateToken(req: Request) {
     try {
-      return await this.accessTokenService.validateToken(req);
+      return await this.accessTokenService.validateTokenByRequest(req);
     } catch (error) {
       const authGraphqlApiExceptionFilter = new AuthGraphqlApiExceptionFilter();
 

@@ -152,6 +152,10 @@ export class Workspace {
   databaseSchema: string;
 
   @Field()
+  @Column()
+  subdomain: string;
+
+  @Field()
   @Column({ default: true })
   isGoogleAuthEnabled: boolean;
 

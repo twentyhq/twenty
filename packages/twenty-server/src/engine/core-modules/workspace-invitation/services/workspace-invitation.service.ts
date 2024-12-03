@@ -28,6 +28,7 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { castAppTokenToWorkspaceInvitationUtil } from 'src/engine/core-modules/workspace-invitation/utils/cast-app-token-to-workspace-invitation.util';
 
 @Injectable()
@@ -43,6 +44,7 @@ export class WorkspaceInvitationService {
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
     private readonly onboardingService: OnboardingService,
+    private readonly domainManagerService: DomainManagerService,
   ) {}
 
   // VALIDATIONS METHODS
@@ -133,7 +135,24 @@ export class WorkspaceInvitationService {
     );
   }
 
-  // QUERY METHODS
+  async findInvitationByWorkspaceSubdomainAndUserEmail({
+    subdomain,
+    email,
+  }: {
+    subdomain?: string;
+    email: string;
+  }) {
+    const workspace = this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
+      ? await this.workspaceRepository.findOneBy({
+          subdomain,
+        })
+      : await this.domainManagerService.getDefaultWorkspace();
+
+    if (!workspace) return;
+
+    return await this.getOneWorkspaceInvitation(workspace.id, email);
+  }
+
   async getOneWorkspaceInvitation(workspaceId: string, email: string) {
     return await this.appTokenRepository
       .createQueryBuilder('appToken')
@@ -181,7 +200,6 @@ export class WorkspaceInvitationService {
     return appTokens.map(castAppTokenToWorkspaceInvitationUtil);
   }
 
-  // MUTATIONS METHODS
   async createWorkspaceInvitation(email: string, workspace: Workspace) {
     const maybeWorkspaceInvitation = await this.getOneWorkspaceInvitation(
       workspace.id,
@@ -311,16 +329,17 @@ export class WorkspaceInvitationService {
       }),
     );
 
-    const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
-
     for (const invitation of invitationsPr) {
       if (invitation.status === 'fulfilled') {
-        const link = new URL(`${frontBaseURL}/invite/${workspace?.inviteHash}`);
-
-        if (invitation.value.isPersonalInvitation) {
-          link.searchParams.set('inviteToken', invitation.value.appToken.value);
-        }
-
+        const link = this.domainManagerService.buildWorkspaceURL({
+          subdomain: workspace.subdomain,
+          pathname: `invite/${workspace?.inviteHash}`,
+          searchParams: invitation.value.isPersonalInvitation
+            ? {
+                inviteToken: invitation.value.appToken.value,
+              }
+            : {},
+        });
         const emailData = {
           link: link.toString(),
           workspace: { name: workspace.displayName, logo: workspace.logo },

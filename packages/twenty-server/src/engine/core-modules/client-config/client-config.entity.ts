@@ -62,6 +62,15 @@ export class ClientConfig {
   isMultiWorkspaceEnabled: boolean;
 
   @Field(() => Boolean)
+  isSSOEnabled: boolean;
+
+  @Field(() => String, { nullable: true })
+  defaultSubdomain: string;
+
+  @Field(() => String)
+  frontDomain: string;
+
+  @Field(() => Boolean)
   debugMode: boolean;
 
   @Field(() => Boolean)

@@ -1,5 +1,4 @@
-import { BadRequestException, Logger } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
@@ -19,16 +18,10 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
-import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
-} from 'src/engine/core-modules/workspace/workspace.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
+@Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
-  private readonly userWorkspaceService: UserWorkspaceService;
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -38,14 +31,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly environmentService: EnvironmentService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    private moduleRef: ModuleRef,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {
     super(workspaceRepository);
-    this.userWorkspaceService = this.moduleRef.get(UserWorkspaceService, {
-      strict: false,
-    });
   }
 
   async activateWorkspace(user: User, data: ActivateWorkspaceInput) {
@@ -167,75 +156,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         {
           defaultWorkspaceId: userWorkspaces[0].workspaceId,
         },
-      );
-    }
-  }
-
-  async getAuthProvidersByWorkspaceId(workspaceId: string) {
-    const workspace = await this.workspaceRepository.findOne({
-      where: {
-        id: workspaceId,
-      },
-      relations: ['workspaceSSOIdentityProviders'],
-    });
-
-    workspaceValidator.assertIsExist(
-      workspace,
-      new WorkspaceException(
-        'Workspace not found',
-        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
-      ),
-    );
-
-    return {
-      google: workspace.isGoogleAuthEnabled,
-      magicLink: false,
-      password: workspace.isPasswordAuthEnabled,
-      microsoft: workspace.isMicrosoftAuthEnabled,
-      sso: workspace.workspaceSSOIdentityProviders.map((identityProvider) => ({
-        id: identityProvider.id,
-        name: identityProvider.name,
-        type: identityProvider.type,
-        status: identityProvider.status,
-        issuer: identityProvider.issuer,
-      })),
-    };
-  }
-
-  async getWorkspaceByOrigin() {
-    try {
-      if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
-        const workspaces = await this.workspaceRepository.find({
-          order: {
-            createdAt: 'DESC',
-          },
-        });
-
-        if (workspaces.length > 1) {
-          // TODO AMOREAUX: this logger is trigger twice and the second time the message is undefined for an unknown reason
-          Logger.warn(
-            `In single-workspace mode, there should be only one workspace. Today there are ${workspaces.length} workspaces`,
-          );
-        }
-
-        return workspaces[0];
-      } else {
-        // TODO AMOREAUX: change that with subdomains
-        throw new Error('New workspace not implemented in this PR');
-      }
-
-      // const subdomain = getWorkspaceSubdomainByOrigin(
-      //   origin,
-      //   this.environmentService.get('FRONT_BASE_URL'),
-      // );
-      //
-      // if (!subdomain) return;
-      //
-      // return this.workspaceRepository.findOneBy({ subdomain });
-    } catch (e) {
-      throw new WorkspaceException(
-        'Workspace not found',
-        WorkspaceExceptionCode.SUBDOMAIN_NOT_FOUND,
       );
     }
   }

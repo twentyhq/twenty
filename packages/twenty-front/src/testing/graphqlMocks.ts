@@ -51,6 +51,7 @@ export const graphqlMocks = {
               id: 'id',
               logo: 'logo',
               displayName: 'displayName',
+              subdomain: 'subdomain',
               authProviders: {
                 google: true,
                 microsoft: false,

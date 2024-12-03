@@ -81,7 +81,7 @@ export type AuthProviders = {
   magicLink: Scalars['Boolean']['output'];
   microsoft: Scalars['Boolean']['output'];
   password: Scalars['Boolean']['output'];
-  sso: Scalars['Boolean']['output'];
+  sso: Array<SsoIdentityProvider>;
 };
 
 export type AuthToken = {
@@ -104,6 +104,15 @@ export type AuthTokens = {
 export type AuthorizeApp = {
   __typename?: 'AuthorizeApp';
   redirectUrl: Scalars['String']['output'];
+};
+
+export type AvailableWorkspaceOutput = {
+  __typename?: 'AvailableWorkspaceOutput';
+  displayName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  logo?: Maybe<Scalars['String']['output']>;
+  sso: Array<SsoConnection>;
+  subdomain: Scalars['String']['output'];
 };
 
 export type Billing = {
@@ -165,9 +174,12 @@ export type ClientConfig = {
   captcha: Captcha;
   chromeExtensionId?: Maybe<Scalars['String']['output']>;
   debugMode: Scalars['Boolean']['output'];
+  defaultSubdomain?: Maybe<Scalars['String']['output']>;
+  frontDomain: Scalars['String']['output'];
+  isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
+  isSSOEnabled: Scalars['Boolean']['output'];
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
-  isMultiWorkspaceEnabled: Scalars['Boolean']['output'];
   support: Support;
 };
 
@@ -316,7 +328,7 @@ export type EditSsoOutput = {
   issuer: Scalars['String']['output'];
   name: Scalars['String']['output'];
   status: SsoIdentityProviderStatus;
-  type: IdpType;
+  type: IdentityProviderType;
 };
 
 export type EmailPasswordResetLink = {
@@ -408,17 +420,13 @@ export enum FileFolder {
   WorkspaceLogo = 'WorkspaceLogo'
 }
 
-export type FindAvailableSsoidpInput = {
-  email: Scalars['String']['input'];
-};
-
 export type FindAvailableSsoidpOutput = {
   __typename?: 'FindAvailableSSOIDPOutput';
   id: Scalars['String']['output'];
   issuer: Scalars['String']['output'];
   name: Scalars['String']['output'];
   status: SsoIdentityProviderStatus;
-  type: IdpType;
+  type: IdentityProviderType;
   workspace: WorkspaceNameAndId;
 };
 
@@ -433,22 +441,6 @@ export type FullName = {
   __typename?: 'FullName';
   firstName: Scalars['String']['output'];
   lastName: Scalars['String']['output'];
-};
-
-export type GenerateJwt = GenerateJwtOutputWithAuthTokens | GenerateJwtOutputWithSsoauth;
-
-export type GenerateJwtOutputWithAuthTokens = {
-  __typename?: 'GenerateJWTOutputWithAuthTokens';
-  authTokens: AuthTokens;
-  reason: Scalars['String']['output'];
-  success: Scalars['Boolean']['output'];
-};
-
-export type GenerateJwtOutputWithSsoauth = {
-  __typename?: 'GenerateJWTOutputWithSSOAUTH';
-  availableSSOIDPs: Array<FindAvailableSsoidpOutput>;
-  reason: Scalars['String']['output'];
-  success: Scalars['Boolean']['output'];
 };
 
 export type GetAuthorizationUrlInput = {
@@ -469,7 +461,7 @@ export type GetServerlessFunctionSourceCodeInput = {
   version?: Scalars['String']['input'];
 };
 
-export enum IdpType {
+export enum IdentityProviderType {
   Oidc = 'OIDC',
   Saml = 'SAML'
 }
@@ -568,9 +560,7 @@ export type Mutation = {
   enablePostgresProxy: PostgresCredentials;
   exchangeAuthorizationCode: ExchangeAuthCode;
   executeOneServerlessFunction: ServerlessFunctionExecutionResult;
-  findAvailableSSOIdentityProviders: Array<FindAvailableSsoidpOutput>;
   generateApiKeyToken: ApiKeyToken;
-  generateJWT: GenerateJwt;
   generateTransientToken: TransientToken;
   getAuthorizationUrl: GetAuthorizationUrlOutput;
   impersonate: Verify;
@@ -581,6 +571,7 @@ export type Mutation = {
   sendInvitations: SendInvitationsOutput;
   signUp: LoginToken;
   skipSyncEmailOnboardingStep: OnboardingStepSuccess;
+  switchWorkspace: PublicWorkspaceDataOutput;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   track: Analytics;
@@ -747,19 +738,9 @@ export type MutationExecuteOneServerlessFunctionArgs = {
 };
 
 
-export type MutationFindAvailableSsoIdentityProvidersArgs = {
-  input: FindAvailableSsoidpInput;
-};
-
-
 export type MutationGenerateApiKeyTokenArgs = {
   apiKeyId: Scalars['String']['input'];
   expiresAt: Scalars['String']['input'];
-};
-
-
-export type MutationGenerateJwtArgs = {
-  workspaceId: Scalars['String']['input'];
 };
 
 
@@ -804,6 +785,11 @@ export type MutationSignUpArgs = {
   password: Scalars['String']['input'];
   workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
   workspacePersonalInviteToken?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationSwitchWorkspaceArgs = {
+  workspaceId: Scalars['String']['input'];
 };
 
 
@@ -959,6 +945,15 @@ export type ProductPricesEntity = {
   totalNumberOfPrices: Scalars['Int']['output'];
 };
 
+export type PublicWorkspaceDataOutput = {
+  __typename?: 'PublicWorkspaceDataOutput';
+  authProviders: AuthProviders;
+  displayName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  logo?: Maybe<Scalars['String']['output']>;
+  subdomain: Scalars['String']['output'];
+};
+
 export type PublishServerlessFunctionInput = {
   /** The id of the function. */
   id: Scalars['ID']['input'];
@@ -967,13 +962,14 @@ export type PublishServerlessFunctionInput = {
 export type Query = {
   __typename?: 'Query';
   billingPortalSession: SessionEntity;
-  checkUserExists: UserExists;
+  checkUserExists: UserExistsOutput;
   checkWorkspaceInviteHashIsValid: WorkspaceInviteHashValid;
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
   field: Field;
   fields: FieldConnection;
+  findAvailableWorkspacesByEmail: Array<AvailableWorkspaceOutput>;
   findDistantTablesWithStatus: Array<RemoteTable>;
   findManyRemoteServersByType: Array<RemoteServer>;
   findManyServerlessFunctions: Array<ServerlessFunction>;
@@ -984,6 +980,7 @@ export type Query = {
   getAvailablePackages: Scalars['JSON']['output'];
   getPostgresCredentials?: Maybe<PostgresCredentials>;
   getProductPrices: ProductPricesEntity;
+  getPublicWorkspaceDataBySubdomain: PublicWorkspaceDataOutput;
   getServerlessFunctionSourceCode?: Maybe<Scalars['JSON']['output']>;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
@@ -1024,6 +1021,11 @@ export type QueryFieldArgs = {
 export type QueryFieldsArgs = {
   filter?: FieldFilter;
   paging?: CursorPaging;
+};
+
+
+export type QueryFindAvailableWorkspacesByEmailArgs = {
+  email: Scalars['String']['input'];
 };
 
 
@@ -1209,6 +1211,24 @@ export type RunWorkflowVersionInput = {
   workflowVersionId: Scalars['String']['input'];
 };
 
+export type SsoConnection = {
+  __typename?: 'SSOConnection';
+  id: Scalars['String']['output'];
+  issuer: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  status: SsoIdentityProviderStatus;
+  type: IdentityProviderType;
+};
+
+export type SsoIdentityProvider = {
+  __typename?: 'SSOIdentityProvider';
+  id: Scalars['String']['output'];
+  issuer: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+  status: SsoIdentityProviderStatus;
+  type: IdentityProviderType;
+};
+
 export enum SsoIdentityProviderStatus {
   Active = 'Active',
   Error = 'Error',
@@ -1300,7 +1320,7 @@ export type SetupSsoOutput = {
   issuer: Scalars['String']['output'];
   name: Scalars['String']['output'];
   status: SsoIdentityProviderStatus;
-  type: IdpType;
+  type: IdentityProviderType;
 };
 
 /** Sort Directions */
@@ -1494,8 +1514,12 @@ export type UpdateWorkspaceInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
   domainName?: InputMaybe<Scalars['String']['input']>;
   inviteHash?: InputMaybe<Scalars['String']['input']>;
+  isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  isMicrosoftAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  isPasswordAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   logo?: InputMaybe<Scalars['String']['input']>;
+  subdomain?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type User = {
@@ -1533,8 +1557,11 @@ export type UserEdge = {
 
 export type UserExists = {
   __typename?: 'UserExists';
+  availableWorkspaces: Array<AvailableWorkspaceOutput>;
   exists: Scalars['Boolean']['output'];
 };
+
+export type UserExistsOutput = UserExists | UserNotExists;
 
 export type UserMappingOptions = {
   password?: InputMaybe<Scalars['String']['input']>;
@@ -1549,6 +1576,11 @@ export type UserMappingOptionsUpdateInput = {
 export type UserMappingOptionsUser = {
   __typename?: 'UserMappingOptionsUser';
   user?: Maybe<Scalars['String']['output']>;
+};
+
+export type UserNotExists = {
+  __typename?: 'UserNotExists';
+  exists: Scalars['Boolean']['output'];
 };
 
 export type UserWorkspace = {
@@ -1584,6 +1616,7 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
   allowImpersonation: Scalars['Boolean']['output'];
+  billingEntitlements?: Maybe<Array<BillingEntitlement>>;
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime']['output'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
@@ -1596,11 +1629,21 @@ export type Workspace = {
   hasValidEntrepriseKey: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
   inviteHash?: Maybe<Scalars['String']['output']>;
+  isGoogleAuthEnabled: Scalars['Boolean']['output'];
+  isMicrosoftAuthEnabled: Scalars['Boolean']['output'];
+  isPasswordAuthEnabled: Scalars['Boolean']['output'];
   isPublicInviteLinkEnabled: Scalars['Boolean']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   metadataVersion: Scalars['Float']['output'];
+  subdomain: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
+};
+
+
+export type WorkspaceBillingEntitlementsArgs = {
+  filter?: BillingEntitlementFilter;
+  sorting?: Array<BillingEntitlementSort>;
 };
 
 
@@ -1674,6 +1717,30 @@ export type WorkspaceNameAndId = {
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
 };
+
+export type BillingEntitlement = {
+  __typename?: 'billingEntitlement';
+  id: Scalars['UUID']['output'];
+  key: Scalars['String']['output'];
+  value: Scalars['Boolean']['output'];
+  workspaceId: Scalars['String']['output'];
+};
+
+export type BillingEntitlementFilter = {
+  and?: InputMaybe<Array<BillingEntitlementFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  or?: InputMaybe<Array<BillingEntitlementFilter>>;
+};
+
+export type BillingEntitlementSort = {
+  direction: SortDirection;
+  field: BillingEntitlementSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum BillingEntitlementSortFields {
+  Id = 'id'
+}
 
 export type Field = {
   __typename?: 'field';

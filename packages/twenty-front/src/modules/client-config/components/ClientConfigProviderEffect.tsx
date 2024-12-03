@@ -13,15 +13,19 @@ import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { urlManagerState } from '@/url-manager/states/url-manager.state';
+import { isSSOEnabledState } from '@/client-config/states/isSSOEnabledState';
 
 export const ClientConfigProviderEffect = () => {
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
+  const setUrlManager = useSetRecoilState(urlManagerState);
 
   const setIsSignInPrefilled = useSetRecoilState(isSignInPrefilledState);
   const setIsMultiWorkspaceEnabled = useSetRecoilState(
     isMultiWorkspaceEnabledState,
   );
+  const setIsSSOEnabledState = useSetRecoilState(isSSOEnabledState);
 
   const setBilling = useSetRecoilState(billingState);
   const setSupportChat = useSetRecoilState(supportChatState);
@@ -88,6 +92,11 @@ export const ClientConfigProviderEffect = () => {
 
     setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
     setApiConfig(data?.clientConfig?.api);
+    setIsSSOEnabledState(data?.clientConfig?.isSSOEnabled);
+    setUrlManager({
+      defaultSubdomain: data?.clientConfig?.defaultSubdomain,
+      frontDomain: data?.clientConfig?.frontDomain,
+    });
   }, [
     data,
     setIsDebugMode,
@@ -103,6 +112,8 @@ export const ClientConfigProviderEffect = () => {
     setApiConfig,
     setIsAnalyticsEnabled,
     error,
+    setUrlManager,
+    setIsSSOEnabledState,
   ]);
 
   return <></>;
