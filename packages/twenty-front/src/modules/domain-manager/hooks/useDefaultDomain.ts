@@ -1,4 +1,4 @@
-import { domainConfigurationState } from '@/domain-manager/states/domain-configuration.state';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRecoilValue } from 'recoil';
 

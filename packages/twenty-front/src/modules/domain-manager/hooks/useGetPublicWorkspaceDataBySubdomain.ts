@@ -6,7 +6,7 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useDomainBackToDefaultSubdomain } from '@/domain-manager/hooks/useDomainBackToDefaultSubdomain';
-import { workspaceDomainState } from '@/auth/states/workspaceDomainState';
+import { useLastAuthenticateWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticateWorkspaceDomain';
 
 export const useGetPublicWorkspaceDataBySubdomain = () => {
   const { isDefaultDomain } = useDefaultDomain();
@@ -17,7 +17,9 @@ export const useGetPublicWorkspaceDataBySubdomain = () => {
   const setWorkspacePublicDataState = useSetRecoilState(
     workspacePublicDataState,
   );
-  const setWorkspaceDomain = useSetRecoilState(workspaceDomainState);
+  const { setLastAuthenticateWorkspaceDomain } =
+    useLastAuthenticateWorkspaceDomain();
+
   const { loading } = useGetPublicWorkspaceDataBySubdomainQuery({
     skip:
       (isMultiWorkspaceEnabled && isDefaultDomain) ||
@@ -29,7 +31,7 @@ export const useGetPublicWorkspaceDataBySubdomain = () => {
     onError: (error) => {
       // eslint-disable-next-line no-console
       console.error(error);
-      setWorkspaceDomain(null);
+      setLastAuthenticateWorkspaceDomain(null);
       backToDefaultSubdomain();
     },
   });
