@@ -23,15 +23,7 @@ export const useUpdateViewAggregate = () => {
     [currentViewId, updateView],
   );
 
-  const updateViewAggregateToCount = () => {
-    updateViewAggregate({
-      kanbanAggregateOperationFieldMetadataId: null,
-      kanbanAggregateOperation: AGGREGATE_OPERATIONS.count,
-    });
-  };
-
   return {
-    updateViewAggregateToCount,
     updateViewAggregate,
   };
 };

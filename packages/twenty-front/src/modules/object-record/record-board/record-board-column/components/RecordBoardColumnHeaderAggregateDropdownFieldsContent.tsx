@@ -1,16 +1,16 @@
 import { useDropdown } from '@/dropdown/hooks/useDropdown';
 import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
-import { aggregateDropdownState } from '@/object-record/record-board/record-board-column/states/aggregateDropdownState';
+import { aggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/aggregateOperationComponentState';
+import { availableFieldIdsForAggregateOperationComponentState } from '@/object-record/record-board/record-board-column/states/availableFieldIdsForAggregateOperationComponentState';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useUpdateViewAggregate } from '@/views/hooks/useUpdateViewAggregate';
-import { useRecoilValue } from 'recoil';
 import { Icon123, IconChevronLeft, MenuItem, useIcons } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
 export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
-  const aggregateDropdown = useRecoilValue(aggregateDropdownState);
   const { closeDropdown, resetContent, objectMetadataItem } = useDropdown({
     context: RecordBoardColumnHeaderAggregateDropdownContext,
   });
@@ -19,16 +19,22 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
 
   const { getIcon } = useIcons();
 
-  const operation = aggregateDropdown.operation;
+  const aggregateOperation = useRecoilComponentValueV2(
+    aggregateOperationComponentState,
+  );
 
-  if (!isDefined(operation)) return <></>;
+  const availableFieldsIdsForAggregateOperation = useRecoilComponentValueV2(
+    availableFieldIdsForAggregateOperationComponentState,
+  );
+
+  if (!isDefined(aggregateOperation)) return <></>;
 
   return (
     <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
-        {getAggregateOperationLabel(operation)}
+        {getAggregateOperationLabel(aggregateOperation)}
       </DropdownMenuHeader>
-      {aggregateDropdown.availableFieldIdsForOperation.map((fieldId) => {
+      {availableFieldsIdsForAggregateOperation.map((fieldId) => {
         const fieldMetadata = objectMetadataItem.fields.find(
           (field) => field.id === fieldId,
         );
@@ -41,7 +47,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
               onClick={() => {
                 updateViewAggregate({
                   kanbanAggregateOperationFieldMetadataId: fieldId,
-                  kanbanAggregateOperation: operation,
+                  kanbanAggregateOperation: aggregateOperation,
                 });
                 closeDropdown();
               }}

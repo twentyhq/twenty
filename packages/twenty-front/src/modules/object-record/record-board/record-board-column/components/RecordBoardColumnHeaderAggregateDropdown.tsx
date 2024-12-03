@@ -2,6 +2,7 @@ import { DROPDOWN_OFFSET_Y } from '@/dropdown/constants/DropdownOffsetY';
 import { DROPDOWN_WIDTH } from '@/dropdown/constants/DropdownWidth';
 import { useCurrentContentId } from '@/dropdown/hooks/useCurrentContentId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext } from '@/object-record/record-board/contexts/RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext';
 import { RecordBoardColumnHeaderAggregateDropdownButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownButton';
 import { AggregateDropdownContent } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContent';
 import { RecordBoardColumnHeaderAggregateDropdownContext } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdownContext';
@@ -26,31 +27,37 @@ export const RecordBoardColumnHeaderAggregateDropdown = ({
     useCurrentContentId<AggregateContentId>();
 
   return (
-    <Dropdown
-      dropdownId={dropdownId}
-      dropdownHotkeyScope={{ scope: RecordBoardColumnHotkeyScope.ColumnHeader }}
-      dropdownMenuWidth={DROPDOWN_WIDTH}
-      dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
-      clickableComponent={
-        <RecordBoardColumnHeaderAggregateDropdownButton
-          dropdownId={dropdownId}
-          value={aggregateValue}
-          tooltip={aggregateLabel}
-        />
-      }
-      dropdownComponents={
-        <RecordBoardColumnHeaderAggregateDropdownContext.Provider
-          value={{
-            currentContentId,
-            onContentChange: handleContentChange,
-            resetContent: handleResetContent,
-            objectMetadataItem: objectMetadataItem,
-            dropdownId: dropdownId,
-          }}
-        >
-          <AggregateDropdownContent />
-        </RecordBoardColumnHeaderAggregateDropdownContext.Provider>
-      }
-    />
+    <RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext.Provider
+      value={{ instanceId: dropdownId }}
+    >
+      <Dropdown
+        dropdownId={dropdownId}
+        dropdownHotkeyScope={{
+          scope: RecordBoardColumnHotkeyScope.ColumnHeader,
+        }}
+        dropdownMenuWidth={DROPDOWN_WIDTH}
+        dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
+        clickableComponent={
+          <RecordBoardColumnHeaderAggregateDropdownButton
+            dropdownId={dropdownId}
+            value={aggregateValue}
+            tooltip={aggregateLabel}
+          />
+        }
+        dropdownComponents={
+          <RecordBoardColumnHeaderAggregateDropdownContext.Provider
+            value={{
+              currentContentId,
+              onContentChange: handleContentChange,
+              resetContent: handleResetContent,
+              objectMetadataItem: objectMetadataItem,
+              dropdownId: dropdownId,
+            }}
+          >
+            <AggregateDropdownContent />
+          </RecordBoardColumnHeaderAggregateDropdownContext.Provider>
+        }
+      />
+    </RecordBoardColumnHeaderAggregateDropdownComponentInstanceContext.Provider>
   );
 };
