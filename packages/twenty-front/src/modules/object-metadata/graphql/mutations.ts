@@ -75,6 +75,7 @@ export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
       createdAt
       updatedAt
       settings
+      isLabelSyncedWithName
     }
   }
 `;

@@ -6,7 +6,7 @@ import { TEXT_INPUT_STYLE } from 'twenty-ui';
 const StyledDropdownMenuSearchInputContainer = styled.div`
   align-items: center;
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
-
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   background: ${({ theme }) => theme.background.transparent.secondary};
   backdrop-filter: ${({ theme }) => theme.blur.medium};

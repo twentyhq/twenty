@@ -3,28 +3,22 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useRecoilValue } from 'recoil';
 import { IconHeart, IconHeartOff, isDefined } from 'twenty-ui';
 
 export const useManageFavoritesSingleRecordAction = ({
-  position,
+  recordId,
   objectMetadataItem,
 }: {
-  position: number;
+  recordId: string;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
-
-  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
-    contextStoreTargetedRecordsRuleComponentState,
-  );
 
   const { sortedFavorites: favorites } = useFavorites();
 
@@ -32,22 +26,19 @@ export const useManageFavoritesSingleRecordAction = ({
 
   const { deleteFavorite } = useDeleteFavorite();
 
-  const selectedRecordId =
-    contextStoreTargetedRecordsRule.mode === 'selection'
-      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
-      : undefined;
-
-  const selectedRecord = useRecoilValue(
-    recordStoreFamilyState(selectedRecordId ?? ''),
-  );
+  const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
 
   const foundFavorite = favorites?.find(
-    (favorite) => favorite.recordId === selectedRecordId,
+    (favorite) => favorite.recordId === recordId,
   );
 
-  const isFavorite = !!selectedRecordId && !!foundFavorite;
+  const isFavorite = !!foundFavorite;
 
-  const registerManageFavoritesSingleRecordAction = () => {
+  const registerManageFavoritesSingleRecordAction = ({
+    position,
+  }: {
+    position: number;
+  }) => {
     if (!isDefined(objectMetadataItem) || objectMetadataItem.isRemote) {
       return;
     }

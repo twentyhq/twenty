@@ -12,10 +12,8 @@ import {
 } from '@/object-record/record-index/export/hooks/useExportRecords';
 
 export const useExportViewNoSelectionRecordAction = ({
-  position,
   objectMetadataItem,
 }: {
-  position: number;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
@@ -27,7 +25,11 @@ export const useExportViewNoSelectionRecordAction = ({
     filename: `${objectMetadataItem.nameSingular}.csv`,
   });
 
-  const registerExportViewNoSelectionRecordsAction = () => {
+  const registerExportViewNoSelectionRecordsAction = ({
+    position,
+  }: {
+    position: number;
+  }) => {
     addActionMenuEntry({
       type: ActionMenuEntryType.Standard,
       scope: ActionMenuEntryScope.Global,
