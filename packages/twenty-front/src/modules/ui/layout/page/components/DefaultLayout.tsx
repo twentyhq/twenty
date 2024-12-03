@@ -67,6 +67,10 @@ const StyledMainContainer = styled.div`
   display: flex;
   flex: 0 1 100%;
   overflow: hidden;
+
+  .justify-center {
+    justify-content: center;
+  }
 `;
 
 export const DefaultLayout = () => {
