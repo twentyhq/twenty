@@ -15,12 +15,7 @@ export const getImageAbsoluteURI = <T extends string | null | undefined>(
     return imageUrl as ImageAbsoluteURI<T>;
   }
 
-  const serverFilesUrl = new URL(REACT_APP_SERVER_BASE_URL);
+  const serverFilesUrl = REACT_APP_SERVER_BASE_URL;
 
-  serverFilesUrl.pathname = `/files/`;
-  serverFilesUrl.pathname += imageUrl.startsWith('/')
-    ? imageUrl.slice(1)
-    : imageUrl;
-
-  return serverFilesUrl.toString() as ImageAbsoluteURI<T>;
+  return `${serverFilesUrl}/files/${imageUrl}` as ImageAbsoluteURI<T>;
 };
