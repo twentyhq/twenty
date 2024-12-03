@@ -31,7 +31,7 @@ import { getImageBufferFromUrl } from 'src/utils/image';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -60,7 +60,7 @@ export class SignInUpService {
     private readonly onboardingService: OnboardingService,
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
-    private readonly workspaceService: WorkspaceService,
+    private readonly domainManagerService: DomainManagerService,
   ) {}
 
   async signInUp({
@@ -303,7 +303,7 @@ export class SignInUpService {
     }
 
     const workspaceToCreate = this.workspaceRepository.create({
-      subdomain: await this.workspaceService.generateSubdomain(),
+      subdomain: await this.domainManagerService.generateSubdomain(),
       displayName: '',
       domainName: '',
       inviteHash: v4(),

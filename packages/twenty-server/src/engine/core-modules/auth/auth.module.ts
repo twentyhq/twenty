@@ -35,7 +35,6 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
@@ -43,6 +42,7 @@ import { ConnectedAccountModule } from 'src/modules/connected-account/connected-
 import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 
 import { AuthResolver } from './auth.resolver';
 
