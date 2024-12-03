@@ -1,6 +1,10 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { GoogleAPIsOauthRequestCodeStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-request-code.auth.strategy';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
@@ -25,6 +29,14 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
   }
 
   async canActivate(context: ExecutionContext) {
+    const variab = true;
+
+    if (variab === true) {
+      throw new AuthException(
+        'AuthException FORBIDDEN_EXCEPTION',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
     const request = context.switchToHttp().getRequest();
 
     const { workspaceId } =

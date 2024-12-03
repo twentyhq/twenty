@@ -29,6 +29,7 @@ export class AuthGraphqlApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.INVALID_DATA:
       case AuthExceptionCode.INTERNAL_SERVER_ERROR:
       default:
+        console.log('AuthGraphqlApiExceptionFilter');
         throw new InternalServerError(exception.message);
     }
   }

@@ -28,6 +28,7 @@ export class AuthOAuthExceptionFilter implements ExceptionFilter {
           .redirect(this.environmentService.get('FRONT_BASE_URL'));
         break;
       default:
+        console.log('AuthOAuthExceptionFilter 2');
         throw new InternalServerErrorException(exception.message);
     }
   }
