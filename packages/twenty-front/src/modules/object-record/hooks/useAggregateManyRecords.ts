@@ -4,18 +4,18 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
-import { useAggregateQuery } from '@/object-record/hooks/useAggregateQuery';
+import { useAggregateManyRecordsQuery } from '@/object-record/hooks/useAggregateManyRecordsQuery';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import isEmpty from 'lodash.isempty';
 import { isDefined } from 'twenty-ui';
 
-export type AggregateData = {
+export type AggregateManyRecordsData = {
   [fieldName: string]: {
     [operation in AGGREGATE_OPERATIONS]?: string | number | undefined;
   };
 };
 
-export const useAggregate = ({
+export const useAggregateManyRecords = ({
   objectNameSingular,
   filter,
   recordGqlFieldsAggregate,
@@ -30,7 +30,7 @@ export const useAggregate = ({
     objectNameSingular,
   });
 
-  const { aggregateQuery, gqlFieldToFieldMap } = useAggregateQuery({
+  const { aggregateQuery, gqlFieldToFieldMap } = useAggregateManyRecordsQuery({
     objectNameSingular,
     recordGqlFieldsAggregate,
   });
@@ -45,7 +45,7 @@ export const useAggregate = ({
     },
   );
 
-  const formattedData: AggregateData = {};
+  const formattedData: AggregateManyRecordsData = {};
 
   if (!isEmpty(data)) {
     Object.entries(data?.[objectMetadataItem.namePlural] ?? {})?.forEach(

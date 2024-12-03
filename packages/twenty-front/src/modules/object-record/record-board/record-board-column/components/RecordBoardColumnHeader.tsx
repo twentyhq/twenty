@@ -6,7 +6,7 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { useAggregateQueryForColumn } from '@/object-record/record-board/record-board-column/hooks/useAggregateQueryForColumn';
+import { useAggregateManyRecordsForRecordBoardColumn } from '@/object-record/record-board/record-board-column/hooks/useAggregateManyRecordsForRecordBoardColumn';
 import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
 import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
@@ -41,7 +41,7 @@ const StyledLeftContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledNumChildren = styled.div`
+const StyledRecordCountChildren = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
@@ -95,7 +95,8 @@ export const RecordBoardColumnHeader = () => {
     setIsBoardColumnMenuOpen(false);
   };
 
-  const { aggregateValue, aggregateLabel } = useAggregateQueryForColumn();
+  const { aggregateValue, aggregateLabel } =
+    useAggregateManyRecordsForRecordBoardColumn();
 
   const { handleNewButtonClick } = useColumnNewCardActions(
     columnDefinition.id ?? '',
@@ -147,7 +148,9 @@ export const RecordBoardColumnHeader = () => {
                 aggregateLabel={aggregateLabel}
               />
             ) : (
-              <StyledNumChildren>{aggregateValue}</StyledNumChildren>
+              <StyledRecordCountChildren>
+                {aggregateValue}
+              </StyledRecordCountChildren>
             )}
           </StyledLeftContainer>
           <StyledRightContainer>

@@ -29,7 +29,6 @@ export class ProcessAggregateHelper {
         aggregatedField.fromField,
         aggregatedField.fromSubField,
       );
-      const operation = aggregatedField.aggregateOperation;
 
       if (
         !Object.values(AGGREGATE_OPERATIONS).includes(
@@ -40,7 +39,7 @@ export class ProcessAggregateHelper {
       }
 
       queryBuilder.addSelect(
-        `${operation}("${columnName}")`,
+        `${aggregatedField.aggregateOperation}("${columnName}")`,
         `${aggregatedFieldName}`,
       );
     }
