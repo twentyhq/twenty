@@ -338,7 +338,7 @@ export class WorkspaceInvitationService {
             ? {
                 inviteToken: invitation.value.appToken.value,
                 email: invitation.value.email,
-            }
+              }
             : {},
         });
         const emailData = {
