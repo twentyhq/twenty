@@ -29,6 +29,7 @@ import { H2Title, Section } from 'twenty-ui';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { DEFAULT_ICONS_BY_FIELD_TYPE } from '~/pages/settings/data-model/constants/DefaultIconsByFieldType';
+import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
@@ -140,13 +141,17 @@ export const SettingsObjectNewFieldConfigure = () => {
             'label',
             'description',
             'name',
+            'isLabelSyncedWithName',
           ]),
           objectMetadataId: activeObjectMetadataItem.id,
           connect: {
             field: {
               icon: relationFormValues.field.icon,
               label: relationFormValues.field.label,
-              name: relationFormValues.field.name,
+              name:
+                (relationFormValues.field.isLabelSyncedWithName ?? true)
+                  ? computeMetadataNameFromLabel(relationFormValues.field.label)
+                  : relationFormValues.field.name,
             },
             objectMetadataId: relationFormValues.objectMetadataId,
           },
@@ -211,6 +216,9 @@ export const SettingsObjectNewFieldConfigure = () => {
               />
               <SettingsDataModelFieldIconLabelForm
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
+                canToggleSyncLabelWithName={
+                  fieldType !== FieldMetadataType.Relation
+                }
               />
             </Section>
             <Section>

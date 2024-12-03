@@ -73,9 +73,11 @@ type SettingsDataModelFieldIconLabelFormProps = {
   disabled?: boolean;
   fieldMetadataItem?: FieldMetadataItem;
   maxLength?: number;
+  canToggleSyncLabelWithName?: boolean;
 };
 
 export const SettingsDataModelFieldIconLabelForm = ({
+  canToggleSyncLabelWithName = true,
   disabled,
   fieldMetadataItem,
   maxLength,
@@ -145,81 +147,85 @@ export const SettingsDataModelFieldIconLabelForm = ({
           )}
         />
       </StyledInputsContainer>
-      <StyledAdvancedSettingsOuterContainer>
-        <AdvancedSettingsWrapper>
-          <StyledAdvancedSettingsContainer>
-            <StyledAdvancedSettingsSectionInputWrapper>
-              <StyledInputsContainer>
+      {canToggleSyncLabelWithName && (
+        <StyledAdvancedSettingsOuterContainer>
+          <AdvancedSettingsWrapper>
+            <StyledAdvancedSettingsContainer>
+              <StyledAdvancedSettingsSectionInputWrapper>
+                <StyledInputsContainer>
+                  <Controller
+                    name="name"
+                    control={control}
+                    defaultValue={fieldMetadataItem?.name}
+                    render={({ field: { onChange, value } }) => (
+                      <>
+                        <TextInput
+                          label="API Name"
+                          placeholder="employees"
+                          value={value}
+                          onChange={onChange}
+                          disabled={disabled || isLabelSyncedWithName}
+                          fullWidth
+                          maxLength={DATABASE_IDENTIFIER_MAXIMUM_LENGTH}
+                          RightIcon={() =>
+                            apiNameTooltipText && (
+                              <>
+                                <IconInfoCircle
+                                  id="info-circle-id-name"
+                                  size={theme.icon.size.md}
+                                  color={theme.font.color.tertiary}
+                                  style={{ outline: 'none' }}
+                                />
+                                <AppTooltip
+                                  anchorSelect="#info-circle-id-name"
+                                  content={apiNameTooltipText}
+                                  offset={5}
+                                  noArrow
+                                  place="bottom"
+                                  positionStrategy="fixed"
+                                  delay={TooltipDelay.shortDelay}
+                                />
+                              </>
+                            )
+                          }
+                        />
+                      </>
+                    )}
+                  />
+                </StyledInputsContainer>
                 <Controller
-                  name="name"
+                  name="isLabelSyncedWithName"
                   control={control}
-                  defaultValue={fieldMetadataItem?.name}
+                  defaultValue={
+                    fieldMetadataItem?.isLabelSyncedWithName ?? true
+                  }
                   render={({ field: { onChange, value } }) => (
-                    <>
-                      <TextInput
-                        label="API Name"
-                        placeholder="employees"
-                        value={value}
-                        onChange={onChange}
-                        disabled={disabled || isLabelSyncedWithName}
-                        fullWidth
-                        maxLength={DATABASE_IDENTIFIER_MAXIMUM_LENGTH}
-                        RightIcon={() =>
-                          apiNameTooltipText && (
-                            <>
-                              <IconInfoCircle
-                                id="info-circle-id-name"
-                                size={theme.icon.size.md}
-                                color={theme.font.color.tertiary}
-                                style={{ outline: 'none' }}
-                              />
-                              <AppTooltip
-                                anchorSelect="#info-circle-id-name"
-                                content={apiNameTooltipText}
-                                offset={5}
-                                noArrow
-                                place="bottom"
-                                positionStrategy="fixed"
-                                delay={TooltipDelay.shortDelay}
-                              />
-                            </>
-                          )
+                    <Card rounded>
+                      <SettingsOptionCardContentToggle
+                        Icon={IconRefresh}
+                        title="Synchronize Field Label and API Name"
+                        description="Should changing a field's label also change the API name?"
+                        checked={value ?? true}
+                        disabled={
+                          isDefined(fieldMetadataItem) &&
+                          !fieldMetadataItem.isCustom
                         }
+                        advancedMode
+                        onChange={(value) => {
+                          onChange(value);
+                          if (value === true) {
+                            fillNameFromLabel(label);
+                          }
+                        }}
                       />
-                    </>
+                    </Card>
                   )}
                 />
-              </StyledInputsContainer>
-              <Controller
-                name="isLabelSyncedWithName"
-                control={control}
-                defaultValue={fieldMetadataItem?.isLabelSyncedWithName ?? true}
-                render={({ field: { onChange, value } }) => (
-                  <Card rounded>
-                    <SettingsOptionCardContentToggle
-                      Icon={IconRefresh}
-                      title="Synchronize Field Label and API Name"
-                      description="Should changing a field's label also change the API name?"
-                      checked={value ?? true}
-                      disabled={
-                        isDefined(fieldMetadataItem) &&
-                        !fieldMetadataItem.isCustom
-                      }
-                      advancedMode
-                      onChange={(value) => {
-                        onChange(value);
-                        if (value === true) {
-                          fillNameFromLabel(label);
-                        }
-                      }}
-                    />
-                  </Card>
-                )}
-              />
-            </StyledAdvancedSettingsSectionInputWrapper>
-          </StyledAdvancedSettingsContainer>
-        </AdvancedSettingsWrapper>
-      </StyledAdvancedSettingsOuterContainer>
+              </StyledAdvancedSettingsSectionInputWrapper>
+            </StyledAdvancedSettingsContainer>
+          </AdvancedSettingsWrapper>
+        </StyledAdvancedSettingsOuterContainer>
+      )}
     </>
   );
 };
