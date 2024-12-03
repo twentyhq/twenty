@@ -8,7 +8,6 @@ import {
 } from 'twenty-ui';
 
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
-import { SettingsServerlessFunctionCodeEditorContainer } from '@/settings/serverless-functions/components/SettingsServerlessFunctionCodeEditorContainer';
 import { SettingsServerlessFunctionsOutputMetadataInfo } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsOutputMetadataInfo';
 import { settingsServerlessFunctionCodeEditorOutputParamsState } from '@/settings/serverless-functions/states/settingsServerlessFunctionCodeEditorOutputParamsState';
 import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
@@ -82,30 +81,26 @@ export const SettingsServerlessFunctionTestTab = ({
               />,
             ]}
           />
-          <SettingsServerlessFunctionCodeEditorContainer>
-            <CodeEditor
-              value={settingsServerlessFunctionInput}
-              language="json"
-              height={200}
-              onChange={setSettingsServerlessFunctionInput}
-            />
-          </SettingsServerlessFunctionCodeEditorContainer>
+          <CodeEditor
+            value={settingsServerlessFunctionInput}
+            language="json"
+            height={200}
+            onChange={setSettingsServerlessFunctionInput}
+            withHeader
+          />
         </div>
         <div>
           <CoreEditorHeader
             leftNodes={[<SettingsServerlessFunctionsOutputMetadataInfo />]}
             rightNodes={[<LightCopyIconButton copyText={result} />]}
           />
-          <SettingsServerlessFunctionCodeEditorContainer>
-            <CodeEditor
-              value={result}
-              language={
-                settingsServerlessFunctionCodeEditorOutputParams.language
-              }
-              height={settingsServerlessFunctionCodeEditorOutputParams.height}
-              options={{ readOnly: true, domReadOnly: true }}
-            />
-          </SettingsServerlessFunctionCodeEditorContainer>
+          <CodeEditor
+            value={result}
+            language={settingsServerlessFunctionCodeEditorOutputParams.language}
+            height={settingsServerlessFunctionCodeEditorOutputParams.height}
+            options={{ readOnly: true, domReadOnly: true }}
+            withHeader
+          />
         </div>
       </StyledInputsContainer>
     </Section>

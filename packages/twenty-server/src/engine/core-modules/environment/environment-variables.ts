@@ -473,11 +473,11 @@ export class EnvironmentVariables {
 
   // SSL
   @IsString()
-  @ValidateIf((env) => env.SERVER_URL.startsWith('https'))
+  @IsOptional()
   SSL_KEY_PATH: string;
 
   @IsString()
-  @ValidateIf((env) => env.SERVER_URL.startsWith('https'))
+  @IsOptional()
   SSL_CERT_PATH: string;
 }
 

@@ -1,6 +1,4 @@
-import { WorkflowEditActionFormRecordCreate } from '@/workflow/components/WorkflowEditActionFormRecordCreate';
-import { WorkflowEditActionFormSendEmail } from '@/workflow/components/WorkflowEditActionFormSendEmail';
-import { WorkflowEditActionFormServerlessFunction } from '@/workflow/components/WorkflowEditActionFormServerlessFunction';
+import { lazy, Suspense } from 'react';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/components/WorkflowEditTriggerManualForm';
 import {
@@ -11,7 +9,20 @@ import {
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { isWorkflowRecordCreateAction } from '@/workflow/utils/isWorkflowRecordCreateAction';
+import { isWorkflowRecordUpdateAction } from '@/workflow/utils/isWorkflowRecordUpdateAction';
+import { WorkflowEditActionFormRecordCreate } from '@/workflow/workflow-actions/components/WorkflowEditActionFormRecordCreate';
+import { WorkflowEditActionFormRecordUpdate } from '@/workflow/workflow-actions/components/WorkflowEditActionFormRecordUpdate';
+import { WorkflowEditActionFormSendEmail } from '@/workflow/workflow-actions/components/WorkflowEditActionFormSendEmail';
 import { isDefined } from 'twenty-ui';
+import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
+
+const WorkflowEditActionFormServerlessFunction = lazy(() =>
+  import(
+    '@/workflow/workflow-actions/components/WorkflowEditActionFormServerlessFunction'
+  ).then((module) => ({
+    default: module.WorkflowEditActionFormServerlessFunction,
+  })),
+);
 
 type WorkflowStepDetailProps =
   | {
@@ -78,10 +89,12 @@ export const WorkflowStepDetail = ({
       switch (stepDefinition.definition.type) {
         case 'CODE': {
           return (
-            <WorkflowEditActionFormServerlessFunction
-              action={stepDefinition.definition}
-              actionOptions={props}
-            />
+            <Suspense fallback={<RightDrawerSkeletonLoader />}>
+              <WorkflowEditActionFormServerlessFunction
+                action={stepDefinition.definition}
+                actionOptions={props}
+              />
+            </Suspense>
           );
         }
         case 'SEND_EMAIL': {
@@ -96,6 +109,15 @@ export const WorkflowStepDetail = ({
           if (isWorkflowRecordCreateAction(stepDefinition.definition)) {
             return (
               <WorkflowEditActionFormRecordCreate
+                action={stepDefinition.definition}
+                actionOptions={props}
+              />
+            );
+          }
+
+          if (isWorkflowRecordUpdateAction(stepDefinition.definition)) {
+            return (
+              <WorkflowEditActionFormRecordUpdate
                 action={stepDefinition.definition}
                 actionOptions={props}
               />

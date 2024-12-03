@@ -229,6 +229,7 @@ export class WorkspaceInvitationService {
 
         if (invitation.value.isPersonalInvitation) {
           link.searchParams.set('inviteToken', invitation.value.appToken.value);
+          link.searchParams.set('email', invitation.value.email);
         }
         const emailData = {
           link: link.toString(),

@@ -3,6 +3,4 @@ export interface ExceptionHandlerUser {
   email?: string;
   firstName?: string;
   lastName?: string;
-  workspaceId?: string;
-  workspaceDisplayName?: string;
 }

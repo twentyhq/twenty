@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -49,6 +49,7 @@ type SettingsDataModelFieldEditFormValues = z.infer<
 export const SettingsObjectFieldEdit = () => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
+  const [isPersisting, setIsPersisting] = useState(false);
 
   const { objectSlug = '', fieldSlug = '' } = useParams();
   const { findObjectMetadataItemBySlug } = useFilteredObjectMetadataItems();
@@ -87,14 +88,16 @@ export const SettingsObjectFieldEdit = () => {
       type: fieldMetadataItem?.type as SettingsFieldType,
       label: fieldMetadataItem?.label ?? '',
       description: fieldMetadataItem?.description,
+      isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
     },
   });
 
   useEffect(() => {
+    if (isPersisting) return;
     if (!objectMetadataItem || !fieldMetadataItem) {
       navigate(AppPath.NotFound);
     }
-  }, [fieldMetadataItem, objectMetadataItem, navigate]);
+  }, [navigate, objectMetadataItem, fieldMetadataItem, isPersisting]);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isDirty && isValid && !isSubmitting;
@@ -125,6 +128,8 @@ export const SettingsObjectFieldEdit = () => {
           }) ?? {};
 
         if (isDefined(relationFieldMetadataItem)) {
+          setIsPersisting(true);
+
           await updateOneFieldMetadataItem({
             objectMetadataId: objectMetadataItem.id,
             fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
@@ -141,6 +146,8 @@ export const SettingsObjectFieldEdit = () => {
           Object.keys(otherDirtyFields),
         );
 
+        setIsPersisting(true);
+
         await updateOneFieldMetadataItem({
           objectMetadataId: objectMetadataItem.id,
           fieldMetadataIdToUpdate: fieldMetadataItem.id,
@@ -155,6 +162,8 @@ export const SettingsObjectFieldEdit = () => {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
       });
+    } finally {
+      setIsPersisting(false);
     }
   };
 
@@ -210,6 +219,9 @@ export const SettingsObjectFieldEdit = () => {
                 disabled={!fieldMetadataItem.isCustom}
                 fieldMetadataItem={fieldMetadataItem}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
+                canToggleSyncLabelWithName={
+                  fieldMetadataItem.type !== FieldMetadataType.Relation
+                }
               />
             </Section>
             <Section>

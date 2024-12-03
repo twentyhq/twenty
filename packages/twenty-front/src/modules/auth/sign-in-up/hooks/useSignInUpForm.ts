@@ -5,7 +5,9 @@ import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { useSearchParams } from 'react-router-dom';
+import { isDefined } from '~/utils/isDefined';
 
 export const validationSchema = z
   .object({
@@ -20,7 +22,12 @@ export const validationSchema = z
 
 export type Form = z.infer<typeof validationSchema>;
 export const useSignInUpForm = () => {
-  const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
+  const isDeveloperDefaultSignInPrefilled = useRecoilValue(
+    isDeveloperDefaultSignInPrefilledState,
+  );
+  const [searchParams] = useSearchParams();
+  const invitationPrefilledEmail = searchParams.get('email');
+
   const form = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
@@ -33,10 +40,12 @@ export const useSignInUpForm = () => {
   });
 
   useEffect(() => {
-    if (isSignInPrefilled === true) {
+    if (isDefined(invitationPrefilledEmail)) {
+      form.setValue('email', invitationPrefilledEmail);
+    } else if (isDeveloperDefaultSignInPrefilled === true) {
       form.setValue('email', 'tim@apple.dev');
       form.setValue('password', 'Applecar2025');
     }
-  }, [form, isSignInPrefilled]);
+  }, [form, isDeveloperDefaultSignInPrefilled, invitationPrefilledEmail]);
   return { form: form };
 };
