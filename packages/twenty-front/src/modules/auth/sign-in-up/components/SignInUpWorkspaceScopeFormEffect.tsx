@@ -36,7 +36,6 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
     authProviders.microsoft,
     authProviders.sso,
     authProviders.password,
-    email,
     continueWithEmail,
     continueWithCredentials,
   ]);
