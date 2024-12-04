@@ -41,7 +41,7 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
 
         if (!fieldMetadata) return null;
         return (
-          <DropdownMenuItemsContainer>
+          <DropdownMenuItemsContainer key={fieldId}>
             <MenuItem
               key={fieldId}
               onClick={() => {
