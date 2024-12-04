@@ -7,35 +7,24 @@ import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { isDefined } from '~/utils/isDefined';
-
-import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
-import { availableSSOIdentityProvidersState } from '@/auth/states/availableWorkspacesForSSO';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
 import { AppPath } from '@/types/AppPath';
 import { useAuth } from '../../hooks/useAuth';
-
-export enum SignInUpMode {
-  SignIn = 'sign-in',
-  SignUp = 'sign-up',
-}
+import { signInUpModeState } from '@/auth/states/signInUpModeState';
+import { SignInUpMode } from '@/auth/types/signInUpMode.type';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueSnackBar } = useSnackBar();
 
   const [signInUpStep, setSignInUpStep] = useRecoilState(signInUpStepState);
+  const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
 
   const isMatchingLocation = useIsMatchingLocation();
-
-  const { redirectToSSOLoginPage, findAvailableSSOProviderByEmail } = useSSO();
-  const setAvailableWorkspacesForSSOState = useSetRecoilState(
-    availableSSOIdentityProvidersState,
-  );
 
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const [searchParams] = useSearchParams();
@@ -43,12 +32,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     searchParams.get('inviteToken') ?? undefined;
 
   const [isInviteMode] = useState(() => isMatchingLocation(AppPath.Invite));
-
-  const [signInUpMode, setSignInUpMode] = useState<SignInUpMode>(() => {
-    return isMatchingLocation(AppPath.SignInUp)
-      ? SignInUpMode.SignIn
-      : SignInUpMode.SignUp;
-  });
 
   const {
     signInWithCredentials,
@@ -67,7 +50,12 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         ? SignInUpMode.SignIn
         : SignInUpMode.SignUp,
     );
-  }, [isMatchingLocation, requestFreshCaptchaToken, setSignInUpStep]);
+  }, [
+    isMatchingLocation,
+    requestFreshCaptchaToken,
+    setSignInUpMode,
+    setSignInUpStep,
+  ]);
 
   const continueWithCredentials = useCallback(async () => {
     const token = await readCaptchaToken();
@@ -101,46 +89,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     enqueueSnackBar,
     requestFreshCaptchaToken,
     setSignInUpStep,
+    setSignInUpMode,
   ]);
-
-  const continueWithSSO = () => {
-    setSignInUpStep(SignInUpStep.SSOEmail);
-  };
-
-  const submitSSOEmail = async (email: string) => {
-    const result = await findAvailableSSOProviderByEmail({
-      email,
-    });
-
-    if (isDefined(result.errors)) {
-      return enqueueSnackBar(result.errors[0].message, {
-        variant: SnackBarVariant.Error,
-      });
-    }
-
-    if (
-      !result.data?.findAvailableSSOIdentityProviders ||
-      result.data?.findAvailableSSOIdentityProviders.length === 0
-    ) {
-      enqueueSnackBar('No workspaces with SSO found', {
-        variant: SnackBarVariant.Error,
-      });
-      return;
-    }
-    // If only one workspace, redirect to SSO
-    if (result.data?.findAvailableSSOIdentityProviders.length === 1) {
-      return redirectToSSOLoginPage(
-        result.data.findAvailableSSOIdentityProviders[0].id,
-      );
-    }
-
-    if (result.data?.findAvailableSSOIdentityProviders.length > 1) {
-      setAvailableWorkspacesForSSOState(
-        result.data.findAvailableSSOIdentityProviders,
-      );
-      setSignInUpStep(SignInUpStep.SSOWorkspaceSelection);
-    }
-  };
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
@@ -150,19 +100,21 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           throw new Error('Email and password are required');
         }
 
-        signInUpMode === SignInUpMode.SignIn && !isInviteMode
-          ? await signInWithCredentials(
-              data.email.toLowerCase().trim(),
-              data.password,
-              token,
-            )
-          : await signUpWithCredentials(
-              data.email.toLowerCase().trim(),
-              data.password,
-              workspaceInviteHash,
-              workspacePersonalInviteToken,
-              token,
-            );
+        if (signInUpMode === SignInUpMode.SignIn && !isInviteMode) {
+          await signInWithCredentials(
+            data.email.toLowerCase().trim(),
+            data.password,
+            token,
+          );
+        } else {
+          await signUpWithCredentials(
+            data.email.toLowerCase().trim(),
+            data.password,
+            workspaceInviteHash,
+            workspacePersonalInviteToken,
+            token,
+          );
+        }
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
           variant: SnackBarVariant.Error,
@@ -189,8 +141,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     signInUpMode,
     continueWithCredentials,
     continueWithEmail,
-    continueWithSSO,
-    submitSSOEmail,
     submitCredentials,
   };
 };

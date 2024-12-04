@@ -29,16 +29,28 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { assert } from 'src/utils/assert';
 import { isDefined } from 'src/utils/is-defined';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+} from 'src/engine/core-modules/workspace/workspace.exception';
+import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
+import { ActivateWorkspaceOutput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-output';
+import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/getAuthProvidersByWorkspace';
 
 import { Workspace } from './workspace.entity';
 
 import { WorkspaceService } from './services/workspace.service';
 
-@UseGuards(WorkspaceAuthGuard)
 @Resolver(() => Workspace)
 export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,
+    private readonly loginTokenService: LoginTokenService,
+    private readonly domainManagerService: DomainManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
@@ -47,6 +59,7 @@ export class WorkspaceResolver {
   ) {}
 
   @Query(() => Workspace)
+  @UseGuards(WorkspaceAuthGuard)
   async currentWorkspace(@AuthWorkspace() { id }: Workspace) {
     const workspace = await this.workspaceService.findById(id);
 
@@ -55,16 +68,25 @@ export class WorkspaceResolver {
     return workspace;
   }
 
-  @Mutation(() => Workspace)
+  @Mutation(() => ActivateWorkspaceOutput)
   @UseGuards(UserAuthGuard)
   async activateWorkspace(
     @Args('data') data: ActivateWorkspaceInput,
     @AuthUser() user: User,
   ) {
-    return await this.workspaceService.activateWorkspace(user, data);
+    const workspace = await this.workspaceService.activateWorkspace(user, data);
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
+    );
+
+    return {
+      workspace,
+      loginToken,
+    };
   }
 
   @Mutation(() => Workspace)
+  @UseGuards(WorkspaceAuthGuard)
   async updateWorkspace(
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: Workspace,
@@ -73,6 +95,7 @@ export class WorkspaceResolver {
   }
 
   @Mutation(() => String)
+  @UseGuards(WorkspaceAuthGuard)
   async uploadWorkspaceLogo(
     @AuthWorkspace() { id }: Workspace,
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -101,8 +124,8 @@ export class WorkspaceResolver {
     return `${paths[0]}?token=${workspaceLogoToken}`;
   }
 
-  @UseGuards(DemoEnvGuard)
   @Mutation(() => Workspace)
+  @UseGuards(DemoEnvGuard, WorkspaceAuthGuard)
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: Workspace) {
     return this.workspaceService.deleteWorkspace(id);
   }
@@ -143,5 +166,27 @@ export class WorkspaceResolver {
   @ResolveField(() => Boolean)
   hasValidEntrepriseKey(): boolean {
     return isDefined(this.environmentService.get('ENTERPRISE_KEY'));
+  }
+
+  @Query(() => PublicWorkspaceDataOutput)
+  async getPublicWorkspaceDataBySubdomain(@OriginHeader() origin: string) {
+    const workspace =
+      await this.domainManagerService.getWorkspaceByOrigin(origin);
+
+    workspaceValidator.assertIsExist(
+      workspace,
+      new WorkspaceException(
+        'Workspace not found',
+        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
+    return {
+      id: workspace.id,
+      logo: workspace.logo,
+      displayName: workspace.displayName,
+      subdomain: workspace.subdomain,
+      authProviders: getAuthProvidersByWorkspace(workspace),
+    };
   }
 }

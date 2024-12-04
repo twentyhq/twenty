@@ -1,0 +1,281 @@
+---
+title: Setup
+icon: TbServer
+image: /images/user-guide/table-views/table.png
+---
+
+import OptionTable from '@site/src/theme/OptionTable'
+
+# Setup Messaging & Calendar sync
+
+Twenty offers integrations with Gmail and Google Calendar.
+
+## For Gmail and Google Calendar
+
+### Create a project in Google Cloud
+
+You will need to create a project in Google Cloud and get the credentials.
+
+Then you can set the following environment variables:
+
+- `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+- `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+- `AUTH_GOOGLE_CLIENT_ID=<client-id>`
+- `AUTH_GOOGLE_CLIENT_SECRET=<client-secret>`
+- `AUTH_GOOGLE_CALLBACK_URL=https://<your-domain>/auth/google/redirect` if you want to use Google SSO
+- `AUTH_GOOGLE_APIS_CALLBACK_URL=https://<your-domain>/auth/google-apis/get-access-token`
+
+### Enable APIs
+
+On Google Cloud Console, go to [APIs & Services](https://console.cloud.google.com/apis/library/) and enable the following APIs:
+
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### Authorized redirect URIs
+
+Under [Credentials](https://console.cloud.google.com/apis/credentials), in OAuth 2.0 Client IDs, you need to add the following redirect URIs to your project:
+
+- `https://<your-domain>/auth/google/redirect` if you want to use Google SSO
+- `https://<your-domain>/auth/google-apis/get-access-token`
+
+### If your app is in test mode
+
+If your app is in test mode, you will need to add test users to your project.
+
+Under [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent), add your test users to the "Test users" section.
+
+### Start the cron jobs
+
+Register the following recurring jobs:
+```
+# from your worker container
+yarn command:prod cron:messaging:messages-import
+yarn command:prod cron:messaging:message-list-fetch
+yarn command:prod cron:calendar:calendar-event-list-fetch
+yarn command:prod cron:messaging:ongoing-stale
+yarn command:prod cron:calendar:ongoing-stale
+```
+
+# Setup Environment Variables
+
+## Frontend
+
+<ArticleTable options={[
+    ['REACT_APP_SERVER_BASE_URL', 'http://localhost:3000', 'Url of backend server'],
+    ['GENERATE_SOURCEMAP', 'false', 'Generate source maps for debugging'],
+    ['CHROMATIC_PROJECT_TOKEN', '', 'Chromatic token used for CI'],
+    ]}></ArticleTable>
+
+
+## Backend
+
+### Config
+
+<ArticleTable options={[
+    ['PG_DATABASE_URL', 'postgres://user:pw@localhost:5432/default?connection_limit=1', 'Database connection'],
+    ['PG_SSL_ALLOW_SELF_SIGNED', 'false', 'Allow self signed certificates'],
+    ['REDIS_URL', 'redis://localhost:6379', 'Redis connection url'],
+    ['FRONT_DOMAIN', 'localhost', 'Domain of the hosted frontend'],
+    ['DEFAULT_SUBDOMAIN', 'app', 'The default subdomain name when multiworkspace mode is enabled'],
+    ['SERVER_URL', 'http://localhost:3000', 'Url to the hosted server'],
+    ['FRONT_PROTOCOL', 'http', 'protocol of the frontend server. Could be `http` or `https`'],
+    ['FRONT_PORT', '3001', 'Port of the frontend server.'],
+    ['PORT', '3000', 'Port of the backend server'],
+    ['CACHE_STORAGE_TYPE', 'redis', 'Cache type (memory, redis...)'],
+    ['CACHE_STORAGE_TTL', '3600 * 24 * 7', 'Cache TTL in seconds']
+    ]}></ArticleTable>
+
+### Security
+
+<ArticleTable options={[
+    ['API_RATE_LIMITING_TTL', '100', 'API rate limiting time window'],
+    ['API_RATE_LIMITING_LIMIT', '200', 'API rate limiting max requests'],
+    ]}></ArticleTable>
+### Tokens
+
+<ArticleTable options={[
+    ['APP_SECRET', '<random>', 'Secret used for encryption across the app'],
+    ['ACCESS_TOKEN_EXPIRES_IN', '30m', 'Access token expiration time'],
+    ['LOGIN_TOKEN_EXPIRES_IN', '15m', 'Login token expiration time'],
+    ['REFRESH_TOKEN_EXPIRES_IN', '90d', 'Refresh token expiration time'],
+    ['REFRESH_TOKEN_COOL_DOWN', '1m', 'Refresh token cooldown'],
+    ['FILE_TOKEN_EXPIRES_IN', '1d', 'File token expiration time'],
+    ]}></ArticleTable>
+
+### Auth
+
+<ArticleTable options={[
+    ['MESSAGING_PROVIDER_GMAIL_ENABLED', 'false', 'Enable Gmail API connection'],
+    ['CALENDAR_PROVIDER_GOOGLE_ENABLED', 'false', 'Enable Google Calendar API connection'],
+    ['AUTH_GOOGLE_APIS_CALLBACK_URL', 'https://[YourDomain]/auth/google-apis/get-access-token', 'Google APIs auth callback'],
+    ['AUTH_PASSWORD_ENABLED', 'false', 'Enable Email/Password login'],
+    ['AUTH_GOOGLE_ENABLED', 'false', 'Enable Google SSO login'],
+    ['AUTH_GOOGLE_CLIENT_ID', '123456789012-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com', 'Google client ID'],
+    ['AUTH_GOOGLE_CLIENT_SECRET', '', 'Google client secret'],
+    ['AUTH_GOOGLE_CALLBACK_URL', 'https://[YourDomain]/auth/google/redirect', 'Google auth callback'],
+    ['AUTH_MICROSOFT_ENABLED', 'false', 'Enable Microsoft SSO login'],
+    ['AUTH_MICROSOFT_CLIENT_ID', '', 'Microsoft client ID'],
+    ['AUTH_MICROSOFT_TENANT_ID', '', 'Microsoft tenant ID'],
+    ['AUTH_MICROSOFT_CLIENT_SECRET', '', 'Microsoft client secret'],
+    ['AUTH_MICROSOFT_CALLBACK_URL', 'http://[YourDomain]/auth/microsoft/redirect', 'Microsoft auth callback'],
+    ['AUTH_MICROSOFT_APIS_CALLBACK_URL', 'http://[YourDomain]/auth/microsoft-apis/get-access-token', 'Microsoft APIs auth callback'],
+    ['IS_MULTIWORKSPACE_ENABLED', 'false', 'Allows the use of multiple workspaces. Requires a web server that can manage wildcards for subdomains.'],
+    ['PASSWORD_RESET_TOKEN_EXPIRES_IN', '5m', 'Password reset token expiration time'],
+    ]}></ArticleTable>
+
+### Email
+
+<ArticleTable options={[
+    ['EMAIL_FROM_ADDRESS', 'contact@yourdomain.com', 'Global email From: header used to send emails'],
+    ['EMAIL_FROM_NAME', 'John from YourDomain', 'Global name From: header used to send emails'],
+    ['EMAIL_SYSTEM_ADDRESS', 'system@yourdomain.com', 'Email address used as a destination to send internal system notification'],
+    ['EMAIL_DRIVER', 'logger', "Email driver: 'logger' (to log emails in console) or 'smtp'"],
+    ['EMAIL_SMTP_HOST', '', 'Email SMTP Host'],
+    ['EMAIL_SMTP_PORT', '', 'Email SMTP Port'],
+    ['EMAIL_SMTP_USER', '', 'Email SMTP User'],
+    ['EMAIL_SMTP_PASSWORD', '', 'Email SMTP Password'],
+  ]}></ArticleTable>
+
+#### Email SMTP Server configuration examples
+
+<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+
+  <ArticleTab>
+
+  You will need to provision an [App Password](https://support.google.com/accounts/answer/185833).
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=smtp.gmail.com
+  - EMAIL_SMTP_PORT=465
+  - EMAIL_SMTP_USER=gmail_email_address
+  - EMAIL_SMTP_PASSWORD='gmail_app_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+    Keep in mind that if you have 2FA enabled, you will need to provision an [App Password](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
+    - EMAIL_DRIVER=smtp
+    - EMAIL_SMTP_HOST=smtp.office365.com
+    - EMAIL_SMTP_PORT=587
+    - EMAIL_SMTP_USER=office365_email_address
+    - EMAIL_SMTP_PASSWORD='office365_password'
+
+  </ArticleTab>
+
+  <ArticleTab>
+
+    **smtp4dev** is a fake SMTP email server for development and testing.
+    - Run the smtp4dev image: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+    - Access the smtp4dev ui here: [http://localhost:8090](http://localhost:8090)
+    - Set the following env variables:
+      - EMAIL_DRIVER=smtp
+      - EMAIL_SMTP_HOST=localhost
+      - EMAIL_SMTP_PORT=2525
+
+  </ArticleTab>
+
+</ArticleTabs>
+
+### Storage
+
+<ArticleTable options={[
+    ['STORAGE_TYPE', 'local', "Storage driver: 'local' or 's3'"],
+    ['STORAGE_S3_REGION', '', 'Storage Region'],
+    ['STORAGE_S3_NAME', '', 'Bucket Name'],
+    ['STORAGE_S3_ENDPOINT', '', 'Use if a different Endpoint is needed (for example Google)'],
+    ['STORAGE_S3_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
+    ['STORAGE_S3_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
+    ['STORAGE_LOCAL_PATH', '.local-storage', 'Data path (local storage)'],
+    ]}></ArticleTable>
+
+### Custom Code Execution
+
+<ArticleTable options={[
+  ['SERVERLESS_TYPE', 'local', "Serverless driver type: 'local' or 'lambda'"],
+  ['SERVERLESS_LAMBDA_REGION', '', 'Lambda Region'],
+  ['SERVERLESS_LAMBDA_ROLE', '', 'Lambda Role'],
+  ['SERVERLESS_LAMBDA_ACCESS_KEY_ID', '', 'Optional depending on the authentication method'],
+  ['SERVERLESS_LAMBDA_SECRET_ACCESS_KEY', '', 'Optional depending on the authentication method'],
+]}></ArticleTable>
+
+### Message Queue
+
+<ArticleTable options={[
+    ['MESSAGE_QUEUE_TYPE', 'bull-mq', "Queue driver: 'bull-mq'"],
+    ]}></ArticleTable>
+
+### Logging
+
+<ArticleTable options={[
+    ['LOGGER_DRIVER', 'console', "Currently, only supports 'console'"],
+    ['LOGGER_IS_BUFFER_ENABLED', 'true', 'Buffer the logs before sending them to the logging driver'],
+    ['LOG_LEVELS', 'error,warn', "The loglevels which are logged to the logging driver. Can include: 'log', 'warn', 'error'"],
+    ['EXCEPTION_HANDLER_DRIVER', 'sentry', "The exception handler driver can be: 'console' or 'sentry'"],
+    ['SENTRY_ENVIRONMENT', 'main', 'The sentry environment used if sentry logging driver is selected'],
+    ['SENTRY_RELEASE', 'latest', 'The sentry release used if sentry logging driver is selected'],
+    ['SENTRY_DSN', 'https://xxx@xxx.ingest.sentry.io/xxx', 'The sentry logging endpoint used if sentry logging driver is selected'],
+    ['SENTRY_FRONT_DSN', 'https://xxx@xxx.ingest.sentry.io/xxx', 'The sentry logging endpoint used by the frontend if sentry logging driver is selected'],
+    ]}></ArticleTable>
+
+
+### Data enrichment and AI
+
+<ArticleTable options={[
+    ['OPENAI_API_KEY', 'sk-proj-abcdabcd...', "OpenAI API key"],
+    ['LLM_CHAT_MODEL_DRIVER', 'openai', "LLM provider"],
+    ['LLM_TRACING_DRIVER', 'langfuse', "Where to output LangChain logs. 'langfuse' or 'console'."],
+    ['LANGFUSE_SECRET_KEY', 'sk-lf-abcdabcd-abcd...', "Langfuse secret key"],
+    ['LANGFUSE_PUBLIC_KEY', 'pk-lf-abcdabcd-abcd...', "Langfuse public key"],
+]}></ArticleTable>
+
+### Serverless functions
+This feature is WIP and is not yet useful for most users.
+<ArticleTable options={[
+    ['SERVERLESS_TYPE', 'local', "Functions can either be executed through Lambda or directly by the main node process"],
+    ['SERVERLESS_LAMBDA_REGION', 'us-east-1', 'If you use the Lambda driver, region of the Lambda function'],
+    ['SERVERLESS_LAMBDA_ROLE', 'arn:aws:iam::121334:role/lambda-execution-role', "If you use the Lambda drive, name of the IAM role with the right permissions"],
+]}></ArticleTable>
+
+
+
+
+### Support Chat
+
+<ArticleTable options={[
+    ['SUPPORT_DRIVER', 'front', "Support driver ('front' or 'none')"],
+    ['SUPPORT_FRONT_HMAC_KEY', '<secret>', 'Support chat key'],
+    ['SUPPORT_FRONT_CHAT_ID', '<id>', 'Support chat id'],
+    ]}></ArticleTable>
+
+### Telemetry
+
+<ArticleTable options={[
+    ['TELEMETRY_ENABLED', 'true', 'Change this if you want to disable telemetry'],
+    ['TELEMETRY_ANONYMIZATION_ENABLED', 'true', 'Telemetry is anonymized by default, you probably don\'t want to change this'],
+    ]}></ArticleTable>
+
+### Debug / Development
+
+<ArticleTable options={[
+    ['DEBUG_MODE', 'true', 'Activate debug mode'],
+    ['SIGN_IN_PREFILLED', 'true', 'Prefill the Sign in form for usage in a demo or dev environment'],
+    ]}></ArticleTable>
+
+### Workspace Cleaning
+
+<ArticleTable options={[
+  ['WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION', '', 'Number of inactive days before sending workspace deleting warning email'],
+  ['WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', '', 'Number of inactive days before deleting workspace'],
+  ]}></ArticleTable>
+
+### Captcha
+
+<ArticleTable options={[
+    ['CAPTCHA_DRIVER', '', "The captcha driver can be 'google-recaptcha' or 'turnstile'"],
+    ['CAPTCHA_SITE_KEY', '', 'The captcha site key'],
+    ['CAPTCHA_SECRET_KEY', '', 'The captcha secret key'],
+]}></ArticleTable>
+
+<ArticleEditContent></ArticleEditContent>
