@@ -11,11 +11,11 @@ import { IsNull, Repository } from 'typeorm';
 
 import {
   AppToken,
-  AppTokenType
+  AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
   AuthException,
-  AuthExceptionCode
+  AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -25,7 +25,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { SendInvitationsOutput } from 'src/engine/core-modules/workspace-invitation/dtos/send-invitations.output';
 import {
   WorkspaceInvitationException,
-  WorkspaceInvitationExceptionCode
+  WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -233,7 +233,11 @@ export class WorkspaceInvitationService {
         const emailData = {
           link: link.toString(),
           workspace: { name: workspace.displayName, logo: workspace.logo },
-          sender: { email: sender.email, firstName: sender.firstName, lastName: sender.lastName }, //added last name
+          sender: {
+            email: sender.email,
+            firstName: sender.firstName,
+            lastName: sender.lastName,
+          },
           serverUrl: this.environmentService.get('SERVER_URL'),
         };
 
@@ -246,17 +250,6 @@ export class WorkspaceInvitationService {
           plainText: true,
         });
 
-        // await this.emailService.send({
-        //   from: `${this.environmentService.get(
-        //     'EMAIL_FROM_NAME',
-        //   )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
-        //   to: invitation.value.email,
-        //   subject: 'Join your team on Twenty',
-        //   text,
-        //   html,
-        // });
-
-        //handles the sender's name as opposed to previously
         await this.emailService.send({
           from: `${sender.firstName} ${sender.lastName} (via Twenty) <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
           to: invitation.value.email,
@@ -264,7 +257,6 @@ export class WorkspaceInvitationService {
           text,
           html,
         });
-        
       }
     }
 
