@@ -73,11 +73,24 @@ export const useHandleRecordGroupField = ({
               }) satisfies ViewGroup,
           );
 
+        const viewGroupsToDelete = view.viewGroups.filter(
+          (group) => group.fieldMetadataId !== fieldMetadataItem.id,
+        );
+
         if (viewGroupsToCreate.length > 0) {
           await createViewGroupRecords(viewGroupsToCreate, view);
         }
+
+        if (viewGroupsToDelete.length > 0) {
+          await deleteViewGroupRecords(viewGroupsToDelete);
+        }
       },
-    [createViewGroupRecords, currentViewIdCallbackState, getViewFromCache],
+    [
+      createViewGroupRecords,
+      deleteViewGroupRecords,
+      currentViewIdCallbackState,
+      getViewFromCache,
+    ],
   );
 
   const resetRecordGroupField = useRecoilCallback(
