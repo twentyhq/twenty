@@ -40,6 +40,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { RelationDefinitionType } from '~/generated-metadata/graphql';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 const StyledListItem = styled(RecordDetailRecordsListItem)<{
   isDropdownOpen?: boolean;
@@ -219,21 +220,23 @@ export const RecordDetailRelationRecordsListItem = ({
                 />
               }
               dropdownComponents={
-                <DropdownMenuItemsContainer>
-                  <MenuItem
-                    LeftIcon={IconUnlink}
-                    text="Detach"
-                    onClick={handleDetach}
-                  />
-                  {!isAccountOwnerRelation && (
+                <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
+                  <DropdownMenuItemsContainer>
                     <MenuItem
-                      LeftIcon={IconTrash}
-                      text="Delete"
-                      accent="danger"
-                      onClick={handleDelete}
+                      LeftIcon={IconUnlink}
+                      text="Detach"
+                      onClick={handleDetach}
                     />
-                  )}
-                </DropdownMenuItemsContainer>
+                    {!isAccountOwnerRelation && (
+                      <MenuItem
+                        LeftIcon={IconTrash}
+                        text="Delete"
+                        accent="danger"
+                        onClick={handleDelete}
+                      />
+                    )}
+                  </DropdownMenuItemsContainer>
+                </ScrollWrapper>
               }
               dropdownHotkeyScope={{ scope: dropdownScopeId }}
             />

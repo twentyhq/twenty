@@ -42,23 +42,28 @@ export const useDropdown = (dropdownId?: string) => {
     useRecoilState(isDropdownOpenState);
 
   const closeDropdown = useCallback(() => {
-    goBackToPreviousHotkeyScope();
-    setIsDropdownOpen(false);
-    goBackToPreviouslyFocusedDropdownId();
+    if (isDropdownOpen) {
+      goBackToPreviousHotkeyScope();
+      setIsDropdownOpen(false);
+      goBackToPreviouslyFocusedDropdownId();
+    }
   }, [
+    isDropdownOpen,
     goBackToPreviousHotkeyScope,
     setIsDropdownOpen,
     goBackToPreviouslyFocusedDropdownId,
   ]);
 
   const openDropdown = () => {
-    setIsDropdownOpen(true);
-    setFocusedDropdownIdAndMemorizePrevious(dropdownId ?? scopeId);
-    if (isDefined(dropdownHotkeyScope)) {
-      setHotkeyScopeAndMemorizePreviousScope(
-        dropdownHotkeyScope.scope,
-        dropdownHotkeyScope.customScopes,
-      );
+    if (!isDropdownOpen) {
+      setIsDropdownOpen(true);
+      setFocusedDropdownIdAndMemorizePrevious(dropdownId ?? scopeId);
+      if (isDefined(dropdownHotkeyScope)) {
+        setHotkeyScopeAndMemorizePreviousScope(
+          dropdownHotkeyScope.scope,
+          dropdownHotkeyScope.customScopes,
+        );
+      }
     }
   };
 

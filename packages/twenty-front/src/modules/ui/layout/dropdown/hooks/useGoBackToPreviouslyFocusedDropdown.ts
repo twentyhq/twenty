@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
-import { focusedDropdownIdState } from '@/ui/layout/dropdown/states/focusedDropdownIdState';
-import { previouslyFocusedDropdownIdState } from '@/ui/layout/dropdown/states/previouslyFocusedDropdownIdState';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdState';
 import { DEBUG_HOTKEY_SCOPE } from '@/ui/utilities/hotkey/hooks/useScopedHotkeyCallback';
 import { logDebug } from '~/utils/logDebug';
 
@@ -10,7 +10,7 @@ export const useGoBackToPreviouslyFocusedDropdownId = () => {
     ({ snapshot, set }) =>
       () => {
         const previouslyFocusedDropdownId = snapshot
-          .getLoadable(previouslyFocusedDropdownIdState)
+          .getLoadable(previousDropdownFocusIdState)
           .getValue();
 
         if (DEBUG_HOTKEY_SCOPE) {
@@ -20,8 +20,8 @@ export const useGoBackToPreviouslyFocusedDropdownId = () => {
           );
         }
 
-        set(focusedDropdownIdState, previouslyFocusedDropdownId);
-        set(previouslyFocusedDropdownIdState, null);
+        set(activeDropdownFocusIdState, previouslyFocusedDropdownId);
+        set(previousDropdownFocusIdState, null);
       },
     [],
   );

@@ -21,7 +21,6 @@ import { isDefined } from '~/utils/isDefined';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
 type RecordTableCellSoftFocusModeProps = {
@@ -135,13 +134,13 @@ export const RecordTableCellSoftFocusMode = ({
     */
   };
 
-  useListenClickOutside({
-    listenerId: 'RecordTableCellSoftFocusMode',
-    refs: [scrollRef],
-    callback: () => {
-      closeCurrentTableCell();
-    },
-  });
+  // useListenClickOutside({
+  //   listenerId: 'RecordTableCellSoftFocusMode',
+  //   refs: [scrollRef],
+  //   callback: () => {
+  //     closeCurrentTableCell();
+  //   },
+  // });
 
   const isFirstColumn = columnIndex === 0;
   const customButtonIcon = useGetButtonIcon();

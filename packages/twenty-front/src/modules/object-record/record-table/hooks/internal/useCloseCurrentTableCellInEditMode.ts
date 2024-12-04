@@ -2,6 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { currentTableCellInEditModePositionComponentState } from '@/object-record/record-table/states/currentTableCellInEditModePositionComponentState';
 import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
+import { useGoBackToPreviouslyFocusedDropdownId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviouslyFocusedDropdown';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 
@@ -16,6 +17,9 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
     recordTableId,
   );
 
+  const { goBackToPreviouslyFocusedDropdownId } =
+    useGoBackToPreviouslyFocusedDropdownId();
+
   return useRecoilCallback(
     ({ set, snapshot }) => {
       return async () => {
@@ -23,13 +27,19 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
           snapshot,
           currentTableCellInEditModePositionState,
         );
-
+        console.log('close table cell', currentTableCellInEditModePosition);
         set(
           isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
           false,
         );
+
+        goBackToPreviouslyFocusedDropdownId();
       };
     },
-    [currentTableCellInEditModePositionState, isTableCellInEditModeFamilyState],
+    [
+      currentTableCellInEditModePositionState,
+      isTableCellInEditModeFamilyState,
+      goBackToPreviouslyFocusedDropdownId,
+    ],
   );
 };

@@ -15,6 +15,9 @@ import { useInlineCell } from '../hooks/useInlineCell';
 
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { getDropdownFocusIdForRecordField } from '@/ui/layout/dropdown/utils/getDropdownFocusIdForRecordField';
+import { useRecoilValue } from 'recoil';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
   RecordInlineCellContext,
@@ -35,6 +38,8 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   const isFieldReadOnly = useIsFieldValueReadOnly();
 
   const { closeInlineCell } = useInlineCell();
+
+  const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
@@ -65,6 +70,22 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   };
 
   const handleClickOutside: FieldInputEvent = (persistField) => {
+    // If not currently focused return
+    const recordFieldDropdownId = getDropdownFocusIdForRecordField(
+      recordId,
+      fieldDefinition.fieldMetadataId,
+      'inline-cell',
+    );
+
+    console.log({
+      recordFieldDropdownId,
+      activeDropdownFocusId,
+    });
+
+    if (recordFieldDropdownId !== activeDropdownFocusId) {
+      return;
+    }
+
     persistField();
     closeInlineCell();
   };

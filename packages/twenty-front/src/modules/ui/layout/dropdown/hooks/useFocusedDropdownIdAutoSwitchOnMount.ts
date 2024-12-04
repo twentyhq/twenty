@@ -1,4 +1,4 @@
-import { focusedDropdownIdState } from '@/ui/layout/dropdown/states/focusedDropdownIdState';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
@@ -10,26 +10,31 @@ export const useFocusedDropdownIdAutoSwitchOnMount = ({
   dropdownId: string;
   parentDropdownId?: string;
 }) => {
-  const [focusedDropdownId, setFocusedDropdownId] = useRecoilState(
-    focusedDropdownIdState,
+  const [activeDropdownFocusId, setActiveDropdownFocusId] = useRecoilState(
+    activeDropdownFocusIdState,
   );
 
   useEffect(() => {
     console.log(
-      `useFocusedDropdownIdAutoSwitchOnMount: currently on ${focusedDropdownId}, will switch to ${dropdownId} with parent ${parentDropdownId}`,
+      `useFocusedDropdownIdAutoSwitchOnMount: currently on ${activeDropdownFocusId}, will switch to ${dropdownId} with parent ${parentDropdownId}`,
     );
-    setFocusedDropdownId(dropdownId);
+    setActiveDropdownFocusId(dropdownId);
 
     return () => {
       console.log(
         `useFocusedDropdownIdAutoSwitchOnMount: unmounting ${dropdownId}, with parent ${parentDropdownId}`,
       );
 
-      if (focusedDropdownId === dropdownId && isDefined(parentDropdownId)) {
-        setFocusedDropdownId(parentDropdownId);
+      if (activeDropdownFocusId === dropdownId && isDefined(parentDropdownId)) {
+        setActiveDropdownFocusId(parentDropdownId);
       } else {
-        setFocusedDropdownId(null);
+        setActiveDropdownFocusId(null);
       }
     };
-  }, [dropdownId, focusedDropdownId, parentDropdownId, setFocusedDropdownId]);
+  }, [
+    dropdownId,
+    activeDropdownFocusId,
+    parentDropdownId,
+    setActiveDropdownFocusId,
+  ]);
 };

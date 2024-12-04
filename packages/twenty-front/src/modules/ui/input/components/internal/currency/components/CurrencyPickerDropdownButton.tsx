@@ -10,11 +10,7 @@ import { CurrencyPickerHotkeyScope } from '../types/CurrencyPickerHotkeyScope';
 
 import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
 
-type StyledDropdownButtonProps = {
-  isUnfolded: boolean;
-};
-
-const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
+const StyledDropdownButtonContainer = styled.div`
   align-items: center;
   color: ${({ color }) => color ?? 'none'};
   cursor: pointer;
@@ -67,6 +63,7 @@ export const CurrencyPickerDropdownButton = ({
   );
 
   const handleChange = (currency: Currency) => {
+    console.log('CurrencyPickerDropdownButton handleChange', currency);
     onChange(currency);
     closeDropdown();
   };
@@ -77,11 +74,10 @@ export const CurrencyPickerDropdownButton = ({
 
   return (
     <Dropdown
-      dropdownMenuWidth={200}
-      dropdownId="currncy-picker-dropdown-id"
+      dropdownId="currency-picker-dropdown-id"
       dropdownHotkeyScope={{ scope: CurrencyPickerHotkeyScope.CurrencyPicker }}
       clickableComponent={
-        <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
+        <StyledDropdownButtonContainer>
           <StyledIconContainer>
             {currencyCode}
             <IconChevronDown size={theme.icon.size.sm} />

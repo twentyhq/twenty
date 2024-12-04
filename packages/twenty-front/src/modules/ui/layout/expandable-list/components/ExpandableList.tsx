@@ -26,12 +26,12 @@ const StyledChildrenContainer = styled.div`
 
 const StyledChildContainer = styled.div`
   display: flex;
-  flex-shrink: 0;
-  overflow: hidden;
+  // flex-shrink: 0;
+  // overflow: hidden;
 
-  &:last-child {
-    flex-shrink: 1;
-  }
+  // &:last-child {
+  //   flex-shrink: 1;
+  // }
 `;
 
 const StyledChipCount = styled(Chip)`

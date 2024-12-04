@@ -1,8 +1,8 @@
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '@/ui/layout/dropdown/hooks/useInternalHotkeyScopeManagement';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
-import { focusedDropdownIdState } from '@/ui/layout/dropdown/states/focusedDropdownIdState';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -54,7 +54,7 @@ export const DropdownContent = ({
   const { isDropdownOpen, closeDropdown, dropdownWidth, setDropdownPlacement } =
     useDropdown(dropdownId);
 
-  const focusedDropdownId = useRecoilValue(focusedDropdownIdState);
+  const focusedDropdownId = useRecoilValue(activeDropdownFocusIdState);
 
   const [dropdownMaxHeight] = useRecoilComponentStateV2(
     dropdownMaxHeightComponentStateV2,

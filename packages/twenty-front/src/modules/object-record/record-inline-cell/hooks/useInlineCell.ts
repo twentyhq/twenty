@@ -7,6 +7,9 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { isDefined } from '~/utils/isDefined';
 
 import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
+import { useGoBackToPreviouslyFocusedDropdownId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviouslyFocusedDropdown';
+import { useSetFocusedDropdownIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
+import { getDropdownFocusIdForRecordField } from '@/ui/layout/dropdown/utils/getDropdownFocusIdForRecordField';
 import { isInlineCellInEditModeScopedState } from '../states/isInlineCellInEditModeScopedState';
 import { InlineCellHotkeyScope } from '../types/InlineCellHotkeyScope';
 
@@ -21,6 +24,11 @@ export const useInlineCell = () => {
     isInlineCellInEditModeScopedState(recoilScopeId),
   );
 
+  const { setFocusedDropdownIdAndMemorizePrevious } =
+    useSetFocusedDropdownIdAndMemorizePrevious();
+  const { goBackToPreviouslyFocusedDropdownId } =
+    useGoBackToPreviouslyFocusedDropdownId();
+
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
@@ -32,6 +40,8 @@ export const useInlineCell = () => {
     setIsInlineCellInEditMode(false);
 
     goBackToPreviousHotkeyScope();
+
+    goBackToPreviouslyFocusedDropdownId();
   };
 
   const openInlineCell = (customEditHotkeyScopeForField?: HotkeyScope) => {
@@ -46,6 +56,14 @@ export const useInlineCell = () => {
     } else {
       setHotkeyScopeAndMemorizePreviousScope(InlineCellHotkeyScope.InlineCell);
     }
+
+    setFocusedDropdownIdAndMemorizePrevious(
+      getDropdownFocusIdForRecordField(
+        recordId,
+        fieldDefinition.fieldMetadataId,
+        'inline-cell',
+      ),
+    );
   };
 
   return {

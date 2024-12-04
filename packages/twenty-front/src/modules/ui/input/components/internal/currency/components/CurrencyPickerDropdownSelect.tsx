@@ -5,6 +5,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { MenuItem, MenuItemSelectAvatar } from 'twenty-ui';
 import { Currency } from './CurrencyPickerDropdownButton';
 
@@ -32,39 +33,41 @@ export const CurrencyPickerDropdownSelect = ({
   );
 
   return (
-    <DropdownMenu width="240px" disableBlur>
+    <DropdownMenu disableBlur>
       <DropdownMenuSearchInput
         value={searchFilter}
         onChange={(event) => setSearchFilter(event.target.value)}
         autoFocus
       />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer hasMaxHeight>
-        {filteredCurrencies.length === 0 ? (
-          <MenuItem text="No result" />
-        ) : (
-          <>
-            {selectedCurrency && (
-              <MenuItemSelectAvatar
-                key={selectedCurrency.value}
-                selected={true}
-                onClick={() => onChange(selectedCurrency)}
-                text={`${selectedCurrency.label} (${selectedCurrency.value})`}
-              />
-            )}
-            {filteredCurrencies.map((item) =>
-              selectedCurrency?.value === item.value ? null : (
+      <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
+        <DropdownMenuItemsContainer hasMaxHeight>
+          {filteredCurrencies.length === 0 ? (
+            <MenuItem text="No result" />
+          ) : (
+            <>
+              {selectedCurrency && (
                 <MenuItemSelectAvatar
-                  key={item.value}
-                  selected={selectedCurrency?.value === item.value}
-                  onClick={() => onChange(item)}
-                  text={`${item.label} (${item.value})`}
+                  key={selectedCurrency.value}
+                  selected={true}
+                  onClick={() => onChange(selectedCurrency)}
+                  text={`${selectedCurrency.label} (${selectedCurrency.value})`}
                 />
-              ),
-            )}
-          </>
-        )}
-      </DropdownMenuItemsContainer>
+              )}
+              {filteredCurrencies.map((item) =>
+                selectedCurrency?.value === item.value ? null : (
+                  <MenuItemSelectAvatar
+                    key={item.value}
+                    selected={selectedCurrency?.value === item.value}
+                    onClick={() => onChange(item)}
+                    text={`${item.label} (${item.value})`}
+                  />
+                ),
+              )}
+            </>
+          )}
+        </DropdownMenuItemsContainer>
+      </ScrollWrapper>
     </DropdownMenu>
   );
 };

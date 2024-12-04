@@ -4,20 +4,13 @@ import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { focusedDropdownIdState } from '@/ui/layout/dropdown/states/focusedDropdownIdState';
-import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { getDropdownFocusIdForRecordField } from '@/ui/layout/dropdown/utils/getDropdownFocusIdForRecordField';
+import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
-  const { getClickOutsideListenerIsActivatedState } =
-    useClickOustideListenerStates(RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID);
-  const setClickOutsideListenerIsActivated = useSetRecoilState(
-    getClickOutsideListenerIsActivatedState,
-  );
-
   const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
     useContext(RecordTableContext);
 
@@ -52,15 +45,17 @@ export const RecordTableCellFieldInput = () => {
   const handleClickOutside: FieldInputEvent = useRecoilCallback(
     ({ snapshot }) =>
       (persistField) => {
-        // Check if dropdown is focused
-        const dropdownId = `dropdown-${recordId}-cell-${fieldDefinition.fieldMetadataId}`;
-        console.log('handleClickOutside close table cell', dropdownId);
+        const dropdownFocusId = getDropdownFocusIdForRecordField(
+          recordId,
+          fieldDefinition.fieldMetadataId,
+          'table-cell',
+        );
 
-        const focusedDropdownId = snapshot
-          .getLoadable(focusedDropdownIdState)
+        const activeDropdownFocusId = snapshot
+          .getLoadable(activeDropdownFocusIdState)
           .getValue();
 
-        if (focusedDropdownId !== dropdownId) {
+        if (activeDropdownFocusId !== dropdownFocusId) {
           return;
         }
 

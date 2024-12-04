@@ -16,6 +16,7 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
@@ -97,30 +98,32 @@ export const MultiRecordSelect = ({
   );
 
   const results = (
-    <DropdownMenuItemsContainer hasMaxHeight>
-      <SelectableList
-        selectableListId={MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID}
-        selectableItemIdArray={objectRecordsIdsMultiSelect}
-        hotkeyScope={instanceId}
-        onEnter={(selectedId) => {
-          onChange?.(selectedId);
-          resetSelectedItem();
-        }}
-      >
-        {objectRecordsIdsMultiSelect?.map((recordId) => {
-          return (
-            <MultipleObjectRecordSelectItem
-              key={recordId}
-              objectRecordId={recordId}
-              onChange={(recordId) => {
-                onChange?.(recordId);
-                resetSelectedItem();
-              }}
-            />
-          );
-        })}
-      </SelectableList>
-    </DropdownMenuItemsContainer>
+    <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
+      <DropdownMenuItemsContainer hasMaxHeight>
+        <SelectableList
+          selectableListId={MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID}
+          selectableItemIdArray={objectRecordsIdsMultiSelect}
+          hotkeyScope={instanceId}
+          onEnter={(selectedId) => {
+            onChange?.(selectedId);
+            resetSelectedItem();
+          }}
+        >
+          {objectRecordsIdsMultiSelect?.map((recordId) => {
+            return (
+              <MultipleObjectRecordSelectItem
+                key={recordId}
+                objectRecordId={recordId}
+                onChange={(recordId) => {
+                  onChange?.(recordId);
+                  resetSelectedItem();
+                }}
+              />
+            );
+          })}
+        </SelectableList>
+      </DropdownMenuItemsContainer>
+    </ScrollWrapper>
   );
 
   const createNewButton = isDefined(onCreate) && (
@@ -179,7 +182,11 @@ export const MultiRecordSelect = ({
             {objectRecordsIdsMultiSelect?.length > 0 && (
               <DropdownMenuSeparator />
             )}
-            {isDefined(onCreate) && <div>{createNewButton}</div>}
+            {isDefined(onCreate) && (
+              <DropdownMenuItemsContainer>
+                {createNewButton}
+              </DropdownMenuItemsContainer>
+            )}
           </>
         )}
       </DropdownMenu>
