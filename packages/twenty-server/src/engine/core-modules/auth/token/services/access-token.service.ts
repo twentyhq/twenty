@@ -17,10 +17,6 @@ import {
   AuthContext,
   JwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
-import {
-  EnvironmentException,
-  EnvironmentExceptionCode,
-} from 'src/engine/core-modules/environment/environment.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -44,13 +40,6 @@ export class AccessTokenService {
     workspaceId: string,
   ): Promise<AuthToken> {
     const expiresIn = this.environmentService.get('ACCESS_TOKEN_EXPIRES_IN');
-
-    if (!expiresIn) {
-      throw new EnvironmentException(
-        'Expiration time for access token is not set',
-        EnvironmentExceptionCode.ENVIRONMENT_VARIABLES_NOT_FOUND,
-      );
-    }
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 

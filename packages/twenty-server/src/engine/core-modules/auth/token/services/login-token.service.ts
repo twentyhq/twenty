@@ -4,10 +4,6 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 
 import { AuthToken } from 'src/engine/core-modules/auth/dto/token.entity';
-import {
-  EnvironmentException,
-  EnvironmentExceptionCode,
-} from 'src/engine/core-modules/environment/environment.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
@@ -21,13 +17,6 @@ export class LoginTokenService {
   async generateLoginToken(email: string): Promise<AuthToken> {
     const secret = this.jwtWrapperService.generateAppSecret('LOGIN');
     const expiresIn = this.environmentService.get('LOGIN_TOKEN_EXPIRES_IN');
-
-    if (!expiresIn) {
-      throw new EnvironmentException(
-        'Expiration time for access token is not set',
-        EnvironmentExceptionCode.ENVIRONMENT_VARIABLES_NOT_FOUND,
-      );
-    }
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
     const jwtPayload = {
