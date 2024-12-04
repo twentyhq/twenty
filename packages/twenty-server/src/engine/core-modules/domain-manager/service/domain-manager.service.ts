@@ -153,7 +153,10 @@ export class DomainManagerService {
 
       if (!isDefined(subdomain)) return;
 
-      return this.workspaceRepository.findOneBy({ subdomain });
+      return this.workspaceRepository.findOne({
+        where: { subdomain },
+        relations: ['workspaceSSOIdentityProviders'],
+      });
     } catch (e) {
       throw new WorkspaceException(
         'Workspace not found',

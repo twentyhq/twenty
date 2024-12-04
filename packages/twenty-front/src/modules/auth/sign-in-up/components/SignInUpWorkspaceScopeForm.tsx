@@ -4,15 +4,12 @@ import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import styled from '@emotion/styled';
-import { useCallback, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { ActionLink, HorizontalSeparator } from 'twenty-ui';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/SignInUpWithMicrosoft';
 import { SignInUpWithSSO } from '@/auth/sign-in-up/components/SignInUpWithSSO';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/SignInUpWithCredentials';
-import { useLocation } from 'react-router-dom';
-import { isDefined } from '~/utils/isDefined';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -25,38 +22,7 @@ export const SignInUpWorkspaceScopeForm = () => {
   const { form } = useSignInUpForm();
   const { handleResetPassword } = useHandleResetPassword();
 
-  const { signInUpStep, continueWithEmail, continueWithCredentials } =
-    useSignInUp(form);
-  const location = useLocation();
-
-  const checkAuthProviders = useCallback(() => {
-    if (
-      signInUpStep === SignInUpStep.Init &&
-      !authProviders.google &&
-      !authProviders.microsoft &&
-      !authProviders.sso
-    ) {
-      return continueWithEmail();
-    }
-    const searchParams = new URLSearchParams(location.search);
-    const email = searchParams.get('email');
-    if (isDefined(email) && authProviders.password) {
-      return continueWithCredentials();
-    }
-  }, [
-    continueWithCredentials,
-    location.search,
-    authProviders.google,
-    authProviders.microsoft,
-    authProviders.password,
-    authProviders.sso,
-    continueWithEmail,
-    signInUpStep,
-  ]);
-
-  useEffect(() => {
-    checkAuthProviders();
-  }, [checkAuthProviders]);
+  const { signInUpStep } = useSignInUp(form);
 
   return (
     <>

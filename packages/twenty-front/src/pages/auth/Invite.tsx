@@ -17,6 +17,7 @@ import {
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeFormEffect';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -93,7 +94,10 @@ export const Invite = () => {
           <FooterNote />
         </>
       ) : (
-        <SignInUpWorkspaceScopeForm />
+        <>
+          <SignInUpWorkspaceScopeFormEffect />
+          <SignInUpWorkspaceScopeForm />
+        </>
       )}
     </>
   );

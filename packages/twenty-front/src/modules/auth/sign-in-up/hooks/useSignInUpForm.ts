@@ -3,11 +3,10 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
-import { useSearchParams } from 'react-router-dom';
 import { isDefined } from '~/utils/isDefined';
 import {
   SignInUpStep,
@@ -59,10 +58,17 @@ export const useSignInUpForm = () => {
   useEffect(() => {
     if (isDefined(prefilledEmail)) {
       form.setValue('email', prefilledEmail);
-    } else if (isDeveloperDefaultSignInPrefilled === true) {
-      form.setValue('email', 'tim@apple.dev');
+    }
+
+    if (isDeveloperDefaultSignInPrefilled === true) {
+      form.setValue('email', prefilledEmail ?? 'tim@apple.dev');
       form.setValue('password', 'Applecar2025');
     }
-  }, [form, isDeveloperDefaultSignInPrefilled, prefilledEmail, location.search]);
-  return { form: form };
+  }, [
+    form,
+    isDeveloperDefaultSignInPrefilled,
+    prefilledEmail,
+    location.search,
+  ]);
+  return { form: form, validationSchema };
 };

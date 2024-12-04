@@ -31,7 +31,7 @@ import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
-import { SignInUpMode } from '@/auth/types/signInUpMode.type';
+import { SignInUpMode } from '@/auth/types/signInUpMode';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
