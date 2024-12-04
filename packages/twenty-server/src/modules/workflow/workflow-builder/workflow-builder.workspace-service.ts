@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { join } from 'path';
 
 import { Repository } from 'typeorm';
-import isObject from 'lodash.isobject';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { checkStringIsDatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/utils/check-string-is-database-event-action';
@@ -223,18 +222,11 @@ export class WorkflowBuilderWorkspaceService {
     const fakeFunctionInput =
       codeIntrospectionService.generateInputData(inputSchema);
 
-    // We extract the 'params' parameter required to execute serverless function
-    if (
-      !('params' in fakeFunctionInput && isObject(fakeFunctionInput.params))
-    ) {
-      return {};
-    }
-
     const resultFromFakeInput =
       await serverlessFunctionService.executeOneServerlessFunction(
         serverlessFunctionId,
         workspaceId,
-        fakeFunctionInput.params,
+        Object.values(fakeFunctionInput)?.[0] || {},
         serverlessFunctionVersion,
       );
 
