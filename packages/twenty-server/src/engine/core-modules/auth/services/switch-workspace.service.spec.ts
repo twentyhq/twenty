@@ -211,10 +211,9 @@ describe('SwitchWorkspaceService', () => {
           refreshToken: mockRefreshToken,
         },
       });
-      expect(userService.saveDefaultWorkspace).toHaveBeenCalledWith(
-        mockUser.id,
-        mockWorkspace.id,
-      );
+      expect(
+        userService.saveDefautWorkspaceIfUserHasAccessOrThrow,
+      ).toHaveBeenCalledWith(mockUser.id, mockWorkspace.id);
       expect(accessTokenService.generateAccessToken).toHaveBeenCalledWith(
         mockUser.id,
         mockWorkspace.id,

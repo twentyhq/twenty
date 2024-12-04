@@ -36,6 +36,7 @@ import {
   EnvironmentException,
   EnvironmentExceptionCode,
 } from 'src/engine/core-modules/environment/environment.exception';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/workspace.type';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -47,7 +48,7 @@ export type SignInUpServiceInput = {
   picture?: string | null;
   fromSSO: boolean;
   targetWorkspaceSubdomain?: string;
-  isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
+  authProvider?: WorkspaceAuthProvider;
 };
 
 @Injectable()
@@ -77,7 +78,7 @@ export class SignInUpService {
     picture,
     fromSSO,
     targetWorkspaceSubdomain,
-    isAuthEnabled,
+    authProvider,
   }: SignInUpServiceInput) {
     if (!firstName) firstName = '';
     if (!lastName) lastName = '';
@@ -158,7 +159,7 @@ export class SignInUpService {
           lastName,
           picture,
           existingUser,
-          isAuthEnabled,
+          authProvider,
         });
 
         await this.workspaceInvitationService.invalidateWorkspaceInvitation(
@@ -191,7 +192,7 @@ export class SignInUpService {
     lastName,
     picture,
     existingUser,
-    isAuthEnabled,
+    authProvider,
   }: {
     email: string;
     passwordHash: string | undefined;
@@ -200,7 +201,7 @@ export class SignInUpService {
     lastName: string;
     picture: SignInUpServiceInput['picture'];
     existingUser: User | null;
-    isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
+    authProvider?: WorkspaceAuthProvider;
   }) {
     const isNewUser = !isDefined(existingUser);
     let user = existingUser;
@@ -221,8 +222,16 @@ export class SignInUpService {
       ),
     );
 
-    if (isAuthEnabled)
-      workspaceValidator.validateAuth(isAuthEnabled, workspace);
+    if (authProvider) {
+      workspaceValidator.isAuthEnabledOrThrow(
+        authProvider,
+        workspace,
+        new AuthException(
+          `${authProvider} auth is not enabled for this workspace`,
+          AuthExceptionCode.OAUTH_ACCESS_DENIED,
+        ),
+      );
+    }
 
     if (isNewUser) {
       const imagePath = await this.uploadPicture(picture, workspace.id);
@@ -240,7 +249,7 @@ export class SignInUpService {
       user = await this.userRepository.save(userToCreate);
     }
 
-    userValidator.assertIsExist(
+    userValidator.assertIsDefinedOrThrow(
       user,
       new AuthException(
         'User not found',

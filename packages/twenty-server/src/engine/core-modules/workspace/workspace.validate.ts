@@ -3,8 +3,8 @@ import {
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CustomException } from 'src/utils/custom-exception';
-
-type WorkspaceAuthProvider = 'google' | 'microsoft' | 'password';
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/workspace.type';
 
 const assertIsExist = (
   workspace: Workspace | undefined | null,
@@ -25,40 +25,29 @@ const assertIsActive = (
   throw exceptionToThrow;
 };
 
-type IsAuthEnabled = <P extends WorkspaceAuthProvider>(
-  provider: P,
-  exceptionToThrow: CustomException,
-) => (
+const isAuthEnabledOrThrow = (
+  provider: WorkspaceAuthProvider,
   workspace: Workspace,
-  exceptionToThrowCustom?: CustomException,
-) => boolean;
-
-const isAuthEnabled: IsAuthEnabled = (provider, exceptionToThrow) => {
-  return (workspace, exceptionToThrowCustom = exceptionToThrow) => {
-    if (provider === 'google' && workspace.isGoogleAuthEnabled) return true;
-    if (provider === 'microsoft' && workspace.isMicrosoftAuthEnabled)
-      return true;
-    if (provider === 'password' && workspace.isPasswordAuthEnabled) return true;
-
-    if (exceptionToThrowCustom) {
+  exceptionToThrowCustom: AuthException,
+) => {
+  switch (provider) {
+    case 'google':
+      return workspace.isGoogleAuthEnabled;
+    case 'microsoft':
+      return workspace.isMicrosoftAuthEnabled;
+    case 'password':
+      return workspace.isPasswordAuthEnabled;
+    default:
       throw exceptionToThrowCustom;
-    }
-
-    return false;
-  };
+  }
 };
-
-const validateAuth = (fn: ReturnType<IsAuthEnabled>, workspace: Workspace) =>
-  fn(workspace);
 
 export const workspaceValidator: {
   assertIsExist: typeof assertIsExist;
   assertIsActive: typeof assertIsActive;
-  isAuthEnabled: IsAuthEnabled;
-  validateAuth: typeof validateAuth;
+  isAuthEnabledOrThrow: typeof isAuthEnabledOrThrow;
 } = {
   assertIsExist: assertIsExist,
   assertIsActive: assertIsActive,
-  isAuthEnabled,
-  validateAuth,
+  isAuthEnabledOrThrow: isAuthEnabledOrThrow,
 };

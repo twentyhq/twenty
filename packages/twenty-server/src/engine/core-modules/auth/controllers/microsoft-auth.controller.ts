@@ -15,12 +15,8 @@ import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guar
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 @Controller('auth/microsoft')
@@ -66,13 +62,7 @@ export class MicrosoftAuthController {
         workspacePersonalInviteToken,
         targetWorkspaceSubdomain,
         fromSSO: true,
-        isAuthEnabled: workspaceValidator.isAuthEnabled(
-          'microsoft',
-          new AuthException(
-            'Microsoft auth is not enabled for this workspace',
-            AuthExceptionCode.OAUTH_ACCESS_DENIED,
-          ),
-        ),
+        authProvider: 'microsoft',
       });
 
       const loginToken = await this.loginTokenService.generateLoginToken(
