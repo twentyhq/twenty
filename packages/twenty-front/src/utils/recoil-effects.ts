@@ -32,7 +32,7 @@ const customCookieAttributeZodSchema = z.object({
 
 export const isCustomCookiesAttributesValue = (
   value: unknown,
-): value is Cookies.CookieAttributes =>
+): value is { cookieAttributes: Cookies.CookieAttributes } =>
   customCookieAttributeZodSchema.safeParse(value).success;
 
 export const cookieStorageEffect =
