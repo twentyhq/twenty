@@ -1,35 +1,36 @@
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { lastAuthenticateWorkspaceDomainState } from '@/domain-manager/states/lastAuthenticateWorkspaceDomainState';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { useRecoilValue, useRecoilState } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
 export const useLastAuthenticateWorkspaceDomain = () => {
-  const [lastAuthenticateWorkspaceDomain, setLastAuthenticateWorkspaceDomain] =
-    useRecoilState(lastAuthenticateWorkspaceDomainState);
-
   const domainConfiguration = useRecoilValue(domainConfigurationState);
 
-  const setLastAuthenticateWorkspaceDomainState = (
-    params: {
-      id: string;
-      subdomain: string;
-    } | null,
-  ) => {
-    setLastAuthenticateWorkspaceDomain(
-      isDefined(params)
-        ? {
-            id: params.id,
-            subdomain: params.subdomain,
-            cookieAttributes: {
-              domain: `.${domainConfiguration.frontDomain}`,
-            },
-          }
-        : null,
-    );
-  };
+  const setLastAuthenticateWorkspaceDomain = useRecoilCallback(
+    ({ set }) =>
+      (params: { id: string; subdomain: string } | null) => {
+        set(
+          lastAuthenticateWorkspaceDomainState,
+          isDefined(params)
+            ? {
+                id: params.id,
+                subdomain: params.subdomain,
+                cookieAttributes: {
+                  domain: `.${domainConfiguration.frontDomain}`,
+                },
+              }
+            : null,
+        );
+      },
+    [domainConfiguration],
+  );
+
+  const lastAuthenticateWorkspaceDomain = useRecoilValue(
+    lastAuthenticateWorkspaceDomainState,
+  );
 
   return {
-    setLastAuthenticateWorkspaceDomain: setLastAuthenticateWorkspaceDomainState,
+    setLastAuthenticateWorkspaceDomain,
     lastAuthenticateWorkspaceDomain,
   };
 };
