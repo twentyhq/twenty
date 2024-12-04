@@ -1,5 +1,6 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
 
+import { ErrorHandlerService } from 'src/engine/core-modules/auth/auth-exception-handler.service';
 import { ExceptionHandlerConsoleDriver } from 'src/engine/core-modules/exception-handler/drivers/console.driver';
 import { ExceptionHandlerSentryDriver } from 'src/engine/core-modules/exception-handler/drivers/sentry.driver';
 import { EXCEPTION_HANDLER_DRIVER } from 'src/engine/core-modules/exception-handler/exception-handler.constants';
@@ -13,8 +14,8 @@ import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handle
 
 @Global()
 @Module({
-  providers: [ExceptionHandlerService],
-  exports: [ExceptionHandlerService],
+  providers: [ExceptionHandlerService, ErrorHandlerService],
+  exports: [ExceptionHandlerService, ErrorHandlerService],
 })
 export class ExceptionHandlerModule extends ConfigurableModuleClass {
   static forRoot(options: typeof OPTIONS_TYPE): DynamicModule {
