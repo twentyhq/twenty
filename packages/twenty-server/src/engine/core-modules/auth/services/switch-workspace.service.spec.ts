@@ -47,7 +47,7 @@ describe('SwitchWorkspaceService', () => {
         {
           provide: UserService,
           useValue: {
-            saveDefaultWorkspace: jest.fn(),
+            saveDefaultWorkspaceIfUserHasAccessOrThrow: jest.fn(),
           },
         },
       ],
