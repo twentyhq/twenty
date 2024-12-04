@@ -82,7 +82,7 @@ export const useAggregateManyRecordsForRecordBoardColumn = () => {
   );
 
   return {
-    aggregateValue: value ?? recordCount,
+    aggregateValue: isAggregateQueryEnabled ? value : recordCount,
     aggregateLabel: isDefined(value) ? label : undefined,
   };
 };
