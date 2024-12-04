@@ -4,10 +4,12 @@ import { useRecoilState } from 'recoil';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
+import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
+import { recordIndexShouldFetchMoreRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexShouldFetchMoreRecordsByGroupComponentState';
 import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
-import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
+import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
 
@@ -18,12 +20,25 @@ export const RecordTableRecordGroupBodyEffect = () => {
 
   const [hasInitializedScroll, setHasInitializedScroll] = useState(false);
 
-  const { records, totalCount, setRecordTableData, loading, hasNextPage } =
-    useLoadRecordIndexTable(objectNameSingular);
+  const [shouldFetchMoreRecords, setShouldFetchMoreRecords] =
+    useRecoilComponentFamilyStateV2(
+      recordIndexShouldFetchMoreRecordsByGroupComponentState,
+      recordGroupId,
+    );
 
-  const setHasRecordTableFetchedAllRecordsComponents =
-    useSetRecoilComponentStateV2(
-      hasRecordTableFetchedAllRecordsComponentStateV2,
+  const {
+    fetchMoreRecords,
+    records,
+    totalCount,
+    setRecordTableData,
+    loading,
+    hasNextPage,
+  } = useLoadRecordIndexTable(objectNameSingular);
+
+  const setHasRecordFetchedAllRecordsComponents =
+    useSetRecoilComponentFamilyStateV2(
+      recordIndexHasFetchedAllRecordsByGroupComponentState,
+      recordGroupId,
     );
 
   const [lastShowPageRecordId] = useRecoilState(lastShowPageRecordIdState);
@@ -65,8 +80,16 @@ export const RecordTableRecordGroupBodyEffect = () => {
   useEffect(() => {
     const allRecordsHaveBeenFetched = !hasNextPage;
 
-    setHasRecordTableFetchedAllRecordsComponents(allRecordsHaveBeenFetched);
-  }, [hasNextPage, setHasRecordTableFetchedAllRecordsComponents]);
+    setHasRecordFetchedAllRecordsComponents(allRecordsHaveBeenFetched);
+  }, [hasNextPage, setHasRecordFetchedAllRecordsComponents]);
+
+  useEffect(() => {
+    if (shouldFetchMoreRecords) {
+      fetchMoreRecords().finally(() => {
+        setShouldFetchMoreRecords(false);
+      });
+    }
+  }, [fetchMoreRecords, setShouldFetchMoreRecords, shouldFetchMoreRecords]);
 
   return <></>;
 };

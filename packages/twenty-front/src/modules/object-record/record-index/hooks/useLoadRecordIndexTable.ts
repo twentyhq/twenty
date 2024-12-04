@@ -84,6 +84,8 @@ export const useFindManyParams = (
       ...recordGroupFilter,
     },
     orderBy,
+    // If we have a current record group definition, we only want to fetch 8 records by page
+    ...(currentRecordGroupDefinition ? { limit: 8 } : {}),
   };
 };
 
