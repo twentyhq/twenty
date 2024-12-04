@@ -54,14 +54,12 @@ export class BillingEntitlement {
 
   @Column({ nullable: true, type: 'timestamptz' })
   deletedAt?: Date;
-
-  // TODO: Because we haven't populated the billingCustomer table yet, this table is not updated
-  // Strategy: if no customer in db, we will get it from Stripe and save it in db before saving the entitlement
   @ManyToOne(
     () => BillingCustomer,
     (billingCustomer) => billingCustomer.billingEntitlements,
     {
       onDelete: 'CASCADE',
+      createForeignKeyConstraints: false,
     },
   )
   @JoinColumn({

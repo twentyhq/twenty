@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
@@ -38,15 +39,17 @@ export class BillingCustomer {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
+  @ManyToOne(() => Workspace, (workspace) => workspace.billingCustomers, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   workspace: Relation<Workspace>;
 
-  @Column({ nullable: false, unique: true })
-  stripeCustomerId: string;
-
-  @Field()
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
+
+  @Column({ nullable: false, unique: true })
+  stripeCustomerId: string;
 
   @OneToMany(
     () => BillingSubscription,

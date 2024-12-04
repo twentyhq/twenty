@@ -5,6 +5,7 @@ import { BillingController } from 'src/engine/core-modules/billing/billing.contr
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
 import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -31,6 +32,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
         BillingCustomer,
         BillingProduct,
         BillingPrice,
+        BillingMeter,
         BillingEntitlement,
         Workspace,
         UserWorkspace,

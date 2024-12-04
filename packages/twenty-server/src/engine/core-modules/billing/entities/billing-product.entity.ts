@@ -1,5 +1,6 @@
 import { registerEnumType } from '@nestjs/graphql';
 
+import Stripe from 'stripe';
 import {
   Column,
   CreateDateColumn,
@@ -13,7 +14,6 @@ import {
 import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingUsageType } from 'src/engine/core-modules/billing/enums/billing-usage-type.enum';
 import { BillingProductMetadata } from 'src/engine/core-modules/billing/types/billing-product-metadata.type';
-
 registerEnumType(BillingUsageType, { name: 'BillingUsageType' });
 @Entity({ name: 'billingProduct', schema: 'core' })
 export class BillingProduct {
@@ -32,10 +32,25 @@ export class BillingProduct {
   @Column({ nullable: false })
   active: boolean;
 
+  @Column({ nullable: true })
+  description: string;
+
+  @Column({ nullable: false })
+  name: string;
+
+  @Column({ nullable: true })
+  taxCode: string;
+
+  @Column({ nullable: false, type: 'jsonb', default: [] })
+  images: string[];
+
+  @Column({ nullable: false, type: 'jsonb', default: [] })
+  marketingFeatures: Stripe.Product.MarketingFeature[];
+
   @Column({ nullable: false, unique: true })
   stripeProductId: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   defaultStripePriceId: string;
 
   @Column({ nullable: false, type: 'jsonb', default: {} })
@@ -43,4 +58,10 @@ export class BillingProduct {
 
   @OneToMany(() => BillingPrice, (billingPrice) => billingPrice.billingProduct)
   billingPrices: Relation<BillingPrice[]>;
+
+  @Column({ nullable: true })
+  unitLabel: string;
+
+  @Column({ nullable: true })
+  url: string;
 }
