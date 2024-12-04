@@ -9,7 +9,11 @@ export const PageFavicon = () => {
   return (
     <Helmet>
       {workspacePublicData?.logo && (
-        <link rel="icon" href={getImageAbsoluteURI(workspacePublicData.logo)} />
+        <link
+          rel="icon"
+          type="image/x-icon"
+          href={getImageAbsoluteURI(workspacePublicData.logo)}
+        />
       )}
     </Helmet>
   );

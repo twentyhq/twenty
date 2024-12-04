@@ -11,25 +11,14 @@ const assertIsDefinedOrThrow = (
   }
 };
 
-const isExist = (user: User | undefined | null): user is User => {
+const isUserDefined = (user: User | undefined | null): user is User => {
   return isDefined(user);
-};
-
-const assertHasDefaultWorkspaceOrThrow = (
-  user: User,
-  exceptionToThrow?: CustomException,
-): asserts user is User & { defaultWorkspaceId: string } => {
-  if (!isDefined(user.defaultWorkspaceId)) {
-    throw exceptionToThrow;
-  }
 };
 
 export const userValidator: {
   assertIsDefinedOrThrow: typeof assertIsDefinedOrThrow;
-  assertHasDefaultWorkspace: typeof assertHasDefaultWorkspaceOrThrow;
-  isExist: typeof isExist;
+  isDefined: typeof isUserDefined;
 } = {
-  assertIsDefinedOrThrow: assertIsDefinedOrThrow,
-  assertHasDefaultWorkspace: assertHasDefaultWorkspaceOrThrow,
-  isExist,
+  assertIsDefinedOrThrow,
+  isDefined: isUserDefined,
 };

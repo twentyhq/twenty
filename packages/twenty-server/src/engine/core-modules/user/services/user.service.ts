@@ -155,7 +155,7 @@ export class UserService extends TypeOrmQueryService<User> {
     );
   }
 
-  async saveDefautWorkspaceIfUserHasAccessOrThrow(
+  async saveDefaultWorkspaceIfUserHasAccessOrThrow(
     userId: string,
     workspaceId: string,
   ) {

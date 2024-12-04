@@ -30,16 +30,11 @@ const isAuthEnabledOrThrow = (
   workspace: Workspace,
   exceptionToThrowCustom: AuthException,
 ) => {
-  switch (provider) {
-    case 'google':
-      return workspace.isGoogleAuthEnabled;
-    case 'microsoft':
-      return workspace.isMicrosoftAuthEnabled;
-    case 'password':
-      return workspace.isPasswordAuthEnabled;
-    default:
-      throw exceptionToThrowCustom;
-  }
+  if (provider === 'google' && workspace.isGoogleAuthEnabled) return true;
+  if (provider === 'microsoft' && workspace.isMicrosoftAuthEnabled) return true;
+  if (provider === 'password' && workspace.isPasswordAuthEnabled) return true;
+
+  throw exceptionToThrowCustom;
 };
 
 export const workspaceValidator: {

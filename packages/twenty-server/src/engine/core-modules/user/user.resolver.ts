@@ -77,7 +77,7 @@ export class UserResolver {
       this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
       workspaceId
     ) {
-      await this.userService.saveDefautWorkspaceIfUserHasAccessOrThrow(
+      await this.userService.saveDefaultWorkspaceIfUserHasAccessOrThrow(
         userId,
         workspaceId,
       );

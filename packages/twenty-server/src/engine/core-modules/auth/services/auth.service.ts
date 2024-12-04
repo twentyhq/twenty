@@ -210,7 +210,7 @@ export class AuthService {
       workspaceId &&
       userWithIdAndDefaultWorkspaceId.defaultWorkspaceId !== workspaceId
     ) {
-      await this.userService.saveDefautWorkspaceIfUserHasAccessOrThrow(
+      await this.userService.saveDefaultWorkspaceIfUserHasAccessOrThrow(
         userWithIdAndDefaultWorkspaceId.id,
         workspaceId,
       );
@@ -254,7 +254,7 @@ export class AuthService {
       email,
     });
 
-    if (userValidator.isExist(user)) {
+    if (userValidator.isDefined(user)) {
       return {
         exists: true,
         availableWorkspaces: await this.findAvailableWorkspacesByEmail(email),

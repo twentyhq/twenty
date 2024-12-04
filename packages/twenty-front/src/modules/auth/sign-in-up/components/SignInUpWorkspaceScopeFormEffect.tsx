@@ -6,6 +6,9 @@ import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useRecoilState } from 'recoil';
 import { useCallback, useEffect } from 'react';
 
+const searchParams = new URLSearchParams(window.location.search);
+const email = searchParams.get('email');
+
 export const SignInUpWorkspaceScopeFormEffect = () => {
   const [authProviders] = useRecoilState(authProvidersState);
 
@@ -13,9 +16,6 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
 
   const { signInUpStep, continueWithEmail, continueWithCredentials } =
     useSignInUp(form);
-
-  const searchParams = new URLSearchParams(window.location.search);
-  const email = searchParams.get('email');
 
   const checkAuthProviders = useCallback(() => {
     if (

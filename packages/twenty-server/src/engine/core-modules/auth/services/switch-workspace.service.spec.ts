@@ -212,7 +212,7 @@ describe('SwitchWorkspaceService', () => {
         },
       });
       expect(
-        userService.saveDefautWorkspaceIfUserHasAccessOrThrow,
+        userService.saveDefaultWorkspaceIfUserHasAccessOrThrow,
       ).toHaveBeenCalledWith(mockUser.id, mockWorkspace.id);
       expect(accessTokenService.generateAccessToken).toHaveBeenCalledWith(
         mockUser.id,

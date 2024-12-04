@@ -78,7 +78,7 @@ export class SwitchWorkspaceService {
     user: User,
     workspace: Workspace,
   ): Promise<AuthTokens> {
-    await this.userService.saveDefautWorkspaceIfUserHasAccessOrThrow(
+    await this.userService.saveDefaultWorkspaceIfUserHasAccessOrThrow(
       user.id,
       workspace.id,
     );
