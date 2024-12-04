@@ -19,10 +19,6 @@ import {
   PASSWORD_REGEX,
 } from 'src/engine/core-modules/auth/auth.util';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import {
-  EnvironmentException,
-  EnvironmentExceptionCode,
-} from 'src/engine/core-modules/environment/environment.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
@@ -299,9 +295,9 @@ export class SignInUpService {
 
       // let the creation of the first workspace
       if (workspacesCount > 0) {
-        throw new EnvironmentException(
+        throw new AuthException(
           'New workspace setup is disabled',
-          EnvironmentExceptionCode.ENVIRONMENT_VARIABLES_NOT_FOUND,
+          AuthExceptionCode.SIGNUP_DISABLED,
         );
       }
     }

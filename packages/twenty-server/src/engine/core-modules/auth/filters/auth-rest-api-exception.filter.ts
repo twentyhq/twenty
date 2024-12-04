@@ -2,7 +2,7 @@ import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 
 import { Response } from 'express';
 
-import { ErrorHandlerService } from 'src/engine/core-modules/auth/auth-exception-handler.service';
+import { AuthExceptionHandlerService } from 'src/engine/core-modules/auth/auth-exception-handler.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -10,7 +10,9 @@ import {
 
 @Catch(AuthException)
 export class AuthRestApiExceptionFilter implements ExceptionFilter {
-  constructor(private readonly errorHandlerService: ErrorHandlerService) {}
+  constructor(
+    private readonly authExceptionHandlerService: AuthExceptionHandlerService,
+  ) {}
 
   catch(exception: AuthException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -19,15 +21,40 @@ export class AuthRestApiExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       case AuthExceptionCode.USER_NOT_FOUND:
       case AuthExceptionCode.CLIENT_NOT_FOUND:
-        return this.errorHandlerService.handleError(exception, response, 404);
+        return this.authExceptionHandlerService.handleError(
+          exception,
+          response,
+          404,
+        );
       case AuthExceptionCode.INVALID_INPUT:
       case AuthExceptionCode.INVALID_DATA:
-        return this.errorHandlerService.handleError(exception, response, 400);
+      case AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE:
+        return this.authExceptionHandlerService.handleError(
+          exception,
+          response,
+          400,
+        );
       case AuthExceptionCode.FORBIDDEN_EXCEPTION:
-        return this.errorHandlerService.handleError(exception, response, 401);
+        return this.authExceptionHandlerService.handleError(
+          exception,
+          response,
+          401,
+        );
+      case AuthExceptionCode.GOOGLE_API_AUTH_DISABLED:
+      case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:
+      case AuthExceptionCode.SIGNUP_DISABLED:
+        return this.authExceptionHandlerService.handleError(
+          exception,
+          response,
+          403,
+        );
       case AuthExceptionCode.INTERNAL_SERVER_ERROR:
       default:
-        return this.errorHandlerService.handleError(exception, response, 500);
+        return this.authExceptionHandlerService.handleError(
+          exception,
+          response,
+          500,
+        );
     }
   }
 }

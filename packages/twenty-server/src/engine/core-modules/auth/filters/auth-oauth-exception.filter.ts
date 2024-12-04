@@ -28,7 +28,6 @@ export class AuthOAuthExceptionFilter implements ExceptionFilter {
           .redirect(this.domainManagerService.getBaseUrl().toString());
         break;
       default:
-        console.log('AuthOAuthExceptionFilter 2');
         throw new InternalServerErrorException(exception.message);
     }
   }

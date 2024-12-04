@@ -24,7 +24,7 @@ interface RequestAndParams {
 }
 
 @Injectable({ scope: Scope.REQUEST })
-export class ErrorHandlerService {
+export class AuthExceptionHandlerService {
   constructor(
     private readonly exceptionHandlerService: ExceptionHandlerService,
     @Inject(REQUEST)
