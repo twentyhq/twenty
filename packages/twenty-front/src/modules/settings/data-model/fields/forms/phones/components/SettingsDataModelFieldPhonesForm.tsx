@@ -4,6 +4,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { phonesSchema as phonesFieldDefaultValueSchema } from '@/object-record/record-field/types/guards/isFieldPhonesValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
+import { Select } from '@/ui/input/components/Select';
 import { IconMap } from 'twenty-ui';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
@@ -58,21 +59,27 @@ export const SettingsDataModelFieldPhonesForm = ({
         return (
           <SettingsOptionCardContentSelect<string>
             Icon={IconMap}
-            dropdownId="selectDefaultCountryCode"
             title="Default Country Code"
             description="The default country code for new phone numbers."
-            value={stripSimpleQuotesFromString(value?.primaryPhoneCountryCode)}
-            onChange={(newPhoneCountryCode) =>
-              onChange({
-                ...value,
-                primaryPhoneCountryCode:
-                  applySimpleQuotesToString(newPhoneCountryCode),
-              })
-            }
-            disabled={disabled}
-            options={countries}
-            fullWidth={true}
-          />
+          >
+            <Select<string>
+              dropdownWidth={'auto'}
+              dropdownId="selectDefaultCountryCode"
+              value={stripSimpleQuotesFromString(
+                value?.primaryPhoneCountryCode,
+              )}
+              onChange={(newPhoneCountryCode) =>
+                onChange({
+                  ...value,
+                  primaryPhoneCountryCode:
+                    applySimpleQuotesToString(newPhoneCountryCode),
+                })
+              }
+              disabled={disabled}
+              options={countries}
+              selectSizeVariant="small"
+            />
+          </SettingsOptionCardContentSelect>
         );
       }}
     />
