@@ -5,7 +5,7 @@ export const DOCS_INDEX = {
       { fileName: 'self-hosting' },
       { fileName: 'docker-compose' },
       { fileName: 'upgrade-guide' },
-      { fileName: 'self-hosting-var' },
+      { fileName: 'setup' },
       { fileName: 'cloud-providers' },
       { fileName: 'troubleshooting' },
     ],
