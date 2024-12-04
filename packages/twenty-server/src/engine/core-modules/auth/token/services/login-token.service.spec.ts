@@ -94,7 +94,7 @@ describe('LoginTokenService', () => {
 
       const result = await service.verifyLoginToken(mockToken);
 
-      expect(result).toEqual(mockEmail);
+      expect(result).toEqual({ sub: mockEmail });
       expect(jwtWrapperService.verifyWorkspaceToken).toHaveBeenCalledWith(
         mockToken,
         'LOGIN',

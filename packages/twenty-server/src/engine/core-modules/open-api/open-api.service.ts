@@ -59,7 +59,7 @@ export class OpenApiService {
 
     try {
       const { workspace } =
-        await this.accessTokenService.validateToken(request);
+        await this.accessTokenService.validateTokenByRequest(request);
 
       objectMetadataItems =
         await this.objectMetadataService.findManyWithinWorkspace(workspace.id);

@@ -13,6 +13,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 import { WorkspaceService } from './workspace.service';
 
@@ -45,6 +46,10 @@ describe('WorkspaceService', () => {
         },
         {
           provide: UserService,
+          useValue: {},
+        },
+        {
+          provide: DomainManagerService,
           useValue: {},
         },
         {

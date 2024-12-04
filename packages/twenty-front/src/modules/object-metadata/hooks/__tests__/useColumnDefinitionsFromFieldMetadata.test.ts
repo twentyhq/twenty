@@ -15,10 +15,14 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
       id: '1',
       featureFlags: [],
       allowImpersonation: false,
+      subdomain: 'test',
       activationStatus: WorkspaceActivationStatus.Active,
       hasValidEntrepriseKey: false,
       metadataVersion: 1,
       isPublicInviteLinkEnabled: false,
+      isGoogleAuthEnabled: true,
+      isMicrosoftAuthEnabled: false,
+      isPasswordAuthEnabled: true,
     });
   },
 });

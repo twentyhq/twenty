@@ -16,11 +16,13 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 
 @Module({
   imports: [
     FeatureFlagModule,
     StripeModule,
+    DomainManagerModule,
     TypeOrmModule.forFeature(
       [
         BillingSubscription,
