@@ -21,10 +21,10 @@ export class AuthRestApiExceptionFilter implements ExceptionFilter {
       case AuthExceptionCode.CLIENT_NOT_FOUND:
         return this.errorHandlerService.handleError(exception, response, 404);
       case AuthExceptionCode.INVALID_INPUT:
+      case AuthExceptionCode.INVALID_DATA:
         return this.errorHandlerService.handleError(exception, response, 400);
       case AuthExceptionCode.FORBIDDEN_EXCEPTION:
         return this.errorHandlerService.handleError(exception, response, 401);
-      case AuthExceptionCode.INVALID_DATA:
       case AuthExceptionCode.INTERNAL_SERVER_ERROR:
       default:
         return this.errorHandlerService.handleError(exception, response, 500);

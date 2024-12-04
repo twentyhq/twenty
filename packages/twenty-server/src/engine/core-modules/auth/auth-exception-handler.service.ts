@@ -1,6 +1,8 @@
 import { Inject, Injectable, Scope } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 
+import { Response } from 'express';
+
 import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 import { ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
 
@@ -31,11 +33,11 @@ export class ErrorHandlerService {
 
   handleError = (
     exception: AuthException,
-    response?: any,
+    response: Response<any, Record<string, any>>,
     errorCode?: number,
     user?: ExceptionHandlerUser,
     workspace?: ExceptionHandlerWorkspace,
-  ) => {
+  ): Response<any, Record<string, any>> | undefined => {
     const params = this.request?.params;
 
     if (params?.workspaceId)
@@ -44,6 +46,6 @@ export class ErrorHandlerService {
 
     handleException(exception, this.exceptionHandlerService, user, workspace);
 
-    return response.status(errorCode).send(exception.message);
+    return response.status(errorCode || 500).send(exception.message);
   };
 }

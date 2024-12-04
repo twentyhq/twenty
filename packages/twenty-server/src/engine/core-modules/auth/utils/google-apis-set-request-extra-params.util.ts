@@ -48,12 +48,15 @@ export const setRequestExtraParams = (
   if (messageVisibility) {
     request.params.messageVisibility = messageVisibility;
   }
+
   if (loginHint) {
     request.params.loginHint = loginHint;
   }
+
   if (userId) {
     request.params.userId = userId;
   }
+
   if (workspaceId) {
     request.params.workspaceId = workspaceId;
   }
