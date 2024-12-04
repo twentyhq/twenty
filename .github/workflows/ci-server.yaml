@@ -85,15 +85,15 @@ jobs:
 
           CORE_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate core-migration-check -d src/database/typeorm/core/core.datasource.ts || true)
 
-          METADATA_MIGRATION_FILE=$(ls *metadata-migration-check.ts 2>/dev/null || echo "")
-          CORE_MIGRATION_FILE=$(ls *core-migration-check.ts 2>/dev/null || echo "")
+          METADATA_MIGRATION_FILE=$(ls packages/twenty-server/*metadata-migration-check.ts 2>/dev/null || echo "")
+          CORE_MIGRATION_FILE=$(ls packages/twenty-server/*core-migration-check.ts 2>/dev/null || echo "")
 
           if [ -n "$METADATA_MIGRATION_FILE" ] || [ -n "$CORE_MIGRATION_FILE" ]; then
             echo "::error::Unexpected migration files were generated. Please create a proper migration manually."
             echo "$METADATA_MIGRATION_OUTPUT"
             echo "$CORE_MIGRATION_OUTPUT"
 
-            rm -f *metadata-migration-check.ts *core-migration-check.ts
+            rm -f packages/twenty-server/*metadata-migration-check.ts packages/twenty-server/*core-migration-check.ts
             
             exit 1
           fi
