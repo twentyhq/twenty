@@ -2,11 +2,11 @@ import { CanActivate, Injectable } from '@nestjs/common';
 
 import { Observable } from 'rxjs';
 
-import { MicrosoftStrategy } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import {
-  EnvironmentException,
-  EnvironmentExceptionCode,
-} from 'src/engine/core-modules/environment/environment.exception';
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { MicrosoftStrategy } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Injectable()
@@ -15,9 +15,9 @@ export class MicrosoftProviderEnabledGuard implements CanActivate {
 
   canActivate(): boolean | Promise<boolean> | Observable<boolean> {
     if (!this.environmentService.get('AUTH_MICROSOFT_ENABLED')) {
-      throw new EnvironmentException(
+      throw new AuthException(
         'Microsoft auth is not enabled',
-        EnvironmentExceptionCode.ENVIRONMENT_VARIABLES_NOT_FOUND,
+        AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED,
       );
     }
 
