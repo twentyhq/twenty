@@ -1,10 +1,10 @@
 import { expect } from '@storybook/test';
 import { renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 
 import { mocks } from '@/auth/hooks/__mocks__/useAuth';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
-import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
+import { useLazyLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLazyLoadRecordIndexTable';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
@@ -45,7 +45,16 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
 describe('useObjectRecordTable', () => {
   it('should skip fetch if currentWorkspace is undefined', async () => {
     const { result } = renderHook(
-      () => useLoadRecordIndexTable(objectNameSingular),
+      () => {
+        const { findManyRecords, ...result } =
+          useLazyLoadRecordIndexTable(objectNameSingular);
+
+        useEffect(() => {
+          findManyRecords();
+        }, [findManyRecords]);
+
+        return result;
+      },
       {
         wrapper: Wrapper,
       },

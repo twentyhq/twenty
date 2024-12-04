@@ -1,39 +1,34 @@
 import { useContext, useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
-import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
+import { useLazyLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLazyLoadRecordIndexTable';
 import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
-import { recordIndexShouldFetchMoreRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexShouldFetchMoreRecordsByGroupComponentState';
 import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
 
 export const RecordTableRecordGroupBodyEffect = () => {
   const { objectNameSingular } = useContext(RecordTableContext);
 
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const recordGroupId = useCurrentRecordGroupId();
 
   const [hasInitializedScroll, setHasInitializedScroll] = useState(false);
 
-  const [shouldFetchMoreRecords, setShouldFetchMoreRecords] =
-    useRecoilComponentFamilyStateV2(
-      recordIndexShouldFetchMoreRecordsByGroupComponentState,
-      recordGroupId,
-    );
-
   const {
-    fetchMoreRecords,
+    findManyRecords,
     records,
     totalCount,
     setRecordTableData,
     loading,
     hasNextPage,
-  } = useLoadRecordIndexTable(objectNameSingular);
+  } = useLazyLoadRecordIndexTable(objectNameSingular);
 
   const setHasRecordFetchedAllRecordsComponents =
     useSetRecoilComponentFamilyStateV2(
@@ -84,12 +79,12 @@ export const RecordTableRecordGroupBodyEffect = () => {
   }, [hasNextPage, setHasRecordFetchedAllRecordsComponents]);
 
   useEffect(() => {
-    if (shouldFetchMoreRecords) {
-      fetchMoreRecords().finally(() => {
-        setShouldFetchMoreRecords(false);
-      });
+    if (isNull(currentWorkspaceMember)) {
+      return;
     }
-  }, [fetchMoreRecords, setShouldFetchMoreRecords, shouldFetchMoreRecords]);
+
+    findManyRecords();
+  }, [currentWorkspaceMember, findManyRecords]);
 
   return <></>;
 };
