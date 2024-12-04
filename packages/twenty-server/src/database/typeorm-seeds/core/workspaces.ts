@@ -36,15 +36,15 @@ export const seedWorkspaces = async (
       logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
     },
-    [SEED_ACME_WORKSPACE_ID]: {
-      id: workspaceId,
-      displayName: 'Acme',
-      domainName: 'acme.dev',
-      subdomain: 'acme',
-      inviteHash: 'acme.dev-invite-hash',
-      logo: 'https://logos-world.net/wp-content/uploads/2022/05/Acme-Logo-700x394.png',
-      activationStatus: WorkspaceActivationStatus.ACTIVE,
-    },
+    // [SEED_ACME_WORKSPACE_ID]: {
+    //   id: workspaceId,
+    //   displayName: 'Acme',
+    //   domainName: 'acme.dev',
+    //   subdomain: 'acme',
+    //   inviteHash: 'acme.dev-invite-hash',
+    //   logo: 'https://logos-world.net/wp-content/uploads/2022/05/Acme-Logo-700x394.png',
+    //   activationStatus: WorkspaceActivationStatus.ACTIVE,
+    // },
   };
 
   await workspaceDataSource
