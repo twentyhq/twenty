@@ -31,13 +31,14 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
       return continueWithCredentials();
     }
   }, [
-    continueWithCredentials,
+    signInUpStep,
     authProviders.google,
     authProviders.microsoft,
-    authProviders.password,
     authProviders.sso,
+    authProviders.password,
+    email,
     continueWithEmail,
-    signInUpStep,
+    continueWithCredentials,
   ]);
 
   useEffect(() => {
