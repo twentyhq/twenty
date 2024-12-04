@@ -14,9 +14,10 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconChevronDown, MenuItemSelectAvatar } from 'twenty-ui';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
+import { getImageAbsoluteURI } from 'twenty-shared';
 import { Link } from 'react-router-dom';
 import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledLink = styled(Link)`
   text-decoration: none;
@@ -104,9 +105,12 @@ export const MultiWorkspaceDropdownButton = ({
           isNavigationDrawerExpanded={isNavigationDrawerExpanded}
         >
           <StyledLogo
-            logo={getImageAbsoluteURI(
-              currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
-            )}
+            logo={
+              getImageAbsoluteURI(
+                currentWorkspace?.logo ?? '',
+                REACT_APP_SERVER_BASE_URL,
+              ) ?? ''
+            }
           />
           <NavigationDrawerAnimatedCollapseWrapper>
             <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
@@ -130,9 +134,12 @@ export const MultiWorkspaceDropdownButton = ({
                 text={workspace.displayName ?? ''}
                 avatar={
                   <StyledLogo
-                    logo={getImageAbsoluteURI(
-                      workspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-                    )}
+                    logo={
+                      getImageAbsoluteURI(
+                        workspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                        REACT_APP_SERVER_BASE_URL,
+                      ) ?? ''
+                    }
                   />
                 }
                 selected={currentWorkspace?.id === workspace.id}

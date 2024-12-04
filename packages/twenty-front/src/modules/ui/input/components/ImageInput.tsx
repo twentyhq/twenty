@@ -2,8 +2,9 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import React, { useMemo } from 'react';
 import { Button, IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
+import { getImageAbsoluteURI } from 'twenty-shared';
 import { isDefined } from '~/utils/isDefined';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -109,7 +110,10 @@ export const ImageInput = ({
     hiddenFileInput.current?.click();
   };
 
-  const pictureURI = useMemo(() => getImageAbsoluteURI(picture), [picture]);
+  const pictureURI = useMemo(
+    () => getImageAbsoluteURI(picture ?? '', REACT_APP_SERVER_BASE_URL),
+    [picture],
+  );
 
   return (
     <StyledContainer className={className}>
