@@ -11,7 +11,6 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { FindAvailableSSOIDPOutput } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.output';
 import {
   SSOException,
   SSOExceptionCode,
@@ -147,44 +146,6 @@ export class SSOService {
       issuer: this.buildIssuerURL(identityProvider),
       status: identityProvider.status,
     };
-  }
-
-  async findAvailableSSOIdentityProviders(email: string) {
-    const user = await this.userRepository.findOne({
-      where: { email },
-      relations: [
-        'workspaces',
-        'workspaces.workspace',
-        'workspaces.workspace.workspaceSSOIdentityProviders',
-      ],
-    });
-
-    if (!user) {
-      throw new SSOException('User not found', SSOExceptionCode.USER_NOT_FOUND);
-    }
-
-    return user.workspaces.flatMap((userWorkspace) =>
-      (
-        userWorkspace.workspace
-          .workspaceSSOIdentityProviders as Array<SSOConfiguration>
-      ).reduce((acc, identityProvider) => {
-        if (identityProvider.status === 'Inactive') return acc;
-
-        acc.push({
-          id: identityProvider.id,
-          name: identityProvider.name ?? 'Unknown',
-          issuer: identityProvider.issuer,
-          type: identityProvider.type,
-          status: identityProvider.status,
-          workspace: {
-            id: userWorkspace.workspaceId,
-            displayName: userWorkspace.workspace.displayName,
-          },
-        });
-
-        return acc;
-      }, [] as Array<FindAvailableSSOIDPOutput>),
-    );
   }
 
   async findSSOIdentityProviderById(identityProviderId?: string) {

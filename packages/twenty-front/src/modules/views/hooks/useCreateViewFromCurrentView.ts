@@ -74,7 +74,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             'id' | 'name' | 'icon' | 'kanbanFieldMetadataId' | 'type'
           >
         >,
-        shouldCopyFiltersAndSorts?: boolean,
+        shouldCopyFiltersAndSortsAndAggregate?: boolean,
       ) => {
         const currentViewId = getSnapshotValue(
           snapshot,
@@ -101,6 +101,13 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           key: null,
           kanbanFieldMetadataId:
             kanbanFieldMetadataId ?? sourceView.kanbanFieldMetadataId,
+          kanbanAggregateOperation: shouldCopyFiltersAndSortsAndAggregate
+            ? sourceView.kanbanAggregateOperation
+            : undefined,
+          kanbanAggregateOperationFieldMetadataId:
+            shouldCopyFiltersAndSortsAndAggregate
+              ? sourceView.kanbanAggregateOperationFieldMetadataId
+              : undefined,
           type: type ?? sourceView.type,
           objectMetadataId: sourceView.objectMetadataId,
         });
@@ -143,7 +150,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           await createViewGroupRecords(viewGroupsToCreate, newView);
         }
 
-        if (shouldCopyFiltersAndSorts === true) {
+        if (shouldCopyFiltersAndSortsAndAggregate === true) {
           const sourceViewCombinedFilterGroups = getViewFilterGroupsCombined(
             sourceView.id,
           );

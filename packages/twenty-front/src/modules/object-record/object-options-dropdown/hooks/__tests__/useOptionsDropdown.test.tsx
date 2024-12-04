@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -55,6 +56,7 @@ describe('useOptionsDropdown', () => {
           currentContentId: 'recordGroups',
           onContentChange: mockOnContentChange,
           resetContent: mockResetContent,
+          dropdownId: OBJECT_OPTIONS_DROPDOWN_ID,
           ...contextValue,
         }}
       >

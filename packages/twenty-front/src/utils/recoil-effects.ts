@@ -1,4 +1,5 @@
 import { AtomEffect } from 'recoil';
+import omit from 'lodash.omit';
 
 import { cookieStorage } from '~/utils/cookie-storage';
 
@@ -20,25 +21,50 @@ export const localStorageEffect =
   };
 
 export const cookieStorageEffect =
-  <T>(key: string): AtomEffect<T | null> =>
+  <T>(
+    key: string,
+    attributes?: Cookies.CookieAttributes,
+    hooks?: {
+      validateInitFn?: (payload: T) => boolean;
+    },
+  ): AtomEffect<T | null> =>
   ({ setSelf, onSet }) => {
     const savedValue = cookieStorage.getItem(key);
+
     if (
       isDefined(savedValue) &&
-      isDefined(JSON.parse(savedValue)['accessToken'])
+      (!isDefined(hooks?.validateInitFn) ||
+        hooks.validateInitFn(JSON.parse(savedValue)))
     ) {
       setSelf(JSON.parse(savedValue));
     }
 
+    const defaultAttributes = {
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+      ...(attributes ?? {}),
+    };
+
     onSet((newValue, _, isReset) => {
       if (!newValue) {
-        cookieStorage.removeItem(key);
+        cookieStorage.removeItem(key, defaultAttributes);
         return;
       }
+
+      const cookieAttributes = {
+        ...defaultAttributes,
+        ...(typeof newValue === 'object' &&
+        'cookieAttributes' in newValue &&
+        typeof newValue.cookieAttributes === 'object'
+          ? newValue.cookieAttributes
+          : {}),
+      };
+
       isReset
-        ? cookieStorage.removeItem(key)
-        : cookieStorage.setItem(key, JSON.stringify(newValue), {
-            expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-          });
+        ? cookieStorage.removeItem(key, defaultAttributes)
+        : cookieStorage.setItem(
+            key,
+            JSON.stringify(omit(newValue, ['cookieAttributes'])),
+            cookieAttributes,
+          );
     });
   };

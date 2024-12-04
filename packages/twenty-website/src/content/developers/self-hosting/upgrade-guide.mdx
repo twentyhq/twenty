@@ -5,7 +5,7 @@ image: /images/user-guide/notes/notes_header.png
 ---
 
 
-## General guidelines 
+## General guidelines
 
 Always make sure to back up your database before starting the upgrade process.
 
@@ -16,9 +16,23 @@ If you used Docker Compose, follow these steps:
 2. Upgrade the version by changing the `TAG` value in the .env file near your docker-compose.
 
 3. Bring Twenty back online with `docker-compose up -d`
- 
+
 
 ## Version-specific upgrade steps
+
+### v0.33.0 to v0.34.0
+
+Upgrade your Twenty instance to use v0.34.0 image
+
+```
+yarn database:migrate:prod
+yarn command:prod upgrade-0.34
+```
+
+The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
+The `yarn command:prod upgrade-0.34` takes care of the data migration of all workspaces.
+
+
 
 ### v0.32.0 to v0.33.0
 
@@ -39,7 +53,7 @@ The `yarn command:prod upgrade-0.33` takes care of the data migration of all wor
 
 Upgrade your Twenty instance to use v0.32.0 image
 
-**Schema and data migration** 
+**Schema and data migration**
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.32
@@ -73,7 +87,7 @@ If you are using connected account to synchronize your Google emails and calenda
 
 Upgrade your Twenty instance to use v0.31.0 image
 
-**Schema and data migration**: 
+**Schema and data migration**:
 ```
 yarn database:migrate:prod
 yarn command:prod upgrade-0.31
@@ -125,11 +139,11 @@ Upgrade your Twenty instance to use v0.23.0 image
 Run the following commands:
 
 ```
-yarn database:migrate:prod 
+yarn database:migrate:prod
 yarn command:prod upgrade-0.23
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the Database.  
+The `yarn database:migrate:prod` command will apply the migrations to the Database.
 The `yarn command:prod upgrade-0.23` takes care of the data migration, including transferring activities to tasks/notes.
 
 ### v0.21.0 to v0.22.0
@@ -139,13 +153,13 @@ Upgrade your Twenty instance to use v0.22.0 image
 Run the following commands:
 
 ```
-yarn database:migrate:prod 
-yarn command:prod workspace:sync-metadata -f 
+yarn database:migrate:prod
+yarn command:prod workspace:sync-metadata -f
 yarn command:prod upgrade-0.22
 ```
 
-The `yarn database:migrate:prod` command will apply the migrations to the Database.  
-The `yarn command:prod workspace:sync-metadata -f` command will sync the definition of standard objects to the metadata tables and apply to required migrations to existing workspaces.  
+The `yarn database:migrate:prod` command will apply the migrations to the Database.
+The `yarn command:prod workspace:sync-metadata -f` command will sync the definition of standard objects to the metadata tables and apply to required migrations to existing workspaces.
 The `yarn command:prod upgrade-0.22` command will apply specific data transformations to adapt to the new object defaultRequestInstrumentationOptions.
 
 

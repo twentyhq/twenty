@@ -6,27 +6,22 @@ export const FIELD_RELATION_METADATA_ID =
   '4da0302d-358a-45cd-9973-9f92723ed3c1';
 export const RELATION_METADATA_ID = 'f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
-const baseFields = `
-  id
-  type
-  name
-  label
-  description
-  icon
-  isCustom
-  isActive
-  isNullable
-  createdAt
-  updatedAt
-  settings
-`;
-
-
 export const queries = {
   deleteMetadataField: gql`
     mutation DeleteOneFieldMetadataItem($idToDelete: UUID!) {
       deleteOneField(input: { id: $idToDelete }) {
-        ${baseFields}
+        id
+        type
+        name
+        label
+        description
+        icon
+        isCustom
+        isActive
+        isNullable
+        createdAt
+        updatedAt
+        settings
       }
     }
   `,
@@ -74,7 +69,19 @@ export const queries = {
       $updatePayload: UpdateFieldInput!
     ) {
       updateOneField(input: { id: $idToUpdate, update: $updatePayload }) {
-        ${baseFields}
+        id
+        type
+        name
+        label
+        description
+        icon
+        isCustom
+        isActive
+        isNullable
+        createdAt
+        updatedAt
+        settings
+        isLabelSyncedWithName
       }
     }
   `,
@@ -98,6 +105,89 @@ export const queries = {
       }
     }
   `,
+  getCurrentUser: gql`
+    query GetCurrentUser {
+      currentUser {
+        ...UserQueryFragment
+      }
+    }
+
+    fragment UserQueryFragment on User {
+      id
+      firstName
+      lastName
+      email
+      canImpersonate
+      supportUserHash
+      analyticsTinybirdJwts {
+        getWebhookAnalytics
+        getPageviewsAnalytics
+        getUsersAnalytics
+        getServerlessFunctionDuration
+        getServerlessFunctionSuccessRate
+        getServerlessFunctionErrorCount
+      }
+      onboardingStatus
+      workspaceMember {
+        ...WorkspaceMemberQueryFragment
+      }
+      workspaceMembers {
+        ...WorkspaceMemberQueryFragment
+      }
+      defaultWorkspace {
+        id
+        displayName
+        logo
+        domainName
+        inviteHash
+        allowImpersonation
+        activationStatus
+        isPublicInviteLinkEnabled
+        isGoogleAuthEnabled
+        isMicrosoftAuthEnabled
+        isPasswordAuthEnabled
+        subdomain
+        hasValidEntrepriseKey
+        featureFlags {
+          id
+          key
+          value
+          workspaceId
+        }
+        metadataVersion
+        currentBillingSubscription {
+          id
+          status
+          interval
+        }
+        workspaceMembersCount
+      }
+      workspaces {
+        workspace {
+          id
+          logo
+          displayName
+          domainName
+          subdomain
+        }
+      }
+      userVars
+    }
+
+    fragment WorkspaceMemberQueryFragment on WorkspaceMember {
+      id
+      name {
+        firstName
+        lastName
+      }
+      colorScheme
+      avatarUrl
+      locale
+      timeZone
+      dateFormat
+      timeFormat
+    }
+  `,
 };
 
 export const objectMetadataId = '25611fce-6637-4089-b0ca-91afeec95784';
@@ -107,7 +197,7 @@ export const variables = {
   deleteMetadataFieldRelation: { idToDelete: RELATION_METADATA_ID },
   activateMetadataField: {
     idToUpdate: FIELD_METADATA_ID,
-    updatePayload: { isActive: true, label: undefined },
+    updatePayload: { isActive: true },
   },
   createMetadataField: {
     input: {
@@ -116,9 +206,10 @@ export const variables = {
         description: null,
         icon: undefined,
         label: 'fieldLabel',
-        name: 'fieldlabel',
+        name: 'fieldName',
         options: undefined,
         settings: undefined,
+        isLabelSyncedWithName: true,
         objectMetadataId,
         type: 'TEXT',
       },
@@ -158,5 +249,59 @@ export const responseData = {
     ...defaultResponseData,
     defaultValue: '',
     options: [],
+  },
+  getCurrentUser: {
+    currentUser: {
+      id: 'test-user-id',
+      firstName: 'Test',
+      lastName: 'User',
+      email: 'test@example.com',
+      canImpersonate: false,
+      supportUserHash: null,
+      analyticsTinybirdJwts: {
+        getWebhookAnalytics: null,
+        getPageviewsAnalytics: null,
+        getUsersAnalytics: null,
+        getServerlessFunctionDuration: null,
+        getServerlessFunctionSuccessRate: null,
+        getServerlessFunctionErrorCount: null,
+      },
+      onboardingStatus: 'completed',
+      workspaceMember: {
+        id: 'test-workspace-member-id',
+        name: {
+          firstName: 'Test',
+          lastName: 'User',
+        },
+        colorScheme: 'light',
+        avatarUrl: null,
+        locale: 'en',
+        timeZone: 'UTC',
+        dateFormat: 'MM/DD/YYYY',
+        timeFormat: '24',
+      },
+      workspaceMembers: [],
+      defaultWorkspace: {
+        id: 'test-workspace-id',
+        displayName: 'Test Workspace',
+        logo: null,
+        domainName: 'test',
+        inviteHash: 'test-hash',
+        allowImpersonation: false,
+        activationStatus: 'active',
+        isPublicInviteLinkEnabled: false,
+        hasValidEntrepriseKey: false,
+        isGoogleAuthEnabled: true,
+        isMicrosoftAuthEnabled: false,
+        isPasswordAuthEnabled: true,
+        subdomain: 'test',
+        featureFlags: [],
+        metadataVersion: 1,
+        currentBillingSubscription: null,
+        workspaceMembersCount: 1,
+      },
+      workspaces: [],
+      userVars: null,
+    },
   },
 };

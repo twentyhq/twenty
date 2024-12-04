@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import { EnvironmentException } from 'src/engine/core-modules/environment/environment.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
@@ -76,7 +76,7 @@ describe('LoginTokenService', () => {
 
       await expect(
         service.generateLoginToken('test@example.com'),
-      ).rejects.toThrow(AuthException);
+      ).rejects.toThrow(EnvironmentException);
     });
   });
 
@@ -94,7 +94,7 @@ describe('LoginTokenService', () => {
 
       const result = await service.verifyLoginToken(mockToken);
 
-      expect(result).toEqual(mockEmail);
+      expect(result).toEqual({ sub: mockEmail });
       expect(jwtWrapperService.verifyWorkspaceToken).toHaveBeenCalledWith(
         mockToken,
         'LOGIN',

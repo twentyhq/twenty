@@ -145,6 +145,11 @@ export class FieldMetadataDTO<
 
   objectMetadataId: string;
 
+  @IsBoolean()
+  @IsOptional()
+  @Field()
+  isLabelSyncedWithName?: boolean;
+
   @IsDateString()
   @Field()
   createdAt: Date;
