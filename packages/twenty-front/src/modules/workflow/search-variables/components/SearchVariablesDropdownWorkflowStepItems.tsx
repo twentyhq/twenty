@@ -1,34 +1,58 @@
+import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
+import { useTheme } from '@emotion/react';
+import { useState } from 'react';
 import {
-  RecordOutputSchema,
-  StepOutputSchema,
-} from '@/workflow/search-variables/types/StepOutputSchema';
-import { isDefined, MenuItem, MenuItemSelect } from 'twenty-ui';
+  HorizontalSeparator,
+  IconX,
+  MenuItem,
+  MenuItemSelect,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui';
 
 type SearchVariablesDropdownWorkflowStepItemsProps = {
+  dropdownId: string;
   steps: StepOutputSchema[];
   onSelect: (value: string) => void;
-  objectNameSingularToSelect?: string;
 };
 
 export const SearchVariablesDropdownWorkflowStepItems = ({
+  dropdownId,
   steps,
   onSelect,
-  objectNameSingularToSelect,
 }: SearchVariablesDropdownWorkflowStepItemsProps) => {
-  const availableSteps = objectNameSingularToSelect
-    ? steps.filter((step) => {
-        const recordOutputSchema = step.outputSchema as RecordOutputSchema;
-        console.log('recordOutputSchema', recordOutputSchema);
-        return (
-          isDefined(recordOutputSchema.object) &&
-          recordOutputSchema.object.nameSingular === objectNameSingularToSelect
-        );
-      })
-    : steps;
+  const theme = useTheme();
+  const [searchInputValue, setSearchInputValue] = useState('');
+
+  const { closeDropdown } = useDropdown(dropdownId);
+
+  const availableSteps = steps.filter((step) =>
+    searchInputValue
+      ? step.name.toLowerCase().includes(searchInputValue)
+      : true,
+  );
 
   return (
     <DropdownMenuItemsContainer>
+      <DropdownMenuHeader StartIcon={IconX} onClick={closeDropdown}>
+        <OverflowingTextWithTooltip text={'Select Step'} />
+      </DropdownMenuHeader>
+      <HorizontalSeparator
+        color={theme.background.transparent.primary}
+        noMargin
+      />
+      <DropdownMenuSearchInput
+        autoFocus
+        value={searchInputValue}
+        onChange={(event) => setSearchInputValue(event.target.value)}
+      />
+      <HorizontalSeparator
+        color={theme.background.transparent.primary}
+        noMargin
+      />
       {availableSteps.length > 0 ? (
         availableSteps.map((item, _index) => (
           <MenuItemSelect

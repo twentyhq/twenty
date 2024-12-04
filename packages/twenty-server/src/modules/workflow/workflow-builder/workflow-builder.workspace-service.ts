@@ -61,9 +61,7 @@ export class WorkflowBuilderWorkspaceService {
         const { objectType } = step.settings;
 
         if (!objectType) {
-          return {
-            fields: {},
-          };
+          return {};
         }
 
         return this.computeRecordOutputSchema({
@@ -95,7 +93,7 @@ export class WorkflowBuilderWorkspaceService {
           objectMetadataRepository: this.objectMetadataRepository,
         });
       default:
-        return { fields: {} };
+        return {};
     }
   }
 
@@ -111,7 +109,7 @@ export class WorkflowBuilderWorkspaceService {
     const [nameSingular, action] = eventName.split('.');
 
     if (!checkStringIsDatabaseEventAction(action)) {
-      return { fields: {} };
+      return {};
     }
 
     const objectMetadata = await objectMetadataRepository.findOneOrFail({
@@ -123,15 +121,13 @@ export class WorkflowBuilderWorkspaceService {
     });
 
     if (!isDefined(objectMetadata)) {
-      return { fields: {} };
+      return {};
     }
 
-    return {
-      fields: generateFakeObjectRecordEvent(
-        objectMetadata,
-        action as DatabaseEventAction,
-      ),
-    };
+    return generateFakeObjectRecordEvent(
+      objectMetadata,
+      action as DatabaseEventAction,
+    );
   }
 
   private async computeRecordCrudOutputSchema({
@@ -153,19 +149,17 @@ export class WorkflowBuilderWorkspaceService {
 
     if (operationType === WorkflowRecordCRUDType.READ) {
       return {
-        fields: {
-          first: {
-            isLeaf: false,
-            icon: 'IconAlpha',
-            value: recordOutputSchema,
-          },
-          last: { isLeaf: false, icon: 'IconOmega', value: recordOutputSchema },
-          totalCount: {
-            isLeaf: true,
-            icon: 'IconSum',
-            type: 'number',
-            value: generateFakeValue('number'),
-          },
+        first: {
+          isLeaf: false,
+          icon: 'IconAlpha',
+          value: recordOutputSchema,
+        },
+        last: { isLeaf: false, icon: 'IconOmega', value: recordOutputSchema },
+        totalCount: {
+          isLeaf: true,
+          icon: 'IconSum',
+          type: 'number',
+          value: generateFakeValue('number'),
         },
       };
     }
@@ -191,18 +185,14 @@ export class WorkflowBuilderWorkspaceService {
     });
 
     if (!isDefined(objectMetadata)) {
-      return {
-        fields: {},
-      };
+      return {};
     }
 
     return generateFakeObjectRecord(objectMetadata);
   }
 
   private computeSendEmailActionOutputSchema(): OutputSchema {
-    return {
-      fields: { success: { isLeaf: true, type: 'boolean', value: true } },
-    };
+    return { success: { isLeaf: true, type: 'boolean', value: true } };
   }
 
   private async computeCodeActionOutputSchema({
@@ -219,9 +209,7 @@ export class WorkflowBuilderWorkspaceService {
     codeIntrospectionService: CodeIntrospectionService;
   }): Promise<OutputSchema> {
     if (serverlessFunctionId === '') {
-      return {
-        fields: {},
-      };
+      return {};
     }
 
     const sourceCode = (
@@ -233,9 +221,7 @@ export class WorkflowBuilderWorkspaceService {
     )?.[join('src', INDEX_FILE_NAME)];
 
     if (!isDefined(sourceCode)) {
-      return {
-        fields: {},
-      };
+      return {};
     }
 
     const inputSchema =
@@ -251,21 +237,19 @@ export class WorkflowBuilderWorkspaceService {
         serverlessFunctionVersion,
       );
 
-    return {
-      fields: resultFromFakeInput.data
-        ? Object.entries(resultFromFakeInput.data).reduce(
-            (acc: Record<string, Leaf | Node>, [key, value]) => {
-              acc[key] = {
-                isLeaf: true,
-                value,
-                type: typeof value as InputSchemaPropertyType,
-              };
+    return resultFromFakeInput.data
+      ? Object.entries(resultFromFakeInput.data).reduce(
+          (acc: Record<string, Leaf | Node>, [key, value]) => {
+            acc[key] = {
+              isLeaf: true,
+              value,
+              type: typeof value as InputSchemaPropertyType,
+            };
 
-              return acc;
-            },
-            {},
-          )
-        : {},
-    };
+            return acc;
+          },
+          {},
+        )
+      : {};
   }
 }

@@ -26,16 +26,23 @@ export const generateFakeObjectRecordEvent = (
   }, {});
 
   const baseResult: Record<string, Leaf | Node> = {
-    recordId: { isLeaf: true, type: 'string', value: recordId },
-    userId: { isLeaf: true, type: 'string', value: userId },
+    recordId: {
+      isLeaf: true,
+      type: 'string',
+      value: recordId,
+      label: 'Record ID',
+    },
+    userId: { isLeaf: true, type: 'string', value: userId, label: 'User ID' },
     workspaceMemberId: {
       isLeaf: true,
       type: 'string',
       value: workspaceMemberId,
+      label: 'Workspace Member ID',
     },
     objectMetadata: {
       isLeaf: false,
       value: formattedObjectMetadataEntity,
+      label: 'Object Metadata',
     },
   };
 
@@ -44,7 +51,8 @@ export const generateFakeObjectRecordEvent = (
       ...baseResult,
       properties: {
         isLeaf: false,
-        value: { after: { isLeaf: false, value: after } },
+        value: { after: { isLeaf: false, value: after, label: 'After' } },
+        label: 'Properties',
       },
     };
   }
@@ -57,9 +65,10 @@ export const generateFakeObjectRecordEvent = (
       properties: {
         isLeaf: false,
         value: {
-          before: { isLeaf: false, value: before },
-          after: { isLeaf: false, value: after },
+          before: { isLeaf: false, value: before, label: 'Before' },
+          after: { isLeaf: false, value: after, label: 'After' },
         },
+        label: 'Properties',
       },
     };
   }
@@ -70,8 +79,9 @@ export const generateFakeObjectRecordEvent = (
       properties: {
         isLeaf: false,
         value: {
-          before: { isLeaf: false, value: before },
+          before: { isLeaf: false, value: before, label: 'Before' },
         },
+        label: 'Properties',
       },
     };
   }
@@ -82,8 +92,9 @@ export const generateFakeObjectRecordEvent = (
       properties: {
         isLeaf: false,
         value: {
-          before: { isLeaf: false, value: before },
+          before: { isLeaf: false, value: before, label: 'Before' },
         },
+        label: 'Properties',
       },
     };
   }

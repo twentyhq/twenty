@@ -12,16 +12,15 @@ export type Node = {
   isLeaf: false;
   icon?: string;
   label?: string;
-  value: Record<string, Leaf | Node> | OutputSchema;
+  value: OutputSchema;
 };
 
-export type BaseOutputSchema = {
-  fields: Record<string, Leaf | Node>;
-};
+export type BaseOutputSchema = Record<string, Leaf | Node>;
 
 export type RecordOutputSchema = {
   object: { nameSingular: string; fieldIdName: string } & Leaf;
-  fields: Record<string, Leaf | Node>;
+  fields: BaseOutputSchema;
+  _outputSchemaType: 'RECORD';
 };
 
 export type OutputSchema = BaseOutputSchema | RecordOutputSchema;

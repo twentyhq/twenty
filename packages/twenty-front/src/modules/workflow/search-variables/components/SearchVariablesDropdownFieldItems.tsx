@@ -1,10 +1,17 @@
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
+import {
+  OutputSchema,
+  StepOutputSchema,
+} from '@/workflow/search-variables/types/StepOutputSchema';
+import { isBaseOutputSchema } from '@/workflow/search-variables/utils/isBaseOutputSchema';
+import { isRecordOutputSchema } from '@/workflow/search-variables/utils/isRecordOutputSchema';
+import { useTheme } from '@emotion/react';
 
 import { useState } from 'react';
 import {
+  HorizontalSeparator,
   IconChevronLeft,
   MenuItemSelect,
   OverflowingTextWithTooltip,
@@ -22,28 +29,54 @@ export const SearchVariablesDropdownFieldItems = ({
   onSelect,
   onBack,
 }: SearchVariablesDropdownFieldItemsProps) => {
+  const theme = useTheme();
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [searchInputValue, setSearchInputValue] = useState('');
   const { getIcon } = useIcons();
 
-  const getSelectedObject = () => {
-    let selected = step.outputSchema.fields;
+  const getCurrentSubStep = (): OutputSchema => {
+    let currentSubStep = step.outputSchema;
 
     for (const key of currentPath) {
-      selected = selected[key]?.value;
+      if (isRecordOutputSchema(currentSubStep)) {
+        currentSubStep = currentSubStep.fields[key]?.value;
+      } else if (isBaseOutputSchema(currentSubStep)) {
+        currentSubStep = currentSubStep[key]?.value;
+      }
     }
 
-    return selected;
+    return currentSubStep;
   };
 
-  const handleSelect = (key: string) => {
-    const selectedObject = getSelectedObject();
+  const getDisplayedSubStepFields = () => {
+    const currentSubStep = getCurrentSubStep();
 
-    if (!selectedObject[key]?.isLeaf) {
-      setCurrentPath([...currentPath, key]);
-      setSearchInputValue('');
-    } else {
-      onSelect(`{{${step.id}.${[...currentPath, key].join('.')}}}`);
+    if (isRecordOutputSchema(currentSubStep)) {
+      const subStepFields = currentSubStep.fields;
+      return subStepFields;
+    } else if (isBaseOutputSchema(currentSubStep)) {
+      return currentSubStep;
+    }
+  };
+
+  const handleSelectField = (key: string) => {
+    const currentSubStep = getCurrentSubStep();
+
+    if (isRecordOutputSchema(currentSubStep)) {
+      const subStepFields = currentSubStep.fields;
+      if (!subStepFields[key]?.isLeaf) {
+        setCurrentPath([...currentPath, key]);
+        setSearchInputValue('');
+      } else {
+        onSelect(`{{${step.id}.${[...currentPath, key].join('.')}}}`);
+      }
+    } else if (isBaseOutputSchema(currentSubStep)) {
+      if (!currentSubStep[key]?.isLeaf) {
+        setCurrentPath([...currentPath, key]);
+        setSearchInputValue('');
+      } else {
+        onSelect(`{{${step.id}.${[...currentPath, key].join('.')}}}`);
+      }
     }
   };
 
@@ -56,8 +89,8 @@ export const SearchVariablesDropdownFieldItems = ({
   };
 
   const headerLabel = currentPath.length === 0 ? step.name : currentPath.at(-1);
-
-  const options = Object.entries(getSelectedObject());
+  const displayedObject = getDisplayedSubStepFields();
+  const options = displayedObject ? Object.entries(displayedObject) : [];
 
   const filteredOptions = searchInputValue
     ? options.filter(
@@ -72,17 +105,25 @@ export const SearchVariablesDropdownFieldItems = ({
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={goBack}>
         <OverflowingTextWithTooltip text={headerLabel} />
       </DropdownMenuHeader>
+      <HorizontalSeparator
+        color={theme.background.transparent.primary}
+        noMargin
+      />
       <DropdownMenuSearchInput
         autoFocus
         value={searchInputValue}
         onChange={(event) => setSearchInputValue(event.target.value)}
+      />
+      <HorizontalSeparator
+        color={theme.background.transparent.primary}
+        noMargin
       />
       {filteredOptions.map(([key, value]) => (
         <MenuItemSelect
           key={key}
           selected={false}
           hovered={false}
-          onClick={() => handleSelect(key)}
+          onClick={() => handleSelectField(key)}
           text={value.label || key}
           hasSubMenu={!value.isLeaf}
           LeftIcon={value.icon ? getIcon(value.icon) : undefined}

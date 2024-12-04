@@ -26,6 +26,10 @@ const StyledDropdownVariableButtonContainer = styled(
   }
 `;
 
+const StyledDropdownComponetsContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.transparent.light};
+`;
+
 const SearchVariablesDropdown = ({
   inputId,
   onVariableSelect,
@@ -41,8 +45,9 @@ const SearchVariablesDropdown = ({
 
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${inputId}`;
   const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
-  const availableVariablesInWorkflowStep =
-    useAvailableVariablesInWorkflowStep();
+  const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
+    objectNameSingularToSelect,
+  });
 
   const initialStep =
     availableVariablesInWorkflowStep.length === 1
@@ -92,9 +97,9 @@ const SearchVariablesDropdown = ({
 
     return (
       <SearchVariablesDropdownWorkflowStepItems
+        dropdownId={dropdownId}
         steps={availableVariablesInWorkflowStep}
         onSelect={handleStepSelect}
-        objectNameSingularToSelect={objectNameSingularToSelect}
       />
     );
   };
@@ -130,7 +135,11 @@ const SearchVariablesDropdown = ({
           <IconVariablePlus size={theme.icon.size.sm} />
         </StyledDropdownVariableButtonContainer>
       }
-      dropdownComponents={getSearchVariablesDropdownComponents()}
+      dropdownComponents={
+        <StyledDropdownComponetsContainer>
+          {getSearchVariablesDropdownComponents()}
+        </StyledDropdownComponetsContainer>
+      }
       dropdownPlacement="bottom-end"
       dropdownOffset={{ x: 0, y: 4 }}
     />

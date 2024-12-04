@@ -62,4 +62,5 @@ export const generateFakeObjectRecord = (
     fieldIdName: 'id',
   },
   fields: generateObjectRecordFields(objectMetadataEntity),
+  _outputSchemaType: 'RECORD',
 });
