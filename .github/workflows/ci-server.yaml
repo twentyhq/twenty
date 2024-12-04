@@ -79,19 +79,25 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx run twenty-server:worker:ci
       - name: Server / Check for Pending Migrations
-          if: steps.changed-files.outputs.any_changed == 'true'
-          run: |
-            CORE_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate core-migration-check -d src/database/typeorm/core/core.datasource.ts || true)
-            METADATA_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate metadata-migration-check -d src/database/typeorm/metadata/metadata.datasource.ts || true)
-            CORE_MIGRATION_FILES=$(find . -name "core-migration-check*.ts" | wc -l)
-            METADATA_MIGRATION_FILES=$(find . -name "metadata-migration-check*.ts" | wc -l)
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          METADATA_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate metadata-migration-check -d src/database/typeorm/metadata/metadata.datasource.ts || true)
+
+          CORE_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate core-migration-check -d src/database/typeorm/core/core.datasource.ts || true)
+
+          METADATA_MIGRATION_FILE=$(ls *metadata-migration-check.ts 2>/dev/null || echo "")
+          CORE_MIGRATION_FILE=$(ls *core-migration-check.ts 2>/dev/null || echo "")
+
+          if [ -n "$METADATA_MIGRATION_FILE" ] || [ -n "$CORE_MIGRATION_FILE" ]; then
+            echo "::error::Unexpected migration files were generated. Please create a proper migration manually."
+            echo "$METADATA_MIGRATION_OUTPUT"
+            echo "$CORE_MIGRATION_OUTPUT"
+
+            rm -f *metadata-migration-check.ts *core-migration-check.ts
             
-            if [ "$CORE_MIGRATION_FILES" -gt 0 ] || [ "$METADATA_MIGRATION_FILES" -gt 0 ]; then
-              echo "::error::Unexpected migration files were generated. Please create a proper migration manually."
-              echo "$CORE_MIGRATION_OUTPUT"
-              echo "$METADATA_MIGRATION_OUTPUT"
-              exit 1
-            fi
+            exit 1
+          fi
+
   server-test:
     timeout-minutes: 30
     runs-on: ubuntu-latest
