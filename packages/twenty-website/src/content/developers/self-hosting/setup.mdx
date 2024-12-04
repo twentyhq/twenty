@@ -1,5 +1,5 @@
 ---
-title: Environment Variables
+title: Setup
 icon: TbServer
 image: /images/user-guide/table-views/table.png
 ---
@@ -8,7 +8,47 @@ import OptionTable from '@site/src/theme/OptionTable'
 
 # Setup Messaging & Calendar sync
 
-Twenty offers integrations with Gmail and Google Calendar. To enable these features, you need to connect to register the following recurring jobs:
+Twenty offers integrations with Gmail and Google Calendar.
+
+## For Gmail and Google Calendar
+
+### Create a project in Google Cloud
+
+You will need to create a project in Google Cloud and get the credentials.
+
+Then you can set the following environment variables:
+
+- `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+- `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+- `AUTH_GOOGLE_CLIENT_ID=<client-id>`
+- `AUTH_GOOGLE_CLIENT_SECRET=<client-secret>`
+- `AUTH_GOOGLE_CALLBACK_URL=https://<your-domain>/auth/google/redirect` if you want to use Google SSO
+- `AUTH_GOOGLE_APIS_CALLBACK_URL=https://<your-domain>/auth/google-apis/get-access-token`
+
+### Enable APIs
+
+On Google Cloud Console, go to [APIs & Services](https://console.cloud.google.com/apis/library/) and enable the following APIs:
+
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+
+### Authorized redirect URIs
+
+Under [Credentials](https://console.cloud.google.com/apis/credentials), in OAuth 2.0 Client IDs, you need to add the following redirect URIs to your project:
+
+- `https://<your-domain>/auth/google/redirect` if you want to use Google SSO
+- `https://<your-domain>/auth/google-apis/get-access-token`
+
+### If your app is in test mode
+
+If your app is in test mode, you will need to add test users to your project.
+
+Under [OAuth consent screen](https://console.cloud.google.com/apis/credentials/consent), add your test users to the "Test users" section.
+
+### Start the cron jobs
+
+Register the following recurring jobs:
 ```
 # from your worker container
 yarn command:prod cron:messaging:messages-import
