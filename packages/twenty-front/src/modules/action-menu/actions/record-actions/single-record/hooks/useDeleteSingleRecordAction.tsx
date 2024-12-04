@@ -10,6 +10,7 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
+import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -44,6 +45,10 @@ export const useDeleteSingleRecordAction = ({
   );
 
   const { closeRightDrawer } = useRightDrawer();
+  const isSoftDeleteActive = useRecoilComponentValueV2(
+    isSoftDeleteFilterActiveComponentState,
+    objectMetadataItem.namePlural,
+  );
 
   const recordIdToDelete =
     contextStoreTargetedRecordsRule.mode === 'selection'
@@ -102,7 +107,9 @@ export const useDeleteSingleRecordAction = ({
           setIsOpen={setIsDeleteRecordsModalOpen}
           title={'Delete Record'}
           subtitle={
-            'Are you sure you want to delete this record? It can be recovered from the Options menu.'
+            isSoftDeleteActive
+              ? 'Are you sure to permanently erase this record? You will not be able to recover it.'
+              : 'Are you sure you want to delete this record? It can be recovered from the Options menu.'
           }
           onConfirmClick={() => {
             handleDeleteClick();
