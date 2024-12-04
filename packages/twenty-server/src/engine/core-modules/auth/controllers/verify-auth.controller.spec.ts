@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { ErrorHandlerService } from 'src/engine/core-modules/auth/auth-exception-handler.service';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 
@@ -18,6 +19,10 @@ describe('VerifyAuthController', () => {
         },
         {
           provide: LoginTokenService,
+          useValue: {},
+        },
+        {
+          provide: ErrorHandlerService,
           useValue: {},
         },
       ],
