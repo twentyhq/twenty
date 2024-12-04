@@ -5,7 +5,7 @@ import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/utils/merg
 import { setNestedValue } from '@/workflow/utils/setNestedValue';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Fragment, ReactNode, useState } from 'react';
+import { Fragment, ReactNode, useEffect, useState } from 'react';
 import {
   CodeEditor,
   HorizontalSeparator,
@@ -91,8 +91,15 @@ export const WorkflowEditActionFormServerlessFunction = ({
     id: serverlessFunctionId,
   });
 
+  const [functionInput, setFunctionInput] =
+    useState<ServerlessFunctionInputFormData>(
+      action.settings.input.serverlessFunctionInput,
+    );
+
   const { formValues, setFormValues, loading } =
     useServerlessFunctionUpdateFormState(serverlessFunctionId);
+
+  const headerTitle = action.name || 'Code - Serverless Function';
 
   const save = async () => {
     try {
@@ -149,11 +156,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
     updateFunctionInputSchema,
     100,
   );
-
-  const [functionInput, setFunctionInput] =
-    useState<ServerlessFunctionInputFormData>(
-      action.settings.input.serverlessFunctionInput,
-    );
 
   const updateFunctionInput = useDebouncedCallback(
     async (newFunctionInput: object, updateStepOutput = true) => {
@@ -242,10 +244,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
     });
   };
 
-  const headerTitle = isDefined(action.name)
-    ? action.name
-    : 'Code - Serverless Function';
-
   const handleEditorDidMount = async (
     editor: editor.IStandaloneCodeEditor,
     monaco: Monaco,
@@ -279,6 +277,10 @@ export const WorkflowEditActionFormServerlessFunction = ({
     }
     await getUpdatableWorkflowVersion(workflow);
   };
+
+  useEffect(() => {
+    setFunctionInput(action.settings.input.serverlessFunctionInput);
+  }, [action]);
 
   return (
     !loading && (
