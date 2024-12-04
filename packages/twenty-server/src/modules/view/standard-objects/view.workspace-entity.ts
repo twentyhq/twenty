@@ -1,5 +1,7 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
+import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -8,6 +10,7 @@ import {
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -175,4 +178,63 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsSystem()
   favorites: Relation<FavoriteWorkspaceEntity[]>;
+
+  @WorkspaceField({
+    standardId: VIEW_STANDARD_FIELD_IDS.kanbanAggregateOperation,
+    type: FieldMetadataType.SELECT,
+    label: 'Aggregate operation',
+    description: 'Optional aggregate operation',
+    icon: 'IconCalculator',
+    options: [
+      {
+        value: AGGREGATE_OPERATIONS.avg,
+        label: 'Average',
+        position: 0,
+        color: 'red',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.count,
+        label: 'Count',
+        position: 1,
+        color: 'purple',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.max,
+        label: 'Maximum',
+        position: 2,
+        color: 'sky',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.min,
+        label: 'Minimum',
+        position: 3,
+        color: 'turquoise',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.sum,
+        label: 'Sum',
+        position: 4,
+        color: 'yellow',
+      },
+    ],
+    defaultValue: `'${AGGREGATE_OPERATIONS.count}'`,
+  })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsAggregateQueryEnabled,
+  })
+  @WorkspaceIsNullable()
+  kanbanAggregateOperation?: AGGREGATE_OPERATIONS | null;
+
+  @WorkspaceField({
+    standardId: VIEW_STANDARD_FIELD_IDS.kanbanAggregateOperationFieldMetadataId,
+    type: FieldMetadataType.UUID,
+    label: 'Field metadata used for aggregate operation',
+    description: 'Field metadata used for aggregate operation',
+    defaultValue: null,
+  })
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKey.IsAggregateQueryEnabled,
+  })
+  @WorkspaceIsNullable()
+  kanbanAggregateOperationFieldMetadataId?: string | null;
 }
