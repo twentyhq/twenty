@@ -25,17 +25,9 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
   }
 
   async canActivate(context: ExecutionContext) {
-    // const variab = true;
-
-    // if (variab === true) {
-    //   throw new AuthException(
-    //     'MANUEL AuthException CLIENT_NOT_FOUND',
-    //     AuthExceptionCode.CLIENT_NOT_FOUND,
-    //   );
-    // }
     const request = context.switchToHttp().getRequest();
 
-    const { workspaceId } =
+    const { workspaceId, userId } =
       await this.transientTokenService.verifyTransientToken(
         request.query.transientToken,
       );
@@ -44,6 +36,16 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
         FeatureFlagKey.IsGmailSendEmailScopeEnabled,
         workspaceId,
       );
+
+    setRequestExtraParams(request, {
+      transientToken: request.query.transientToken,
+      redirectLocation: request.query.redirectLocation,
+      calendarVisibility: request.query.calendarVisibility,
+      messageVisibility: request.query.messageVisibility,
+      loginHint: request.query.loginHint,
+      userId: userId,
+      workspaceId: workspaceId,
+    });
 
     if (
       !this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED') &&
@@ -60,13 +62,6 @@ export class GoogleAPIsOauthRequestCodeGuard extends AuthGuard('google-apis') {
       {},
       isGmailSendEmailScopeEnabled,
     );
-    setRequestExtraParams(request, {
-      transientToken: request.query.transientToken,
-      redirectLocation: request.query.redirectLocation,
-      calendarVisibility: request.query.calendarVisibility,
-      messageVisibility: request.query.messageVisibility,
-      loginHint: request.query.loginHint,
-    });
 
     const activate = (await super.canActivate(context)) as boolean;
 
