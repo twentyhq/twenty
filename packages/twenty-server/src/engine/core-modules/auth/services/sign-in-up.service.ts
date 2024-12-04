@@ -32,7 +32,7 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/workspace.type';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 export type SignInUpServiceInput = {
   email: string;

@@ -47,7 +47,7 @@ import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/avail
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/workspace.type';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository

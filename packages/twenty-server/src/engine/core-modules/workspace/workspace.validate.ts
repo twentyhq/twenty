@@ -4,7 +4,7 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CustomException } from 'src/utils/custom-exception';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
-import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/workspace.type';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 const assertIsExist = (
   workspace: Workspace | undefined | null,
