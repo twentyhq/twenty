@@ -245,10 +245,12 @@ export class WorkflowVersionStepWorkspaceService {
     workspaceId,
     workflowVersionId,
     step,
+    updateStepOutput,
   }: {
     workspaceId: string;
     workflowVersionId: string;
     step: WorkflowAction;
+    updateStepOutput: boolean;
   }): Promise<WorkflowAction> {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -275,10 +277,12 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
-    const enrichedNewStep = await this.enrichOutputSchema({
-      step,
-      workspaceId,
-    });
+    const enrichedNewStep = updateStepOutput
+      ? await this.enrichOutputSchema({
+          step,
+          workspaceId,
+        })
+      : step;
 
     const updatedSteps = workflowVersion.steps.map((existingStep) => {
       if (existingStep.id === step.id) {

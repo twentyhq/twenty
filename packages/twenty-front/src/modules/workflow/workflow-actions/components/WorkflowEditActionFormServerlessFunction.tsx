@@ -63,7 +63,10 @@ type WorkflowEditActionFormServerlessFunctionProps = {
       }
     | {
         readonly?: false;
-        onActionUpdate: (action: WorkflowCodeAction) => void;
+        onActionUpdate: (
+          action: WorkflowCodeAction,
+          updateStepOutput?: boolean,
+        ) => void;
       };
 };
 
@@ -153,21 +156,24 @@ export const WorkflowEditActionFormServerlessFunction = ({
     );
 
   const updateFunctionInput = useDebouncedCallback(
-    async (newFunctionInput: object) => {
+    async (newFunctionInput: object, updateStepOutput = true) => {
       if (actionOptions.readonly === true) {
         return;
       }
 
-      actionOptions.onActionUpdate({
-        ...action,
-        settings: {
-          ...action.settings,
-          input: {
-            ...action.settings.input,
-            serverlessFunctionInput: newFunctionInput,
+      actionOptions.onActionUpdate(
+        {
+          ...action,
+          settings: {
+            ...action.settings,
+            input: {
+              ...action.settings.input,
+              serverlessFunctionInput: newFunctionInput,
+            },
           },
         },
-      });
+        updateStepOutput,
+      );
     },
     1_000,
   );
@@ -177,7 +183,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
 
     setFunctionInput(updatedFunctionInput);
 
-    await updateFunctionInput(updatedFunctionInput);
+    await updateFunctionInput(updatedFunctionInput, false);
   };
 
   const renderFields = (
@@ -258,10 +264,13 @@ export const WorkflowEditActionFormServerlessFunction = ({
       return;
     }
 
-    actionOptions?.onActionUpdate({
-      ...action,
-      ...actionUpdate,
-    });
+    actionOptions?.onActionUpdate(
+      {
+        ...action,
+        ...actionUpdate,
+      },
+      false,
+    );
   };
 
   const checkWorkflowUpdatable = async () => {

@@ -577,7 +577,7 @@ export type Mutation = {
   deleteOneServerlessFunction: ServerlessFunction;
   deleteSSOIdentityProvider: DeleteSsoOutput;
   deleteUser: User;
-  deleteWorkflowVersionStep: Scalars['Boolean']['output'];
+  deleteWorkflowVersionStep: WorkflowAction;
   deleteWorkspaceInvitation: Scalars['String']['output'];
   disablePostgresProxy: PostgresCredentials;
   editSSOIdentityProvider: EditSsoOutput;
@@ -608,12 +608,14 @@ export type Mutation = {
   updateOneRemoteServer: RemoteServer;
   updateOneServerlessFunction: ServerlessFunction;
   updatePasswordViaResetToken: InvalidatePassword;
-  updateWorkflowVersionStep: Scalars['Boolean']['output'];
+  updateWorkflowVersionStep: WorkflowAction;
   updateWorkspace: Workspace;
+  updateWorkspaceFeatureFlag: Scalars['Boolean']['output'];
   uploadFile: Scalars['String']['output'];
   uploadImage: Scalars['String']['output'];
   uploadProfilePicture: Scalars['String']['output'];
   uploadWorkspaceLogo: Scalars['String']['output'];
+  userLookupAdminPanel: UserLookup;
   verify: Verify;
 };
 
@@ -892,6 +894,13 @@ export type MutationUpdateWorkspaceArgs = {
 };
 
 
+export type MutationUpdateWorkspaceFeatureFlagArgs = {
+  featureFlag: Scalars['String']['input'];
+  value: Scalars['Boolean']['input'];
+  workspaceId: Scalars['String']['input'];
+};
+
+
 export type MutationUploadFileArgs = {
   file: Scalars['Upload']['input'];
   fileFolder?: InputMaybe<FileFolder>;
@@ -911,6 +920,11 @@ export type MutationUploadProfilePictureArgs = {
 
 export type MutationUploadWorkspaceLogoArgs = {
   file: Scalars['Upload']['input'];
+};
+
+
+export type MutationUserLookupAdminPanelArgs = {
+  userIdentifier: Scalars['String']['input'];
 };
 
 
@@ -1530,6 +1544,8 @@ export type UpdateServerlessFunctionInput = {
 export type UpdateWorkflowVersionStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON']['input'];
+  /** Boolean to check if we need to update stepOutput */
+  updateStepOutput?: InputMaybe<Scalars['Boolean']['input']>;
   /** Workflow version ID */
   workflowVersionId: Scalars['String']['input'];
 };
@@ -1581,6 +1597,20 @@ export type UserExists = {
   exists: Scalars['Boolean']['output'];
 };
 
+export type UserInfo = {
+  __typename?: 'UserInfo';
+  email: Scalars['String']['output'];
+  firstName?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  lastName?: Maybe<Scalars['String']['output']>;
+};
+
+export type UserLookup = {
+  __typename?: 'UserLookup';
+  user: UserInfo;
+  workspaces: Array<WorkspaceInfo>;
+};
+
 export type UserMappingOptions = {
   password?: InputMaybe<Scalars['String']['input']>;
   user?: InputMaybe<Scalars['String']['input']>;
@@ -1623,6 +1653,10 @@ export type Verify = {
 export type WorkflowAction = {
   __typename?: 'WorkflowAction';
   id: Scalars['UUID']['output'];
+  name: Scalars['String']['output'];
+  settings: Scalars['JSON']['output'];
+  type: Scalars['String']['output'];
+  valid: Scalars['Boolean']['output'];
 };
 
 export type WorkflowRun = {
@@ -1685,6 +1719,16 @@ export type WorkspaceEdge = {
   cursor: Scalars['ConnectionCursor']['output'];
   /** The node containing the Workspace */
   node: Workspace;
+};
+
+export type WorkspaceInfo = {
+  __typename?: 'WorkspaceInfo';
+  featureFlags: Array<FeatureFlag>;
+  id: Scalars['String']['output'];
+  logo?: Maybe<Scalars['String']['output']>;
+  name: Scalars['String']['output'];
+  totalUsers: Scalars['Float']['output'];
+  users: Array<UserInfo>;
 };
 
 export type WorkspaceInvitation = {
