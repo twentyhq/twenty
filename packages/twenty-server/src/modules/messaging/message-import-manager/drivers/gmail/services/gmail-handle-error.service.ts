@@ -1,33 +1,48 @@
 import { Injectable } from '@nestjs/common';
 
 import { parseGaxiosError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gaxios-error.util';
-import { parseGmailError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-error.util';
+import { parseGmailMessagesImportError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-messages-import-error.util';
 
 @Injectable()
 export class GmailHandleErrorService {
   constructor() {}
 
-  public handleError(error: any, messageExternalId?: string): void {
-    if (
-      error.code &&
-      [
-        'ECONNRESET',
-        'ENOTFOUND',
-        'ECONNABORTED',
-        'ETIMEDOUT',
-        'ERR_NETWORK',
-      ].includes(error.code)
-    ) {
-      throw parseGaxiosError(error);
-    }
-    if (error.code != 410) {
-      const gmailError = {
-        code: error.code,
-        reason: `${error?.errors?.[0].reason || error.response?.data?.error || ''}`,
-        message: `${error?.errors?.[0].message || error.response?.data?.error_description || ''}${messageExternalId ? ` for message with externalId: ${messageExternalId}` : ''}`,
-      };
+  public handleGaxiosError(error: any): void {
+    const gaxiosError = parseGaxiosError(error);
 
-      throw parseGmailError(gmailError);
+    if (gaxiosError) {
+      throw gaxiosError;
+    }
+  }
+
+  public handleGmailMessageListFetchError(error: any): void {
+    this.handleGaxiosError(error);
+
+    const gmailError = parseGmailMessagesImportError({
+      status: error.status,
+      reason: `${error?.errors?.[0].reason || error.response?.data?.error || ''}`,
+      message: `${error?.errors?.[0].message || error.response?.data?.error_description || ''}`,
+    });
+
+    if (gmailError) {
+      throw gmailError;
+    }
+  }
+
+  public handleGmailMessagesImportError(
+    error: any,
+    messageExternalId: string,
+  ): void {
+    this.handleGaxiosError(error);
+
+    const gmailError = parseGmailMessagesImportError({
+      status: error.status,
+      reason: `${error?.errors?.[0].reason || error.response?.data?.error || ''}`,
+      message: `${error?.errors?.[0].message || error.response?.data?.error_description || ''} for message with externalId: ${messageExternalId}`,
+    });
+
+    if (gmailError) {
+      throw gmailError;
     }
   }
 }
