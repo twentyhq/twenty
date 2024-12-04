@@ -1,17 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
-import { useLocation, useSearchParams } from 'react-router-dom';
 
-import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
-import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
-import { isDefined } from '~/utils/isDefined';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { isDefined } from '~/utils/isDefined';
 
 const makeValidationSchema = (signInUpStep: SignInUpStep) =>
   z
