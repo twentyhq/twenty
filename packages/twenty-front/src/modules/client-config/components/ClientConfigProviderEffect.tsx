@@ -19,7 +19,7 @@ import { isSSOEnabledState } from '@/client-config/states/isSSOEnabledState';
 export const ClientConfigProviderEffect = () => {
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
-  const setUrlManager = useSetRecoilState(domainConfigurationState);
+  const setDomainConfiguration = useSetRecoilState(domainConfigurationState);
 
   const setIsDeveloperDefaultSignInPrefilled = useSetRecoilState(
     isDeveloperDefaultSignInPrefilledState,
@@ -94,7 +94,7 @@ export const ClientConfigProviderEffect = () => {
     setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
     setApiConfig(data?.clientConfig?.api);
     setIsSSOEnabledState(data?.clientConfig?.isSSOEnabled);
-    setUrlManager({
+    setDomainConfiguration({
       defaultSubdomain: data?.clientConfig?.defaultSubdomain,
       frontDomain: data?.clientConfig?.frontDomain,
     });
@@ -113,7 +113,7 @@ export const ClientConfigProviderEffect = () => {
     setApiConfig,
     setIsAnalyticsEnabled,
     error,
-    setUrlManager,
+    setDomainConfiguration,
     setIsSSOEnabledState,
   ]);
 
