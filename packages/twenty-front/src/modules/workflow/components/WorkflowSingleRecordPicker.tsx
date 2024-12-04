@@ -61,6 +61,16 @@ const StyledSearchVariablesDropdownContainer = styled.div`
 export type RecordId = string;
 export type Variable = string;
 
+type WorkflowSingleRecordPickerValue =
+  | {
+      type: 'static';
+      value: RecordId;
+    }
+  | {
+      type: 'variable';
+      value: Variable;
+    };
+
 export type WorkflowSingleRecordPickerProps = {
   label?: string;
   defaultValue: RecordId | Variable;
@@ -74,20 +84,16 @@ export const WorkflowSingleRecordPicker = ({
   objectNameSingular,
   onChange,
 }: WorkflowSingleRecordPickerProps) => {
-  const draftValue:
-    | { type: 'static'; value: RecordId }
-    | {
-        type: 'variable';
-        value: Variable;
-      } = isStandaloneVariableString(defaultValue)
-    ? {
-        type: 'variable',
-        value: defaultValue,
-      }
-    : {
-        type: 'static',
-        value: defaultValue || '',
-      };
+  const draftValue: WorkflowSingleRecordPickerValue =
+    isStandaloneVariableString(defaultValue)
+      ? {
+          type: 'variable',
+          value: defaultValue,
+        }
+      : {
+          type: 'static',
+          value: defaultValue || '',
+        };
 
   const { record: selectedRecord } = useFindOneRecord({
     objectRecordId:

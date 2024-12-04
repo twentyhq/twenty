@@ -52,8 +52,7 @@ export const SearchVariablesDropdownFieldItems = ({
     const currentSubStep = getCurrentSubStep();
 
     if (isRecordOutputSchema(currentSubStep)) {
-      const subStepFields = currentSubStep.fields;
-      return subStepFields;
+      return currentSubStep.fields;
     } else if (isBaseOutputSchema(currentSubStep)) {
       return currentSubStep;
     }

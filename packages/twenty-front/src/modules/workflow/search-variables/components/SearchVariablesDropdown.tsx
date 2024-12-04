@@ -74,8 +74,18 @@ const SearchVariablesDropdown = ({
     setSelectedStep(undefined);
   };
 
-  const getSearchVariablesDropdownComponents = () => {
-    if (isDefined(selectedStep) && isDefined(objectNameSingularToSelect)) {
+  const renderSearchVariablesDropdownComponents = () => {
+    if (!isDefined(selectedStep)) {
+      return (
+        <SearchVariablesDropdownWorkflowStepItems
+          dropdownId={dropdownId}
+          steps={availableVariablesInWorkflowStep}
+          onSelect={handleStepSelect}
+        />
+      );
+    }
+
+    if (isDefined(objectNameSingularToSelect)) {
       return (
         <SearchVariablesDropdownObjectItems
           step={selectedStep}
@@ -85,21 +95,11 @@ const SearchVariablesDropdown = ({
       );
     }
 
-    if (isDefined(selectedStep)) {
-      return (
-        <SearchVariablesDropdownFieldItems
-          step={selectedStep}
-          onSelect={handleSubItemSelect}
-          onBack={handleBack}
-        />
-      );
-    }
-
     return (
-      <SearchVariablesDropdownWorkflowStepItems
-        dropdownId={dropdownId}
-        steps={availableVariablesInWorkflowStep}
-        onSelect={handleStepSelect}
+      <SearchVariablesDropdownFieldItems
+        step={selectedStep}
+        onSelect={handleSubItemSelect}
+        onBack={handleBack}
       />
     );
   };
@@ -137,7 +137,7 @@ const SearchVariablesDropdown = ({
       }
       dropdownComponents={
         <StyledDropdownComponetsContainer>
-          {getSearchVariablesDropdownComponents()}
+          {renderSearchVariablesDropdownComponents()}
         </StyledDropdownComponetsContainer>
       }
       dropdownPlacement="bottom-end"

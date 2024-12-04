@@ -52,8 +52,7 @@ export const SearchVariablesDropdownObjectItems = ({
     const currentSubStep = getCurrentSubStep();
 
     if (isRecordOutputSchema(currentSubStep)) {
-      const subStepFields = currentSubStep.fields;
-      return subStepFields;
+      return currentSubStep.fields;
     } else if (isBaseOutputSchema(currentSubStep)) {
       return currentSubStep;
     }
@@ -72,7 +71,9 @@ export const SearchVariablesDropdownObjectItems = ({
       return;
     }
 
-    onSelect(`{{${step.id}.${currentSubStep.object.fieldIdName}}}`);
+    onSelect(
+      `{{${step.id}.${[...currentPath, currentSubStep.object.fieldIdName].join('.')}}}`,
+    );
   };
 
   const handleSelectField = (key: string) => {
@@ -81,7 +82,11 @@ export const SearchVariablesDropdownObjectItems = ({
   };
 
   const goBack = () => {
-    onBack();
+    if (currentPath.length === 0) {
+      onBack();
+    } else {
+      setCurrentPath(currentPath.slice(0, -1));
+    }
   };
 
   const headerLabel = currentPath.length === 0 ? step.name : currentPath.at(-1);

@@ -67,17 +67,20 @@ describe('filterOutputSchema', () => {
         },
       });
 
-      const expectedSchema = createRecordSchema('company', {
-        employee: {
-          isLeaf: false,
-          value: createRecordSchema('person', {
-            manager: {
-              isLeaf: false,
-              value: createRecordSchema('person'),
-            },
-          }),
+      const expectedSchema = {
+        _outputSchemaType: 'RECORD',
+        fields: {
+          employee: {
+            isLeaf: false,
+            value: createRecordSchema('person', {
+              manager: {
+                isLeaf: false,
+                value: createRecordSchema('person'),
+              },
+            }),
+          },
         },
-      });
+      };
 
       expect(filterOutputSchema(inputSchema, 'person')).toEqual(expectedSchema);
     });
@@ -91,12 +94,15 @@ describe('filterOutputSchema', () => {
         },
       });
 
-      const expectedSchema = createRecordSchema('company', {
-        employee: {
-          isLeaf: false,
-          value: createRecordSchema('person'),
+      const expectedSchema = {
+        _outputSchemaType: 'RECORD',
+        fields: {
+          employee: {
+            isLeaf: false,
+            value: createRecordSchema('person'),
+          },
         },
-      });
+      };
 
       expect(filterOutputSchema(inputSchema, 'person')).toEqual(expectedSchema);
     });
