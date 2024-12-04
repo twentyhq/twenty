@@ -1,4 +1,4 @@
 export enum BillingPlanKey {
-  BasePlan = 'base-plan',
-  ProPlan = 'pro-plan',
+  BASE_PLAN = 'base-plan',
+  PRO_PLAN = 'pro-plan',
 }

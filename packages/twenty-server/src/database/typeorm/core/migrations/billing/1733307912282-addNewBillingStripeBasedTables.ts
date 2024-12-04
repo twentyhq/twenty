@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddNewBillingStripeTables1733304583683
+export class AddNewBillingStripeBasedTables1733307912282
   implements MigrationInterface
 {
-  name = 'AddNewBillingStripeTables1733304583683';
+  name = 'AddNewBillingStripeBasedTables1733307912282';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -105,6 +105,7 @@ export class AddNewBillingStripeTables1733304583683
     await queryRunner.query(
       `ALTER TABLE "core"."billingSubscription" ADD "trialEnd" TIMESTAMP WITH TIME ZONE`,
     );
+
     await queryRunner.query(
       `ALTER TABLE "core"."billingSubscriptionItem" ADD CONSTRAINT "UQ_6a989264cab5ee2d4b424e78526" UNIQUE ("stripeSubscriptionItemId")`,
     );
@@ -123,6 +124,7 @@ export class AddNewBillingStripeTables1733304583683
     await queryRunner.query(
       `ALTER TABLE "core"."billingCustomer" ADD CONSTRAINT "FK_53c2ef50e9611082f83d760897d" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
+
     await queryRunner.query(
       `ALTER TABLE "core"."billingPrice" ADD CONSTRAINT "FK_4d57ee4dbfc8b4075eb24026fca" FOREIGN KEY ("stripeProductId") REFERENCES "core"."billingProduct"("stripeProductId") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
@@ -138,6 +140,7 @@ export class AddNewBillingStripeTables1733304583683
     await queryRunner.query(
       `ALTER TABLE "core"."billingPrice" DROP CONSTRAINT "FK_4d57ee4dbfc8b4075eb24026fca"`,
     );
+
     await queryRunner.query(
       `ALTER TABLE "core"."billingCustomer" DROP CONSTRAINT "FK_53c2ef50e9611082f83d760897d"`,
     );

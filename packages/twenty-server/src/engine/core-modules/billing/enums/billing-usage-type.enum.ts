@@ -1,4 +1,4 @@
 export enum BillingUsageType {
-  Metered = 'metered',
-  Licensed = 'licensed',
+  METERED = 'metered',
+  LICENSED = 'licensed',
 }
