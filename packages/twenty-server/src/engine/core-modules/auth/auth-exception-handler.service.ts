@@ -16,12 +16,17 @@ export const handleException = (
   exceptionHandlerService.captureExceptions([exception], { user, workspace });
 };
 
+interface RequestAndParams {
+  request: Request | null;
+  params: any;
+}
+
 @Injectable({ scope: Scope.REQUEST })
 export class ErrorHandlerService {
   constructor(
     private readonly exceptionHandlerService: ExceptionHandlerService,
     @Inject(REQUEST)
-    private readonly request: Request | null,
+    private readonly request: RequestAndParams | null,
   ) {}
 
   handleError = (
@@ -31,7 +36,12 @@ export class ErrorHandlerService {
     user?: ExceptionHandlerUser,
     workspace?: ExceptionHandlerWorkspace,
   ) => {
-    // console.log('scope', this.request?);
+    const params = this.request?.params;
+
+    if (params?.workspaceId)
+      workspace = { ...workspace, id: params.workspaceId };
+    if (params?.userId) user = { ...user, id: params.userId };
+
     handleException(exception, this.exceptionHandlerService, user, workspace);
 
     return response.status(errorCode).send(exception.message);
