@@ -54,6 +54,7 @@ export const SettingsDataModelFieldNumberForm = ({
               <Select<string>
                 selectSizeVariant="small"
                 dropdownId="number-type"
+                dropdownWidth={120}
                 value={type}
                 onChange={(value) => onChange({ type: value, decimals: count })}
                 disabled={disabled}

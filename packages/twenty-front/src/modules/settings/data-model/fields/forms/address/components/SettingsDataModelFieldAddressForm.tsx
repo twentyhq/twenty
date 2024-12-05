@@ -63,7 +63,7 @@ export const SettingsDataModelFieldAddressForm = ({
       render={({ field: { onChange, value } }) => {
         const defaultCountry = value?.addressCountry || '';
         return (
-          <SettingsOptionCardContentSelect<string>
+          <SettingsOptionCardContentSelect
             Icon={IconMap}
             title="Default Country"
             description="The default country for new addresses"

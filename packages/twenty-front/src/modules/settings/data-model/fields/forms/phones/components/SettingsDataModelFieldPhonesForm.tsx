@@ -57,7 +57,7 @@ export const SettingsDataModelFieldPhonesForm = ({
       control={control}
       render={({ field: { onChange, value } }) => {
         return (
-          <SettingsOptionCardContentSelect<string>
+          <SettingsOptionCardContentSelect
             Icon={IconMap}
             title="Default Country Code"
             description="The default country code for new phone numbers."

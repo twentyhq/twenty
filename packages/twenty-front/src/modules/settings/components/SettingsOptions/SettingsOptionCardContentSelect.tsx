@@ -5,11 +5,10 @@ import {
   StyledSettingsOptionCardTitle,
 } from '@/settings/components/SettingsOptions/SettingsOptionCardContentBase';
 import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOptions/SettingsOptionIconCustomizer';
-import { SelectValue } from '@/ui/input/components/Select';
 import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui';
 
-type SettingsOptionCardContentSelectProps<Value extends SelectValue> = {
+type SettingsOptionCardContentSelectProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
   description?: string;
@@ -23,14 +22,14 @@ const StyledSelectContainer = styled.div`
   margin-left: auto;
 `;
 
-export const SettingsOptionCardContentSelect = <Value extends SelectValue>({
+export const SettingsOptionCardContentSelect = ({
   Icon,
   title,
   description,
   divider,
   disabled = false,
   children,
-}: SettingsOptionCardContentSelectProps<Value>) => {
+}: SettingsOptionCardContentSelectProps) => {
   return (
     <StyledSettingsOptionCardContent divider={divider} disabled={disabled}>
       {Icon && (
