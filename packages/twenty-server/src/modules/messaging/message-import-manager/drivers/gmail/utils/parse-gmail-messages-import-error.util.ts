@@ -3,14 +3,22 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 
-export const parseGmailMessagesImportError = (error: {
-  status?: number;
-  reason: string;
-  message: string;
-}): MessageImportDriverException | undefined => {
-  const { status, reason, message } = error;
+export const parseGmailMessagesImportError = (
+  error: {
+    code?: number;
+    errors: {
+      reason: string;
+      message: string;
+    }[];
+  },
+  messageExternalId: string,
+): MessageImportDriverException | undefined => {
+  const { code, errors } = error;
 
-  switch (status) {
+  const reason = errors[0].reason;
+  const message = `${errors[0].message} for message with externalId: ${messageExternalId}`;
+
+  switch (code) {
     case 400:
       if (reason === 'invalid_grant') {
         return new MessageImportDriverException(
