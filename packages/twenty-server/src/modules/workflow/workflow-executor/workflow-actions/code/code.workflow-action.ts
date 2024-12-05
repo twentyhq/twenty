@@ -35,7 +35,8 @@ export class CodeWorkflowAction implements WorkflowAction {
         await this.serverlessFunctionService.executeOneServerlessFunction(
           workflowActionInput.serverlessFunctionId,
           workspaceId,
-          workflowActionInput.serverlessFunctionInput,
+          Object.values(workflowActionInput.serverlessFunctionInput)?.[0] || {},
+          workflowActionInput.serverlessFunctionVersion,
         );
 
       if (result.error) {

@@ -4,11 +4,11 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { addressSchema as addressFieldDefaultValueSchema } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
+import { Select } from '@/ui/input/components/Select';
 import { IconMap } from 'twenty-ui';
 import { z } from 'zod';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
-
 type SettingsDataModelFieldAddressFormProps = {
   disabled?: boolean;
   defaultCountry?: string;
@@ -63,22 +63,26 @@ export const SettingsDataModelFieldAddressForm = ({
       render={({ field: { onChange, value } }) => {
         const defaultCountry = value?.addressCountry || '';
         return (
-          <SettingsOptionCardContentSelect<string>
+          <SettingsOptionCardContentSelect
             Icon={IconMap}
-            dropdownId="selectDefaultCountry"
             title="Default Country"
             description="The default country for new addresses"
-            value={stripSimpleQuotesFromString(defaultCountry)}
-            onChange={(newCountry) =>
-              onChange({
-                ...value,
-                addressCountry: applySimpleQuotesToString(newCountry),
-              })
-            }
-            disabled={disabled}
-            options={countries}
-            fullWidth={true}
-          />
+          >
+            <Select<string>
+              dropdownWidth={'auto'}
+              disabled={disabled}
+              dropdownId="selectDefaultCountry"
+              value={stripSimpleQuotesFromString(defaultCountry)}
+              onChange={(newCountry) =>
+                onChange({
+                  ...value,
+                  addressCountry: applySimpleQuotesToString(newCountry),
+                })
+              }
+              options={countries}
+              selectSizeVariant="small"
+            />
+          </SettingsOptionCardContentSelect>
         );
       }}
     />
