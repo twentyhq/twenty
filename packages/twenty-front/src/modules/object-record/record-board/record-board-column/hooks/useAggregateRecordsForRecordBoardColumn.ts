@@ -1,4 +1,4 @@
-import { useAggregateManyRecords } from '@/object-record/hooks/useAggregateManyRecords';
+import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { buildRecordGqlFieldsAggregate } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregate';
@@ -13,7 +13,7 @@ import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
-export const useAggregateManyRecordsForRecordBoardColumn = () => {
+export const useAggregateRecordsForRecordBoardColumn = () => {
   const isAggregateQueryEnabled = useIsFeatureEnabled(
     'IS_AGGREGATE_QUERY_ENABLED',
   );
@@ -67,7 +67,7 @@ export const useAggregateManyRecordsForRecordBoardColumn = () => {
         : { eq: columnDefinition.value },
   };
 
-  const { data } = useAggregateManyRecords({
+  const { data } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
     filter,
@@ -82,7 +82,7 @@ export const useAggregateManyRecordsForRecordBoardColumn = () => {
   );
 
   return {
-    aggregateValue: value ?? recordCount,
+    aggregateValue: isAggregateQueryEnabled ? value : recordCount,
     aggregateLabel: isDefined(value) ? label : undefined,
   };
 };

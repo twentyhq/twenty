@@ -57,7 +57,7 @@ describe('buildRecordGqlFieldsAggregate', () => {
     });
 
     expect(result).toEqual({
-      amount: AGGREGATE_OPERATIONS.sum,
+      amount: [AGGREGATE_OPERATIONS.sum],
     });
   });
 
@@ -74,7 +74,7 @@ describe('buildRecordGqlFieldsAggregate', () => {
     });
 
     expect(result).toEqual({
-      [MOCK_KANBAN_FIELD]: AGGREGATE_OPERATIONS.count,
+      [MOCK_KANBAN_FIELD]: [AGGREGATE_OPERATIONS.count],
     });
   });
 
