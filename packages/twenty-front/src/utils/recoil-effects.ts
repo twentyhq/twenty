@@ -45,9 +45,9 @@ export const cookieStorageEffect =
   ): AtomEffect<T | null> =>
   ({ setSelf, onSet }) => {
     const savedValue = cookieStorage.getItem(key);
-
     if (
       isDefined(savedValue) &&
+      savedValue.length !== 0 &&
       (!isDefined(hooks?.validateInitFn) ||
         hooks.validateInitFn(JSON.parse(savedValue)))
     ) {
