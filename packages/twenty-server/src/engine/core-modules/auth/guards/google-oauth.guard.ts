@@ -38,6 +38,13 @@ export class GoogleOauthGuard extends AuthGuard('google') {
         workspacePersonalInviteToken;
     }
 
+    if (
+      request.query.workspaceSubdomain &&
+      typeof request.query.workspaceSubdomain === 'string'
+    ) {
+      request.params.workspaceSubdomain = request.query.workspaceSubdomain;
+    }
+
     return (await super.canActivate(context)) as boolean;
   }
 }

@@ -84,11 +84,14 @@ export class ServerlessFunctionResolver {
   }
 
   @Query(() => graphqlTypeJson)
-  async getAvailablePackages(@AuthWorkspace() { id: workspaceId }: Workspace) {
+  async getAvailablePackages(
+    @Args('input') { id }: ServerlessFunctionIdInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
     try {
       await this.checkFeatureFlag(workspaceId);
 
-      return await this.serverlessFunctionService.getAvailablePackages();
+      return await this.serverlessFunctionService.getAvailablePackages(id);
     } catch (error) {
       serverlessFunctionGraphQLApiExceptionHandler(error);
     }

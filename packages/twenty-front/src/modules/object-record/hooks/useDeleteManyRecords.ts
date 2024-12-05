@@ -9,6 +9,7 @@ import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNo
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
 import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteManyRecordsMutation';
+import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
 import { useRecoilValue } from 'recoil';
@@ -50,6 +51,10 @@ export const useDeleteManyRecords = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const { refetchAggregateQueries } = useRefetchAggregateQueries({
+    objectMetadataNamePlural: objectMetadataItem.namePlural,
+  });
 
   const mutationResponseField = getDeleteManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
@@ -194,7 +199,7 @@ export const useDeleteManyRecords = ({
         await sleep(options.delayInMsBetweenRequests);
       }
     }
-
+    await refetchAggregateQueries();
     return deletedRecords;
   };
 

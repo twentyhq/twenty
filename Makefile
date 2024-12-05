@@ -8,11 +8,11 @@ postgres-on-docker:
 	-p 5432:5432 \
 	twentycrm/twenty-postgres-spilo:latest
 	@echo "Waiting for PostgreSQL to be ready..."
-	@until PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres \
+	@until docker exec twenty_pg psql -U postgres -d postgres \
 		-c 'SELECT pg_is_in_recovery();' 2>/dev/null | grep -q 'f'; do \
 		sleep 1; \
 	done
-	PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres \
+	docker exec twenty_pg psql -U postgres -d postgres \
 		-c "CREATE DATABASE \"default\" WITH OWNER postgres;" \
 		-c "CREATE DATABASE \"test\" WITH OWNER postgres;"
 

@@ -7,7 +7,7 @@ type PhonesFieldMenuItemProps = {
   onEdit?: () => void;
   onSetAsPrimary?: () => void;
   onDelete?: () => void;
-  phone: { number: string; countryCode: string };
+  phone: { number: string; callingCode: string };
 };
 
 export const PhonesFieldMenuItem = ({
@@ -22,7 +22,7 @@ export const PhonesFieldMenuItem = ({
     <MultiItemFieldMenuItem
       dropdownId={dropdownId}
       isPrimary={isPrimary}
-      value={phone.countryCode + phone.number}
+      value={{ number: phone.number, callingCode: phone.callingCode }}
       onEdit={onEdit}
       onSetAsPrimary={onSetAsPrimary}
       onDelete={onDelete}

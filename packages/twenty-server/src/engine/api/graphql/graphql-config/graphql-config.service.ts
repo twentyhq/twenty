@@ -114,8 +114,13 @@ export class GraphQLConfigService
                   email: user.email,
                   firstName: user.firstName,
                   lastName: user.lastName,
-                  workspaceId: workspace?.id,
-                  workspaceDisplayName: workspace?.displayName,
+                }
+              : undefined,
+            workspace
+              ? {
+                  id: workspace.id,
+                  displayName: workspace.displayName,
+                  activationStatus: workspace.activationStatus,
                 }
               : undefined,
           );

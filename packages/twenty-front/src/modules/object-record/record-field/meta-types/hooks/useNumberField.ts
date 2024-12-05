@@ -35,8 +35,8 @@ export const useNumberField = () => {
 
   const persistNumberField = (newValue: string) => {
     if (fieldDefinition?.metadata?.settings?.type === 'percentage') {
-      newValue = newValue.replaceAll('%', '');
-      if (!canBeCastAsNumberOrNull(newValue)) {
+      const newValueEscaped = newValue.replaceAll('%', '');
+      if (!canBeCastAsNumberOrNull(newValueEscaped)) {
         return;
       }
       const castedValue = castAsNumberOrNull(newValue);

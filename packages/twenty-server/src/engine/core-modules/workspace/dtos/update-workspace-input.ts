@@ -12,6 +12,11 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
+  subdomain?: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
   displayName?: string;
 
   @Field({ nullable: true })
@@ -33,4 +38,19 @@ export class UpdateWorkspaceInput {
   @IsBoolean()
   @IsOptional()
   allowImpersonation?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isGoogleAuthEnabled?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isMicrosoftAuthEnabled?: boolean;
+
+  @Field({ nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isPasswordAuthEnabled?: boolean;
 }

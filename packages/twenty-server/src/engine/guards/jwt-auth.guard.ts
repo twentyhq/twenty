@@ -14,7 +14,8 @@ export class JwtAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     try {
-      const data = await this.accessTokenService.validateToken(request);
+      const data =
+        await this.accessTokenService.validateTokenByRequest(request);
       const metadataVersion =
         await this.workspaceStorageCacheService.getMetadataVersion(
           data.workspace.id,

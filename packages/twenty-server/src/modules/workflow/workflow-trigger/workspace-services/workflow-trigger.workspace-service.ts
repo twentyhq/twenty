@@ -28,6 +28,7 @@ import { assertNever } from 'src/utils/assert';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { WORKFLOW_VERSION_STATUS_UPDATED } from 'src/modules/workflow/workflow-status/constants/workflow-version-status-updated.constants';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { WorkflowVersionStatusUpdate } from 'src/modules/workflow/workflow-status/jobs/workflow-statuses-update.job';
 
 @Injectable()
 export class WorkflowTriggerWorkspaceService {
@@ -387,11 +388,12 @@ export class WorkflowTriggerWorkspaceService {
       workspaceId,
     });
 
-    this.workspaceEventEmitter.emitCustomBatchEvent(
+    this.workspaceEventEmitter.emitCustomBatchEvent<WorkflowVersionStatusUpdate>(
       WORKFLOW_VERSION_STATUS_UPDATED,
       [
         {
           workflowId: workflowVersion.workflowId,
+          workflowVersionId: workflowVersion.id,
           previousStatus: workflowVersion.status,
           newStatus,
         },

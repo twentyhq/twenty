@@ -3,10 +3,7 @@ import styled from '@emotion/styled';
 import { CodeEditor, isDefined } from 'twenty-ui';
 
 const StyledSourceCodeContainer = styled.div`
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   margin: ${({ theme }) => theme.spacing(4)};
-  overflow: hidden;
 `;
 
 export const WorkflowRunOutputVisualizer = ({

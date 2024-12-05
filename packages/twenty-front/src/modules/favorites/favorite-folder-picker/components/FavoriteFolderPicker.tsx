@@ -20,6 +20,7 @@ type FavoriteFolderPickerProps = {
   onSubmit?: () => void;
   record?: ObjectRecord;
   objectNameSingular: string;
+  dropdownId: string;
 };
 
 const NO_FOLDER_ID = 'no-folder';
@@ -28,6 +29,7 @@ export const FavoriteFolderPicker = ({
   onSubmit,
   record,
   objectNameSingular,
+  dropdownId,
 }: FavoriteFolderPickerProps) => {
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
     useRecoilState(isFavoriteFolderCreatingState);
@@ -97,7 +99,7 @@ export const FavoriteFolderPicker = ({
           toggleFolderSelection={toggleFolderSelection}
         />
       </DropdownMenuItemsContainer>
-      <FavoriteFolderPickerFooter />
+      <FavoriteFolderPickerFooter dropdownId={dropdownId} />
     </DropdownMenu>
   );
 };

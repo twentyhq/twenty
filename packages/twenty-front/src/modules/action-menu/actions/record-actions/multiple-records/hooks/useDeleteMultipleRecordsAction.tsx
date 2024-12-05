@@ -22,10 +22,8 @@ import { useCallback, useContext, useState } from 'react';
 import { IconTrash, isDefined } from 'twenty-ui';
 
 export const useDeleteMultipleRecordsAction = ({
-  position,
   objectMetadataItem,
 }: {
-  position: number;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
@@ -106,7 +104,11 @@ export const useDeleteMultipleRecordsAction = ({
   const { isInRightDrawer, onActionExecutedCallback } =
     useContext(ActionMenuContext);
 
-  const registerDeleteMultipleRecordsAction = () => {
+  const registerDeleteMultipleRecordsAction = ({
+    position,
+  }: {
+    position: number;
+  }) => {
     if (canDelete) {
       addActionMenuEntry({
         type: ActionMenuEntryType.Standard,

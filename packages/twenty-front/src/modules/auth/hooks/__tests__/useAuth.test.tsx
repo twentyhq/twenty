@@ -10,10 +10,11 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 
 import { email, mocks, password, results, token } from '../__mocks__/useAuth';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <MockedProvider mocks={mocks} addTypename={false}>
@@ -78,9 +79,14 @@ describe('useAuth', () => {
         const icons = useRecoilValue(iconsState);
         const authProviders = useRecoilValue(authProvidersState);
         const billing = useRecoilValue(billingState);
-        const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
+        const isDeveloperDefaultSignInPrefilled = useRecoilValue(
+          isDeveloperDefaultSignInPrefilledState,
+        );
         const supportChat = useRecoilValue(supportChatState);
         const isDebugMode = useRecoilValue(isDebugModeState);
+        const isMultiWorkspaceEnabled = useRecoilValue(
+          isMultiWorkspaceEnabledState,
+        );
         return {
           ...useAuth(),
           client,
@@ -88,9 +94,10 @@ describe('useAuth', () => {
             icons,
             authProviders,
             billing,
-            isSignInPrefilled,
+            isDeveloperDefaultSignInPrefilled,
             supportChat,
             isDebugMode,
+            isMultiWorkspaceEnabled,
           },
         };
       },
@@ -112,14 +119,14 @@ describe('useAuth', () => {
 
     expect(state.icons).toEqual({});
     expect(state.authProviders).toEqual({
-      google: false,
+      google: true,
       microsoft: false,
       magicLink: false,
-      password: false,
-      sso: false,
+      password: true,
+      sso: [],
     });
     expect(state.billing).toBeNull();
-    expect(state.isSignInPrefilled).toBe(false);
+    expect(state.isDeveloperDefaultSignInPrefilled).toBe(false);
     expect(state.supportChat).toEqual({
       supportDriver: 'none',
       supportFrontChatId: null,

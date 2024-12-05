@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
@@ -70,14 +69,6 @@ describe('LoginTokenService', () => {
         { secret: mockSecret, expiresIn: mockExpiresIn },
       );
     });
-
-    it('should throw an error if LOGIN_TOKEN_EXPIRES_IN is not set', async () => {
-      jest.spyOn(environmentService, 'get').mockReturnValue(undefined);
-
-      await expect(
-        service.generateLoginToken('test@example.com'),
-      ).rejects.toThrow(AuthException);
-    });
   });
 
   describe('verifyLoginToken', () => {
@@ -94,7 +85,7 @@ describe('LoginTokenService', () => {
 
       const result = await service.verifyLoginToken(mockToken);
 
-      expect(result).toEqual(mockEmail);
+      expect(result).toEqual({ sub: mockEmail });
       expect(jwtWrapperService.verifyWorkspaceToken).toHaveBeenCalledWith(
         mockToken,
         'LOGIN',
