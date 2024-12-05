@@ -5,11 +5,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -28,7 +28,10 @@ registerEnumType(OnboardingStatus, {
 
 @Entity({ name: 'user', schema: 'core' })
 @ObjectType('User')
-@Unique('UQ_USER_EMAIL', ['email', 'deletedAt'])
+@Index('UQ_USER_EMAIL', ['email'], {
+  unique: true,
+  where: '"deletedAt" IS NULL',
+})
 export class User {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
