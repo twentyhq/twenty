@@ -18,9 +18,27 @@ export class UpdateBillingSubscription1709914564361
     await queryRunner.query(
       `ALTER TABLE "core"."billingSubscription" ADD CONSTRAINT "FK_4abfb70314c18da69e1bee1954d" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
+    await queryRunner.query(
+      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "deletedAt" TYPE TIMESTAMP WITH TIME ZONE USING "deletedAt" AT TIME ZONE 'UTC'`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "status" TYPE text`,
+    );
+    await queryRunner.query(
+      `CREATE TYPE "core"."billingSubscription_status_enum" AS ENUM('active', 'canceled', 'incomplete', 'incomplete_expired', 'past_due', 'paused', 'trialing', 'unpaid')`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "status" TYPE "core"."billingSubscription_status_enum" USING "status"::"core"."billingSubscription_status_enum"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "status" SET NOT NULL`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "status" DROP NOT NULL`,
+    );
     await queryRunner.query(
       `ALTER TABLE "core"."billingSubscription" DROP CONSTRAINT "FK_4abfb70314c18da69e1bee1954d"`,
     );
@@ -32,6 +50,18 @@ export class UpdateBillingSubscription1709914564361
     );
     await queryRunner.query(
       `ALTER TABLE "core"."billingSubscription" ADD CONSTRAINT "FK_4abfb70314c18da69e1bee1954d" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "status" TYPE text`,
+    );
+    await queryRunner.query(
+      `DROP TYPE "core"."billingSubscription_status_enum"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "status" TYPE character varying`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."billingSubscription" ALTER COLUMN "deletedAt" TYPE TIMESTAMP`,
     );
   }
 }
