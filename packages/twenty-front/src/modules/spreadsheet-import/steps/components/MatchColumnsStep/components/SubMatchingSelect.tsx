@@ -116,7 +116,6 @@ export const SubMatchingSelect = <T extends string>({
 
         {isOpen && (
           <SelectInput
-            parentRef={selectWrapperRef}
             defaultOption={value}
             options={options}
             onOptionSelected={handleSelect}

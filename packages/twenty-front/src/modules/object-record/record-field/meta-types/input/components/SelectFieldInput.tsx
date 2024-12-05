@@ -22,8 +22,6 @@ export const SelectFieldInput = ({
 }: SelectFieldInputProps) => {
   const { persistField, fieldDefinition, fieldValue, hotkeyScope } =
     useSelectField();
-  const [selectWrapperRef, setSelectWrapperRef] =
-    useState<HTMLDivElement | null>(null);
 
   const [filteredOptions, setFilteredOptions] = useState<SelectOption[]>([]);
 
@@ -63,7 +61,7 @@ export const SelectFieldInput = ({
   ];
 
   return (
-    <div ref={setSelectWrapperRef}>
+    <div>
       <SelectableList
         selectableListId={SINGLE_RECORD_SELECT_BASE_LIST}
         selectableItemIdArray={optionIds}
@@ -79,7 +77,6 @@ export const SelectFieldInput = ({
         }}
       >
         <SelectInput
-          parentRef={selectWrapperRef}
           onOptionSelected={handleSubmit}
           options={fieldDefinition.metadata.options}
           onCancel={onCancel}

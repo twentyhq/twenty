@@ -33,7 +33,6 @@ export const ObjectFilterDropdownOperandDropdown = ({
   return (
     <Dropdown
       dropdownId={dropdownId}
-      parentDropdownId={filterDropdownId}
       clickableComponent={
         <StyledDropdownMenuHeader
           key={'selected-filter-operand'}
