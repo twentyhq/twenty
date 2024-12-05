@@ -2,7 +2,7 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
-import { sortedInsert } from '@/object-record/record-group/utils/sortedInsert';
+import { recordGroupSortedInsert } from '@/object-record/record-group/utils/recordGroupSortedInsert';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
@@ -54,7 +54,7 @@ export const visibleRecordGroupIdsComponentSelector = createComponentSelectorV2<
           isDefined(recordGroupDefinition) &&
           recordGroupDefinition.isVisible
         ) {
-          sortedInsert(result, recordGroupDefinition, comparator);
+          recordGroupSortedInsert(result, recordGroupDefinition, comparator);
         }
       }
 
