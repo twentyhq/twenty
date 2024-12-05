@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -1279,6 +1279,8 @@ export type UpdateServerlessFunctionInput = {
 export type UpdateWorkflowVersionStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON'];
+  /** Boolean to check if we need to update stepOutput */
+  shouldUpdateStepOutput?: InputMaybe<Scalars['Boolean']>;
   /** Workflow version ID */
   workflowVersionId: Scalars['String'];
 };
