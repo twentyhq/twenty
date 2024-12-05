@@ -8,29 +8,25 @@ import { parseGmailMessagesImportError } from 'src/modules/messaging/message-imp
 export class GmailHandleErrorService {
   constructor() {}
 
-  public handleGaxiosError(error: any): void {
+  public handleGmailMessageListFetchError(error: any): void {
     const gaxiosError = parseGaxiosError(error);
 
     if (gaxiosError) {
       throw gaxiosError;
     }
-  }
 
-  public handleGmailMessageListFetchError(error: any): void {
-    this.handleGaxiosError(error);
-
-    const gmailError = parseGmailMessageListFetchError(error);
-
-    if (gmailError) {
-      throw gmailError;
-    }
+    throw parseGmailMessageListFetchError(error);
   }
 
   public handleGmailMessagesImportError(
     error: any,
     messageExternalId: string,
   ): void {
-    this.handleGaxiosError(error);
+    const gaxiosError = parseGaxiosError(error);
+
+    if (gaxiosError) {
+      throw gaxiosError;
+    }
 
     const gmailError = parseGmailMessagesImportError(error, messageExternalId);
 
