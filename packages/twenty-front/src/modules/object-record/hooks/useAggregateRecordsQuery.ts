@@ -34,26 +34,20 @@ export const useAggregateRecordsQuery = ({
   const gqlFieldToFieldMap: GqlFieldToFieldMap = {};
 
   Object.entries(recordGqlFieldsAggregate).forEach(
-    ([fieldName, aggregateOperation]) => {
-      if (
-        !isDefined(fieldName) &&
-        aggregateOperation === AGGREGATE_OPERATIONS.count
-      ) {
-        recordGqlFields.totalCount = true;
-        return;
-      }
+    ([fieldName, aggregateOperations]) => {
+      aggregateOperations.forEach((aggregateOperation) => {
+        const fieldToQuery =
+          availableAggregations[fieldName]?.[aggregateOperation];
 
-      const fieldToQuery =
-        availableAggregations[fieldName]?.[aggregateOperation];
+        if (!isDefined(fieldToQuery)) {
+          throw new Error(
+            `Cannot query operation ${aggregateOperation} on field ${fieldName}`,
+          );
+        }
+        gqlFieldToFieldMap[fieldToQuery] = [fieldName, aggregateOperation];
 
-      if (!isDefined(fieldToQuery)) {
-        throw new Error(
-          `Cannot query operation ${aggregateOperation} on field ${fieldName}`,
-        );
-      }
-      gqlFieldToFieldMap[fieldToQuery] = [fieldName, aggregateOperation];
-
-      recordGqlFields[fieldToQuery] = true;
+        recordGqlFields[fieldToQuery] = true;
+      });
     },
   );
 

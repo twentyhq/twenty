@@ -33,7 +33,6 @@ export const useAggregateRecords = ({
   const { aggregateQuery, gqlFieldToFieldMap } = useAggregateRecordsQuery({
     objectNameSingular,
     recordGqlFieldsAggregate,
-    filter,
   });
 
   const { data, loading, error } = useQuery<RecordGqlOperationFindManyResult>(
