@@ -22,7 +22,10 @@ export const getPhonesFieldPreviewValue = ({
   const primaryPhoneCountryCode =
     fieldMetadataItem.defaultValue?.primaryPhoneCountryCode &&
     fieldMetadataItem.defaultValue.primaryPhoneCountryCode !== ''
-      ? `${stripSimpleQuotesFromString(
+            ? stripSimpleQuotesFromString(
+          fieldMetadataItem.defaultValue.primaryPhoneCountryCode,
+        )
+      : null;
           fieldMetadataItem.defaultValue?.primaryPhoneCountryCode,
         )}`
       : null;
