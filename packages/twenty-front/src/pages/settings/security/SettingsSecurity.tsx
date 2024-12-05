@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { H2Title, IconLock, Section, Tag } from 'twenty-ui';
 
-import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
+import { isSSOEnabledState } from '@/client-config/states/isSSOEnabledState';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SettingsSSOIdentitiesProvidersListCard';
@@ -10,7 +10,6 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isSSOEnabledState } from '@/client-config/states/isSSOEnabledState';
 import { useRecoilValue } from 'recoil';
 
 const StyledContainer = styled.div`
@@ -65,15 +64,13 @@ export const SettingsSecurity = () => {
             </StyledSSOSection>
           )}
           <Section>
-            <AdvancedSettingsWrapper>
-              <StyledContainer>
-                <H2Title
-                  title="Authentication"
-                  description="Customize your workspace security"
-                />
-                <SettingsSecurityOptionsList />
-              </StyledContainer>
-            </AdvancedSettingsWrapper>
+            <StyledContainer>
+              <H2Title
+                title="Authentication"
+                description="Customize your workspace security"
+              />
+              <SettingsSecurityOptionsList />
+            </StyledContainer>
           </Section>
         </StyledMainContent>
       </SettingsPageContainer>
