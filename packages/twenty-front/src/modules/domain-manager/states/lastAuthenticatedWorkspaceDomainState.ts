@@ -9,7 +9,7 @@ export const lastAuthenticatedWorkspaceDomainState = createState<{
   key: 'lastAuthenticateWorkspaceDomain',
   defaultValue: null,
   effects: [
-    cookieStorageEffect('lastWorkspaceDomainState', {
+    cookieStorageEffect('lastAuthenticateWorkspaceDomain', {
       expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365), // 1 year
     }),
   ],
