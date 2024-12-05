@@ -71,7 +71,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
   const navigate = useNavigate();
 
-  const { setActiveDropdownFocusIdAndMemorizePrevious: setFocusedDropdownIdAndMemorizePrevious } =
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
 
   const openTableCell = useRecoilCallback(
@@ -148,7 +148,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           );
         }
 
-        setFocusedDropdownIdAndMemorizePrevious(
+        setActiveDropdownFocusIdAndMemorizePrevious(
           getDropdownFocusIdForRecordField(
             recordId,
             fieldDefinition.fieldMetadataId,
@@ -169,7 +169,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
       setViewableRecordNameSingular,
       openRightDrawer,
       setHotkeyScope,
-      setFocusedDropdownIdAndMemorizePrevious,
+      setActiveDropdownFocusIdAndMemorizePrevious,
     ],
   );
 

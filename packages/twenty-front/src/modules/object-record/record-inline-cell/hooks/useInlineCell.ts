@@ -24,9 +24,9 @@ export const useInlineCell = () => {
     isInlineCellInEditModeScopedState(recoilScopeId),
   );
 
-  const { setActiveDropdownFocusIdAndMemorizePrevious: setFocusedDropdownIdAndMemorizePrevious } =
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
-  const { goBackToPreviousDropdownFocusId: goBackToPreviouslyFocusedDropdownId } =
+  const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
   const {
@@ -41,7 +41,7 @@ export const useInlineCell = () => {
 
     goBackToPreviousHotkeyScope();
 
-    goBackToPreviouslyFocusedDropdownId();
+    goBackToPreviousDropdownFocusId();
   };
 
   const openInlineCell = (customEditHotkeyScopeForField?: HotkeyScope) => {
@@ -57,7 +57,7 @@ export const useInlineCell = () => {
       setHotkeyScopeAndMemorizePreviousScope(InlineCellHotkeyScope.InlineCell);
     }
 
-    setFocusedDropdownIdAndMemorizePrevious(
+    setActiveDropdownFocusIdAndMemorizePrevious(
       getDropdownFocusIdForRecordField(
         recordId,
         fieldDefinition.fieldMetadataId,

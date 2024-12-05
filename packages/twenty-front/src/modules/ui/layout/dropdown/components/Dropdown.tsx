@@ -41,7 +41,6 @@ type DropdownProps = {
   usePortal?: boolean;
   onClose?: () => void;
   onOpen?: () => void;
-  parentDropdownId?: string;
 };
 
 export const Dropdown = ({
@@ -55,11 +54,9 @@ export const Dropdown = ({
   dropdownStrategy = 'absolute',
   dropdownOffset = { x: 0, y: 0 },
   disableBlur = false,
-  usePortal = false,
   onClickOutside,
   onClose,
   onOpen,
-  parentDropdownId,
 }: DropdownProps) => {
   const { isDropdownOpen, toggleDropdown } = useDropdown(dropdownId);
 
@@ -132,7 +129,6 @@ export const Dropdown = ({
               hotkey={hotkey}
               onClickOutside={onClickOutside}
               onHotkeyTriggered={toggleDropdown}
-              parentDropdownId={parentDropdownId}
             />
           )}
           <DropdownOnToggleEffect

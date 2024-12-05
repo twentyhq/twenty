@@ -17,10 +17,6 @@ export const useClickOutsideListener = (componentId: string) => {
   const toggleClickOutsideListener = useRecoilCallback(
     ({ set }) =>
       (activated: boolean) => {
-        console.log(
-          `Toggle click outside listener: ${activated} for component id ${componentId}`,
-        );
-
         set(getClickOutsideListenerIsActivatedState, activated);
 
         if (!activated) {

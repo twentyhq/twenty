@@ -49,12 +49,11 @@ export const DropdownContent = ({
   disableBlur,
   dropdownMenuWidth,
   dropdownComponents,
-  parentDropdownId,
 }: DropdownContentProps) => {
   const { isDropdownOpen, closeDropdown, dropdownWidth, setDropdownPlacement } =
     useDropdown(dropdownId);
 
-  const focusedDropdownId = useRecoilValue(activeDropdownFocusIdState);
+  const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
 
   const [dropdownMaxHeight] = useRecoilComponentStateV2(
     dropdownMaxHeightComponentStateV2,
@@ -69,16 +68,9 @@ export const DropdownContent = ({
     refs: [floatingUiRefs.floating, floatingUiRefs.domReference],
     listenerId: dropdownId,
     callback: (event) => {
-      console.log({
-        focusedDropdownId,
-        dropdownId,
-        parentDropdownId,
-      });
-
-      if (focusedDropdownId !== dropdownId) return;
+      if (activeDropdownFocusId !== dropdownId) return;
 
       if (isDropdownOpen) {
-        console.log(`Closing dropdown ${dropdownId} on click outside`);
         event.stopImmediatePropagation();
         event.preventDefault();
 
@@ -97,7 +89,7 @@ export const DropdownContent = ({
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      if (focusedDropdownId !== dropdownId) return;
+      if (activeDropdownFocusId !== dropdownId) return;
 
       if (isDropdownOpen) {
         closeDropdown();

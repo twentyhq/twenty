@@ -17,9 +17,8 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
     recordTableId,
   );
 
-  const {
-    goBackToPreviousDropdownFocusId: goBackToPreviouslyFocusedDropdownId,
-  } = useGoBackToPreviousDropdownFocusId();
+  const { goBackToPreviousDropdownFocusId } =
+    useGoBackToPreviousDropdownFocusId();
 
   return useRecoilCallback(
     ({ set, snapshot }) => {
@@ -34,13 +33,13 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
           false,
         );
 
-        goBackToPreviouslyFocusedDropdownId();
+        goBackToPreviousDropdownFocusId();
       };
     },
     [
       currentTableCellInEditModePositionState,
       isTableCellInEditModeFamilyState,
-      goBackToPreviouslyFocusedDropdownId,
+      goBackToPreviousDropdownFocusId,
     ],
   );
 };

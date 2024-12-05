@@ -52,7 +52,6 @@ export const MenuItem = ({
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
   const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
-    console.log({ event });
     if (!onClick) return;
     event.preventDefault();
     event.stopPropagation();

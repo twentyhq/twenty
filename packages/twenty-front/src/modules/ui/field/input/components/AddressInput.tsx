@@ -200,8 +200,6 @@ export const AddressInput = ({
         return;
       }
 
-      console.log('click outside AddressInput');
-
       event.stopImmediatePropagation();
 
       closeCountryDropdown();

@@ -6,10 +6,10 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { MenuItemSelectTag, TagColor, isDefined } from 'twenty-ui';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 interface SelectInputProps {
   onOptionSelected: (selectedOption: SelectOption) => void;
@@ -96,10 +96,6 @@ export const SelectInput = ({
   );
 
   return (
-    // <StyledRelationPickerContainer
-    //   ref={refs.setFloating}
-    //   style={floatingStyles}
-    // >
     <DropdownMenu ref={containerRef} data-select-disable>
       <DropdownMenuSearchInput
         value={searchFilter}
@@ -136,6 +132,5 @@ export const SelectInput = ({
         </DropdownMenuItemsContainer>
       </ScrollWrapper>
     </DropdownMenu>
-    // </StyledRelationPickerContainer>
   );
 };

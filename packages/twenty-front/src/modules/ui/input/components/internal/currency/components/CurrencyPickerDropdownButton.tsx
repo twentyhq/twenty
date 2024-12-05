@@ -58,12 +58,11 @@ export const CurrencyPickerDropdownButton = ({
 }) => {
   const theme = useTheme();
 
-  const { isDropdownOpen, closeDropdown } = useDropdown(
+  const { closeDropdown } = useDropdown(
     CurrencyPickerHotkeyScope.CurrencyPicker,
   );
 
   const handleChange = (currency: Currency) => {
-    console.log('CurrencyPickerDropdownButton handleChange', currency);
     onChange(currency);
     closeDropdown();
   };

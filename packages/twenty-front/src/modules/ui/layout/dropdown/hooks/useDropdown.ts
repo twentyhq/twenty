@@ -19,10 +19,10 @@ export const useDropdown = (dropdownId?: string) => {
     dropdownScopeId: getScopeIdOrUndefinedFromComponentId(dropdownId),
   });
 
-  const { setActiveDropdownFocusIdAndMemorizePrevious: setFocusedDropdownIdAndMemorizePrevious } =
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
 
-  const { goBackToPreviousDropdownFocusId: goBackToPreviouslyFocusedDropdownId } =
+  const { goBackToPreviousDropdownFocusId } =
     useGoBackToPreviousDropdownFocusId();
 
   const {
@@ -45,19 +45,19 @@ export const useDropdown = (dropdownId?: string) => {
     if (isDropdownOpen) {
       goBackToPreviousHotkeyScope();
       setIsDropdownOpen(false);
-      goBackToPreviouslyFocusedDropdownId();
+      goBackToPreviousDropdownFocusId();
     }
   }, [
     isDropdownOpen,
     goBackToPreviousHotkeyScope,
     setIsDropdownOpen,
-    goBackToPreviouslyFocusedDropdownId,
+    goBackToPreviousDropdownFocusId,
   ]);
 
   const openDropdown = () => {
     if (!isDropdownOpen) {
       setIsDropdownOpen(true);
-      setFocusedDropdownIdAndMemorizePrevious(dropdownId ?? scopeId);
+      setActiveDropdownFocusIdAndMemorizePrevious(dropdownId ?? scopeId);
       if (isDefined(dropdownHotkeyScope)) {
         setHotkeyScopeAndMemorizePreviousScope(
           dropdownHotkeyScope.scope,

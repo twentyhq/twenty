@@ -41,7 +41,7 @@ export const SingleRecordSelect = ({
         onCancel();
       }
     },
-    listenerId: 'single-entity-select',
+    listenerId: 'single-record-select',
   });
 
   return (

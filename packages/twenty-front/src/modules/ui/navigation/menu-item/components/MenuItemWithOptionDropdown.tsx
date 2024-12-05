@@ -94,7 +94,6 @@ export const MenuItemWithOptionDropdown = ({
           dropdownId={dropdownId}
           dropdownHotkeyScope={{ scope: SelectHotkeyScope.Select }}
           disableBlur
-          usePortal
         />
       </div>
       {hasSubMenu && (
