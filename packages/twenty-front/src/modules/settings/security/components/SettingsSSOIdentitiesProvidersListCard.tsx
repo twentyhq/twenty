@@ -14,7 +14,7 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { IconKey } from 'twenty-ui';
 import { useListSsoIdentityProvidersByWorkspaceIdQuery } from '~/generated/graphql';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 const StyledLink = styled(Link, {

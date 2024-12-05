@@ -16,7 +16,7 @@ import {
 import { AppPath } from '@/types/AppPath';
 import { useAuth } from '../../hooks/useAuth';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
-import { SignInUpMode } from '@/auth/types/signInUpMode.type';
+import { SignInUpMode } from '@/auth/types/signInUpMode';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueSnackBar } = useSnackBar();

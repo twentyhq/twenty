@@ -13,16 +13,14 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconChevronDown, MenuItemSelectAvatar } from 'twenty-ui';
+import {
+  IconChevronDown,
+  MenuItemSelectAvatar,
+  UndecoratedLink,
+} from 'twenty-ui';
 import { getImageAbsoluteURI } from 'twenty-shared';
-import { Link } from 'react-router-dom';
-import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  width: 100%;
-`;
 
 const StyledLogo = styled.div<{ logo: string }>`
   background: url(${({ logo }) => logo});
@@ -80,7 +78,7 @@ export const MultiWorkspaceDropdownButton = ({
     useState(false);
 
   const { switchWorkspace } = useWorkspaceSwitching();
-  const { buildWorkspaceUrl } = useUrlManager();
+  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
   const { closeDropdown } = useDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
 
@@ -126,9 +124,13 @@ export const MultiWorkspaceDropdownButton = ({
       dropdownComponents={
         <DropdownMenuItemsContainer>
           {workspaces.map((workspace) => (
-            <StyledLink
+            <UndecoratedLink
               key={workspace.id}
               to={buildWorkspaceUrl(workspace.subdomain)}
+              onClick={(event) => {
+                event?.preventDefault();
+                handleChange(workspace.id);
+              }}
             >
               <MenuItemSelectAvatar
                 text={workspace.displayName ?? ''}
@@ -143,12 +145,8 @@ export const MultiWorkspaceDropdownButton = ({
                   />
                 }
                 selected={currentWorkspace?.id === workspace.id}
-                onClick={(event) => {
-                  event?.preventDefault();
-                  handleChange(workspace.id);
-                }}
               />
-            </StyledLink>
+            </UndecoratedLink>
           ))}
         </DropdownMenuItemsContainer>
       }

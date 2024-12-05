@@ -15,9 +15,9 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useNavigate } from 'react-router-dom';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
-import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
-import { urlManagerState } from '@/url-manager/states/url-manager.state';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isDefined } from '~/utils/isDefined';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 
 const validationSchema = z
   .object({
@@ -39,17 +39,17 @@ const StyledDomain = styled.h2`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-left: 8px;
+  margin-left: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsDomain = () => {
   const navigate = useNavigate();
 
-  const urlManager = useRecoilValue(urlManagerState);
+  const domainConfiguration = useRecoilValue(domainConfigurationState);
 
   const { enqueueSnackBar } = useSnackBar();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
-  const { buildWorkspaceUrl } = useUrlManager();
+  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -142,8 +142,8 @@ export const SettingsDomain = () => {
                   />
                 )}
               />
-              {isDefined(urlManager) && isDefined(urlManager.frontDomain) && (
-                <StyledDomain>.{urlManager.frontDomain}</StyledDomain>
+              {isDefined(domainConfiguration.frontDomain) && (
+                <StyledDomain>.{domainConfiguration.frontDomain}</StyledDomain>
               )}
             </StyledDomainFromWrapper>
           )}

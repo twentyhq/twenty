@@ -4,7 +4,6 @@ import {
   snapshot_UNSTABLE,
   useGotoRecoilSnapshot,
   useRecoilCallback,
-  useRecoilValue,
   useSetRecoilState,
 } from 'recoil';
 import { iconsState } from 'twenty-ui';
@@ -42,18 +41,15 @@ import { getDateFormatFromWorkspaceDateFormat } from '@/localization/utils/getDa
 import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTimeFormatFromWorkspaceTimeFormat';
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
-import { lastAuthenticateWorkspaceState } from '@/auth/states/lastAuthenticateWorkspaceState';
 
-import { urlManagerState } from '@/url-manager/states/url-manager.state';
-import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
+import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
+import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setCurrentUser = useSetRecoilState(currentUserState);
-  const urlManager = useRecoilValue(urlManagerState);
-  const setLastAuthenticateWorkspaceState = useSetRecoilState(
-    lastAuthenticateWorkspaceState,
-  );
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
   );
@@ -68,7 +64,12 @@ export const useAuth = () => {
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
   const [verify] = useVerifyMutation();
-  const { isTwentyWorkspaceSubdomain, getWorkspaceSubdomain } = useUrlManager();
+  const { isOnAWorkspaceSubdomain } =
+    useIsCurrentLocationOnAWorkspaceSubdomain();
+  const { workspaceSubdomain } = useReadWorkspaceSubdomainFromCurrentLocation();
+
+  const { setLastAuthenticateWorkspaceDomain } =
+    useLastAuthenticatedWorkspaceDomain();
   const [checkUserExistsQuery, { data: checkUserExistsData }] =
     useCheckUserExistsLazyQuery();
 
@@ -101,6 +102,9 @@ export const useAuth = () => {
         const isCurrentUserLoaded = snapshot
           .getLoadable(isCurrentUserLoadedState)
           .getValue();
+        const isMultiWorkspaceEnabled = snapshot
+          .getLoadable(isMultiWorkspaceEnabledState)
+          .getValue();
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
           set(authProvidersState, authProvidersValue);
@@ -114,6 +118,7 @@ export const useAuth = () => {
           set(captchaProviderState, captchaProvider);
           set(clientConfigApiStatusState, clientConfigApiStatus);
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
+          set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
           return undefined;
         });
         goToRecoilSnapshot(initialSnapshot);
@@ -212,13 +217,11 @@ export const useAuth = () => {
       const workspace = user.defaultWorkspace ?? null;
 
       setCurrentWorkspace(workspace);
-      if (isDefined(workspace) && isTwentyWorkspaceSubdomain) {
-        setLastAuthenticateWorkspaceState({
-          id: workspace.id,
+
+      if (isDefined(workspace) && isOnAWorkspaceSubdomain) {
+        setLastAuthenticateWorkspaceDomain({
+          workspaceId: workspace.id,
           subdomain: workspace.subdomain,
-          cookieAttributes: {
-            domain: `.${urlManager.frontDomain}`,
-          },
         });
       }
 
@@ -245,12 +248,11 @@ export const useAuth = () => {
       setTokenPair,
       setCurrentUser,
       setCurrentWorkspace,
-      isTwentyWorkspaceSubdomain,
+      isOnAWorkspaceSubdomain,
       setCurrentWorkspaceMembers,
       setCurrentWorkspaceMember,
       setDateTimeFormat,
-      setLastAuthenticateWorkspaceState,
-      urlManager.frontDomain,
+      setLastAuthenticateWorkspaceDomain,
       setWorkspaces,
     ],
   );
@@ -340,15 +342,13 @@ export const useAuth = () => {
           params.workspacePersonalInviteToken,
         );
       }
-      const subdomain = getWorkspaceSubdomain;
-
-      if (isDefined(subdomain)) {
-        url.searchParams.set('workspaceSubdomain', subdomain);
+      if (isDefined(workspaceSubdomain)) {
+        url.searchParams.set('workspaceSubdomain', workspaceSubdomain);
       }
 
       return url.toString();
     },
-    [getWorkspaceSubdomain],
+    [workspaceSubdomain],
   );
 
   const handleGoogleLogin = useCallback(
