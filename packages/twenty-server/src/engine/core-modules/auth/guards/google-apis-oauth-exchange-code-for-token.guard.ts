@@ -1,13 +1,13 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { GoogleAPIsOauthExchangeCodeForTokenStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-exchange-code-for-token.auth.strategy';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
-import {
-  EnvironmentException,
-  EnvironmentExceptionCode,
-} from 'src/engine/core-modules/environment/environment.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -41,9 +41,9 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
       !this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED') &&
       !this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')
     ) {
-      throw new EnvironmentException(
+      throw new AuthException(
         'Google apis auth is not enabled',
-        EnvironmentExceptionCode.ENVIRONMENT_VARIABLES_NOT_FOUND,
+        AuthExceptionCode.GOOGLE_API_AUTH_DISABLED,
       );
     }
 

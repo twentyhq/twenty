@@ -11,7 +11,7 @@ import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
 type RecordBoardColumnHeaderAggregateDropdownProps = {
-  aggregateValue: string | number;
+  aggregateValue?: string | number;
   aggregateLabel?: string;
   objectMetadataItem: ObjectMetadataItem;
   dropdownId: string;

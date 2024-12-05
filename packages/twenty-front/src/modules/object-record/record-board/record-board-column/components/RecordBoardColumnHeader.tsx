@@ -6,7 +6,7 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnHeaderAggregateDropdown } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnHeaderAggregateDropdown';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { useAggregateManyRecordsForRecordBoardColumn } from '@/object-record/record-board/record-board-column/hooks/useAggregateManyRecordsForRecordBoardColumn';
+import { useAggregateRecordsForRecordBoardColumn } from '@/object-record/record-board/record-board-column/hooks/useAggregateRecordsForRecordBoardColumn';
 import { useColumnNewCardActions } from '@/object-record/record-board/record-board-column/hooks/useColumnNewCardActions';
 import { useIsOpportunitiesCompanyFieldDisabled } from '@/object-record/record-board/record-board-column/hooks/useIsOpportunitiesCompanyFieldDisabled';
 import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
@@ -96,7 +96,7 @@ export const RecordBoardColumnHeader = () => {
   };
 
   const { aggregateValue, aggregateLabel } =
-    useAggregateManyRecordsForRecordBoardColumn();
+    useAggregateRecordsForRecordBoardColumn();
 
   const { handleNewButtonClick } = useColumnNewCardActions(
     columnDefinition.id ?? '',

@@ -17,4 +17,11 @@ export class UpdateWorkflowVersionStepInput {
     nullable: false,
   })
   step: WorkflowAction;
+
+  @Field(() => Boolean, {
+    description: 'Boolean to check if we need to update stepOutput',
+    nullable: true,
+    defaultValue: true,
+  })
+  shouldUpdateStepOutput: boolean;
 }

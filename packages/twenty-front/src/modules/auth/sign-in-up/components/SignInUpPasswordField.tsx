@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { StyledText } from 'twenty-ui';
 import { useTheme } from '@emotion/react';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { SignInUpMode } from '@/auth/types/signInUpMode.type';
+import { SignInUpMode } from '@/auth/types/signInUpMode';
 
 const StyledFullWidthMotionDiv = styled(motion.div)`
   width: 100%;

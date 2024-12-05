@@ -6,25 +6,25 @@ import { join } from 'path';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
-import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import {
-  WorkflowAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { isDefined } from 'src/utils/is-defined';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { WorkflowBuilderWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-builder.workspace-service';
-import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { WorkflowRecordCRUDType } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
-import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
 import { INDEX_FILE_NAME } from 'src/engine/core-modules/serverless/drivers/constants/index-file-name';
+import { WorkflowActionDTO } from 'src/engine/core-modules/workflow/dtos/workflow-step.dto';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
+import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { WorkflowBuilderWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-builder.workspace-service';
+import { WorkflowRecordCRUDType } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
+import {
+  WorkflowAction,
+  WorkflowActionType,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { isDefined } from 'src/utils/is-defined';
 
 const TRIGGER_STEP_ID = 'trigger';
 
@@ -245,10 +245,12 @@ export class WorkflowVersionStepWorkspaceService {
     workspaceId,
     workflowVersionId,
     step,
+    shouldUpdateStepOutput,
   }: {
     workspaceId: string;
     workflowVersionId: string;
     step: WorkflowAction;
+    shouldUpdateStepOutput: boolean;
   }): Promise<WorkflowAction> {
     const workflowVersionRepository =
       await this.twentyORMManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -275,10 +277,12 @@ export class WorkflowVersionStepWorkspaceService {
       );
     }
 
-    const enrichedNewStep = await this.enrichOutputSchema({
-      step,
-      workspaceId,
-    });
+    const enrichedNewStep = shouldUpdateStepOutput
+      ? await this.enrichOutputSchema({
+          step,
+          workspaceId,
+        })
+      : step;
 
     const updatedSteps = workflowVersion.steps.map((existingStep) => {
       if (existingStep.id === step.id) {

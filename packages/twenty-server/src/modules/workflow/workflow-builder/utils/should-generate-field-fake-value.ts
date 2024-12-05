@@ -5,7 +5,7 @@ import {
 
 export const shouldGenerateFieldFakeValue = (field: FieldMetadataEntity) => {
   return (
-    !field.isSystem &&
+    (!field.isSystem || field.name === 'id') &&
     field.isActive &&
     field.type !== FieldMetadataType.RELATION
   );

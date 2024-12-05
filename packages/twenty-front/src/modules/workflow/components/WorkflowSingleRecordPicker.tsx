@@ -12,7 +12,6 @@ import { SingleRecordSelect } from '@/object-record/relation-picker/components/S
 import { useRecordPicker } from '@/object-record/relation-picker/hooks/useRecordPicker';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { RecordForSelect } from '@/object-record/relation-picker/types/RecordForSelect';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -22,7 +21,7 @@ import SearchVariablesDropdown from '@/workflow/search-variables/components/Sear
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { isValidUuid } from '~/utils/isValidUuid';
 
 const StyledFormSelectContainer = styled.div`
@@ -62,6 +61,16 @@ const StyledSearchVariablesDropdownContainer = styled.div`
 export type RecordId = string;
 export type Variable = string;
 
+type WorkflowSingleRecordPickerValue =
+  | {
+      type: 'static';
+      value: RecordId;
+    }
+  | {
+      type: 'variable';
+      value: Variable;
+    };
+
 export type WorkflowSingleRecordPickerProps = {
   label?: string;
   defaultValue: RecordId | Variable;
@@ -75,16 +84,7 @@ export const WorkflowSingleRecordPicker = ({
   objectNameSingular,
   onChange,
 }: WorkflowSingleRecordPickerProps) => {
-  const [draftValue, setDraftValue] = useState<
-    | {
-        type: 'static';
-        value: RecordId;
-      }
-    | {
-        type: 'variable';
-        value: Variable;
-      }
-  >(
+  const draftValue: WorkflowSingleRecordPickerValue =
     isStandaloneVariableString(defaultValue)
       ? {
           type: 'variable',
@@ -93,10 +93,9 @@ export const WorkflowSingleRecordPicker = ({
       : {
           type: 'static',
           value: defaultValue || '',
-        },
-  );
+        };
 
-  const { record } = useFindOneRecord({
+  const { record: selectedRecord } = useFindOneRecord({
     objectRecordId:
       isDefined(defaultValue) && !isStandaloneVariableString(defaultValue)
         ? defaultValue
@@ -105,10 +104,6 @@ export const WorkflowSingleRecordPicker = ({
     withSoftDeleted: true,
     skip: !isValidUuid(defaultValue),
   });
-
-  const [selectedRecord, setSelectedRecord] = useState<
-    ObjectRecord | undefined
-  >(record);
 
   const dropdownId = `workflow-record-picker-${objectNameSingular}`;
   const variablesDropdownId = `workflow-record-picker-${objectNameSingular}-variables`;
@@ -126,32 +121,16 @@ export const WorkflowSingleRecordPicker = ({
   const handleRecordSelected = (
     selectedEntity: RecordForSelect | null | undefined,
   ) => {
-    setDraftValue({
-      type: 'static',
-      value: selectedEntity?.record?.id ?? '',
-    });
-    setSelectedRecord(selectedEntity?.record);
-    closeDropdown();
-
     onChange?.(selectedEntity?.record?.id ?? '');
+    closeDropdown();
   };
 
   const handleVariableTagInsert = (variable: string) => {
-    setDraftValue({
-      type: 'variable',
-      value: variable,
-    });
-    setSelectedRecord(undefined);
-    closeDropdown();
-
     onChange?.(variable);
+    closeDropdown();
   };
 
   const handleUnlinkVariable = () => {
-    setDraftValue({
-      type: 'static',
-      value: '',
-    });
     closeDropdown();
 
     onChange('');
@@ -211,6 +190,7 @@ export const WorkflowSingleRecordPicker = ({
             inputId={variablesDropdownId}
             onVariableSelect={handleVariableTagInsert}
             disabled={false}
+            objectNameSingularToSelect={objectNameSingular}
           />
         </StyledSearchVariablesDropdownContainer>
       </StyledFormFieldInputRowContainer>
