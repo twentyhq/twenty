@@ -36,7 +36,7 @@ export class BillingSubscriptionItem {
   @Column({ nullable: false })
   billingSubscriptionId: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   stripeSubscriptionId: string;
 
   @Column({ nullable: false, type: 'jsonb', default: {} })

@@ -43,7 +43,7 @@ export class AddNewBillingStripeTables1733397937967
       `CREATE TABLE "core"."billingPrice" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "deletedAt" TIMESTAMP WITH TIME ZONE, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "stripePriceId" character varying NOT NULL, "active" boolean NOT NULL, "stripeProductId" character varying NOT NULL, "currency" character varying NOT NULL, "nickname" text, "taxBehavior" "core"."billingPrice_taxbehavior_enum" NOT NULL, "type" "core"."billingPrice_type_enum" NOT NULL, "billingScheme" "core"."billingPrice_billingscheme_enum" NOT NULL, "currencyOptions" jsonb, "tiers" jsonb, "recurring" jsonb, "transformQuantity" jsonb, "tiersMode" "core"."billingPrice_tiersmode_enum", "unitAmountDecimal" text, "unitAmount" numeric, "stripeMeterId" character varying, "usageType" "core"."billingPrice_usagetype_enum" NOT NULL, "interval" "core"."billingPrice_interval_enum", CONSTRAINT "UQ_f66d20a329f5f4b9d12afeae7d0" UNIQUE ("stripePriceId"), CONSTRAINT "PK_13927aef8d4e68e176a61c33d89" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscriptionItem" ADD "stripeSubscriptionId" character varying NOT NULL`,
+      `ALTER TABLE "core"."billingSubscriptionItem" ADD "stripeSubscriptionId" character varying`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."billingSubscriptionItem" ADD "metadata" jsonb NOT NULL DEFAULT '{}'`,
