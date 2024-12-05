@@ -5,9 +5,9 @@ import { useRecoilValue } from 'recoil';
 export const useBuildWorkspaceUrl = () => {
   const domainConfiguration = useRecoilValue(domainConfigurationState);
 
-  return (
+  const buildWorkspaceUrl = (
     subdomain?: string,
-    onPage?: string,
+    pathname?: string,
     searchParams?: Record<string, string>,
   ) => {
     const url = new URL(window.location.href);
@@ -16,8 +16,8 @@ export const useBuildWorkspaceUrl = () => {
       url.hostname = `${subdomain}.${domainConfiguration.frontDomain}`;
     }
 
-    if (isDefined(onPage)) {
-      url.pathname = onPage;
+    if (isDefined(pathname)) {
+      url.pathname = pathname;
     }
 
     if (isDefined(searchParams)) {
@@ -26,5 +26,9 @@ export const useBuildWorkspaceUrl = () => {
       );
     }
     return url.toString();
+  };
+
+  return {
+    buildWorkspaceUrl,
   };
 };

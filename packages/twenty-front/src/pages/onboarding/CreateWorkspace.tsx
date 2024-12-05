@@ -24,7 +24,7 @@ import {
 import { isDefined } from '~/utils/isDefined';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { AppPath } from '@/types/AppPath';
-import { useDomainBackToWorkspace } from '@/domain-manager/hooks/useDomainBackToWorkspace';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -51,7 +51,7 @@ export const CreateWorkspace = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-  const backToWorkspace = useDomainBackToWorkspace();
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   const [activateWorkspace] = useActivateWorkspaceMutation();
   const apolloMetadataClient = useApolloMetadataClient();
@@ -84,7 +84,7 @@ export const CreateWorkspace = () => {
         setIsCurrentUserLoaded(false);
 
         if (isDefined(result.data) && isMultiWorkspaceEnabled) {
-          return backToWorkspace(
+          return redirectToWorkspaceDomain(
             result.data.activateWorkspace.workspace.subdomain,
             AppPath.Verify,
             {
@@ -111,7 +111,7 @@ export const CreateWorkspace = () => {
       setIsCurrentUserLoaded,
       isMultiWorkspaceEnabled,
       apolloMetadataClient,
-      backToWorkspace,
+      redirectToWorkspaceDomain,
       enqueueSnackBar,
     ],
   );

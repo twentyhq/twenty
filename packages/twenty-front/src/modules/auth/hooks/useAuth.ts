@@ -42,9 +42,10 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
-import { useWorkspaceSubdomain } from '@/domain-manager/hooks/useWorkspaceSubdomain';
-import { useLastAuthenticateWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticateWorkspaceDomain';
+import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
+import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -63,9 +64,12 @@ export const useAuth = () => {
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
   const [verify] = useVerifyMutation();
-  const { isWorkspaceSubdomain, workspaceSubdomain } = useWorkspaceSubdomain();
+  const { isOnAWorkspaceSubdomain } =
+    useIsCurrentLocationOnAWorkspaceSubdomain();
+  const { workspaceSubdomain } = useReadWorkspaceSubdomainFromCurrentLocation();
+
   const { setLastAuthenticateWorkspaceDomain } =
-    useLastAuthenticateWorkspaceDomain();
+    useLastAuthenticatedWorkspaceDomain();
   const [checkUserExistsQuery, { data: checkUserExistsData }] =
     useCheckUserExistsLazyQuery();
 
@@ -214,9 +218,9 @@ export const useAuth = () => {
 
       setCurrentWorkspace(workspace);
 
-      if (isDefined(workspace) && isWorkspaceSubdomain()) {
+      if (isDefined(workspace) && isOnAWorkspaceSubdomain) {
         setLastAuthenticateWorkspaceDomain({
-          id: workspace.id,
+          workspaceId: workspace.id,
           subdomain: workspace.subdomain,
         });
       }
@@ -244,7 +248,7 @@ export const useAuth = () => {
       setTokenPair,
       setCurrentUser,
       setCurrentWorkspace,
-      isWorkspaceSubdomain,
+      isOnAWorkspaceSubdomain,
       setCurrentWorkspaceMembers,
       setCurrentWorkspaceMember,
       setDateTimeFormat,
@@ -338,10 +342,8 @@ export const useAuth = () => {
           params.workspacePersonalInviteToken,
         );
       }
-      const subdomain = workspaceSubdomain();
-
-      if (isDefined(subdomain)) {
-        url.searchParams.set('workspaceSubdomain', subdomain);
+      if (isDefined(workspaceSubdomain)) {
+        url.searchParams.set('workspaceSubdomain', workspaceSubdomain);
       }
 
       return url.toString();

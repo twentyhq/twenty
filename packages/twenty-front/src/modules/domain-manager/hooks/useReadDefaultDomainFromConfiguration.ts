@@ -2,7 +2,7 @@ import { domainConfigurationState } from '@/domain-manager/states/domainConfigur
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useRecoilValue } from 'recoil';
 
-export const useDefaultDomain = () => {
+export const useReadDefaultDomainFromConfiguration = () => {
   const domainConfiguration = useRecoilValue(domainConfigurationState);
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
@@ -10,12 +10,7 @@ export const useDefaultDomain = () => {
     ? `${domainConfiguration.defaultSubdomain}.${domainConfiguration.frontDomain}`
     : domainConfiguration.frontDomain;
 
-  const isDefaultDomain = isMultiWorkspaceEnabled
-    ? window.location.hostname === defaultDomain
-    : true;
-
   return {
     defaultDomain,
-    isDefaultDomain,
   };
 };

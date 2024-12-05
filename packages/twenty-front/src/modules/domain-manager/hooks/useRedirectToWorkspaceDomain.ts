@@ -2,16 +2,20 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useRecoilValue } from 'recoil';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 
-export const useDomainBackToWorkspace = () => {
+export const useRedirectToWorkspaceDomain = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-  const buildWorkspaceUrl = useBuildWorkspaceUrl();
+  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
-  return (
+  const redirectToWorkspaceDomain = (
     subdomain: string,
-    onPage?: string,
+    pathname?: string,
     searchParams?: Record<string, string>,
   ) => {
     if (!isMultiWorkspaceEnabled) return;
-    window.location.href = buildWorkspaceUrl(subdomain, onPage, searchParams);
+    window.location.href = buildWorkspaceUrl(subdomain, pathname, searchParams);
+  };
+
+  return {
+    redirectToWorkspaceDomain,
   };
 };

@@ -49,7 +49,7 @@ export const SettingsDomain = () => {
 
   const { enqueueSnackBar } = useSnackBar();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
-  const buildWorkspaceUrl = useBuildWorkspaceUrl();
+  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,

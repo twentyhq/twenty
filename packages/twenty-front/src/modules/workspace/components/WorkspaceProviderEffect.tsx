@@ -4,47 +4,49 @@ import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState
 import { useEffect } from 'react';
 import { isDefined } from '~/utils/isDefined';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useDomainBackToWorkspace } from '@/domain-manager/hooks/useDomainBackToWorkspace';
-import { useDefaultDomain } from '@/domain-manager/hooks/useDefaultDomain';
-import { useWorkspaceSubdomain } from '@/domain-manager/hooks/useWorkspaceSubdomain';
-import { useLastAuthenticateWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticateWorkspaceDomain';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { lastAuthenticatedWorkspaceDomainState } from '@/domain-manager/states/lastAuthenticatedWorkspaceDomainState';
+import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
 
+import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 export const WorkspaceProviderEffect = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
-  const { lastAuthenticateWorkspaceDomain } =
-    useLastAuthenticateWorkspaceDomain();
+  const lastAuthenticatedWorkspaceDomain = useRecoilValue(
+    lastAuthenticatedWorkspaceDomainState,
+  );
 
-  const backToWorkspace = useDomainBackToWorkspace();
-  const { isDefaultDomain } = useDefaultDomain();
-  const { workspaceSubdomain } = useWorkspaceSubdomain();
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
+  const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
+
+  const { workspaceSubdomain } = useReadWorkspaceSubdomainFromCurrentLocation();
 
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   useEffect(() => {
     if (isMultiWorkspaceEnabled && isDefined(workspacePublicData?.subdomain)) {
-      backToWorkspace(workspacePublicData.subdomain);
+      redirectToWorkspaceDomain(workspacePublicData.subdomain);
     }
   }, [
     workspaceSubdomain,
     isMultiWorkspaceEnabled,
-    backToWorkspace,
+    redirectToWorkspaceDomain,
     workspacePublicData,
   ]);
 
   useEffect(() => {
     if (
       isMultiWorkspaceEnabled &&
-      isDefined(lastAuthenticateWorkspaceDomain?.subdomain) &&
+      isDefined(lastAuthenticatedWorkspaceDomain?.subdomain) &&
       isDefaultDomain
     ) {
-      backToWorkspace(lastAuthenticateWorkspaceDomain.subdomain);
+      redirectToWorkspaceDomain(lastAuthenticatedWorkspaceDomain.subdomain);
     }
   }, [
     isMultiWorkspaceEnabled,
     isDefaultDomain,
-    lastAuthenticateWorkspaceDomain,
-    backToWorkspace,
+    lastAuthenticatedWorkspaceDomain,
+    redirectToWorkspaceDomain,
   ]);
 
   useEffect(() => {

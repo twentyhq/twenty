@@ -31,7 +31,7 @@ import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { SignInUpMode } from '@/auth/types/signInUpMode.type';
-import { useDomainBackToWorkspace } from '@/domain-manager/hooks/useDomainBackToWorkspace';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -53,7 +53,7 @@ export const SignInUpGlobalScopeForm = () => {
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
   const { checkUserExists } = useAuth();
   const { readCaptchaToken } = useReadCaptchaToken();
-  const backToWorkspace = useDomainBackToWorkspace();
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
 
@@ -96,7 +96,7 @@ export const SignInUpGlobalScopeForm = () => {
             isDefined(data?.checkUserExists.availableWorkspaces) &&
             data.checkUserExists.availableWorkspaces.length >= 1
           ) {
-            return backToWorkspace(
+            return redirectToWorkspaceDomain(
               data?.checkUserExists.availableWorkspaces[0].subdomain,
               pathname,
               {

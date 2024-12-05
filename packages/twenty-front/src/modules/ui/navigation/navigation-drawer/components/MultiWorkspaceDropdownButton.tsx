@@ -77,7 +77,7 @@ export const MultiWorkspaceDropdownButton = ({
     useState(false);
 
   const { switchWorkspace } = useWorkspaceSwitching();
-  const buildWorkspaceUrl = useBuildWorkspaceUrl();
+  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
   const { closeDropdown } = useDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
 
