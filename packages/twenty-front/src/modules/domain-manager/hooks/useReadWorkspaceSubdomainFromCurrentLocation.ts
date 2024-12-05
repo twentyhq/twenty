@@ -7,6 +7,7 @@ export const useReadWorkspaceSubdomainFromCurrentLocation = () => {
   const domainConfiguration = useRecoilValue(domainConfigurationState);
   const { isOnAWorkspaceSubdomain } =
     useIsCurrentLocationOnAWorkspaceSubdomain();
+
   if (!isDefined(domainConfiguration.frontDomain)) {
     throw new Error('frontDomain is not defined');
   }

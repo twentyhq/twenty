@@ -116,24 +116,20 @@ export const SignInUpGlobalScopeForm = () => {
   return (
     <>
       <StyledContentContainer>
-        <>
-          <MainButton
-            Icon={() => <IconGoogle size={theme.icon.size.lg} />}
-            title="Continue with Google"
-            onClick={signInWithGoogle}
-            fullWidth
-          />
-          <HorizontalSeparator visible={false} />
-        </>
-        <>
-          <MainButton
-            Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
-            title="Continue with Microsoft"
-            onClick={signInWithMicrosoft}
-            fullWidth
-          />
-          <HorizontalSeparator visible={false} />
-        </>
+        <MainButton
+          Icon={() => <IconGoogle size={theme.icon.size.lg} />}
+          title="Continue with Google"
+          onClick={signInWithGoogle}
+          fullWidth
+        />
+        <HorizontalSeparator visible={false} />
+        <MainButton
+          Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
+          title="Continue with Microsoft"
+          onClick={signInWithMicrosoft}
+          fullWidth
+        />
+        <HorizontalSeparator visible={false} />
         <HorizontalSeparator visible />
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>

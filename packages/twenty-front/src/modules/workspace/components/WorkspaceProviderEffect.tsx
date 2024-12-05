@@ -24,7 +24,11 @@ export const WorkspaceProviderEffect = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   useEffect(() => {
-    if (isMultiWorkspaceEnabled && isDefined(workspacePublicData?.subdomain)) {
+    if (
+      isMultiWorkspaceEnabled &&
+      isDefined(workspacePublicData?.subdomain) &&
+      workspacePublicData.subdomain !== workspaceSubdomain
+    ) {
       redirectToWorkspaceDomain(workspacePublicData.subdomain);
     }
   }, [
