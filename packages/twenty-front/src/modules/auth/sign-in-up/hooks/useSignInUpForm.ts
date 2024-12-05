@@ -58,8 +58,10 @@ export const useSignInUpForm = () => {
   useEffect(() => {
     if (isDefined(prefilledEmail)) {
       form.setValue('email', prefilledEmail);
-    } else if (isDeveloperDefaultSignInPrefilled === true) {
-      form.setValue('email', 'tim@apple.dev');
+    }
+
+    if (isDeveloperDefaultSignInPrefilled === true) {
+      form.setValue('email', prefilledEmail ?? 'tim@apple.dev');
       form.setValue('password', 'Applecar2025');
     }
   }, [
@@ -68,5 +70,5 @@ export const useSignInUpForm = () => {
     prefilledEmail,
     location.search,
   ]);
-  return { form, validationSchema };
+  return { form: form, validationSchema };
 };

@@ -16,6 +16,7 @@ import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/componen
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useMemo } from 'react';
 import { isDefined } from '~/utils/isDefined';
+import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeFormEffect';
 import { useGetPublicWorkspaceDataBySubdomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataBySubdomain';
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
@@ -49,7 +50,12 @@ export const SignInUp = () => {
       isDefined(workspacePublicData) &&
       (!isMultiWorkspaceEnabled || isOnAWorkspaceSubdomain)
     ) {
-      return <SignInUpWorkspaceScopeForm />;
+      return (
+        <>
+          <SignInUpWorkspaceScopeFormEffect />
+          <SignInUpWorkspaceScopeForm />
+        </>
+      );
     }
 
     return <SignInUpGlobalScopeForm />;

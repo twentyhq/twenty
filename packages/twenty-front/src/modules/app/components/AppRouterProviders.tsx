@@ -22,6 +22,7 @@ import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProvide
 import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 
 export const AppRouterProviders = () => {
   const { pathname } = useLocation();
@@ -49,6 +50,7 @@ export const AppRouterProviders = () => {
                               <PromiseRejectionEffect />
                               <GotoHotkeysEffectsProvider />
                               <PageTitle title={pageTitle} />
+                              <PageFavicon />
                               <Outlet />
                             </StrictMode>
                           </DialogManager>
