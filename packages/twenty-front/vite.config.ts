@@ -19,7 +19,6 @@ export default defineConfig(({ command, mode }) => {
     VITE_BUILD_SOURCEMAP,
     VITE_DISABLE_TYPESCRIPT_CHECKER,
     VITE_DISABLE_ESLINT_CHECKER,
-    VITE_ENABLE_SSL,
     VITE_HOST,
     SSL_CERT_PATH,
     SSL_KEY_PATH,
