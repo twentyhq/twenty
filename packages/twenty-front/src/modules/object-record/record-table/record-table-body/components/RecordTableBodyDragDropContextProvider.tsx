@@ -5,7 +5,7 @@ import { useSetRecoilState } from 'recoil';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useComputeNewRowPosition } from '@/object-record/record-table/hooks/useComputeNewRowPosition';
+import { useComputeNewRecordPosition } from '@/object-record/record-table/hooks/useComputeNewRecordPosition';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -35,7 +35,7 @@ export const RecordTableBodyDragDropContextProvider = ({
     isRemoveSortingModalOpenState,
   );
 
-  const computeNewRowPosition = useComputeNewRowPosition();
+  const computeNewRowPosition = useComputeNewRecordPosition();
 
   const handleDragEnd = (result: DropResult) => {
     if (viewSorts.length > 0) {
@@ -50,7 +50,7 @@ export const RecordTableBodyDragDropContextProvider = ({
     }
 
     updateOneRow({
-      idToUpdate: computeResult.draggedRecordId,
+      idToUpdate: result.draggableId,
       updateOneRecordInput: {
         position: computeResult.newPosition,
       },

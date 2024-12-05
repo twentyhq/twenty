@@ -4,9 +4,10 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useComputeNewRowPosition } from '@/object-record/record-table/hooks/useComputeNewRowPosition';
+import { useComputeNewRecordPosition } from '@/object-record/record-table/hooks/useComputeNewRecordPosition';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -38,33 +39,32 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
     isRemoveSortingModalOpenState,
   );
 
-  const computeNewRowPosition = useComputeNewRowPosition();
+  const computeNewRowPosition = useComputeNewRecordPosition();
+
+  const recordGroupRecordIdsState = useRecoilComponentCallbackStateV2(
+    recordIndexRecordIdsByGroupComponentFamilyState,
+  );
 
   const handleDragEnd = useRecoilCallback(
     ({ snapshot }) =>
       (result: DropResult) => {
-        const tableAllRecordIds = getSnapshotValue(
-          snapshot,
-          recordIndexAllRecordIdsSelector,
-        );
+        const destinationRecordGroupId = result.destination?.droppableId;
 
-        const recordGroupId = result.destination?.droppableId;
-
-        if (!isDefined(recordGroupId)) {
+        if (!isDefined(destinationRecordGroupId)) {
           throw new Error('Record group id is not defined');
         }
 
-        const recordGroup = getSnapshotValue(
+        const destinationRecordGroup = getSnapshotValue(
           snapshot,
-          recordGroupDefinitionFamilyState(recordGroupId),
+          recordGroupDefinitionFamilyState(destinationRecordGroupId),
         );
 
-        if (!isDefined(recordGroup)) {
+        if (!isDefined(destinationRecordGroup)) {
           throw new Error('Record group is not defined');
         }
 
         const fieldMetadata = objectMetadataItem.fields.find(
-          (field) => field.id === recordGroup.fieldMetadataId,
+          (field) => field.id === destinationRecordGroup.fieldMetadataId,
         );
 
         if (!isDefined(fieldMetadata)) {
@@ -76,24 +76,32 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
           return;
         }
 
-        const computeResult = computeNewRowPosition(result, tableAllRecordIds);
+        const desinationRecordGroupRecordIds = getSnapshotValue(
+          snapshot,
+          recordGroupRecordIdsState(destinationRecordGroupId),
+        );
+
+        const computeResult = computeNewRowPosition(
+          result,
+          desinationRecordGroupRecordIds,
+        );
 
         if (!isDefined(computeResult)) {
           return;
         }
 
         updateOneRow({
-          idToUpdate: computeResult.draggedRecordId,
+          idToUpdate: result.draggableId,
           updateOneRecordInput: {
             position: computeResult.newPosition,
-            [fieldMetadata.name]: recordGroup.value,
+            [fieldMetadata.name]: destinationRecordGroup.value,
           },
         });
       },
     [
-      recordIndexAllRecordIdsSelector,
       objectMetadataItem.fields,
       viewSorts.length,
+      recordGroupRecordIdsState,
       computeNewRowPosition,
       updateOneRow,
       setIsRemoveSortingModalOpenState,
