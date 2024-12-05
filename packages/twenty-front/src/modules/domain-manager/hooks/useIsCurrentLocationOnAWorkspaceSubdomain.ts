@@ -11,8 +11,9 @@ export const useIsCurrentLocationOnAWorkspaceSubdomain = () => {
   const domainConfiguration = useRecoilValue(domainConfigurationState);
 
   if (
-    (isMultiWorkspaceEnabled && !isDefined(domainConfiguration.frontDomain)) ||
-    !isDefined(domainConfiguration.defaultSubdomain)
+    isMultiWorkspaceEnabled &&
+    (!isDefined(domainConfiguration.frontDomain) ||
+      !isDefined(domainConfiguration.defaultSubdomain))
   ) {
     throw new Error('frontDomain and defaultSubdomain are required');
   }
