@@ -18,24 +18,20 @@ import {
   hashPassword,
   PASSWORD_REGEX,
 } from 'src/engine/core-modules/auth/auth.util';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
-import { getImageBufferFromUrl } from 'src/utils/image';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import {
-  EnvironmentException,
-  EnvironmentExceptionCode,
-} from 'src/engine/core-modules/environment/environment.exception';
+import { getImageBufferFromUrl } from 'src/utils/image';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -299,9 +295,9 @@ export class SignInUpService {
 
       // let the creation of the first workspace
       if (workspacesCount > 0) {
-        throw new EnvironmentException(
+        throw new AuthException(
           'New workspace setup is disabled',
-          EnvironmentExceptionCode.ENVIRONMENT_VARIABLES_NOT_FOUND,
+          AuthExceptionCode.SIGNUP_DISABLED,
         );
       }
     }
