@@ -22,7 +22,7 @@ import { isDefined } from '~/utils/isDefined';
 
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
-import { useSetFocusedDropdownIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
+import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { getDropdownFocusIdForRecordField } from '@/ui/layout/dropdown/utils/getDropdownFocusIdForRecordField';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 import { useContext } from 'react';
@@ -71,8 +71,8 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
   const navigate = useNavigate();
 
-  const { setFocusedDropdownIdAndMemorizePrevious } =
-    useSetFocusedDropdownIdAndMemorizePrevious();
+  const { setActiveDropdownFocusIdAndMemorizePrevious: setFocusedDropdownIdAndMemorizePrevious } =
+    useSetActiveDropdownFocusIdAndMemorizePrevious();
 
   const openTableCell = useRecoilCallback(
     ({ snapshot, set }) =>

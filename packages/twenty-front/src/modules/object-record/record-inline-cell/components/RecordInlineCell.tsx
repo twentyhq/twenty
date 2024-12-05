@@ -70,17 +70,11 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   };
 
   const handleClickOutside: FieldInputEvent = (persistField) => {
-    // If not currently focused return
     const recordFieldDropdownId = getDropdownFocusIdForRecordField(
       recordId,
       fieldDefinition.fieldMetadataId,
       'inline-cell',
     );
-
-    console.log({
-      recordFieldDropdownId,
-      activeDropdownFocusId,
-    });
 
     if (recordFieldDropdownId !== activeDropdownFocusId) {
       return;

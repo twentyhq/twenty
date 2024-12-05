@@ -5,8 +5,8 @@ import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previo
 import { DEBUG_HOTKEY_SCOPE } from '@/ui/utilities/hotkey/hooks/useScopedHotkeyCallback';
 import { logDebug } from '~/utils/logDebug';
 
-export const useGoBackToPreviouslyFocusedDropdownId = () => {
-  const goBackToPreviouslyFocusedDropdownId = useRecoilCallback(
+export const useGoBackToPreviousDropdownFocusId = () => {
+  const goBackToPreviousDropdownFocusId = useRecoilCallback(
     ({ snapshot, set }) =>
       () => {
         const previouslyFocusedDropdownId = snapshot
@@ -27,6 +27,6 @@ export const useGoBackToPreviouslyFocusedDropdownId = () => {
   );
 
   return {
-    goBackToPreviouslyFocusedDropdownId,
+    goBackToPreviousDropdownFocusId,
   };
 };

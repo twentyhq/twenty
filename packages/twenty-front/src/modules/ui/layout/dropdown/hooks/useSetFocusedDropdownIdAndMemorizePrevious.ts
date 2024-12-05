@@ -6,8 +6,8 @@ import { logDebug } from '~/utils/logDebug';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { previousDropdownFocusIdState } from '@/ui/layout/dropdown/states/previousDropdownFocusIdState';
 
-export const useSetFocusedDropdownIdAndMemorizePrevious = () => {
-  const setFocusedDropdownIdAndMemorizePrevious = useRecoilCallback(
+export const useSetActiveDropdownFocusIdAndMemorizePrevious = () => {
+  const setActiveDropdownFocusIdAndMemorizePrevious = useRecoilCallback(
     ({ snapshot, set }) =>
       (dropdownId: string) => {
         const focusedDropdownId = snapshot
@@ -28,6 +28,6 @@ export const useSetFocusedDropdownIdAndMemorizePrevious = () => {
   );
 
   return {
-    setFocusedDropdownIdAndMemorizePrevious,
+    setActiveDropdownFocusIdAndMemorizePrevious,
   };
 };

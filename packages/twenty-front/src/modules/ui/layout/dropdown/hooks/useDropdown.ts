@@ -1,8 +1,8 @@
 import { useRecoilState } from 'recoil';
 
 import { useDropdownStates } from '@/ui/layout/dropdown/hooks/internal/useDropdownStates';
-import { useGoBackToPreviouslyFocusedDropdownId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviouslyFocusedDropdown';
-import { useSetFocusedDropdownIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
+import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
+import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
 import { useCallback } from 'react';
@@ -19,11 +19,11 @@ export const useDropdown = (dropdownId?: string) => {
     dropdownScopeId: getScopeIdOrUndefinedFromComponentId(dropdownId),
   });
 
-  const { setFocusedDropdownIdAndMemorizePrevious } =
-    useSetFocusedDropdownIdAndMemorizePrevious();
+  const { setActiveDropdownFocusIdAndMemorizePrevious: setFocusedDropdownIdAndMemorizePrevious } =
+    useSetActiveDropdownFocusIdAndMemorizePrevious();
 
-  const { goBackToPreviouslyFocusedDropdownId } =
-    useGoBackToPreviouslyFocusedDropdownId();
+  const { goBackToPreviousDropdownFocusId: goBackToPreviouslyFocusedDropdownId } =
+    useGoBackToPreviousDropdownFocusId();
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
