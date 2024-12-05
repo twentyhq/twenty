@@ -37,7 +37,7 @@ export const SettingsDataModelFieldPhonesForm = ({
     .sort((a, b) => a.countryName.localeCompare(b.countryName))
     .map((country) => ({
       label: `${country.countryName} (+${country.callingCode})`,
-      value: `${country.callingCode}`,
+      value: `+${country.callingCode}`,
     }));
   countries.unshift({ label: 'No country', value: '' });
   const defaultDefaultValue = {
