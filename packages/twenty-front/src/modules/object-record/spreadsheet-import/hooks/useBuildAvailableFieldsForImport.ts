@@ -143,6 +143,25 @@ export const useBuildAvailableFieldsForImport = () => {
             fieldMetadataItem.label + ' (ID)',
           ),
         });
+      } else if (fieldMetadataItem.type === FieldMetadataType.MultiSelect) {
+        availableFieldsForImport.push({
+          icon: getIcon(fieldMetadataItem.icon),
+          label: fieldMetadataItem.label,
+          key: fieldMetadataItem.name,
+          fieldType: {
+            type: 'multiSelect',
+            options:
+              fieldMetadataItem.options?.map((option) => ({
+                label: option.label,
+                value: option.value,
+                color: option.color,
+              })) || [],
+          },
+          fieldValidationDefinitions: getSpreadSheetFieldValidationDefinitions(
+            fieldMetadataItem.type,
+            fieldMetadataItem.label + ' (ID)',
+          ),
+        });
       } else if (fieldMetadataItem.type === FieldMetadataType.Boolean) {
         availableFieldsForImport.push({
           icon: getIcon(fieldMetadataItem.icon),
