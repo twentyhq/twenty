@@ -14,7 +14,12 @@ import {
 } from '@/action-menu/types/ActionMenuEntry';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
-import { IconCheckbox, IconHeart, IconTrash } from 'twenty-ui';
+import {
+  IconCheckbox,
+  IconHeart,
+  IconTrash,
+  getCanvasElementForDropdownTesting,
+} from 'twenty-ui';
 
 const deleteMock = jest.fn();
 const markAsDoneMock = jest.fn();
@@ -107,7 +112,9 @@ export const WithInteractions: Story = {
   args: {
     actionMenuId: 'story',
   },
-  play: async ({ canvasElement }) => {
+  play: async () => {
+    const canvasElement = getCanvasElementForDropdownTesting();
+
     const canvas = within(canvasElement);
 
     const deleteButton = await canvas.findByText('Delete');
