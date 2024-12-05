@@ -200,7 +200,7 @@ export const ObjectFilterDropdownFilterSelect = ({
           )}
         </DropdownMenuItemsContainer>
       </SelectableList>
-      {<AdvancedFilterButton />}
+      {shouldShowAdvancedFilterButton && <AdvancedFilterButton />}
     </>
   );
 };

@@ -26,7 +26,6 @@ export const useClickOutsideListener = (componentId: string) => {
     [
       getClickOutsideListenerIsActivatedState,
       getClickOutsideListenerMouseDownHappenedState,
-      componentId,
     ],
   );
 
