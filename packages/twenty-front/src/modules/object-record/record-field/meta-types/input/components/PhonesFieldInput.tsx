@@ -47,7 +47,7 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
 
 type PhonesFieldInputProps = {
   onCancel?: () => void;
-  onClickOutside?: () => void;
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
 export const PhonesFieldInput = ({

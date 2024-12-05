@@ -42,9 +42,9 @@ export const RecordTableCellFieldInput = () => {
     onCloseTableCell();
   };
 
-  const handleClickOutside: FieldInputEvent = useRecoilCallback(
+  const handleClickOutside = useRecoilCallback(
     ({ snapshot }) =>
-      (persistField) => {
+      (persistField: () => void, event?: MouseEvent | TouchEvent) => {
         const dropdownFocusId = getDropdownFocusIdForRecordField(
           recordId,
           fieldDefinition.fieldMetadataId,
@@ -58,6 +58,8 @@ export const RecordTableCellFieldInput = () => {
         if (activeDropdownFocusId !== dropdownFocusId) {
           return;
         }
+
+        event?.stopImmediatePropagation();
 
         onUpsertRecord({
           persistField,

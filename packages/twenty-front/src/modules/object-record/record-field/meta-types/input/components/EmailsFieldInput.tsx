@@ -8,7 +8,7 @@ import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 type EmailsFieldInputProps = {
   onCancel?: () => void;
-  onClickOutside?: () => void;
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
 export const EmailsFieldInput = ({

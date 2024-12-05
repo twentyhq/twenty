@@ -41,7 +41,7 @@ type MultiItemFieldInputProps<T> = {
   newItemLabel?: string;
   fieldMetadataType: FieldMetadataType;
   renderInput?: DropdownMenuInputProps['renderInput'];
-  onClickOutside?: () => void;
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
 // Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
@@ -67,8 +67,8 @@ export const MultiItemFieldInput = <T,>({
 
   useListenClickOutside({
     refs: [containerRef],
-    callback: () => {
-      onClickOutside?.();
+    callback: (event) => {
+      onClickOutside?.(event);
     },
     listenerId: hotkeyScope,
   });

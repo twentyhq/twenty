@@ -48,7 +48,10 @@ type FieldInputProps = {
   recordFieldInputdId: string;
   onSubmit?: FieldInputEvent;
   onCancel?: () => void;
-  onClickOutside?: FieldInputEvent;
+  onClickOutside?: (
+    persist: () => void,
+    event?: MouseEvent | TouchEvent,
+  ) => void;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
@@ -80,7 +83,7 @@ export const FieldInput = ({
       ) : isFieldPhones(fieldDefinition) ? (
         <PhonesFieldInput
           onCancel={onCancel}
-          onClickOutside={() => onClickOutside?.(() => {})}
+          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
         />
       ) : isFieldText(fieldDefinition) ? (
         <TextFieldInput
@@ -93,7 +96,7 @@ export const FieldInput = ({
       ) : isFieldEmails(fieldDefinition) ? (
         <EmailsFieldInput
           onCancel={onCancel}
-          onClickOutside={() => onClickOutside?.(() => {})}
+          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
         />
       ) : isFieldFullName(fieldDefinition) ? (
         <FullNameFieldInput
@@ -130,7 +133,7 @@ export const FieldInput = ({
       ) : isFieldLinks(fieldDefinition) ? (
         <LinksFieldInput
           onCancel={onCancel}
-          onClickOutside={() => onClickOutside?.(() => {})}
+          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
         />
       ) : isFieldCurrency(fieldDefinition) ? (
         <CurrencyFieldInput
@@ -169,7 +172,7 @@ export const FieldInput = ({
       ) : isFieldArray(fieldDefinition) ? (
         <ArrayFieldInput
           onCancel={onCancel}
-          onClickOutside={() => onClickOutside?.(() => {})}
+          onClickOutside={(event) => onClickOutside?.(() => {}, event)}
         />
       ) : (
         <></>

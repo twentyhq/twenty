@@ -8,7 +8,7 @@ import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 type LinksFieldInputProps = {
   onCancel?: () => void;
-  onClickOutside?: () => void;
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
 export const LinksFieldInput = ({

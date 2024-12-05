@@ -6,7 +6,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type ArrayFieldInputProps = {
   onCancel?: () => void;
-  onClickOutside?: () => void;
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
 export const ArrayFieldInput = ({
