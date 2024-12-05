@@ -70,13 +70,22 @@ export const normalizeTableData = <T extends string>(
 
             const rawCurrentOptions = currentOptionsSchema.safeParse(curr).data;
 
-            const currentOptions = rawCurrentOptions?.filter((option) =>
-              column.matchedOptions.some(({ entry }) => entry === option),
-            );
+            const matchedOptionValues = [
+              ...new Set(
+                rawCurrentOptions
+                  ?.map(
+                    (option) =>
+                      column.matchedOptions.find(
+                        (matchedOption) => matchedOption.entry === option,
+                      )?.value,
+                  )
+                  .filter(isDefined),
+              ),
+            ];
 
             const fieldValue =
-              currentOptions && currentOptions.length > 0
-                ? JSON.stringify(currentOptions)
+              matchedOptionValues && matchedOptionValues.length > 0
+                ? JSON.stringify(matchedOptionValues)
                 : undefined;
 
             acc[column.value] = fieldValue;
