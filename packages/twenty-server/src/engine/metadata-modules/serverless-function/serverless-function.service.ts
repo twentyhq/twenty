@@ -386,6 +386,7 @@ export class ServerlessFunctionService {
         ],
         workspaceId,
       },
+      { id: `${serverlessFunctionId}-${serverlessFunctionVersion}` },
     );
   }
 }
