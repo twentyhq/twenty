@@ -1,13 +1,14 @@
-import { JSX } from 'react';
 import styled from '@emotion/styled';
+import { JSX } from 'react';
 
 type HorizontalSeparatorProps = {
   visible?: boolean;
   text?: string;
   noMargin?: boolean;
+  color?: string;
 };
 const StyledSeparator = styled.div<HorizontalSeparatorProps>`
-  background-color: ${({ theme }) => theme.border.color.medium};
+  background-color: ${({ theme, color }) => color ?? theme.border.color.medium};
   height: ${({ visible }) => (visible ? '1px' : 0)};
   margin-bottom: ${({ theme, noMargin }) => (noMargin ? 0 : theme.spacing(3))};
   margin-top: ${({ theme, noMargin }) => (noMargin ? 0 : theme.spacing(3))};
@@ -38,6 +39,7 @@ export const HorizontalSeparator = ({
   visible = true,
   text = '',
   noMargin = false,
+  color,
 }: HorizontalSeparatorProps): JSX.Element => (
   <>
     {text ? (
@@ -47,7 +49,7 @@ export const HorizontalSeparator = ({
         <StyledLine visible={visible} />
       </StyledSeparatorContainer>
     ) : (
-      <StyledSeparator visible={visible} noMargin={noMargin} />
+      <StyledSeparator visible={visible} noMargin={noMargin} color={color} />
     )}
   </>
 );
