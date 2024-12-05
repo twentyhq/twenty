@@ -25,4 +25,10 @@ export const THEME_COMMON = {
   rightDrawerWidth: '500px',
   clickableElementBackgroundTransition: 'background 0.1s ease',
   lastLayerZIndex: 2147483647,
+  zIndex: {
+    modal: 10000,
+    dropdown: 50,
+    tooltip: 50,
+    rightDrawer: 50,
+  },
 };

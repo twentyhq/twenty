@@ -3,7 +3,7 @@ import {
   OnDragEndResponder,
   ResponderProvided,
 } from '@hello-pangea/dnd';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   AppTooltip,
@@ -79,8 +79,6 @@ export const ViewFieldsVisibilityDropdownSection = ({
     return iconButtons.length ? iconButtons : undefined;
   };
 
-  const ref = useRef<HTMLDivElement>(null);
-
   const { nonDraggableItems = [], draggableItems = [] } = isDraggable
     ? groupArrayItemsBy(fields, ({ isLabelIdentifier }) =>
         isLabelIdentifier ? 'nonDraggableItems' : 'draggableItems',
@@ -88,7 +86,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
     : { nonDraggableItems: fields, draggableItems: [] };
 
   return (
-    <div ref={ref}>
+    <>
       {showSubheader && (
         <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
       )}
@@ -150,6 +148,6 @@ export const ViewFieldsVisibilityDropdownSection = ({
           />,
           document.body,
         )}
-    </div>
+    </>
   );
 };

@@ -6,7 +6,6 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { MenuItemSelectTag, TagColor, isDefined } from 'twenty-ui';
@@ -103,34 +102,32 @@ export const SelectInput = ({
         autoFocus
       />
       <DropdownMenuSeparator />
-      <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-        <DropdownMenuItemsContainer hasMaxHeight>
-          {onClear && clearLabel && (
+      <DropdownMenuItemsContainer hasMaxHeight>
+        {onClear && clearLabel && (
+          <MenuItemSelectTag
+            key={`No ${clearLabel}`}
+            selected={false}
+            text={`No ${clearLabel}`}
+            color="transparent"
+            variant="outline"
+            onClick={() => {
+              setSelectedOption(undefined);
+              onClear();
+            }}
+          />
+        )}
+        {optionsInDropDown.map((option) => {
+          return (
             <MenuItemSelectTag
-              key={`No ${clearLabel}`}
-              selected={false}
-              text={`No ${clearLabel}`}
-              color="transparent"
-              variant="outline"
-              onClick={() => {
-                setSelectedOption(undefined);
-                onClear();
-              }}
+              key={option.value}
+              selected={selectedOption?.value === option.value}
+              text={option.label}
+              color={option.color as TagColor}
+              onClick={() => handleOptionChange(option)}
             />
-          )}
-          {optionsInDropDown.map((option) => {
-            return (
-              <MenuItemSelectTag
-                key={option.value}
-                selected={selectedOption?.value === option.value}
-                text={option.label}
-                color={option.color as TagColor}
-                onClick={() => handleOptionChange(option)}
-              />
-            );
-          })}
-        </DropdownMenuItemsContainer>
-      </ScrollWrapper>
+          );
+        })}
+      </DropdownMenuItemsContainer>
     </DropdownMenu>
   );
 };

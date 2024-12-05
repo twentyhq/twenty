@@ -9,7 +9,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { SelectControl } from '@/ui/input/components/SelectControl';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { isDefined } from '~/utils/isDefined';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
@@ -150,36 +149,32 @@ export const Select = <Value extends SelectValue>({
                 <DropdownMenuSeparator />
               )}
               {!!filteredOptions.length && (
-                <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-                  <DropdownMenuItemsContainer hasMaxHeight>
-                    {filteredOptions.map((option) => (
-                      <MenuItem
-                        key={`${option.value}-${option.label}`}
-                        LeftIcon={option.Icon}
-                        text={option.label}
-                        onClick={() => {
-                          onChange?.(option.value);
-                          onBlur?.();
-                          closeDropdown();
-                        }}
-                      />
-                    ))}
-                  </DropdownMenuItemsContainer>
-                </ScrollWrapper>
+                <DropdownMenuItemsContainer hasMaxHeight>
+                  {filteredOptions.map((option) => (
+                    <MenuItem
+                      key={`${option.value}-${option.label}`}
+                      LeftIcon={option.Icon}
+                      text={option.label}
+                      onClick={() => {
+                        onChange?.(option.value);
+                        onBlur?.();
+                        closeDropdown();
+                      }}
+                    />
+                  ))}
+                </DropdownMenuItemsContainer>
               )}
               {!!callToActionButton && !!filteredOptions.length && (
                 <DropdownMenuSeparator />
               )}
               {!!callToActionButton && (
-                <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-                  <DropdownMenuItemsContainer hasMaxHeight>
-                    <MenuItem
-                      onClick={callToActionButton.onClick}
-                      LeftIcon={callToActionButton.Icon}
-                      text={callToActionButton.text}
-                    />
-                  </DropdownMenuItemsContainer>
-                </ScrollWrapper>
+                <DropdownMenuItemsContainer hasMaxHeight withoutScrollWrapper>
+                  <MenuItem
+                    onClick={callToActionButton.onClick}
+                    LeftIcon={callToActionButton.Icon}
+                    text={callToActionButton.text}
+                  />
+                </DropdownMenuItemsContainer>
               )}
             </>
           }

@@ -30,7 +30,7 @@ const StyledModalDiv = styled(motion.div)<{
     return theme.border.radius.md;
   }};
   overflow: hidden;
-  z-index: 10000; // should be higher than Backdrop's z-index
+  z-index: ${({ theme }) => theme.zIndex.modal} // should be higher than Backdrop's z-index
 
   width: ${({ isMobile, size, theme }) => {
     if (isMobile) return theme.modal.size.fullscreen;

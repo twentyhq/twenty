@@ -13,7 +13,6 @@ import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectab
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { RecordForSelect } from '../types/RecordForSelect';
 import { RelationPickerHotkeyScope } from '../types/RelationPickerHotkeyScope';
 
@@ -118,62 +117,60 @@ export const SingleRecordSelectMenuItems = ({
           resetSelectedItem();
         }}
       >
-        <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-          <DropdownMenuItemsContainer hasMaxHeight>
-            {loading && !isFiltered ? (
-              <DropdownMenuSkeletonItem />
-            ) : recordsInDropdown.length === 0 &&
-              !isAllRecordsSelectShown &&
-              !loading ? (
-              <></>
-            ) : (
-              recordsInDropdown?.map((record) => {
-                switch (record.id) {
-                  case 'select-none': {
-                    return (
-                      emptyLabel && (
-                        <MenuItemSelect
-                          key={record.id}
-                          onClick={() => onRecordSelected()}
-                          LeftIcon={EmptyIcon}
-                          text={emptyLabel}
-                          selected={shouldSelectEmptyOption === true}
-                          hovered={isSelectedSelectNoneButton}
-                        />
-                      )
-                    );
-                  }
-                  case 'select-all': {
-                    return (
-                      isAllRecordsSelectShown &&
-                      selectAllLabel &&
-                      onAllRecordsSelected && (
-                        <MenuItemSelect
-                          key={record.id}
-                          onClick={() => onAllRecordsSelected()}
-                          LeftIcon={SelectAllIcon}
-                          text={selectAllLabel}
-                          selected={!!isAllRecordsSelected}
-                          hovered={isSelectedSelectAllButton}
-                        />
-                      )
-                    );
-                  }
-                  default: {
-                    return (
-                      <SelectableMenuItemSelect
+        <DropdownMenuItemsContainer hasMaxHeight>
+          {loading && !isFiltered ? (
+            <DropdownMenuSkeletonItem />
+          ) : recordsInDropdown.length === 0 &&
+            !isAllRecordsSelectShown &&
+            !loading ? (
+            <></>
+          ) : (
+            recordsInDropdown?.map((record) => {
+              switch (record.id) {
+                case 'select-none': {
+                  return (
+                    emptyLabel && (
+                      <MenuItemSelect
                         key={record.id}
-                        record={record}
-                        onRecordSelected={onRecordSelected}
-                        selectedRecord={selectedRecord}
+                        onClick={() => onRecordSelected()}
+                        LeftIcon={EmptyIcon}
+                        text={emptyLabel}
+                        selected={shouldSelectEmptyOption === true}
+                        hovered={isSelectedSelectNoneButton}
                       />
-                    );
-                  }
+                    )
+                  );
                 }
-              })
-            )}
-          </DropdownMenuItemsContainer>
-        </ScrollWrapper>
+                case 'select-all': {
+                  return (
+                    isAllRecordsSelectShown &&
+                    selectAllLabel &&
+                    onAllRecordsSelected && (
+                      <MenuItemSelect
+                        key={record.id}
+                        onClick={() => onAllRecordsSelected()}
+                        LeftIcon={SelectAllIcon}
+                        text={selectAllLabel}
+                        selected={!!isAllRecordsSelected}
+                        hovered={isSelectedSelectAllButton}
+                      />
+                    )
+                  );
+                }
+                default: {
+                  return (
+                    <SelectableMenuItemSelect
+                      key={record.id}
+                      record={record}
+                      onRecordSelected={onRecordSelected}
+                      selectedRecord={selectedRecord}
+                    />
+                  );
+                }
+              }
+            })
+          )}
+        </DropdownMenuItemsContainer>
       </SelectableList>
     </div>
   );
