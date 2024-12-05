@@ -2,6 +2,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import {
+  BaseOutputSchema,
   OutputSchema,
   StepOutputSchema,
 } from '@/workflow/search-variables/types/StepOutputSchema';
@@ -60,22 +61,21 @@ export const SearchVariablesDropdownFieldItems = ({
 
   const handleSelectField = (key: string) => {
     const currentSubStep = getCurrentSubStep();
+    const handleSelectBaseOutputSchema = (
+      baseOutputSchema: BaseOutputSchema,
+    ) => {
+      if (!baseOutputSchema[key]?.isLeaf) {
+        setCurrentPath([...currentPath, key]);
+        setSearchInputValue('');
+      } else {
+        onSelect(`{{${step.id}.${[...currentPath, key].join('.')}}}`);
+      }
+    };
 
     if (isRecordOutputSchema(currentSubStep)) {
-      const subStepFields = currentSubStep.fields;
-      if (!subStepFields[key]?.isLeaf) {
-        setCurrentPath([...currentPath, key]);
-        setSearchInputValue('');
-      } else {
-        onSelect(`{{${step.id}.${[...currentPath, key].join('.')}}}`);
-      }
+      handleSelectBaseOutputSchema(currentSubStep.fields);
     } else if (isBaseOutputSchema(currentSubStep)) {
-      if (!currentSubStep[key]?.isLeaf) {
-        setCurrentPath([...currentPath, key]);
-        setSearchInputValue('');
-      } else {
-        onSelect(`{{${step.id}.${[...currentPath, key].join('.')}}}`);
-      }
+      handleSelectBaseOutputSchema(currentSubStep);
     }
   };
 
