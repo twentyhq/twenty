@@ -23,7 +23,7 @@ const validationSchema = z
   .object({
     subdomain: z
       .string()
-      .min(1, { message: 'Subdomain can not be empty' })
+      .min(3, { message: 'Subdomain can not be shorter than 3 characters' })
       .max(30, { message: 'Subdomain can not be longer than 30 characters' })
       .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
         message:
@@ -95,6 +95,7 @@ export const SettingsDomain = () => {
     formState: { isValid },
   } = useForm<Form>({
     mode: 'onChange',
+    delayError: 500,
     defaultValues: {
       subdomain: currentWorkspace?.subdomain ?? '',
     },
