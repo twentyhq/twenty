@@ -14,7 +14,7 @@ import {
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { AuthProviders } from '~/generated-metadata/graphql';
 import { capitalize } from '~/utils/string/capitalize';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;

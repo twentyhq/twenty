@@ -18,13 +18,9 @@ import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Controller('auth/google')
@@ -70,13 +66,7 @@ export class GoogleAuthController {
         workspacePersonalInviteToken,
         targetWorkspaceSubdomain,
         fromSSO: true,
-        isAuthEnabled: workspaceValidator.isAuthEnabled(
-          'google',
-          new AuthException(
-            'Google auth is not enabled for this workspace',
-            AuthExceptionCode.OAUTH_ACCESS_DENIED,
-          ),
-        ),
+        isAuthEnabled: 'google',
       };
 
       if (

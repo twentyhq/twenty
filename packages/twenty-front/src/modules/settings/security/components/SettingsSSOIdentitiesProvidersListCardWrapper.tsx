@@ -6,7 +6,7 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { useNavigate } from 'react-router-dom';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProviders.state';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { useRecoilValue } from 'recoil';
 
 export const SettingsSSOIdentitiesProvidersListCardWrapper = () => {

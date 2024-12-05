@@ -47,7 +47,7 @@ describe('SwitchWorkspaceService', () => {
         {
           provide: UserService,
           useValue: {
-            saveDefaultWorkspace: jest.fn(),
+            saveDefaultWorkspaceIfUserHasAccessOrThrow: jest.fn(),
           },
         },
       ],
@@ -211,10 +211,9 @@ describe('SwitchWorkspaceService', () => {
           refreshToken: mockRefreshToken,
         },
       });
-      expect(userService.saveDefaultWorkspace).toHaveBeenCalledWith(
-        mockUser.id,
-        mockWorkspace.id,
-      );
+      expect(
+        userService.saveDefaultWorkspaceIfUserHasAccessOrThrow,
+      ).toHaveBeenCalledWith(mockUser.id, mockWorkspace.id);
       expect(accessTokenService.generateAccessToken).toHaveBeenCalledWith(
         mockUser.id,
         mockWorkspace.id,

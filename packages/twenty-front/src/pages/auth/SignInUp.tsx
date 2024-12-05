@@ -17,6 +17,7 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
 import { useMemo } from 'react';
 import { isDefined } from '~/utils/isDefined';
+import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeFormEffect';
 
 export const SignInUp = () => {
   const { form } = useSignInUpForm();
@@ -43,7 +44,12 @@ export const SignInUp = () => {
       isDefined(workspacePublicData) &&
       (!isMultiWorkspaceEnabled || isTwentyWorkspaceSubdomain)
     ) {
-      return <SignInUpWorkspaceScopeForm />;
+      return (
+        <>
+          <SignInUpWorkspaceScopeFormEffect />
+          <SignInUpWorkspaceScopeForm />
+        </>
+      );
     }
 
     return <SignInUpGlobalScopeForm />;

@@ -38,7 +38,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 import { ChallengeInput } from './dto/challenge.input';
@@ -129,13 +128,7 @@ export class AuthResolver {
       targetWorkspaceSubdomain:
         this.domainManagerService.getWorkspaceSubdomainByOrigin(origin),
       fromSSO: false,
-      isAuthEnabled: workspaceValidator.isAuthEnabled(
-        'password',
-        new AuthException(
-          'Password auth is not enabled for this workspace',
-          AuthExceptionCode.OAUTH_ACCESS_DENIED,
-        ),
-      ),
+      authProvider: 'password',
     });
 
     const loginToken = await this.loginTokenService.generateLoginToken(
