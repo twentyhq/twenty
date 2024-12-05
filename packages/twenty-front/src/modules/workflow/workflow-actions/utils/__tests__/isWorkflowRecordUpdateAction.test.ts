@@ -4,76 +4,78 @@ import {
 } from '@/workflow/types/Workflow';
 import { isWorkflowRecordUpdateAction } from '../isWorkflowRecordUpdateAction';
 
-it('returns false when providing an action that is not Record Create', () => {
-  const codeAction: WorkflowCodeAction = {
-    type: 'CODE',
-    id: '',
-    name: '',
-    settings: {
-      errorHandlingOptions: {
-        continueOnFailure: {
-          value: false,
+describe('isWorkflowRecordUpdateAction', () => {
+  it('returns false when providing an action that is not Record Create', () => {
+    const action: WorkflowCodeAction = {
+      type: 'CODE',
+      id: '',
+      name: '',
+      settings: {
+        errorHandlingOptions: {
+          continueOnFailure: {
+            value: false,
+          },
+          retryOnFailure: {
+            value: false,
+          },
         },
-        retryOnFailure: {
-          value: false,
+        input: {
+          serverlessFunctionId: '',
+          serverlessFunctionVersion: '',
+          serverlessFunctionInput: {},
         },
+        outputSchema: {},
       },
-      input: {
-        serverlessFunctionId: '',
-        serverlessFunctionVersion: '',
-        serverlessFunctionInput: {},
-      },
-      outputSchema: {},
-    },
-    valid: true,
-  };
+      valid: true,
+    };
 
-  expect(isWorkflowRecordUpdateAction(codeAction)).toBe(false);
-});
+    expect(isWorkflowRecordUpdateAction(action)).toBe(false);
+  });
 
-it('returns true for Record Update', () => {
-  const codeAction: WorkflowRecordCRUDAction = {
-    type: 'RECORD_CRUD',
-    id: '',
-    name: '',
-    settings: {
-      errorHandlingOptions: {
-        continueOnFailure: { value: false },
-        retryOnFailure: { value: false },
+  it('returns true for Record Update', () => {
+    const action: WorkflowRecordCRUDAction = {
+      type: 'RECORD_CRUD',
+      id: '',
+      name: '',
+      settings: {
+        errorHandlingOptions: {
+          continueOnFailure: { value: false },
+          retryOnFailure: { value: false },
+        },
+        input: {
+          type: 'UPDATE',
+          objectName: '',
+          objectRecord: {},
+          objectRecordId: '',
+        },
+        outputSchema: {},
       },
-      input: {
-        type: 'UPDATE',
-        objectName: '',
-        objectRecord: {},
-        objectRecordId: '',
-      },
-      outputSchema: {},
-    },
-    valid: true,
-  };
+      valid: true,
+    };
 
-  expect(isWorkflowRecordUpdateAction(codeAction)).toBe(false);
-});
+    expect(isWorkflowRecordUpdateAction(action)).toBe(true);
+  });
 
-it('returns false for Record Create', () => {
-  const codeAction: WorkflowRecordCRUDAction = {
-    type: 'RECORD_CRUD',
-    id: '',
-    name: '',
-    settings: {
-      errorHandlingOptions: {
-        continueOnFailure: { value: false },
-        retryOnFailure: { value: false },
+  it('returns false for Record Create', () => {
+    const action: WorkflowRecordCRUDAction = {
+      type: 'RECORD_CRUD',
+      id: '',
+      name: '',
+      settings: {
+        errorHandlingOptions: {
+          continueOnFailure: { value: false },
+          retryOnFailure: { value: false },
+        },
+        input: {
+          type: 'CREATE',
+          objectName: '',
+          objectRecord: {},
+        },
+        outputSchema: {},
       },
-      input: {
-        type: 'CREATE',
-        objectName: '',
-        objectRecord: {},
-      },
-      outputSchema: {},
-    },
-    valid: true,
-  };
+      valid: true,
+    };
 
-  expect(isWorkflowRecordUpdateAction(codeAction)).toBe(true);
+    expect(isWorkflowRecordUpdateAction(action)).toBe(false);
+  });
 });
