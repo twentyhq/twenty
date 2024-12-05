@@ -121,7 +121,7 @@ export const useUpdateOneRecord = <
           idToUpdate,
           input: sanitizedInput,
         },
-        update: async (cache, { data }) => {
+        update: (cache, { data }) => {
           const record = data?.[mutationResponseField];
 
           if (!record || !cachedRecord) return;
@@ -133,8 +133,6 @@ export const useUpdateOneRecord = <
             updatedRecord: record,
             objectMetadataItems,
           });
-
-          await refetchAggregateQueries();
         },
       })
       .catch((error: Error) => {

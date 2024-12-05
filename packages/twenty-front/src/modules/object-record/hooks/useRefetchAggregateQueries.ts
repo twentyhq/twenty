@@ -12,9 +12,9 @@ export const useRefetchAggregateQueries = ({
     'IS_AGGREGATE_QUERY_ENABLED',
   );
   const refetchAggregateQueries = async () => {
-    const queryName = getAggregateQueryName(objectMetadataNamePlural);
-
     if (isAggregateQueryEnabled) {
+      const queryName = getAggregateQueryName(objectMetadataNamePlural);
+
       await apolloClient.refetchQueries({
         include: [queryName],
       });
