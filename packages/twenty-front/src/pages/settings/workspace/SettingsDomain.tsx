@@ -23,8 +23,11 @@ const validationSchema = z
   .object({
     subdomain: z
       .string()
+      .regex(/^[a-zA-Z0-9][a-zA-Z0-9-]{1,28}[a-zA-Z0-9]$/g, {
+        message: 'Character not allowed. Use letter, number and dash only',
+      })
       .min(1, { message: 'Subdomain can not be empty' })
-      .max(63, { message: 'Subdomain can not be longer than 63 characters' }),
+      .max(30, { message: 'Subdomain can not be longer than 30 characters' }),
   })
   .required();
 
@@ -36,10 +39,11 @@ const StyledDomainFromWrapper = styled.div`
 `;
 
 const StyledDomain = styled.h2`
+  align-self: flex-start;
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsDomain = () => {
@@ -133,18 +137,22 @@ export const SettingsDomain = () => {
                   field: { onChange, value },
                   fieldState: { error },
                 }) => (
-                  <TextInputV2
-                    value={value}
-                    type="text"
-                    onChange={onChange}
-                    error={error?.message}
-                    fullWidth
-                  />
+                  <>
+                    <TextInputV2
+                      value={value}
+                      type="text"
+                      onChange={onChange}
+                      error={error?.message}
+                      fullWidth
+                    />
+                    {isDefined(domainConfiguration.frontDomain) && (
+                      <StyledDomain>
+                        .{domainConfiguration.frontDomain}
+                      </StyledDomain>
+                    )}
+                  </>
                 )}
               />
-              {isDefined(domainConfiguration.frontDomain) && (
-                <StyledDomain>.{domainConfiguration.frontDomain}</StyledDomain>
-              )}
             </StyledDomainFromWrapper>
           )}
         </Section>
