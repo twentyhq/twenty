@@ -1,4 +1,6 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
@@ -55,6 +57,33 @@ export const WorkflowEditActionFormRecordCreate = ({
   });
   const isFormDisabled = actionOptions.readonly;
 
+  const objectNameSingular = formData.objectName;
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const inlineFieldMetadataItems = objectMetadataItem.fields
+    .filter(
+      (fieldMetadataItem) =>
+        fieldMetadataItem.type !== FieldMetadataType.Relation &&
+        !fieldMetadataItem.isSystem &&
+        fieldMetadataItem.isActive,
+    )
+    .sort((fieldMetadataItemA, fieldMetadataItemB) =>
+      fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
+    );
+
+  const inlineFieldDefinitions = inlineFieldMetadataItems.map(
+    (fieldMetadataItem) =>
+      formatFieldMetadataItemAsFieldDefinition({
+        field: fieldMetadataItem,
+        objectMetadataItem,
+        showLabel: true,
+        labelWidth: 90,
+      }),
+  );
+
   const handleFieldChange = (
     fieldName: keyof CreateRecordFormData,
     updatedValue: JsonValue,
@@ -75,23 +104,6 @@ export const WorkflowEditActionFormRecordCreate = ({
       ...action.settings.input.objectRecord,
     });
   }, [action.settings.input]);
-
-  const selectedObjectMetadataItemNameSingular = formData.objectName;
-
-  const selectedObjectMetadataItem = activeObjectMetadataItems.find(
-    (item) => item.nameSingular === selectedObjectMetadataItemNameSingular,
-  );
-
-  if (!isDefined(selectedObjectMetadataItem)) {
-    throw new Error('Should have found the metadata item');
-  }
-
-  const editableFields = selectedObjectMetadataItem.fields.filter(
-    (field) =>
-      field.type !== FieldMetadataType.Relation &&
-      !field.isSystem &&
-      field.isActive,
-  );
 
   const saveAction = useDebouncedCallback(
     async (formData: CreateRecordFormData) => {
@@ -162,16 +174,16 @@ export const WorkflowEditActionFormRecordCreate = ({
 
       <HorizontalSeparator noMargin />
 
-      {editableFields.map((field) => {
-        const currentValue = formData[field.name] as JsonValue;
+      {inlineFieldDefinitions.map((field) => {
+        const currentValue = formData[field.metadata.fieldName] as JsonValue;
 
         return (
           <FormFieldInput
-            key={field.id}
+            key={field.metadata.fieldName}
             defaultValue={currentValue}
             field={field}
             onPersist={(value) => {
-              handleFieldChange(field.name, value);
+              handleFieldChange(field.metadata.fieldName, value);
             }}
             VariablePicker={WorkflowVariablePicker}
           />
