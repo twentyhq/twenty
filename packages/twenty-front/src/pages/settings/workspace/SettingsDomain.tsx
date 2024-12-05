@@ -23,11 +23,12 @@ const validationSchema = z
   .object({
     subdomain: z
       .string()
-      .regex(/^[a-zA-Z0-9][a-zA-Z0-9-]{1,28}[a-zA-Z0-9]$/g, {
-        message: 'Character not allowed. Use letter, number and dash only',
-      })
       .min(1, { message: 'Subdomain can not be empty' })
-      .max(30, { message: 'Subdomain can not be longer than 30 characters' }),
+      .max(30, { message: 'Subdomain can not be longer than 30 characters' })
+      .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
+        message:
+          'Use letter, number and dash only. Start and finish with a letter or a number',
+      }),
   })
   .required();
 
