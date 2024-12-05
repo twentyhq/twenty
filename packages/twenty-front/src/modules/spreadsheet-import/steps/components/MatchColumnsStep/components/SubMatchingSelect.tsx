@@ -113,7 +113,6 @@ export const SubMatchingSelect = <T extends string>({
           color={value?.color as TagColor}
         />
         <StyledIconChevronDown size={theme.icon.size.md} />
-
         {isOpen && (
           <SelectInput
             defaultOption={value}
