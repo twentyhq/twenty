@@ -226,6 +226,7 @@ export class WorkflowBuilderWorkspaceService {
 
     const inputSchema =
       codeIntrospectionService.getFunctionInputSchema(sourceCode);
+
     const fakeFunctionInput =
       codeIntrospectionService.generateInputData(inputSchema);
 
@@ -233,7 +234,7 @@ export class WorkflowBuilderWorkspaceService {
       await serverlessFunctionService.executeOneServerlessFunction(
         serverlessFunctionId,
         workspaceId,
-        fakeFunctionInput,
+        Object.values(fakeFunctionInput)?.[0] || {},
         serverlessFunctionVersion,
       );
 

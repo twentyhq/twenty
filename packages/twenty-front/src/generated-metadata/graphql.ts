@@ -1571,6 +1571,8 @@ export type UpdateServerlessFunctionInput = {
 export type UpdateWorkflowVersionStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON']['input'];
+  /** Boolean to check if we need to update stepOutput */
+  shouldUpdateStepOutput?: InputMaybe<Scalars['Boolean']['input']>;
   /** Workflow version ID */
   workflowVersionId: Scalars['String']['input'];
 };

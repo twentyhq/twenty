@@ -319,6 +319,7 @@ export class LambdaDriver implements ServerlessDriver {
     await this.waitFunctionUpdates(functionToExecute.id, 10);
 
     const startTime = Date.now();
+
     const params: InvokeCommandInput = {
       FunctionName: functionName,
       Payload: JSON.stringify(payload),
