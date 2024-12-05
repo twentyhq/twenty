@@ -3,12 +3,17 @@ import {
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 
-export const parseGmailError = (error: {
+export const parseGmailMessageListFetchError = (error: {
   code?: number;
-  reason: string;
-  message: string;
+  errors: {
+    reason: string;
+    message: string;
+  }[];
 }): MessageImportDriverException => {
-  const { code, reason, message } = error;
+  const { code, errors } = error;
+
+  const reason = errors?.[0]?.reason;
+  const message = errors?.[0]?.message;
 
   switch (code) {
     case 400:
@@ -45,18 +50,22 @@ export const parseGmailError = (error: {
     case 403:
       if (
         reason === 'rateLimitExceeded' ||
-        reason === 'userRateLimitExceeded'
+        reason === 'userRateLimitExceeded' ||
+        reason === 'dailyLimitExceeded'
       ) {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
-      } else {
+      }
+      if (reason === 'domainPolicy') {
         return new MessageImportDriverException(
           message,
           MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
         );
       }
+
+      break;
 
     case 401:
       return new MessageImportDriverException(
@@ -70,12 +79,9 @@ export const parseGmailError = (error: {
           message,
           MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         );
-      } else {
-        return new MessageImportDriverException(
-          message,
-          MessageImportDriverExceptionCode.UNKNOWN,
-        );
       }
+
+      break;
 
     default:
       break;
