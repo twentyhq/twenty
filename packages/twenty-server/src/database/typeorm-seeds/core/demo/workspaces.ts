@@ -18,6 +18,7 @@ export const seedWorkspaces = async (
       'domainName',
       'inviteHash',
       'logo',
+      'subdomain',
       'activationStatus',
     ])
     .orIgnore()
@@ -28,6 +29,7 @@ export const seedWorkspaces = async (
         domainName: 'demo.dev',
         inviteHash: 'demo.dev-invite-hash',
         logo: 'https://twentyhq.github.io/placeholder-images/workspaces/apple-logo.png',
+        subdomain: 'demo',
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
     ])

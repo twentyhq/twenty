@@ -53,14 +53,24 @@ export const RecordTableWithWrappers = ({
     recordTableId,
   );
 
-  const { resetTableRowSelection, selectAllRows } = useRecordTable({
-    recordTableId,
-  });
+  const { resetTableRowSelection, selectAllRows, setHasUserSelectedAllRows } =
+    useRecordTable({
+      recordTableId,
+    });
 
-  useScopedHotkeys('ctrl+a,meta+a', selectAllRows, TableHotkeyScope.Table);
+  const handleSelectAllRows = () => {
+    setHasUserSelectedAllRows(true);
+    selectAllRows();
+  };
+
   useScopedHotkeys(
     'ctrl+a,meta+a',
-    selectAllRows,
+    handleSelectAllRows,
+    TableHotkeyScope.Table,
+  );
+  useScopedHotkeys(
+    'ctrl+a,meta+a',
+    handleSelectAllRows,
     ActionBarHotkeyScope.ActionBar,
   );
 

@@ -143,6 +143,10 @@ export const queries = {
         allowImpersonation
         activationStatus
         isPublicInviteLinkEnabled
+        isGoogleAuthEnabled
+        isMicrosoftAuthEnabled
+        isPasswordAuthEnabled
+        subdomain
         hasValidEntrepriseKey
         featureFlags {
           id
@@ -164,6 +168,7 @@ export const queries = {
           logo
           displayName
           domainName
+          subdomain
         }
       }
       userVars
@@ -286,6 +291,10 @@ export const responseData = {
         activationStatus: 'active',
         isPublicInviteLinkEnabled: false,
         hasValidEntrepriseKey: false,
+        isGoogleAuthEnabled: true,
+        isMicrosoftAuthEnabled: false,
+        isPasswordAuthEnabled: true,
+        subdomain: 'test',
         featureFlags: [],
         metadataVersion: 1,
         currentBillingSubscription: null,

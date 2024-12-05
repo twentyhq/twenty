@@ -18,7 +18,7 @@ export class RestApiMetadataService {
   ) {}
 
   async get(request: Request) {
-    await this.accessTokenService.validateToken(request);
+    await this.accessTokenService.validateTokenByRequest(request);
     const data = await this.metadataQueryBuilderFactory.get(request);
 
     return await this.restApiService.call(
@@ -29,7 +29,7 @@ export class RestApiMetadataService {
   }
 
   async create(request: Request) {
-    await this.accessTokenService.validateToken(request);
+    await this.accessTokenService.validateTokenByRequest(request);
     const data = await this.metadataQueryBuilderFactory.create(request);
 
     return await this.restApiService.call(
@@ -40,7 +40,7 @@ export class RestApiMetadataService {
   }
 
   async update(request: Request) {
-    await this.accessTokenService.validateToken(request);
+    await this.accessTokenService.validateTokenByRequest(request);
     const data = await this.metadataQueryBuilderFactory.update(request);
 
     return await this.restApiService.call(
@@ -51,7 +51,7 @@ export class RestApiMetadataService {
   }
 
   async delete(request: Request) {
-    await this.accessTokenService.validateToken(request);
+    await this.accessTokenService.validateTokenByRequest(request);
     const data = await this.metadataQueryBuilderFactory.delete(request);
 
     return await this.restApiService.call(

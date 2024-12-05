@@ -14,7 +14,11 @@ export type CurrentWorkspace = Pick<
   | 'currentBillingSubscription'
   | 'workspaceMembersCount'
   | 'isPublicInviteLinkEnabled'
+  | 'isGoogleAuthEnabled'
+  | 'isMicrosoftAuthEnabled'
+  | 'isPasswordAuthEnabled'
   | 'hasValidEntrepriseKey'
+  | 'subdomain'
   | 'metadataVersion'
 >;
 

@@ -1,9 +1,12 @@
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+
 type FakeValueTypes =
   | string
   | number
   | boolean
   | Date
   | FakeValueTypes[]
+  | FieldMetadataType
   | { [key: string]: FakeValueTypes };
 
 export const generateFakeValue = (valueType: string): FakeValueTypes => {
@@ -35,6 +38,8 @@ export const generateFakeValue = (valueType: string): FakeValueTypes => {
     });
 
     return objData;
+  } else if (valueType === FieldMetadataType.TEXT) {
+    return 'My text';
   } else {
     return 'generated-string-value';
   }
