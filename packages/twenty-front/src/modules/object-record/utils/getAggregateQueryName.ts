@@ -1,10 +1,11 @@
+import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const getAggregateQueryName = (
   objectMetadataNamePlural: string,
 ): string => {
-  if (!objectMetadataNamePlural) {
+  if (!isDefined(objectMetadataNamePlural)) {
     throw new Error('objectMetadataNamePlural is required');
   }
-  return `AggregateMany${capitalize(objectMetadataNamePlural)}`;
+  return `Aggregate${capitalize(objectMetadataNamePlural)}`;
 };

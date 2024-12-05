@@ -43,7 +43,6 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
         return (
           <DropdownMenuItemsContainer key={fieldId}>
             <MenuItem
-              key={fieldId}
               onClick={() => {
                 updateViewAggregate({
                   kanbanAggregateOperationFieldMetadataId: fieldId,

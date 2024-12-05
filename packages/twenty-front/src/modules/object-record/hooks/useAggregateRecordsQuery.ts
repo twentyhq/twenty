@@ -14,7 +14,7 @@ export type GqlFieldToFieldMap = {
   ];
 };
 
-export const useAggregateManyRecordsQuery = ({
+export const useAggregateRecordsQuery = ({
   objectNameSingular,
   recordGqlFieldsAggregate = {},
 }: {
