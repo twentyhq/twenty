@@ -56,12 +56,12 @@ export class BillingWebhookService {
         status: data.object.status as SubscriptionStatus,
         interval: data.object.items.data[0].plan.interval,
         cancelAtPeriodEnd: data.object.cancel_at_period_end,
-        currency: data.object.currency,
+        currency: data.object.currency.toUpperCase(),
         currentPeriodEnd: new Date(data.object.current_period_end * 1000),
         currentPeriodStart: new Date(data.object.current_period_start * 1000),
         metadata: data.object.metadata,
-        collectionMethod: data.object
-          .collection_method as BillingSubscriptionCollectionMethod,
+        collectionMethod:
+          data.object.collection_method.toUpperCase() as BillingSubscriptionCollectionMethod,
         automaticTax: data.object.automatic_tax ?? undefined,
         cancellationDetails: data.object.cancellation_details ?? undefined,
         endedAt: data.object.ended_at
@@ -86,9 +86,15 @@ export class BillingWebhookService {
       },
     );
 
+    const billingSubscription =
+      await this.billingSubscriptionRepository.findOneOrFail({
+        where: { stripeSubscriptionId: data.object.id },
+      });
+
     await this.billingSubscriptionItemRepository.upsert(
       data.object.items.data.map((item) => {
         return {
+          billingSubscriptionId: billingSubscription.id,
           stripeSubscriptionId: data.object.id,
           stripeProductId: item.price.product as string,
           stripePriceId: item.price.id,
@@ -99,7 +105,7 @@ export class BillingWebhookService {
         };
       }),
       {
-        conflictPaths: ['stripeSubscriptionId', 'stripeProductId'],
+        conflictPaths: ['billingSubscriptionId', 'stripeProductId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );

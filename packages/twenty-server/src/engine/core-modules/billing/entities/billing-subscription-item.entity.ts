@@ -3,7 +3,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
@@ -13,12 +12,12 @@ import {
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 @Entity({ name: 'billingSubscriptionItem', schema: 'core' })
-@Unique('IndexOnStripeSubscriptionIdAndStripeProductIdUnique', [
-  'stripeSubscriptionId',
+@Unique('IndexOnBillingSubscriptionIdAndStripeProductIdUnique', [
+  'billingSubscriptionId',
   'stripeProductId',
 ])
-@Unique('IndexOnStripeSubscriptionIdAndStripeSubscriptionItemIdUnique', [
-  'stripeSubscriptionId',
+@Unique('IndexOnBillingSubscriptionIdAndStripeSubscriptionItemIdUnique', [
+  'billingSubscriptionId',
   'stripeSubscriptionItemId',
 ])
 export class BillingSubscriptionItem {
@@ -33,6 +32,9 @@ export class BillingSubscriptionItem {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @Column({ nullable: false })
+  billingSubscriptionId: string;
 
   @Column({ nullable: false })
   stripeSubscriptionId: string;
@@ -50,10 +52,6 @@ export class BillingSubscriptionItem {
       onDelete: 'CASCADE',
     },
   )
-  @JoinColumn({
-    referencedColumnName: 'stripeSubscriptionId',
-    name: 'stripeSubscriptionId',
-  })
   billingSubscription: Relation<BillingSubscription>;
 
   @Column({ nullable: false })
@@ -62,9 +60,9 @@ export class BillingSubscriptionItem {
   @Column({ nullable: false })
   stripePriceId: string;
 
-  @Column({ nullable: false, unique: true })
-  stripeSubscriptionItemId: string;
+  @Column({ nullable: false })
+  stripeSubscriptionItemId: string; //TODO: add unique
 
-  @Column({ nullable: true })
-  quantity: number;
+  @Column({ nullable: false })
+  quantity: number; //TODO: add nullable and modify stripe service
 }

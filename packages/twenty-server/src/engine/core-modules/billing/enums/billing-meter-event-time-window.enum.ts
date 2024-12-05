@@ -1,4 +1,4 @@
 export enum BillingMeterEventTimeWindow {
-  DAY = 'day',
-  HOUR = 'hour',
+  DAY = 'DAY',
+  HOUR = 'HOUR',
 }

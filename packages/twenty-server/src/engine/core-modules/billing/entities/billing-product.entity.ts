@@ -32,14 +32,14 @@ export class BillingProduct {
   @Column({ nullable: false })
   active: boolean;
 
-  @Column({ nullable: true })
-  description: string;
+  @Column({ nullable: true, type: 'text' })
+  description: string | null;
 
   @Column({ nullable: false })
   name: string;
 
-  @Column({ nullable: true })
-  taxCode: string;
+  @Column({ nullable: true, type: 'text' })
+  taxCode: string | null;
 
   @Column({ nullable: false, type: 'jsonb', default: [] })
   images: string[];
@@ -50,8 +50,8 @@ export class BillingProduct {
   @Column({ nullable: false, unique: true })
   stripeProductId: string;
 
-  @Column({ nullable: true })
-  defaultStripePriceId: string;
+  @Column({ nullable: true, type: 'text' })
+  defaultStripePriceId: string | null;
 
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: BillingProductMetadata;
@@ -59,9 +59,9 @@ export class BillingProduct {
   @OneToMany(() => BillingPrice, (billingPrice) => billingPrice.billingProduct)
   billingPrices: Relation<BillingPrice[]>;
 
-  @Column({ nullable: true })
-  unitLabel: string;
+  @Column({ nullable: true, type: 'text' })
+  unitLabel: string | null;
 
-  @Column({ nullable: true })
-  url: string;
+  @Column({ nullable: true, type: 'text' })
+  url: string | null;
 }

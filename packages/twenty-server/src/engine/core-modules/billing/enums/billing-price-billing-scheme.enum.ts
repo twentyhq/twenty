@@ -1,4 +1,4 @@
 export enum BillingPriceBillingScheme {
-  PER_UNIT = 'per_unit',
-  TIERED = 'tiered',
+  PER_UNIT = 'PER_UNIT',
+  TIERED = 'TIERED',
 }

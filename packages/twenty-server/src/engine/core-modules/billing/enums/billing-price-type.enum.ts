@@ -1,4 +1,4 @@
 export enum BillingPriceType {
-  ONE_TIME = 'one_time',
-  RECURRING = 'recurring',
+  ONE_TIME = 'ONE_TIME',
+  RECURRING = 'RECURRING',
 }

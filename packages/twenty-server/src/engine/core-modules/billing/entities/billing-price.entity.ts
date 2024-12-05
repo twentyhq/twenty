@@ -47,57 +47,57 @@ export class BillingPrice {
   @Column({ nullable: false })
   currency: string;
 
-  @Column({ nullable: true })
-  nickname: string;
+  @Column({ nullable: true, type: 'text' })
+  nickname: string | null;
 
   @Column({
     nullable: false,
     type: 'enum',
     enum: Object.values(BillingPriceTaxBehavior),
   })
-  taxBehavior: Stripe.Price.TaxBehavior;
+  taxBehavior: BillingPriceTaxBehavior;
 
   @Column({
     nullable: false,
     type: 'enum',
     enum: Object.values(BillingPriceType),
   })
-  type: Stripe.Price.Type;
+  type: BillingPriceType;
 
   @Column({
     nullable: false,
     type: 'enum',
     enum: Object.values(BillingPriceBillingScheme),
   })
-  billingScheme: Stripe.Price.BillingScheme;
+  billingScheme: BillingPriceBillingScheme;
 
   @Column({ nullable: true, type: 'jsonb' })
-  currencyOptions: Stripe.Price.CurrencyOptions;
+  currencyOptions: Stripe.Price.CurrencyOptions | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  tiers: Stripe.Price.Tier[];
+  tiers: Stripe.Price.Tier[] | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  recurring: Stripe.Price.Recurring;
+  recurring: Stripe.Price.Recurring | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  transformQuantity: Stripe.Price.TransformQuantity;
+  transformQuantity: Stripe.Price.TransformQuantity | null;
 
   @Column({
     nullable: true,
     type: 'enum',
     enum: Object.values(BillingPriceTiersMode),
   })
-  tiersMode: Stripe.Price.TiersMode;
+  tiersMode: BillingPriceTiersMode | null;
 
-  @Column({ nullable: true })
-  unitAmountDecimal: string;
+  @Column({ nullable: true, type: 'text' })
+  unitAmountDecimal: string | null;
 
-  @Column({ nullable: true })
-  unitAmount: number;
+  @Column({ nullable: true, type: 'numeric' })
+  unitAmount: number | null;
 
-  @Column({ nullable: true })
-  stripeMeterId: string;
+  @Column({ nullable: true, type: 'text' })
+  stripeMeterId: string | null;
 
   @Field(() => BillingUsageType)
   @Column({
@@ -113,7 +113,7 @@ export class BillingPrice {
     enum: Object.values(SubscriptionInterval),
     nullable: true,
   })
-  interval: Stripe.Price.Recurring.Interval;
+  interval: SubscriptionInterval | null;
 
   @ManyToOne(
     () => BillingProduct,

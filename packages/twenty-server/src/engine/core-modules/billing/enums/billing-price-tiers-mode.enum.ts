@@ -1,4 +1,4 @@
 export enum BillingPriceTiersMode {
-  GRADUATED = 'graduated',
-  VOLUME = 'volume',
+  GRADUATED = 'GRADUATED',
+  VOLUME = 'VOLUME',
 }

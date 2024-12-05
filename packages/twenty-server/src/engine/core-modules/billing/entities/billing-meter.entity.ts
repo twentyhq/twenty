@@ -41,7 +41,7 @@ export class BillingMeter {
     type: 'enum',
     enum: Object.values(BillingMeterStatus),
   })
-  status: Stripe.Billing.Meter.Status;
+  status: BillingMeterStatus;
 
   @Column({ nullable: false, type: 'jsonb' })
   customerMapping: Stripe.Billing.Meter.CustomerMapping;
@@ -51,7 +51,7 @@ export class BillingMeter {
     type: 'enum',
     enum: Object.values(BillingMeterEventTimeWindow),
   })
-  eventTimeWindow: Stripe.Billing.Meter.EventTimeWindow;
+  eventTimeWindow: BillingMeterEventTimeWindow | null;
 
   @OneToMany(() => BillingPrice, (billingPrice) => billingPrice.billingMeter)
   billingPrices: Relation<BillingPrice[]>;

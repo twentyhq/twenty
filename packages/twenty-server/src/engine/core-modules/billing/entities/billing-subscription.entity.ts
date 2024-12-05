@@ -32,10 +32,6 @@ export class BillingSubscription {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  static transformTimestampToDate(timestamp: number): Date {
-    return new Date(timestamp * 1000);
-  }
-
   @Column({ nullable: true, type: 'timestamptz' })
   deletedAt?: Date;
 
@@ -87,60 +83,67 @@ export class BillingSubscription {
     (billingCustomer) => billingCustomer.billingSubscriptions,
     {
       nullable: false,
-      createForeignKeyConstraints: false, //TO DO: when table BillingCustomer populated set to true
-      //even if we put this column nullable and we set createForeignKeyConstraints to ture, we are unabled to insert due to constraints
-      // right now we save the relation , but when we will have populated BillingCustomer, we will add the contraints
+      createForeignKeyConstraints: false,
     },
   )
   @JoinColumn({
     referencedColumnName: 'stripeCustomerId',
     name: 'stripeCustomerId',
   })
-  billingCustomer: Relation<BillingCustomer>;
+  billingCustomer: Relation<BillingCustomer>; //let's see if it works
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, default: false })
   cancelAtPeriodEnd: boolean;
 
-  @Column({ nullable: false })
+  @Column({ nullable: false, default: 'USD' })
   currency: string;
 
-  @Column({ nullable: false, type: 'timestamptz' })
+  @Column({
+    nullable: false,
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   currentPeriodEnd: Date;
 
-  @Column({ nullable: false, type: 'timestamptz' })
+  @Column({
+    nullable: false,
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   currentPeriodStart: Date;
 
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: Stripe.Metadata;
 
   @Column({ nullable: true, type: 'timestamptz' })
-  cancelAt: Date;
+  cancelAt: Date | null;
 
   @Column({
     nullable: true,
     type: 'timestamptz',
   })
-  canceledAt: Date;
-
-  @Column({ nullable: true, type: 'jsonb', default: {} })
-  automaticTax: Stripe.Subscription.AutomaticTax;
+  canceledAt: Date | null;
 
   @Column({ nullable: true, type: 'jsonb' })
-  cancellationDetails: Stripe.Subscription.CancellationDetails;
+  automaticTax: Stripe.Subscription.AutomaticTax | null;
+
+  @Column({ nullable: true, type: 'jsonb' })
+  cancellationDetails: Stripe.Subscription.CancellationDetails | null;
 
   @Column({
     nullable: false,
     type: 'enum',
     enum: Object.values(BillingSubscriptionCollectionMethod),
+    default: BillingSubscriptionCollectionMethod.CHARGE_AUTOMATICALLY,
   })
   collectionMethod: BillingSubscriptionCollectionMethod;
 
   @Column({ nullable: true, type: 'timestamptz' })
-  endedAt: Date;
+  endedAt: Date | null;
 
   @Column({ nullable: true, type: 'timestamptz' })
-  trialStart: Date;
+  trialStart: Date | null;
 
   @Column({ nullable: true, type: 'timestamptz' })
-  trialEnd: Date;
+  trialEnd: Date | null;
 }

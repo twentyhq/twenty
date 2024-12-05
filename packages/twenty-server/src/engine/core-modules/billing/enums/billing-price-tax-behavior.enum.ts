@@ -1,5 +1,5 @@
 export enum BillingPriceTaxBehavior {
-  EXCLUSIVE = 'exclusive',
-  INCLUSIVE = 'inclusive',
-  UNSPECIFIED = 'unspecified',
+  EXCLUSIVE = 'EXCLUSIVE',
+  INCLUSIVE = 'INCLUSIVE',
+  UNSPECIFIED = 'UNSPECIFIED',
 }

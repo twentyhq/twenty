@@ -1,4 +1,4 @@
 export enum BillingSubscriptionCollectionMethod {
-  CHARGE_AUTOMATICALLY = 'charge_automatically',
-  SEND_INVOICE = 'send_invoice',
+  CHARGE_AUTOMATICALLY = 'CHARGE_AUTOMATICALLY',
+  SEND_INVOICE = 'SEND_INVOICE',
 }
