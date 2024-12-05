@@ -1,4 +1,7 @@
-import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import gmailApiErrorMocks from 'src/modules/messaging/message-import-manager/drivers/gmail/mocks/gmail-api-error-mocks';
 import { parseGmailMessagesImportError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-messages-import-error.util';
 
@@ -12,9 +15,39 @@ describe('parseGmailMessagesImportError', () => {
       messageExternalId,
     );
 
+    expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception?.code).toBe(MessageImportDriverExceptionCode.UNKNOWN);
     expect(exception?.message).toBe(
       `${error.error.errors[0].message} for message with externalId: ${messageExternalId}`,
+    );
+  });
+
+  it('should handle 400 Invalid Grant', () => {
+    const error = gmailApiErrorMocks.getError(400, 'invalid_grant');
+    const exception = parseGmailMessagesImportError(
+      error.error,
+      messageExternalId,
+    );
+
+    expect(exception).toBeInstanceOf(MessageImportDriverException);
+    expect(exception?.code).toBe(
+      MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+    );
+    expect(exception?.message).toBe(
+      `${error.error.errors[0].message} for message with externalId: ${messageExternalId}`,
+    );
+  });
+
+  it('should handle 400 Failed Precondition', () => {
+    const error = gmailApiErrorMocks.getError(400, 'failedPrecondition');
+    const exception = parseGmailMessagesImportError(
+      error.error,
+      messageExternalId,
+    );
+
+    expect(exception).toBeInstanceOf(MessageImportDriverException);
+    expect(exception?.code).toBe(
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
     );
   });
 
@@ -25,6 +58,7 @@ describe('parseGmailMessagesImportError', () => {
       messageExternalId,
     );
 
+    expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception?.code).toBe(
       MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
     );
@@ -40,6 +74,7 @@ describe('parseGmailMessagesImportError', () => {
       messageExternalId,
     );
 
+    expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception?.code).toBe(
       MessageImportDriverExceptionCode.TEMPORARY_ERROR,
     );
@@ -55,6 +90,7 @@ describe('parseGmailMessagesImportError', () => {
       messageExternalId,
     );
 
+    expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception?.code).toBe(
       MessageImportDriverExceptionCode.TEMPORARY_ERROR,
     );
@@ -70,6 +106,7 @@ describe('parseGmailMessagesImportError', () => {
       messageExternalId,
     );
 
+    expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception?.code).toBe(
       MessageImportDriverExceptionCode.TEMPORARY_ERROR,
     );
@@ -85,6 +122,7 @@ describe('parseGmailMessagesImportError', () => {
       messageExternalId,
     );
 
+    expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception?.code).toBe(
       MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
     );
@@ -120,6 +158,7 @@ describe('parseGmailMessagesImportError', () => {
       messageExternalId,
     );
 
+    expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception?.code).toBe(
       MessageImportDriverExceptionCode.TEMPORARY_ERROR,
     );
@@ -135,6 +174,7 @@ describe('parseGmailMessagesImportError', () => {
       messageExternalId,
     );
 
+    expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception?.code).toBe(
       MessageImportDriverExceptionCode.TEMPORARY_ERROR,
     );

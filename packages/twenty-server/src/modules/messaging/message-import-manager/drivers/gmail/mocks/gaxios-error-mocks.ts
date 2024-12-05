@@ -109,7 +109,7 @@ const gaxiosErrorMocks = {
       case 'ERR_NETWORK':
         return this.networkError;
       default:
-        return this.networkError;
+        throw new Error(`Unknown error code: ${code}`);
     }
   },
 };

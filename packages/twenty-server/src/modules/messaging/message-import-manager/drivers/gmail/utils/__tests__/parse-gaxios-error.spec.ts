@@ -1,4 +1,7 @@
-import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import gaxiosErrorMocks from 'src/modules/messaging/message-import-manager/drivers/gmail/mocks/gaxios-error-mocks';
 import { parseGaxiosError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gaxios-error.util';
 
@@ -9,6 +12,7 @@ describe('parseGaxiosError', () => {
 
     expect(result).toBeInstanceOf(MessageImportDriverException);
     expect(result?.message).toBe(error.message);
+    expect(result?.code).toBe(MessageImportDriverExceptionCode.TEMPORARY_ERROR);
   });
 
   it('should return a MessageImportDriverException for ENOTFOUND', () => {
@@ -17,6 +21,7 @@ describe('parseGaxiosError', () => {
 
     expect(result).toBeInstanceOf(MessageImportDriverException);
     expect(result?.message).toBe(error.message);
+    expect(result?.code).toBe(MessageImportDriverExceptionCode.TEMPORARY_ERROR);
   });
 
   it('should return a MessageImportDriverException for ECONNABORTED', () => {
@@ -25,6 +30,7 @@ describe('parseGaxiosError', () => {
 
     expect(result).toBeInstanceOf(MessageImportDriverException);
     expect(result?.message).toBe(error.message);
+    expect(result?.code).toBe(MessageImportDriverExceptionCode.TEMPORARY_ERROR);
   });
 
   it('should return a MessageImportDriverException for ETIMEDOUT', () => {
@@ -33,6 +39,7 @@ describe('parseGaxiosError', () => {
 
     expect(result).toBeInstanceOf(MessageImportDriverException);
     expect(result?.message).toBe(error.message);
+    expect(result?.code).toBe(MessageImportDriverExceptionCode.TEMPORARY_ERROR);
   });
 
   it('should return a MessageImportDriverException for ERR_NETWORK', () => {
@@ -41,6 +48,7 @@ describe('parseGaxiosError', () => {
 
     expect(result).toBeInstanceOf(MessageImportDriverException);
     expect(result?.message).toBe(error.message);
+    expect(result?.code).toBe(MessageImportDriverExceptionCode.TEMPORARY_ERROR);
   });
 
   it('should return undefined for unknown error codes', () => {

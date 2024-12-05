@@ -12,8 +12,8 @@ export const parseGmailMessageListFetchError = (error: {
 }): MessageImportDriverException => {
   const { code, errors } = error;
 
-  const reason = errors[0].reason;
-  const message = errors[0].message;
+  const reason = errors?.[0]?.reason;
+  const message = errors?.[0]?.message;
 
   switch (code) {
     case 400:

@@ -15,8 +15,8 @@ export const parseGmailMessagesImportError = (
 ): MessageImportDriverException | undefined => {
   const { code, errors } = error;
 
-  const reason = errors[0].reason;
-  const message = `${errors[0].message} for message with externalId: ${messageExternalId}`;
+  const reason = errors?.[0]?.reason;
+  const message = `${errors?.[0]?.message} for message with externalId: ${messageExternalId}`;
 
   switch (code) {
     case 400:

@@ -19,6 +19,36 @@ const gmailApiErrorMocks = {
     },
   },
 
+  // 400 Invalid Grant
+  invalidGrant: {
+    error: {
+      code: 400,
+      errors: [
+        {
+          domain: 'global',
+          reason: 'invalid_grant',
+          message: 'Invalid Credentials',
+        },
+      ],
+      message: 'Invalid Credentials',
+    },
+  },
+
+  // 400 Failed Precondition
+  failedPrecondition: {
+    error: {
+      code: 400,
+      errors: [
+        {
+          domain: 'global',
+          reason: 'failedPrecondition',
+          message: 'Failed Precondition',
+        },
+      ],
+      message: 'Failed Precondition',
+    },
+  },
+
   // 401 Invalid Credentials
   invalidCredentials: {
     error: {
@@ -106,8 +136,8 @@ const gmailApiErrorMocks = {
       errors: [
         {
           domain: 'usageLimits',
-          message: 'Rate Limit Exceeded',
           reason: 'rateLimitExceeded',
+          message: 'Rate Limit Exceeded',
         },
       ],
       code: 403,
@@ -163,7 +193,14 @@ const gmailApiErrorMocks = {
   getError: function (code: number, type?: string) {
     switch (code) {
       case 400:
-        return this.badRequest;
+        switch (type) {
+          case 'invalid_grant':
+            return this.invalidGrant;
+          case 'failedPrecondition':
+            return this.failedPrecondition;
+          default:
+            return this.badRequest;
+        }
       case 401:
         return this.invalidCredentials;
       case 403:
@@ -195,7 +232,7 @@ const gmailApiErrorMocks = {
       case 500:
         return this.backendError;
       default:
-        return this.backendError;
+        throw new Error(`Unknown error code: ${code}`);
     }
   },
 };
