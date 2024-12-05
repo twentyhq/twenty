@@ -23,5 +23,5 @@ export class UpdateWorkflowVersionStepInput {
     nullable: true,
     defaultValue: true,
   })
-  updateStepOutput: boolean;
+  shouldUpdateStepOutput: boolean;
 }

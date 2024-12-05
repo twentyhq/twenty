@@ -147,14 +147,14 @@ export class WorkflowStatusesUpdateJob {
     workflowVersion: WorkflowVersionWorkspaceEntity;
     workflowVersionRepository: WorkspaceRepository<WorkflowVersionWorkspaceEntity>;
   }) {
-    const computeNewSteps =
+    const shouldComputeNewSteps =
       statusUpdate.newStatus === WorkflowVersionStatus.ACTIVE &&
       isDefined(workflowVersion.steps) &&
       workflowVersion.steps.filter(
         (step) => step.type === WorkflowActionType.CODE,
       ).length > 0;
 
-    if (computeNewSteps) {
+    if (shouldComputeNewSteps) {
       const newSteps: WorkflowAction[] = [];
 
       for (const step of workflowVersion.steps || []) {

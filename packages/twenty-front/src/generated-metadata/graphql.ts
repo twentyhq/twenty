@@ -1572,7 +1572,7 @@ export type UpdateWorkflowVersionStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON']['input'];
   /** Boolean to check if we need to update stepOutput */
-  updateStepOutput?: InputMaybe<Scalars['Boolean']['input']>;
+  shouldUpdateStepOutput?: InputMaybe<Scalars['Boolean']['input']>;
   /** Workflow version ID */
   workflowVersionId: Scalars['String']['input'];
 };

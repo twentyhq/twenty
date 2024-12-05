@@ -65,7 +65,7 @@ type WorkflowEditActionFormServerlessFunctionProps = {
         readonly?: false;
         onActionUpdate: (
           action: WorkflowCodeAction,
-          updateStepOutput?: boolean,
+          shouldUpdateStepOutput?: boolean,
         ) => void;
       };
 };
@@ -158,7 +158,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
   );
 
   const updateFunctionInput = useDebouncedCallback(
-    async (newFunctionInput: object, updateStepOutput = true) => {
+    async (newFunctionInput: object, shouldUpdateStepOutput = true) => {
       if (actionOptions.readonly === true) {
         return;
       }
@@ -174,7 +174,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
             },
           },
         },
-        updateStepOutput,
+        shouldUpdateStepOutput,
       );
     },
     1_000,

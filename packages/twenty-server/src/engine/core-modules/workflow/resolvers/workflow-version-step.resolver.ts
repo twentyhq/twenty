@@ -40,14 +40,14 @@ export class WorkflowVersionStepResolver {
     {
       step,
       workflowVersionId,
-      updateStepOutput,
+      shouldUpdateStepOutput,
     }: UpdateWorkflowVersionStepInput,
   ): Promise<WorkflowActionDTO> {
     return this.workflowVersionStepWorkspaceService.updateWorkflowVersionStep({
       workspaceId,
       workflowVersionId,
       step,
-      updateStepOutput,
+      shouldUpdateStepOutput,
     });
   }
 
