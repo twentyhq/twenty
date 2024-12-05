@@ -14,10 +14,7 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useNavigate } from 'react-router-dom';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import {
-  useIsSubdomainAvailableMutation,
-  useUpdateWorkspaceMutation,
-} from '~/generated/graphql';
+import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isDefined } from '~/utils/isDefined';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
@@ -58,7 +55,6 @@ export const SettingsDomain = () => {
   const { enqueueSnackBar } = useSnackBar();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
-  const [isSubdomainAvailable] = useIsSubdomainAvailableMutation();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -85,20 +81,6 @@ export const SettingsDomain = () => {
         throw new Error('Invalid form values');
       }
 
-      const { data } = await isSubdomainAvailable({
-        variables: {
-          subdomain: values.subdomain,
-        },
-      });
-
-      if (isDefined(data) && !data.isSubdomainAvailable) {
-        control.setError('subdomain', {
-          type: 'manual',
-          message: 'This subdomain has already been taken. Please try another.',
-        });
-        return;
-      }
-
       await updateWorkspace({
         variables: {
           input: {
@@ -114,6 +96,17 @@ export const SettingsDomain = () => {
 
       window.location.href = buildWorkspaceUrl(values.subdomain);
     } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === 'Subdomain already taken'
+      ) {
+        control.setError('subdomain', {
+          type: 'manual',
+          message: (error as Error).message,
+        });
+        return;
+      }
+
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
       });

@@ -475,7 +475,6 @@ export type Mutation = {
   generateTransientToken: TransientToken;
   getAuthorizationUrl: GetAuthorizationUrlOutput;
   impersonate: Verify;
-  isSubdomainAvailable: Scalars['Boolean'];
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -631,11 +630,6 @@ export type MutationGetAuthorizationUrlArgs = {
 
 export type MutationImpersonateArgs = {
   userId: Scalars['String'];
-};
-
-
-export type MutationIsSubdomainAvailableArgs = {
-  subdomain: Scalars['String'];
 };
 
 
@@ -2155,13 +2149,6 @@ export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: nev
 
 
 export type DeleteCurrentWorkspaceMutation = { __typename?: 'Mutation', deleteCurrentWorkspace: { __typename?: 'Workspace', id: any } };
-
-export type IsSubdomainAvailableMutationVariables = Exact<{
-  subdomain: Scalars['String'];
-}>;
-
-
-export type IsSubdomainAvailableMutation = { __typename?: 'Mutation', isSubdomainAvailable: boolean };
 
 export type UpdateWorkspaceMutationVariables = Exact<{
   input: UpdateWorkspaceInput;
@@ -4349,37 +4336,6 @@ export function useDeleteCurrentWorkspaceMutation(baseOptions?: Apollo.MutationH
 export type DeleteCurrentWorkspaceMutationHookResult = ReturnType<typeof useDeleteCurrentWorkspaceMutation>;
 export type DeleteCurrentWorkspaceMutationResult = Apollo.MutationResult<DeleteCurrentWorkspaceMutation>;
 export type DeleteCurrentWorkspaceMutationOptions = Apollo.BaseMutationOptions<DeleteCurrentWorkspaceMutation, DeleteCurrentWorkspaceMutationVariables>;
-export const IsSubdomainAvailableDocument = gql`
-    mutation IsSubdomainAvailable($subdomain: String!) {
-  isSubdomainAvailable(subdomain: $subdomain)
-}
-    `;
-export type IsSubdomainAvailableMutationFn = Apollo.MutationFunction<IsSubdomainAvailableMutation, IsSubdomainAvailableMutationVariables>;
-
-/**
- * __useIsSubdomainAvailableMutation__
- *
- * To run a mutation, you first call `useIsSubdomainAvailableMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useIsSubdomainAvailableMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [isSubdomainAvailableMutation, { data, loading, error }] = useIsSubdomainAvailableMutation({
- *   variables: {
- *      subdomain: // value for 'subdomain'
- *   },
- * });
- */
-export function useIsSubdomainAvailableMutation(baseOptions?: Apollo.MutationHookOptions<IsSubdomainAvailableMutation, IsSubdomainAvailableMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<IsSubdomainAvailableMutation, IsSubdomainAvailableMutationVariables>(IsSubdomainAvailableDocument, options);
-      }
-export type IsSubdomainAvailableMutationHookResult = ReturnType<typeof useIsSubdomainAvailableMutation>;
-export type IsSubdomainAvailableMutationResult = Apollo.MutationResult<IsSubdomainAvailableMutation>;
-export type IsSubdomainAvailableMutationOptions = Apollo.BaseMutationOptions<IsSubdomainAvailableMutation, IsSubdomainAvailableMutationVariables>;
 export const UpdateWorkspaceDocument = gql`
     mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {
   updateWorkspace(data: $input) {

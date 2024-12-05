@@ -91,13 +91,10 @@ export class WorkspaceResolver {
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: Workspace,
   ) {
-    return this.workspaceService.updateOne(workspace.id, data);
-  }
-
-  @Mutation(() => Boolean)
-  @UseGuards(WorkspaceAuthGuard)
-  async isSubdomainAvailable(@Args('subdomain') subdomain: string) {
-    return this.workspaceService.isSubdomainAvailable(subdomain);
+    return this.workspaceService.updateWorkspaceById({
+      ...data,
+      id: workspace.id,
+    });
   }
 
   @Mutation(() => String)
