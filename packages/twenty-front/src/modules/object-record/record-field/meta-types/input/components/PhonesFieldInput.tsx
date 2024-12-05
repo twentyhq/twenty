@@ -71,8 +71,7 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
   const defaultCallingCode =
     stripSimpleQuotesFromString(
       fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
-    ) ?? '+1';
-
+    ) ?? '1';
   // TODO : improve once we store the real country code
   const defaultCountry = useCountries().find(
     (obj) => obj.callingCode === defaultCallingCode,
@@ -103,7 +102,7 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
         if (phone !== undefined) {
           return {
             number: phone.nationalNumber,
-            callingCode: `${phone.countryCallingCode}`,
+            callingCode: `+${phone.countryCallingCode}`,
           };
         }
         return {
