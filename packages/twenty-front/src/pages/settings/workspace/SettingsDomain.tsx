@@ -14,7 +14,10 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useNavigate } from 'react-router-dom';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
+import {
+  useIsSubdomainAvailableMutation,
+  useUpdateWorkspaceMutation,
+} from '~/generated/graphql';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isDefined } from '~/utils/isDefined';
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
@@ -50,10 +53,23 @@ export const SettingsDomain = () => {
   const { enqueueSnackBar } = useSnackBar();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
+  const [isSubdomainAvailable] = useIsSubdomainAvailableMutation();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
+
+  const {
+    control,
+    getValues,
+    formState: { isValid },
+  } = useForm<Form>({
+    mode: 'onChange',
+    defaultValues: {
+      subdomain: currentWorkspace?.subdomain ?? '',
+    },
+    resolver: zodResolver(validationSchema),
+  });
 
   const handleSave = async () => {
     try {
@@ -61,6 +77,20 @@ export const SettingsDomain = () => {
 
       if (!values || !isValid || !currentWorkspace) {
         throw new Error('Invalid form values');
+      }
+
+      const { data } = await isSubdomainAvailable({
+        variables: {
+          subdomain: values.subdomain,
+        },
+      });
+
+      if (isDefined(data) && !data.isSubdomainAvailable) {
+        control.setError('subdomain', {
+          type: 'manual',
+          message: 'This subdomain has already been taken. Please try another.',
+        });
+        return;
       }
 
       await updateWorkspace({
@@ -83,18 +113,6 @@ export const SettingsDomain = () => {
       });
     }
   };
-
-  const {
-    control,
-    getValues,
-    formState: { isValid },
-  } = useForm<Form>({
-    mode: 'onChange',
-    defaultValues: {
-      subdomain: currentWorkspace?.subdomain ?? '',
-    },
-    resolver: zodResolver(validationSchema),
-  });
 
   return (
     <SubMenuTopBarContainer

@@ -159,4 +159,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       );
     }
   }
+
+  async isSubdomainAvailable(subdomain: string) {
+    const existingWorkspace = await this.workspaceRepository.findOne({
+      where: { subdomain: subdomain },
+    });
+
+    return !existingWorkspace;
+  }
 }

@@ -94,6 +94,12 @@ export class WorkspaceResolver {
     return this.workspaceService.updateOne(workspace.id, data);
   }
 
+  @Mutation(() => Boolean)
+  @UseGuards(WorkspaceAuthGuard)
+  async isSubdomainAvailable(@Args('subdomain') subdomain: string) {
+    return this.workspaceService.isSubdomainAvailable(subdomain);
+  }
+
   @Mutation(() => String)
   @UseGuards(WorkspaceAuthGuard)
   async uploadWorkspaceLogo(
