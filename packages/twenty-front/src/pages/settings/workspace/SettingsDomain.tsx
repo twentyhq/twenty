@@ -23,8 +23,12 @@ const validationSchema = z
   .object({
     subdomain: z
       .string()
-      .min(1, { message: 'Subdomain can not be empty' })
-      .max(63, { message: 'Subdomain can not be longer than 63 characters' }),
+      .min(3, { message: 'Subdomain can not be shorter than 3 characters' })
+      .max(30, { message: 'Subdomain can not be longer than 30 characters' })
+      .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
+        message:
+          'Use letter, number and dash only. Start and finish with a letter or a number',
+      }),
   })
   .required();
 
@@ -36,10 +40,11 @@ const StyledDomainFromWrapper = styled.div`
 `;
 
 const StyledDomain = styled.h2`
+  align-self: flex-start;
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-left: ${({ theme }) => theme.spacing(2)};
+  margin: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsDomain = () => {
@@ -90,6 +95,7 @@ export const SettingsDomain = () => {
     formState: { isValid },
   } = useForm<Form>({
     mode: 'onChange',
+    delayError: 500,
     defaultValues: {
       subdomain: currentWorkspace?.subdomain ?? '',
     },
@@ -133,18 +139,22 @@ export const SettingsDomain = () => {
                   field: { onChange, value },
                   fieldState: { error },
                 }) => (
-                  <TextInputV2
-                    value={value}
-                    type="text"
-                    onChange={onChange}
-                    error={error?.message}
-                    fullWidth
-                  />
+                  <>
+                    <TextInputV2
+                      value={value}
+                      type="text"
+                      onChange={onChange}
+                      error={error?.message}
+                      fullWidth
+                    />
+                    {isDefined(domainConfiguration.frontDomain) && (
+                      <StyledDomain>
+                        .{domainConfiguration.frontDomain}
+                      </StyledDomain>
+                    )}
+                  </>
                 )}
               />
-              {isDefined(domainConfiguration.frontDomain) && (
-                <StyledDomain>.{domainConfiguration.frontDomain}</StyledDomain>
-              )}
             </StyledDomainFromWrapper>
           )}
         </Section>
