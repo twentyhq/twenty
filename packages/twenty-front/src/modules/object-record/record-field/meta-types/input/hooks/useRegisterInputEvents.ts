@@ -29,7 +29,7 @@ export const useRegisterInputEvents = <T>({
     refs: [inputRef, copyRef].filter(isDefined),
     callback: (event) => {
       event.stopImmediatePropagation();
-      console.log('click outside useRegisterInputEvents');
+
       onClickOutside?.(event, inputValue);
     },
     enabled: isDefined(onClickOutside),
