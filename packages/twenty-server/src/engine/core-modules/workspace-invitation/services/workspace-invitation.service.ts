@@ -344,7 +344,11 @@ export class WorkspaceInvitationService {
         const emailData = {
           link: link.toString(),
           workspace: { name: workspace.displayName, logo: workspace.logo },
-          sender: { email: sender.email, firstName: sender.firstName },
+          sender: {
+            email: sender.email,
+            firstName: sender.firstName,
+            lastName: sender.lastName,
+          },
           serverUrl: this.environmentService.get('SERVER_URL'),
         };
 
@@ -358,9 +362,7 @@ export class WorkspaceInvitationService {
         });
 
         await this.emailService.send({
-          from: `${this.environmentService.get(
-            'EMAIL_FROM_NAME',
-          )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+          from: `${sender.firstName} ${sender.lastName} (via Twenty) <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
           to: invitation.value.email,
           subject: 'Join your team on Twenty',
           text,
