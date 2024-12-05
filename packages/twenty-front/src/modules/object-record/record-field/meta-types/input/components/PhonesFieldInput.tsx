@@ -74,7 +74,7 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
     ) ?? '1';
   // TODO : improve once we store the real country code
   const defaultCountry = useCountries().find(
-    (obj) => obj.callingCode === defaultCallingCode,
+    (obj) => `+${obj.callingCode}` === defaultCallingCode,
   )?.countryCode;
 
   const handlePersistPhones = (
