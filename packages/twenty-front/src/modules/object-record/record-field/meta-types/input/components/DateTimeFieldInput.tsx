@@ -2,6 +2,7 @@ import { Nullable } from 'twenty-ui';
 
 import { DateInput } from '@/ui/field/input/components/DateInput';
 
+import { useRef, useState } from 'react';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useDateTimeField } from '../../hooks/useDateTimeField';
 
@@ -69,17 +70,26 @@ export const DateTimeFieldInput = ({
 
   const dateValue = fieldValue ? new Date(fieldValue) : null;
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const [temporaryValue, setTemporaryValue] =
+    useState<Nullable<Date>>(dateValue);
+
   return (
-    <DateInput
-      onClickOutside={handleClickOutside}
-      onEnter={handleEnter}
-      onEscape={handleEscape}
-      value={dateValue}
-      clearable
-      onChange={handleChange}
-      isDateTimeInput
-      onClear={handleClear}
-      onSubmit={handleSubmit}
-    />
+    <div ref={wrapperRef}>
+      <DateInput
+        onClickOutside={handleClickOutside}
+        onEnter={handleEnter}
+        onEscape={handleEscape}
+        clearable
+        onChange={handleChange}
+        isDateTimeInput
+        onClear={handleClear}
+        onSubmit={handleSubmit}
+        wrapperRef={wrapperRef}
+        temporaryValue={temporaryValue}
+        setTemporaryValue={setTemporaryValue}
+      />
+    </div>
   );
 };

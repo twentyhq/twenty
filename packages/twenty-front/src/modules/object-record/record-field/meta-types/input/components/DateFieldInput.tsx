@@ -4,6 +4,7 @@ import { useDateField } from '@/object-record/record-field/meta-types/hooks/useD
 import { DateInput } from '@/ui/field/input/components/DateInput';
 import { isDefined } from '~/utils/isDefined';
 
+import { useRef, useState } from 'react';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 
@@ -67,16 +68,25 @@ export const DateFieldInput = ({
 
   const dateValue = fieldValue ? new Date(fieldValue) : null;
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const [temporaryValue, setTemporaryValue] =
+    useState<Nullable<Date>>(dateValue);
+
   return (
-    <DateInput
-      onClickOutside={handleClickOutside}
-      onEnter={handleEnter}
-      onEscape={handleEscape}
-      value={dateValue}
-      clearable
-      onChange={handleChange}
-      onClear={handleClear}
-      onSubmit={handleSubmit}
-    />
+    <div ref={wrapperRef}>
+      <DateInput
+        onClickOutside={handleClickOutside}
+        onEnter={handleEnter}
+        onEscape={handleEscape}
+        clearable
+        onChange={handleChange}
+        onClear={handleClear}
+        onSubmit={handleSubmit}
+        wrapperRef={wrapperRef}
+        temporaryValue={temporaryValue}
+        setTemporaryValue={setTemporaryValue}
+      />
+    </div>
   );
 };

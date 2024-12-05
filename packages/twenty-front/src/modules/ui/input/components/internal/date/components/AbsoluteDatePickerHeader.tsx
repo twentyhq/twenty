@@ -38,6 +38,7 @@ type AbsoluteDatePickerHeaderProps = {
   nextMonthButtonDisabled: boolean;
   isDateTimeInput?: boolean;
   timeZone: string;
+  hideInput?: boolean;
 };
 
 export const AbsoluteDatePickerHeader = ({
@@ -51,6 +52,7 @@ export const AbsoluteDatePickerHeader = ({
   nextMonthButtonDisabled,
   isDateTimeInput,
   timeZone,
+  hideInput,
 }: AbsoluteDatePickerHeaderProps) => {
   const endOfDayDateTimeInLocalTimezone = DateTime.now().set({
     day: date.getDate(),
@@ -66,12 +68,15 @@ export const AbsoluteDatePickerHeader = ({
 
   return (
     <>
-      <DateTimeInput
-        date={date}
-        isDateTimeInput={isDateTimeInput}
-        onChange={onChange}
-        userTimezone={timeZone}
-      />
+      {hideInput !== true ? (
+        <DateTimeInput
+          date={date}
+          isDateTimeInput={isDateTimeInput}
+          onChange={onChange}
+          userTimezone={timeZone}
+        />
+      ) : null}
+
       <StyledCustomDatePickerHeader>
         <Select
           dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}

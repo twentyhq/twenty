@@ -28,6 +28,7 @@ const StyledFormFieldInputInputContainer = styled.div<{
   display: flex;
   overflow: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
   width: 100%;
+  position: relative;
 `;
 
 export const FormFieldInputInputContainer = StyledFormFieldInputInputContainer;
