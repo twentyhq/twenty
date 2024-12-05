@@ -1,6 +1,6 @@
 import { expect } from '@storybook/test';
 import { renderHook } from '@testing-library/react';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, act } from 'react';
 
 import { mocks } from '@/auth/hooks/__mocks__/useAuth';
 import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
@@ -43,17 +43,16 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
 };
 
 describe('useObjectRecordTable', () => {
-  it('should skip fetch if currentWorkspace is undefined', async () => {
+  it('should fetch', async () => {
     const { result } = renderHook(
       () => {
         const { findManyRecords, ...result } =
           useLazyLoadRecordIndexTable(objectNameSingular);
 
-        useEffect(() => {
-          findManyRecords();
-        }, [findManyRecords]);
-
-        return result;
+        return {
+          findManyRecords,
+          ...result,
+        };
       },
       {
         wrapper: Wrapper,
@@ -61,6 +60,11 @@ describe('useObjectRecordTable', () => {
     );
 
     expect(result.current.loading).toBe(false);
+
+    act(() => {
+      result.current.findManyRecords();
+    });
+
     expect(Array.isArray(result.current.records)).toBe(true);
     expect(result.current.records.length).toBe(13);
   });
