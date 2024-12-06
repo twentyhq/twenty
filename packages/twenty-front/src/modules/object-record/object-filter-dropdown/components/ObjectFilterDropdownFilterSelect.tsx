@@ -16,7 +16,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
@@ -167,43 +166,41 @@ export const ObjectFilterDropdownFilterSelect = ({
           setObjectFilterDropdownSearchInput(event.target.value)
         }
       />
-      <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-        <SelectableList
-          hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
-          selectableItemIdArray={selectableListItemIds}
-          selectableListId={OBJECT_FILTER_DROPDOWN_ID}
-          onEnter={handleEnter}
-        >
-          <DropdownMenuItemsContainer>
-            {visibleColumnsFilterDefinitions.map(
-              (visibleFilterDefinition, index) => (
-                <SelectableItem
-                  itemId={visibleFilterDefinition.fieldMetadataId}
-                  key={`visible-select-filter-${index}`}
-                >
-                  <ObjectFilterDropdownFilterSelectMenuItem
-                    filterDefinition={visibleFilterDefinition}
-                  />
-                </SelectableItem>
-              ),
-            )}
-            {shoudShowSeparator && <DropdownMenuSeparator />}
-            {hiddenColumnsFilterDefinitions.map(
-              (hiddenFilterDefinition, index) => (
-                <SelectableItem
-                  itemId={hiddenFilterDefinition.fieldMetadataId}
-                  key={`hidden-select-filter-${index}`}
-                >
-                  <ObjectFilterDropdownFilterSelectMenuItem
-                    filterDefinition={hiddenFilterDefinition}
-                  />
-                </SelectableItem>
-              ),
-            )}
-          </DropdownMenuItemsContainer>
-        </SelectableList>
-        {shouldShowAdvancedFilterButton && <AdvancedFilterButton />}
-      </ScrollWrapper>
+      <SelectableList
+        hotkeyScope={FiltersHotkeyScope.ObjectFilterDropdownButton}
+        selectableItemIdArray={selectableListItemIds}
+        selectableListId={OBJECT_FILTER_DROPDOWN_ID}
+        onEnter={handleEnter}
+      >
+        <DropdownMenuItemsContainer>
+          {visibleColumnsFilterDefinitions.map(
+            (visibleFilterDefinition, index) => (
+              <SelectableItem
+                itemId={visibleFilterDefinition.fieldMetadataId}
+                key={`visible-select-filter-${index}`}
+              >
+                <ObjectFilterDropdownFilterSelectMenuItem
+                  filterDefinition={visibleFilterDefinition}
+                />
+              </SelectableItem>
+            ),
+          )}
+          {shoudShowSeparator && <DropdownMenuSeparator />}
+          {hiddenColumnsFilterDefinitions.map(
+            (hiddenFilterDefinition, index) => (
+              <SelectableItem
+                itemId={hiddenFilterDefinition.fieldMetadataId}
+                key={`hidden-select-filter-${index}`}
+              >
+                <ObjectFilterDropdownFilterSelectMenuItem
+                  filterDefinition={hiddenFilterDefinition}
+                />
+              </SelectableItem>
+            ),
+          )}
+        </DropdownMenuItemsContainer>
+      </SelectableList>
+      {shouldShowAdvancedFilterButton && <AdvancedFilterButton />}
     </>
   );
 };

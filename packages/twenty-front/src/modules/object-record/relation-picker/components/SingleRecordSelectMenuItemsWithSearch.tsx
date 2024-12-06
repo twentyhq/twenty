@@ -59,27 +59,6 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
     />
   );
 
-  const results = (
-    <SingleRecordSelectMenuItems
-      recordsToSelect={records.recordsToSelect}
-      loading={records.loading}
-      selectedRecord={
-        records.recordsToSelect.length === 1
-          ? records.recordsToSelect[0]
-          : undefined
-      }
-      shouldSelectEmptyOption={selectedRecordIds?.length === 0}
-      hotkeyScope={recordPickerInstanceId}
-      isFiltered={!!recordPickerSearchFilter}
-      {...{
-        EmptyIcon,
-        emptyLabel,
-        onCancel,
-        onRecordSelected,
-      }}
-    />
-  );
-
   return (
     <>
       {dropdownPlacement?.includes('end') && (
@@ -88,7 +67,26 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
             {createNewButton}
           </DropdownMenuItemsContainer>
           {records.recordsToSelect.length > 0 && <DropdownMenuSeparator />}
-          {records.recordsToSelect.length > 0 && results}
+          {records.recordsToSelect.length > 0 && (
+            <SingleRecordSelectMenuItems
+              recordsToSelect={records.recordsToSelect}
+              loading={records.loading}
+              selectedRecord={
+                records.recordsToSelect.length === 1
+                  ? records.recordsToSelect[0]
+                  : undefined
+              }
+              shouldSelectEmptyOption={selectedRecordIds?.length === 0}
+              hotkeyScope={recordPickerInstanceId}
+              isFiltered={!!recordPickerSearchFilter}
+              {...{
+                EmptyIcon,
+                emptyLabel,
+                onCancel,
+                onRecordSelected,
+              }}
+            />
+          )}
           <DropdownMenuSeparator />
         </>
       )}
@@ -97,7 +95,26 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
         isUndefinedOrNull(dropdownPlacement)) && (
         <>
           <DropdownMenuSeparator />
-          {records.recordsToSelect.length > 0 && results}
+          {records.recordsToSelect.length > 0 && (
+            <SingleRecordSelectMenuItems
+              recordsToSelect={records.recordsToSelect}
+              loading={records.loading}
+              selectedRecord={
+                records.recordsToSelect.length === 1
+                  ? records.recordsToSelect[0]
+                  : undefined
+              }
+              shouldSelectEmptyOption={selectedRecordIds?.length === 0}
+              hotkeyScope={recordPickerInstanceId}
+              isFiltered={!!recordPickerSearchFilter}
+              {...{
+                EmptyIcon,
+                emptyLabel,
+                onCancel,
+                onRecordSelected,
+              }}
+            />
+          )}
           {records.recordsToSelect.length > 0 && isDefined(onCreate) && (
             <DropdownMenuSeparator />
           )}

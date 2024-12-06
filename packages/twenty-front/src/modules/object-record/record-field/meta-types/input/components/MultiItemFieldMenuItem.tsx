@@ -1,7 +1,7 @@
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItemWithOptionDropdown } from '@/ui/navigation/menu-item/components/MenuItemWithOptionDropdown';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   IconBookmark,
   IconBookmarkPlus,
@@ -37,23 +37,29 @@ export const MultiItemFieldMenuItem = <T,>({
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => {
     setIsHovered(false);
-    if (isDropdownOpen) {
-      closeDropdown();
-    }
   };
 
-  const handleDeleteClick = () => {
+  const handleDeleteClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+
     closeDropdown();
     setIsHovered(false);
     onDelete?.();
   };
 
-  const handleSetAsPrimaryClick = () => {
+  const handleSetAsPrimaryClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+
     closeDropdown();
     onSetAsPrimary?.();
   };
 
-  const handleEditClick = () => {
+  const handleEditClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+
     closeDropdown();
     onEdit?.();
   };

@@ -1,4 +1,4 @@
-import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/utils/mergeDefaultFunctionInputAndFunctionInput';
+import { mergeDefaultFunctionInputAndFunctionInput } from '../mergeDefaultFunctionInputAndFunctionInput';
 
 describe('mergeDefaultFunctionInputAndFunctionInput', () => {
   it('should merge properly', () => {

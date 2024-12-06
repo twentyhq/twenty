@@ -1,11 +1,16 @@
 import { cookieStorageEffect } from '~/utils/recoil-effects';
 import { createState } from 'twenty-ui';
 
-export const lastAuthenticatedWorkspaceDomainState = createState<{
-  subdomain: string;
-  workspaceId: string;
-  cookieAttributes?: Cookies.CookieAttributes;
-} | null>({
+export const lastAuthenticatedWorkspaceDomainState = createState<
+  | {
+      subdomain: string;
+      workspaceId: string;
+      cookieAttributes?: Cookies.CookieAttributes;
+    }
+  | null
+  // this type is necessary to let the deletion of cookie. Without the domain the cookie is not deleted.
+  | { cookieAttributes?: Cookies.CookieAttributes }
+>({
   key: 'lastAuthenticateWorkspaceDomain',
   defaultValue: null,
   effects: [

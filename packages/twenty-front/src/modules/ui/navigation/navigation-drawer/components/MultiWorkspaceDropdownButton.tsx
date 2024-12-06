@@ -129,7 +129,7 @@ export const MultiWorkspaceDropdownButton = ({
               }}
             >
               <MenuItemSelectAvatar
-                text={workspace.displayName ?? ''}
+                text={workspace.displayName ?? '(No name)'}
                 avatar={
                   <StyledLogo
                     logo={getImageAbsoluteURI(

@@ -6,9 +6,13 @@ import { usePersistField } from '../../../hooks/usePersistField';
 import { useDateTimeField } from '../../hooks/useDateTimeField';
 
 export type FieldInputEvent = (persist: () => void) => void;
+export type FieldInputClickOutsideEvent = (
+  persist: () => void,
+  event: MouseEvent | TouchEvent,
+) => void;
 
 export type DateTimeFieldInputProps = {
-  onClickOutside?: FieldInputEvent;
+  onClickOutside?: FieldInputClickOutsideEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
   onClear?: FieldInputEvent;
@@ -45,10 +49,10 @@ export const DateTimeFieldInput = ({
   };
 
   const handleClickOutside = (
-    _event: MouseEvent | TouchEvent,
+    event: MouseEvent | TouchEvent,
     newDate: Nullable<Date>,
   ) => {
-    onClickOutside?.(() => persistDate(newDate));
+    onClickOutside?.(() => persistDate(newDate), event);
   };
 
   const handleChange = (newDate: Nullable<Date>) => {

@@ -91,7 +91,10 @@ export class WorkspaceResolver {
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: Workspace,
   ) {
-    return this.workspaceService.updateOne(workspace.id, data);
+    return this.workspaceService.updateWorkspaceById({
+      ...data,
+      id: workspace.id,
+    });
   }
 
   @Mutation(() => String)
