@@ -4,10 +4,11 @@ import styled from '@emotion/styled';
 import { E164Number, parsePhoneNumber } from 'libphonenumber-js';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { TEXT_INPUT_STYLE, isDefined } from 'twenty-ui';
+import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
+import { createPhonesFromFieldValue } from '@/object-record/record-field/meta-types/input/utils/phonesUtils';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -54,17 +55,7 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
   const { persistPhonesField, hotkeyScope, fieldDefinition, fieldValue } =
     usePhonesField();
 
-  const phones = !isDefined(fieldValue)
-    ? []
-    : [
-        fieldValue.primaryPhoneNumber
-          ? {
-              number: fieldValue.primaryPhoneNumber,
-              callingCode: fieldValue.primaryPhoneCountryCode,
-            }
-          : null,
-        ...(fieldValue.additionalPhones ?? []),
-      ].filter(isDefined);
+  const phones = createPhonesFromFieldValue(fieldValue);
 
   const defaultCallingCode =
     stripSimpleQuotesFromString(
