@@ -5,7 +5,7 @@ import { useRecoilCallback, useSetRecoilState } from 'recoil';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
@@ -35,8 +35,8 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
     isRemoveSortingModalOpenState,
   );
 
-  const recordIndexAllRecordIdsSelector = useRecoilComponentCallbackStateV2(
-    recordIndexAllRecordIdsComponentSelector,
+  const recordIdsByGroupFamilyState = useRecoilComponentCallbackStateV2(
+    recordIndexRecordIdsByGroupComponentFamilyState,
   );
 
   const handleDragEnd = useRecoilCallback(
@@ -74,13 +74,13 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
           return;
         }
 
-        const allRecordIds = getSnapshotValue(
+        const destinationGroupRecordIds = getSnapshotValue(
           snapshot,
-          recordIndexAllRecordIdsSelector,
+          recordIdsByGroupFamilyState(destinationRecordGroupId),
         );
 
         const recordBeforeDestinationId =
-          allRecordIds[result.destination.index - 1];
+          destinationGroupRecordIds[result.destination.index - 1];
 
         const recordBeforeDestination = recordBeforeDestinationId
           ? snapshot
@@ -89,7 +89,7 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
           : null;
 
         const recordAfterDestinationId =
-          allRecordIds[result.destination.index + 1];
+          destinationGroupRecordIds[result.destination.index + 1];
 
         const recordAfterDestination = recordAfterDestinationId
           ? snapshot
@@ -117,7 +117,7 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
     [
       objectMetadataItem.fields,
       viewSorts.length,
-      recordIndexAllRecordIdsSelector,
+      recordIdsByGroupFamilyState,
       updateOneRow,
       setIsRemoveSortingModalOpenState,
     ],

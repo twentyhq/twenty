@@ -63,8 +63,7 @@ export const RecordTableBodyDragDropContextProvider = ({
               .getValue()
           : null;
 
-        const recordAfterDestinationId =
-          allRecordIds[result.destination.index + 1];
+        const recordAfterDestinationId = allRecordIds[result.destination.index];
 
         const recordAfterDestination = recordAfterDestinationId
           ? snapshot
