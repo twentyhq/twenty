@@ -66,9 +66,6 @@ export const cookieStorageEffect =
           ? newValue.cookieAttributes
           : {}),
       };
-      console.log('>>>>>>>>>>>>>>', newValue);
-      console.log('>>>>>>>>>>>>>>', key, cookieAttributes);
-
       if (
         !newValue ||
         (Object.keys(newValue).length === 1 &&
