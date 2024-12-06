@@ -18,7 +18,6 @@ import {
 } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { WorkflowBuilderWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-builder.workspace-service';
-import { WorkflowRecordCRUDType } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import { BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
   WorkflowAction,
@@ -126,7 +125,7 @@ export class WorkflowVersionStepWorkspaceService {
           },
         };
       }
-      case `${WorkflowActionType.RECORD_CRUD}.${WorkflowRecordCRUDType.CREATE}`: {
+      case WorkflowActionType.CREATE_RECORD: {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({
             where: { workspaceId, isActive: true, isSystem: false },
@@ -135,19 +134,18 @@ export class WorkflowVersionStepWorkspaceService {
         return {
           id: newStepId,
           name: 'Create Record',
-          type: WorkflowActionType.RECORD_CRUD,
+          type: WorkflowActionType.CREATE_RECORD,
           valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
-              type: WorkflowRecordCRUDType.CREATE,
               objectName: activeObjectMetadataItem?.nameSingular || '',
               objectRecord: {},
             },
           },
         };
       }
-      case `${WorkflowActionType.RECORD_CRUD}.${WorkflowRecordCRUDType.UPDATE}`: {
+      case WorkflowActionType.UPDATE_RECORD: {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({
             where: { workspaceId, isActive: true, isSystem: false },
@@ -156,12 +154,11 @@ export class WorkflowVersionStepWorkspaceService {
         return {
           id: newStepId,
           name: 'Update Record',
-          type: WorkflowActionType.RECORD_CRUD,
+          type: WorkflowActionType.UPDATE_RECORD,
           valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
-              type: WorkflowRecordCRUDType.UPDATE,
               objectName: activeObjectMetadataItem?.nameSingular || '',
               objectRecord: {},
               objectRecordId: '',
@@ -169,7 +166,7 @@ export class WorkflowVersionStepWorkspaceService {
           },
         };
       }
-      case `${WorkflowActionType.RECORD_CRUD}.${WorkflowRecordCRUDType.DELETE}`: {
+      case WorkflowActionType.DELETE_RECORD: {
         const activeObjectMetadataItem =
           await this.objectMetadataRepository.findOne({
             where: { workspaceId, isActive: true, isSystem: false },
@@ -178,12 +175,11 @@ export class WorkflowVersionStepWorkspaceService {
         return {
           id: newStepId,
           name: 'Delete Record',
-          type: WorkflowActionType.RECORD_CRUD,
+          type: WorkflowActionType.DELETE_RECORD,
           valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
             input: {
-              type: WorkflowRecordCRUDType.DELETE,
               objectName: activeObjectMetadataItem?.nameSingular || '',
               objectRecordId: '',
             },
