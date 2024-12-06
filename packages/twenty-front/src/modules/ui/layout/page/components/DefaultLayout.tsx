@@ -67,10 +67,6 @@ const StyledMainContainer = styled.div`
   display: flex;
   flex: 0 1 100%;
   overflow: hidden;
-
-  .justify-center {
-    justify-content: center;
-  }
 `;
 
 export const DefaultLayout = () => {
@@ -130,24 +126,24 @@ export const DefaultLayout = () => {
           ) : (
             <StyledAppNavigationDrawer />
           )}
-          <StyledMainContainer>
-            {showAuthModal ? (
-              <>
-                <SignInBackgroundMockPage />
-                <AnimatePresence mode="wait">
-                  <LayoutGroup>
-                    <AuthModal>
-                      <Outlet />
-                    </AuthModal>
-                  </LayoutGroup>
-                </AnimatePresence>
-              </>
-            ) : (
+          {showAuthModal ? (
+            <>
+              <SignInBackgroundMockPage />
+              <AnimatePresence mode="wait">
+                <LayoutGroup>
+                  <AuthModal>
+                    <Outlet />
+                  </AuthModal>
+                </LayoutGroup>
+              </AnimatePresence>
+            </>
+          ) : (
+            <StyledMainContainer>
               <AppErrorBoundary>
                 <Outlet />
               </AppErrorBoundary>
-            )}
-          </StyledMainContainer>
+            </StyledMainContainer>
+          )}
         </StyledPageContainer>
         {isMobile && <MobileNavigationBar />}
       </StyledLayout>

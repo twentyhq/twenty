@@ -4,12 +4,13 @@ import React from 'react';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
+  justify-content: center;
 `;
 
 type AuthModalProps = { children: React.ReactNode };
 
 export const AuthModal = ({ children }: AuthModalProps) => (
-  <Modal padding={'none'} modalVariant="primary" className="justify-center">
+  <Modal padding={'none'} modalVariant="primary">
     <StyledContent>{children}</StyledContent>
   </Modal>
 );
