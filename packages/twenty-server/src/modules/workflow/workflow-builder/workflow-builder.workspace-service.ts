@@ -92,7 +92,7 @@ export class WorkflowBuilderWorkspaceService {
           workspaceId,
           objectMetadataRepository: this.objectMetadataRepository,
         });
-      case WorkflowActionType.FIND_RECORD:
+      case WorkflowActionType.FIND_RECORDS:
         return this.computeFindRecordsOutputSchema({
           objectType: step.settings.input.objectName,
           workspaceId,

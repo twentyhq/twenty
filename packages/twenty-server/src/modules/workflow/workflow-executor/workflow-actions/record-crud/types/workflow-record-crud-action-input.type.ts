@@ -21,7 +21,7 @@ export type WorkflowDeleteRecordActionInput = {
   objectRecordId: string;
 };
 
-export type WorkflowFindRecordActionInput = {
+export type WorkflowFindRecordsActionInput = {
   objectName: string;
   filter?: Partial<ObjectRecordFilter>;
   orderBy?: Partial<ObjectRecordOrderBy>;

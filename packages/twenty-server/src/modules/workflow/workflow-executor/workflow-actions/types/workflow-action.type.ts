@@ -3,7 +3,7 @@ import { WorkflowSendEmailActionSettings } from 'src/modules/workflow/workflow-e
 import {
   WorkflowCreateRecordActionSettings,
   WorkflowDeleteRecordActionSettings,
-  WorkflowFindRecordActionSettings,
+  WorkflowFindRecordsActionSettings,
   WorkflowUpdateRecordActionSettings,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-settings.type';
 import { WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
@@ -14,7 +14,7 @@ export enum WorkflowActionType {
   CREATE_RECORD = 'CREATE_RECORD',
   UPDATE_RECORD = 'UPDATE_RECORD',
   DELETE_RECORD = 'DELETE_RECORD',
-  FIND_RECORD = 'FIND_RECORD',
+  FIND_RECORDS = 'FIND_RECORDS',
 }
 
 type BaseWorkflowAction = {
@@ -50,9 +50,9 @@ export type WorkflowDeleteRecordAction = BaseWorkflowAction & {
   settings: WorkflowDeleteRecordActionSettings;
 };
 
-export type WorkflowFindRecordAction = BaseWorkflowAction & {
-  type: WorkflowActionType.FIND_RECORD;
-  settings: WorkflowFindRecordActionSettings;
+export type WorkflowFindRecordsAction = BaseWorkflowAction & {
+  type: WorkflowActionType.FIND_RECORDS;
+  settings: WorkflowFindRecordsActionSettings;
 };
 
 export type WorkflowAction =
@@ -61,4 +61,4 @@ export type WorkflowAction =
   | WorkflowCreateRecordAction
   | WorkflowUpdateRecordAction
   | WorkflowDeleteRecordAction
-  | WorkflowFindRecordAction;
+  | WorkflowFindRecordsAction;

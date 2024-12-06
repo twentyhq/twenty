@@ -10,7 +10,7 @@ import { CodeWorkflowAction } from 'src/modules/workflow/workflow-executor/workf
 import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
 import { CreateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/create-record.workflow-action';
 import { DeleteRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/delete-record.workflow-action';
-import { FindRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-record.workflow-action';
+import { FindRecordsWorflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/find-records.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
 import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
@@ -22,7 +22,7 @@ export class WorkflowActionFactory {
     private readonly createRecordWorkflowAction: CreateRecordWorkflowAction,
     private readonly updateRecordWorkflowAction: UpdateRecordWorkflowAction,
     private readonly deleteRecordWorkflowAction: DeleteRecordWorkflowAction,
-    private readonly findRecordWorkflowAction: FindRecordWorkflowAction,
+    private readonly findRecordsWorflowAction: FindRecordsWorflowAction,
   ) {}
 
   get(stepType: WorkflowActionType): WorkflowAction {
@@ -37,8 +37,8 @@ export class WorkflowActionFactory {
         return this.updateRecordWorkflowAction;
       case WorkflowActionType.DELETE_RECORD:
         return this.deleteRecordWorkflowAction;
-      case WorkflowActionType.FIND_RECORD:
-        return this.findRecordWorkflowAction;
+      case WorkflowActionType.FIND_RECORDS:
+        return this.findRecordsWorflowAction;
       default:
         throw new WorkflowStepExecutorException(
           `Workflow step executor not found for step type '${stepType}'`,

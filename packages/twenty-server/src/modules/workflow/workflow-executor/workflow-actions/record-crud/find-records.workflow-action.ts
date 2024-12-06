@@ -24,11 +24,11 @@ import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
-import { WorkflowFindRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
+import { WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 
 @Injectable()
-export class FindRecordWorkflowAction implements WorkflowAction {
+export class FindRecordsWorflowAction implements WorkflowAction {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
@@ -36,7 +36,7 @@ export class FindRecordWorkflowAction implements WorkflowAction {
   ) {}
 
   async execute(
-    workflowActionInput: WorkflowFindRecordActionInput,
+    workflowActionInput: WorkflowFindRecordsActionInput,
   ): Promise<WorkflowActionResult> {
     const repository = await this.twentyORMManager.getRepository(
       workflowActionInput.objectName,
@@ -115,7 +115,7 @@ export class FindRecordWorkflowAction implements WorkflowAction {
   }
 
   private async getObjectRecords<T extends ObjectLiteral>(
-    workflowActionInput: WorkflowFindRecordActionInput,
+    workflowActionInput: WorkflowFindRecordsActionInput,
     objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps,
     objectMetadataMaps: ObjectMetadataMaps,
     repository: WorkspaceRepository<T>,
@@ -155,7 +155,7 @@ export class FindRecordWorkflowAction implements WorkflowAction {
   }
 
   private async getTotalCount(
-    workflowActionInput: WorkflowFindRecordActionInput,
+    workflowActionInput: WorkflowFindRecordsActionInput,
     repository: WorkspaceRepository<Entity>,
     graphqlQueryParser: GraphqlQueryParser,
   ) {
