@@ -223,35 +223,35 @@ export const SettingsDataModelObjectAboutForm = ({
         )}
       />
       <StyledAdvancedSettingsOuterContainer>
-        <AdvancedSettingsWrapper>
-          <StyledAdvancedSettingsContainer>
-            <StyledAdvancedSettingsSectionInputWrapper>
-              {[
-                {
-                  label: 'API Name (Singular)',
-                  fieldName: 'nameSingular' as const,
-                  placeholder: 'listing',
-                  defaultValue: objectMetadataItem?.nameSingular,
-                  disableEdition: disableEdition || isLabelSyncedWithName,
-                  tooltip: apiNameTooltipText,
-                },
-                {
-                  label: 'API Name (Plural)',
-                  fieldName: 'namePlural' as const,
-                  placeholder: 'listings',
-                  defaultValue: objectMetadataItem?.namePlural,
-                  disableEdition: disableEdition || isLabelSyncedWithName,
-                  tooltip: apiNameTooltipText,
-                },
-              ].map(
-                ({
-                  defaultValue,
-                  fieldName,
-                  label,
-                  placeholder,
-                  disableEdition,
-                  tooltip,
-                }) => (
+        <StyledAdvancedSettingsContainer>
+          <StyledAdvancedSettingsSectionInputWrapper>
+            {[
+              {
+                label: 'API Name (Singular)',
+                fieldName: 'nameSingular' as const,
+                placeholder: 'listing',
+                defaultValue: objectMetadataItem?.nameSingular,
+                disableEdition: disableEdition || isLabelSyncedWithName,
+                tooltip: apiNameTooltipText,
+              },
+              {
+                label: 'API Name (Plural)',
+                fieldName: 'namePlural' as const,
+                placeholder: 'listings',
+                defaultValue: objectMetadataItem?.namePlural,
+                disableEdition: disableEdition || isLabelSyncedWithName,
+                tooltip: apiNameTooltipText,
+              },
+            ].map(
+              ({
+                defaultValue,
+                fieldName,
+                label,
+                placeholder,
+                disableEdition,
+                tooltip,
+              }) => (
+                <AdvancedSettingsWrapper>
                   <StyledInputContainer key={`object-${fieldName}-text-input`}>
                     <Controller
                       name={fieldName}
@@ -294,8 +294,10 @@ export const SettingsDataModelObjectAboutForm = ({
                       )}
                     />
                   </StyledInputContainer>
-                ),
-              )}
+                </AdvancedSettingsWrapper>
+              ),
+            )}
+            <AdvancedSettingsWrapper>
               <Controller
                 name={IS_LABEL_SYNCED_WITH_NAME_LABEL}
                 control={control}
@@ -324,9 +326,9 @@ export const SettingsDataModelObjectAboutForm = ({
                   </Card>
                 )}
               />
-            </StyledAdvancedSettingsSectionInputWrapper>
-          </StyledAdvancedSettingsContainer>
-        </AdvancedSettingsWrapper>
+            </AdvancedSettingsWrapper>
+          </StyledAdvancedSettingsSectionInputWrapper>
+        </StyledAdvancedSettingsContainer>
       </StyledAdvancedSettingsOuterContainer>
     </>
   );
