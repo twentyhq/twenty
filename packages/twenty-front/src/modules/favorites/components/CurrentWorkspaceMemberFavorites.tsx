@@ -11,6 +11,7 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { NavigationDrawerEmptySubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerEmptySubItem';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
@@ -155,6 +156,9 @@ export const CurrentWorkspaceMemberFavorites = ({
             onDragEnd={handleReorderFavorite}
             draggableItems={
               <>
+                {folder.favorites.length === 0 && (
+                  <NavigationDrawerEmptySubItem label="Empty" />
+                )}
                 {folder.favorites.map((favorite, index) => (
                   <DraggableItem
                     key={favorite.id}
