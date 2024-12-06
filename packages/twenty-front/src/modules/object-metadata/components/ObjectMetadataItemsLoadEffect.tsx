@@ -16,10 +16,12 @@ export const ObjectMetadataItemsLoadEffect = () => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const isLoggedIn = useIsLogged();
 
-  const { objectMetadataItems: newObjectMetadataItems } =
-    useFindManyObjectMetadataItems({
-      skip: !isLoggedIn,
-    });
+  const {
+    objectMetadataItems: newObjectMetadataItems,
+    loading: isObjectMetadataLoading,
+  } = useFindManyObjectMetadataItems({
+    skip: !isLoggedIn,
+  });
 
   const updateObjectMetadataItems = useRecoilCallback(
     ({ set, snapshot }) =>
@@ -32,6 +34,7 @@ export const ObjectMetadataItemsLoadEffect = () => {
             : newObjectMetadataItems;
 
         if (
+          !isObjectMetadataLoading &&
           !isDeeplyEqual(
             snapshot.getLoadable(objectMetadataItemsState).getValue(),
             toSetObjectMetadataItems,
@@ -40,7 +43,12 @@ export const ObjectMetadataItemsLoadEffect = () => {
           set(objectMetadataItemsState, toSetObjectMetadataItems);
         }
       },
-    [currentUser, currentWorkspace?.activationStatus, newObjectMetadataItems],
+    [
+      currentUser,
+      currentWorkspace?.activationStatus,
+      isObjectMetadataLoading,
+      newObjectMetadataItems,
+    ],
   );
 
   useEffect(() => {
