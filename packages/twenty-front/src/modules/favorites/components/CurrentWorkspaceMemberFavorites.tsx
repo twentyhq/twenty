@@ -1,3 +1,4 @@
+import { AnimatedFolderIcon } from '@/favorites/components/AnimatedFolderIcon';
 import { FavoriteFolderNavigationDrawerItemDropdown } from '@/favorites/components/FavoriteFolderNavigationDrawerItemDropdown';
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
@@ -21,12 +22,7 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import {
-  IconFolder,
-  IconFolderOpen,
-  IconHeartOff,
-  LightIconButton,
-} from 'twenty-ui';
+import { IconFolder, IconHeartOff, LightIconButton } from 'twenty-ui';
 
 type CurrentWorkspaceMemberFavoritesProps = {
   folder: {
@@ -143,7 +139,9 @@ export const CurrentWorkspaceMemberFavorites = ({
           <NavigationDrawerItem
             key={folder.folderId}
             label={folder.folderName}
-            Icon={isOpen ? IconFolderOpen : IconFolder}
+            Icon={() => (
+              <AnimatedFolderIcon isOpen={isOpen} id={folder.folderId} />
+            )}
             onClick={handleToggle}
             rightOptions={rightOptions}
             className="navigation-drawer-item"
