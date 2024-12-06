@@ -1,7 +1,7 @@
 import { Button, IconPlus } from 'twenty-ui';
 
 type PageAddButtonProps = {
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 export const PageAddButton = ({ onClick }: PageAddButtonProps) => (

@@ -1,4 +1,4 @@
-import { IconButton, IconDotsVertical } from 'twenty-ui';
+import { Button, IconDotsVertical } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 
@@ -6,12 +6,14 @@ export const ShowPageMoreButton = () => {
   const { openCommandMenu } = useCommandMenu();
 
   return (
-    <IconButton
+    <Button
       Icon={IconDotsVertical}
-      size="medium"
       dataTestId="more-showpage-button"
-      accent="default"
+      size="small"
       variant="secondary"
+      accent="default"
+      shortcut="⌘K"
+      ariaLabel="More"
       onClick={openCommandMenu}
     />
   );
