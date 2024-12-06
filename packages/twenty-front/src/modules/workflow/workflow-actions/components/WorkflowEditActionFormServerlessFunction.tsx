@@ -5,7 +5,6 @@ import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
-import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
@@ -28,6 +27,8 @@ import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
 import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { VariablePickerComponent } from 'packages/twenty-front/src/modules/object-record/record-field/form-types/types/VariablePickerComponent';
+import { WorkflowVariablePicker } from 'packages/twenty-front/src/modules/workflow/components/WorkflowVariablePicker';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -195,14 +196,22 @@ export const WorkflowEditActionFormServerlessFunction = ({
     await updateFunctionInput(updatedFunctionInput, false);
   };
 
+  const handleTestInputChange = async (value: any, path: string[]) => {
+    console.log('val', value, '- path', path);
+  };
+
   const renderFields = ({
     functionInput,
     path = [],
     isRoot = true,
+    VariablePicker,
+    onInputChange,
   }: {
     functionInput: FunctionInput;
     path?: string[];
     isRoot?: boolean;
+    VariablePicker?: VariablePickerComponent;
+    onInputChange: (value: any, path: string[]) => void;
   }): ReactNode[] => {
     return Object.entries(functionInput).map(([inputKey, inputValue]) => {
       const currentPath = [...path, inputKey];
@@ -216,6 +225,8 @@ export const WorkflowEditActionFormServerlessFunction = ({
                 functionInput: inputValue,
                 path: currentPath,
                 isRoot: false,
+                VariablePicker,
+                onInputChange,
               })}
             </Fragment>
           );
@@ -228,6 +239,8 @@ export const WorkflowEditActionFormServerlessFunction = ({
                 functionInput: inputValue,
                 path: currentPath,
                 isRoot: false,
+                VariablePicker,
+                onInputChange,
               })}
             </StyledInputContainer>
           </StyledContainer>
@@ -240,8 +253,8 @@ export const WorkflowEditActionFormServerlessFunction = ({
             placeholder="Enter value"
             defaultValue={inputValue ? `${inputValue}` : ''}
             readonly={actionOptions.readonly}
-            onPersist={(value) => handleInputChange(value, currentPath)}
-            VariablePicker={WorkflowVariablePicker}
+            onPersist={(value) => onInputChange(value, currentPath)}
+            VariablePicker={VariablePicker}
           />
         );
       }
@@ -311,7 +324,11 @@ export const WorkflowEditActionFormServerlessFunction = ({
         <WorkflowStepBody>
           {activeTabId === 'code' && (
             <>
-              {renderFields({ functionInput })}
+              {renderFields({
+                functionInput,
+                VariablePicker: WorkflowVariablePicker,
+                onInputChange: handleInputChange,
+              })}
               <CodeEditor
                 height={340}
                 value={formValues.code?.[INDEX_FILE_PATH]}
@@ -328,7 +345,14 @@ export const WorkflowEditActionFormServerlessFunction = ({
               />
             </>
           )}
-          {activeTabId === 'test' && <>{renderFields({ functionInput })}</>}
+          {activeTabId === 'test' && (
+            <>
+              {renderFields({
+                functionInput,
+                onInputChange: handleTestInputChange,
+              })}
+            </>
+          )}
         </WorkflowStepBody>
       </>
     )
