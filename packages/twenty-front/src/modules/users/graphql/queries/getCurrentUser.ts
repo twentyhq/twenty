@@ -3,10 +3,11 @@ import { USER_QUERY_FRAGMENT } from '@/users/graphql/fragments/userQueryFragment
 import { gql } from '@apollo/client';
 
 export const GET_CURRENT_USER = gql`
-  ${USER_QUERY_FRAGMENT}
   query GetCurrentUser {
     currentUser {
       ...UserQueryFragment
     }
   }
+
+  ${USER_QUERY_FRAGMENT}
 `;

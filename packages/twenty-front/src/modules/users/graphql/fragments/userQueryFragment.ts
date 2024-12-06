@@ -2,7 +2,6 @@ import { WORKSPACE_MEMBER_QUERY_FRAGMENT } from '@/workspace-member/graphql/frag
 import { gql } from '@apollo/client';
 
 export const USER_QUERY_FRAGMENT = gql`
-  ${WORKSPACE_MEMBER_QUERY_FRAGMENT}
   fragment UserQueryFragment on User {
     id
     firstName
@@ -64,4 +63,6 @@ export const USER_QUERY_FRAGMENT = gql`
     }
     userVars
   }
+
+  ${WORKSPACE_MEMBER_QUERY_FRAGMENT}
 `;
