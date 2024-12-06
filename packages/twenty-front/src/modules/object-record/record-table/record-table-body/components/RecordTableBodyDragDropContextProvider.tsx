@@ -54,8 +54,15 @@ export const RecordTableBodyDragDropContextProvider = ({
           recordIndexAllRecordIdsSelector,
         );
 
+        const isSourceIndexBeforeDestinationIndex =
+          result.source.index < result.destination.index;
+
         const recordBeforeDestinationId =
-          allRecordIds[result.destination.index - 1];
+          allRecordIds[
+            isSourceIndexBeforeDestinationIndex
+              ? result.destination.index
+              : result.destination.index - 1
+          ];
 
         const recordBeforeDestination = recordBeforeDestinationId
           ? snapshot
@@ -63,7 +70,12 @@ export const RecordTableBodyDragDropContextProvider = ({
               .getValue()
           : null;
 
-        const recordAfterDestinationId = allRecordIds[result.destination.index];
+        const recordAfterDestinationId =
+          allRecordIds[
+            isSourceIndexBeforeDestinationIndex
+              ? result.destination.index + 1
+              : result.destination.index
+          ];
 
         const recordAfterDestination = recordAfterDestinationId
           ? snapshot

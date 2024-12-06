@@ -74,13 +74,21 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
           return;
         }
 
+        const isSourceIndexBeforeDestinationIndexInSameGroup =
+          result.source.index < result.destination.index &&
+          result.source.droppableId === result.destination.droppableId;
+
         const destinationGroupRecordIds = getSnapshotValue(
           snapshot,
           recordIdsByGroupFamilyState(destinationRecordGroupId),
         );
 
         const recordBeforeDestinationId =
-          destinationGroupRecordIds[result.destination.index - 1];
+          destinationGroupRecordIds[
+            isSourceIndexBeforeDestinationIndexInSameGroup
+              ? result.destination.index
+              : result.destination.index - 1
+          ];
 
         const recordBeforeDestination = recordBeforeDestinationId
           ? snapshot
@@ -89,7 +97,11 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
           : null;
 
         const recordAfterDestinationId =
-          destinationGroupRecordIds[result.destination.index + 1];
+          destinationGroupRecordIds[
+            isSourceIndexBeforeDestinationIndexInSameGroup
+              ? result.destination.index + 1
+              : result.destination.index
+          ];
 
         const recordAfterDestination = recordAfterDestinationId
           ? snapshot
