@@ -251,8 +251,8 @@ export const SettingsDataModelObjectAboutForm = ({
                 disableEdition,
                 tooltip,
               }) => (
-                <AdvancedSettingsWrapper>
-                  <StyledInputContainer key={`object-${fieldName}-text-input`}>
+                <AdvancedSettingsWrapper key={`object-${fieldName}-text-input`}>
+                  <StyledInputContainer>
                     <Controller
                       name={fieldName}
                       control={control}
