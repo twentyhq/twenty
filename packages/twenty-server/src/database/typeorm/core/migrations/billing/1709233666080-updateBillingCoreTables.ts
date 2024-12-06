@@ -15,6 +15,9 @@ export class UpdateBillingCoreTables1709233666080
     await queryRunner.query(
       `ALTER TABLE "core"."billingSubscriptionItem" ADD CONSTRAINT "IndexOnBillingSubscriptionIdAndStripeProductIdUnique" UNIQUE ("billingSubscriptionId", "stripeProductId")`,
     );
+    await queryRunner.query(
+      `ALTER TABLE "core"."billingSubscriptionItem" ALTER COLUMN "deletedAt" TYPE TIMESTAMP WITH TIME ZONE USING "deletedAt" AT TIME ZONE 'UTC'`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -26,6 +29,9 @@ export class UpdateBillingCoreTables1709233666080
     );
     await queryRunner.query(
       `ALTER TABLE "core"."billingSubscriptionItem" DROP COLUMN "stripeSubscriptionItemId"`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "core"."billingSubscriptionItem" ALTER COLUMN "deletedAt" TYPE TIMESTAMP`,
     );
   }
 }

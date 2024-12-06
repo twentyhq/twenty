@@ -27,6 +27,10 @@ const StyledDropdownMenuItemsInternalContainer = styled.div`
   width: 100%;
 `;
 
+const StyledScrollWrapper = styled(ScrollWrapper)`
+  width: 100%;
+`;
+
 // TODO: refactor this, the dropdown should handle the max height behavior + scroll with the size middleware
 // We should instead create a DropdownMenuItemsContainerScrollable or take for granted that it is the default behavior
 export const DropdownMenuItemsContainer = ({
@@ -45,9 +49,17 @@ export const DropdownMenuItemsContainer = ({
       hasMaxHeight={hasMaxHeight}
       className={className}
     >
-      <StyledDropdownMenuItemsInternalContainer>
-        {children}
-      </StyledDropdownMenuItemsInternalContainer>
+      {hasMaxHeight ? (
+        <StyledScrollWrapper contextProviderName="dropdownMenuItemsContainer">
+          <StyledDropdownMenuItemsInternalContainer>
+            {children}
+          </StyledDropdownMenuItemsInternalContainer>
+        </StyledScrollWrapper>
+      ) : (
+        <StyledDropdownMenuItemsInternalContainer>
+          {children}
+        </StyledDropdownMenuItemsInternalContainer>
+      )}
     </StyledDropdownMenuItemsExternalContainer>
   ) : (
     <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">

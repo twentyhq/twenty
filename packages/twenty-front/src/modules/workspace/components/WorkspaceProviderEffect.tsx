@@ -24,7 +24,11 @@ export const WorkspaceProviderEffect = () => {
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   useEffect(() => {
-    if (isMultiWorkspaceEnabled && isDefined(workspacePublicData?.subdomain)) {
+    if (
+      isMultiWorkspaceEnabled &&
+      isDefined(workspacePublicData?.subdomain) &&
+      workspacePublicData.subdomain !== workspaceSubdomain
+    ) {
       redirectToWorkspaceDomain(workspacePublicData.subdomain);
     }
   }, [
@@ -37,8 +41,10 @@ export const WorkspaceProviderEffect = () => {
   useEffect(() => {
     if (
       isMultiWorkspaceEnabled &&
-      isDefined(lastAuthenticatedWorkspaceDomain?.subdomain) &&
-      isDefaultDomain
+      isDefaultDomain &&
+      isDefined(lastAuthenticatedWorkspaceDomain) &&
+      'subdomain' in lastAuthenticatedWorkspaceDomain &&
+      isDefined(lastAuthenticatedWorkspaceDomain?.subdomain)
     ) {
       redirectToWorkspaceDomain(lastAuthenticatedWorkspaceDomain.subdomain);
     }

@@ -67,7 +67,7 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
     <ExpandableList isChipCountDisplayed>
       {phones.map(({ number, callingCode }, index) => {
         const { parsedPhone, invalidPhone } =
-          parsePhoneNumberOrReturnInvalidValue(`+${callingCode}` + number);
+          parsePhoneNumberOrReturnInvalidValue(callingCode + number);
         const URI = parsedPhone?.getURI();
         return (
           <RoundedLink
@@ -84,7 +84,7 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
     <StyledContainer>
       {phones.map(({ number, callingCode }, index) => {
         const { parsedPhone, invalidPhone } =
-          parsePhoneNumberOrReturnInvalidValue(`+${callingCode}` + number);
+          parsePhoneNumberOrReturnInvalidValue(callingCode + number);
         const URI = parsedPhone?.getURI();
         return (
           <RoundedLink

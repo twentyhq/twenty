@@ -45,9 +45,9 @@ export const cookieStorageEffect =
   ): AtomEffect<T | null> =>
   ({ setSelf, onSet }) => {
     const savedValue = cookieStorage.getItem(key);
-
     if (
       isDefined(savedValue) &&
+      savedValue.length !== 0 &&
       (!isDefined(hooks?.validateInitFn) ||
         hooks.validateInitFn(JSON.parse(savedValue)))
     ) {
@@ -60,20 +60,23 @@ export const cookieStorageEffect =
     };
 
     onSet((newValue, _, isReset) => {
-      if (!newValue) {
-        cookieStorage.removeItem(key, defaultAttributes);
-        return;
-      }
-
       const cookieAttributes = {
         ...defaultAttributes,
         ...(isCustomCookiesAttributesValue(newValue)
           ? newValue.cookieAttributes
           : {}),
       };
+      if (
+        !newValue ||
+        (Object.keys(newValue).length === 1 &&
+          isCustomCookiesAttributesValue(newValue))
+      ) {
+        cookieStorage.removeItem(key, cookieAttributes);
+        return;
+      }
 
       isReset
-        ? cookieStorage.removeItem(key, defaultAttributes)
+        ? cookieStorage.removeItem(key, cookieAttributes)
         : cookieStorage.setItem(
             key,
             JSON.stringify(omit(newValue, ['cookieAttributes'])),

@@ -8,5 +8,8 @@ export const getFieldOptions = <T extends string>(
   if (!field) {
     return [];
   }
-  return field.fieldType.type === 'select' ? field.fieldType.options : [];
+  return field.fieldType.type === 'select' ||
+    field.fieldType.type === 'multiSelect'
+    ? field.fieldType.options
+    : [];
 };
