@@ -25,7 +25,6 @@ export const query = gql`
           labelIdentifierFieldMetadataId
           imageIdentifierFieldMetadataId
           shortcut
-          isLabelSyncedWithName
           fields(paging: { first: 1000 }, filter: $fieldFilter) {
             edges {
               node {
@@ -41,6 +40,7 @@ export const query = gql`
                 isNullable
                 createdAt
                 updatedAt
+                isLabelSyncedWithName
                 relationDefinition {
                   relationId
                   direction

@@ -8,11 +8,9 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
-import { ServerlessFunctionPublicationListener } from 'src/engine/metadata-modules/serverless-function/listeners/serverless-function-publication.listener';
 import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { ServerlessFunctionResolver } from 'src/engine/metadata-modules/serverless-function/serverless-function.resolver';
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
-import { CodeIntrospectionModule } from 'src/modules/code-introspection/code-introspection.module';
 
 @Module({
   imports: [
@@ -22,13 +20,8 @@ import { CodeIntrospectionModule } from 'src/modules/code-introspection/code-int
     FileModule,
     ThrottlerModule,
     AnalyticsModule,
-    CodeIntrospectionModule,
   ],
-  providers: [
-    ServerlessFunctionService,
-    ServerlessFunctionResolver,
-    ServerlessFunctionPublicationListener,
-  ],
+  providers: [ServerlessFunctionService, ServerlessFunctionResolver],
   exports: [ServerlessFunctionService],
 })
 export class ServerlessFunctionModule {}

@@ -1,4 +1,3 @@
-import { FAVORITE_FOLDER_PICKER_DROPDOWN_ID } from '@/favorites/favorite-folder-picker/constants/FavoriteFolderPickerDropdownId';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -10,13 +9,16 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import { IconPlus, MenuItem } from 'twenty-ui';
 
 const StyledFooter = styled.div`
-  background: ${({ theme }) => theme.background.primary};
   border-bottom-left-radius: ${({ theme }) => theme.border.radius.md};
   border-bottom-right-radius: ${({ theme }) => theme.border.radius.md};
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
-export const FavoriteFolderPickerFooter = () => {
+export const FavoriteFolderPickerFooter = ({
+  dropdownId,
+}: {
+  dropdownId: string;
+}) => {
   const [, setIsFavoriteFolderCreating] = useRecoilState(
     isFavoriteFolderCreatingState,
   );
@@ -25,7 +27,7 @@ export const FavoriteFolderPickerFooter = () => {
   );
   const { openNavigationSection } = useNavigationSection('Favorites');
   const theme = useTheme();
-  const { closeDropdown } = useDropdown(FAVORITE_FOLDER_PICKER_DROPDOWN_ID);
+  const { closeDropdown } = useDropdown(dropdownId);
 
   return (
     <StyledFooter>

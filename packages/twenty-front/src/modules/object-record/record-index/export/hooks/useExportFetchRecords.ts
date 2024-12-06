@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -13,8 +12,8 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
-import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { useFindManyParams } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
+import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
+import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
@@ -68,10 +67,13 @@ export const useExportFetchRecords = ({
     viewBarId: recordIndexId,
   });
 
-  const { kanbanFieldMetadataNameState } = useRecordBoardStates(recordIndexId);
-  const kanbanFieldMetadataName = useRecoilValue(kanbanFieldMetadataNameState);
+  const recordGroupFieldMetadata = useRecoilComponentValueV2(
+    recordGroupFieldMetadataComponentState,
+    recordIndexId,
+  );
+
   const hiddenKanbanFieldColumn = hiddenBoardFields.find(
-    (column) => column.metadata.fieldName === kanbanFieldMetadataName,
+    (column) => column.metadata.fieldName === recordGroupFieldMetadata?.name,
   );
   const columns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
@@ -92,29 +94,24 @@ export const useExportFetchRecords = ({
     objectMetadataItem,
   );
 
-  const findManyRecordsParams = useFindManyParams(
+  const findManyRecordsParams = useFindManyRecordIndexTableParams(
     objectMetadataItem.nameSingular,
     recordIndexId,
   );
 
-  const {
-    findManyRecords,
-    totalCount,
-    records,
-    fetchMoreRecordsWithPagination,
-    loading,
-  } = useLazyFindManyRecords({
-    ...findManyRecordsParams,
-    filter: queryFilter,
-    limit: pageSize,
-  });
+  const { findManyRecords, totalCount, records, fetchMoreRecords, loading } =
+    useLazyFindManyRecords({
+      ...findManyRecordsParams,
+      filter: queryFilter,
+      limit: pageSize,
+    });
 
   useEffect(() => {
     const fetchNextPage = async () => {
       setInflight(true);
       setPreviousRecordCount(records.length);
 
-      await fetchMoreRecordsWithPagination();
+      await fetchMoreRecords();
 
       setPageCount((state) => state + 1);
       setProgress({
@@ -164,7 +161,7 @@ export const useExportFetchRecords = ({
     }
   }, [
     delayMs,
-    fetchMoreRecordsWithPagination,
+    fetchMoreRecords,
     inflight,
     isDownloading,
     pageCount,

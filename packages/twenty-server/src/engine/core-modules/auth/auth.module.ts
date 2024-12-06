@@ -1,17 +1,17 @@
 /* eslint-disable no-restricted-imports */
 import { HttpModule } from '@nestjs/axios';
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
+import { AuthExceptionHandlerService } from 'src/engine/core-modules/auth/auth-exception-handler.service';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
-import { VerifyAuthController } from 'src/engine/core-modules/auth/controllers/verify-auth.controller';
 import { ApiKeyService } from 'src/engine/core-modules/auth/services/api-key.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
@@ -22,8 +22,10 @@ import { SwitchWorkspaceService } from 'src/engine/core-modules/auth/services/sw
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
@@ -53,7 +55,9 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     JwtModule,
     FileUploadModule,
     DataSourceModule,
-    forwardRef(() => UserModule),
+    DomainManagerModule,
+    TokenModule,
+    UserModule,
     WorkspaceManagerModule,
     TypeORMModule,
     TypeOrmModule.forFeature(
@@ -68,22 +72,20 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       'core',
     ),
     HttpModule,
-    TokenModule,
     UserWorkspaceModule,
     WorkspaceModule,
     OnboardingModule,
     WorkspaceDataSourceModule,
-    WorkspaceInvitationModule,
     ConnectedAccountModule,
     WorkspaceSSOModule,
     FeatureFlagModule,
+    WorkspaceInvitationModule,
   ],
   controllers: [
     GoogleAuthController,
     MicrosoftAuthController,
     GoogleAPIsAuthController,
     MicrosoftAPIsAuthController,
-    VerifyAuthController,
     SSOAuthController,
   ],
   providers: [
@@ -96,13 +98,15 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MicrosoftAPIsService,
     AppTokenService,
     AccessTokenService,
+    RefreshTokenService,
     LoginTokenService,
     ResetPasswordService,
     SwitchWorkspaceService,
     TransientTokenService,
+    AuthExceptionHandlerService,
     ApiKeyService,
     OAuthService,
   ],
-  exports: [AccessTokenService, LoginTokenService],
+  exports: [AccessTokenService, LoginTokenService, RefreshTokenService],
 })
 export class AuthModule {}

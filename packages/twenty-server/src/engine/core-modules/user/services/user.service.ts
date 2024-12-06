@@ -18,6 +18,11 @@ import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/worksp
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class UserService extends TypeOrmQueryService<User> {
@@ -64,9 +69,7 @@ export class UserService extends TypeOrmQueryService<User> {
         'workspaceMember',
       );
 
-    const workspaceMembers = workspaceMemberRepository.find();
-
-    return workspaceMembers;
+    return workspaceMemberRepository.find();
   }
 
   async deleteUser(userId: string): Promise<User> {
@@ -130,5 +133,37 @@ export class UserService extends TypeOrmQueryService<User> {
     });
 
     return user;
+  }
+
+  async hasUserAccessToWorkspaceOrThrow(userId: string, workspaceId: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+        workspaces: {
+          workspaceId,
+        },
+      },
+      relations: ['workspaces'],
+    });
+
+    userValidator.assertIsDefinedOrThrow(
+      user,
+      new AuthException(
+        'User does not have access to this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      ),
+    );
+  }
+
+  async saveDefaultWorkspaceIfUserHasAccessOrThrow(
+    userId: string,
+    workspaceId: string,
+  ) {
+    await this.hasUserAccessToWorkspaceOrThrow(userId, workspaceId);
+
+    return await this.userRepository.save({
+      id: userId,
+      defaultWorkspaceId: workspaceId,
+    });
   }
 }

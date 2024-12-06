@@ -26,9 +26,6 @@ export enum AppPath {
   Developers = `developers`,
   DevelopersCatchAll = `/${Developers}/*`,
 
-  // Impersonate
-  Impersonate = '/impersonate/:userId',
-
   Authorize = '/authorize',
 
   // 404 page not found

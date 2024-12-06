@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString, isNull } from '@sniptt/guards';
 
-import { hasRecordGroupDefinitionsComponentSelector } from '@/object-record/record-group/states/hasRecordGroupDefinitionsComponentSelector';
+import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { RecordTableStickyEffect } from '@/object-record/record-table/components/RecordTableStickyEffect';
@@ -16,7 +17,6 @@ import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
-import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -53,8 +53,8 @@ export const RecordTable = ({
     recordTableId,
   );
 
-  const tableRowIds = useRecoilComponentValueV2(
-    tableAllRowIdsComponentState,
+  const allRecordIds = useRecoilComponentValueV2(
+    recordIndexAllRecordIdsComponentSelector,
     recordTableId,
   );
 
@@ -64,13 +64,13 @@ export const RecordTable = ({
   );
 
   const hasRecordGroups = useRecoilComponentValueV2(
-    hasRecordGroupDefinitionsComponentSelector,
+    hasRecordGroupsComponentSelector,
     recordTableId,
   );
 
   const recordTableIsEmpty =
     !isRecordTableInitialLoading &&
-    tableRowIds.length === 0 &&
+    allRecordIds.length === 0 &&
     isNull(pendingRecordId);
 
   const { resetTableRowSelection, setRowSelected } = useRecordTable({
@@ -109,9 +109,7 @@ export const RecordTable = ({
               {!hasRecordGroups ? (
                 <RecordTableNoRecordGroupBody />
               ) : (
-                <RecordTableRecordGroupsBody
-                  objectNameSingular={objectNameSingular}
-                />
+                <RecordTableRecordGroupsBody />
               )}
               <RecordTableStickyEffect />
             </StyledTable>

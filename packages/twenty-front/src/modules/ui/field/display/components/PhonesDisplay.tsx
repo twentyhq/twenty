@@ -36,16 +36,16 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
         value?.primaryPhoneNumber
           ? {
               number: value.primaryPhoneNumber,
-              countryCode: value.primaryPhoneCountryCode,
+              callingCode: value.primaryPhoneCountryCode,
             }
           : null,
         ...parseAdditionalPhones(value?.additionalPhones),
       ]
         .filter(isDefined)
-        .map(({ number, countryCode }) => {
+        .map(({ number, callingCode }) => {
           return {
             number,
-            countryCode,
+            callingCode,
           };
         }),
     [
@@ -65,9 +65,9 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
 
   return isFocused ? (
     <ExpandableList isChipCountDisplayed>
-      {phones.map(({ number, countryCode }, index) => {
+      {phones.map(({ number, callingCode }, index) => {
         const { parsedPhone, invalidPhone } =
-          parsePhoneNumberOrReturnInvalidValue(countryCode + number);
+          parsePhoneNumberOrReturnInvalidValue(callingCode + number);
         const URI = parsedPhone?.getURI();
         return (
           <RoundedLink
@@ -82,9 +82,9 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
     </ExpandableList>
   ) : (
     <StyledContainer>
-      {phones.map(({ number, countryCode }, index) => {
+      {phones.map(({ number, callingCode }, index) => {
         const { parsedPhone, invalidPhone } =
-          parsePhoneNumberOrReturnInvalidValue(countryCode + number);
+          parsePhoneNumberOrReturnInvalidValue(callingCode + number);
         const URI = parsedPhone?.getURI();
         return (
           <RoundedLink

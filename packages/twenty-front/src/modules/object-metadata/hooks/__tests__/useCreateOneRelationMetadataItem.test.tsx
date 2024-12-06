@@ -45,11 +45,13 @@ describe('useCreateOneRelationMetadataItem', () => {
         relationType: RelationDefinitionType.OneToOne,
         field: {
           label: 'label',
+          name: 'name',
         },
         objectMetadataId: 'objectMetadataId',
         connect: {
           field: {
             label: 'Another label',
+            name: 'anotherName',
           },
           objectMetadataId: 'objectMetadataId1',
         },

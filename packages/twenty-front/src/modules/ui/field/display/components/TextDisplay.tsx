@@ -6,5 +6,9 @@ type TextDisplayProps = {
 };
 
 export const TextDisplay = ({ text, displayedMaxRows }: TextDisplayProps) => (
-  <OverflowingTextWithTooltip text={text} displayedMaxRows={displayedMaxRows} />
+  <OverflowingTextWithTooltip
+    text={text}
+    displayedMaxRows={displayedMaxRows}
+    isTooltipMultiline={true}
+  />
 );

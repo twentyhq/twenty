@@ -1,7 +1,6 @@
 import { CustomException } from 'src/utils/custom-exception';
 
 export class WorkspaceInvitationException extends CustomException {
-  code: WorkspaceInvitationExceptionCode;
   constructor(message: string, code: WorkspaceInvitationExceptionCode) {
     super(message, code);
   }

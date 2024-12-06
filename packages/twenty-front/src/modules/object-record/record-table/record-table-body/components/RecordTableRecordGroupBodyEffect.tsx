@@ -1,29 +1,39 @@
 import { useContext, useEffect, useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
-import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
+import { useLazyLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLazyLoadRecordIndexTable';
+import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
 import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
-import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { isNonEmptyString } from '@sniptt/guards';
+import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
 
 export const RecordTableRecordGroupBodyEffect = () => {
   const { objectNameSingular } = useContext(RecordTableContext);
 
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const recordGroupId = useCurrentRecordGroupId();
 
   const [hasInitializedScroll, setHasInitializedScroll] = useState(false);
 
-  const { records, totalCount, setRecordTableData, loading, hasNextPage } =
-    useLoadRecordIndexTable(objectNameSingular);
+  const {
+    findManyRecords,
+    records,
+    totalCount,
+    setRecordTableData,
+    loading,
+    hasNextPage,
+  } = useLazyLoadRecordIndexTable(objectNameSingular);
 
-  const setHasRecordTableFetchedAllRecordsComponents =
-    useSetRecoilComponentStateV2(
-      hasRecordTableFetchedAllRecordsComponentStateV2,
+  const setHasRecordFetchedAllRecordsComponents =
+    useSetRecoilComponentFamilyStateV2(
+      recordIndexHasFetchedAllRecordsByGroupComponentState,
+      recordGroupId,
     );
 
   const [lastShowPageRecordId] = useRecoilState(lastShowPageRecordIdState);
@@ -56,7 +66,7 @@ export const RecordTableRecordGroupBodyEffect = () => {
     if (!loading) {
       setRecordTableData({
         records,
-        recordGroupId,
+        currentRecordGroupId: recordGroupId,
         totalCount,
       });
     }
@@ -65,8 +75,16 @@ export const RecordTableRecordGroupBodyEffect = () => {
   useEffect(() => {
     const allRecordsHaveBeenFetched = !hasNextPage;
 
-    setHasRecordTableFetchedAllRecordsComponents(allRecordsHaveBeenFetched);
-  }, [hasNextPage, setHasRecordTableFetchedAllRecordsComponents]);
+    setHasRecordFetchedAllRecordsComponents(allRecordsHaveBeenFetched);
+  }, [hasNextPage, setHasRecordFetchedAllRecordsComponents]);
+
+  useEffect(() => {
+    if (isNull(currentWorkspaceMember)) {
+      return;
+    }
+
+    findManyRecords();
+  }, [currentWorkspaceMember, findManyRecords]);
 
   return <></>;
 };

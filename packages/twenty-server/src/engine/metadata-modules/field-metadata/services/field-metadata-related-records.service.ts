@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { In } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 
 import {
   FieldMetadataComplexOption,
@@ -27,6 +27,7 @@ export class FieldMetadataRelatedRecordsService {
   public async updateRelatedViewGroups(
     oldFieldMetadata: FieldMetadataEntity,
     newFieldMetadata: FieldMetadataEntity,
+    transactionManager?: EntityManager,
   ) {
     if (
       !isSelectFieldMetadataType(newFieldMetadata.type) ||
@@ -49,6 +50,10 @@ export class FieldMetadataRelatedRecordsService {
       );
 
     for (const view of views) {
+      if (view.viewGroups.length === 0) {
+        continue;
+      }
+
       const maxPosition = view.viewGroups.reduce(
         (max, viewGroup) => Math.max(max, viewGroup.position),
         0,
@@ -64,7 +69,7 @@ export class FieldMetadataRelatedRecordsService {
         }),
       );
 
-      await viewGroupRepository.insert(viewGroupsToCreate);
+      await viewGroupRepository.insert(viewGroupsToCreate, transactionManager);
 
       for (const { old: oldOption, new: newOption } of updated) {
         const viewGroup = view.viewGroups.find(
@@ -82,15 +87,19 @@ export class FieldMetadataRelatedRecordsService {
           {
             fieldValue: newOption.value,
           },
+          transactionManager,
         );
       }
 
       const valuesToDelete = deleted.map((option) => option.value);
 
-      await viewGroupRepository.delete({
-        fieldMetadataId: newFieldMetadata.id,
-        fieldValue: In(valuesToDelete),
-      });
+      await viewGroupRepository.delete(
+        {
+          fieldMetadataId: newFieldMetadata.id,
+          fieldValue: In(valuesToDelete),
+        },
+        transactionManager,
+      );
     }
   }
 
@@ -143,7 +152,9 @@ export class FieldMetadataRelatedRecordsService {
 
     return await viewRepository.find({
       where: {
-        kanbanFieldMetadataId: fieldMetadata.id,
+        viewGroups: {
+          fieldMetadataId: fieldMetadata.id,
+        },
       },
       relations: ['viewGroups'],
     });
