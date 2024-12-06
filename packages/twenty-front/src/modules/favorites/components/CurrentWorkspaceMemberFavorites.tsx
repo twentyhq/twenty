@@ -12,16 +12,16 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { NavigationDrawerEmptySubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerEmptySubItem';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconFolder, IconHeartOff, LightIconButton } from 'twenty-ui';
 
 type CurrentWorkspaceMemberFavoritesProps = {
@@ -54,6 +54,9 @@ export const CurrentWorkspaceMemberFavorites = ({
   const handleToggle = () => {
     setActiveFavoriteFolderId(isOpen ? null : folder.folderId);
   };
+  const isNavigationDrawerExpanded = useRecoilValue(
+    isNavigationDrawerExpandedState,
+  );
 
   const { renameFavoriteFolder } = useRenameFavoriteFolder();
   const { deleteFavoriteFolder } = useDeleteFavoriteFolder();
@@ -154,9 +157,18 @@ export const CurrentWorkspaceMemberFavorites = ({
             onDragEnd={handleReorderFavorite}
             draggableItems={
               <>
-                {folder.favorites.length === 0 && (
-                  <NavigationDrawerEmptySubItem label="Empty" />
-                )}
+                {folder.favorites.length === 0 &&
+                  isNavigationDrawerExpanded && (
+                    <NavigationDrawerSubItem
+                      isEmptySubItem
+                      label="Empty"
+                      subItemState={getNavigationSubItemLeftAdornment({
+                        index: 0,
+                        arrayLength: 1,
+                        selectedIndex: 0,
+                      })}
+                    />
+                  )}
                 {folder.favorites.map((favorite, index) => (
                   <DraggableItem
                     key={favorite.id}
