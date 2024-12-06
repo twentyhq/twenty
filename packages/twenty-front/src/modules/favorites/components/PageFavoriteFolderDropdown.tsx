@@ -2,12 +2,10 @@ import { PageFavoriteButton } from '@/favorites/components/PageFavoriteButton';
 import { FavoriteFolderPicker } from '@/favorites/favorite-folder-picker/components/FavoriteFolderPicker';
 import { FavoriteFolderPickerEffect } from '@/favorites/favorite-folder-picker/components/FavoriteFolderPickerEffect';
 import { FavoriteFolderPickerComponentInstanceContext } from '@/favorites/favorite-folder-picker/scopes/FavoriteFolderPickerScope';
-import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { isDefined } from '@ui/utilities/isDefined';
 
 type PageFavoriteFoldersDropdownProps = {
   dropdownId: string;
@@ -23,13 +21,6 @@ export const PageFavoriteFoldersDropdown = ({
   objectNameSingular,
 }: PageFavoriteFoldersDropdownProps) => {
   const { closeDropdown } = useDropdown(dropdownId);
-  const { createFavorite } = useCreateFavorite();
-
-  const handleAddToFavorites = () => {
-    if (!isFavorite && isDefined(record)) {
-      createFavorite(record, objectNameSingular);
-    }
-  };
 
   return (
     <FavoriteFolderPickerComponentInstanceContext
@@ -39,12 +30,7 @@ export const PageFavoriteFoldersDropdown = ({
         <Dropdown
           dropdownId={dropdownId}
           dropdownPlacement="bottom-start"
-          clickableComponent={
-            <PageFavoriteButton
-              isFavorite={isFavorite}
-              onClick={handleAddToFavorites}
-            />
-          }
+          clickableComponent={<PageFavoriteButton isFavorite={isFavorite} />}
           dropdownComponents={
             <>
               <FavoriteFolderPickerEffect record={record} />
