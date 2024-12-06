@@ -1,6 +1,5 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
-import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
 import {
   WorkflowTrigger,
   WorkflowVersion,
@@ -8,6 +7,7 @@ import {
 } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-ui';
 import { useComputeStepOutputSchema } from '@/workflow/hooks/useComputeStepOutputSchema';
+import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 
 export const useUpdateWorkflowVersionTrigger = ({
   workflow,
@@ -19,7 +19,7 @@ export const useUpdateWorkflowVersionTrigger = ({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
-  const { createNewWorkflowVersion } = useCreateNewWorkflowVersion();
+  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
 
   const { computeStepOutputSchema } = useComputeStepOutputSchema();
 
@@ -28,34 +28,24 @@ export const useUpdateWorkflowVersionTrigger = ({
       throw new Error('Can not update an undefined workflow version.');
     }
 
-    if (workflow.currentVersion.status === 'DRAFT') {
-      const outputSchema = (
-        await computeStepOutputSchema({
-          step: updatedTrigger,
-        })
-      )?.data?.computeStepOutputSchema;
+    const workflowVersion = await getUpdatableWorkflowVersion(workflow);
 
-      updatedTrigger.settings = {
-        ...updatedTrigger.settings,
-        outputSchema: outputSchema || {},
-      };
+    const outputSchema = (
+      await computeStepOutputSchema({
+        step: updatedTrigger,
+      })
+    )?.data?.computeStepOutputSchema;
 
-      await updateOneWorkflowVersion({
-        idToUpdate: workflow.currentVersion.id,
-        updateOneRecordInput: {
-          trigger: updatedTrigger,
-        },
-      });
+    updatedTrigger.settings = {
+      ...updatedTrigger.settings,
+      outputSchema: outputSchema || {},
+    };
 
-      return;
-    }
-
-    await createNewWorkflowVersion({
-      workflowId: workflow.id,
-      name: `v${workflow.versions.length + 1}`,
-      status: 'DRAFT',
-      trigger: updatedTrigger,
-      steps: workflow.currentVersion.steps,
+    await updateOneWorkflowVersion({
+      idToUpdate: workflowVersion.id,
+      updateOneRecordInput: {
+        trigger: updatedTrigger,
+      },
     });
   };
 

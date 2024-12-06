@@ -111,7 +111,7 @@ export const MultiItemFieldInput = <T,>({
         break;
       case FieldMetadataType.Phones:
         item = items[index] as PhoneRecord;
-        setInputValue(`+${item.callingCode}` + item.number);
+        setInputValue(item.callingCode + item.number);
         break;
       case FieldMetadataType.Emails:
         item = items[index] as string;

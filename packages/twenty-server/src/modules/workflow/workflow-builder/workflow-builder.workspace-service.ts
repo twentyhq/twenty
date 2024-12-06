@@ -12,6 +12,12 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { ServerlessFunctionService } from 'src/engine/metadata-modules/serverless-function/serverless-function.service';
 import { generateFakeValue } from 'src/engine/utils/generate-fake-value';
 import { CodeIntrospectionService } from 'src/modules/code-introspection/code-introspection.service';
+import { InputSchemaPropertyType } from 'src/modules/code-introspection/types/input-schema.type';
+import {
+  Leaf,
+  Node,
+  OutputSchema,
+} from 'src/modules/workflow/workflow-builder/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
 import { WorkflowRecordCRUDType } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
@@ -24,8 +30,6 @@ import {
   WorkflowTriggerType,
 } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 import { isDefined } from 'src/utils/is-defined';
-import { OutputSchema } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
-import { InputSchemaPropertyType } from 'src/modules/code-introspection/types/input-schema.type';
 
 @Injectable()
 export class WorkflowBuilderWorkspaceService {
@@ -145,7 +149,11 @@ export class WorkflowBuilderWorkspaceService {
 
     if (operationType === WorkflowRecordCRUDType.READ) {
       return {
-        first: { isLeaf: false, icon: 'IconAlpha', value: recordOutputSchema },
+        first: {
+          isLeaf: false,
+          icon: 'IconAlpha',
+          value: recordOutputSchema,
+        },
         last: { isLeaf: false, icon: 'IconOmega', value: recordOutputSchema },
         totalCount: {
           isLeaf: true,
@@ -218,6 +226,7 @@ export class WorkflowBuilderWorkspaceService {
 
     const inputSchema =
       codeIntrospectionService.getFunctionInputSchema(sourceCode);
+
     const fakeFunctionInput =
       codeIntrospectionService.generateInputData(inputSchema);
 
@@ -225,13 +234,13 @@ export class WorkflowBuilderWorkspaceService {
       await serverlessFunctionService.executeOneServerlessFunction(
         serverlessFunctionId,
         workspaceId,
-        fakeFunctionInput,
+        Object.values(fakeFunctionInput)?.[0] || {},
         serverlessFunctionVersion,
       );
 
     return resultFromFakeInput.data
       ? Object.entries(resultFromFakeInput.data).reduce(
-          (acc: OutputSchema, [key, value]) => {
+          (acc: Record<string, Leaf | Node>, [key, value]) => {
             acc[key] = {
               isLeaf: true,
               value,

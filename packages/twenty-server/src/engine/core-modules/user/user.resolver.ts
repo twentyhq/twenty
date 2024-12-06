@@ -9,7 +9,6 @@ import {
 } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import assert from 'assert';
 import crypto from 'crypto';
 
 import { GraphQLJSONObject } from 'graphql-type-json';
@@ -40,6 +39,11 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -65,7 +69,20 @@ export class UserResolver {
   ) {}
 
   @Query(() => User)
-  async currentUser(@AuthUser() { id: userId }: User): Promise<User> {
+  async currentUser(
+    @AuthUser() { id: userId }: User,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ): Promise<User> {
+    if (
+      this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
+      workspaceId
+    ) {
+      await this.userService.saveDefaultWorkspaceIfUserHasAccessOrThrow(
+        userId,
+        workspaceId,
+      );
+    }
+
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
@@ -73,7 +90,10 @@ export class UserResolver {
       relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
     });
 
-    assert(user, 'User not found');
+    userValidator.assertIsDefinedOrThrow(
+      user,
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
 
     return user;
   }

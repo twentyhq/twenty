@@ -14,6 +14,8 @@ import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
+export const DEFAULT_PHONE_COUNTRY_CODE = '1';
+
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
   font-family: ${({ theme }) => theme.font.family};
   height: 32px;
@@ -71,11 +73,10 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
   const defaultCallingCode =
     stripSimpleQuotesFromString(
       fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
-    ) ?? '+1';
-
+    ) ?? DEFAULT_PHONE_COUNTRY_CODE;
   // TODO : improve once we store the real country code
   const defaultCountry = useCountries().find(
-    (obj) => obj.callingCode === defaultCallingCode,
+    (obj) => `+${obj.callingCode}` === defaultCallingCode,
   )?.countryCode;
 
   const handlePersistPhones = (
@@ -103,7 +104,7 @@ export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
         if (phone !== undefined) {
           return {
             number: phone.nationalNumber,
-            callingCode: `${phone.countryCallingCode}`,
+            callingCode: `+${phone.countryCallingCode}`,
           };
         }
         return {

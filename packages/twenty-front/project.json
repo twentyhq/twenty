@@ -69,7 +69,7 @@
     "test": {},
     "storybook:build": {
       "options": {
-        "env": { "NODE_OPTIONS": "--max_old_space_size=6500" }
+        "env": { "NODE_OPTIONS": "--max_old_space_size=7000" }
       },
       "configurations": {
         "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },

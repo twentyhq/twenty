@@ -1,5 +1,4 @@
-import { BadRequestException } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
@@ -20,9 +19,9 @@ import {
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 
+@Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
-  private userWorkspaceService: UserWorkspaceService;
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -33,12 +32,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    private moduleRef: ModuleRef,
+    private readonly userWorkspaceService: UserWorkspaceService,
   ) {
     super(workspaceRepository);
-    this.userWorkspaceService = this.moduleRef.get(UserWorkspaceService, {
-      strict: false,
-    });
   }
 
   async activateWorkspace(user: User, data: ActivateWorkspaceInput) {
@@ -82,12 +78,15 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       user.defaultWorkspaceId,
       user,
     );
+
     await this.workspaceRepository.update(user.defaultWorkspaceId, {
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
 
-    return existingWorkspace;
+    return await this.workspaceRepository.findOneBy({
+      id: user.defaultWorkspaceId,
+    });
   }
 
   async softDeleteWorkspace(id: string) {

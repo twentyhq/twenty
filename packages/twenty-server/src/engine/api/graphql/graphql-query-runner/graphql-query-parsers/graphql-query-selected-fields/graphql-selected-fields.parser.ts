@@ -45,6 +45,12 @@ export class GraphqlQuerySelectedFieldsParser {
       return accumulator;
     }
 
+    this.aggregateParser.parse(
+      graphqlSelectedFields,
+      fieldMetadataMapByName,
+      accumulator,
+    );
+
     this.parseRecordField(
       graphqlSelectedFields,
       fieldMetadataMapByName,

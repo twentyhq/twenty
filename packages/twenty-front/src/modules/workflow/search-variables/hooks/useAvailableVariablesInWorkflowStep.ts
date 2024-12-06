@@ -1,5 +1,9 @@
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
+import {
+  OutputSchema,
+  StepOutputSchema,
+} from '@/workflow/search-variables/types/StepOutputSchema';
+import { filterOutputSchema } from '@/workflow/search-variables/utils/filterOutputSchema';
 import { getTriggerStepName } from '@/workflow/search-variables/utils/getTriggerStepName';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
@@ -9,7 +13,11 @@ import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 
-export const useAvailableVariablesInWorkflowStep = (): StepOutputSchema[] => {
+export const useAvailableVariablesInWorkflowStep = ({
+  objectNameSingularToSelect,
+}: {
+  objectNameSingularToSelect?: string;
+}): StepOutputSchema[] => {
   const workflowId = useRecoilValue(workflowIdState);
   const workflow = useWorkflowWithCurrentVersion(workflowId);
   const workflowSelectedNode = useRecoilValue(workflowSelectedNodeState);
@@ -42,29 +50,38 @@ export const useAvailableVariablesInWorkflowStep = (): StepOutputSchema[] => {
 
   const result = [];
 
+  const filteredTriggerOutputSchema = filterOutputSchema(
+    workflow.currentVersion.trigger?.settings?.outputSchema as
+      | OutputSchema
+      | undefined,
+    objectNameSingularToSelect,
+  );
+
   if (
     isDefined(workflow.currentVersion.trigger) &&
-    isDefined(workflow.currentVersion.trigger?.settings?.outputSchema) &&
-    !isEmptyObject(workflow.currentVersion.trigger?.settings?.outputSchema)
+    isDefined(filteredTriggerOutputSchema) &&
+    !isEmptyObject(filteredTriggerOutputSchema)
   ) {
     result.push({
       id: 'trigger',
       name: isDefined(workflow.currentVersion.trigger.name)
         ? workflow.currentVersion.trigger.name
         : getTriggerStepName(workflow.currentVersion.trigger),
-      outputSchema: workflow.currentVersion.trigger.settings.outputSchema,
+      outputSchema: filteredTriggerOutputSchema,
     });
   }
 
   previousSteps.forEach((previousStep) => {
-    if (
-      isDefined(previousStep.settings.outputSchema) &&
-      !isEmpty(previousStep.settings.outputSchema)
-    ) {
+    const filteredOutputSchema = filterOutputSchema(
+      previousStep.settings.outputSchema as OutputSchema,
+      objectNameSingularToSelect,
+    );
+
+    if (isDefined(filteredOutputSchema) && !isEmpty(filteredOutputSchema)) {
       result.push({
         id: previousStep.id,
         name: previousStep.name,
-        outputSchema: previousStep.settings.outputSchema,
+        outputSchema: filteredOutputSchema,
       });
     }
   });

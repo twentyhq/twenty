@@ -6,7 +6,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
-import { useFindManyParams } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
+import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useContext, useEffect } from 'react';
@@ -31,7 +31,7 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       objectNameSingular,
     });
 
-    const findManyRecordsParams = useFindManyParams(
+    const findManyRecordsParams = useFindManyRecordIndexTableParams(
       objectMetadataItem?.nameSingular ?? '',
       objectMetadataItem?.namePlural ?? '',
     );

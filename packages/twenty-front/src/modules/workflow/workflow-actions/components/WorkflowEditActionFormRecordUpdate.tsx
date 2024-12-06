@@ -135,13 +135,9 @@ export const WorkflowEditActionFormRecordUpdate = ({
           name: newName,
         });
       }}
-      HeaderIcon={
-        <IconAddressBook
-          color={theme.font.color.tertiary}
-          stroke={theme.icon.stroke.sm}
-        />
-      }
-      headerTitle={headerTitle}
+      Icon={IconAddressBook}
+      iconColor={theme.font.color.tertiary}
+      initialTitle={headerTitle}
       headerType="Action"
     >
       <Select

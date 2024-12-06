@@ -90,6 +90,7 @@ export const SummaryCard = ({
             useUpdateRecord: useUpdateOneObjectRecordMutation,
             hotkeyScope: InlineCellHotkeyScope.InlineCell,
             isCentered: !isMobile,
+            isDisplayModeFixHeight: true,
           }}
         >
           {isInRightDrawer ? (

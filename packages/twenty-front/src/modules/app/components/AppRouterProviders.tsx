@@ -18,9 +18,11 @@ import { BaseThemeProvider } from '@/ui/theme/components/BaseThemeProvider';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
+import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { StrictMode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+import { PageFavicon } from '@/ui/utilities/page-favicon/components/PageFavicon';
 
 export const AppRouterProviders = () => {
   const { pathname } = useLocation();
@@ -34,6 +36,7 @@ export const AppRouterProviders = () => {
           <ChromeExtensionSidecarEffect />
           <ChromeExtensionSidecarProvider>
             <UserProviderEffect />
+            <WorkspaceProviderEffect />
             <UserProvider>
               <AuthProvider>
                 <ApolloMetadataClientProvider>
@@ -47,6 +50,7 @@ export const AppRouterProviders = () => {
                               <PromiseRejectionEffect />
                               <GotoHotkeysEffectsProvider />
                               <PageTitle title={pageTitle} />
+                              <PageFavicon />
                               <Outlet />
                             </StrictMode>
                           </DialogManager>

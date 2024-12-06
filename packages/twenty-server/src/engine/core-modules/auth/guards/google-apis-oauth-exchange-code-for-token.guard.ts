@@ -43,7 +43,7 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
     ) {
       throw new AuthException(
         'Google apis auth is not enabled',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        AuthExceptionCode.GOOGLE_API_AUTH_DISABLED,
       );
     }
 

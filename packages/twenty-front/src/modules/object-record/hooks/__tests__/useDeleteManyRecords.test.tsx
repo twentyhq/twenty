@@ -6,6 +6,7 @@ import {
   variables,
 } from '@/object-record/hooks/__mocks__/useDeleteManyRecords';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { act } from 'react';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -28,11 +29,20 @@ const mocks = [
   },
 ];
 
+jest.mock('@/object-record/hooks/useRefetchAggregateQueries');
+const mockRefetchAggregateQueries = jest.fn();
+(useRefetchAggregateQueries as jest.Mock).mockReturnValue({
+  refetchAggregateQueries: mockRefetchAggregateQueries,
+});
+
 const Wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: mocks,
 });
 
 describe('useDeleteManyRecords', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
   it('works as expected', async () => {
     const { result } = renderHook(
       () => useDeleteManyRecords({ objectNameSingular: 'person' }),
@@ -48,5 +58,6 @@ describe('useDeleteManyRecords', () => {
     });
 
     expect(mocks[0].result).toHaveBeenCalled();
+    expect(mockRefetchAggregateQueries).toHaveBeenCalledTimes(1);
   });
 });
