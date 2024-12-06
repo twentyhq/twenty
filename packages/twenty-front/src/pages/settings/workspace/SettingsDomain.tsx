@@ -60,6 +60,22 @@ export const SettingsDomain = () => {
     currentWorkspaceState,
   );
 
+  const {
+    control,
+    watch,
+    getValues,
+    formState: { isValid },
+  } = useForm<Form>({
+    mode: 'onChange',
+    delayError: 500,
+    defaultValues: {
+      subdomain: currentWorkspace?.subdomain ?? '',
+    },
+    resolver: zodResolver(validationSchema),
+  });
+
+  const subdomainValue = watch('subdomain');
+
   const handleSave = async () => {
     try {
       const values = getValues();
@@ -83,24 +99,22 @@ export const SettingsDomain = () => {
 
       window.location.href = buildWorkspaceUrl(values.subdomain);
     } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === 'Subdomain already taken'
+      ) {
+        control.setError('subdomain', {
+          type: 'manual',
+          message: (error as Error).message,
+        });
+        return;
+      }
+
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
       });
     }
   };
-
-  const {
-    control,
-    getValues,
-    formState: { isValid },
-  } = useForm<Form>({
-    mode: 'onChange',
-    delayError: 500,
-    defaultValues: {
-      subdomain: currentWorkspace?.subdomain ?? '',
-    },
-    resolver: zodResolver(validationSchema),
-  });
 
   return (
     <SubMenuTopBarContainer
@@ -118,7 +132,9 @@ export const SettingsDomain = () => {
       ]}
       actionButton={
         <SaveAndCancelButtons
-          isSaveDisabled={!isValid}
+          isSaveDisabled={
+            !isValid || subdomainValue === currentWorkspace?.subdomain
+          }
           onCancel={() => navigate(getSettingsPagePath(SettingsPath.Workspace))}
           onSave={handleSave}
         />
