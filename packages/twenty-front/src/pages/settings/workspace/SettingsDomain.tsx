@@ -129,7 +129,9 @@ export const SettingsDomain = () => {
       ]}
       actionButton={
         <SaveAndCancelButtons
-          isSaveDisabled={!isValid}
+          isSaveDisabled={
+            !isValid || getValues('subdomain') === currentWorkspace?.subdomain
+          }
           onCancel={() => navigate(getSettingsPagePath(SettingsPath.Workspace))}
           onSave={handleSave}
         />

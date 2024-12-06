@@ -23,6 +23,7 @@ import {
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { ConflictError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -61,10 +62,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       );
 
       if (!subdomainAvailable) {
-        throw new WorkspaceException(
-          'Subdomain already taken',
-          WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,
-        );
+        throw new ConflictError('Subdomain already taken');
       }
     }
 

@@ -8,6 +8,5 @@ export class WorkspaceException extends CustomException {
 
 export enum WorkspaceExceptionCode {
   SUBDOMAIN_NOT_FOUND = 'SUBDOMAIN_NOT_FOUND',
-  SUBDOMAIN_ALREADY_TAKEN = 'SUBDOMAIN_ALREADY_TAKEN',
   WORKSPACE_NOT_FOUND = 'WORKSPACE_NOT_FOUND',
 }
