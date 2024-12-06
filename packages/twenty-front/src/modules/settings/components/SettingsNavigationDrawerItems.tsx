@@ -54,14 +54,10 @@ const StyledIconContainer = styled.div`
   border-right: 1px solid ${MAIN_COLORS.yellow};
   position: absolute;
   left: ${({ theme }) => theme.spacing(-5)};
-  margin-top: ${({ theme }) => theme.spacing(2)};
-  height: 75%;
+  height: 100%;
 `;
 
 const StyledContainer = styled.div`
-  display: flex;
-  width: 100%;
-  gap: ${({ theme }) => theme.spacing(1)};
   position: relative;
 `;
 
