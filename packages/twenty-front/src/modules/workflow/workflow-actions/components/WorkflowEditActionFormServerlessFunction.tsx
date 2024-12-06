@@ -4,7 +4,7 @@ import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-func
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
+import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
 import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
@@ -30,6 +30,7 @@ import {
 } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
+import { StyledWorkflowStepBody } from '@/workflow/components/StyledWorkflowStepBody';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -284,31 +285,34 @@ export const WorkflowEditActionFormServerlessFunction = ({
 
   return (
     !loading && (
-      <WorkflowEditGenericFormBase
-        onTitleChange={(newName: string) => {
-          onActionUpdate({ name: newName });
-        }}
-        Icon={IconCode}
-        iconColor={theme.color.orange}
-        initialTitle={headerTitle}
-        headerType="Code"
-      >
-        <CodeEditor
-          height={340}
-          value={formValues.code?.[INDEX_FILE_PATH]}
-          language={'typescript'}
-          onChange={async (value) => {
-            await checkWorkflowUpdatable();
-            await onCodeChange(value);
+      <>
+        <WorkflowStepHeader
+          onTitleChange={(newName: string) => {
+            onActionUpdate({ name: newName });
           }}
-          onMount={handleEditorDidMount}
-          options={{
-            readOnly: actionOptions.readonly,
-            domReadOnly: actionOptions.readonly,
-          }}
+          Icon={IconCode}
+          iconColor={theme.color.orange}
+          initialTitle={headerTitle}
+          headerType="Code"
         />
-        {renderFields(functionInput)}
-      </WorkflowEditGenericFormBase>
+        <StyledWorkflowStepBody>
+          <CodeEditor
+            height={340}
+            value={formValues.code?.[INDEX_FILE_PATH]}
+            language={'typescript'}
+            onChange={async (value) => {
+              await checkWorkflowUpdatable();
+              await onCodeChange(value);
+            }}
+            onMount={handleEditorDidMount}
+            options={{
+              readOnly: actionOptions.readonly,
+              domReadOnly: actionOptions.readonly,
+            }}
+          />
+          {renderFields(functionInput)}
+        </StyledWorkflowStepBody>
+      </>
     )
   );
 };

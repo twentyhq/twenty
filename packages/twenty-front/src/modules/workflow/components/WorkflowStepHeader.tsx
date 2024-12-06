@@ -43,27 +43,18 @@ const StyledHeaderIconContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledContentContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing(6)};
-  display: flex;
-  flex-direction: column;
-  row-gap: ${({ theme }) => theme.spacing(4)};
-`;
-
-export const WorkflowEditGenericFormBase = ({
+export const WorkflowStepHeader = ({
   onTitleChange,
   Icon,
   iconColor,
   initialTitle,
   headerType,
-  children,
 }: {
   onTitleChange: (newTitle: string) => void;
   Icon: IconComponent;
   iconColor: string;
   initialTitle: string;
   headerType: string;
-  children: React.ReactNode;
 }) => {
   const theme = useTheme();
   const [title, setTitle] = useState(initialTitle);
@@ -100,7 +91,6 @@ export const WorkflowEditGenericFormBase = ({
           <StyledHeaderType>{headerType}</StyledHeaderType>
         </StyledHeaderInfo>
       </StyledHeader>
-      <StyledContentContainer>{children}</StyledContentContainer>
     </>
   );
 };
