@@ -17,7 +17,6 @@ const StyledTitle = styled.div`
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   height: ${({ theme }) => theme.spacing(5)};
-  padding: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
   padding-right: ${({ theme }) => theme.spacing(0.5)};
   padding-top: ${({ theme }) => theme.spacing(1)};
