@@ -103,6 +103,17 @@ export const useRecordsForSelect = ({
       objectNameSingular,
     });
 
+  const specialSelectableItems: SelectableItem[] =
+    objectNameSingular === 'workspaceMember'
+      ? [
+          {
+            id: 'me',
+            name: 'Me',
+            isSelected: false,
+          },
+        ]
+      : [];
+
   return {
     selectedRecords: selectedRecordsData
       .map(mapToObjectRecordIdentifier)
@@ -116,12 +127,15 @@ export const useRecordsForSelect = ({
         ...record,
         isSelected: true,
       })) as SelectableItem[],
-    recordsToSelect: recordsToSelectData
-      .map(mapToObjectRecordIdentifier)
-      .map((record) => ({
-        ...record,
-        isSelected: false,
-      })) as SelectableItem[],
+    recordsToSelect: [
+      ...specialSelectableItems,
+      ...(recordsToSelectData
+        .map(mapToObjectRecordIdentifier)
+        .map((record) => ({
+          ...record,
+          isSelected: false,
+        })) as SelectableItem[]),
+    ],
     loading:
       recordsToSelectLoading ||
       filteredSelectedRecordsLoading ||

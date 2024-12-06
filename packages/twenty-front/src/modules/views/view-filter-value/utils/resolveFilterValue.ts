@@ -1,13 +1,14 @@
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterableFieldType } from '@/object-record/object-filter-dropdown/types/FilterableFieldType';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { resolveBooleanViewFilterValue } from '@/views/view-filter-value/utils/resolveBooleanViewFilterValue';
 import { resolveNumberViewFilterValue } from '@/views/view-filter-value/utils/resolveNumberViewFilterValue';
+import { resolveRelationViewFilterValue } from '@/views/view-filter-value/utils/resolveRelationViewFilterValue';
 import { resolveSelectViewFilterValue } from '@/views/view-filter-value/utils/resolveSelectViewFilterValue';
 import {
   resolveDateViewFilterValue,
   ResolvedDateViewFilterValue,
 } from './resolveDateViewFilterValue';
-import { resolveBooleanViewFilterValue } from '@/views/view-filter-value/utils/resolveBooleanViewFilterValue';
 
 type ResolvedFilterValue<
   T extends FilterableFieldType,
@@ -20,7 +21,9 @@ type ResolvedFilterValue<
       ? string[]
       : T extends 'BOOLEAN'
         ? boolean
-        : string;
+        : T extends 'RELATION'
+          ? string
+          : string;
 
 type PartialFilter<
   T extends FilterableFieldType,
@@ -47,6 +50,11 @@ export const resolveFilterValue = <
       return resolveSelectViewFilterValue(filter) as ResolvedFilterValue<T, O>;
     case 'BOOLEAN':
       return resolveBooleanViewFilterValue(filter) as ResolvedFilterValue<T, O>;
+    case 'RELATION':
+      return resolveRelationViewFilterValue(filter) as ResolvedFilterValue<
+        T,
+        O
+      >;
     default:
       return filter.value as ResolvedFilterValue<T, O>;
   }
