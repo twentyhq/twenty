@@ -9,6 +9,7 @@ import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-impor
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-ui';
+import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { castToString } from '~/utils/castToString';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
@@ -203,6 +204,35 @@ export const buildRecordFromImportedStructuredRow = (
           source: 'IMPORT',
         };
         break;
+      case FieldMetadataType.Array:
+      case FieldMetadataType.MultiSelect: {
+        const stringArrayJSONSchema = z
+          .preprocess((value) => {
+            try {
+              if (typeof value !== 'string') {
+                return [];
+              }
+              return JSON.parse(value);
+            } catch {
+              return [];
+            }
+          }, z.array(z.string()))
+          .catch([]);
+
+        recordToBuild[field.name] =
+          stringArrayJSONSchema.parse(importedFieldValue);
+        break;
+      }
+      case FieldMetadataType.RawJson: {
+        if (typeof importedFieldValue === 'string') {
+          try {
+            recordToBuild[field.name] = JSON.parse(importedFieldValue);
+          } catch {
+            break;
+          }
+        }
+        break;
+      }
       default:
         recordToBuild[field.name] = importedFieldValue;
         break;

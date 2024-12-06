@@ -1,4 +1,3 @@
-import { lazy, Suspense } from 'react';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/components/WorkflowEditTriggerManualForm';
 import {
@@ -8,11 +7,11 @@ import {
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
-import { isWorkflowRecordCreateAction } from '@/workflow/utils/isWorkflowRecordCreateAction';
-import { isWorkflowRecordUpdateAction } from '@/workflow/utils/isWorkflowRecordUpdateAction';
-import { WorkflowEditActionFormRecordCreate } from '@/workflow/workflow-actions/components/WorkflowEditActionFormRecordCreate';
-import { WorkflowEditActionFormRecordUpdate } from '@/workflow/workflow-actions/components/WorkflowEditActionFormRecordUpdate';
+import { WorkflowEditActionFormCreateRecord } from '@/workflow/workflow-actions/components/WorkflowEditActionFormCreateRecord';
+import { WorkflowEditActionFormDeleteRecord } from '@/workflow/workflow-actions/components/WorkflowEditActionFormDeleteRecord';
 import { WorkflowEditActionFormSendEmail } from '@/workflow/workflow-actions/components/WorkflowEditActionFormSendEmail';
+import { WorkflowEditActionFormUpdateRecord } from '@/workflow/workflow-actions/components/WorkflowEditActionFormUpdateRecord';
+import { lazy, Suspense } from 'react';
 import { isDefined } from 'twenty-ui';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 
@@ -105,33 +104,35 @@ export const WorkflowStepDetail = ({
             />
           );
         }
-        case 'RECORD_CRUD': {
-          if (isWorkflowRecordCreateAction(stepDefinition.definition)) {
-            return (
-              <WorkflowEditActionFormRecordCreate
-                action={stepDefinition.definition}
-                actionOptions={props}
-              />
-            );
-          }
+        case 'CREATE_RECORD': {
+          return (
+            <WorkflowEditActionFormCreateRecord
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
 
-          if (isWorkflowRecordUpdateAction(stepDefinition.definition)) {
-            return (
-              <WorkflowEditActionFormRecordUpdate
-                action={stepDefinition.definition}
-                actionOptions={props}
-              />
-            );
-          }
+        case 'UPDATE_RECORD': {
+          return (
+            <WorkflowEditActionFormUpdateRecord
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
 
-          return null;
+        case 'DELETE_RECORD': {
+          return (
+            <WorkflowEditActionFormDeleteRecord
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
         }
       }
 
-      return assertUnreachable(
-        stepDefinition.definition,
-        `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
-      );
+      return null;
     }
   }
 

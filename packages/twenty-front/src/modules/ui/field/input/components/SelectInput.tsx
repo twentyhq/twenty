@@ -1,14 +1,12 @@
 import { SelectOption } from '@/spreadsheet-import/types';
 import { SelectInput as SelectBaseInput } from '@/ui/input/components/SelectInput';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
-import { ReferenceType } from '@floating-ui/react';
 
 type SelectInputProps = {
   selectableListId: string;
   selectableItemIdArray: string[];
   hotkeyScope: string;
   onEnter: (itemId: string) => void;
-  selectWrapperRef?: ReferenceType | null | undefined;
   onOptionSelected: (selectedOption: SelectOption) => void;
   options: SelectOption[];
   onCancel?: () => void;
@@ -23,7 +21,6 @@ export const SelectInput = ({
   selectableItemIdArray,
   hotkeyScope,
   onEnter,
-  selectWrapperRef,
   onOptionSelected,
   options,
   onCancel,
@@ -40,7 +37,6 @@ export const SelectInput = ({
       onEnter={onEnter}
     >
       <SelectBaseInput
-        parentRef={selectWrapperRef}
         onOptionSelected={onOptionSelected}
         options={options}
         onCancel={onCancel}

@@ -52,7 +52,7 @@ type SettingsNavigationItem = {
 
 const StyledIconContainer = styled.div`
   position: absolute;
-  left: ${({ theme }) => theme.spacing(-3)};
+  left: ${({ theme }) => theme.spacing(-5)};
   height: 100%;
   display: flex;
   align-items: center;
