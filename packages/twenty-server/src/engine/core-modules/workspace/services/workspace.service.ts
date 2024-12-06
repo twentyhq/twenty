@@ -60,7 +60,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         payload.subdomain,
       );
 
-      console.log('>>>>>>>>>>>>>>', subdomainAvailable);
       if (!subdomainAvailable) {
         throw new WorkspaceException(
           'Subdomain already taken',
