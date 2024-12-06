@@ -23,13 +23,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import {
-  IconCode,
-  IconGauge,
-  IconSettings,
-  IconTestPipe,
-  Section,
-} from 'twenty-ui';
+import { IconCode, IconGauge, IconSettings, IconTestPipe } from 'twenty-ui';
 import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
@@ -262,9 +256,7 @@ export const SettingsServerlessFunctionDetail = () => {
         ]}
       >
         <SettingsPageContainer>
-          <Section>
-            <TabList tabListInstanceId={TAB_LIST_COMPONENT_ID} tabs={tabs} />
-          </Section>
+          <TabList tabListInstanceId={TAB_LIST_COMPONENT_ID} tabs={tabs} />
           {renderActiveTabContent()}
         </SettingsPageContainer>
       </SubMenuTopBarContainer>

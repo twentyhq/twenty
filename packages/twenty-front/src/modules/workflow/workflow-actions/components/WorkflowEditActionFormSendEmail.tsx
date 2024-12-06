@@ -15,7 +15,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import { IconMail, IconPlus, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { StyledWorkflowStepBody } from '@/workflow/components/StyledWorkflowStepBody';
+import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 
 type WorkflowEditActionFormSendEmailProps = {
   action: WorkflowSendEmailAction;
@@ -189,7 +189,7 @@ export const WorkflowEditActionFormSendEmail = ({
           initialTitle={headerTitle}
           headerType="Email"
         />
-        <StyledWorkflowStepBody>
+        <WorkflowStepBody>
           <Controller
             name="connectedAccountId"
             control={form.control}
@@ -268,7 +268,7 @@ export const WorkflowEditActionFormSendEmail = ({
               />
             )}
           />
-        </StyledWorkflowStepBody>
+        </WorkflowStepBody>
       </>
     )
   );

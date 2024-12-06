@@ -22,15 +22,12 @@ import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { Fragment, ReactNode, useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import {
-  CodeEditor,
-  HorizontalSeparator,
-  IconCode,
-  isDefined,
-} from 'twenty-ui';
+import { CodeEditor, IconCode, isDefined, IconPlayerPlay } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
-import { StyledWorkflowStepBody } from '@/workflow/components/StyledWorkflowStepBody';
+import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
+import { TabList } from '@/ui/layout/tab/components/TabList';
+import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -56,6 +53,11 @@ const StyledInputContainer = styled.div`
   position: relative;
 `;
 
+const StyledTabList = styled(TabList)`
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+`;
+
 type WorkflowEditActionFormServerlessFunctionProps = {
   action: WorkflowCodeAction;
   actionOptions:
@@ -77,12 +79,16 @@ type ServerlessFunctionInputFormData = {
 
 const INDEX_FILE_PATH = 'src/index.ts';
 
+const TAB_LIST_COMPONENT_ID = 'serverless-function-code-step';
+
 export const WorkflowEditActionFormServerlessFunction = ({
   action,
   actionOptions,
 }: WorkflowEditActionFormServerlessFunctionProps) => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
+  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const activeTabId = useRecoilValue(activeTabIdState);
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
@@ -189,23 +195,15 @@ export const WorkflowEditActionFormServerlessFunction = ({
     await updateFunctionInput(updatedFunctionInput, false);
   };
 
-  const renderFields = (
-    functionInput: FunctionInput,
-    path: string[] = [],
+  const renderFields = ({
+    functionInput,
+    path = [],
     isRoot = true,
-  ): ReactNode[] => {
-    const displaySeparator = (functionInput: FunctionInput) => {
-      const keys = Object.keys(functionInput);
-      if (keys.length > 1) {
-        return true;
-      }
-      if (keys.length === 1) {
-        const subKeys = Object.keys(functionInput[keys[0]]);
-        return subKeys.length > 0;
-      }
-      return false;
-    };
-
+  }: {
+    functionInput: FunctionInput;
+    path?: string[];
+    isRoot?: boolean;
+  }): ReactNode[] => {
     return Object.entries(functionInput).map(([inputKey, inputValue]) => {
       const currentPath = [...path, inputKey];
       const pathKey = currentPath.join('.');
@@ -214,10 +212,11 @@ export const WorkflowEditActionFormServerlessFunction = ({
         if (isRoot) {
           return (
             <Fragment key={pathKey}>
-              {displaySeparator(functionInput) && (
-                <HorizontalSeparator noMargin />
-              )}
-              {renderFields(inputValue, currentPath, false)}
+              {renderFields({
+                functionInput: inputValue,
+                path: currentPath,
+                isRoot: false,
+              })}
             </Fragment>
           );
         }
@@ -225,7 +224,11 @@ export const WorkflowEditActionFormServerlessFunction = ({
           <StyledContainer key={pathKey}>
             <StyledLabel>{inputKey}</StyledLabel>
             <StyledInputContainer>
-              {renderFields(inputValue, currentPath, false)}
+              {renderFields({
+                functionInput: inputValue,
+                path: currentPath,
+                isRoot: false,
+              })}
             </StyledInputContainer>
           </StyledContainer>
         );
@@ -279,6 +282,15 @@ export const WorkflowEditActionFormServerlessFunction = ({
     await getUpdatableWorkflowVersion(workflow);
   };
 
+  const tabs = [
+    {
+      id: 'code',
+      title: 'Code',
+      Icon: IconCode,
+    },
+    { id: 'test', title: 'Test', Icon: IconPlayerPlay },
+  ];
+
   useEffect(() => {
     setFunctionInput(action.settings.input.serverlessFunctionInput);
   }, [action]);
@@ -286,6 +298,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
   return (
     !loading && (
       <>
+        <StyledTabList tabListInstanceId={TAB_LIST_COMPONENT_ID} tabs={tabs} />
         <WorkflowStepHeader
           onTitleChange={(newName: string) => {
             onActionUpdate({ name: newName });
@@ -295,23 +308,28 @@ export const WorkflowEditActionFormServerlessFunction = ({
           initialTitle={headerTitle}
           headerType="Code"
         />
-        <StyledWorkflowStepBody>
-          <CodeEditor
-            height={340}
-            value={formValues.code?.[INDEX_FILE_PATH]}
-            language={'typescript'}
-            onChange={async (value) => {
-              await checkWorkflowUpdatable();
-              await onCodeChange(value);
-            }}
-            onMount={handleEditorDidMount}
-            options={{
-              readOnly: actionOptions.readonly,
-              domReadOnly: actionOptions.readonly,
-            }}
-          />
-          {renderFields(functionInput)}
-        </StyledWorkflowStepBody>
+        <WorkflowStepBody>
+          {activeTabId === 'code' && (
+            <>
+              {renderFields({ functionInput })}
+              <CodeEditor
+                height={340}
+                value={formValues.code?.[INDEX_FILE_PATH]}
+                language={'typescript'}
+                onChange={async (value) => {
+                  await checkWorkflowUpdatable();
+                  await onCodeChange(value);
+                }}
+                onMount={handleEditorDidMount}
+                options={{
+                  readOnly: actionOptions.readonly,
+                  domReadOnly: actionOptions.readonly,
+                }}
+              />
+            </>
+          )}
+          {activeTabId === 'test' && <>{renderFields({ functionInput })}</>}
+        </WorkflowStepBody>
       </>
     )
   );

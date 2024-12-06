@@ -9,7 +9,7 @@ import {
 import { getManualTriggerDefaultSettings } from '@/workflow/utils/getManualTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
 import { IconHandMove, isDefined, useIcons } from 'twenty-ui';
-import { StyledWorkflowStepBody } from '@/workflow/components/StyledWorkflowStepBody';
+import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 
 type WorkflowEditTriggerManualFormProps = {
   trigger: WorkflowManualTrigger;
@@ -65,7 +65,7 @@ export const WorkflowEditTriggerManualForm = ({
         initialTitle={headerTitle}
         headerType="Trigger · Manual"
       />
-      <StyledWorkflowStepBody>
+      <WorkflowStepBody>
         <Select
           dropdownId="workflow-edit-manual-trigger-availability"
           label="Available"
@@ -111,7 +111,7 @@ export const WorkflowEditTriggerManualForm = ({
             }}
           />
         ) : null}
-      </StyledWorkflowStepBody>
+      </WorkflowStepBody>
     </>
   );
 };

@@ -17,7 +17,7 @@ import {
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';
-import { StyledWorkflowStepBody } from '@/workflow/components/StyledWorkflowStepBody';
+import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 
 type WorkflowEditActionFormRecordCreateProps = {
   action: WorkflowRecordCreateAction;
@@ -155,7 +155,7 @@ export const WorkflowEditActionFormRecordCreate = ({
         initialTitle={headerTitle}
         headerType="Action"
       />
-      <StyledWorkflowStepBody>
+      <WorkflowStepBody>
         <Select
           dropdownId="workflow-edit-action-record-create-object-name"
           label="Object"
@@ -192,7 +192,7 @@ export const WorkflowEditActionFormRecordCreate = ({
             />
           );
         })}
-      </StyledWorkflowStepBody>
+      </WorkflowStepBody>
     </>
   );
 };

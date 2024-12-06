@@ -5,7 +5,6 @@ import { IconComponent } from 'twenty-ui';
 
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
@@ -30,13 +29,17 @@ type TabListProps = {
   behaveAsLinks?: boolean;
 };
 
-const StyledContainer = styled.div`
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
+const StyledTabsContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: 40px;
   user-select: none;
+  margin-bottom: -1px;
+`;
+
+const StyledContainer = styled.div`
+  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
 `;
 
 export const TabList = ({
@@ -63,13 +66,13 @@ export const TabList = ({
   }
 
   return (
-    <TabListScope tabListScopeId={tabListInstanceId}>
-      <TabListFromUrlOptionalEffect
-        componentInstanceId={tabListInstanceId}
-        tabListIds={tabs.map((tab) => tab.id)}
-      />
-      <ScrollWrapper enableYScroll={false} contextProviderName="tabList">
-        <StyledContainer className={className}>
+    <StyledContainer className={className}>
+      <TabListScope tabListScopeId={tabListInstanceId}>
+        <TabListFromUrlOptionalEffect
+          componentInstanceId={tabListInstanceId}
+          tabListIds={tabs.map((tab) => tab.id)}
+        />
+        <StyledTabsContainer>
           {visibleTabs.map((tab) => (
             <Tab
               id={tab.id}
@@ -88,8 +91,8 @@ export const TabList = ({
               }}
             />
           ))}
-        </StyledContainer>
-      </ScrollWrapper>
-    </TabListScope>
+        </StyledTabsContainer>
+      </TabListScope>
+    </StyledContainer>
   );
 };

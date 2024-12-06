@@ -14,7 +14,7 @@ import {
 
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
-import { StyledWorkflowStepBody } from '@/workflow/components/StyledWorkflowStepBody';
+import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 
 type WorkflowEditActionFormRecordUpdateProps = {
   action: WorkflowRecordUpdateAction;
@@ -142,7 +142,7 @@ export const WorkflowEditActionFormRecordUpdate = ({
         initialTitle={headerTitle}
         headerType="Action"
       />
-      <StyledWorkflowStepBody>
+      <WorkflowStepBody>
         <Select
           dropdownId="workflow-edit-action-record-update-object-name"
           label="Object"
@@ -173,7 +173,7 @@ export const WorkflowEditActionFormRecordUpdate = ({
           objectNameSingular={formData.objectName}
           defaultValue={formData.objectRecordId}
         />
-      </StyledWorkflowStepBody>
+      </WorkflowStepBody>
     </>
   );
 };

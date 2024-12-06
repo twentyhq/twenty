@@ -6,7 +6,7 @@ import { WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { useTheme } from '@emotion/react';
 import { IconPlaylistAdd, isDefined } from 'twenty-ui';
-import { StyledWorkflowStepBody } from '@/workflow/components/StyledWorkflowStepBody';
+import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 
 type WorkflowEditTriggerDatabaseEventFormProps = {
   trigger: WorkflowDatabaseEventTrigger;
@@ -78,7 +78,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
         initialTitle={headerTitle}
         headerType={headerType}
       />
-      <StyledWorkflowStepBody>
+      <WorkflowStepBody>
         <Select
           dropdownId="workflow-edit-trigger-record-type"
           label="Record Type"
@@ -145,7 +145,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
             );
           }}
         />
-      </StyledWorkflowStepBody>
+      </WorkflowStepBody>
     </>
   );
 };

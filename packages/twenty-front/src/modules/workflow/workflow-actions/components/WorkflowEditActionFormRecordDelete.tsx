@@ -14,7 +14,7 @@ import {
 
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
-import { StyledWorkflowStepBody } from '@/workflow/components/StyledWorkflowStepBody';
+import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 
 type WorkflowEditActionFormRecordDeleteProps = {
   action: WorkflowRecordDeleteAction;
@@ -137,7 +137,7 @@ export const WorkflowEditActionFormRecordDelete = ({
         initialTitle={headerTitle}
         headerType="Action"
       />
-      <StyledWorkflowStepBody>
+      <WorkflowStepBody>
         <Select
           dropdownId="workflow-edit-action-record-delete-object-name"
           label="Object"
@@ -168,7 +168,7 @@ export const WorkflowEditActionFormRecordDelete = ({
           objectNameSingular={formData.objectName}
           defaultValue={formData.objectRecordId}
         />
-      </StyledWorkflowStepBody>
+      </WorkflowStepBody>
     </>
   );
 };

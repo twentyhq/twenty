@@ -14,17 +14,18 @@ import { WorkflowEditActionFormSendEmail } from '@/workflow/workflow-actions/com
 import { isWorkflowRecordCreateAction } from '@/workflow/workflow-actions/utils/isWorkflowRecordCreateAction';
 import { isWorkflowRecordDeleteAction } from '@/workflow/workflow-actions/utils/isWorkflowRecordDeleteAction';
 import { isWorkflowRecordUpdateAction } from '@/workflow/workflow-actions/utils/isWorkflowRecordUpdateAction';
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { isDefined } from 'twenty-ui';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
+import { WorkflowEditActionFormServerlessFunction } from '@/workflow/workflow-actions/components/WorkflowEditActionFormServerlessFunction';
 
-const WorkflowEditActionFormServerlessFunction = lazy(() =>
+/*const WorkflowEditActionFormServerlessFunction = lazy(() =>
   import(
     '@/workflow/workflow-actions/components/WorkflowEditActionFormServerlessFunction'
   ).then((module) => ({
     default: module.WorkflowEditActionFormServerlessFunction,
   })),
-);
+);*/
 
 type WorkflowStepDetailProps =
   | {
