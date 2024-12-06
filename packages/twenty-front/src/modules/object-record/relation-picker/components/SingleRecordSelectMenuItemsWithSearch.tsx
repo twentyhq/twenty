@@ -59,6 +59,9 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
     />
   );
 
+  const shouldDisplayDropdownMenuItems =
+    records.recordsToSelect.length + records.selectedRecords?.length > 0;
+
   return (
     <>
       {dropdownPlacement?.includes('end') && (
@@ -67,15 +70,11 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
             {createNewButton}
           </DropdownMenuItemsContainer>
           {records.recordsToSelect.length > 0 && <DropdownMenuSeparator />}
-          {records.recordsToSelect.length > 0 && (
+          {shouldDisplayDropdownMenuItems && (
             <SingleRecordSelectMenuItems
               recordsToSelect={records.recordsToSelect}
               loading={records.loading}
-              selectedRecord={
-                records.recordsToSelect.length === 1
-                  ? records.recordsToSelect[0]
-                  : undefined
-              }
+              selectedRecord={records.selectedRecords?.[0]}
               shouldSelectEmptyOption={selectedRecordIds?.length === 0}
               hotkeyScope={recordPickerInstanceId}
               isFiltered={!!recordPickerSearchFilter}
@@ -95,15 +94,11 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
         isUndefinedOrNull(dropdownPlacement)) && (
         <>
           <DropdownMenuSeparator />
-          {records.recordsToSelect.length > 0 && (
+          {shouldDisplayDropdownMenuItems && (
             <SingleRecordSelectMenuItems
               recordsToSelect={records.recordsToSelect}
               loading={records.loading}
-              selectedRecord={
-                records.recordsToSelect.length === 1
-                  ? records.recordsToSelect[0]
-                  : undefined
-              }
+              selectedRecord={records.selectedRecords?.[0]}
               shouldSelectEmptyOption={selectedRecordIds?.length === 0}
               hotkeyScope={recordPickerInstanceId}
               isFiltered={!!recordPickerSearchFilter}
