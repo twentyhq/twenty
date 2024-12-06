@@ -24,7 +24,7 @@ export class ForbiddenWordsConstraint implements ValidatorConstraintInterface {
 }
 
 export function ForbiddenWords(
-  list: string[],
+  forbiddenWords: string[],
   validationOptions?: ValidationOptions,
 ) {
   return function (object: object, propertyName: string) {
@@ -32,7 +32,7 @@ export function ForbiddenWords(
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      constraints: [list],
+      constraints: [forbiddenWords],
       validator: ForbiddenWordsConstraint,
     });
   };

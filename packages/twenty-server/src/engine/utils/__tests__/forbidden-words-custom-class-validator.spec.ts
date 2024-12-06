@@ -1,41 +1,38 @@
-import {
-  ValidationArguments,
-  ValidatorConstraintInterface,
-} from 'class-validator';
+import { validate } from 'class-validator';
 
-import { ForbiddenWordsConstraint } from 'src/engine/utils/custom-class-validator/ForbiddenWords';
+import { ForbiddenWords } from 'src/engine/utils/custom-class-validator/ForbiddenWords';
 
 describe('ForbiddenWordsConstraint', () => {
-  let forbiddenWordsConstraint: ValidatorConstraintInterface;
-  const forbiddenWords = ['foo', 'bar'];
+  test('should throw error when word is forbidden', async () => {
+    class Test {
+      @ForbiddenWords(['forbidden', 'restricted'])
+      subdomain: string;
+    }
 
-  beforeEach(() => {
-    forbiddenWordsConstraint = new ForbiddenWordsConstraint();
-  });
+    const instance = new Test();
 
-  describe('validate', () => {
-    it('should return false if the word is forbidden', () => {
-      const result = forbiddenWordsConstraint.validate('foo', {
-        constraints: forbiddenWords,
-      } as ValidationArguments);
+    instance.subdomain = 'forbidden';
 
-      expect(result).toBe(false);
-    });
+    const errors = await validate(instance);
 
-    it('should return true if the word is not forbidden', () => {
-      const result = forbiddenWordsConstraint.validate('foo', {
-        constraints: forbiddenWords,
-      } as ValidationArguments);
-
-      expect(result).toBe(true);
+    expect(errors.length).toBeGreaterThan(0);
+    expect(errors[0].constraints).toEqual({
+      ForbiddenWordsConstraint: 'forbidden, restricted are not allowed',
     });
   });
 
-  describe('defaultMessage', () => {
-    it('should return a message listing the forbidden words', () => {
-      const message = forbiddenWordsConstraint.defaultMessage?.();
+  test('should pass validation word is not in the list', async () => {
+    class Test {
+      @ForbiddenWords(['forbidden', 'restricted'])
+      subdomain: string;
+    }
 
-      expect(message).toBe('foo, bar are not allowed');
-    });
+    const instance = new Test();
+
+    instance.subdomain = 'valid';
+
+    const errors = await validate(instance);
+
+    expect(errors.length).toEqual(0);
   });
 });
