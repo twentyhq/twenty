@@ -290,6 +290,8 @@ const companyMocks = [
             name: 'Example Company',
             id: companyId,
             visaSponsorship: false,
+            deletedAt: undefined,
+            workPolicy: [],
           },
         ],
         upsert: true,
