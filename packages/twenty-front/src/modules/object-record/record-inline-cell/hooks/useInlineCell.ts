@@ -7,9 +7,9 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { isDefined } from '~/utils/isDefined';
 
 import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
+import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
-import { getDropdownFocusIdForRecordField } from '@/ui/layout/dropdown/utils/getDropdownFocusIdForRecordField';
 import { isInlineCellInEditModeScopedState } from '../states/isInlineCellInEditModeScopedState';
 import { InlineCellHotkeyScope } from '../types/InlineCellHotkeyScope';
 

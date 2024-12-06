@@ -14,16 +14,16 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { useInlineCell } from '../hooks/useInlineCell';
 
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
+import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { getDropdownFocusIdForRecordField } from '@/ui/layout/dropdown/utils/getDropdownFocusIdForRecordField';
 import { useRecoilCallback } from 'recoil';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
   RecordInlineCellContext,
   RecordInlineCellContextProps,
 } from './RecordInlineCellContext';
-import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 
 type RecordInlineCellProps = {
   readonly?: boolean;

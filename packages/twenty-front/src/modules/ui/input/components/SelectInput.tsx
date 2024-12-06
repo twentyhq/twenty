@@ -77,7 +77,7 @@ export const SelectInput = ({
         onCancel();
       }
     },
-    listenerId: 'SelectInput',
+    listenerId: 'select-input',
   });
 
   useScopedHotkeys(

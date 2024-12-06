@@ -20,6 +20,7 @@ import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 export type DropdownContentProps = {
+  className?: string;
   dropdownId: string;
   dropdownPlacement: Placement;
   floatingUiRefs: UseFloatingReturn['refs'];
@@ -38,6 +39,7 @@ export type DropdownContentProps = {
 };
 
 export const DropdownContent = ({
+  className,
   dropdownId,
   dropdownPlacement,
   floatingUiRefs,
@@ -111,6 +113,7 @@ export const DropdownContent = ({
       )}
       <FloatingPortal>
         <DropdownMenu
+          className={className}
           disableBlur={disableBlur}
           width={dropdownMenuWidth ?? dropdownWidth}
           data-select-disable

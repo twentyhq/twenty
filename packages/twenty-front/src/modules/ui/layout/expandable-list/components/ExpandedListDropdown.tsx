@@ -50,7 +50,7 @@ export const ExpandedListDropdown = ({
     callback: () => {
       onClickOutside?.();
     },
-    listenerId: 'ExpandableList',
+    listenerId: 'expandable-list',
   });
 
   return (

@@ -18,12 +18,13 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownUnmountEffect } from '@/ui/layout/dropdown/components/DropdownUnmountEffect';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
 import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { flushSync } from 'react-dom';
 import { isDefined } from 'twenty-ui';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
 type DropdownProps = {
+  className?: string;
   clickableComponent?: ReactNode;
   dropdownComponents: ReactNode;
   hotkey?: {
@@ -44,6 +45,7 @@ type DropdownProps = {
 };
 
 export const Dropdown = ({
+  className,
   clickableComponent,
   dropdownComponents,
   dropdownMenuWidth,
@@ -62,7 +64,7 @@ export const Dropdown = ({
 
   const offsetMiddlewares = [];
 
-  const [, setDropdownMaxHeight] = useRecoilComponentStateV2(
+  const setDropdownMaxHeight = useSetRecoilComponentStateV2(
     dropdownMaxHeightComponentStateV2,
     dropdownId,
   );
@@ -118,6 +120,7 @@ export const Dropdown = ({
           )}
           {isDropdownOpen && (
             <DropdownContent
+              className={className}
               floatingStyles={floatingStyles}
               disableBlur={disableBlur}
               dropdownMenuWidth={dropdownMenuWidth}

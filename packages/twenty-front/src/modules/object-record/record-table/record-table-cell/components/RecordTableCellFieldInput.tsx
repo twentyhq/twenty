@@ -5,9 +5,9 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { getDropdownFocusIdForRecordField } from '@/ui/layout/dropdown/utils/getDropdownFocusIdForRecordField';
 import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
