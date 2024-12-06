@@ -1,9 +1,6 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
-import { useContext, useMemo } from 'react';
-import { useRecoilState } from 'recoil';
-
-import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
+import { useContext, useMemo, useState } from 'react';
 import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPropertiesBySize';
 import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
@@ -63,7 +60,6 @@ export type AvatarProps = {
   onClick?: () => void;
 };
 
-// TODO: Remove recoil because we don't want it into twenty-ui and find a solution for invalid avatar urls
 export const Avatar = ({
   avatarUrl,
   size = 'md',
@@ -77,9 +73,7 @@ export const Avatar = ({
   backgroundColor,
 }: AvatarProps) => {
   const { theme } = useContext(ThemeContext);
-  const [invalidAvatarUrls, setInvalidAvatarUrls] = useRecoilState(
-    invalidAvatarUrlsState,
-  );
+  const [isInvalidAvatarUrl, setIsInvalidAvatarUrl] = useState(false);
 
   const avatarImageURI = useMemo(
     () => getImageAbsoluteURI(avatarUrl),
@@ -89,14 +83,10 @@ export const Avatar = ({
   const noAvatarUrl = !isNonEmptyString(avatarImageURI);
 
   const placeholderChar = placeholder?.[0]?.toLocaleUpperCase();
-
-  const showPlaceholder =
-    noAvatarUrl || invalidAvatarUrls.includes(avatarImageURI);
+  const showPlaceholder = noAvatarUrl || isInvalidAvatarUrl;
 
   const handleImageError = () => {
-    if (isNonEmptyString(avatarImageURI)) {
-      setInvalidAvatarUrls((prev) => [...prev, avatarImageURI]);
-    }
+    setIsInvalidAvatarUrl(true);
   };
 
   const fixedColor =
