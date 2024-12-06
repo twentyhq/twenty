@@ -125,7 +125,7 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
     }
 
     const queueOptions: JobsOptions = {
-      jobId: options?.id ? `${options.id}—${v4()}` : undefined, // We add V4() to id to make sure ids are uniques so we can add a waiting job when a job related with the same option.id is running
+      jobId: options?.id ? `${options.id}-${v4()}` : undefined, // We add V4() to id to make sure ids are uniques so we can add a waiting job when a job related with the same option.id is running
       priority: options?.priority,
       attempts: 1 + (options?.retryLimit || 0),
       removeOnComplete: 100,
