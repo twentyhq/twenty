@@ -50,7 +50,7 @@ type FieldInputProps = {
   onCancel?: () => void;
   onClickOutside?: (
     persist: () => void,
-    event?: MouseEvent | TouchEvent,
+    event: MouseEvent | TouchEvent,
   ) => void;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;

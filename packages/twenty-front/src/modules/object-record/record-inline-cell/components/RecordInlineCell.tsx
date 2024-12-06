@@ -17,12 +17,13 @@ import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useI
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { getDropdownFocusIdForRecordField } from '@/ui/layout/dropdown/utils/getDropdownFocusIdForRecordField';
-import { useRecoilValue } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
   RecordInlineCellContext,
   RecordInlineCellContextProps,
 } from './RecordInlineCellContext';
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 
 type RecordInlineCellProps = {
   readonly?: boolean;
@@ -39,8 +40,6 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
   const isFieldReadOnly = useIsFieldValueReadOnly();
 
   const { closeInlineCell } = useInlineCell();
-
-  const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
@@ -70,20 +69,30 @@ export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
     closeInlineCell();
   };
 
-  const handleClickOutside: FieldInputEvent = (persistField) => {
-    const recordFieldDropdownId = getDropdownFocusIdForRecordField(
-      recordId,
-      fieldDefinition.fieldMetadataId,
-      'inline-cell',
-    );
+  const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
+    ({ snapshot }) =>
+      (persistField, event) => {
+        const recordFieldDropdownId = getDropdownFocusIdForRecordField(
+          recordId,
+          fieldDefinition.fieldMetadataId,
+          'inline-cell',
+        );
 
-    if (recordFieldDropdownId !== activeDropdownFocusId) {
-      return;
-    }
+        const activeDropdownFocusId = snapshot
+          .getLoadable(activeDropdownFocusIdState)
+          .getValue();
 
-    persistField();
-    closeInlineCell();
-  };
+        if (recordFieldDropdownId !== activeDropdownFocusId) {
+          return;
+        }
+
+        event.stopImmediatePropagation();
+
+        persistField();
+        closeInlineCell();
+      },
+    [closeInlineCell, fieldDefinition.fieldMetadataId, recordId],
+  );
 
   const { getIcon } = useIcons();
 
