@@ -2,7 +2,6 @@ import { usePhonesField } from '@/object-record/record-field/meta-types/hooks/us
 import { PhonesFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/PhonesFieldMenuItem';
 import styled from '@emotion/styled';
 import { E164Number, parsePhoneNumber } from 'libphonenumber-js';
-import { useMemo } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { TEXT_INPUT_STYLE, isDefined } from 'twenty-ui';
@@ -52,28 +51,20 @@ type PhonesFieldInputProps = {
 };
 
 export const PhonesFieldInput = ({ onCancel }: PhonesFieldInputProps) => {
-  const {
-    persistPhonesField,
-    hotkeyScope,
-    draftValue,
-    fieldDefinition,
-    fieldValue,
-  } = usePhonesField();
+  const { persistPhonesField, hotkeyScope, fieldDefinition, fieldValue } =
+    usePhonesField();
 
-  const phones = useMemo<{ number: string; callingCode: string }[]>(() => {
-    if (!isDefined(draftValue)) {
-      return [];
-    }
-    return [
-      draftValue.primaryPhoneNumber
-        ? {
-            number: draftValue.primaryPhoneNumber,
-            callingCode: draftValue.primaryPhoneCountryCode,
-          }
-        : null,
-      ...(draftValue.additionalPhones ?? []),
-    ].filter(isDefined);
-  }, [draftValue, fieldValue]);
+  const phones = !isDefined(fieldValue)
+    ? []
+    : [
+        fieldValue.primaryPhoneNumber
+          ? {
+              number: fieldValue.primaryPhoneNumber,
+              callingCode: fieldValue.primaryPhoneCountryCode,
+            }
+          : null,
+        ...(fieldValue.additionalPhones ?? []),
+      ].filter(isDefined);
 
   const defaultCallingCode =
     stripSimpleQuotesFromString(
