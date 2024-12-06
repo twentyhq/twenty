@@ -191,3 +191,9 @@ export class InternalServerError extends BaseGraphQLError {
     Object.defineProperty(this, 'name', { value: 'InternalServerError' });
   }
 }
+
+export class ExpiredAttachmentTokenError extends BaseGraphQLError {
+  constructor(message = 'The attachment token has expired') {
+    super(message, ErrorCode.UNAUTHENTICATED);
+  }
+}
