@@ -94,9 +94,6 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
               />
             ) : undefined
           }
-          onRightIconClick={
-            isFavoriteFolderEnabled ? toggleNewFolder : undefined
-          }
         />
       </NavigationDrawerAnimatedCollapseWrapper>
 

@@ -48,7 +48,6 @@ const StyledRightIcon = styled.div<StyledRightIconProps>`
 
 type NavigationDrawerSectionTitleProps = {
   onClick?: () => void;
-  onRightIconClick?: () => void;
   label: string;
   rightIcon?: React.ReactNode;
 };
