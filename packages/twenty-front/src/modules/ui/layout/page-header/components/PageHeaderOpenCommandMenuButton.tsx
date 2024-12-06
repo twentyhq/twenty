@@ -2,7 +2,7 @@ import { Button, IconDotsVertical } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 
-export const ShowPageMoreButton = () => {
+export const PageHeaderOpenCommandMenuButton = () => {
   const { openCommandMenu } = useCommandMenu();
 
   return (
