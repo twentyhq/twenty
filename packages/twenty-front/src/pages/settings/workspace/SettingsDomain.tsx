@@ -62,6 +62,7 @@ export const SettingsDomain = () => {
 
   const {
     control,
+    watch,
     getValues,
     formState: { isValid },
   } = useForm<Form>({
@@ -72,6 +73,8 @@ export const SettingsDomain = () => {
     },
     resolver: zodResolver(validationSchema),
   });
+
+  const subdomainValue = watch('subdomain');
 
   const handleSave = async () => {
     try {
@@ -130,7 +133,7 @@ export const SettingsDomain = () => {
       actionButton={
         <SaveAndCancelButtons
           isSaveDisabled={
-            !isValid || getValues('subdomain') === currentWorkspace?.subdomain
+            !isValid || subdomainValue === currentWorkspace?.subdomain
           }
           onCancel={() => navigate(getSettingsPagePath(SettingsPath.Workspace))}
           onSave={handleSave}
