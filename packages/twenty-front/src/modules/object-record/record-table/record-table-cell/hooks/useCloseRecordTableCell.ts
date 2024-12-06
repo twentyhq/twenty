@@ -3,13 +3,19 @@ import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 
+import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
+import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
+import { useContext } from 'react';
 import { useResetRecoilState } from 'recoil';
+import { isDefined } from '~/utils/isDefined';
 import { useCloseCurrentTableCellInEditMode } from '../../hooks/internal/useCloseCurrentTableCellInEditMode';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const useCloseRecordTableCell = () => {
+  const context = useContext(RecordGroupContext);
+
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
 
@@ -21,8 +27,15 @@ export const useCloseRecordTableCell = () => {
   const pendingRecordIdState = useRecoilComponentCallbackStateV2(
     recordTablePendingRecordIdComponentState,
   );
+  const recordTablePendingRecordIdByGroupFamilyState =
+    useRecoilComponentCallbackStateV2(
+      recordTablePendingRecordIdByGroupComponentFamilyState,
+    );
   const resetRecordTablePendingRecordId =
     useResetRecoilState(pendingRecordIdState);
+  const resetRecordTablePendingRecordIdByGroupFamily = useResetRecoilState(
+    recordTablePendingRecordIdByGroupFamilyState(context?.recordGroupId),
+  );
 
   const closeTableCell = async () => {
     toggleClickOutsideListener(true);
@@ -30,6 +43,9 @@ export const useCloseRecordTableCell = () => {
     closeCurrentTableCellInEditMode();
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
     resetRecordTablePendingRecordId();
+    if (isDefined(context?.recordGroupId)) {
+      resetRecordTablePendingRecordIdByGroupFamily();
+    }
   };
 
   return {

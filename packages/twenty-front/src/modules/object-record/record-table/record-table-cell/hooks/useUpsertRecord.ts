@@ -4,13 +4,16 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordFieldInputDraftValueComponentSelector } from '@/object-record/record-field/states/selectors/recordFieldInputDraftValueComponentSelector';
+import { RecordGroupContext } from '@/object-record/record-group/states/context/RecordGroupContext';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
+import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentSelector } from '@/ui/utilities/state/component-state/utils/extractComponentSelector';
+import { useContext } from 'react';
 import { isDefined } from '~/utils/isDefined';
 
 export const useUpsertRecord = ({
@@ -20,6 +23,8 @@ export const useUpsertRecord = ({
   objectNameSingular: string;
   recordTableId: string;
 }) => {
+  const context = useContext(RecordGroupContext);
+
   const hasRecordGroups = useRecoilComponentValueV2(
     hasRecordGroupsComponentSelector,
   );
@@ -33,6 +38,11 @@ export const useUpsertRecord = ({
     recordTablePendingRecordIdComponentState,
     recordTableId,
   );
+
+  const recordTablePendingRecordIdByGroupFamilyState =
+    useRecoilComponentCallbackStateV2(
+      recordTablePendingRecordIdByGroupComponentFamilyState,
+    );
 
   const upsertRecord = useRecoilCallback(
     ({ snapshot }) =>
@@ -52,10 +62,14 @@ export const useUpsertRecord = ({
         const labelIdentifierFieldMetadataItem =
           getLabelIdentifierFieldMetadataItem(foundObjectMetadataItem);
 
-        const recordTablePendingRecordId = getSnapshotValue(
-          snapshot,
-          recordTablePendingRecordIdState,
-        );
+        const recordTablePendingRecordId = context.recordGroupId
+          ? getSnapshotValue(
+              snapshot,
+              recordTablePendingRecordIdByGroupFamilyState(
+                context.recordGroupId,
+              ),
+            )
+          : getSnapshotValue(snapshot, recordTablePendingRecordIdState);
         const fieldScopeId = getScopeIdFromComponentId(
           `${recordId}-${fieldName}`,
         );
@@ -77,7 +91,13 @@ export const useUpsertRecord = ({
           persistField();
         }
       },
-    [createOneRecord, objectNameSingular, recordTablePendingRecordIdState],
+    [
+      context.recordGroupId,
+      createOneRecord,
+      objectNameSingular,
+      recordTablePendingRecordIdByGroupFamilyState,
+      recordTablePendingRecordIdState,
+    ],
   );
 
   return { upsertRecord };
