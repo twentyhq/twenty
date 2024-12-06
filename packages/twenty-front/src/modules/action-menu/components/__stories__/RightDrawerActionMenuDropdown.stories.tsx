@@ -15,6 +15,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { userEvent, waitFor, within } from '@storybook/test';
 import {
   ComponentDecorator,
+  getCanvasElementForDropdownTesting,
   IconFileExport,
   IconHeart,
   IconTrash,
@@ -117,8 +118,8 @@ export const WithButtonClicks: Story = {
   args: {
     actionMenuId: 'story-action-menu',
   },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     let actionButton = await canvas.findByText('Actions');
     await userEvent.click(actionButton);

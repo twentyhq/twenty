@@ -28,10 +28,10 @@ export const useRegisterInputEvents = <T>({
   useListenClickOutside({
     refs: [inputRef, copyRef].filter(isDefined),
     callback: (event) => {
-      event.stopImmediatePropagation();
       onClickOutside?.(event, inputValue);
     },
     enabled: isDefined(onClickOutside),
+    listenerId: hotkeyScope,
   });
 
   useScopedHotkeys(

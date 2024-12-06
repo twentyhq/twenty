@@ -1,12 +1,5 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react';
-import {
-  expect,
-  fireEvent,
-  fn,
-  userEvent,
-  waitFor,
-  within,
-} from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -26,6 +19,7 @@ import {
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { getCanvasElementForDropdownTesting } from 'twenty-ui';
 import {
   RelationToOneFieldInput,
   RelationToOneFieldInputProps,
@@ -136,8 +130,8 @@ export const Default: Story = {
 
 export const Submit: Story = {
   decorators: [ComponentWithRecoilScopeDecorator],
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     expect(submitJestFn).toHaveBeenCalledTimes(0);
 
@@ -154,16 +148,16 @@ export const Submit: Story = {
 
 export const Cancel: Story = {
   decorators: [ComponentWithRecoilScopeDecorator],
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     expect(cancelJestFn).toHaveBeenCalledTimes(0);
     await canvas.findByText('John Wick', undefined, { timeout: 3000 });
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
-    fireEvent.click(emptyDiv);
 
     await waitFor(() => {
+      userEvent.click(emptyDiv);
       expect(cancelJestFn).toHaveBeenCalledTimes(1);
     });
   },

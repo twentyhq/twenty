@@ -3,10 +3,13 @@ import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 
 import { useJsonField } from '../../hooks/useJsonField';
 
-import { FieldInputEvent } from './DateTimeFieldInput';
+import {
+  FieldInputClickOutsideEvent,
+  FieldInputEvent,
+} from './DateTimeFieldInput';
 
 type RawJsonFieldInputProps = {
-  onClickOutside?: FieldInputEvent;
+  onClickOutside?: FieldInputClickOutsideEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
@@ -37,10 +40,10 @@ export const RawJsonFieldInput = ({
   };
 
   const handleClickOutside = (
-    _event: MouseEvent | TouchEvent,
+    event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    onClickOutside?.(() => persistJsonField(newText));
+    onClickOutside?.(() => persistJsonField(newText), event);
   };
 
   const handleTab = (newText: string) => {
