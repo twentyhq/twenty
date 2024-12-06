@@ -30,4 +30,9 @@ export const ACTIONS: Array<{
     type: 'RECORD_CRUD.UPDATE',
     icon: IconAddressBook,
   },
+  {
+    label: 'Delete Record',
+    type: 'RECORD_CRUD.DELETE',
+    icon: IconAddressBook,
+  },
 ];

@@ -169,6 +169,27 @@ export class WorkflowVersionStepWorkspaceService {
           },
         };
       }
+      case `${WorkflowActionType.RECORD_CRUD}.${WorkflowRecordCRUDType.DELETE}`: {
+        const activeObjectMetadataItem =
+          await this.objectMetadataRepository.findOne({
+            where: { workspaceId, isActive: true, isSystem: false },
+          });
+
+        return {
+          id: newStepId,
+          name: 'Delete Record',
+          type: WorkflowActionType.RECORD_CRUD,
+          valid: false,
+          settings: {
+            ...BASE_STEP_DEFINITION,
+            input: {
+              type: WorkflowRecordCRUDType.DELETE,
+              objectName: activeObjectMetadataItem?.nameSingular || '',
+              objectRecordId: '',
+            },
+          },
+        };
+      }
       default:
         throw new WorkflowVersionStepException(
           `WorkflowActionType '${type}' unknown`,

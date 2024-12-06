@@ -1,4 +1,3 @@
-import { lazy, Suspense } from 'react';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/components/WorkflowEditTriggerManualForm';
 import {
@@ -8,11 +7,14 @@ import {
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
-import { isWorkflowRecordCreateAction } from '@/workflow/utils/isWorkflowRecordCreateAction';
-import { isWorkflowRecordUpdateAction } from '@/workflow/utils/isWorkflowRecordUpdateAction';
 import { WorkflowEditActionFormRecordCreate } from '@/workflow/workflow-actions/components/WorkflowEditActionFormRecordCreate';
+import { WorkflowEditActionFormRecordDelete } from '@/workflow/workflow-actions/components/WorkflowEditActionFormRecordDelete';
 import { WorkflowEditActionFormRecordUpdate } from '@/workflow/workflow-actions/components/WorkflowEditActionFormRecordUpdate';
 import { WorkflowEditActionFormSendEmail } from '@/workflow/workflow-actions/components/WorkflowEditActionFormSendEmail';
+import { isWorkflowRecordCreateAction } from '@/workflow/workflow-actions/utils/isWorkflowRecordCreateAction';
+import { isWorkflowRecordDeleteAction } from '@/workflow/workflow-actions/utils/isWorkflowRecordDeleteAction';
+import { isWorkflowRecordUpdateAction } from '@/workflow/workflow-actions/utils/isWorkflowRecordUpdateAction';
+import { lazy, Suspense } from 'react';
 import { isDefined } from 'twenty-ui';
 import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
 
@@ -118,6 +120,15 @@ export const WorkflowStepDetail = ({
           if (isWorkflowRecordUpdateAction(stepDefinition.definition)) {
             return (
               <WorkflowEditActionFormRecordUpdate
+                action={stepDefinition.definition}
+                actionOptions={props}
+              />
+            );
+          }
+
+          if (isWorkflowRecordDeleteAction(stepDefinition.definition)) {
+            return (
+              <WorkflowEditActionFormRecordDelete
                 action={stepDefinition.definition}
                 actionOptions={props}
               />
