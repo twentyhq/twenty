@@ -62,7 +62,7 @@ export const ScrollWrapper = ({
   const [initialize, instance] = useOverlayScrollbars({
     options: {
       scrollbars: {
-        autoHide: scrollHide ? 'scroll' : 'never',
+        autoHide: scrollHide ? 'scroll' : 'move',
         visibility: scrollHide ? 'hidden' : 'visible',
       },
       overflow: {
