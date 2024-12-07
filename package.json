@@ -365,6 +365,7 @@
       "packages/twenty-zapier",
       "packages/twenty-website",
       "packages/twenty-e2e-testing",
+      "packages/twenty-shared",
       "tools/eslint-rules"
     ]
   }

@@ -10,7 +10,7 @@ import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { WhatIsTwenty } from 'src/components/WhatIsTwenty';
 import { capitalize } from 'src/utils/capitalize';
-import { getImageAbsoluteURI } from 'src/utils/getImageAbsoluteURI';
+import { getImageAbsoluteURI } from 'twenty-shared';
 
 type SendInviteLinkEmailProps = {
   link: string;
@@ -29,7 +29,10 @@ export const SendInviteLinkEmail = ({
   sender,
   serverUrl,
 }: SendInviteLinkEmailProps) => {
-  const workspaceLogo = getImageAbsoluteURI(workspace.logo, serverUrl);
+  const workspaceLogo = getImageAbsoluteURI(
+    workspace.logo ?? '',
+    serverUrl ?? '',
+  );
 
   return (
     <BaseEmail width={333}>

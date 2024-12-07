@@ -7,7 +7,8 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
+import { getImageAbsoluteURI } from 'twenty-shared';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { sleep } from '~/utils/sleep';
 
 const SOURCE_CODE_FULL_PATH =
@@ -43,9 +44,15 @@ const meta: Meta<PageDecoratorArgs> = {
             },
           });
         }),
-        http.get(getImageAbsoluteURI(SOURCE_CODE_FULL_PATH) || '', () => {
-          return HttpResponse.text('export const handler = () => {}');
-        }),
+        http.get(
+          getImageAbsoluteURI(
+            SOURCE_CODE_FULL_PATH,
+            REACT_APP_SERVER_BASE_URL,
+          ) || '',
+          () => {
+            return HttpResponse.text('export const handler = () => {}');
+          },
+        ),
       ],
     },
   },

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
+import { getImageAbsoluteURI } from 'twenty-shared';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type LogoProps = {
   primaryLogo?: string | null;
@@ -48,8 +49,12 @@ export const Logo = (props: LogoProps) => {
 
   const primaryLogoUrl = getImageAbsoluteURI(
     props.primaryLogo ?? defaultPrimaryLogoUrl,
+    REACT_APP_SERVER_BASE_URL,
   );
-  const secondaryLogoUrl = getImageAbsoluteURI(props.secondaryLogo);
+  const secondaryLogoUrl = getImageAbsoluteURI(
+    props.secondaryLogo ?? '',
+    REACT_APP_SERVER_BASE_URL,
+  );
 
   return (
     <StyledContainer>

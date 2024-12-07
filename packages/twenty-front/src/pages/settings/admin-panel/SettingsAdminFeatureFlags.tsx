@@ -17,7 +17,6 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import {
   Button,
-  getImageAbsoluteURI,
   H1Title,
   H1TitleFontColor,
   H2Title,
@@ -26,6 +25,8 @@ import {
   Section,
   Toggle,
 } from 'twenty-ui';
+import { getImageAbsoluteURI } from 'twenty-shared';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -107,7 +108,8 @@ export const SettingsAdminFeatureFlags = () => {
       title: workspace.name,
       logo:
         getImageAbsoluteURI(
-          workspace.logo === null ? DEFAULT_WORKSPACE_LOGO : workspace.logo,
+          workspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+          REACT_APP_SERVER_BASE_URL,
         ) ?? '',
     })) ?? [];
 
