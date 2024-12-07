@@ -25,7 +25,7 @@
       "~/*": ["packages/twenty-front/src/*"],
       "twenty-ui": ["packages/twenty-ui/src/index.ts"],
       "@ui/*": ["packages/twenty-ui/src/*"],
-      "twenty-shared": ["packages/twenty-shared/src"]
+      "twenty-shared": ["packages/twenty-shared/src/index.ts"]
     }
   },
   "files": [],

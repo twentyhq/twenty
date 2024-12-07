@@ -1,17 +1,13 @@
-type ImageAbsoluteURI<T extends string | null | undefined> = T extends string
-  ? string
-  : null;
-
-export const getImageAbsoluteURI = <T extends string | null | undefined>(
-  imageUrl: T,
-  serverUrl: string,
-): ImageAbsoluteURI<T> => {
-  if (imageUrl == null || imageUrl.length === 0 || serverUrl.length === 0) {
-    return null as ImageAbsoluteURI<T>;
+export const getImageAbsoluteURI = (
+  imageUrl: string | null | undefined,
+  serverUrl: string | null | undefined,
+): string | null => {
+  if (!imageUrl || !serverUrl) {
+    return null;
   }
 
   if (imageUrl.startsWith('https:') || imageUrl.startsWith('http:')) {
-    return imageUrl as ImageAbsoluteURI<T>;
+    return imageUrl;
   }
 
   const baseUrl = new URL(serverUrl);
@@ -25,5 +21,5 @@ export const getImageAbsoluteURI = <T extends string | null | undefined>(
     fullUrl = new URL(imageUrl, `${baseUrl.origin}/files/`);
   }
 
-  return fullUrl.toString() as ImageAbsoluteURI<T>;
+  return fullUrl.toString();
 };

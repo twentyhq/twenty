@@ -1,9 +1,9 @@
 module.exports = {
-  extends: ['../../.eslintrc.cjs', '../../.eslintrc.react.cjs'],
+  extends: ['../../.eslintrc.cjs'],
   ignorePatterns: ['!**/*'],
   overrides: [
     {
-      files: ['*.ts', '*.tsx'],
+      files: ['*.ts'],
       parserOptions: {
         project: ['packages/twenty-shared/tsconfig.{json,*.json}'],
       },

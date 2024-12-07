@@ -8,7 +8,7 @@
     "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
-      "twenty-shared": ["packages/twenty-shared/dist"]
+      "twenty-shared": ["packages/twenty-shared/src/*"]
     }
   },
   "files": [],
