@@ -3,6 +3,7 @@ import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-me
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { getActionMenuIdFromRecordIndexId } from '@/action-menu/utils/getActionMenuIdFromRecordIndexId';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { RecordBoardCardInput } from '@/object-record/record-board/record-board-card/components/RecordBoardCardInput';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import { RecordBoardScopeInternalContext } from '@/object-record/record-board/scopes/scope-internal-context/RecordBoardScopeInternalContext';
 import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
@@ -16,12 +17,10 @@ import {
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { RecordBoardScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
@@ -41,7 +40,6 @@ import {
   LightIconButton,
 } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { useAddNewCard } from '../../record-board-column/hooks/useAddNewCard';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
   background-color: ${({ theme, selected }) =>
@@ -77,14 +75,6 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
   &:hover .compact-icon-container {
     opacity: 1;
   }
-`;
-
-const StyledTextInput = styled(TextInput)`
-  backdrop-filter: blur(12px) saturate(200%) contrast(50%) brightness(130%);
-  background: ${({ theme }) => theme.background.primary};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  width: ${({ theme }) => theme.spacing(53)};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
 
 const StyledBoardCardWrapper = styled.div`
@@ -162,10 +152,6 @@ export const RecordBoardCard = ({
   position?: 'first' | 'last';
 }) => {
   const { recordId } = useContext(RecordBoardCardContext);
-
-  const [newLabelValue, setNewLabelValue] = useState('');
-
-  const { handleBlur, handleInputEnter } = useAddNewCard();
 
   const { updateOneRecord, objectMetadataItem } =
     useContext(RecordBoardContext);
@@ -277,31 +263,12 @@ export const RecordBoardCard = ({
           }}
         >
           <StyledBoardCardHeader showCompactView={isCompactModeActive}>
-            {isCreating && position !== undefined ? (
-              <RecordInlineCellEditMode>
-                <StyledTextInput
-                  autoFocus
-                  value={newLabelValue}
-                  onInputEnter={() =>
-                    handleInputEnter(
-                      labelIdentifierField?.label ?? '',
-                      newLabelValue,
-                      position,
-                      onCreateSuccess,
-                    )
-                  }
-                  onBlur={() =>
-                    handleBlur(
-                      labelIdentifierField?.label ?? '',
-                      newLabelValue,
-                      position,
-                      onCreateSuccess,
-                    )
-                  }
-                  onChange={(text: string) => setNewLabelValue(text)}
-                  placeholder={labelIdentifierField?.label}
-                />
-              </RecordInlineCellEditMode>
+            {isCreating ? (
+              <RecordBoardCardInput
+                labelIdentifierField={labelIdentifierField}
+                position={position}
+                onCreateSuccess={onCreateSuccess}
+              />
             ) : (
               <RecordIdentifierChip
                 objectNameSingular={objectMetadataItem.nameSingular}

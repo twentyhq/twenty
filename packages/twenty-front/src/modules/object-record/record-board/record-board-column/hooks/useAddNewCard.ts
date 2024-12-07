@@ -7,9 +7,7 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useCallback, useContext } from 'react';
 import { RecoilState, useRecoilCallback } from 'recoil';
-import { isDefined } from 'twenty-ui';
 import { v4 as uuidv4 } from 'uuid';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SetFunction = <T>(
   recoilVal: RecoilState<T>,
@@ -18,7 +16,7 @@ type SetFunction = <T>(
 
 export const useAddNewCard = () => {
   const columnContext = useContext(RecordBoardColumnContext);
-  const { createOneRecord, selectFieldMetadataItem, objectMetadataItem } =
+  const { createOneRecord, selectFieldMetadataItem } =
     useContext(RecordBoardContext);
   const { resetSearchFilter } = useRecordSelectSearch({
     recordPickerInstanceId: 'record-picker',
@@ -68,7 +66,7 @@ export const useAddNewCard = () => {
   const createRecord = useCallback(
     (
       labelIdentifier: string,
-      labelValue: string,
+      labelValue: string | { firstName: string; lastName: string },
       position: 'first' | 'last',
       isOpportunity: boolean,
       company?: RecordForSelect,
@@ -82,38 +80,18 @@ export const useAddNewCard = () => {
         // - piloted by metadata,
         // - avoid drill down props, especially internal stuff
         // - and follow record table pending record creation logic
-        let computedLabelIdentifierValue: any = labelValue;
-
-        const labelIdentifierField = objectMetadataItem?.fields.find(
-          (field) =>
-            field.id === objectMetadataItem.labelIdentifierFieldMetadataId,
-        );
-
-        if (!isDefined(labelIdentifierField)) {
-          throw new Error('Label identifier field not found');
-        }
-
-        if (labelIdentifierField.type === FieldMetadataType.FullName) {
-          computedLabelIdentifierValue = {
-            firstName: labelValue,
-            lastName: '',
-          };
-        }
-
         createOneRecord({
           [selectFieldMetadataItem.name]: columnContext?.columnDefinition.value,
           position,
           ...(isOpportunity
             ? { companyId: company?.id, name: company?.name }
             : {
-                [labelIdentifier.toLowerCase()]: computedLabelIdentifierValue,
+                [labelIdentifier.toLowerCase()]: labelValue,
               }),
         });
       }
     },
     [
-      objectMetadataItem?.fields,
-      objectMetadataItem?.labelIdentifierFieldMetadataId,
       createOneRecord,
       selectFieldMetadataItem?.name,
       columnContext?.columnDefinition?.value,
@@ -124,7 +102,7 @@ export const useAddNewCard = () => {
     ({ set }) =>
       (
         labelIdentifier: string,
-        labelValue: string,
+        labelValue: string | { firstName: string; lastName: string },
         position: 'first' | 'last',
         isOpportunity: boolean,
         columnId?: string,
@@ -179,29 +157,35 @@ export const useAddNewCard = () => {
 
   const handleCreate = (
     labelIdentifier: string,
-    labelValue: string,
+    labelValue: string | { firstName: string; lastName: string },
     position: 'first' | 'last',
     onCreateSuccess?: () => void,
   ) => {
-    if (labelValue.trim() !== '' && position !== undefined) {
-      handleAddNewCardClick(
-        labelIdentifier,
-        labelValue.trim(),
-        position,
-        false,
-        '',
-      );
+    const isEmpty =
+      typeof labelValue === 'string'
+        ? labelValue.trim() === ''
+        : labelValue.firstName.trim() === '' &&
+          labelValue.lastName.trim() === '';
+
+    if (!isEmpty && position !== undefined) {
+      handleAddNewCardClick(labelIdentifier, labelValue, position, false, '');
       onCreateSuccess?.();
     }
   };
 
   const handleBlur = (
     labelIdentifier: string,
-    labelValue: string,
+    labelValue: string | { firstName: string; lastName: string },
     position: 'first' | 'last',
     onCreateSuccess?: () => void,
   ) => {
-    if (labelValue.trim() === '') {
+    const isEmpty =
+      typeof labelValue === 'string'
+        ? labelValue.trim() === ''
+        : labelValue.firstName.trim() === '' &&
+          labelValue.lastName.trim() === '';
+
+    if (isEmpty) {
       onCreateSuccess?.();
     } else {
       handleCreate(labelIdentifier, labelValue, position, onCreateSuccess);
@@ -210,7 +194,7 @@ export const useAddNewCard = () => {
 
   const handleInputEnter = (
     labelIdentifier: string,
-    labelValue: string,
+    labelValue: string | { firstName: string; lastName: string },
     position: 'first' | 'last',
     onCreateSuccess?: () => void,
   ) => {
