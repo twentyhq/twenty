@@ -2,6 +2,8 @@ import { Field, InputType } from '@nestjs/graphql';
 
 import { IsBoolean, IsOptional, IsString, Matches } from 'class-validator';
 
+import { ForbiddenWords } from 'src/engine/utils/custom-class-validator/ForbiddenWords';
+
 @InputType()
 export class UpdateWorkspaceInput {
   @Field({ nullable: true })
@@ -13,6 +15,7 @@ export class UpdateWorkspaceInput {
   @IsString()
   @IsOptional()
   @Matches(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/)
+  @ForbiddenWords(['demo'])
   subdomain?: string;
 
   @Field({ nullable: true })
