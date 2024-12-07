@@ -5,5 +5,5 @@ export const getImageAbsoluteURI = (imageUrl: string, serverUrl: string) => {
 
   return serverUrl.endsWith('/')
     ? `${serverUrl.substring(0, serverUrl.length - 1)}/files/${imageUrl}`
-    : `${serverUrl || ''}/files/${imageUrl}`;
+    : `${serverUrl}/files/${imageUrl}`;
 };
