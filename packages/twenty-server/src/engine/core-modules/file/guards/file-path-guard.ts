@@ -15,6 +15,7 @@ export class FilePathGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const query = request.query;
+    const urlParamsV2 = new URLSearchParams(request.originalUrl);
 
     if (!query || !query['token']) {
       return false;
