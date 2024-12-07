@@ -30,7 +30,7 @@ export type NavigationDrawerItemProps = {
   subItemState?: NavigationDrawerSubItemState;
   to?: string;
   onClick?: () => void;
-  Icon: IconComponent | ((props: TablerIconsProps) => JSX.Element);
+  Icon?: IconComponent | ((props: TablerIconsProps) => JSX.Element);
   active?: boolean;
   danger?: boolean;
   soon?: boolean;
@@ -38,11 +38,18 @@ export type NavigationDrawerItemProps = {
   keyboard?: string[];
   rightOptions?: ReactNode;
   isDraggable?: boolean;
+  isEmptySubItem?: boolean;
 };
 
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
-  'active' | 'danger' | 'indentationLevel' | 'soon' | 'to' | 'isDraggable'
+  | 'active'
+  | 'danger'
+  | 'indentationLevel'
+  | 'soon'
+  | 'to'
+  | 'isDraggable'
+  | 'isEmptySubItem'
 > & { isNavigationDrawerExpanded: boolean };
 
 const StyledItem = styled('button', {
@@ -65,7 +72,7 @@ const StyledItem = styled('button', {
     if (props.danger === true) {
       return props.theme.color.red;
     }
-    if (props.soon === true) {
+    if (props.soon === true || props.isEmptySubItem === true) {
       return props.theme.font.color.light;
     }
     return props.theme.font.color.secondary;
@@ -100,9 +107,13 @@ const StyledItem = styled('button', {
   `}
 
   :hover {
-    background: ${({ theme }) => theme.background.transparent.light};
-    color: ${(props) =>
-      props.danger ? props.theme.color.red : props.theme.font.color.primary};
+    background: ${({ theme, isEmptySubItem }) =>
+      isEmptySubItem ? 'inherit' : theme.background.transparent.light};
+    color: ${({ danger, isEmptySubItem, theme }) => {
+      if (danger === true) return theme.color.red;
+      if (isEmptySubItem === true) return theme.font.color.light;
+      return theme.font.color.primary;
+    }};
   }
 
   :hover .keyboard-shortcuts {
@@ -199,6 +210,7 @@ export const NavigationDrawerItem = ({
   subItemState,
   rightOptions,
   isDraggable,
+  isEmptySubItem,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -232,6 +244,7 @@ export const NavigationDrawerItem = ({
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
         isDraggable={isDraggable}
+        isEmptySubItem={isEmptySubItem}
       >
         {showBreadcrumb && (
           <NavigationDrawerAnimatedCollapseWrapper>
@@ -239,7 +252,7 @@ export const NavigationDrawerItem = ({
           </NavigationDrawerAnimatedCollapseWrapper>
         )}
         <StyledItemElementsContainer>
-          {Icon && (
+          {Icon && !isEmptySubItem && (
             <Icon
               style={{ minWidth: theme.icon.size.md }}
               size={theme.icon.size.md}
@@ -258,19 +271,19 @@ export const NavigationDrawerItem = ({
 
           <StyledSpacer />
 
-          {soon && (
+          {soon && !isEmptySubItem && (
             <NavigationDrawerAnimatedCollapseWrapper>
               <Pill label="Soon" />
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
 
-          {!!count && (
+          {!!count && !isEmptySubItem && (
             <NavigationDrawerAnimatedCollapseWrapper>
               <StyledItemCount>{count}</StyledItemCount>
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
 
-          {keyboard && (
+          {keyboard && !isEmptySubItem && (
             <NavigationDrawerAnimatedCollapseWrapper>
               <StyledKeyBoardShortcut className="keyboard-shortcuts">
                 {keyboard}
@@ -278,7 +291,7 @@ export const NavigationDrawerItem = ({
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
           <NavigationDrawerAnimatedCollapseWrapper>
-            {rightOptions && (
+            {rightOptions && !isEmptySubItem && (
               <StyledRightOptionsContainer
                 isMobile={isMobile}
                 active={active || false}
