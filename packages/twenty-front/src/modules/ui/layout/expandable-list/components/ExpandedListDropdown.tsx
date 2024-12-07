@@ -46,8 +46,11 @@ export const ExpandedListDropdown = ({
   });
 
   useListenClickOutside({
-    refs: [refs.floating],
-    callback: onClickOutside ?? (() => {}),
+    refs: [refs.domReference],
+    callback: () => {
+      onClickOutside?.();
+    },
+    listenerId: 'expandable-list',
   });
 
   return (

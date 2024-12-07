@@ -15,7 +15,8 @@ export const RecordTableNoRecordGroupRows = () => {
           <RecordTableRow
             key={recordId}
             recordId={recordId}
-            rowIndex={rowIndex}
+            rowIndexForFocus={rowIndex}
+            rowIndexForDrag={rowIndex}
           />
         );
       })}

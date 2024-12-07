@@ -12,10 +12,10 @@ import {
   IconHierarchy2,
   IconKey,
   IconMail,
+  IconPoint,
   IconRocket,
   IconServer,
   IconSettings,
-  IconTool,
   IconUserCircle,
   IconUsers,
   MAIN_COLORS,
@@ -51,22 +51,19 @@ type SettingsNavigationItem = {
 };
 
 const StyledIconContainer = styled.div`
-  border-right: 1px solid ${MAIN_COLORS.yellow};
   position: absolute;
   left: ${({ theme }) => theme.spacing(-5)};
-  margin-top: ${({ theme }) => theme.spacing(2)};
-  height: 75%;
+  height: 100%;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledContainer = styled.div`
-  display: flex;
-  width: 100%;
-  gap: ${({ theme }) => theme.spacing(1)};
   position: relative;
 `;
 
-const StyledIconTool = styled(IconTool)`
-  margin-right: ${({ theme }) => theme.spacing(0.5)};
+const StyledIconPoint = styled(IconPoint)`
+  margin-right: 0;
 `;
 
 export const SettingsNavigationDrawerItems = () => {
@@ -194,7 +191,11 @@ export const SettingsNavigationDrawerItems = () => {
         {isAdvancedModeEnabled && (
           <StyledContainer>
             <StyledIconContainer>
-              <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
+              <StyledIconPoint
+                size={12}
+                color={MAIN_COLORS.yellow}
+                fill={MAIN_COLORS.yellow}
+              />
             </StyledIconContainer>
             <SettingsNavigationDrawerItem
               label="Security"
@@ -214,26 +215,41 @@ export const SettingsNavigationDrawerItems = () => {
             exit="exit"
             variants={motionAnimationVariants}
           >
-            <StyledContainer>
-              <StyledIconContainer>
-                <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
-              </StyledIconContainer>
-              <NavigationDrawerSection>
-                <NavigationDrawerSectionTitle label="Developers" />
+            <NavigationDrawerSection>
+              <NavigationDrawerSectionTitle label="Developers" />
+              <StyledContainer>
+                <StyledIconContainer>
+                  <StyledIconPoint
+                    size={12}
+                    color={MAIN_COLORS.yellow}
+                    fill={MAIN_COLORS.yellow}
+                  />
+                </StyledIconContainer>
+
                 <SettingsNavigationDrawerItem
                   label="API & Webhooks"
                   path={SettingsPath.Developers}
                   Icon={IconCode}
                 />
-                {isFunctionSettingsEnabled && (
+              </StyledContainer>
+              {isFunctionSettingsEnabled && (
+                <StyledContainer>
+                  <StyledIconContainer>
+                    <StyledIconPoint
+                      size={12}
+                      color={MAIN_COLORS.yellow}
+                      fill={MAIN_COLORS.yellow}
+                    />
+                  </StyledIconContainer>
+
                   <SettingsNavigationDrawerItem
                     label="Functions"
                     path={SettingsPath.ServerlessFunctions}
                     Icon={IconFunction}
                   />
-                )}
-              </NavigationDrawerSection>
-            </StyledContainer>
+                </StyledContainer>
+              )}
+            </NavigationDrawerSection>
           </motion.div>
         )}
       </AnimatePresence>

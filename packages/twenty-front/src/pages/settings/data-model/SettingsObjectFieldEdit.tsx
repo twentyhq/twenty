@@ -1,8 +1,7 @@
-import { useApolloClient } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
@@ -21,7 +20,6 @@ import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdate
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -49,7 +47,6 @@ type SettingsDataModelFieldEditFormValues = z.infer<
 export const SettingsObjectFieldEdit = () => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
-  const [isPersisting, setIsPersisting] = useState(false);
 
   const { objectSlug = '', fieldSlug = '' } = useParams();
   const { findObjectMetadataItemBySlug } = useFilteredObjectMetadataItems();
@@ -66,20 +63,6 @@ export const SettingsObjectFieldEdit = () => {
   const getRelationMetadata = useGetRelationMetadata();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
 
-  const apolloClient = useApolloClient();
-
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular: objectMetadataItem?.nameSingular || '',
-  });
-
-  const refetchRecords = async () => {
-    if (!objectMetadataItem) return;
-    await apolloClient.query({
-      query: findManyRecordsQuery,
-      fetchPolicy: 'network-only',
-    });
-  };
-
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsFieldFormSchema()),
@@ -93,11 +76,10 @@ export const SettingsObjectFieldEdit = () => {
   });
 
   useEffect(() => {
-    if (isPersisting) return;
     if (!objectMetadataItem || !fieldMetadataItem) {
       navigate(AppPath.NotFound);
     }
-  }, [navigate, objectMetadataItem, fieldMetadataItem, isPersisting]);
+  }, [navigate, objectMetadataItem, fieldMetadataItem]);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isDirty && isValid && !isSubmitting;
@@ -128,8 +110,6 @@ export const SettingsObjectFieldEdit = () => {
           }) ?? {};
 
         if (isDefined(relationFieldMetadataItem)) {
-          setIsPersisting(true);
-
           await updateOneFieldMetadataItem({
             objectMetadataId: objectMetadataItem.id,
             fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
@@ -146,7 +126,7 @@ export const SettingsObjectFieldEdit = () => {
           Object.keys(otherDirtyFields),
         );
 
-        setIsPersisting(true);
+        navigate(`/settings/objects/${objectSlug}`);
 
         await updateOneFieldMetadataItem({
           objectMetadataId: objectMetadataItem.id,
@@ -154,16 +134,10 @@ export const SettingsObjectFieldEdit = () => {
           updatePayload: formattedInput,
         });
       }
-
-      navigate(`/settings/objects/${objectSlug}`);
-
-      refetchRecords();
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
       });
-    } finally {
-      setIsPersisting(false);
     }
   };
 

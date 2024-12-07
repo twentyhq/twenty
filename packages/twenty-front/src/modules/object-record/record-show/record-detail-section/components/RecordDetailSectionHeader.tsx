@@ -11,6 +11,8 @@ const StyledHeader = styled.header<{
   height: 24px;
   margin-bottom: ${({ theme, areRecordsAvailable }) =>
     areRecordsAvailable && theme.spacing(2)};
+
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledTitle = styled.div`

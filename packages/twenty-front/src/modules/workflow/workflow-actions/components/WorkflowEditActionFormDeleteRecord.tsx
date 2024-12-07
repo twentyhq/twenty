@@ -2,7 +2,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
 import { WorkflowSingleRecordPicker } from '@/workflow/components/WorkflowSingleRecordPicker';
-import { WorkflowRecordUpdateAction } from '@/workflow/types/Workflow';
+import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import {
@@ -15,28 +15,27 @@ import {
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
-type WorkflowEditActionFormRecordUpdateProps = {
-  action: WorkflowRecordUpdateAction;
+type WorkflowEditActionFormDeleteRecordProps = {
+  action: WorkflowDeleteRecordAction;
   actionOptions:
     | {
         readonly: true;
       }
     | {
         readonly?: false;
-        onActionUpdate: (action: WorkflowRecordUpdateAction) => void;
+        onActionUpdate: (action: WorkflowDeleteRecordAction) => void;
       };
 };
 
-type UpdateRecordFormData = {
+type DeleteRecordFormData = {
   objectName: string;
   objectRecordId: string;
-  [field: string]: unknown;
 };
 
-export const WorkflowEditActionFormRecordUpdate = ({
+export const WorkflowEditActionFormDeleteRecord = ({
   action,
   actionOptions,
-}: WorkflowEditActionFormRecordUpdateProps) => {
+}: WorkflowEditActionFormDeleteRecordProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
 
@@ -49,18 +48,17 @@ export const WorkflowEditActionFormRecordUpdate = ({
       value: item.nameSingular,
     }));
 
-  const [formData, setFormData] = useState<UpdateRecordFormData>({
+  const [formData, setFormData] = useState<DeleteRecordFormData>({
     objectName: action.settings.input.objectName,
     objectRecordId: action.settings.input.objectRecordId,
-    ...action.settings.input.objectRecord,
   });
   const isFormDisabled = actionOptions.readonly;
 
   const handleFieldChange = (
-    fieldName: keyof UpdateRecordFormData,
+    fieldName: keyof DeleteRecordFormData,
     updatedValue: JsonValue,
   ) => {
-    const newFormData: UpdateRecordFormData = {
+    const newFormData: DeleteRecordFormData = {
       ...formData,
       [fieldName]: updatedValue,
     };
@@ -74,7 +72,6 @@ export const WorkflowEditActionFormRecordUpdate = ({
     setFormData({
       objectName: action.settings.input.objectName,
       objectRecordId: action.settings.input.objectRecordId,
-      ...action.settings.input.objectRecord,
     });
   }, [action.settings.input]);
 
@@ -88,7 +85,7 @@ export const WorkflowEditActionFormRecordUpdate = ({
   }
 
   const saveAction = useDebouncedCallback(
-    async (formData: UpdateRecordFormData) => {
+    async (formData: DeleteRecordFormData) => {
       if (actionOptions.readonly === true) {
         return;
       }
@@ -96,7 +93,6 @@ export const WorkflowEditActionFormRecordUpdate = ({
       const {
         objectName: updatedObjectName,
         objectRecordId: updatedObjectRecordId,
-        ...updatedOtherFields
       } = formData;
 
       actionOptions.onActionUpdate({
@@ -104,10 +100,8 @@ export const WorkflowEditActionFormRecordUpdate = ({
         settings: {
           ...action.settings,
           input: {
-            type: 'UPDATE',
             objectName: updatedObjectName,
             objectRecordId: updatedObjectRecordId ?? '',
-            objectRecord: updatedOtherFields,
           },
         },
       });
@@ -121,7 +115,7 @@ export const WorkflowEditActionFormRecordUpdate = ({
     };
   }, [saveAction]);
 
-  const headerTitle = isDefined(action.name) ? action.name : `Update Record`;
+  const headerTitle = isDefined(action.name) ? action.name : `Delete Record`;
 
   return (
     <WorkflowEditGenericFormBase
@@ -141,16 +135,16 @@ export const WorkflowEditActionFormRecordUpdate = ({
       headerType="Action"
     >
       <Select
-        dropdownId="workflow-edit-action-record-update-object-name"
+        dropdownId="workflow-edit-action-record-delete-object-name"
         label="Object"
         fullWidth
         disabled={isFormDisabled}
         value={formData.objectName}
         emptyOption={{ label: 'Select an option', value: '' }}
         options={availableMetadata}
-        onChange={(updatedObjectName) => {
-          const newFormData: UpdateRecordFormData = {
-            objectName: updatedObjectName,
+        onChange={(objectName) => {
+          const newFormData: DeleteRecordFormData = {
+            objectName,
             objectRecordId: '',
           };
 

@@ -20,7 +20,6 @@ import {
 } from 'src/modules/workflow/workflow-builder/types/output-schema.type';
 import { generateFakeObjectRecord } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record';
 import { generateFakeObjectRecordEvent } from 'src/modules/workflow/workflow-builder/utils/generate-fake-object-record-event';
-import { WorkflowRecordCRUDType } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import {
   WorkflowAction,
   WorkflowActionType,
@@ -85,10 +84,17 @@ export class WorkflowBuilderWorkspaceService {
           codeIntrospectionService: this.codeIntrospectionService,
         });
       }
-      case WorkflowActionType.RECORD_CRUD:
-        return this.computeRecordCrudOutputSchema({
+      case WorkflowActionType.CREATE_RECORD:
+      case WorkflowActionType.UPDATE_RECORD:
+      case WorkflowActionType.DELETE_RECORD:
+        return this.computeRecordOutputSchema({
           objectType: step.settings.input.objectName,
-          operationType: step.settings.input.type,
+          workspaceId,
+          objectMetadataRepository: this.objectMetadataRepository,
+        });
+      case WorkflowActionType.FIND_RECORDS:
+        return this.computeFindRecordsOutputSchema({
+          objectType: step.settings.input.objectName,
           workspaceId,
           objectMetadataRepository: this.objectMetadataRepository,
         });
@@ -130,14 +136,12 @@ export class WorkflowBuilderWorkspaceService {
     );
   }
 
-  private async computeRecordCrudOutputSchema({
+  private async computeFindRecordsOutputSchema({
     objectType,
-    operationType,
     workspaceId,
     objectMetadataRepository,
   }: {
     objectType: string;
-    operationType: string;
     workspaceId: string;
     objectMetadataRepository: Repository<ObjectMetadataEntity>;
   }): Promise<OutputSchema> {
@@ -147,24 +151,20 @@ export class WorkflowBuilderWorkspaceService {
       objectMetadataRepository,
     });
 
-    if (operationType === WorkflowRecordCRUDType.READ) {
-      return {
-        first: {
-          isLeaf: false,
-          icon: 'IconAlpha',
-          value: recordOutputSchema,
-        },
-        last: { isLeaf: false, icon: 'IconOmega', value: recordOutputSchema },
-        totalCount: {
-          isLeaf: true,
-          icon: 'IconSum',
-          type: 'number',
-          value: generateFakeValue('number'),
-        },
-      };
-    }
-
-    return recordOutputSchema;
+    return {
+      first: {
+        isLeaf: false,
+        icon: 'IconAlpha',
+        value: recordOutputSchema,
+      },
+      last: { isLeaf: false, icon: 'IconOmega', value: recordOutputSchema },
+      totalCount: {
+        isLeaf: true,
+        icon: 'IconSum',
+        type: 'number',
+        value: generateFakeValue('number'),
+      },
+    };
   }
 
   private async computeRecordOutputSchema({
