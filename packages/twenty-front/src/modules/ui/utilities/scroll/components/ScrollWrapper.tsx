@@ -34,6 +34,7 @@ export type ScrollWrapperProps = {
   enableYScroll?: boolean;
   contextProviderName: ContextProviderName;
   scrollHide?: boolean;
+  autoHide?: boolean;
 };
 
 export const ScrollWrapper = ({
@@ -43,6 +44,7 @@ export const ScrollWrapper = ({
   enableYScroll = true,
   contextProviderName,
   scrollHide = false,
+  autoHide = true,
 }: ScrollWrapperProps) => {
   const scrollableRef = useRef<HTMLDivElement>(null);
   const Context = getContextByProviderName(contextProviderName);
@@ -62,7 +64,7 @@ export const ScrollWrapper = ({
   const [initialize, instance] = useOverlayScrollbars({
     options: {
       scrollbars: {
-        autoHide: scrollHide ? 'scroll' : 'never',
+        autoHide: autoHide ? 'scroll' : 'never',
         visibility: scrollHide ? 'hidden' : 'visible',
       },
       overflow: {
