@@ -2,7 +2,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
 import { WorkflowSingleRecordPicker } from '@/workflow/components/WorkflowSingleRecordPicker';
-import { WorkflowRecordDeleteAction } from '@/workflow/types/Workflow';
+import { WorkflowDeleteRecordAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import {
@@ -15,15 +15,15 @@ import {
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
-type WorkflowEditActionFormRecordDeleteProps = {
-  action: WorkflowRecordDeleteAction;
+type WorkflowEditActionFormDeleteRecordProps = {
+  action: WorkflowDeleteRecordAction;
   actionOptions:
     | {
         readonly: true;
       }
     | {
         readonly?: false;
-        onActionUpdate: (action: WorkflowRecordDeleteAction) => void;
+        onActionUpdate: (action: WorkflowDeleteRecordAction) => void;
       };
 };
 
@@ -32,10 +32,10 @@ type DeleteRecordFormData = {
   objectRecordId: string;
 };
 
-export const WorkflowEditActionFormRecordDelete = ({
+export const WorkflowEditActionFormDeleteRecord = ({
   action,
   actionOptions,
-}: WorkflowEditActionFormRecordDeleteProps) => {
+}: WorkflowEditActionFormDeleteRecordProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
 
@@ -100,7 +100,6 @@ export const WorkflowEditActionFormRecordDelete = ({
         settings: {
           ...action.settings,
           input: {
-            type: 'DELETE',
             objectName: updatedObjectName,
             objectRecordId: updatedObjectRecordId ?? '',
           },

@@ -101,6 +101,7 @@ export const MatchColumnSelect = ({
     callback: () => {
       setIsOpen(false);
     },
+    listenerId: 'match-column-select',
   });
 
   useUpdateEffect(() => {

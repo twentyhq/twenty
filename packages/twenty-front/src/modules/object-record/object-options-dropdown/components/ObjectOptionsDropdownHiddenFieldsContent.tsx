@@ -18,7 +18,6 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { ViewType } from '@/views/types/ViewType';
 
@@ -71,19 +70,16 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
         Hidden Fields
       </DropdownMenuHeader>
       {hiddenRecordFields.length > 0 && (
-        <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-          <ViewFieldsVisibilityDropdownSection
-            title="Hidden"
-            fields={hiddenRecordFields}
-            isDraggable={false}
-            onVisibilityChange={handleChangeFieldVisibility}
-            showSubheader={false}
-            showDragGrip={false}
-          />
-        </ScrollWrapper>
+        <ViewFieldsVisibilityDropdownSection
+          title="Hidden"
+          fields={hiddenRecordFields}
+          isDraggable={false}
+          onVisibilityChange={handleChangeFieldVisibility}
+          showSubheader={false}
+          showDragGrip={false}
+        />
       )}
       <DropdownMenuSeparator />
-
       <UndecoratedLink
         to={settingsUrl}
         onClick={() => {
@@ -91,7 +87,7 @@ export const ObjectOptionsDropdownHiddenFieldsContent = () => {
           closeDropdown();
         }}
       >
-        <DropdownMenuItemsContainer>
+        <DropdownMenuItemsContainer withoutScrollWrapper>
           <MenuItem LeftIcon={IconSettings} text="Edit Fields" />
         </DropdownMenuItemsContainer>
       </UndecoratedLink>

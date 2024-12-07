@@ -1,12 +1,12 @@
+import { fireEvent, renderHook } from '@testing-library/react';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
-import { fireEvent, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import {
   ClickOutsideMode,
-  useListenClickOutsideV2,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
+  useListenClickOutside,
+} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
 const containerRef = React.createRef<HTMLDivElement>();
@@ -19,13 +19,13 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 const listenerId = 'listenerId';
-describe('useListenClickOutsideV2', () => {
+describe('useListenClickOutside', () => {
   it('should trigger the callback when clicking outside the specified refs', () => {
     const callback = jest.fn();
 
     renderHook(
       () =>
-        useListenClickOutsideV2({
+        useListenClickOutside({
           refs: [containerRef],
           callback,
           listenerId,
@@ -46,7 +46,7 @@ describe('useListenClickOutsideV2', () => {
 
     renderHook(
       () =>
-        useListenClickOutsideV2({
+        useListenClickOutside({
           refs: [nullRef],
           callback,
           mode: ClickOutsideMode.comparePixels,
@@ -68,7 +68,7 @@ describe('useListenClickOutsideV2', () => {
 
     renderHook(
       () =>
-        useListenClickOutsideV2({
+        useListenClickOutside({
           refs: [containerRef],
           callback,
           listenerId,
@@ -91,7 +91,7 @@ describe('useListenClickOutsideV2', () => {
 
     renderHook(
       () =>
-        useListenClickOutsideV2({
+        useListenClickOutside({
           refs: [containerRef],
           callback,
           mode: ClickOutsideMode.comparePixels,

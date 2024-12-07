@@ -42,24 +42,25 @@ export const SettingsWorkspace = () => {
           <NameField />
         </Section>
         {isMultiWorkspaceEnabled && (
-          <Section>
-            <H2Title
-              title="Domain"
-              description="Edit your subdomain name or set a custom domain."
-            />
-            <UndecoratedLink to={getSettingsPagePath(SettingsPath.Domain)}>
-              <SettingsCard title="Customize Domain" Icon={<IconWorld />} />
-            </UndecoratedLink>
-          </Section>
+          <>
+            <Section>
+              <H2Title
+                title="Domain"
+                description="Edit your subdomain name or set a custom domain."
+              />
+              <UndecoratedLink to={getSettingsPagePath(SettingsPath.Domain)}>
+                <SettingsCard title="Customize Domain" Icon={<IconWorld />} />
+              </UndecoratedLink>
+            </Section>
+            <Section>
+              <H2Title
+                title="Support"
+                adornment={<ToggleImpersonate />}
+                description="Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
+              />
+            </Section>
+          </>
         )}
-
-        <Section>
-          <H2Title
-            title="Support"
-            adornment={<ToggleImpersonate />}
-            description="Grant Twenty support temporary access to your workspace so we can troubleshoot problems or recover content on your behalf. You can revoke access at any time."
-          />
-        </Section>
         <Section>
           <DeleteWorkspace />
         </Section>

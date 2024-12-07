@@ -15,7 +15,6 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useContext } from 'react';
 import { SORT_DIRECTIONS } from '../types/SortDirection';
@@ -184,39 +183,37 @@ export const ObjectSortDropdownButton = ({
                 setObjectSortDropdownSearchInput(event.target.value)
               }
             />
-            <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-              <DropdownMenuItemsContainer>
-                {visibleColumnsSortDefinitions.map(
-                  (visibleSortDefinition, index) => (
-                    <MenuItem
-                      testId={`visible-select-sort-${index}`}
-                      key={index}
-                      onClick={() => {
-                        setObjectSortDropdownSearchInput('');
-                        handleAddSort(visibleSortDefinition);
-                      }}
-                      LeftIcon={getIcon(visibleSortDefinition.iconName)}
-                      text={visibleSortDefinition.label}
-                    />
-                  ),
-                )}
-                {shoudShowSeparator && <DropdownMenuSeparator />}
-                {hiddenColumnsSortDefinitions.map(
-                  (hiddenSortDefinition, index) => (
-                    <MenuItem
-                      testId={`hidden-select-sort-${index}`}
-                      key={index}
-                      onClick={() => {
-                        setObjectSortDropdownSearchInput('');
-                        handleAddSort(hiddenSortDefinition);
-                      }}
-                      LeftIcon={getIcon(hiddenSortDefinition.iconName)}
-                      text={hiddenSortDefinition.label}
-                    />
-                  ),
-                )}
-              </DropdownMenuItemsContainer>
-            </ScrollWrapper>
+            <DropdownMenuItemsContainer>
+              {visibleColumnsSortDefinitions.map(
+                (visibleSortDefinition, index) => (
+                  <MenuItem
+                    testId={`visible-select-sort-${index}`}
+                    key={index}
+                    onClick={() => {
+                      setObjectSortDropdownSearchInput('');
+                      handleAddSort(visibleSortDefinition);
+                    }}
+                    LeftIcon={getIcon(visibleSortDefinition.iconName)}
+                    text={visibleSortDefinition.label}
+                  />
+                ),
+              )}
+              {shoudShowSeparator && <DropdownMenuSeparator />}
+              {hiddenColumnsSortDefinitions.map(
+                (hiddenSortDefinition, index) => (
+                  <MenuItem
+                    testId={`hidden-select-sort-${index}`}
+                    key={index}
+                    onClick={() => {
+                      setObjectSortDropdownSearchInput('');
+                      handleAddSort(hiddenSortDefinition);
+                    }}
+                    LeftIcon={getIcon(hiddenSortDefinition.iconName)}
+                    text={hiddenSortDefinition.label}
+                  />
+                ),
+              )}
+            </DropdownMenuItemsContainer>
           </>
         }
         onClose={handleDropdownButtonClose}
