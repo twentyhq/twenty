@@ -8,9 +8,13 @@ import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 type LinksFieldInputProps = {
   onCancel?: () => void;
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
-export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
+export const LinksFieldInput = ({
+  onCancel,
+  onClickOutside,
+}: LinksFieldInputProps) => {
   const { persistLinksField, hotkeyScope, fieldValue } = useLinksField();
 
   const links = useMemo<{ url: string; label: string }[]>(
@@ -49,6 +53,7 @@ export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
       items={links}
       onPersist={handlePersistLinks}
       onCancel={onCancel}
+      onClickOutside={onClickOutside}
       placeholder="URL"
       fieldMetadataType={FieldMetadataType.Links}
       validateInput={(input) => ({

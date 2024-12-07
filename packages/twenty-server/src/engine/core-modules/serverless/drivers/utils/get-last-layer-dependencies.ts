@@ -12,14 +12,10 @@ export const getLayerDependencies = async (
   layerVersion: number | 'latest',
 ): Promise<LayerDependencies> => {
   const lastVersionLayerDirName = getLayerDependenciesDirName(layerVersion);
-  const packageJson = await fs.readFile(
-    join(lastVersionLayerDirName, 'package.json'),
-    'utf8',
-  );
-  const yarnLock = await fs.readFile(
-    join(lastVersionLayerDirName, 'yarn.lock'),
-    'utf8',
-  );
+  const [packageJson, yarnLock] = await Promise.all([
+    fs.readFile(join(lastVersionLayerDirName, 'package.json'), 'utf8'),
+    fs.readFile(join(lastVersionLayerDirName, 'yarn.lock'), 'utf8'),
+  ]);
 
   return { packageJson: JSON.parse(packageJson), yarnLock };
 };

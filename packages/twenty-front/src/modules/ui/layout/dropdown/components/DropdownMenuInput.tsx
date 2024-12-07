@@ -44,7 +44,7 @@ const StyledInputContainer = styled.div`
 
 const StyledRightContainer = styled.div`
   position: absolute;
-  right: ${({ theme }) => theme.spacing(1)};
+  right: ${({ theme }) => theme.spacing(2)};
   top: 50%;
   transform: translateY(-50%);
 `;

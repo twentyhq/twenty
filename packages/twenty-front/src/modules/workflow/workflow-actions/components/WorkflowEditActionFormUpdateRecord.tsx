@@ -1,11 +1,8 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
-import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
-import { WorkflowRecordCreateAction } from '@/workflow/types/Workflow';
+import { WorkflowSingleRecordPicker } from '@/workflow/components/WorkflowSingleRecordPicker';
+import { WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
 import {
@@ -14,31 +11,32 @@ import {
   isDefined,
   useIcons,
 } from 'twenty-ui';
+
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
-import { FieldMetadataType } from '~/generated/graphql';
 
-type WorkflowEditActionFormRecordCreateProps = {
-  action: WorkflowRecordCreateAction;
+type WorkflowEditActionFormUpdateRecordProps = {
+  action: WorkflowUpdateRecordAction;
   actionOptions:
     | {
         readonly: true;
       }
     | {
         readonly?: false;
-        onActionUpdate: (action: WorkflowRecordCreateAction) => void;
+        onActionUpdate: (action: WorkflowUpdateRecordAction) => void;
       };
 };
 
-type CreateRecordFormData = {
+type UpdateRecordFormData = {
   objectName: string;
+  objectRecordId: string;
   [field: string]: unknown;
 };
 
-export const WorkflowEditActionFormRecordCreate = ({
+export const WorkflowEditActionFormUpdateRecord = ({
   action,
   actionOptions,
-}: WorkflowEditActionFormRecordCreateProps) => {
+}: WorkflowEditActionFormUpdateRecordProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
 
@@ -51,44 +49,18 @@ export const WorkflowEditActionFormRecordCreate = ({
       value: item.nameSingular,
     }));
 
-  const [formData, setFormData] = useState<CreateRecordFormData>({
+  const [formData, setFormData] = useState<UpdateRecordFormData>({
     objectName: action.settings.input.objectName,
+    objectRecordId: action.settings.input.objectRecordId,
     ...action.settings.input.objectRecord,
   });
   const isFormDisabled = actionOptions.readonly;
 
-  const objectNameSingular = formData.objectName;
-
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-
-  const inlineFieldMetadataItems = objectMetadataItem.fields
-    .filter(
-      (fieldMetadataItem) =>
-        fieldMetadataItem.type !== FieldMetadataType.Relation &&
-        !fieldMetadataItem.isSystem &&
-        fieldMetadataItem.isActive,
-    )
-    .sort((fieldMetadataItemA, fieldMetadataItemB) =>
-      fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
-    );
-
-  const inlineFieldDefinitions = inlineFieldMetadataItems.map(
-    (fieldMetadataItem) =>
-      formatFieldMetadataItemAsFieldDefinition({
-        field: fieldMetadataItem,
-        objectMetadataItem,
-        showLabel: true,
-        labelWidth: 90,
-      }),
-  );
-
   const handleFieldChange = (
-    fieldName: keyof CreateRecordFormData,
+    fieldName: keyof UpdateRecordFormData,
     updatedValue: JsonValue,
   ) => {
-    const newFormData: CreateRecordFormData = {
+    const newFormData: UpdateRecordFormData = {
       ...formData,
       [fieldName]: updatedValue,
     };
@@ -101,25 +73,39 @@ export const WorkflowEditActionFormRecordCreate = ({
   useEffect(() => {
     setFormData({
       objectName: action.settings.input.objectName,
+      objectRecordId: action.settings.input.objectRecordId,
       ...action.settings.input.objectRecord,
     });
   }, [action.settings.input]);
 
+  const selectedObjectMetadataItemNameSingular = formData.objectName;
+
+  const selectedObjectMetadataItem = activeObjectMetadataItems.find(
+    (item) => item.nameSingular === selectedObjectMetadataItemNameSingular,
+  );
+  if (!isDefined(selectedObjectMetadataItem)) {
+    throw new Error('Should have found the metadata item');
+  }
+
   const saveAction = useDebouncedCallback(
-    async (formData: CreateRecordFormData) => {
+    async (formData: UpdateRecordFormData) => {
       if (actionOptions.readonly === true) {
         return;
       }
 
-      const { objectName: updatedObjectName, ...updatedOtherFields } = formData;
+      const {
+        objectName: updatedObjectName,
+        objectRecordId: updatedObjectRecordId,
+        ...updatedOtherFields
+      } = formData;
 
       actionOptions.onActionUpdate({
         ...action,
         settings: {
           ...action.settings,
           input: {
-            type: 'CREATE',
             objectName: updatedObjectName,
+            objectRecordId: updatedObjectRecordId ?? '',
             objectRecord: updatedOtherFields,
           },
         },
@@ -134,7 +120,7 @@ export const WorkflowEditActionFormRecordCreate = ({
     };
   }, [saveAction]);
 
-  const headerTitle = isDefined(action.name) ? action.name : `Create Record`;
+  const headerTitle = isDefined(action.name) ? action.name : `Update Record`;
 
   return (
     <WorkflowEditGenericFormBase
@@ -154,7 +140,7 @@ export const WorkflowEditActionFormRecordCreate = ({
       headerType="Action"
     >
       <Select
-        dropdownId="workflow-edit-action-record-create-object-name"
+        dropdownId="workflow-edit-action-record-update-object-name"
         label="Object"
         fullWidth
         disabled={isFormDisabled}
@@ -162,8 +148,9 @@ export const WorkflowEditActionFormRecordCreate = ({
         emptyOption={{ label: 'Select an option', value: '' }}
         options={availableMetadata}
         onChange={(updatedObjectName) => {
-          const newFormData: CreateRecordFormData = {
+          const newFormData: UpdateRecordFormData = {
             objectName: updatedObjectName,
+            objectRecordId: '',
           };
 
           setFormData(newFormData);
@@ -174,21 +161,14 @@ export const WorkflowEditActionFormRecordCreate = ({
 
       <HorizontalSeparator noMargin />
 
-      {inlineFieldDefinitions.map((field) => {
-        const currentValue = formData[field.metadata.fieldName] as JsonValue;
-
-        return (
-          <FormFieldInput
-            key={field.metadata.fieldName}
-            defaultValue={currentValue}
-            field={field}
-            onPersist={(value) => {
-              handleFieldChange(field.metadata.fieldName, value);
-            }}
-            VariablePicker={WorkflowVariablePicker}
-          />
-        );
-      })}
+      <WorkflowSingleRecordPicker
+        label="Record"
+        onChange={(objectRecordId) =>
+          handleFieldChange('objectRecordId', objectRecordId)
+        }
+        objectNameSingular={formData.objectName}
+        defaultValue={formData.objectRecordId}
+      />
     </WorkflowEditGenericFormBase>
   );
 };

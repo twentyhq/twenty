@@ -32,6 +32,13 @@ import {
 } from 'src/engine/metadata-modules/serverless-function/serverless-function.exception';
 import { isDefined } from 'src/utils/is-defined';
 import { getLayerDependencies } from 'src/engine/core-modules/serverless/drivers/utils/get-last-layer-dependencies';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import {
+  BuildServerlessFunctionBatchEvent,
+  BuildServerlessFunctionJob,
+} from 'src/engine/metadata-modules/serverless-function/jobs/build-serverless-function.job';
 
 @Injectable()
 export class ServerlessFunctionService {
@@ -43,6 +50,8 @@ export class ServerlessFunctionService {
     private readonly throttlerService: ThrottlerService,
     private readonly environmentService: EnvironmentService,
     private readonly analyticsService: AnalyticsService,
+    @InjectMessageQueue(MessageQueue.serverlessFunctionQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   async findManyServerlessFunctions(where) {
@@ -263,7 +272,11 @@ export class ServerlessFunctionService {
       });
     }
 
-    await this.serverlessService.build(existingServerlessFunction, 'draft');
+    await this.buildServerlessFunction({
+      serverlessFunctionId: existingServerlessFunction.id,
+      serverlessFunctionVersion: 'draft',
+      workspaceId,
+    });
     await this.serverlessFunctionRepository.update(
       existingServerlessFunction.id,
       {
@@ -330,7 +343,11 @@ export class ServerlessFunctionService {
       });
     }
 
-    await this.serverlessService.build(createdServerlessFunction, 'draft');
+    await this.buildServerlessFunction({
+      serverlessFunctionId: createdServerlessFunction.id,
+      serverlessFunctionVersion: 'draft',
+      workspaceId,
+    });
 
     return this.serverlessFunctionRepository.findOneBy({
       id: createdServerlessFunction.id,
@@ -350,5 +367,26 @@ export class ServerlessFunctionService {
         ServerlessFunctionExceptionCode.SERVERLESS_FUNCTION_EXECUTION_LIMIT_REACHED,
       );
     }
+  }
+
+  private async buildServerlessFunction({
+    serverlessFunctionId,
+    serverlessFunctionVersion,
+    workspaceId,
+  }: {
+    serverlessFunctionId: string;
+    serverlessFunctionVersion: string;
+    workspaceId: string;
+  }) {
+    await this.messageQueueService.add<BuildServerlessFunctionBatchEvent>(
+      BuildServerlessFunctionJob.name,
+      {
+        serverlessFunctions: [
+          { serverlessFunctionId, serverlessFunctionVersion },
+        ],
+        workspaceId,
+      },
+      { id: `${serverlessFunctionId}-${serverlessFunctionVersion}` },
+    );
   }
 }

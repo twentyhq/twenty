@@ -1,9 +1,5 @@
 import { TRIGGER_STEP_ID } from '@/workflow/constants/TriggerStepId';
-import {
-  WorkflowActionType,
-  WorkflowStep,
-  WorkflowTrigger,
-} from '@/workflow/types/Workflow';
+import { WorkflowStep, WorkflowTrigger } from '@/workflow/types/Workflow';
 import {
   WorkflowDiagram,
   WorkflowDiagramEdge,
@@ -35,25 +31,12 @@ export const generateWorkflowDiagram = ({
   ) => {
     const nodeId = step.id;
 
-    let nodeActionType: WorkflowActionType;
-    if (step.type === 'RECORD_CRUD') {
-      nodeActionType = `RECORD_CRUD.${step.settings.input.type}`;
-    } else {
-      nodeActionType = step.type;
-    }
-
-    let nodeLabel = step.name;
-    if (step.type === 'RECORD_CRUD') {
-      // FIXME: use activeObjectMetadataItems to get labelSingular
-      nodeLabel = `${capitalize(step.settings.input.type.toLowerCase())} ${capitalize(step.settings.input.objectName)}`;
-    }
-
     nodes.push({
       id: nodeId,
       data: {
         nodeType: 'action',
-        actionType: nodeActionType,
-        name: isDefined(step.name) ? step.name : nodeLabel,
+        actionType: step.type,
+        name: step.name,
       },
       position: {
         x: xPos,

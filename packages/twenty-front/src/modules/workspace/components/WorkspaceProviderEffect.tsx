@@ -41,8 +41,10 @@ export const WorkspaceProviderEffect = () => {
   useEffect(() => {
     if (
       isMultiWorkspaceEnabled &&
-      isDefined(lastAuthenticatedWorkspaceDomain?.subdomain) &&
-      isDefaultDomain
+      isDefaultDomain &&
+      isDefined(lastAuthenticatedWorkspaceDomain) &&
+      'subdomain' in lastAuthenticatedWorkspaceDomain &&
+      isDefined(lastAuthenticatedWorkspaceDomain?.subdomain)
     ) {
       redirectToWorkspaceDomain(lastAuthenticatedWorkspaceDomain.subdomain);
     }

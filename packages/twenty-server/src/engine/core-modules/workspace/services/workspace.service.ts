@@ -18,6 +18,12 @@ import {
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+} from 'src/engine/core-modules/workspace/workspace.exception';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -33,8 +39,44 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly featureFlagService: FeatureFlagService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly environmentService: EnvironmentService,
   ) {
     super(workspaceRepository);
+  }
+
+  async updateWorkspaceById(payload: Partial<Workspace> & { id: string }) {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: payload.id,
+    });
+
+    workspaceValidator.assertIsExist(
+      workspace,
+      new WorkspaceException(
+        'Workspace not found',
+        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
+    if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
+      const subdomainAvailable = await this.isSubdomainAvailable(
+        payload.subdomain,
+      );
+
+      if (
+        !subdomainAvailable ||
+        this.environmentService.get('DEFAULT_SUBDOMAIN') === payload.subdomain
+      ) {
+        throw new WorkspaceException(
+          'Subdomain already taken',
+          WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,
+        );
+      }
+    }
+
+    return this.workspaceRepository.save({
+      ...workspace,
+      ...payload,
+    });
   }
 
   async activateWorkspace(user: User, data: ActivateWorkspaceInput) {
@@ -158,5 +200,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         },
       );
     }
+  }
+
+  async isSubdomainAvailable(subdomain: string) {
+    const existingWorkspace = await this.workspaceRepository.findOne({
+      where: { subdomain: subdomain },
+    });
+
+    return !existingWorkspace;
   }
 }
