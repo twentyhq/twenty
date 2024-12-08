@@ -6,11 +6,11 @@ import { useRecoilValue } from 'recoil';
 import {
   Avatar,
   AvatarGroup,
+  Card,
+  CardContent,
   IconArrowRight,
   IconLock,
   isDefined,
-  Card,
-  CardContent,
 } from 'twenty-ui';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
@@ -44,6 +44,7 @@ const StyledAttendanceIndicator = styled.div<{ active?: boolean }>`
   height: 100%;
   width: ${({ theme }) => theme.spacing(1)};
   border-radius: ${({ theme }) => theme.border.radius.xs};
+  flex-shrink: 0;
 
   ${({ active, theme }) =>
     active &&
@@ -57,7 +58,8 @@ const StyledLabels = styled.div`
   display: flex;
   color: ${({ theme }) => theme.font.color.primary};
   gap: ${({ theme }) => theme.spacing(2)};
-  flex: 1 0 auto;
+  overflow: hidden;
+  flex-grow: 1;
 `;
 
 const StyledTime = styled.div`
@@ -66,10 +68,13 @@ const StyledTime = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   gap: ${({ theme }) => theme.spacing(1)};
   width: ${({ theme }) => theme.spacing(26)};
+  flex-shrink: 0;
 `;
 
 const StyledTitle = styled.div<{ active: boolean; canceled: boolean }>`
-  flex: 1 0 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   ${({ theme, active }) =>
     active &&
@@ -89,8 +94,8 @@ const StyledVisibilityCard = styled(Card)<{ active: boolean }>`
   color: ${({ active, theme }) =>
     active ? theme.font.color.primary : theme.font.color.light};
   border-color: ${({ theme }) => theme.border.color.light};
-  flex: 1 0 auto;
   transition: color ${({ theme }) => theme.animation.duration.normal} ease;
+  flex-shrink: 0;
 `;
 
 const StyledVisibilityCardContent = styled(CardContent)`
