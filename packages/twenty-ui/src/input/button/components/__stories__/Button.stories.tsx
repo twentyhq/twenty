@@ -11,6 +11,7 @@ import {
   ButtonPosition,
   ButtonSize,
   ButtonVariant,
+  ButtonProps
 } from '../Button';
 
 const meta: Meta<typeof Button> = {
@@ -44,7 +45,7 @@ export const Default: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof Button> = {
-  args: { title: 'Filter', Icon: IconSearch },
+  args: { title: 'Filter', Icon: IconSearch, shortcut: ''},
   argTypes: {
     size: { control: false },
     variant: { control: false },
@@ -55,7 +56,6 @@ export const Catalog: CatalogStory<Story, typeof Button> = {
     soon: { control: false },
     position: { control: false },
     className: { control: false },
-    shortcut: { control: false },
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
@@ -277,7 +277,6 @@ export const ShortcutCatalog: CatalogStory<Story, typeof Button> = {
     fullWidth: { control: false },
     soon: { control: false },
     position: { control: false },
-    shortcut: { control: false },
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
@@ -287,6 +286,16 @@ export const ShortcutCatalog: CatalogStory<Story, typeof Button> = {
           name: 'sizes',
           values: ['small', 'medium'] satisfies ButtonSize[],
           props: (size: ButtonSize) => ({ size }),
+        },
+        {
+          name: 'colors',
+          values: ['default', 'blue', 'danger'] satisfies ButtonAccent[],
+          props: (accent: ButtonAccent) => ({ accent }),
+        },
+        {
+          name: 'variants',
+          values: ['primary', 'secondary', 'tertiary'] satisfies ButtonVariant[],
+          props: (variant: ButtonVariant) => ({ variant }),
         },
       ],
     },
