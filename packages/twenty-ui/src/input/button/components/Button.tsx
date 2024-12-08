@@ -359,34 +359,20 @@ const StyledSoonPill = styled(Pill)`
   margin-left: auto;
 `;
 
-const StyledShortcutLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
-// const StyledSeparator = styled.div<{ buttonSize: ButtonSize }>`
-//   background: ${({ theme }) => theme.border.color.light};
-//   height: ${({ theme, buttonSize }) =>
-//     theme.spacing(buttonSize === 'small' ? 3 : 4)};
-//   margin: 0 ${({ theme }) => theme.spacing(1)};
-//   width: 1px;
-// `;
-
 const StyledSeparator = styled.div<{ buttonSize: ButtonSize; variant: ButtonVariant; accent: ButtonAccent }>`
   background: ${({ theme, variant, accent }) => {
-    switch (variant) {
-      case 'secondary':
-        switch (accent) {
-          case 'default':
-            return theme.border.color.light
-          case 'blue':
-            return theme.accent.primary
-          case 'danger':
-            return theme.border.color.danger
-        }
-      default:
-        return theme.border.color.light;
+    if (variant === 'secondary' || variant === 'tertiary') {
+      switch (accent) {
+        case 'blue':
+          return theme.accent.primary;
+        case 'danger':
+          return theme.border.color.danger;
+        default:
+          return theme.border.color.light;
+      }
     }
+
+    return theme.border.color.light;
   }};
   height: ${({ theme, buttonSize }) =>
     theme.spacing(buttonSize === 'small' ? 3 : 4)};
@@ -394,24 +380,18 @@ const StyledSeparator = styled.div<{ buttonSize: ButtonSize; variant: ButtonVari
   width: 1px;
 `;
 
-// const StyledShortcutLabel = styled.div<{ variant: ButtonVariant; accent: ButtonAccent }>`
-//   color: ${({ theme, variant, accent }) => {
-//     switch (variant) {
-//       case 'primary':
-//         return accent === 'danger'
-//           ? theme.color.red
-//           : theme.font.color.secondary;
-//       case 'secondary':
-//       case 'tertiary':
-//         return accent === 'danger'
-//           ? theme.color.red
-//           : theme.font.color.primary;
-//       default:
-//         return theme.font.color.secondary;
-//     }
-//   }};
-//   font-weight: ${({ theme }) => theme.font.weight.medium};
-// `;
+const StyledShortcutLabel = styled.div<{ variant: ButtonVariant; accent: ButtonAccent }>`
+  color: ${({ theme, variant, accent }) => {
+    if (variant === 'primary') {
+      if (accent === 'blue' || accent === 'danger') {
+        return theme.border.color.light;
+      }
+    }
+
+    return theme.font.color.light;
+  }};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+`;
 
 
 export const Button = ({
@@ -460,10 +440,10 @@ export const Button = ({
         <>
           {/* <StyledSeparator buttonSize={size} />*/}
           <StyledSeparator buttonSize={size} variant={variant} accent={accent} />
-          <StyledShortcutLabel>{shortcut}</StyledShortcutLabel> 
-          {/* <StyledShortcutLabel variant={variant} accent={accent}>
+          {/* <StyledShortcutLabel>{shortcut}</StyledShortcutLabel>  */}
+          <StyledShortcutLabel variant={variant} accent={accent}>
             {shortcut}
-          </StyledShortcutLabel> */}
+          </StyledShortcutLabel>
         </>
       )}
       {soon && <StyledSoonPill label="Soon" />}
