@@ -364,35 +364,35 @@ const StyledShortcutLabel = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const StyledSeparator = styled.div<{ buttonSize: ButtonSize }>`
-  background: ${({ theme }) => theme.border.color.light};
-  height: ${({ theme, buttonSize }) =>
-    theme.spacing(buttonSize === 'small' ? 3 : 4)};
-  margin: 0 ${({ theme }) => theme.spacing(1)};
-  width: 1px;
-`;
-
-// const StyledSeparator = styled.div<{ buttonSize: ButtonSize; variant: ButtonVariant; accent: ButtonAccent }>`
-//   background: ${({ theme, variant, accent }) => {
-//     switch (variant) {
-//       case 'primary':
-//         return accent === 'danger'
-//           ? theme.color.red
-//           : theme.background.transparent.light;
-//       case 'secondary':
-//       case 'tertiary':
-//         return accent === 'danger'
-//           ? theme.color.red
-//           : theme.background.transparent.medium;
-//       default:
-//         return theme.background.transparent.light;
-//     }
-//   }};
+// const StyledSeparator = styled.div<{ buttonSize: ButtonSize }>`
+//   background: ${({ theme }) => theme.border.color.light};
 //   height: ${({ theme, buttonSize }) =>
 //     theme.spacing(buttonSize === 'small' ? 3 : 4)};
 //   margin: 0 ${({ theme }) => theme.spacing(1)};
 //   width: 1px;
 // `;
+
+const StyledSeparator = styled.div<{ buttonSize: ButtonSize; variant: ButtonVariant; accent: ButtonAccent }>`
+  background: ${({ theme, variant, accent }) => {
+    switch (variant) {
+      case 'secondary':
+        switch (accent) {
+          case 'default':
+            return theme.border.color.light
+          case 'blue':
+            return theme.accent.primary
+          case 'danger':
+            return theme.border.color.danger
+        }
+      default:
+        return theme.border.color.light;
+    }
+  }};
+  height: ${({ theme, buttonSize }) =>
+    theme.spacing(buttonSize === 'small' ? 3 : 4)};
+  margin: 0 ${({ theme }) => theme.spacing(1)};
+  width: 1px;
+`;
 
 // const StyledShortcutLabel = styled.div<{ variant: ButtonVariant; accent: ButtonAccent }>`
 //   color: ${({ theme, variant, accent }) => {
@@ -458,10 +458,10 @@ export const Button = ({
       {title}
       {shortcut && (
         <>
-          <StyledSeparator buttonSize={size} />
-          <StyledShortcutLabel>{shortcut}</StyledShortcutLabel>
-          {/* <StyledSeparator buttonSize={size} variant={variant} accent={accent} />
-          <StyledShortcutLabel variant={variant} accent={accent}>
+          {/* <StyledSeparator buttonSize={size} />*/}
+          <StyledSeparator buttonSize={size} variant={variant} accent={accent} />
+          <StyledShortcutLabel>{shortcut}</StyledShortcutLabel> 
+          {/* <StyledShortcutLabel variant={variant} accent={accent}>
             {shortcut}
           </StyledShortcutLabel> */}
         </>
