@@ -143,7 +143,7 @@ const StyledButton = styled('button', {
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
-              color: ${!inverted ? theme.background.primary : theme.color.red};
+              color: ${!inverted ? theme.border.color.danger : theme.color.red};
               opacity: ${disabled ? 0.24 : 1};
               ${disabled
                 ? ''
@@ -359,36 +359,37 @@ const StyledSoonPill = styled(Pill)`
   margin-left: auto;
 `;
 
-const StyledSeparator = styled.div<{ buttonSize: ButtonSize; variant: ButtonVariant; accent: ButtonAccent }>`
-  background: ${({ theme, variant, accent }) => {
-    if (variant === 'secondary' || variant === 'tertiary') {
-      switch (accent) {
-        case 'blue':
-          return theme.accent.primary;
-        case 'danger':
-          return theme.border.color.danger;
-        default:
-          return theme.border.color.light;
-      }
+const StyledSeparator = styled.div<{ buttonSize: ButtonSize; accent: ButtonAccent }>`
+  background: ${({ theme, accent }) => {
+    switch (accent) {
+      case 'blue':
+        // Might need to be lighter, cannot find the color
+        return theme.accent.primary;
+      case 'danger':
+        return theme.border.color.danger;
+      default:
+        return theme.border.color.light;
     }
-
-    return theme.border.color.light;
   }};
   height: ${({ theme, buttonSize }) =>
-    theme.spacing(buttonSize === 'small' ? 3 : 4)};
-  margin: 0 ${({ theme }) => theme.spacing(1)};
+    theme.spacing(buttonSize === 'small' ? 2 : 4)};
+  margin: 0 ${({ theme }) => theme.spacing(0.25)};
   width: 1px;
 `;
 
 const StyledShortcutLabel = styled.div<{ variant: ButtonVariant; accent: ButtonAccent }>`
   color: ${({ theme, variant, accent }) => {
-    if (variant === 'primary') {
-      if (accent === 'blue' || accent === 'danger') {
-        return theme.border.color.light;
-      }
+    switch (accent) {
+      case 'blue':
+        // Currently matches the provided button border color for secondary/blue, but hard to see
+        return theme.accent.primary;
+      case 'danger':
+        return variant === 'primary' 
+          ? theme.border.color.danger 
+          : theme.font.color.danger; // Cannot find the matching color
+      default:
+        return theme.font.color.light;
     }
-
-    return theme.font.color.light;
   }};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
@@ -438,9 +439,7 @@ export const Button = ({
       {title}
       {shortcut && (
         <>
-          {/* <StyledSeparator buttonSize={size} />*/}
-          <StyledSeparator buttonSize={size} variant={variant} accent={accent} />
-          {/* <StyledShortcutLabel>{shortcut}</StyledShortcutLabel>  */}
+          <StyledSeparator buttonSize={size} accent={accent} />
           <StyledShortcutLabel variant={variant} accent={accent}>
             {shortcut}
           </StyledShortcutLabel>

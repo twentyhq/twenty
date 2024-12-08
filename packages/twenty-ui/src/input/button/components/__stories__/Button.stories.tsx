@@ -45,7 +45,7 @@ export const Default: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof Button> = {
-  args: { title: 'Filter', Icon: IconSearch },
+  args: { title: 'Filter', Icon: IconSearch, shortcut: ''},
   argTypes: {
     size: { control: false },
     variant: { control: false },
@@ -56,7 +56,6 @@ export const Catalog: CatalogStory<Story, typeof Button> = {
     soon: { control: false },
     position: { control: false },
     className: { control: false },
-    shortcut: { control: false },
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
