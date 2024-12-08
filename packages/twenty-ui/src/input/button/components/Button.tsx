@@ -386,7 +386,7 @@ const StyledShortcutLabel = styled.div<{ variant: ButtonVariant; accent: ButtonA
       case 'danger':
         return variant === 'primary' 
           ? theme.border.color.danger 
-          : theme.font.color.danger; // Cannot find the matching color
+          : theme.color.red40;
       default:
         return theme.font.color.light;
     }
