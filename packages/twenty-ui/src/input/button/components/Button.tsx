@@ -372,6 +372,48 @@ const StyledSeparator = styled.div<{ buttonSize: ButtonSize }>`
   width: 1px;
 `;
 
+// const StyledSeparator = styled.div<{ buttonSize: ButtonSize; variant: ButtonVariant; accent: ButtonAccent }>`
+//   background: ${({ theme, variant, accent }) => {
+//     switch (variant) {
+//       case 'primary':
+//         return accent === 'danger'
+//           ? theme.color.red
+//           : theme.background.transparent.light;
+//       case 'secondary':
+//       case 'tertiary':
+//         return accent === 'danger'
+//           ? theme.color.red
+//           : theme.background.transparent.medium;
+//       default:
+//         return theme.background.transparent.light;
+//     }
+//   }};
+//   height: ${({ theme, buttonSize }) =>
+//     theme.spacing(buttonSize === 'small' ? 3 : 4)};
+//   margin: 0 ${({ theme }) => theme.spacing(1)};
+//   width: 1px;
+// `;
+
+// const StyledShortcutLabel = styled.div<{ variant: ButtonVariant; accent: ButtonAccent }>`
+//   color: ${({ theme, variant, accent }) => {
+//     switch (variant) {
+//       case 'primary':
+//         return accent === 'danger'
+//           ? theme.color.red
+//           : theme.font.color.secondary;
+//       case 'secondary':
+//       case 'tertiary':
+//         return accent === 'danger'
+//           ? theme.color.red
+//           : theme.font.color.primary;
+//       default:
+//         return theme.font.color.secondary;
+//     }
+//   }};
+//   font-weight: ${({ theme }) => theme.font.weight.medium};
+// `;
+
+
 export const Button = ({
   className,
   Icon,
@@ -418,6 +460,10 @@ export const Button = ({
         <>
           <StyledSeparator buttonSize={size} />
           <StyledShortcutLabel>{shortcut}</StyledShortcutLabel>
+          {/* <StyledSeparator buttonSize={size} variant={variant} accent={accent} />
+          <StyledShortcutLabel variant={variant} accent={accent}>
+            {shortcut}
+          </StyledShortcutLabel> */}
         </>
       )}
       {soon && <StyledSoonPill label="Soon" />}

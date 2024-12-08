@@ -11,6 +11,7 @@ import {
   ButtonPosition,
   ButtonSize,
   ButtonVariant,
+  ButtonProps
 } from '../Button';
 
 const meta: Meta<typeof Button> = {
@@ -277,7 +278,6 @@ export const ShortcutCatalog: CatalogStory<Story, typeof Button> = {
     fullWidth: { control: false },
     soon: { control: false },
     position: { control: false },
-    shortcut: { control: false },
   },
   parameters: {
     pseudo: { hover: ['.hover'], active: ['.pressed'], focus: ['.focus'] },
@@ -289,14 +289,14 @@ export const ShortcutCatalog: CatalogStory<Story, typeof Button> = {
           props: (size: ButtonSize) => ({ size }),
         },
         {
-          name: 'variants',
-          values: ['primary', 'secondary', 'tertiary'] satisfies ButtonVariant[],
-          props: (variant: ButtonVariant) => ({ variant }),
-        },
-        {
           name: 'colors',
           values: ['default', 'blue', 'danger'] satisfies ButtonAccent[],
           props: (accent: ButtonAccent) => ({ accent }),
+        },
+        {
+          name: 'variants',
+          values: ['primary', 'secondary', 'tertiary'] satisfies ButtonVariant[],
+          props: (variant: ButtonVariant) => ({ variant }),
         },
       ],
     },
