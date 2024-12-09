@@ -62,10 +62,10 @@ export const AvatarChip = ({
   size = ChipSize.Small,
 }: AvatarChipProps) => {
   const { theme } = useContext(ThemeContext);
-
+  const name_short = name.length > 10 ? name.substring(0,10).concat("..") : name;
   const chip = (
     <Chip
-      label={name}
+      label={name_short}
       variant={
         isDefined(onClick) || isDefined(to)
           ? variant === AvatarChipVariant.Regular
@@ -97,7 +97,7 @@ export const AvatarChip = ({
           <Avatar
             avatarUrl={avatarUrl}
             placeholderColorSeed={placeholderColorSeed}
-            placeholder={name}
+            placeholder={name_short}
             size="sm"
             type={avatarType}
           />
