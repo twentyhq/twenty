@@ -43,7 +43,6 @@ export const ObjectOptionsDropdownMenuContent = () => {
   const isViewGroupEnabled = useIsFeatureEnabled('IS_VIEW_GROUPS_ENABLED');
 
   const {currentViewWithCombinedFiltersAndSorts} = useGetCurrentView();
-  console.log(currentViewWithCombinedFiltersAndSorts);
   const { objectNamePlural } = useObjectNamePluralFromSingular({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
