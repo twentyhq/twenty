@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from 'react';
-
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import * as Sentry from '@sentry/react';
 
 export const PromiseRejectionEffect = () => {
   const { enqueueSnackBar } = useSnackBar();
@@ -11,7 +11,8 @@ export const PromiseRejectionEffect = () => {
     (event: PromiseRejectionEvent) => {
       const error = event.reason;
 
-      // TODO: connect Sentry here
+      Sentry.captureException(error);
+
       if (error instanceof ObjectMetadataItemNotFoundError) {
         enqueueSnackBar(
           `Error with custom object that cannot be found : ${event.reason}`,
