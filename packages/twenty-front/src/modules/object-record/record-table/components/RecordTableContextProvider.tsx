@@ -4,7 +4,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useHandleContainerMouseEnter } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
-import { useCloseRecordTableCellV2 } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCellV2';
+import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCell';
 import { useMoveSoftFocusToCellOnHoverV2 } from '@/object-record/record-table/record-table-cell/hooks/useMoveSoftFocusToCellOnHoverV2';
 import {
   OpenTableCellArgs,
@@ -41,12 +41,14 @@ export const RecordTableContextProvider = ({
     persistField,
     recordId,
     fieldName,
+    recordGroupId,
   }: {
     persistField: () => void;
     recordId: string;
     fieldName: string;
+    recordGroupId: string | undefined;
   }) => {
-    upsertRecord(persistField, recordId, fieldName);
+    upsertRecord(persistField, recordId, recordGroupId, fieldName);
   };
 
   const { openTableCell } = useOpenRecordTableCellV2(recordTableId);
@@ -61,10 +63,10 @@ export const RecordTableContextProvider = ({
     moveFocus(direction);
   };
 
-  const { closeTableCell } = useCloseRecordTableCellV2(recordTableId);
+  const { closeTableCell } = useCloseRecordTableCell(recordTableId);
 
-  const handleCloseTableCell = () => {
-    closeTableCell();
+  const handleCloseTableCell = (recordGroupId?: string) => {
+    closeTableCell(recordGroupId);
   };
 
   const { moveSoftFocusToCell } =

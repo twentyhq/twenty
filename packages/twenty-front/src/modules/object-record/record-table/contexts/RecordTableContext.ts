@@ -15,14 +15,16 @@ export type RecordTableContextProps = {
     persistField,
     recordId,
     fieldName,
+    recordGroupId,
   }: {
     persistField: () => void;
     recordId: string;
     fieldName: string;
+    recordGroupId: string | undefined;
   }) => void;
   onOpenTableCell: (args: OpenTableCellArgs) => void;
   onMoveFocus: (direction: MoveFocusDirection) => void;
-  onCloseTableCell: () => void;
+  onCloseTableCell: (recordGroupId?: string) => void;
   onMoveSoftFocusToCell: (cellPosition: TableCellPosition) => void;
   onActionMenuDropdownOpened: (
     event: React.MouseEvent,

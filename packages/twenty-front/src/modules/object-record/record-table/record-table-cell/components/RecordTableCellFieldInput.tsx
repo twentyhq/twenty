@@ -4,6 +4,7 @@ import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
@@ -23,14 +24,19 @@ export const RecordTableCellFieldInput = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
   const isFieldReadOnly = useIsFieldValueReadOnly();
 
+  const currentRecordGroupId = useCurrentRecordGroupId({
+    allowUndefined: true,
+  });
+
   const handleEnter: FieldInputEvent = (persistField) => {
     onUpsertRecord({
       persistField,
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
+      recordGroupId: currentRecordGroupId,
     });
 
-    onCloseTableCell();
+    onCloseTableCell(currentRecordGroupId);
     onMoveFocus('down');
   };
 
@@ -39,13 +45,14 @@ export const RecordTableCellFieldInput = () => {
       persistField,
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
+      recordGroupId: currentRecordGroupId,
     });
 
-    onCloseTableCell();
+    onCloseTableCell(currentRecordGroupId);
   };
 
   const handleCancel = () => {
-    onCloseTableCell();
+    onCloseTableCell(currentRecordGroupId);
   };
 
   const handleClickOutside: FieldInputEvent = (persistField) => {
@@ -55,9 +62,10 @@ export const RecordTableCellFieldInput = () => {
       persistField,
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
+      recordGroupId: currentRecordGroupId,
     });
 
-    onCloseTableCell();
+    onCloseTableCell(currentRecordGroupId);
   };
 
   const handleEscape: FieldInputEvent = (persistField) => {
@@ -65,9 +73,10 @@ export const RecordTableCellFieldInput = () => {
       persistField,
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
+      recordGroupId: currentRecordGroupId,
     });
 
-    onCloseTableCell();
+    onCloseTableCell(currentRecordGroupId);
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
@@ -75,9 +84,10 @@ export const RecordTableCellFieldInput = () => {
       persistField,
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
+      recordGroupId: currentRecordGroupId,
     });
 
-    onCloseTableCell();
+    onCloseTableCell(currentRecordGroupId);
     onMoveFocus('right');
   };
 
@@ -86,9 +96,10 @@ export const RecordTableCellFieldInput = () => {
       persistField,
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
+      recordGroupId: currentRecordGroupId,
     });
 
-    onCloseTableCell();
+    onCloseTableCell(currentRecordGroupId);
     onMoveFocus('left');
   };
 
