@@ -1,35 +1,27 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
-import { generateDefaultFieldValue } from '@/object-record/utils/generateDefaultFieldValue';
+import { SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
-import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
-import { isDefined } from '~/utils/isDefined';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+
+const DEFAULT_NUMBER_PREVIEW_VALUE = 2000;
 
 export const getFieldPreviewValue = ({
   fieldMetadataItem,
 }: {
-  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'defaultValue'>;
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'type' | 'defaultValue'
+  >;
 }) => {
-  if (!isFieldTypeSupportedInSettings(fieldMetadataItem.type)) return null;
-
-  if (
-    !isFieldValueEmpty({
-      fieldDefinition: { type: fieldMetadataItem.type },
-      fieldValue: fieldMetadataItem.defaultValue,
-    })
-  ) {
-    return generateDefaultFieldValue(fieldMetadataItem);
+  if (fieldMetadataItem.defaultValue !== undefined && fieldMetadataItem.defaultValue !== null) {
+    return fieldMetadataItem.defaultValue;
   }
 
-  const fieldTypeConfig = getSettingsFieldTypeConfig(fieldMetadataItem.type);
-
-  if (
-    isDefined(fieldTypeConfig) &&
-    'exampleValue' in fieldTypeConfig &&
-    isDefined(fieldTypeConfig.exampleValue)
-  ) {
-    return fieldTypeConfig.exampleValue;
+  const fieldTypeConfig = getSettingsFieldTypeConfig(fieldMetadataItem.type as SettingsFieldType);
+  
+  if (fieldMetadataItem.type === FieldMetadataType.Number) {
+    return fieldTypeConfig.exampleValue || DEFAULT_NUMBER_PREVIEW_VALUE;
   }
 
-  return null;
+  return fieldTypeConfig.exampleValue ?? null;
 };

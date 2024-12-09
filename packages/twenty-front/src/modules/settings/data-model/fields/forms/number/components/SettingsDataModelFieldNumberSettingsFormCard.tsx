@@ -1,8 +1,12 @@
 import styled from '@emotion/styled';
+import { useFormContext } from 'react-hook-form';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
-import { SettingsDataModelFieldNumberForm } from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
+import {
+  SettingsDataModelFieldNumberForm,
+  SettingsDataModelFieldNumberFormValues,
+} from '@/settings/data-model/fields/forms/number/components/SettingsDataModelFieldNumberForm';
 import {
   SettingsDataModelFieldPreviewCard,
   SettingsDataModelFieldPreviewCardProps,
@@ -12,7 +16,7 @@ type SettingsDataModelFieldNumberSettingsFormCardProps = {
   disabled?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue'
+    'icon' | 'label' | 'type' | 'defaultValue' | 'settings'
   >;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
@@ -26,11 +30,18 @@ export const SettingsDataModelFieldNumberSettingsFormCard = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldNumberSettingsFormCardProps) => {
+  const { watch } = useFormContext<SettingsDataModelFieldNumberFormValues>();
+  
+  const settings = watch('settings');
+
   return (
     <SettingsDataModelPreviewFormCard
       preview={
         <StyledFieldPreviewCard
-          fieldMetadataItem={fieldMetadataItem}
+          fieldMetadataItem={{
+            ...fieldMetadataItem,
+            settings: settings ?? fieldMetadataItem.settings ?? { decimals: 0 },
+          }}
           objectMetadataItem={objectMetadataItem}
         />
       }
