@@ -91,11 +91,11 @@ const StyledTitle = styled.div<{ active: boolean; canceled: boolean }>`
 `;
 
 const StyledVisibilityCard = styled(Card)<{ active: boolean }>`
+  border-color: ${({ theme }) => theme.border.color.light};
   color: ${({ active, theme }) =>
     active ? theme.font.color.primary : theme.font.color.light};
-  border-color: ${({ theme }) => theme.border.color.light};
-  transition: color ${({ theme }) => theme.animation.duration.normal} ease;
   flex-shrink: 0;
+  transition: color ${({ theme }) => theme.animation.duration.normal} ease;
 `;
 
 const StyledVisibilityCardContent = styled(CardContent)`
