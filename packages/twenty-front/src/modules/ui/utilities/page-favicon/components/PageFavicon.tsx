@@ -1,7 +1,7 @@
-import { Helmet } from 'react-helmet-async';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
+import { Helmet } from 'react-helmet-async';
 import { useRecoilValue } from 'recoil';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
+import { getImageAbsoluteURI } from 'twenty-ui';
 
 export const PageFavicon = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
