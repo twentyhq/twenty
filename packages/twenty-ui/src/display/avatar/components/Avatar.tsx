@@ -11,10 +11,11 @@ import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
 import {
   Nullable,
-  getImageAbsoluteURI,
   isDefined,
   stringToHslColor,
 } from '@ui/utilities';
+import { getImageAbsoluteURI } from 'twenty-shared';
+import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
 
 const StyledAvatar = styled.div<{
   size: AvatarSize;
@@ -87,7 +88,7 @@ export const Avatar = ({
   );
 
   const avatarImageURI = useMemo(
-    () => (isDefined(avatarUrl) ? getImageAbsoluteURI(avatarUrl) : null),
+    () => (isDefined(avatarUrl) ? getImageAbsoluteURI(avatarUrl, REACT_APP_SERVER_BASE_URL) : null),
     [avatarUrl],
   );
 
