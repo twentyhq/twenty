@@ -6,7 +6,6 @@ import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hook
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
 import { ViewType } from '@/views/types/ViewType';
 
@@ -53,19 +52,17 @@ export const ObjectOptionsDropdownFieldsContent = () => {
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
         Fields
       </DropdownMenuHeader>
-      <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-        <ViewFieldsVisibilityDropdownSection
-          title="Visible"
-          fields={visibleRecordFields}
-          isDraggable
-          onDragEnd={handleReorderFields}
-          onVisibilityChange={handleChangeFieldVisibility}
-          showSubheader={false}
-          showDragGrip={true}
-        />
-      </ScrollWrapper>
+      <ViewFieldsVisibilityDropdownSection
+        title="Visible"
+        fields={visibleRecordFields}
+        isDraggable
+        onDragEnd={handleReorderFields}
+        onVisibilityChange={handleChangeFieldVisibility}
+        showSubheader={false}
+        showDragGrip={true}
+      />
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer withoutScrollWrapper>
         <MenuItemNavigate
           onClick={() => onContentChange('hiddenFields')}
           LeftIcon={IconEyeOff}

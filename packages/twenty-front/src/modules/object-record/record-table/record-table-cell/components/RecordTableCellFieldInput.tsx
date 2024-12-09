@@ -5,19 +5,13 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
-import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
-import { useSetRecoilState } from 'recoil';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
-  const { getClickOutsideListenerIsActivatedState } =
-    useClickOustideListenerStates(RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID);
-  const setClickOutsideListenerIsActivated = useSetRecoilState(
-    getClickOutsideListenerIsActivatedState,
-  );
-
   const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
     useContext(RecordTableContext);
 
@@ -55,18 +49,42 @@ export const RecordTableCellFieldInput = () => {
     onCloseTableCell(currentRecordGroupId);
   };
 
-  const handleClickOutside: FieldInputEvent = (persistField) => {
-    setClickOutsideListenerIsActivated(false);
+  const handleClickOutside = useRecoilCallback(
+    ({ snapshot }) =>
+      (persistField: () => void, event: MouseEvent | TouchEvent) => {
+        const dropdownFocusId = getDropdownFocusIdForRecordField(
+          recordId,
+          fieldDefinition.fieldMetadataId,
+          'table-cell',
+        );
 
-    onUpsertRecord({
-      persistField,
+        const activeDropdownFocusId = snapshot
+          .getLoadable(activeDropdownFocusIdState)
+          .getValue();
+
+        if (activeDropdownFocusId !== dropdownFocusId) {
+          return;
+        }
+
+        event.stopImmediatePropagation();
+
+        onUpsertRecord({
+          persistField,
+          recordId,
+          fieldName: fieldDefinition.metadata.fieldName,
+          recordGroupId: currentRecordGroupId,
+        });
+
+        onCloseTableCell(currentRecordGroupId);
+      },
+    [
+      currentRecordGroupId,
+      fieldDefinition,
+      onCloseTableCell,
+      onUpsertRecord,
       recordId,
-      fieldName: fieldDefinition.metadata.fieldName,
-      recordGroupId: currentRecordGroupId,
-    });
-
-    onCloseTableCell(currentRecordGroupId);
-  };
+    ],
+  );
 
   const handleEscape: FieldInputEvent = (persistField) => {
     onUpsertRecord({

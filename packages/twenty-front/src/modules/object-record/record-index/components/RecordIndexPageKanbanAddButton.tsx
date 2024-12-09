@@ -12,11 +12,11 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
 import { useCallback, useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { IconButton, IconPlus } from 'twenty-ui';
 
 const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
   width: 100%;
@@ -92,16 +92,7 @@ export const RecordIndexPageKanbanAddButton = () => {
     <Dropdown
       dropdownMenuWidth="200px"
       dropdownPlacement="bottom-start"
-      clickableComponent={
-        <IconButton
-          Icon={IconPlus}
-          dataTestId="add-button"
-          size="medium"
-          variant="secondary"
-          accent="default"
-          ariaLabel="Add"
-        />
-      }
+      clickableComponent={<PageAddButton />}
       dropdownId={dropdownId}
       dropdownComponents={
         <StyledDropDownMenu>

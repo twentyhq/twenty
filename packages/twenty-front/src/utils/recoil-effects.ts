@@ -60,20 +60,23 @@ export const cookieStorageEffect =
     };
 
     onSet((newValue, _, isReset) => {
-      if (!newValue) {
-        cookieStorage.removeItem(key, defaultAttributes);
-        return;
-      }
-
       const cookieAttributes = {
         ...defaultAttributes,
         ...(isCustomCookiesAttributesValue(newValue)
           ? newValue.cookieAttributes
           : {}),
       };
+      if (
+        !newValue ||
+        (Object.keys(newValue).length === 1 &&
+          isCustomCookiesAttributesValue(newValue))
+      ) {
+        cookieStorage.removeItem(key, cookieAttributes);
+        return;
+      }
 
       isReset
-        ? cookieStorage.removeItem(key, defaultAttributes)
+        ? cookieStorage.removeItem(key, cookieAttributes)
         : cookieStorage.setItem(
             key,
             JSON.stringify(omit(newValue, ['cookieAttributes'])),

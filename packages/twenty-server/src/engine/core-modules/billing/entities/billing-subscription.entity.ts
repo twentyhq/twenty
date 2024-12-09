@@ -20,7 +20,6 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
 registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
@@ -40,12 +39,6 @@ export class BillingSubscription {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
-
-  @ManyToOne(() => Workspace, (workspace) => workspace.billingSubscriptions, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  workspace: Relation<Workspace>;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;

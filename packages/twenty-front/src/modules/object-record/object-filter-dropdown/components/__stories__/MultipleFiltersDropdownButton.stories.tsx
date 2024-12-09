@@ -11,7 +11,10 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { within } from '@storybook/test';
-import { ComponentDecorator } from 'twenty-ui';
+import {
+  ComponentDecorator,
+  getCanvasElementForDropdownTesting,
+} from 'twenty-ui';
 import { FieldMetadataType } from '~/generated/graphql';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -120,7 +123,7 @@ type Story = StoryObj<typeof TaskGroups>;
 
 export const Default: Story = {
   play: async () => {
-    const canvas = within(document.body);
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     const filterButton = await canvas.findByText('Filter');
 
@@ -142,7 +145,7 @@ export const Default: Story = {
 
 export const Date: Story = {
   play: async () => {
-    const canvas = within(document.body);
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     const filterButton = await canvas.findByText('Filter');
 
@@ -156,7 +159,7 @@ export const Date: Story = {
 
 export const Number: Story = {
   play: async () => {
-    const canvas = within(document.body);
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     const filterButton = await canvas.findByText('Filter');
 

@@ -82,6 +82,7 @@ export const SettingsOptionCardContentToggle = ({
         value={checked}
         onChange={onChange}
         disabled={disabled}
+        toggleSize="small"
         color={advancedMode ? theme.color.yellow : theme.color.blue}
       />
     </StyledSettingsOptionCardToggleContent>
