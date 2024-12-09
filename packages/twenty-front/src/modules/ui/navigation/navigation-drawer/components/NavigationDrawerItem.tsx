@@ -227,10 +227,7 @@ export const NavigationDrawerItem = ({
       >
         {showBreadcrumb && (
           <NavigationDrawerAnimatedCollapseWrapper>
-            <NavigationDrawerItemBreadcrumb
-              state={subItemState}
-              isDragging={isDragging}
-            />
+            <NavigationDrawerItemBreadcrumb state={subItemState} />
           </NavigationDrawerAnimatedCollapseWrapper>
         )}
         <StyledItemElementsContainer>
