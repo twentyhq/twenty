@@ -8,6 +8,7 @@ import {
   IconRotate2,
   IconTag,
   MenuItem,
+  useIcons,
 } from 'twenty-ui';
 
 import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
@@ -42,7 +43,11 @@ export const ObjectOptionsDropdownMenuContent = () => {
 
   const isViewGroupEnabled = useIsFeatureEnabled('IS_VIEW_GROUPS_ENABLED');
 
-  const {currentViewWithCombinedFiltersAndSorts} = useGetCurrentView();
+  const { getIcon } = useIcons();
+  const { currentViewWithCombinedFiltersAndSorts: currView } = useGetCurrentView();
+  
+  const CurrentViewIcon = currView?.icon ? getIcon(currView.icon) : null;
+  console.log(currView);
   const { objectNamePlural } = useObjectNamePluralFromSingular({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
@@ -86,8 +91,8 @@ export const ObjectOptionsDropdownMenuContent = () => {
 
   return (
     <>
-      <DropdownMenuHeader StartIcon={IconList}>
-        {currentViewWithCombinedFiltersAndSorts?.name}
+      <DropdownMenuHeader StartIcon={CurrentViewIcon ?? IconList}>
+        {currView?.name}
       </DropdownMenuHeader>
       {/** TODO: Should be removed when view settings contains more options */}
       {viewType === ViewType.Kanban && (
