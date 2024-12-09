@@ -1,7 +1,7 @@
+import { useComputeContextStoreFilters } from '@/context-store/hooks/useComputeContextStoreFilters';
 import { useContextStoreCurrentObjectMetadataIdOrThrow } from '@/context-store/hooks/useContextStoreCurrentObjectMetadataIdOrThrow';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -29,6 +29,8 @@ export const useFindManyRecordsSelectedInContextStore = ({
     contextStoreFiltersComponentState,
     instanceId,
   );
+
+  const { computeContextStoreFilters } = useComputeContextStoreFilters();
 
   const queryFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,

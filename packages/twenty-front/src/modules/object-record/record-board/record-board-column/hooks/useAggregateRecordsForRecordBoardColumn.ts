@@ -3,7 +3,7 @@ import { RecordBoardContext } from '@/object-record/record-board/contexts/Record
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { buildRecordGqlFieldsAggregate } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregate';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
-import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { useComputeViewRecordGqlOperationFilter } from '@/object-record/record-filter/hooks/useComputeViewRecordGqlOperationFilter';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
@@ -53,6 +53,10 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
   );
 
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
+
+  const { computeViewRecordGqlOperationFilter } =
+    useComputeViewRecordGqlOperationFilter();
+
   const requestFilters = computeViewRecordGqlOperationFilter(
     recordIndexFilters,
     objectMetadataItem.fields,

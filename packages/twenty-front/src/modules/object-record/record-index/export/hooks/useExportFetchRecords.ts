@@ -5,9 +5,9 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
+import { useComputeContextStoreFilters } from '@/context-store/hooks/useComputeContextStoreFilters';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
@@ -87,6 +87,8 @@ export const useExportFetchRecords = ({
   const contextStoreFilters = useRecoilComponentValueV2(
     contextStoreFiltersComponentState,
   );
+
+  const { computeContextStoreFilters } = useComputeContextStoreFilters();
 
   const queryFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,

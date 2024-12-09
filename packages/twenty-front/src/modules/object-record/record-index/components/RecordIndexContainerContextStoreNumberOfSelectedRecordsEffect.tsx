@@ -1,7 +1,7 @@
+import { useComputeContextStoreFilters } from '@/context-store/hooks/useComputeContextStoreFilters';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -39,6 +39,8 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
     const contextStoreFilters = useRecoilComponentValueV2(
       contextStoreFiltersComponentState,
     );
+
+    const { computeContextStoreFilters } = useComputeContextStoreFilters();
 
     const { totalCount } = useFindManyRecords({
       ...findManyRecordsParams,

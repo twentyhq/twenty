@@ -64,7 +64,7 @@ export const ObjectFilterDropdownRecordSelect = ({
   const { loading, filteredSelectedRecords, recordsToSelect, selectedRecords } =
     useRecordsForSelect({
       searchFilterText: objectFilterDropdownSearchInput,
-      selectedIds: objectFilterDropdownSelectedRecordIds,
+      selectedRecordIdsAndSpecialIds: objectFilterDropdownSelectedRecordIds,
       objectNameSingular,
       limit: 10,
     });

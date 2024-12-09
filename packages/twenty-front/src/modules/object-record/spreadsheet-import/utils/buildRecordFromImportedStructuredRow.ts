@@ -9,10 +9,10 @@ import { COMPOSITE_FIELD_IMPORT_LABELS } from '@/object-record/spreadsheet-impor
 import { ImportedStructuredRow } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-ui';
-import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { castToString } from '~/utils/castToString';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
+import { safeStringArrayJSONSchema } from '~/utils/validation-schemas/safeStringArrayJSONSchema';
 
 export const buildRecordFromImportedStructuredRow = (
   importedStructuredRow: ImportedStructuredRow<any>,
@@ -206,21 +206,8 @@ export const buildRecordFromImportedStructuredRow = (
         break;
       case FieldMetadataType.Array:
       case FieldMetadataType.MultiSelect: {
-        const stringArrayJSONSchema = z
-          .preprocess((value) => {
-            try {
-              if (typeof value !== 'string') {
-                return [];
-              }
-              return JSON.parse(value);
-            } catch {
-              return [];
-            }
-          }, z.array(z.string()))
-          .catch([]);
-
         recordToBuild[field.name] =
-          stringArrayJSONSchema.parse(importedFieldValue);
+          safeStringArrayJSONSchema.parse(importedFieldValue);
         break;
       }
       case FieldMetadataType.RawJson: {

@@ -1,4 +1,3 @@
-import { ViewFilter } from '@/views/types/ViewFilter';
 import { z } from 'zod';
 
 const selectViewFilterValueSchema = z
@@ -13,7 +12,7 @@ const selectViewFilterValueSchema = z
   );
 
 export const resolveSelectViewFilterValue = (
-  viewFilter: Pick<ViewFilter, 'value'>,
+  viewFilterValue: string,
 ) => {
-  return selectViewFilterValueSchema.parse(viewFilter.value);
+  return selectViewFilterValueSchema.parse(viewFilterValue);
 };

@@ -7,7 +7,7 @@ import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils
 import { useSetRecordBoardRecordIds } from '@/object-record/record-board/hooks/useSetRecordBoardRecordIds';
 import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { recordBoardFieldDefinitionsComponentState } from '@/object-record/record-board/states/recordBoardFieldDefinitionsComponentState';
-import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { useComputeViewRecordGqlOperationFilter } from '@/object-record/record-filter/hooks/useComputeViewRecordGqlOperationFilter';
 import { useRecordBoardRecordGqlFields } from '@/object-record/record-index/hooks/useRecordBoardRecordGqlFields';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
@@ -56,6 +56,9 @@ export const useLoadRecordIndexBoard = ({
 
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
   const recordIndexSorts = useRecoilValue(recordIndexSortsState);
+  const { computeViewRecordGqlOperationFilter } =
+    useComputeViewRecordGqlOperationFilter();
+
   const requestFilters = computeViewRecordGqlOperationFilter(
     recordIndexFilters,
     objectMetadataItem?.fields ?? [],

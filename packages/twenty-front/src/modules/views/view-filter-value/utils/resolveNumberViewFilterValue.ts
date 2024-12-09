@@ -1,7 +1,6 @@
-import { ViewFilter } from '@/views/types/ViewFilter';
 
 export const resolveNumberViewFilterValue = (
-  viewFilter: Pick<ViewFilter, 'value'>,
+  viewFilterValue: string
 ) => {
-  return viewFilter.value === '' ? null : +viewFilter.value;
+  return viewFilterValue === '' ? null : +viewFilterValue;
 };
