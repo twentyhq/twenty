@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
-import { graphql, http, HttpResponse } from 'msw';
+import { HttpResponse, graphql, http } from 'msw';
 import { SettingsServerlessFunctionDetail } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetail';
 import {
   PageDecorator,

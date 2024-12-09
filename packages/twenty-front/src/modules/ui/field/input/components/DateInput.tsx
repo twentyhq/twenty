@@ -9,7 +9,7 @@ import {
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 const StyledCalendarContainer = styled.div`
   background: ${({ theme }) => theme.background.transparent.secondary};
@@ -72,7 +72,7 @@ export const DateInput = ({
     MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
   );
 
-  useListenClickOutsideV2({
+  useListenClickOutside({
     refs: [wrapperRef],
     listenerId: 'DateInput',
     callback: (event) => {

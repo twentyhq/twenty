@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Workspaces } from '@/auth/states/workspaces';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -133,7 +134,7 @@ export const MultiWorkspaceDropdownButton = ({
               }}
             >
               <MenuItemSelectAvatar
-                text={workspace.displayName ?? ''}
+                text={workspace.displayName ?? '(No name)'}
                 avatar={
                   <StyledLogo
                     logo={

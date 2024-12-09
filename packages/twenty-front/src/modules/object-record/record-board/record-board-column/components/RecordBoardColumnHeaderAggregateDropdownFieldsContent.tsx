@@ -34,14 +34,14 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetContent}>
         {getAggregateOperationLabel(aggregateOperation)}
       </DropdownMenuHeader>
-      {availableFieldsIdsForAggregateOperation.map((fieldId) => {
-        const fieldMetadata = objectMetadataItem.fields.find(
-          (field) => field.id === fieldId,
-        );
+      <DropdownMenuItemsContainer>
+        {availableFieldsIdsForAggregateOperation.map((fieldId) => {
+          const fieldMetadata = objectMetadataItem.fields.find(
+            (field) => field.id === fieldId,
+          );
 
-        if (!fieldMetadata) return null;
-        return (
-          <DropdownMenuItemsContainer>
+          if (!fieldMetadata) return null;
+          return (
             <MenuItem
               key={fieldId}
               onClick={() => {
@@ -54,9 +54,9 @@ export const RecordBoardColumnHeaderAggregateDropdownFieldsContent = () => {
               LeftIcon={getIcon(fieldMetadata.icon) ?? Icon123}
               text={fieldMetadata.label}
             />
-          </DropdownMenuItemsContainer>
-        );
-      })}
+          );
+        })}
+      </DropdownMenuItemsContainer>
     </>
   );
 };

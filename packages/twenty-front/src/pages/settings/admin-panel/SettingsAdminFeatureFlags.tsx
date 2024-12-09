@@ -108,9 +108,8 @@ export const SettingsAdminFeatureFlags = () => {
       title: workspace.name,
       logo:
         getImageAbsoluteURI(
-          workspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-          REACT_APP_SERVER_BASE_URL,
-        ) ?? '',
+          isDefined(workspace.logo) ? workspace.logo : DEFAULT_WORKSPACE_LOGO,
+        REACT_APP_SERVER_BASE_URL) ?? '',
     })) ?? [];
 
   const renderWorkspaceContent = () => {

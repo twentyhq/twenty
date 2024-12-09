@@ -35,7 +35,7 @@ describe('generateAggregateQuery', () => {
     const normalizedQuery = result.loc?.source.body.replace(/\s+/g, ' ').trim();
 
     expect(normalizedQuery).toBe(
-      'query AggregateManyCompanies($filter: CompanyFilterInput) { companies(filter: $filter) { id name createdAt } }',
+      'query AggregateCompanies($filter: CompanyFilterInput) { companies(filter: $filter) { id name createdAt } }',
     );
   });
 
@@ -69,7 +69,7 @@ describe('generateAggregateQuery', () => {
     const normalizedQuery = result.loc?.source.body.replace(/\s+/g, ' ').trim();
 
     expect(normalizedQuery).toBe(
-      'query AggregateManyPeople($filter: PersonFilterInput) { people(filter: $filter) { id } }',
+      'query AggregatePeople($filter: PersonFilterInput) { people(filter: $filter) { id } }',
     );
   });
 });

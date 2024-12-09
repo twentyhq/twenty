@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 import { getImageAbsoluteURI } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { isDefined } from 'twenty-ui';
 
 type LogoProps = {
   primaryLogo?: string | null;
@@ -51,10 +52,9 @@ export const Logo = (props: LogoProps) => {
     props.primaryLogo ?? defaultPrimaryLogoUrl,
     REACT_APP_SERVER_BASE_URL,
   );
-  const secondaryLogoUrl = getImageAbsoluteURI(
-    props.secondaryLogo ?? '',
-    REACT_APP_SERVER_BASE_URL,
-  );
+  const secondaryLogoUrl = isDefined(props.secondaryLogo)
+    ? getImageAbsoluteURI(props.secondaryLogo, REACT_APP_SERVER_BASE_URL)
+    : null;
 
   return (
     <StyledContainer>

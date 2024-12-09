@@ -25,9 +25,9 @@ export const getAvatarUrl = (
   }
 
   if (objectNameSingular === CoreObjectNameSingular.Person) {
-    return (
-      getImageAbsoluteURI(record.avatarUrl, REACT_APP_SERVER_BASE_URL) ?? ''
-    );
+    return isDefined(record.avatarUrl)
+      ? getImageAbsoluteURI(record.avatarUrl, REACT_APP_SERVER_BASE_URL)
+      : '';
   }
 
   const imageIdentifierFieldValue = getImageIdentifierFieldValue(

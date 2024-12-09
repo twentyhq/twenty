@@ -1,11 +1,27 @@
+import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
+import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
+import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
+import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
+import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
 import { WorkflowCodeAction } from '@/workflow/types/Workflow';
-import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/utils/mergeDefaultFunctionInputAndFunctionInput';
+import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
+import { getFunctionInputSchema } from '@/workflow/utils/getFunctionInputSchema';
 import { setNestedValue } from '@/workflow/utils/setNestedValue';
+import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-actions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Fragment, ReactNode, useState } from 'react';
+import { Monaco } from '@monaco-editor/react';
+import { editor } from 'monaco-editor';
+import { AutoTypings } from 'monaco-editor-auto-typings';
+import { Fragment, ReactNode, useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import {
   CodeEditor,
   HorizontalSeparator,
@@ -13,23 +29,7 @@ import {
   isDefined,
 } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
-import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
-import { AutoTypings } from 'monaco-editor-auto-typings';
-import { editor } from 'monaco-editor';
-import { Monaco } from '@monaco-editor/react';
-import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { getFunctionInputSchema } from '@/workflow/utils/getFunctionInputSchema';
-import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { useRecoilValue } from 'recoil';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -63,7 +63,10 @@ type WorkflowEditActionFormServerlessFunctionProps = {
       }
     | {
         readonly?: false;
-        onActionUpdate: (action: WorkflowCodeAction) => void;
+        onActionUpdate: (
+          action: WorkflowCodeAction,
+          shouldUpdateStepOutput?: boolean,
+        ) => void;
       };
 };
 
@@ -88,8 +91,15 @@ export const WorkflowEditActionFormServerlessFunction = ({
     id: serverlessFunctionId,
   });
 
+  const [functionInput, setFunctionInput] =
+    useState<ServerlessFunctionInputFormData>(
+      action.settings.input.serverlessFunctionInput,
+    );
+
   const { formValues, setFormValues, loading } =
     useServerlessFunctionUpdateFormState(serverlessFunctionId);
+
+  const headerTitle = action.name || 'Code - Serverless Function';
 
   const save = async () => {
     try {
@@ -112,6 +122,9 @@ export const WorkflowEditActionFormServerlessFunction = ({
   const handleSave = usePreventOverlapCallback(save, 1000);
 
   const onCodeChange = async (value: string) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
     setFormValues((prevState) => ({
       ...prevState,
       code: { ...prevState.code, [INDEX_FILE_PATH]: value },
@@ -121,6 +134,9 @@ export const WorkflowEditActionFormServerlessFunction = ({
   };
 
   const updateFunctionInputSchema = async () => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
     const sourceCode = formValues.code?.[INDEX_FILE_PATH];
     if (!isDefined(sourceCode)) {
       return;
@@ -141,27 +157,25 @@ export const WorkflowEditActionFormServerlessFunction = ({
     100,
   );
 
-  const [functionInput, setFunctionInput] =
-    useState<ServerlessFunctionInputFormData>(
-      action.settings.input.serverlessFunctionInput,
-    );
-
   const updateFunctionInput = useDebouncedCallback(
-    async (newFunctionInput: object) => {
+    async (newFunctionInput: object, shouldUpdateStepOutput = true) => {
       if (actionOptions.readonly === true) {
         return;
       }
 
-      actionOptions.onActionUpdate({
-        ...action,
-        settings: {
-          ...action.settings,
-          input: {
-            ...action.settings.input,
-            serverlessFunctionInput: newFunctionInput,
+      actionOptions.onActionUpdate(
+        {
+          ...action,
+          settings: {
+            ...action.settings,
+            input: {
+              ...action.settings.input,
+              serverlessFunctionInput: newFunctionInput,
+            },
           },
         },
-      });
+        shouldUpdateStepOutput,
+      );
     },
     1_000,
   );
@@ -171,7 +185,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
 
     setFunctionInput(updatedFunctionInput);
 
-    await updateFunctionInput(updatedFunctionInput);
+    await updateFunctionInput(updatedFunctionInput, false);
   };
 
   const renderFields = (
@@ -230,10 +244,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
     });
   };
 
-  const headerTitle = isDefined(action.name)
-    ? action.name
-    : 'Code - Serverless Function';
-
   const handleEditorDidMount = async (
     editor: editor.IStandaloneCodeEditor,
     monaco: Monaco,
@@ -252,10 +262,13 @@ export const WorkflowEditActionFormServerlessFunction = ({
       return;
     }
 
-    actionOptions?.onActionUpdate({
-      ...action,
-      ...actionUpdate,
-    });
+    actionOptions?.onActionUpdate(
+      {
+        ...action,
+        ...actionUpdate,
+      },
+      false,
+    );
   };
 
   const checkWorkflowUpdatable = async () => {
@@ -264,6 +277,10 @@ export const WorkflowEditActionFormServerlessFunction = ({
     }
     await getUpdatableWorkflowVersion(workflow);
   };
+
+  useEffect(() => {
+    setFunctionInput(action.settings.input.serverlessFunctionInput);
+  }, [action]);
 
   return (
     !loading && (
@@ -285,6 +302,10 @@ export const WorkflowEditActionFormServerlessFunction = ({
             await onCodeChange(value);
           }}
           onMount={handleEditorDidMount}
+          options={{
+            readOnly: actionOptions.readonly,
+            domReadOnly: actionOptions.readonly,
+          }}
         />
         {renderFields(functionInput)}
       </WorkflowEditGenericFormBase>

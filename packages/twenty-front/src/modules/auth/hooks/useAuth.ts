@@ -46,6 +46,7 @@ import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useL
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
 import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -105,6 +106,9 @@ export const useAuth = () => {
         const isMultiWorkspaceEnabled = snapshot
           .getLoadable(isMultiWorkspaceEnabledState)
           .getValue();
+        const domainConfiguration = snapshot
+          .getLoadable(domainConfigurationState)
+          .getValue();
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
           set(authProvidersState, authProvidersValue);
@@ -119,6 +123,7 @@ export const useAuth = () => {
           set(clientConfigApiStatusState, clientConfigApiStatus);
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
           set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
+          set(domainConfigurationState, domainConfiguration);
           return undefined;
         });
         goToRecoilSnapshot(initialSnapshot);

@@ -9,7 +9,11 @@ import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
-import { Nullable, stringToHslColor } from '@ui/utilities';
+import {
+  Nullable,
+  isDefined,
+  stringToHslColor,
+} from '@ui/utilities';
 import { getImageAbsoluteURI } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
 
@@ -84,7 +88,7 @@ export const Avatar = ({
   );
 
   const avatarImageURI = useMemo(
-    () => getImageAbsoluteURI(avatarUrl ?? '', REACT_APP_SERVER_BASE_URL),
+    () => (isDefined(avatarUrl) ? getImageAbsoluteURI(avatarUrl, REACT_APP_SERVER_BASE_URL) : null),
     [avatarUrl],
   );
 

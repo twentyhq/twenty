@@ -77,7 +77,7 @@ export enum ColumnType {
 
 export type MatchedOptions<T> = {
   entry: string;
-  value: T;
+  value?: T;
 };
 
 type EmptyColumn = { type: ColumnType.empty; index: number; header: string };
