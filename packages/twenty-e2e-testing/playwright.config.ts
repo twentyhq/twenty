@@ -16,12 +16,12 @@ export default defineConfig({
   fullyParallel: true, // false only for specific tests, overwritten in specific projects or global setups of projects
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined, // undefined = amount of projects * amount of tests
+  workers: 1, // 1 worker = 1 test at the time, tests can't be parallelized
   timeout: 30 * 1000, // timeout can be changed
   use: {
     baseURL: process.env.CI
       ? process.env.CI_DEFAULT_BASE_URL
-      : (process.env.FRONTEND_BASE_URL ?? 'http://localhost:3001'),
+      : (process.env.FRONTEND_BASE_URL ?? 'http://app.localhost:3001'),
     trace: 'retain-on-failure', // trace takes EVERYTHING from page source, records every single step, should be used only when normal debugging won't work
     screenshot: 'on', // either 'on' here or in different method in modules, if 'on' all screenshots are overwritten each time the test is run
     headless: true, // instead of changing it to false, run 'yarn test:e2e:debug' or 'yarn test:e2e:ui'
@@ -55,6 +55,10 @@ export default defineConfig({
         storageState: path.resolve(__dirname, '.auth', 'user.json'),
       },
       dependencies: ['Login setup'],
+    },
+    {
+      name: 'Authentication',
+      testMatch: /authentication\/.*\.spec\.ts/,
     },
 
     //{
