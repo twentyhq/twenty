@@ -9,7 +9,9 @@ import { lastAuthenticatedWorkspaceDomainState } from '@/domain-manager/states/l
 import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
 
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
+import { useGetPublicWorkspaceDataBySubdomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataBySubdomain';
 export const WorkspaceProviderEffect = () => {
+  const { loading } = useGetPublicWorkspaceDataBySubdomain();
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
   const lastAuthenticatedWorkspaceDomain = useRecoilValue(

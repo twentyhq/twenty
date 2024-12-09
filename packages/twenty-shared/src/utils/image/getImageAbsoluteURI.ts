@@ -2,12 +2,16 @@ export const getImageAbsoluteURI = (
   imageUrl: string | null | undefined,
   serverUrl: string | null | undefined,
 ): string | null => {
-  if (!imageUrl || !serverUrl) {
+  if (!imageUrl) {
     return null;
   }
 
   if (imageUrl.startsWith('https:') || imageUrl.startsWith('http:')) {
     return imageUrl;
+  }
+
+  if (!serverUrl) {
+    return null;
   }
 
   const baseUrl = new URL(serverUrl);
