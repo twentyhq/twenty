@@ -16,14 +16,16 @@ import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-sta
 
 type RecordTableRowWrapperProps = {
   recordId: string;
-  rowIndex: number;
+  rowIndexForFocus: number;
+  rowIndexForDrag: number;
   isPendingRow?: boolean;
   children: ReactNode;
 };
 
 export const RecordTableRowWrapper = ({
   recordId,
-  rowIndex,
+  rowIndexForFocus,
+  rowIndexForDrag,
   isPendingRow,
   children,
 }: RecordTableRowWrapperProps) => {
@@ -55,7 +57,7 @@ export const RecordTableRowWrapper = ({
   );
 
   useEffect(() => {
-    if (rowIndex === 0) {
+    if (rowIndexForFocus === 0) {
       const tdArray = Array.from(
         trRef.current?.getElementsByTagName('td') ?? [],
       );
@@ -66,7 +68,7 @@ export const RecordTableRowWrapper = ({
 
       setTableCellWidths(tdWidths);
     }
-  }, [trRef, rowIndex, setTableCellWidths]);
+  }, [trRef, rowIndexForFocus, setTableCellWidths]);
 
   // TODO: find a better way to emit this event
   useEffect(() => {
@@ -76,7 +78,7 @@ export const RecordTableRowWrapper = ({
   }, [inView, onIndexRecordsLoaded]);
 
   return (
-    <Draggable key={recordId} draggableId={recordId} index={rowIndex}>
+    <Draggable key={recordId} draggableId={recordId} index={rowIndexForDrag}>
       {(draggableProvided, draggableSnapshot) => (
         <RecordTableTr
           ref={(node) => {
@@ -103,7 +105,7 @@ export const RecordTableRowWrapper = ({
           <RecordTableRowContext.Provider
             value={{
               recordId,
-              rowIndex,
+              rowIndex: rowIndexForFocus,
               pathToShowPage:
                 getBasePathToShowPage({
                   objectNameSingular: objectMetadataItem.nameSingular,

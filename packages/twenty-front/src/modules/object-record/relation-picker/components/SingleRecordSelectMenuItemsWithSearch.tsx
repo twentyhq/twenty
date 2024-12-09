@@ -59,26 +59,8 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
     />
   );
 
-  const results = (
-    <SingleRecordSelectMenuItems
-      recordsToSelect={records.recordsToSelect}
-      loading={records.loading}
-      selectedRecord={
-        records.recordsToSelect.length === 1
-          ? records.recordsToSelect[0]
-          : undefined
-      }
-      shouldSelectEmptyOption={selectedRecordIds?.length === 0}
-      hotkeyScope={recordPickerInstanceId}
-      isFiltered={!!recordPickerSearchFilter}
-      {...{
-        EmptyIcon,
-        emptyLabel,
-        onCancel,
-        onRecordSelected,
-      }}
-    />
-  );
+  const shouldDisplayDropdownMenuItems =
+    records.recordsToSelect.length + records.selectedRecords?.length > 0;
 
   return (
     <>
@@ -88,7 +70,22 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
             {createNewButton}
           </DropdownMenuItemsContainer>
           {records.recordsToSelect.length > 0 && <DropdownMenuSeparator />}
-          {records.recordsToSelect.length > 0 && results}
+          {shouldDisplayDropdownMenuItems && (
+            <SingleRecordSelectMenuItems
+              recordsToSelect={records.recordsToSelect}
+              loading={records.loading}
+              selectedRecord={records.selectedRecords?.[0]}
+              shouldSelectEmptyOption={selectedRecordIds?.length === 0}
+              hotkeyScope={recordPickerInstanceId}
+              isFiltered={!!recordPickerSearchFilter}
+              {...{
+                EmptyIcon,
+                emptyLabel,
+                onCancel,
+                onRecordSelected,
+              }}
+            />
+          )}
           <DropdownMenuSeparator />
         </>
       )}
@@ -97,7 +94,22 @@ export const SingleRecordSelectMenuItemsWithSearch = ({
         isUndefinedOrNull(dropdownPlacement)) && (
         <>
           <DropdownMenuSeparator />
-          {records.recordsToSelect.length > 0 && results}
+          {shouldDisplayDropdownMenuItems && (
+            <SingleRecordSelectMenuItems
+              recordsToSelect={records.recordsToSelect}
+              loading={records.loading}
+              selectedRecord={records.selectedRecords?.[0]}
+              shouldSelectEmptyOption={selectedRecordIds?.length === 0}
+              hotkeyScope={recordPickerInstanceId}
+              isFiltered={!!recordPickerSearchFilter}
+              {...{
+                EmptyIcon,
+                emptyLabel,
+                onCancel,
+                onRecordSelected,
+              }}
+            />
+          )}
           {records.recordsToSelect.length > 0 && isDefined(onCreate) && (
             <DropdownMenuSeparator />
           )}

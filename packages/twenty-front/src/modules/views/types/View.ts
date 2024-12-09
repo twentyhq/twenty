@@ -19,6 +19,9 @@ export type View = {
   viewFilters: ViewFilter[];
   viewFilterGroups?: ViewFilterGroup[];
   viewSorts: ViewSort[];
+  /**
+   * @deprecated Use `viewGroups.fieldMetadataId` instead.
+   */
   kanbanFieldMetadataId: string;
   kanbanAggregateOperation: AGGREGATE_OPERATIONS | null;
   kanbanAggregateOperationFieldMetadataId: string | null;

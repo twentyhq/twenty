@@ -135,7 +135,7 @@ export class UserService extends TypeOrmQueryService<User> {
     return user;
   }
 
-  async saveDefaultWorkspace(userId: string, workspaceId: string) {
+  async hasUserAccessToWorkspaceOrThrow(userId: string, workspaceId: string) {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
@@ -146,13 +146,20 @@ export class UserService extends TypeOrmQueryService<User> {
       relations: ['workspaces'],
     });
 
-    userValidator.assertIsExist(
+    userValidator.assertIsDefinedOrThrow(
       user,
       new AuthException(
         'User does not have access to this workspace',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       ),
     );
+  }
+
+  async saveDefaultWorkspaceIfUserHasAccessOrThrow(
+    userId: string,
+    workspaceId: string,
+  ) {
+    await this.hasUserAccessToWorkspaceOrThrow(userId, workspaceId);
 
     return await this.userRepository.save({
       id: userId,

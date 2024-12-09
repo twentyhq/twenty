@@ -13,7 +13,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTableHeaderPlusButtonContent = () => {
@@ -42,20 +41,18 @@ export const RecordTableHeaderPlusButtonContent = () => {
 
   return (
     <>
-      <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-        <DropdownMenuItemsContainer>
-          {hiddenTableColumns.map((column) => (
-            <MenuItem
-              key={column.fieldMetadataId}
-              onClick={() => handleAddColumn(column)}
-              LeftIcon={getIcon(column.iconName)}
-              text={column.label}
-            />
-          ))}
-        </DropdownMenuItemsContainer>
-      </ScrollWrapper>
-      <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
+        {hiddenTableColumns.map((column) => (
+          <MenuItem
+            key={column.fieldMetadataId}
+            onClick={() => handleAddColumn(column)}
+            LeftIcon={getIcon(column.iconName)}
+            text={column.label}
+          />
+        ))}
+      </DropdownMenuItemsContainer>
+      <DropdownMenuSeparator />
+      <DropdownMenuItemsContainer withoutScrollWrapper>
         <UndecoratedLink
           fullWidth
           to={`/settings/objects/${getObjectSlug(objectMetadataItem)}`}

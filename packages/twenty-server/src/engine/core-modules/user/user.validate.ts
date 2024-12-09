@@ -1,34 +1,24 @@
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { CustomException } from 'src/utils/custom-exception';
+import { isDefined } from 'src/utils/is-defined';
 
-const assertIsExist = (
+const assertIsDefinedOrThrow = (
   user: User | undefined | null,
   exceptionToThrow: CustomException,
 ): asserts user is User => {
-  if (!user) {
+  if (!isDefined(user)) {
     throw exceptionToThrow;
   }
 };
 
-const isExist = (user: User | undefined | null): user is User => {
-  return !!user;
-};
-
-const assertHasDefaultWorkspace = (
-  user: User,
-  exceptionToThrow?: CustomException,
-): asserts user is User & { defaultWorkspaceId: string } => {
-  if (!user.defaultWorkspaceId) {
-    throw exceptionToThrow;
-  }
+const isUserDefined = (user: User | undefined | null): user is User => {
+  return isDefined(user);
 };
 
 export const userValidator: {
-  assertIsExist: typeof assertIsExist;
-  assertHasDefaultWorkspace: typeof assertHasDefaultWorkspace;
-  isExist: typeof isExist;
+  assertIsDefinedOrThrow: typeof assertIsDefinedOrThrow;
+  isDefined: typeof isUserDefined;
 } = {
-  assertIsExist,
-  assertHasDefaultWorkspace,
-  isExist,
+  assertIsDefinedOrThrow,
+  isDefined: isUserDefined,
 };

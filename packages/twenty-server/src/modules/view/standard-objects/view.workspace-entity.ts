@@ -87,6 +87,9 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'kanbanfieldMetadataId',
     description: 'View Kanban column field',
   })
+  /**
+   * @deprecated Use `viewGroups.fieldMetadataId` instead
+   */
   kanbanFieldMetadataId: string;
 
   @WorkspaceField({

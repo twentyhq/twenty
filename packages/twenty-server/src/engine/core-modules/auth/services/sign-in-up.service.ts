@@ -18,24 +18,21 @@ import {
   hashPassword,
   PASSWORD_REGEX,
 } from 'src/engine/core-modules/auth/auth.util';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
-import { getImageBufferFromUrl } from 'src/utils/image';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import {
-  EnvironmentException,
-  EnvironmentExceptionCode,
-} from 'src/engine/core-modules/environment/environment.exception';
+import { getImageBufferFromUrl } from 'src/utils/image';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -47,7 +44,7 @@ export type SignInUpServiceInput = {
   picture?: string | null;
   fromSSO: boolean;
   targetWorkspaceSubdomain?: string;
-  isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
+  authProvider?: WorkspaceAuthProvider;
 };
 
 @Injectable()
@@ -77,7 +74,7 @@ export class SignInUpService {
     picture,
     fromSSO,
     targetWorkspaceSubdomain,
-    isAuthEnabled,
+    authProvider,
   }: SignInUpServiceInput) {
     if (!firstName) firstName = '';
     if (!lastName) lastName = '';
@@ -158,7 +155,7 @@ export class SignInUpService {
           lastName,
           picture,
           existingUser,
-          isAuthEnabled,
+          authProvider,
         });
 
         await this.workspaceInvitationService.invalidateWorkspaceInvitation(
@@ -191,7 +188,7 @@ export class SignInUpService {
     lastName,
     picture,
     existingUser,
-    isAuthEnabled,
+    authProvider,
   }: {
     email: string;
     passwordHash: string | undefined;
@@ -200,7 +197,7 @@ export class SignInUpService {
     lastName: string;
     picture: SignInUpServiceInput['picture'];
     existingUser: User | null;
-    isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
+    authProvider?: WorkspaceAuthProvider;
   }) {
     const isNewUser = !isDefined(existingUser);
     let user = existingUser;
@@ -221,8 +218,16 @@ export class SignInUpService {
       ),
     );
 
-    if (isAuthEnabled)
-      workspaceValidator.validateAuth(isAuthEnabled, workspace);
+    if (authProvider) {
+      workspaceValidator.isAuthEnabledOrThrow(
+        authProvider,
+        workspace,
+        new AuthException(
+          `${authProvider} auth is not enabled for this workspace`,
+          AuthExceptionCode.OAUTH_ACCESS_DENIED,
+        ),
+      );
+    }
 
     if (isNewUser) {
       const imagePath = await this.uploadPicture(picture, workspace.id);
@@ -240,7 +245,7 @@ export class SignInUpService {
       user = await this.userRepository.save(userToCreate);
     }
 
-    userValidator.assertIsExist(
+    userValidator.assertIsDefinedOrThrow(
       user,
       new AuthException(
         'User not found',
@@ -299,9 +304,9 @@ export class SignInUpService {
 
       // let the creation of the first workspace
       if (workspacesCount > 0) {
-        throw new EnvironmentException(
+        throw new AuthException(
           'New workspace setup is disabled',
-          EnvironmentExceptionCode.ENVIRONMENT_VARIABLES_NOT_FOUND,
+          AuthExceptionCode.SIGNUP_DISABLED,
         );
       }
     }

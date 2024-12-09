@@ -45,9 +45,9 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -161,7 +161,7 @@ export class AuthService {
     lastName,
     picture,
     fromSSO,
-    isAuthEnabled,
+    authProvider,
   }: {
     email: string;
     password?: string;
@@ -172,7 +172,7 @@ export class AuthService {
     picture?: string | null;
     fromSSO: boolean;
     targetWorkspaceSubdomain?: string;
-    isAuthEnabled?: ReturnType<(typeof workspaceValidator)['isAuthEnabled']>;
+    authProvider?: WorkspaceAuthProvider;
   }) {
     return await this.signInUpService.signInUp({
       email,
@@ -184,7 +184,7 @@ export class AuthService {
       targetWorkspaceSubdomain,
       picture,
       fromSSO,
-      isAuthEnabled,
+      authProvider,
     });
   }
 
@@ -201,7 +201,7 @@ export class AuthService {
       where: { email },
     });
 
-    userValidator.assertIsExist(
+    userValidator.assertIsDefinedOrThrow(
       userWithIdAndDefaultWorkspaceId,
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
@@ -210,7 +210,7 @@ export class AuthService {
       workspaceId &&
       userWithIdAndDefaultWorkspaceId.defaultWorkspaceId !== workspaceId
     ) {
-      await this.userService.saveDefaultWorkspace(
+      await this.userService.saveDefaultWorkspaceIfUserHasAccessOrThrow(
         userWithIdAndDefaultWorkspaceId.id,
         workspaceId,
       );
@@ -223,7 +223,7 @@ export class AuthService {
       relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
     });
 
-    userValidator.assertIsExist(
+    userValidator.assertIsDefinedOrThrow(
       user,
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
@@ -254,7 +254,7 @@ export class AuthService {
       email,
     });
 
-    if (userValidator.isExist(user)) {
+    if (userValidator.isDefined(user)) {
       return {
         exists: true,
         availableWorkspaces: await this.findAvailableWorkspacesByEmail(email),
@@ -460,7 +460,7 @@ export class AuthService {
       ],
     });
 
-    userValidator.assertIsExist(
+    userValidator.assertIsDefinedOrThrow(
       user,
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );

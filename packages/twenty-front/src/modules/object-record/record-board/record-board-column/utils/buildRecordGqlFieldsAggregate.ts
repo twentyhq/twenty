@@ -1,4 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
 import { KanbanAggregateOperation } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { isDefined } from '~/utils/isDefined';
@@ -11,7 +12,7 @@ export const buildRecordGqlFieldsAggregate = ({
   objectMetadataItem: ObjectMetadataItem;
   recordIndexKanbanAggregateOperation: KanbanAggregateOperation;
   kanbanFieldName: string;
-}) => {
+}): RecordGqlFieldsAggregate => {
   let recordGqlFieldsAggregate = {};
 
   const kanbanAggregateOperationFieldName = objectMetadataItem.fields?.find(
@@ -30,14 +31,15 @@ export const buildRecordGqlFieldsAggregate = ({
       );
     } else {
       recordGqlFieldsAggregate = {
-        [kanbanFieldName]: AGGREGATE_OPERATIONS.count,
+        [kanbanFieldName]: [AGGREGATE_OPERATIONS.count],
       };
     }
   } else {
     recordGqlFieldsAggregate = {
-      [kanbanAggregateOperationFieldName]:
+      [kanbanAggregateOperationFieldName]: [
         recordIndexKanbanAggregateOperation?.operation ??
-        AGGREGATE_OPERATIONS.count,
+          AGGREGATE_OPERATIONS.count,
+      ],
     };
   }
 

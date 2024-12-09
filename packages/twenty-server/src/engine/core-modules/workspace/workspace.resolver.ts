@@ -40,6 +40,7 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/getAuthProvidersByWorkspace';
+import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspaceGraphqlApiExceptionHandler';
 
 import { Workspace } from './workspace.entity';
 
@@ -91,7 +92,14 @@ export class WorkspaceResolver {
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: Workspace,
   ) {
-    return this.workspaceService.updateOne(workspace.id, data);
+    try {
+      return this.workspaceService.updateWorkspaceById({
+        ...data,
+        id: workspace.id,
+      });
+    } catch (error) {
+      workspaceGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Mutation(() => String)
@@ -133,7 +141,11 @@ export class WorkspaceResolver {
   @ResolveField(() => BillingSubscription, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: Workspace,
-  ): Promise<BillingSubscription | null> {
+  ): Promise<BillingSubscription | undefined> {
+    if (!this.environmentService.get('IS_BILLING_ENABLED')) {
+      return;
+    }
+
     return this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
       { workspaceId: workspace.id },
     );

@@ -77,7 +77,10 @@ export class UserResolver {
       this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
       workspaceId
     ) {
-      await this.userService.saveDefaultWorkspace(userId, workspaceId);
+      await this.userService.saveDefaultWorkspaceIfUserHasAccessOrThrow(
+        userId,
+        workspaceId,
+      );
     }
 
     const user = await this.userRepository.findOne({
@@ -87,7 +90,7 @@ export class UserResolver {
       relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
     });
 
-    userValidator.assertIsExist(
+    userValidator.assertIsDefinedOrThrow(
       user,
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );

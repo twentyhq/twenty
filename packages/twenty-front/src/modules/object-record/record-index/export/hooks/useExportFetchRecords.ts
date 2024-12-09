@@ -13,7 +13,7 @@ import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRec
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
-import { useFindManyParams } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
+import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
@@ -94,29 +94,24 @@ export const useExportFetchRecords = ({
     objectMetadataItem,
   );
 
-  const findManyRecordsParams = useFindManyParams(
+  const findManyRecordsParams = useFindManyRecordIndexTableParams(
     objectMetadataItem.nameSingular,
     recordIndexId,
   );
 
-  const {
-    findManyRecords,
-    totalCount,
-    records,
-    fetchMoreRecordsWithPagination,
-    loading,
-  } = useLazyFindManyRecords({
-    ...findManyRecordsParams,
-    filter: queryFilter,
-    limit: pageSize,
-  });
+  const { findManyRecords, totalCount, records, fetchMoreRecords, loading } =
+    useLazyFindManyRecords({
+      ...findManyRecordsParams,
+      filter: queryFilter,
+      limit: pageSize,
+    });
 
   useEffect(() => {
     const fetchNextPage = async () => {
       setInflight(true);
       setPreviousRecordCount(records.length);
 
-      await fetchMoreRecordsWithPagination();
+      await fetchMoreRecords();
 
       setPageCount((state) => state + 1);
       setProgress({
@@ -166,7 +161,7 @@ export const useExportFetchRecords = ({
     }
   }, [
     delayMs,
-    fetchMoreRecordsWithPagination,
+    fetchMoreRecords,
     inflight,
     isDownloading,
     pageCount,
