@@ -287,7 +287,7 @@ export const ShortcutCatalog: CatalogStory<Story, typeof Button> = {
           props: (size: ButtonSize) => ({ size }),
         },
         {
-          name: 'colors',
+          name: 'accents',
           values: ['default', 'blue', 'danger'] satisfies ButtonAccent[],
           props: (accent: ButtonAccent) => ({ accent }),
         },
