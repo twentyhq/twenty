@@ -143,6 +143,9 @@ export class Workspace {
   @Column({ default: '' })
   databaseSchema: string;
 
+  @Column({ default: '' })
+  testColumnForCICheck: string;
+
   @Field()
   @Column()
   subdomain: string;
