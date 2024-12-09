@@ -11,6 +11,7 @@ import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVaria
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { OrderBy } from '@/types/OrderBy';
 import { useMapRelationViewFilterValueSpecialIdsToRecordIds } from '@/views/view-filter-value/hooks/useResolveRelationViewFilterValue';
+import { IconUserCircle } from 'twenty-ui';
 
 export const useRecordsForSelect = ({
   searchFilterText,
@@ -118,6 +119,7 @@ export const useRecordsForSelect = ({
             id: 'CURRENT_WORKSPACE_MEMBER',
             name: 'Me',
             isSelected: false,
+            AvatarIcon: IconUserCircle,
           },
         ]
       : [];
