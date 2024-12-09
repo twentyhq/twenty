@@ -58,7 +58,7 @@ export const Logo = (props: LogoProps) => {
 
   return (
     <StyledContainer>
-      <StyledPrimaryLogo src={primaryLogoUrl} />
+      <StyledPrimaryLogo src={primaryLogoUrl ?? ''} />
       {secondaryLogoUrl && (
         <StyledSecondaryLogoContainer>
           <StyledSecondaryLogo src={secondaryLogoUrl} />

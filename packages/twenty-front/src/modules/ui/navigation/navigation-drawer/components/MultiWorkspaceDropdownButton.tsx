@@ -20,7 +20,6 @@ import {
   UndecoratedLink,
 } from 'twenty-ui';
 import { getImageAbsoluteURI } from 'twenty-shared';
-import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledLogo = styled.div<{ logo: string }>`

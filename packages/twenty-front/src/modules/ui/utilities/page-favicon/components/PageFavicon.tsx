@@ -7,18 +7,14 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 export const PageFavicon = () => {
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
+  const link = getImageAbsoluteURI(
+    workspacePublicData?.logo,
+    REACT_APP_SERVER_BASE_URL,
+  );
+
   return (
     <Helmet>
-      {workspacePublicData?.logo && (
-        <link
-          rel="icon"
-          type="image/x-icon"
-          href={getImageAbsoluteURI(
-            workspacePublicData.logo,
-            REACT_APP_SERVER_BASE_URL,
-          )}
-        />
-      )}
+      {link && <link rel="icon" type="image/x-icon" href={link} />}
     </Helmet>
   );
 };
