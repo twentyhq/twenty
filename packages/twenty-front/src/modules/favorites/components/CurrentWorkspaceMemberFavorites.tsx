@@ -1,3 +1,4 @@
+import { AnimatedFolderIcon } from '@/favorites/components/AnimatedFolderIcon';
 import { FavoriteFolderNavigationDrawerItemDropdown } from '@/favorites/components/FavoriteFolderNavigationDrawerItemDropdown';
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
@@ -16,16 +17,12 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
-import {
-  IconFolder,
-  IconFolderOpen,
-  IconHeartOff,
-  LightIconButton,
-} from 'twenty-ui';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { IconFolder, IconHeartOff, LightIconButton } from 'twenty-ui';
 
 type CurrentWorkspaceMemberFavoritesProps = {
   folder: {
@@ -57,6 +54,9 @@ export const CurrentWorkspaceMemberFavorites = ({
   const handleToggle = () => {
     setActiveFavoriteFolderId(isOpen ? null : folder.folderId);
   };
+  const isNavigationDrawerExpanded = useRecoilValue(
+    isNavigationDrawerExpandedState,
+  );
 
   const { renameFavoriteFolder } = useRenameFavoriteFolder();
   const { deleteFavoriteFolder } = useDeleteFavoriteFolder();
@@ -142,7 +142,9 @@ export const CurrentWorkspaceMemberFavorites = ({
           <NavigationDrawerItem
             key={folder.folderId}
             label={folder.folderName}
-            Icon={isOpen ? IconFolderOpen : IconFolder}
+            Icon={() => (
+              <AnimatedFolderIcon isOpen={isOpen} id={folder.folderId} />
+            )}
             onClick={handleToggle}
             rightOptions={rightOptions}
             className="navigation-drawer-item"
@@ -155,6 +157,18 @@ export const CurrentWorkspaceMemberFavorites = ({
             onDragEnd={handleReorderFavorite}
             draggableItems={
               <>
+                {folder.favorites.length === 0 &&
+                  isNavigationDrawerExpanded && (
+                    <NavigationDrawerSubItem
+                      isEmptySubItem
+                      label="Empty"
+                      subItemState={getNavigationSubItemLeftAdornment({
+                        index: 0,
+                        arrayLength: 1,
+                        selectedIndex: 0,
+                      })}
+                    />
+                  )}
                 {folder.favorites.map((favorite, index) => (
                   <DraggableItem
                     key={favorite.id}
