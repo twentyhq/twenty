@@ -10,18 +10,20 @@ import { getObjectFilterFields } from '@/object-record/select/utils/getObjectFil
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { OrderBy } from '@/types/OrderBy';
+import { useMapRelationViewFilterValueSpecialIdsToRecordIds } from '@/views/view-filter-value/hooks/useResolveRelationViewFilterValue';
+import { IconUserCircle } from 'twenty-ui';
 
 export const useRecordsForSelect = ({
   searchFilterText,
   sortOrder = 'AscNullsLast',
-  selectedIds,
+  selectedRecordIdsAndSpecialIds,
   limit,
   excludedRecordIds = [],
   objectNameSingular,
 }: {
   searchFilterText: string;
   sortOrder?: OrderBy;
-  selectedIds: string[];
+  selectedRecordIdsAndSpecialIds: string[];
   limit?: number;
   excludedRecordIds?: string[];
   objectNameSingular: string;
@@ -41,15 +43,22 @@ export const useRecordsForSelect = ({
     objectNameSingular,
   });
 
+  const { mapRelationViewFilterValueSpecialIdsToRecordIds } =
+    useMapRelationViewFilterValueSpecialIdsToRecordIds();
+
+  const selectedRecordIds = mapRelationViewFilterValueSpecialIdsToRecordIds(
+    selectedRecordIdsAndSpecialIds,
+  );
+
   const orderByField = getObjectOrderByField(sortOrder);
-  const selectedIdsFilter = { id: { in: selectedIds } };
+  const selectedIdsFilter = { id: { in: selectedRecordIds } };
 
   const { loading: selectedRecordsLoading, records: selectedRecordsData } =
     useFindManyRecords({
       filter: selectedIdsFilter,
       orderBy: orderByField,
       objectNameSingular,
-      skip: !selectedIds.length,
+      skip: !selectedRecordIds.length,
     });
 
   const searchFilters = filters.map(({ fieldNames, filter }) => {
@@ -88,10 +97,10 @@ export const useRecordsForSelect = ({
     filter: makeAndFilterVariables([...searchFilters, selectedIdsFilter]),
     orderBy: orderByField,
     objectNameSingular,
-    skip: !selectedIds.length,
+    skip: !selectedRecordIds.length,
   });
 
-  const notFilterIds = [...selectedIds, ...excludedRecordIds];
+  const notFilterIds = [...selectedRecordIds, ...excludedRecordIds];
   const notFilter = notFilterIds.length
     ? { not: { id: { in: notFilterIds } } }
     : undefined;
@@ -102,6 +111,18 @@ export const useRecordsForSelect = ({
       orderBy: orderByField,
       objectNameSingular,
     });
+
+  const specialSelectableItems: SelectableItem[] =
+    objectNameSingular === 'workspaceMember'
+      ? [
+          {
+            id: 'CURRENT_WORKSPACE_MEMBER',
+            name: 'Me',
+            isSelected: false,
+            AvatarIcon: IconUserCircle,
+          },
+        ]
+      : [];
 
   return {
     selectedRecords: selectedRecordsData
@@ -116,12 +137,15 @@ export const useRecordsForSelect = ({
         ...record,
         isSelected: true,
       })) as SelectableItem[],
-    recordsToSelect: recordsToSelectData
-      .map(mapToObjectRecordIdentifier)
-      .map((record) => ({
-        ...record,
-        isSelected: false,
-      })) as SelectableItem[],
+    recordsToSelect: [
+      ...specialSelectableItems,
+      ...(recordsToSelectData
+        .map(mapToObjectRecordIdentifier)
+        .map((record) => ({
+          ...record,
+          isSelected: false,
+        })) as SelectableItem[]),
+    ],
     loading:
       recordsToSelectLoading ||
       filteredSelectedRecordsLoading ||
