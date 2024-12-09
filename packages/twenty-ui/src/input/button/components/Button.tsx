@@ -359,13 +359,18 @@ const StyledSoonPill = styled(Pill)`
   margin-left: auto;
 `;
 
-const StyledShortcutLabel = styled.div`
-  color: ${({ theme }) => theme.font.color.light};
+const StyledShortcutLabel = styled.div<{ accent: ButtonAccent }>`
+  color: ${({ theme, accent }) =>
+    accent === 'blue' ? theme.font.color.blue : theme.font.color.light};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-const StyledSeparator = styled.div<{ buttonSize: ButtonSize }>`
-  background: ${({ theme }) => theme.border.color.light};
+const StyledSeparator = styled.div<{
+  buttonSize: ButtonSize;
+  accent: ButtonAccent;
+}>`
+  background: ${({ theme, accent }) =>
+    accent === 'blue' ? theme.border.color.blue : theme.border.color.light};
   height: ${({ theme, buttonSize }) =>
     theme.spacing(buttonSize === 'small' ? 3 : 4)};
   margin: 0 ${({ theme }) => theme.spacing(1)};
@@ -416,8 +421,8 @@ export const Button = ({
       {title}
       {shortcut && (
         <>
-          <StyledSeparator buttonSize={size} />
-          <StyledShortcutLabel>{shortcut}</StyledShortcutLabel>
+          <StyledSeparator buttonSize={size} accent={accent} />
+          <StyledShortcutLabel accent={accent}>{shortcut}</StyledShortcutLabel>
         </>
       )}
       {soon && <StyledSoonPill label="Soon" />}
