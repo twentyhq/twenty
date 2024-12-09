@@ -390,10 +390,14 @@ export const WorkflowEditActionFormServerlessFunction = ({
         <RightDrawerFooter
           actions={[
             <RecordShowRightDrawerActionMenu />,
-            <RightDrawerActionRunButton
-              title="Test"
-              onClick={testServerlessFunction}
-            />,
+            ...(activeTabId === 'test'
+              ? [
+                  <RightDrawerActionRunButton
+                    title="Test"
+                    onClick={testServerlessFunction}
+                  />,
+                ]
+              : []),
           ]}
         />
       </>
