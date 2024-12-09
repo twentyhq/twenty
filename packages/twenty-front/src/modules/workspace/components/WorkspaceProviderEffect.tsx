@@ -1,6 +1,5 @@
 import { useRecoilValue } from 'recoil';
 
-import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { useEffect } from 'react';
 import { isDefined } from '~/utils/isDefined';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -11,8 +10,8 @@ import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/h
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { useGetPublicWorkspaceDataBySubdomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataBySubdomain';
 export const WorkspaceProviderEffect = () => {
-  const { loading } = useGetPublicWorkspaceDataBySubdomain();
-  const workspacePublicData = useRecoilValue(workspacePublicDataState);
+  const { data: getPublicWorkspaceData } =
+    useGetPublicWorkspaceDataBySubdomain();
 
   const lastAuthenticatedWorkspaceDomain = useRecoilValue(
     lastAuthenticatedWorkspaceDomainState,
@@ -28,16 +27,16 @@ export const WorkspaceProviderEffect = () => {
   useEffect(() => {
     if (
       isMultiWorkspaceEnabled &&
-      isDefined(workspacePublicData?.subdomain) &&
-      workspacePublicData.subdomain !== workspaceSubdomain
+      isDefined(getPublicWorkspaceData?.subdomain) &&
+      getPublicWorkspaceData.subdomain !== workspaceSubdomain
     ) {
-      redirectToWorkspaceDomain(workspacePublicData.subdomain);
+      redirectToWorkspaceDomain(getPublicWorkspaceData.subdomain);
     }
   }, [
     workspaceSubdomain,
     isMultiWorkspaceEnabled,
     redirectToWorkspaceDomain,
-    workspacePublicData,
+    getPublicWorkspaceData,
   ]);
 
   useEffect(() => {
