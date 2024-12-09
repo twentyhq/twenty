@@ -12,7 +12,7 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-const StyledLabel = styled.label`
+const StyledLabel = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -25,7 +25,7 @@ const StyledIconContainer = styled.div`
   left: ${({ theme }) => theme.spacing(-3)};
 `;
 
-const StyledToggleContainer = styled.div`
+const StyledToggleContainer = styled.label`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -59,8 +59,8 @@ export const AdvancedSettingsToggle = ({
           fill={MAIN_COLORS.yellow}
         />
       </StyledIconContainer>
-      <StyledToggleContainer>
-        <StyledLabel htmlFor={inputId}>Advanced:</StyledLabel>
+      <StyledToggleContainer htmlFor={inputId}>
+        <StyledLabel>Advanced:</StyledLabel>
 
         <Toggle
           id={inputId}
