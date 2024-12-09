@@ -143,7 +143,7 @@ const StyledButton = styled('button', {
                       : theme.background.transparent.medium
                   }`
                 : 'none'};
-              color: ${!inverted ? theme.border.color.danger : theme.color.red};
+              color: ${!inverted ? theme.background.primary : theme.color.red};
               opacity: ${disabled ? 0.24 : 1};
               ${disabled
                 ? ''
@@ -359,33 +359,37 @@ const StyledSoonPill = styled(Pill)`
   margin-left: auto;
 `;
 
-const StyledSeparator = styled.div<{ buttonSize: ButtonSize; accent: ButtonAccent }>`
+const StyledSeparator = styled.div<{
+  buttonSize: ButtonSize;
+  accent: ButtonAccent;
+}>`
   background: ${({ theme, accent }) => {
     switch (accent) {
       case 'blue':
-        // Might need to be lighter, cannot find the color
-        return theme.accent.primary;
+        return theme.color.blue30;
       case 'danger':
         return theme.border.color.danger;
       default:
-        return theme.border.color.light;
+        return theme.font.color.light;
     }
   }};
   height: ${({ theme, buttonSize }) =>
     theme.spacing(buttonSize === 'small' ? 2 : 4)};
-  margin: 0 ${({ theme }) => theme.spacing(0.25)};
+  margin: 0;
   width: 1px;
 `;
 
-const StyledShortcutLabel = styled.div<{ variant: ButtonVariant; accent: ButtonAccent }>`
+const StyledShortcutLabel = styled.div<{
+  variant: ButtonVariant;
+  accent: ButtonAccent;
+}>`
   color: ${({ theme, variant, accent }) => {
     switch (accent) {
       case 'blue':
-        // Currently matches the provided button border color for secondary/blue, but hard to see
-        return theme.accent.primary;
+        return theme.color.blue30;
       case 'danger':
-        return variant === 'primary' 
-          ? theme.border.color.danger 
+        return variant === 'primary'
+          ? theme.border.color.danger
           : theme.color.red40;
       default:
         return theme.font.color.light;
@@ -393,7 +397,6 @@ const StyledShortcutLabel = styled.div<{ variant: ButtonVariant; accent: ButtonA
   }};
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
-
 
 export const Button = ({
   className,

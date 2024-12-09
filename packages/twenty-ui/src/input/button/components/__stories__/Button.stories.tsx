@@ -11,7 +11,6 @@ import {
   ButtonPosition,
   ButtonSize,
   ButtonVariant,
-  ButtonProps
 } from '../Button';
 
 const meta: Meta<typeof Button> = {
@@ -45,7 +44,7 @@ export const Default: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof Button> = {
-  args: { title: 'Filter', Icon: IconSearch, shortcut: ''},
+  args: { title: 'Filter', Icon: IconSearch, shortcut: '' },
   argTypes: {
     size: { control: false },
     variant: { control: false },
@@ -294,7 +293,11 @@ export const ShortcutCatalog: CatalogStory<Story, typeof Button> = {
         },
         {
           name: 'variants',
-          values: ['primary', 'secondary', 'tertiary'] satisfies ButtonVariant[],
+          values: [
+            'primary',
+            'secondary',
+            'tertiary',
+          ] satisfies ButtonVariant[],
           props: (variant: ButtonVariant) => ({ variant }),
         },
       ],
