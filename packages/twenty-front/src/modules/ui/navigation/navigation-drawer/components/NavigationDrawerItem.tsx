@@ -89,8 +89,11 @@ const StyledItem = styled('button', {
     !props.isNavigationDrawerExpanded
       ? `${NAV_DRAWER_WIDTHS.menu.desktop.collapsed - 24}px`
       : '100%'};
-  cursor: ${({ isDragging }) => (isDragging ? 'grabbing' : 'pointer')};
-
+  ${({ isDragging }) =>
+    isDragging &&
+    ` 
+          cursor: grabbing;
+        `}
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
     color: ${(props) =>
