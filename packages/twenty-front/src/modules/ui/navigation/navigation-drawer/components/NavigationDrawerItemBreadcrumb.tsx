@@ -3,14 +3,18 @@ import styled from '@emotion/styled';
 
 export type NavigationDrawerItemBreadcrumbProps = {
   state?: NavigationDrawerSubItemState;
+  isDragging?: boolean;
 };
 
-const StyledNavigationDrawerItemBreadcrumbContainer = styled.div`
+const StyledNavigationDrawerItemBreadcrumbContainer = styled.div<{
+  isDragging?: boolean;
+}>`
   height: 28px;
 
   margin-left: 7.5px;
   margin-right: ${({ theme }) => theme.spacing(2)};
   width: 9px;
+  visibility: ${({ isDragging }) => (isDragging ? 'hidden' : 'visible')};
 `;
 
 const StyledGapVerticalLine = styled.div<{ darker: boolean }>`
@@ -54,6 +58,7 @@ const StyledRoundedProtrusion = styled.div<{ darker: boolean }>`
 
 export const NavigationDrawerItemBreadcrumb = ({
   state,
+  isDragging,
 }: NavigationDrawerItemBreadcrumbProps) => {
   const showVerticalBar =
     state !== 'last-not-selected' && state !== 'last-selected';
@@ -69,7 +74,7 @@ export const NavigationDrawerItemBreadcrumb = ({
     state === 'last-selected';
 
   return (
-    <StyledNavigationDrawerItemBreadcrumbContainer>
+    <StyledNavigationDrawerItemBreadcrumbContainer isDragging={isDragging}>
       <StyledGapVerticalLine darker={gapShouldBeDarker} />
       <StyledRoundedProtrusion darker={protrusionShouldBeDarker} />
       {showVerticalBar && (

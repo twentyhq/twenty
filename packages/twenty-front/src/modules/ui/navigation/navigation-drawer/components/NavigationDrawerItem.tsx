@@ -37,17 +37,17 @@ export type NavigationDrawerItemProps = {
   count?: number;
   keyboard?: string[];
   rightOptions?: ReactNode;
-  isDraggable?: boolean;
+  isDragging?: boolean;
 };
 
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
-  'active' | 'danger' | 'indentationLevel' | 'soon' | 'to' | 'isDraggable'
+  'active' | 'danger' | 'indentationLevel' | 'soon' | 'to' | 'isDragging'
 > & { isNavigationDrawerExpanded: boolean };
 
 const StyledItem = styled('button', {
   shouldForwardProp: (prop) =>
-    !['active', 'danger', 'soon', 'isDraggable'].includes(prop) &&
+    !['active', 'danger', 'soon', 'isDragging'].includes(prop) &&
     isPropValid(prop),
 })<StyledItemProps>`
   box-sizing: content-box;
@@ -89,15 +89,7 @@ const StyledItem = styled('button', {
     !props.isNavigationDrawerExpanded
       ? `${NAV_DRAWER_WIDTHS.menu.desktop.collapsed - 24}px`
       : '100%'};
-  ${({ isDraggable }) =>
-    isDraggable &&
-    `
-    cursor: grab;
-    
-    &:active {
-      cursor: grabbing;
-    }
-  `}
+  cursor: ${({ isDragging }) => (isDragging ? 'grabbing' : 'pointer')};
 
   :hover {
     background: ${({ theme }) => theme.background.transparent.light};
@@ -198,7 +190,7 @@ export const NavigationDrawerItem = ({
   keyboard,
   subItemState,
   rightOptions,
-  isDraggable,
+  isDragging,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -231,11 +223,14 @@ export const NavigationDrawerItem = ({
         to={to ? to : undefined}
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
-        isDraggable={isDraggable}
+        isDragging={isDragging}
       >
         {showBreadcrumb && (
           <NavigationDrawerAnimatedCollapseWrapper>
-            <NavigationDrawerItemBreadcrumb state={subItemState} />
+            <NavigationDrawerItemBreadcrumb
+              state={subItemState}
+              isDragging={isDragging}
+            />
           </NavigationDrawerAnimatedCollapseWrapper>
         )}
         <StyledItemElementsContainer>

@@ -16,6 +16,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
+import { DragStart, DropResult, ResponderProvided } from '@hello-pangea/dnd';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
@@ -42,6 +43,7 @@ export const CurrentWorkspaceMemberFavorites = ({
 }: CurrentWorkspaceMemberFavoritesProps) => {
   const currentPath = useLocation().pathname;
   const currentViewPath = useLocation().pathname + useLocation().search;
+  const [isDragging, setIsDragging] = useState(false);
 
   const [isFavoriteFolderRenaming, setIsFavoriteFolderRenaming] =
     useState(false);
@@ -113,6 +115,15 @@ export const CurrentWorkspaceMemberFavorites = ({
     setIsDeleteModalOpen(false);
   };
 
+  const handleDragStart = (_: DragStart) => {
+    setIsDragging(true);
+  };
+
+  const handleDragEnd = (result: DropResult, provided: ResponderProvided) => {
+    setIsDragging(false);
+    handleReorderFavorite(result, provided);
+  };
+
   const rightOptions = (
     <FavoriteFolderNavigationDrawerItemDropdown
       folderId={folder.folderId}
@@ -152,7 +163,8 @@ export const CurrentWorkspaceMemberFavorites = ({
 
         {isOpen && (
           <DraggableList
-            onDragEnd={handleReorderFavorite}
+            onDragEnd={handleDragEnd}
+            onDragStart={handleDragStart}
             draggableItems={
               <>
                 {folder.favorites.map((favorite, index) => (
@@ -180,7 +192,7 @@ export const CurrentWorkspaceMemberFavorites = ({
                             accent="tertiary"
                           />
                         }
-                        isDraggable
+                        isDragging={isDragging}
                       />
                     }
                   />
