@@ -8,12 +8,12 @@ export const PageHeaderOpenCommandMenuButton = () => {
   return (
     <Button
       Icon={IconDotsVertical}
-      dataTestId="more-showpage-button"
+      dataTestId="page-header-open-command-menu-button"
       size="small"
       variant="secondary"
       accent="default"
       shortcut="⌘K"
-      ariaLabel="More"
+      ariaLabel="Open command menu"
       onClick={openCommandMenu}
     />
   );

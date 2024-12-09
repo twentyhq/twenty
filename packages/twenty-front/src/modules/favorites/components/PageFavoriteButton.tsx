@@ -8,15 +8,18 @@ type PageFavoriteButtonProps = {
 export const PageFavoriteButton = ({
   isFavorite,
   onClick,
-}: PageFavoriteButtonProps) => (
-  <Button
-    Icon={IconHeart}
-    dataTestId="favorite-button"
-    size="small"
-    variant="secondary"
-    accent={isFavorite ? 'danger' : 'default'}
-    title={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-    onClick={onClick}
-    ariaLabel={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-  />
-);
+}: PageFavoriteButtonProps) => {
+  const title = isFavorite ? 'Remove from favorites' : 'Add to favorites';
+  return (
+    <Button
+      Icon={IconHeart}
+      dataTestId="favorite-button"
+      size="small"
+      variant="secondary"
+      accent={isFavorite ? 'danger' : 'default'}
+      title={title}
+      onClick={onClick}
+      ariaLabel={title}
+    />
+  );
+};
