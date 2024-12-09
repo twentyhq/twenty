@@ -75,6 +75,11 @@ jobs:
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+      - name: Server / Run migrations
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          npx nx typeorm -- migration:run -d src/database/typeorm/core/core.datasource.ts
+          npx nx typeorm -- migration:run -d src/database/typeorm/metadata/metadata.datasource.ts
       - name: Worker / Run
         if: steps.changed-files.outputs.any_changed == 'true'
         run: npx nx run twenty-server:worker:ci
