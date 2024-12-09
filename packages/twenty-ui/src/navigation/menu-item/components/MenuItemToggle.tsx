@@ -9,8 +9,9 @@ import {
 } from '../internals/components/StyledMenuItemBase';
 
 const StyledToggleContainer = styled.label`
-  display: flex;
   align-items: center;
+  cursor: pointer;
+  display: flex;
   justify-content: space-between;
   width: 100%;
 `;
