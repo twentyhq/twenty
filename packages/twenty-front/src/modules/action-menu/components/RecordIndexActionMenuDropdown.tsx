@@ -84,6 +84,7 @@ export const RecordIndexActionMenuDropdown = () => {
             ))}
           </DropdownMenuItemsContainer>
         }
+        avoidPortal
       />
     </StyledContainerActionMenuDropdown>
   );
