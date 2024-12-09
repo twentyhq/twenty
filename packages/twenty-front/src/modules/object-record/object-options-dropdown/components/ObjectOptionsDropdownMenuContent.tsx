@@ -27,6 +27,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
@@ -41,6 +42,8 @@ export const ObjectOptionsDropdownMenuContent = () => {
 
   const isViewGroupEnabled = useIsFeatureEnabled('IS_VIEW_GROUPS_ENABLED');
 
+  const {currentViewWithCombinedFiltersAndSorts} = useGetCurrentView();
+  console.log(currentViewWithCombinedFiltersAndSorts);
   const { objectNamePlural } = useObjectNamePluralFromSingular({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
@@ -85,7 +88,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
   return (
     <>
       <DropdownMenuHeader StartIcon={IconList}>
-        {objectMetadataItem.labelPlural}
+        {currentViewWithCombinedFiltersAndSorts?.name}
       </DropdownMenuHeader>
       {/** TODO: Should be removed when view settings contains more options */}
       {viewType === ViewType.Kanban && (
