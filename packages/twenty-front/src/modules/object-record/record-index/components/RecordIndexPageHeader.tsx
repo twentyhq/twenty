@@ -1,3 +1,4 @@
+import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { RecordIndexPageKanbanAddButton } from '@/object-record/record-index/components/RecordIndexPageKanbanAddButton';
@@ -53,6 +54,7 @@ export const RecordIndexPageHeader = () => {
         ) : (
           <RecordIndexPageKanbanAddButton />
         ))}
+      <RecordIndexActionMenu />
       <PageHeaderOpenCommandMenuButton />
     </PageHeader>
   );
