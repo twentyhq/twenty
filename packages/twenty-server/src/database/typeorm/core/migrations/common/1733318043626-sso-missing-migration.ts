@@ -26,9 +26,6 @@ export class SsoMissingMigration1733318043626 implements MigrationInterface {
       `ALTER TABLE "core"."workspaceSSOIdentityProvider" DROP CONSTRAINT "CHK_SAML"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."keyValuePair" ALTER COLUMN "textValueDeprecated" SET NOT NULL`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "core"."workspaceSSOIdentityProvider" ALTER COLUMN "name" SET NOT NULL`,
     );
     await queryRunner.query(
@@ -148,9 +145,6 @@ export class SsoMissingMigration1733318043626 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "core"."workspaceSSOIdentityProvider" ALTER COLUMN "name" DROP NOT NULL`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."keyValuePair" ALTER COLUMN "textValueDeprecated" DROP NOT NULL`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."workspaceSSOIdentityProvider" ADD CONSTRAINT "CHK_SAML" CHECK ((((type = 'SAML'::core.idp_type_enum) AND ("ssoURL" IS NOT NULL) AND (certificate IS NOT NULL)) OR (type = 'OIDC'::core.idp_type_enum)))`,
