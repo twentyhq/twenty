@@ -62,7 +62,7 @@ export const AvatarChip = ({
   size = ChipSize.Small,
 }: AvatarChipProps) => {
   const { theme } = useContext(ThemeContext);
-  const name_short = name.length > 10 ? name.substring(0,10).concat("..") : name;
+  const name_short = name.length > 10 ? name.substring(0,10).concat('...') : name;
   const chip = (
     <Chip
       label={name_short}
