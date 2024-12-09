@@ -13,6 +13,7 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -57,7 +58,7 @@ const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
 export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
 
 type ShowPageSubContainerProps = {
-  layout: RecordLayout;
+  layout?: RecordLayout;
   tabs: SingleTabProps[];
   targetableObject: Pick<
     ActivityTargetableObject,
@@ -127,12 +128,15 @@ export const ShowPageSubContainer = ({
 
   return (
     <>
-      {!layout.hideSummaryAndFields && !isMobile && !isInRightDrawer && (
-        <ShowPageLeftContainer forceMobile={isMobile}>
-          {summaryCard}
-          {fieldsCard}
-        </ShowPageLeftContainer>
-      )}
+      {layout &&
+        !layout.hideSummaryAndFields &&
+        !isMobile &&
+        !isInRightDrawer && (
+          <ShowPageLeftContainer forceMobile={isMobile}>
+            {summaryCard}
+            {fieldsCard}
+          </ShowPageLeftContainer>
+        )}
       <StyledShowPageRightContainer isMobile={isMobile}>
         <StyledTabListContainer shouldDisplay={visibleTabs.length > 1}>
           <TabList
@@ -147,9 +151,7 @@ export const ShowPageSubContainer = ({
           {renderActiveTabContent()}
         </StyledContentContainer>
         {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
-          <StyledButtonContainer>
-            <RecordShowRightDrawerActionMenu />
-          </StyledButtonContainer>
+          <RightDrawerFooter actions={[<RecordShowRightDrawerActionMenu />]} />
         )}
       </StyledShowPageRightContainer>
     </>

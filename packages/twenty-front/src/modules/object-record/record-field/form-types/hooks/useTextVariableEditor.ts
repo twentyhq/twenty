@@ -58,11 +58,13 @@ export const useTextVariableEditor = ({
           const { tr } = state;
 
           // Insert hard break using the view's state and dispatch
-          const transaction = tr.replaceSelectionWith(
-            state.schema.nodes.hardBreak.create(),
-          );
+          if (isDefined(state.schema.nodes.hardBreak)) {
+            const transaction = tr.replaceSelectionWith(
+              state.schema.nodes.hardBreak.create(),
+            );
 
-          view.dispatch(transaction);
+            view.dispatch(transaction);
+          }
 
           return true;
         }

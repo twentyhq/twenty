@@ -1,5 +1,5 @@
-import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
 import { InputSchema } from '@/workflow/types/InputSchema';
+import { getDefaultFunctionInputFromInputSchema } from '@/serverless-functions/utils/getDefaultFunctionInputFromInputSchema';
 
 describe('getDefaultFunctionInputFromInputSchema', () => {
   it('should init function input properly', () => {

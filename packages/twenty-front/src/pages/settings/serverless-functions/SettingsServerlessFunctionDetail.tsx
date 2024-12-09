@@ -4,14 +4,10 @@ import { SettingsServerlessFunctionCodeEditorTab } from '@/settings/serverless-f
 import { SettingsServerlessFunctionMonitoringTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionMonitoringTab';
 import { SettingsServerlessFunctionSettingsTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionSettingsTab';
 import { SettingsServerlessFunctionTestTab } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTab';
-import { SettingsServerlessFunctionTestTabEffect } from '@/settings/serverless-functions/components/tabs/SettingsServerlessFunctionTestTabEffect';
-import { useExecuteOneServerlessFunction } from '@/settings/serverless-functions/hooks/useExecuteOneServerlessFunction';
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
 import { usePublishOneServerlessFunction } from '@/settings/serverless-functions/hooks/usePublishOneServerlessFunction';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
-import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
-import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -22,11 +18,12 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { IconCode, IconGauge, IconSettings, IconTestPipe } from 'twenty-ui';
 import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
+import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -38,21 +35,16 @@ export const SettingsServerlessFunctionDetail = () => {
   );
   const activeTabId = useRecoilValue(activeTabIdState);
   const [isCodeValid, setIsCodeValid] = useState(true);
-  const { executeOneServerlessFunction } = useExecuteOneServerlessFunction();
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
   const { publishOneServerlessFunction } = usePublishOneServerlessFunction();
   const { formValues, setFormValues, loading } =
     useServerlessFunctionUpdateFormState(serverlessFunctionId);
+  const { testServerlessFunction } =
+    useTestServerlessFunction(serverlessFunctionId);
   const { code: latestVersionCode } = useGetOneServerlessFunctionSourceCode({
     id: serverlessFunctionId,
     version: 'latest',
   });
-  const setSettingsServerlessFunctionOutput = useSetRecoilState(
-    settingsServerlessFunctionOutputState,
-  );
-  const settingsServerlessFunctionInput = useRecoilValue(
-    settingsServerlessFunctionInputState,
-  );
 
   const save = async () => {
     try {
@@ -137,41 +129,6 @@ export const SettingsServerlessFunctionDetail = () => {
     }
   };
 
-  const handleExecute = async () => {
-    try {
-      const result = await executeOneServerlessFunction({
-        id: serverlessFunctionId,
-        payload: JSON.parse(settingsServerlessFunctionInput),
-        version: 'draft',
-      });
-      setSettingsServerlessFunctionOutput({
-        data: result?.data?.executeOneServerlessFunction?.data
-          ? JSON.stringify(
-              result?.data?.executeOneServerlessFunction?.data,
-              null,
-              4,
-            )
-          : undefined,
-        duration: result?.data?.executeOneServerlessFunction?.duration,
-        status: result?.data?.executeOneServerlessFunction?.status,
-        error: result?.data?.executeOneServerlessFunction?.error
-          ? JSON.stringify(
-              result?.data?.executeOneServerlessFunction?.error,
-              null,
-              4,
-            )
-          : undefined,
-      });
-    } catch (err) {
-      enqueueSnackBar(
-        (err as Error)?.message || 'An error occurred while executing function',
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
-    }
-    setActiveTabId('test');
-  };
   const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
 
   const isAnalyticsV2Enabled = useIsFeatureEnabled('IS_ANALYTICS_V2_ENABLED');
@@ -203,7 +160,7 @@ export const SettingsServerlessFunctionDetail = () => {
         return (
           <SettingsServerlessFunctionCodeEditorTab
             files={files}
-            handleExecute={handleExecute}
+            handleExecute={testServerlessFunction}
             handlePublish={handlePublish}
             handleReset={handleReset}
             resetDisabled={resetDisabled}
@@ -214,10 +171,10 @@ export const SettingsServerlessFunctionDetail = () => {
         );
       case 'test':
         return (
-          <>
-            <SettingsServerlessFunctionTestTabEffect />
-            <SettingsServerlessFunctionTestTab handleExecute={handleExecute} />
-          </>
+          <SettingsServerlessFunctionTestTab
+            serverlessFunctionId={serverlessFunctionId}
+            handleExecute={testServerlessFunction}
+          />
         );
       case 'settings':
         return (
