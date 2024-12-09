@@ -40,6 +40,7 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/getAuthProvidersByWorkspace';
+import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspaceGraphqlApiExceptionHandler';
 
 import { Workspace } from './workspace.entity';
 
@@ -91,10 +92,14 @@ export class WorkspaceResolver {
     @Args('data') data: UpdateWorkspaceInput,
     @AuthWorkspace() workspace: Workspace,
   ) {
-    return this.workspaceService.updateWorkspaceById({
-      ...data,
-      id: workspace.id,
-    });
+    try {
+      return this.workspaceService.updateWorkspaceById({
+        ...data,
+        id: workspace.id,
+      });
+    } catch (error) {
+      workspaceGraphqlApiExceptionHandler(error);
+    }
   }
 
   @Mutation(() => String)

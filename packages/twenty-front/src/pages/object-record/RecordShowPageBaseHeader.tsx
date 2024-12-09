@@ -3,8 +3,8 @@ import { PageFavoriteFoldersDropdown } from '@/favorites/components/PageFavorite
 import { FAVORITE_FOLDER_PICKER_DROPDOWN_ID } from '@/favorites/favorite-folder-picker/constants/FavoriteFolderPickerDropdownId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { PageHeaderOpenCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
-import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMoreButton';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 type RecordShowPageBaseHeaderProps = {
@@ -49,7 +49,7 @@ export const RecordShowPageBaseHeader = ({
           targetObjectNameSingular: objectMetadataItem.nameSingular,
         }}
       />
-      <ShowPageMoreButton key="more" />
+      <PageHeaderOpenCommandMenuButton key="more" />
     </>
   );
 };
