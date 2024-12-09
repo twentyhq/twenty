@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Workspaces } from '@/auth/states/workspaces';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -17,9 +18,8 @@ import {
   IconChevronDown,
   MenuItemSelectAvatar,
   UndecoratedLink,
+  getImageAbsoluteURI,
 } from 'twenty-ui';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
-import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 
 const StyledLogo = styled.div<{ logo: string }>`
   background: url(${({ logo }) => logo});
