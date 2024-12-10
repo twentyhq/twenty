@@ -100,8 +100,8 @@ export class UserResolver {
 
     user.workspaces = user.workspaces.filter(
       (workspaceMember) =>
-        workspaceMember.workspace.activationStatus ===
-        WorkspaceActivationStatus.ACTIVE,
+        workspaceMember.workspace.activationStatus !==
+        WorkspaceActivationStatus.INACTIVE,
     );
 
     return user;
