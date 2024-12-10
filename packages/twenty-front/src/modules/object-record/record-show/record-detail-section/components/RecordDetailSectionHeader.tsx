@@ -7,12 +7,11 @@ const StyledHeader = styled.header<{
   areRecordsAvailable?: boolean;
 }>`
   align-items: center;
+  justify-content: space-between;
   display: flex;
   height: 24px;
   margin-bottom: ${({ theme, areRecordsAvailable }) =>
     areRecordsAvailable && theme.spacing(2)};
-
-  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledTitle = styled.div`

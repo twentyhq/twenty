@@ -9,6 +9,7 @@ import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/components/PageHotkeysEffect';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
@@ -40,6 +41,10 @@ export const RecordIndexPageHeader = () => {
   const pageHeaderTitle =
     objectMetadataItem?.labelPlural ?? capitalize(objectNamePlural);
 
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
+  );
+
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
       <PageHotkeysEffect onAddButtonClick={createNewTableRecord} />
@@ -49,7 +54,7 @@ export const RecordIndexPageHeader = () => {
         ) : (
           <RecordIndexPageKanbanAddButton />
         ))}
-      <PageHeaderOpenCommandMenuButton />
+      {isPageHeaderV2Enabled && <PageHeaderOpenCommandMenuButton />}
     </PageHeader>
   );
 };

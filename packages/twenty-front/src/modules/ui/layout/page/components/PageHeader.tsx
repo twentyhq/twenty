@@ -17,6 +17,7 @@ import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawe
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
@@ -111,6 +112,10 @@ export const PageHeader = ({
     isNavigationDrawerExpandedState,
   );
 
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
+  );
+
   return (
     <StyledTopBarContainer>
       <StyledLeftContainer>
@@ -129,6 +134,24 @@ export const PageHeader = ({
         )}
 
         <StyledTopBarIconStyledTitleContainer>
+          {!isPageHeaderV2Enabled && hasPaginationButtons && (
+            <>
+              <IconButton
+                Icon={IconChevronUp}
+                size="small"
+                variant="secondary"
+                disabled={!hasPreviousRecord}
+                onClick={() => navigateToPreviousRecord?.()}
+              />
+              <IconButton
+                Icon={IconChevronDown}
+                size="small"
+                variant="secondary"
+                disabled={!hasNextRecord}
+                onClick={() => navigateToNextRecord?.()}
+              />
+            </>
+          )}
           {Icon && <Icon size={theme.icon.size.md} />}
           {title && (
             <StyledTitleContainer data-testid="top-bar-title">
@@ -143,7 +166,7 @@ export const PageHeader = ({
       </StyledLeftContainer>
 
       <StyledPageActionContainer>
-        {hasPaginationButtons && (
+        {isPageHeaderV2Enabled && hasPaginationButtons && (
           <>
             <IconButton
               Icon={IconChevronUp}

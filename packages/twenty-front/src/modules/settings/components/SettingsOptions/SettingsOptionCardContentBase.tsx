@@ -1,17 +1,15 @@
 import styled from '@emotion/styled';
-import { CardContent } from 'twenty-ui';
 
 type StyledCardContentProps = {
   disabled?: boolean;
-  divider?: boolean;
 };
 
-export const StyledSettingsOptionCardContent = styled(
-  CardContent,
-)<StyledCardContentProps>`
+export const StyledSettingsOptionCardContent = styled.div<StyledCardContentProps>`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(3)};
+  background-color: ${({ theme }) => theme.background.secondary};
+  padding: ${({ theme }) => theme.spacing(4)};
 `;
 export const StyledSettingsOptionCardIcon = styled.div`
   align-items: center;

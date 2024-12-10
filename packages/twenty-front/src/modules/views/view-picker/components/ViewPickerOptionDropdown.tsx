@@ -61,9 +61,10 @@ export const ViewPickerOptionDropdown = ({
   const handleAddToFavorites = () => {
     if (!isFavorite) {
       createFavorite(view, 'view');
+    } else {
+      setViewPickerReferenceViewId(view.id);
+      setViewPickerMode('favorite-folders-picker');
     }
-    setViewPickerReferenceViewId(view.id);
-    setViewPickerMode('favorite-folders-picker');
     closeDropdown();
   };
 
