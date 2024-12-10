@@ -30,6 +30,7 @@ export const useCloseRecordTableCell = (recordTableId: string) => {
   const recordTablePendingRecordIdByGroupFamilyState =
     useRecoilComponentCallbackStateV2(
       recordTablePendingRecordIdByGroupComponentFamilyState,
+      recordTableId,
     );
   const resetRecordTablePendingRecordId =
     useResetRecoilState(pendingRecordIdState);
