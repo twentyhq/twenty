@@ -37,6 +37,7 @@ export const RecordIdentifierChip = ({
       LeftIcon={LeftIcon}
       LeftIconColor={LeftIconColor}
       size={size}
+      linkWidth={150}
     />
   );
 };
