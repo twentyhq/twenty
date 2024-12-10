@@ -5,10 +5,10 @@ import { VariableChip } from '@/object-record/record-field/form-types/components
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { DateInput } from '@/ui/field/input/components/DateInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { useDateTimeInput } from '@/ui/input/components/internal/date/hooks/useDateTimeInput';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { DateTime } from 'luxon';
 import { useId, useMemo, useRef, useState } from 'react';
 import { isDefined, Nullable, TEXT_INPUT_STYLE } from 'twenty-ui';
 
@@ -85,6 +85,56 @@ export const FormDateFieldInput = ({
   onPersist,
   VariablePicker,
 }: FormDateFieldInputProps) => {
+  // TODO: unify with packages/twenty-front/src/modules/ui/input/components/internal/date/hooks/useDateTimeInput.tsx
+  const parseDateToString = (date: any) => {
+    // FIXME
+    const isDateTimeInput = false;
+    const parsingFormat = isDateTimeInput ? 'MM/dd/yyyy HH:mm' : 'MM/dd/yyyy';
+    const userTimezone = undefined;
+
+    const dateParsed = DateTime.fromJSDate(date, { zone: userTimezone });
+
+    const dateWithoutTime = DateTime.fromJSDate(date)
+      .toLocal()
+      .set({
+        day: date.getUTCDate(),
+        month: date.getUTCMonth() + 1,
+        year: date.getUTCFullYear(),
+        hour: 0,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+      });
+
+    const formattedDate = isDateTimeInput
+      ? dateParsed.setZone(userTimezone).toFormat(parsingFormat)
+      : dateWithoutTime.toFormat(parsingFormat);
+
+    return formattedDate;
+  };
+
+  // TODO: unify with packages/twenty-front/src/modules/ui/input/components/internal/date/hooks/useDateTimeInput.tsx
+  const parseStringToDate = (str: string) => {
+    // FIXME
+    const isDateTimeInput = false;
+    const parsingFormat = isDateTimeInput ? 'MM/dd/yyyy HH:mm' : 'MM/dd/yyyy';
+    const userTimezone = undefined;
+
+    const parsedDate = isDateTimeInput
+      ? DateTime.fromFormat(str, parsingFormat, { zone: userTimezone })
+      : DateTime.fromFormat(str, parsingFormat, { zone: 'utc' });
+
+    const isValid = parsedDate.isValid;
+
+    if (!isValid) {
+      return null;
+    }
+
+    const jsDate = parsedDate.toJSDate();
+
+    return jsDate;
+  };
+
   const inputId = useId();
 
   const [draftValue, setDraftValue] = useState<DraftValue>(
@@ -125,22 +175,18 @@ export const FormDateFieldInput = ({
       value: newDate?.toDateString() ?? null,
     });
 
+    setInputDateTime(isDefined(newDate) ? parseDateToString(newDate) : '');
+
     persistDate(newDate);
   };
 
-  const handleEnter = (newDate: Nullable<Date>) => {
-    setDraftValue({
-      type: 'static',
-      value: newDate?.toDateString() ?? null,
-      editingMode: 'view',
-    });
-
-    setTemporaryValue(newDate);
-
-    persistDate(newDate);
+  const handleEnter = () => {
+    console.log('noop');
   };
 
   const handleEscape = (newDate: Nullable<Date>) => {
+    console.log('should just go in view mode');
+
     setDraftValue({
       type: 'static',
       value: newDate?.toDateString() ?? null,
@@ -156,6 +202,8 @@ export const FormDateFieldInput = ({
     _event: MouseEvent | TouchEvent,
     newDate: Nullable<Date>,
   ) => {
+    console.log('should just go in view mode');
+
     setDraftValue({
       type: 'static',
       value: newDate?.toDateString() ?? null,
@@ -175,6 +223,8 @@ export const FormDateFieldInput = ({
     });
 
     setTemporaryValue(null);
+
+    setInputDateTime('');
 
     persistDate(null);
   };
@@ -196,19 +246,9 @@ export const FormDateFieldInput = ({
   const [temporaryValue, setTemporaryValue] =
     useState<Nullable<Date>>(dateValue);
 
-  const inputDateTimeDate = useMemo(() => dateValue ?? new Date(), [dateValue]);
-  const {
-    ref: dateInputRef,
-    value: dateInputValue,
-    hasError: dateInputHasError,
-  } = useDateTimeInput({
-    date: inputDateTimeDate,
-    onChange: (newDate) => {
-      setTemporaryValue(newDate);
-
-      handleChange(newDate);
-    },
-  });
+  const [inputDateTime, setInputDateTime] = useState(
+    isDefined(dateValue) ? parseDateToString(dateValue) : '',
+  );
 
   const handleVariableTagInsert = (variableName: string) => {
     setDraftValue({
@@ -244,10 +284,8 @@ export const FormDateFieldInput = ({
             <>
               <StyledDateInput
                 type="text"
-                // @ts-expect-error Type mismatch
-                ref={dateInputRef}
-                placeholder="Type date (mm/dd/yyyy)"
-                value={dateInputValue}
+                placeholder="mm/dd/yyyy"
+                value={inputDateTime}
                 onFocus={() => {
                   setDraftValue({
                     type: 'static',
@@ -255,7 +293,35 @@ export const FormDateFieldInput = ({
                     value: draftValue.value,
                   });
                 }}
-                onChange={() => {}}
+                onChange={(event) => {
+                  setInputDateTime(event.target.value);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key !== 'Enter') {
+                    return;
+                  }
+
+                  const inputDateTimeTrimmed = inputDateTime.trim();
+
+                  if (inputDateTimeTrimmed === '') {
+                    handleClear();
+
+                    return;
+                  }
+
+                  const d = parseStringToDate(inputDateTimeTrimmed);
+                  if (isDefined(d)) {
+                    setDraftValue({
+                      type: 'static',
+                      value: d.toDateString(),
+                      editingMode: 'edit',
+                    });
+
+                    setTemporaryValue(d);
+
+                    persistDate(d);
+                  }
+                }}
               />
 
               {draftValue.editingMode === 'edit' ? (
