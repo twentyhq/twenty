@@ -1,21 +1,21 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
-  ActorFilter,
-  AddressFilter,
-  ArrayFilter,
-  BooleanFilter,
-  CurrencyFilter,
-  DateFilter,
-  EmailsFilter,
-  FloatFilter,
-  MultiSelectFilter,
-  RatingFilter,
-  RawJsonFilter,
-  RecordGqlOperationFilter,
-  RelationFilter,
-  SelectFilter,
-  StringFilter,
+    ActorFilter,
+    AddressFilter,
+    ArrayFilter,
+    BooleanFilter,
+    CurrencyFilter,
+    DateFilter,
+    EmailsFilter,
+    FloatFilter,
+    MultiSelectFilter,
+    RatingFilter,
+    RawJsonFilter,
+    RecordGqlOperationFilter,
+    RelationFilter,
+    SelectFilter,
+    StringFilter,
 } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
@@ -23,9 +23,9 @@ import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateIL
 import { isDefined } from '~/utils/isDefined';
 
 import {
-  convertGreaterThanRatingToArrayOfRatingValues,
-  convertLessThanRatingToArrayOfRatingValues,
-  convertRatingToRatingValue,
+    convertGreaterThanRatingToArrayOfRatingValues,
+    convertLessThanRatingToArrayOfRatingValues,
+    convertRatingToRatingValue,
 } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRatingInput';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getEmptyRecordGqlOperationFilter } from '@/object-record/record-filter/utils/getEmptyRecordGqlOperationFilter';
@@ -48,7 +48,7 @@ const useComputeFilterRecordGqlOperationFilter = () => {
 
     const compositeFieldName = filter.definition.compositeFieldName;
 
-    const isCompositeFieldFiter = isNonEmptyString(compositeFieldName);
+    const isCompositeFieldFilter = isNonEmptyString(compositeFieldName);
 
     const isEmptyOperand = [
       ViewFilterOperand.IsEmpty,
@@ -388,7 +388,7 @@ const useComputeFilterRecordGqlOperationFilter = () => {
 
         switch (filter.operand) {
           case ViewFilterOperand.Contains:
-            if (!isCompositeFieldFiter) {
+            if (!isCompositeFieldFilter) {
               return {
                 or: linksFilters,
               };
@@ -402,7 +402,7 @@ const useComputeFilterRecordGqlOperationFilter = () => {
               };
             }
           case ViewFilterOperand.DoesNotContain:
-            if (!isCompositeFieldFiter) {
+            if (!isCompositeFieldFilter) {
               return {
                 and: linksFilters.map((filter) => {
                   return {
@@ -442,7 +442,7 @@ const useComputeFilterRecordGqlOperationFilter = () => {
         );
         switch (filter.operand) {
           case ViewFilterOperand.Contains:
-            if (!isCompositeFieldFiter) {
+            if (!isCompositeFieldFilter) {
               return {
                 or: fullNameFilters,
               };
@@ -456,7 +456,7 @@ const useComputeFilterRecordGqlOperationFilter = () => {
               };
             }
           case ViewFilterOperand.DoesNotContain:
-            if (!isCompositeFieldFiter) {
+            if (!isCompositeFieldFilter) {
               return {
                 and: fullNameFilters.map((filter) => {
                   return {
@@ -491,7 +491,7 @@ const useComputeFilterRecordGqlOperationFilter = () => {
       case 'ADDRESS':
         switch (filter.operand) {
           case ViewFilterOperand.Contains:
-            if (!isCompositeFieldFiter) {
+            if (!isCompositeFieldFilter) {
               return {
                 or: [
                   {
@@ -548,7 +548,7 @@ const useComputeFilterRecordGqlOperationFilter = () => {
               };
             }
           case ViewFilterOperand.DoesNotContain:
-            if (!isCompositeFieldFiter) {
+            if (!isCompositeFieldFilter) {
               return {
                 and: [
                   {
