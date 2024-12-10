@@ -82,6 +82,7 @@ export const ViewBar = ({
             filterDropdownId={filterDropdownId}
             hasFilterButton
             viewBarId={viewBarId}
+            objectNamePlural={objectNamePlural}
             rightComponent={
               <UpdateViewButtonGroup
                 hotkeyScope={{
