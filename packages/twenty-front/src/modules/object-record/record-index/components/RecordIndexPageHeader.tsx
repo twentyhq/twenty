@@ -1,4 +1,5 @@
 import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { RecordIndexPageKanbanAddButton } from '@/object-record/record-index/components/RecordIndexPageKanbanAddButton';
@@ -8,6 +9,7 @@ import { PageHeaderOpenCommandMenuButton } from '@/ui/layout/page-header/compone
 import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/components/PageHotkeysEffect';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
@@ -33,9 +35,14 @@ export const RecordIndexPageHeader = () => {
 
   const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
 
-  const shouldDisplayAddButton = objectMetadataItem
-    ? !isObjectMetadataReadOnly(objectMetadataItem)
-    : false;
+  const numberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
+  );
+
+  const shouldDisplayAddButton =
+    numberOfSelectedRecords === 0 && objectMetadataItem
+      ? !isObjectMetadataReadOnly(objectMetadataItem)
+      : false;
 
   const isTable = recordIndexViewType === ViewType.Table;
 
