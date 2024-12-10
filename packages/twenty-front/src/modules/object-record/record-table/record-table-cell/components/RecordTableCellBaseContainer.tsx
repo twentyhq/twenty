@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { ReactNode, useContext } from 'react';
+import { ReactNode, useContext, useRef } from 'react';
 import { BORDER_COMMON, ThemeContext } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -41,6 +41,8 @@ export const RecordTableCellBaseContainer = ({
 }: {
   children: ReactNode;
 }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const { setIsFocused } = useFieldFocus();
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const { theme } = useContext(ThemeContext);
@@ -74,7 +76,11 @@ export const RecordTableCellBaseContainer = ({
   const { onActionMenuDropdownOpened } = useContext(RecordTableContext);
 
   const handleActionMenuDropdown = (event: React.MouseEvent) => {
-    onActionMenuDropdownOpened(event, recordId);
+    console.log('event', event);
+
+    if (event.currentTarget === containerRef.current) {
+      onActionMenuDropdownOpened(event, recordId);
+    }
   };
 
   const { hotkeyScope } = useContext(FieldContext);
@@ -84,6 +90,7 @@ export const RecordTableCellBaseContainer = ({
   return (
     <CellHotkeyScopeContext.Provider value={editHotkeyScope}>
       <StyledBaseContainer
+        ref={containerRef}
         onMouseLeave={handleContainerMouseLeave}
         onMouseMove={handleContainerMouseMove}
         onClick={handleContainerClick}
