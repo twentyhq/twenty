@@ -6,6 +6,7 @@ import { IconPlus, LightIconButton } from 'twenty-ui';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { useRecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
@@ -102,6 +103,8 @@ export const RecordTableHeaderCell = ({
   column: ColumnDefinition<FieldMetadata>;
   objectNameSingular: string;
 }) => {
+  const { recordTableId } = useRecordTableContext();
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
@@ -199,7 +202,7 @@ export const RecordTableHeaderCell = ({
   const disableColumnResize =
     column.isLabelIdentifier && isMobile && !isRecordTableScrolledLeft;
 
-  const { createNewTableRecord } = useCreateNewTableRecord();
+  const { createNewTableRecord } = useCreateNewTableRecord(recordTableId);
 
   const handlePlusButtonClick = () => {
     createNewTableRecord();

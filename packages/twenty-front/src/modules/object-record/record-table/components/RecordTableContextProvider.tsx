@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableContextProvider as RecordTableContextInternalProvider } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useHandleContainerMouseEnter } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCell';
@@ -97,7 +97,7 @@ export const RecordTableContextProvider = ({
   );
 
   return (
-    <RecordTableContext.Provider
+    <RecordTableContextInternalProvider
       value={{
         viewBarId,
         objectMetadataItem,
@@ -114,6 +114,6 @@ export const RecordTableContextProvider = ({
       }}
     >
       {children}
-    </RecordTableContext.Provider>
+    </RecordTableContextInternalProvider>
   );
 };

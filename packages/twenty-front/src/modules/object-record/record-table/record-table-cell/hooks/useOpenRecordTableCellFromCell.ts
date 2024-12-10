@@ -5,7 +5,7 @@ import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useI
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { CellHotkeyScopeContext } from '@/object-record/record-table/contexts/CellHotkeyScopeContext';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
@@ -28,7 +28,7 @@ export type OpenTableCellArgs = {
 };
 
 export const useOpenRecordTableCellFromCell = () => {
-  const { onOpenTableCell } = useContext(RecordTableContext);
+  const { onOpenTableCell } = useRecordTableContext();
   const cellPosition = useCurrentTableCellPosition();
   const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
   const { recordId, fieldDefinition } = useContext(FieldContext);

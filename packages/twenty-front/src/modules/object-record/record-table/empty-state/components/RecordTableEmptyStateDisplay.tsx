@@ -1,6 +1,5 @@
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
-import { useContext } from 'react';
+import { useRecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -29,7 +28,7 @@ export const RecordTableEmptyStateDisplay = ({
   subTitle,
   title,
 }: RecordTableEmptyStateDisplayProps) => {
-  const { objectMetadataItem } = useContext(RecordTableContext);
+  const { objectMetadataItem } = useRecordTableContext();
   const isReadOnly = isObjectMetadataReadOnly(objectMetadataItem);
 
   return (

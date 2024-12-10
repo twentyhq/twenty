@@ -37,14 +37,13 @@ export const useCloseRecordTableCell = (recordTableId: string) => {
   const closeTableCell = useRecoilCallback(
     ({ reset }) =>
       async (recordGroupId?: string) => {
-        console.log('closeTableCell recordGroupId', recordGroupId);
         toggleClickOutsideListener(true);
         setDragSelectionStartEnabled(true);
         closeCurrentTableCellInEditMode();
         setHotkeyScope(TableHotkeyScope.TableSoftFocus);
         resetRecordTablePendingRecordId();
+
         if (isDefined(recordGroupId)) {
-          console.log('reset', recordTablePendingRecordIdByGroupFamilyState(recordGroupId));
           reset(recordTablePendingRecordIdByGroupFamilyState(recordGroupId));
         }
       },

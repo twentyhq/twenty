@@ -17,7 +17,7 @@ import { recordIndexSortsState } from '@/object-record/record-index/states/recor
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
@@ -37,7 +37,7 @@ import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToC
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContainer = styled.div`
@@ -65,7 +65,7 @@ export const RecordIndexContainer = () => {
     recordIndexId,
     objectMetadataItem,
     objectNameSingular,
-  } = useContext(RecordIndexRootPropsContext);
+  } = useRecordIndexRootPropsContext();
 
   const setRecordGroup = useSetRecordGroup(recordIndexId);
 

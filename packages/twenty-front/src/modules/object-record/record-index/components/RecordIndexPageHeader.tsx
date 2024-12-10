@@ -1,14 +1,14 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { RecordIndexPageKanbanAddButton } from '@/object-record/record-index/components/RecordIndexPageKanbanAddButton';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
+import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
 import { PageHeaderOpenCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton';
 import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/components/PageHotkeysEffect';
 import { ViewType } from '@/views/types/ViewType';
-import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
@@ -17,9 +17,9 @@ export const RecordIndexPageHeader = () => {
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
-  const { objectNamePlural, onCreateRecord } = useContext(
-    RecordIndexRootPropsContext,
-  );
+  const { recordIndexId, objectNamePlural } = useRecordIndexRootPropsContext();
+
+  const { createNewTableRecord } = useCreateNewTableRecord(recordIndexId);
 
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
@@ -40,16 +40,12 @@ export const RecordIndexPageHeader = () => {
   const pageHeaderTitle =
     objectMetadataItem?.labelPlural ?? capitalize(objectNamePlural);
 
-  const handleAddButtonClick = () => {
-    onCreateRecord();
-  };
-
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
-      <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
+      <PageHotkeysEffect onAddButtonClick={createNewTableRecord} />
       {shouldDisplayAddButton &&
         (isTable ? (
-          <PageAddButton onClick={handleAddButtonClick} />
+          <PageAddButton onClick={createNewTableRecord} />
         ) : (
           <RecordIndexPageKanbanAddButton />
         ))}

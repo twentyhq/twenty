@@ -6,7 +6,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { CellHotkeyScopeContext } from '@/object-record/record-table/contexts/CellHotkeyScopeContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import {
   DEFAULT_CELL_SCOPE,
@@ -48,8 +48,7 @@ export const RecordTableCellBaseContainer = ({
 
   const { hasSoftFocus, cellPosition } = useContext(RecordTableCellContext);
 
-  const { onMoveSoftFocusToCell, onCellMouseEnter } =
-    useContext(RecordTableContext);
+  const { onMoveSoftFocusToCell, onCellMouseEnter } = useRecordTableContext();
 
   const handleContainerMouseMove = () => {
     setIsFocused(true);
@@ -71,7 +70,7 @@ export const RecordTableCellBaseContainer = ({
     }
   };
 
-  const { onActionMenuDropdownOpened } = useContext(RecordTableContext);
+  const { onActionMenuDropdownOpened } = useRecordTableContext();
 
   const handleActionMenuDropdown = (event: React.MouseEvent) => {
     onActionMenuDropdownOpened(event, recordId);
