@@ -3,8 +3,8 @@ import { getDefaultFunctionInputFromInputSchema } from '@/serverless-functions/u
 
 describe('getDefaultFunctionInputFromInputSchema', () => {
   it('should init function input properly', () => {
-    const inputSchema = {
-      params: {
+    const inputSchema = [
+      {
         type: 'object',
         properties: {
           a: {
@@ -13,15 +13,30 @@ describe('getDefaultFunctionInputFromInputSchema', () => {
           b: {
             type: 'number',
           },
+          c: {
+            type: 'array',
+            items: { type: 'string' },
+          },
+          d: {
+            type: 'object',
+            properties: {
+              da: { type: 'string', enum: ['my', 'enum'] },
+              db: { type: 'number' },
+            },
+          },
+          e: { type: 'object' },
         },
       },
-    } as InputSchema;
-    const expectedResult = {
-      params: {
+    ] as InputSchema;
+    const expectedResult = [
+      {
         a: null,
         b: null,
+        c: [],
+        d: { da: 'my', db: null },
+        e: {},
       },
-    };
+    ];
     expect(getDefaultFunctionInputFromInputSchema(inputSchema)).toEqual(
       expectedResult,
     );

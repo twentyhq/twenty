@@ -11,7 +11,7 @@ import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
 import { WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { setNestedValue } from '@/workflow/utils/setNestedValue';
-import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-actions/utils/mergeDefaultFunctionInputAndFunctionInput';
+
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Monaco } from '@monaco-editor/react';
@@ -36,6 +36,7 @@ import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDraw
 import { RecordShowRightDrawerActionMenu } from '@/action-menu/components/RecordShowRightDrawerActionMenu';
 import { RightDrawerActionRunButton } from '@/action-menu/components/RightDrawerActionRunButton';
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
+import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 
 const StyledContainer = styled.div`
   display: inline-flex;

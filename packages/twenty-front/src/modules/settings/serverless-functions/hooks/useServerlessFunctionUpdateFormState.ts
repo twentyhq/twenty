@@ -58,7 +58,7 @@ export const useServerlessFunctionUpdateFormState = (
         data?.getServerlessFunctionSourceCode?.[INDEX_FILE_PATH];
       setServerlessFunctionTestData((prev) => ({
         ...prev,
-        input: getFunctionInputFromSourceCode(sourceCode)?.['params'],
+        input: getFunctionInputFromSourceCode(sourceCode),
       }));
     },
   });
