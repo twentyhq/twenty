@@ -18,8 +18,9 @@ import {
   IconChevronDown,
   MenuItemSelectAvatar,
   UndecoratedLink,
-  getImageAbsoluteURI,
 } from 'twenty-ui';
+import { getImageAbsoluteURI } from 'twenty-shared';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledLogo = styled.div<{ logo: string }>`
   background: url(${({ logo }) => logo});
@@ -102,9 +103,12 @@ export const MultiWorkspaceDropdownButton = ({
           isNavigationDrawerExpanded={isNavigationDrawerExpanded}
         >
           <StyledLogo
-            logo={getImageAbsoluteURI(
-              currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
-            )}
+            logo={
+              getImageAbsoluteURI(
+                currentWorkspace?.logo ?? '',
+                REACT_APP_SERVER_BASE_URL,
+              ) ?? ''
+            }
           />
           <NavigationDrawerAnimatedCollapseWrapper>
             <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
@@ -132,9 +136,12 @@ export const MultiWorkspaceDropdownButton = ({
                 text={workspace.displayName ?? '(No name)'}
                 avatar={
                   <StyledLogo
-                    logo={getImageAbsoluteURI(
-                      workspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-                    )}
+                    logo={
+                      getImageAbsoluteURI(
+                        workspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                        REACT_APP_SERVER_BASE_URL,
+                      ) ?? ''
+                    }
                   />
                 }
                 selected={currentWorkspace?.id === workspace.id}

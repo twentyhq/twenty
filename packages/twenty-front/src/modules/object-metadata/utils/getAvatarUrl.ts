@@ -2,11 +2,11 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getLogoUrlFromDomainName } from '~/utils';
+import { getImageAbsoluteURI } from 'twenty-shared';
 import { isDefined } from '~/utils/isDefined';
-
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { Company } from '@/companies/types/Company';
 import { getCompanyDomainName } from '@/object-metadata/utils/getCompanyDomainName';
-import { getImageAbsoluteURI } from 'twenty-ui';
 import { getImageIdentifierFieldValue } from './getImageIdentifierFieldValue';
 
 export const getAvatarUrl = (
@@ -26,7 +26,7 @@ export const getAvatarUrl = (
 
   if (objectNameSingular === CoreObjectNameSingular.Person) {
     return isDefined(record.avatarUrl)
-      ? getImageAbsoluteURI(record.avatarUrl)
+      ? getImageAbsoluteURI(record.avatarUrl, REACT_APP_SERVER_BASE_URL)
       : '';
   }
 

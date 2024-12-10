@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "types": ["vite/client"],
+    "paths": {
+      "twenty-shared": ["./src"]
+    }
+  },
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    }
+  ],
+  "extends": "../../tsconfig.base.json"
+}
