@@ -9,6 +9,7 @@ import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/components/PageHotkeysEffect';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
@@ -45,6 +46,10 @@ export const RecordIndexPageHeader = () => {
     onCreateRecord();
   };
 
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
+  );
+
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
       <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
@@ -54,8 +59,13 @@ export const RecordIndexPageHeader = () => {
         ) : (
           <RecordIndexPageKanbanAddButton />
         ))}
-      <RecordIndexActionMenu />
-      <PageHeaderOpenCommandMenuButton />
+
+      {isPageHeaderV2Enabled && (
+        <>
+          <RecordIndexActionMenu />
+          <PageHeaderOpenCommandMenuButton />
+        </>
+      )}
     </PageHeader>
   );
 };
