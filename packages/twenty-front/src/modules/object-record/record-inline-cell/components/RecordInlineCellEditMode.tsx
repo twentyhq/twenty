@@ -18,11 +18,10 @@ const StyledInlineCellInput = styled.div`
   display: flex;
 
   min-height: 32px;
-  min-width: 240px;
 
-  width: inherit;
+  width: 240px;
 
-  z-index: 1000;
+  z-index: 30;
 `;
 
 type RecordInlineCellEditModeProps = {

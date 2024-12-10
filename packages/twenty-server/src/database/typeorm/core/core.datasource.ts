@@ -11,9 +11,12 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   type: 'postgres',
   logging: ['error'],
   schema: 'core',
-  entities: [
-    `${isJest ? '' : 'dist/'}src/engine/core-modules/**/*.entity{.ts,.js}`,
-  ],
+  entities:
+    process.env.IS_BILLING_ENABLED === 'true'
+      ? [`${isJest ? '' : 'dist/'}src/engine/core-modules/**/*.entity{.ts,.js}`]
+      : [
+          `${isJest ? '' : 'dist/'}src/engine/core-modules/**/!(billing-*).entity{.ts,.js}`,
+        ],
   synchronize: false,
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',

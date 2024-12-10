@@ -24,18 +24,11 @@ import {
   RecordCRUDActionException,
   RecordCRUDActionExceptionCode,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/exceptions/record-crud-action.exception';
-import {
-  WorkflowCreateRecordActionInput,
-  WorkflowDeleteRecordActionInput,
-  WorkflowReadRecordActionInput,
-  WorkflowRecordCRUDActionInput,
-  WorkflowRecordCRUDType,
-  WorkflowUpdateRecordActionInput,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
+import { WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 import { WorkflowActionResult } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-result.type';
 
 @Injectable()
-export class RecordCRUDWorkflowAction implements WorkflowAction {
+export class FindRecordsWorflowAction implements WorkflowAction {
   constructor(
     private readonly twentyORMManager: TwentyORMManager,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
@@ -43,106 +36,7 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
   ) {}
 
   async execute(
-    workflowActionInput: WorkflowRecordCRUDActionInput,
-  ): Promise<WorkflowActionResult> {
-    switch (workflowActionInput.type) {
-      case WorkflowRecordCRUDType.CREATE:
-        return this.createRecord(workflowActionInput);
-      case WorkflowRecordCRUDType.DELETE:
-        return this.deleteRecord(workflowActionInput);
-      case WorkflowRecordCRUDType.UPDATE:
-        return this.updateRecord(workflowActionInput);
-      case WorkflowRecordCRUDType.READ:
-        return this.findRecords(workflowActionInput);
-      default:
-        throw new RecordCRUDActionException(
-          `Unknown record operation type`,
-          RecordCRUDActionExceptionCode.INVALID_REQUEST,
-        );
-    }
-  }
-
-  private async createRecord(
-    workflowActionInput: WorkflowCreateRecordActionInput,
-  ): Promise<WorkflowActionResult> {
-    const repository = await this.twentyORMManager.getRepository(
-      workflowActionInput.objectName,
-    );
-
-    const objectRecord = await repository.create(
-      workflowActionInput.objectRecord,
-    );
-
-    await repository.save(objectRecord);
-
-    return {
-      result: objectRecord,
-    };
-  }
-
-  private async updateRecord(
-    workflowActionInput: WorkflowUpdateRecordActionInput,
-  ): Promise<WorkflowActionResult> {
-    const repository = await this.twentyORMManager.getRepository(
-      workflowActionInput.objectName,
-    );
-
-    const objectRecord = await repository.findOne({
-      where: {
-        id: workflowActionInput.objectRecordId,
-      },
-    });
-
-    if (!objectRecord) {
-      throw new RecordCRUDActionException(
-        `Failed to update: Record ${workflowActionInput.objectName} with id ${workflowActionInput.objectRecordId} not found`,
-        RecordCRUDActionExceptionCode.RECORD_NOT_FOUND,
-      );
-    }
-
-    await repository.update(workflowActionInput.objectRecordId, {
-      ...workflowActionInput.objectRecord,
-    });
-
-    return {
-      result: {
-        ...objectRecord,
-        ...workflowActionInput.objectRecord,
-      },
-    };
-  }
-
-  private async deleteRecord(
-    workflowActionInput: WorkflowDeleteRecordActionInput,
-  ): Promise<WorkflowActionResult> {
-    const repository = await this.twentyORMManager.getRepository(
-      workflowActionInput.objectName,
-    );
-
-    const objectRecord = await repository.findOne({
-      where: {
-        id: workflowActionInput.objectRecordId,
-      },
-    });
-
-    if (!objectRecord) {
-      throw new RecordCRUDActionException(
-        `Failed to delete: Record ${workflowActionInput.objectName} with id ${workflowActionInput.objectRecordId} not found`,
-        RecordCRUDActionExceptionCode.RECORD_NOT_FOUND,
-      );
-    }
-
-    await repository.update(workflowActionInput.objectRecordId, {
-      deletedAt: new Date(),
-    });
-
-    return {
-      result: objectRecord,
-    };
-  }
-
-  private async findRecords(
-    workflowActionInput: WorkflowReadRecordActionInput,
+    workflowActionInput: WorkflowFindRecordsActionInput,
   ): Promise<WorkflowActionResult> {
     const repository = await this.twentyORMManager.getRepository(
       workflowActionInput.objectName,
@@ -221,7 +115,7 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
   }
 
   private async getObjectRecords<T extends ObjectLiteral>(
-    workflowActionInput: WorkflowReadRecordActionInput,
+    workflowActionInput: WorkflowFindRecordsActionInput,
     objectMetadataItemWithFieldsMaps: ObjectMetadataItemWithFieldMaps,
     objectMetadataMaps: ObjectMetadataMaps,
     repository: WorkspaceRepository<T>,
@@ -261,7 +155,7 @@ export class RecordCRUDWorkflowAction implements WorkflowAction {
   }
 
   private async getTotalCount(
-    workflowActionInput: WorkflowReadRecordActionInput,
+    workflowActionInput: WorkflowFindRecordsActionInput,
     repository: WorkspaceRepository<Entity>,
     graphqlQueryParser: GraphqlQueryParser,
   ) {

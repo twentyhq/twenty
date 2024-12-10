@@ -24,8 +24,8 @@ import {
   IconCodeCircle,
   IconListDetails,
   IconPlus,
+  IconPoint,
   IconSettings,
-  IconTool,
   MAIN_COLORS,
   UndecoratedLink,
   isDefined,
@@ -119,7 +119,13 @@ export const SettingsObjectDetailPage = () => {
       title: 'Indexes',
       Icon: IconCodeCircle,
       hide: !isAdvancedModeEnabled || !isUniqueIndexesEnabled,
-      pill: <IconTool size={12} color={MAIN_COLORS.yellow} />,
+      pill: (
+        <IconPoint
+          size={12}
+          color={MAIN_COLORS.yellow}
+          fill={MAIN_COLORS.yellow}
+        />
+      ),
     },
   ];
 

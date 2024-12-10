@@ -18,7 +18,6 @@ const StyledHeader = styled.li`
   padding: ${({ theme }) => theme.spacing(1)};
 
   user-select: none;
-  width: inherit;
 
   &:hover {
     background: ${({ theme, onClick }) =>

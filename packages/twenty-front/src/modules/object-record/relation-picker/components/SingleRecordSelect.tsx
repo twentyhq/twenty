@@ -41,6 +41,7 @@ export const SingleRecordSelect = ({
         onCancel();
       }
     },
+    listenerId: 'single-record-select',
   });
 
   return (

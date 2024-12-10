@@ -1,11 +1,27 @@
+import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
+import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
+import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
+import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
+import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
+import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
+import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
 import { WorkflowCodeAction } from '@/workflow/types/Workflow';
-import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/utils/mergeDefaultFunctionInputAndFunctionInput';
+import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
+import { getFunctionInputSchema } from '@/workflow/utils/getFunctionInputSchema';
 import { setNestedValue } from '@/workflow/utils/setNestedValue';
+import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-actions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Monaco } from '@monaco-editor/react';
+import { editor } from 'monaco-editor';
+import { AutoTypings } from 'monaco-editor-auto-typings';
 import { Fragment, ReactNode, useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import {
   CodeEditor,
   HorizontalSeparator,
@@ -13,23 +29,7 @@ import {
   isDefined,
 } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
-import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
-import { AutoTypings } from 'monaco-editor-auto-typings';
-import { editor } from 'monaco-editor';
-import { Monaco } from '@monaco-editor/react';
-import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { getFunctionInputSchema } from '@/workflow/utils/getFunctionInputSchema';
-import { getDefaultFunctionInputFromInputSchema } from '@/workflow/utils/getDefaultFunctionInputFromInputSchema';
-import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { useRecoilValue } from 'recoil';
-import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 
 const StyledContainer = styled.div`
   display: inline-flex;

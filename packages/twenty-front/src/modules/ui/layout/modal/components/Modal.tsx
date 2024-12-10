@@ -3,8 +3,8 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
   ClickOutsideMode,
-  useListenClickOutsideV2,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
+  useListenClickOutside,
+} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -207,7 +207,7 @@ export const Modal = ({
     hotkeyScope,
   );
 
-  useListenClickOutsideV2({
+  useListenClickOutside({
     refs: [modalRef],
     listenerId: 'MODAL_CLICK_OUTSIDE_LISTENER_ID',
     callback: () => {
