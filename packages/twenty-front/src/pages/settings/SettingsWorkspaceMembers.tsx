@@ -162,7 +162,7 @@ export const SettingsWorkspaceMembers = () => {
           )}
         <Section>
           <H2Title
-            title="Members"
+            title="Manage Members"
             description="Manage the members of your space here"
           />
           <Table>
