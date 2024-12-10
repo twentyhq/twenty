@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
 import { EventList } from '@/activities/timeline-activities/components/EventList';
-import { TimelineCreateButtonGroup } from '@/activities/timeline-activities/components/TimelineCreateButtonGroup';
 import { useTimelineActivities } from '@/activities/timeline-activities/hooks/useTimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -65,13 +64,12 @@ export const TimelineActivities = ({
         <AnimatedPlaceholder type="emptyTimeline" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            Add your first Activity
+            No activity yet
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            There are no activities associated with this record.{' '}
+            There are no activities associated with this record.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
-        <TimelineCreateButtonGroup isInRightDrawer={isInRightDrawer} />
       </AnimatedPlaceholderEmptyContainer>
     );
   }
