@@ -19,6 +19,7 @@ import {
   GetPartialMessageListResponse,
 } from 'src/modules/messaging/message-import-manager/services/messaging-get-message-list.service';
 import { assertNotNull } from 'src/utils/assert';
+import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 export class GmailGetMessageListService {
@@ -53,7 +54,7 @@ export class GmailGetMessageListService {
           ),
         })
         .catch((error) => {
-          this.gmailHandleErrorService.handleError(error);
+          this.gmailHandleErrorService.handleGmailMessageListFetchError(error);
 
           return {
             data: {
@@ -79,13 +80,23 @@ export class GmailGetMessageListService {
       messageExternalIds.push(...messages.map((message) => message.id));
     }
 
+    if (!isDefined(firstMessageExternalId)) {
+      throw new MessageImportDriverException(
+        `No firstMessageExternalId found for connected account ${connectedAccount.id}`,
+        MessageImportDriverExceptionCode.UNKNOWN,
+      );
+    }
+
     const firstMessageContent = await gmailClient.users.messages
       .get({
         userId: 'me',
         id: firstMessageExternalId,
       })
       .catch((error) => {
-        this.gmailHandleErrorService.handleError(error);
+        this.gmailHandleErrorService.handleGmailMessagesImportError(
+          error,
+          firstMessageExternalId as string,
+        );
       });
 
     const nextSyncCursor = firstMessageContent?.data?.historyId;

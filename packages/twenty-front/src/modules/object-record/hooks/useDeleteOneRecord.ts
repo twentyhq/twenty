@@ -8,6 +8,7 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
+import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
 import { capitalize } from '~/utils/string/capitalize';
@@ -34,6 +35,10 @@ export const useDeleteOneRecord = ({
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const { refetchAggregateQueries } = useRefetchAggregateQueries({
+    objectMetadataNamePlural: objectMetadataItem.namePlural,
+  });
 
   const mutationResponseField =
     getDeleteOneRecordMutationResponseField(objectNameSingular);
@@ -126,6 +131,7 @@ export const useDeleteOneRecord = ({
           throw error;
         });
 
+      await refetchAggregateQueries();
       return deletedRecord.data?.[mutationResponseField] ?? null;
     },
     [
@@ -135,6 +141,7 @@ export const useDeleteOneRecord = ({
       mutationResponseField,
       objectMetadataItem,
       objectMetadataItems,
+      refetchAggregateQueries,
     ],
   );
 

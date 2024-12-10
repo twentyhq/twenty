@@ -1,6 +1,6 @@
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { UPDATE_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/mutations/updateOneServerlessFunction';
-import { FIND_MANY_SERVERLESS_FUNCTIONS } from '@/settings/serverless-functions/graphql/queries/findManyServerlessFunctions';
+import { FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE } from '@/settings/serverless-functions/graphql/queries/findOneServerlessFunctionSourceCode';
 import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 import {
@@ -26,7 +26,9 @@ export const useUpdateOneServerlessFunction = () => {
         input,
       },
       awaitRefetchQueries: true,
-      refetchQueries: [getOperationName(FIND_MANY_SERVERLESS_FUNCTIONS) ?? ''],
+      refetchQueries: [
+        getOperationName(FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE) ?? '',
+      ],
     });
   };
 

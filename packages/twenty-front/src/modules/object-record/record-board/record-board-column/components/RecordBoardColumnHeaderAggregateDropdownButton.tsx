@@ -13,13 +13,16 @@ export const RecordBoardColumnHeaderAggregateDropdownButton = ({
   tooltip,
 }: {
   dropdownId: string;
-  value: string | number;
+  value?: string | number;
   tooltip?: string;
 }) => {
   return (
     <div id={dropdownId}>
       <StyledButton>
-        <Tag text={formatNumber(Number(value))} color={'transparent'} />
+        <Tag
+          text={value ? formatNumber(Number(value)) : '-'}
+          color={'transparent'}
+        />
         <AppTooltip
           anchorSelect={`#${dropdownId}`}
           content={tooltip}

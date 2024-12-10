@@ -1,5 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { AggregateManyRecordsData } from '@/object-record/hooks/useAggregateManyRecords';
+import { AggregateRecordsData } from '@/object-record/hooks/useAggregateRecords';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { KanbanAggregateOperation } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
@@ -8,7 +8,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const computeAggregateValueAndLabel = (
-  data: AggregateManyRecordsData,
+  data: AggregateRecordsData,
   objectMetadataItem: ObjectMetadataItem,
   recordIndexKanbanAggregateOperation: KanbanAggregateOperation,
   kanbanFieldName: string,

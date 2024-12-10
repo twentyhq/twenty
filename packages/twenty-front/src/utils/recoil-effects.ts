@@ -1,5 +1,6 @@
 import { AtomEffect } from 'recoil';
 import omit from 'lodash.omit';
+import { z } from 'zod';
 
 import { cookieStorage } from '~/utils/cookie-storage';
 
@@ -20,6 +21,20 @@ export const localStorageEffect =
     });
   };
 
+const customCookieAttributeZodSchema = z.object({
+  cookieAttributes: z.object({
+    expires: z.union([z.number(), z.instanceof(Date)]).optional(),
+    path: z.string().optional(),
+    domain: z.string().optional(),
+    secure: z.boolean().optional(),
+  }),
+});
+
+export const isCustomCookiesAttributesValue = (
+  value: unknown,
+): value is { cookieAttributes: Cookies.CookieAttributes } =>
+  customCookieAttributeZodSchema.safeParse(value).success;
+
 export const cookieStorageEffect =
   <T>(
     key: string,
@@ -30,9 +45,9 @@ export const cookieStorageEffect =
   ): AtomEffect<T | null> =>
   ({ setSelf, onSet }) => {
     const savedValue = cookieStorage.getItem(key);
-
     if (
       isDefined(savedValue) &&
+      savedValue.length !== 0 &&
       (!isDefined(hooks?.validateInitFn) ||
         hooks.validateInitFn(JSON.parse(savedValue)))
     ) {
@@ -45,22 +60,23 @@ export const cookieStorageEffect =
     };
 
     onSet((newValue, _, isReset) => {
-      if (!newValue) {
-        cookieStorage.removeItem(key, defaultAttributes);
-        return;
-      }
-
       const cookieAttributes = {
         ...defaultAttributes,
-        ...(typeof newValue === 'object' &&
-        'cookieAttributes' in newValue &&
-        typeof newValue.cookieAttributes === 'object'
+        ...(isCustomCookiesAttributesValue(newValue)
           ? newValue.cookieAttributes
           : {}),
       };
+      if (
+        !newValue ||
+        (Object.keys(newValue).length === 1 &&
+          isCustomCookiesAttributesValue(newValue))
+      ) {
+        cookieStorage.removeItem(key, cookieAttributes);
+        return;
+      }
 
       isReset
-        ? cookieStorage.removeItem(key, defaultAttributes)
+        ? cookieStorage.removeItem(key, cookieAttributes)
         : cookieStorage.setItem(
             key,
             JSON.stringify(omit(newValue, ['cookieAttributes'])),

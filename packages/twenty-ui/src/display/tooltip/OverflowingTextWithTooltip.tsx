@@ -4,14 +4,15 @@ import { createPortal } from 'react-dom';
 
 import { THEME_COMMON } from '@ui/theme';
 
+import { isDefined } from '@ui/utilities';
 import { AppTooltip, TooltipDelay } from './AppTooltip';
 
 const spacing4 = THEME_COMMON.spacing(4);
 
-const StyledOverflowingText = styled.div<{
+const StyledOverflowingMultilineText = styled.div<{
   cursorPointer: boolean;
   size: 'large' | 'small';
-  displayedMaxRows?: number;
+  displayedMaxRows: number;
 }>`
   cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'inherit')};
   font-family: inherit;
@@ -23,14 +24,39 @@ const StyledOverflowingText = styled.div<{
   text-decoration: inherit;
 
   text-overflow: ellipsis;
-  white-space: pre-wrap;
   height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
 
-  text-wrap: wrap;
   -webkit-line-clamp: ${({ displayedMaxRows }) =>
-    displayedMaxRows ? displayedMaxRows : '1'};
+    displayedMaxRows ? displayedMaxRows.toString() : '1'};
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  white-space: pre-wrap;
+
+  & :hover {
+    text-overflow: ${({ cursorPointer }) =>
+      cursorPointer ? 'clip' : 'ellipsis'};
+    white-space: ${({ cursorPointer }) =>
+      cursorPointer ? 'normal' : 'nowrap'};
+  }
+`;
+
+const StyledOverflowingText = styled.div<{
+  cursorPointer: boolean;
+  size: 'large' | 'small';
+}>`
+  cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'inherit')};
+  font-family: inherit;
+  font-size: inherit;
+
+  font-weight: inherit;
+  max-width: 100%;
+  overflow: hidden;
+  text-decoration: inherit;
+
+  text-overflow: ellipsis;
+  height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
+
+  white-space: nowrap;
 
   & :hover {
     text-overflow: ${({ cursorPointer }) =>
@@ -82,18 +108,33 @@ export const OverflowingTextWithTooltip = ({
   };
   return (
     <>
-      <StyledOverflowingText
-        data-testid="tooltip"
-        cursorPointer={isTitleOverflowing}
-        size={size}
-        displayedMaxRows={displayedMaxRows}
-        ref={textRef}
-        id={textElementId}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
-        {text}
-      </StyledOverflowingText>
+      {isDefined(displayedMaxRows) && (
+        <StyledOverflowingMultilineText
+          data-testid="tooltip"
+          cursorPointer={isTitleOverflowing}
+          size={size}
+          displayedMaxRows={displayedMaxRows}
+          ref={textRef}
+          id={textElementId}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {text}
+        </StyledOverflowingMultilineText>
+      )}
+      {!isDefined(displayedMaxRows) && (
+        <StyledOverflowingText
+          data-testid="tooltip"
+          cursorPointer={isTitleOverflowing}
+          size={size}
+          ref={textRef}
+          id={textElementId}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {text}
+        </StyledOverflowingText>
+      )}
       {isTitleOverflowing &&
         createPortal(
           <div onClick={handleTooltipClick}>

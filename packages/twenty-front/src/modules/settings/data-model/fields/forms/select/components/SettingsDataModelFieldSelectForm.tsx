@@ -5,7 +5,7 @@ import {
   CardContent,
   CardFooter,
   IconPlus,
-  IconTool,
+  IconPoint,
   LightButton,
   MAIN_COLORS,
 } from 'twenty-ui';
@@ -104,7 +104,7 @@ const StyledIconContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledIconTool = styled(IconTool)`
+const StyledIconPoint = styled(IconPoint)`
   margin-right: ${({ theme }) => theme.spacing(0.5)};
 `;
 
@@ -253,7 +253,11 @@ export const SettingsDataModelFieldSelectForm = ({
                 <AdvancedSettingsWrapper dimension="width" hideIcon={true}>
                   <StyledApiKeyContainer>
                     <StyledIconContainer>
-                      <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
+                      <StyledIconPoint
+                        size={12}
+                        color={MAIN_COLORS.yellow}
+                        fill={MAIN_COLORS.yellow}
+                      />
                     </StyledIconContainer>
                     <StyledApiKey>API values</StyledApiKey>
                   </StyledApiKeyContainer>

@@ -14,27 +14,33 @@ import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInU
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/SignInUpSSOIdentityProviderSelection';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
 import { useMemo } from 'react';
 import { isDefined } from '~/utils/isDefined';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeFormEffect';
+import { useGetPublicWorkspaceDataBySubdomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataBySubdomain';
+import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
+import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 
 export const SignInUp = () => {
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
-  const { isTwentyHomePage, isTwentyWorkspaceSubdomain } = useUrlManager();
-
+  const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
+  const { isOnAWorkspaceSubdomain } =
+    useIsCurrentLocationOnAWorkspaceSubdomain();
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
+  const { loading } = useGetPublicWorkspaceDataBySubdomain();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
 
   const signInUpForm = useMemo(() => {
-    if (isTwentyHomePage && isMultiWorkspaceEnabled) {
+    if (loading) return null;
+
+    if (isDefaultDomain && isMultiWorkspaceEnabled) {
       return <SignInUpGlobalScopeForm />;
     }
 
     if (
       (!isMultiWorkspaceEnabled ||
-        (isMultiWorkspaceEnabled && isTwentyWorkspaceSubdomain)) &&
+        (isMultiWorkspaceEnabled && isOnAWorkspaceSubdomain)) &&
       signInUpStep === SignInUpStep.SSOIdentityProviderSelection
     ) {
       return <SignInUpSSOIdentityProviderSelection />;
@@ -42,7 +48,7 @@ export const SignInUp = () => {
 
     if (
       isDefined(workspacePublicData) &&
-      (!isMultiWorkspaceEnabled || isTwentyWorkspaceSubdomain)
+      (!isMultiWorkspaceEnabled || isOnAWorkspaceSubdomain)
     ) {
       return (
         <>
@@ -54,9 +60,10 @@ export const SignInUp = () => {
 
     return <SignInUpGlobalScopeForm />;
   }, [
-    isTwentyHomePage,
+    isDefaultDomain,
     isMultiWorkspaceEnabled,
-    isTwentyWorkspaceSubdomain,
+    isOnAWorkspaceSubdomain,
+    loading,
     signInUpStep,
     workspacePublicData,
   ]);

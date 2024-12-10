@@ -7,22 +7,16 @@ import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/compone
 import { RightDrawerRecord } from '@/object-record/record-right-drawer/components/RightDrawerRecord';
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 
+import { RightDrawerContainer } from '@/ui/layout/right-drawer/components/RightDrawerContainer';
 import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
 import { ComponentByRightDrawerPage } from '@/ui/layout/right-drawer/types/ComponentByRightDrawerPage';
 import { RightDrawerWorkflowEditStep } from '@/workflow/components/RightDrawerWorkflowEditStep';
 import { RightDrawerWorkflowSelectAction } from '@/workflow/components/RightDrawerWorkflowSelectAction';
+import { RightDrawerWorkflowSelectTriggerType } from '@/workflow/components/RightDrawerWorkflowSelectTriggerType';
 import { RightDrawerWorkflowViewStep } from '@/workflow/components/RightDrawerWorkflowViewStep';
 import { isDefined } from 'twenty-ui';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerPages } from '../types/RightDrawerPages';
-import { RightDrawerWorkflowSelectTriggerType } from '@/workflow/components/RightDrawerWorkflowSelectTriggerType';
-
-const StyledRightDrawerPage = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-`;
 
 const StyledRightDrawerBody = styled.div`
   display: flex;
@@ -61,13 +55,13 @@ export const RightDrawerRouter = () => {
   const isRightDrawerMinimized = useRecoilValue(isRightDrawerMinimizedState);
 
   return (
-    <StyledRightDrawerPage>
+    <RightDrawerContainer>
       <RightDrawerTopBar />
       {!isRightDrawerMinimized && (
         <StyledRightDrawerBody>
           {rightDrawerPageComponent}
         </StyledRightDrawerBody>
       )}
-    </StyledRightDrawerPage>
+    </RightDrawerContainer>
   );
 };

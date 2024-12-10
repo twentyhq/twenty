@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Workspaces } from '@/auth/states/workspaces';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -13,15 +14,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconChevronDown, MenuItemSelectAvatar } from 'twenty-ui';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
-import { Link } from 'react-router-dom';
-import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
-
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  width: 100%;
-`;
+import {
+  IconChevronDown,
+  MenuItemSelectAvatar,
+  UndecoratedLink,
+  getImageAbsoluteURI,
+} from 'twenty-ui';
 
 const StyledLogo = styled.div<{ logo: string }>`
   background: url(${({ logo }) => logo});
@@ -79,7 +77,7 @@ export const MultiWorkspaceDropdownButton = ({
     useState(false);
 
   const { switchWorkspace } = useWorkspaceSwitching();
-  const { buildWorkspaceUrl } = useUrlManager();
+  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
   const { closeDropdown } = useDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
 
@@ -122,12 +120,16 @@ export const MultiWorkspaceDropdownButton = ({
       dropdownComponents={
         <DropdownMenuItemsContainer>
           {workspaces.map((workspace) => (
-            <StyledLink
+            <UndecoratedLink
               key={workspace.id}
               to={buildWorkspaceUrl(workspace.subdomain)}
+              onClick={(event) => {
+                event?.preventDefault();
+                handleChange(workspace.id);
+              }}
             >
               <MenuItemSelectAvatar
-                text={workspace.displayName ?? ''}
+                text={workspace.displayName ?? '(No name)'}
                 avatar={
                   <StyledLogo
                     logo={getImageAbsoluteURI(
@@ -136,12 +138,8 @@ export const MultiWorkspaceDropdownButton = ({
                   />
                 }
                 selected={currentWorkspace?.id === workspace.id}
-                onClick={(event) => {
-                  event?.preventDefault();
-                  handleChange(workspace.id);
-                }}
               />
-            </StyledLink>
+            </UndecoratedLink>
           ))}
         </DropdownMenuItemsContainer>
       }

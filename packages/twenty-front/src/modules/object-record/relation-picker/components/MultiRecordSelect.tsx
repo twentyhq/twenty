@@ -179,7 +179,11 @@ export const MultiRecordSelect = ({
             {objectRecordsIdsMultiSelect?.length > 0 && (
               <DropdownMenuSeparator />
             )}
-            {isDefined(onCreate) && <div>{createNewButton}</div>}
+            {isDefined(onCreate) && (
+              <DropdownMenuItemsContainer withoutScrollWrapper>
+                {createNewButton}
+              </DropdownMenuItemsContainer>
+            )}
           </>
         )}
       </DropdownMenu>

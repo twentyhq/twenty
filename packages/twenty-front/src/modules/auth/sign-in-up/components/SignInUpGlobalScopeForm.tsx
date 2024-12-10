@@ -30,8 +30,8 @@ import { useAuth } from '@/auth/hooks/useAuth';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
-import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -53,8 +53,7 @@ export const SignInUpGlobalScopeForm = () => {
   const { signInWithMicrosoft } = useSignInWithMicrosoft();
   const { checkUserExists } = useAuth();
   const { readCaptchaToken } = useReadCaptchaToken();
-  const { redirectToWorkspace } = useUrlManager();
-
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useRecoilState(signInUpModeState);
 
@@ -97,7 +96,7 @@ export const SignInUpGlobalScopeForm = () => {
             isDefined(data?.checkUserExists.availableWorkspaces) &&
             data.checkUserExists.availableWorkspaces.length >= 1
           ) {
-            return redirectToWorkspace(
+            return redirectToWorkspaceDomain(
               data?.checkUserExists.availableWorkspaces[0].subdomain,
               pathname,
               {
@@ -117,24 +116,20 @@ export const SignInUpGlobalScopeForm = () => {
   return (
     <>
       <StyledContentContainer>
-        <>
-          <MainButton
-            Icon={() => <IconGoogle size={theme.icon.size.lg} />}
-            title="Continue with Google"
-            onClick={signInWithGoogle}
-            fullWidth
-          />
-          <HorizontalSeparator visible={false} />
-        </>
-        <>
-          <MainButton
-            Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
-            title="Continue with Microsoft"
-            onClick={signInWithMicrosoft}
-            fullWidth
-          />
-          <HorizontalSeparator visible={false} />
-        </>
+        <MainButton
+          Icon={() => <IconGoogle size={theme.icon.size.lg} />}
+          title="Continue with Google"
+          onClick={signInWithGoogle}
+          fullWidth
+        />
+        <HorizontalSeparator visible={false} />
+        <MainButton
+          Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
+          title="Continue with Microsoft"
+          onClick={signInWithMicrosoft}
+          fullWidth
+        />
+        <HorizontalSeparator visible={false} />
         <HorizontalSeparator visible />
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>

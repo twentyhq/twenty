@@ -2,11 +2,12 @@ import { TextInput } from '@/ui/field/input/components/TextInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { useNumberField } from '../../hooks/useNumberField';
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 
 export type FieldInputEvent = (persist: () => void) => void;
 
 export type NumberFieldInputProps = {
-  onClickOutside?: FieldInputEvent;
+  onClickOutside?: FieldInputClickOutsideEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
@@ -40,7 +41,7 @@ export const NumberFieldInput = ({
     event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    onClickOutside?.(() => persistNumberField(newText));
+    onClickOutside?.(() => persistNumberField(newText), event);
   };
 
   const handleTab = (newText: string) => {

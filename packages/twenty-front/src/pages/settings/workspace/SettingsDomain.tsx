@@ -15,16 +15,20 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useNavigate } from 'react-router-dom';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
-import { useUrlManager } from '@/url-manager/hooks/useUrlManager';
-import { urlManagerState } from '@/url-manager/states/url-manager.state';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isDefined } from '~/utils/isDefined';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 
 const validationSchema = z
   .object({
     subdomain: z
       .string()
-      .min(1, { message: 'Subdomain can not be empty' })
-      .max(63, { message: 'Subdomain can not be longer than 63 characters' }),
+      .min(3, { message: 'Subdomain can not be shorter than 3 characters' })
+      .max(30, { message: 'Subdomain can not be longer than 30 characters' })
+      .regex(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/, {
+        message:
+          'Use letter, number and dash only. Start and finish with a letter or a number',
+      }),
   })
   .required();
 
@@ -36,24 +40,41 @@ const StyledDomainFromWrapper = styled.div`
 `;
 
 const StyledDomain = styled.h2`
+  align-self: flex-start;
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  margin-left: 8px;
+  margin: ${({ theme }) => theme.spacing(2)};
 `;
 
 export const SettingsDomain = () => {
   const navigate = useNavigate();
 
-  const urlManager = useRecoilValue(urlManagerState);
+  const domainConfiguration = useRecoilValue(domainConfigurationState);
 
   const { enqueueSnackBar } = useSnackBar();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
-  const { buildWorkspaceUrl } = useUrlManager();
+  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
+
+  const {
+    control,
+    watch,
+    getValues,
+    formState: { isValid },
+  } = useForm<Form>({
+    mode: 'onChange',
+    delayError: 500,
+    defaultValues: {
+      subdomain: currentWorkspace?.subdomain ?? '',
+    },
+    resolver: zodResolver(validationSchema),
+  });
+
+  const subdomainValue = watch('subdomain');
 
   const handleSave = async () => {
     try {
@@ -78,23 +99,22 @@ export const SettingsDomain = () => {
 
       window.location.href = buildWorkspaceUrl(values.subdomain);
     } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === 'Subdomain already taken'
+      ) {
+        control.setError('subdomain', {
+          type: 'manual',
+          message: (error as Error).message,
+        });
+        return;
+      }
+
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
       });
     }
   };
-
-  const {
-    control,
-    getValues,
-    formState: { isValid },
-  } = useForm<Form>({
-    mode: 'onChange',
-    defaultValues: {
-      subdomain: currentWorkspace?.subdomain ?? '',
-    },
-    resolver: zodResolver(validationSchema),
-  });
 
   return (
     <SubMenuTopBarContainer
@@ -112,7 +132,9 @@ export const SettingsDomain = () => {
       ]}
       actionButton={
         <SaveAndCancelButtons
-          isSaveDisabled={!isValid}
+          isSaveDisabled={
+            !isValid || subdomainValue === currentWorkspace?.subdomain
+          }
           onCancel={() => navigate(getSettingsPagePath(SettingsPath.Workspace))}
           onSave={handleSave}
         />
@@ -133,18 +155,22 @@ export const SettingsDomain = () => {
                   field: { onChange, value },
                   fieldState: { error },
                 }) => (
-                  <TextInputV2
-                    value={value}
-                    type="text"
-                    onChange={onChange}
-                    error={error?.message}
-                    fullWidth
-                  />
+                  <>
+                    <TextInputV2
+                      value={value}
+                      type="text"
+                      onChange={onChange}
+                      error={error?.message}
+                      fullWidth
+                    />
+                    {isDefined(domainConfiguration.frontDomain) && (
+                      <StyledDomain>
+                        .{domainConfiguration.frontDomain}
+                      </StyledDomain>
+                    )}
+                  </>
                 )}
               />
-              {isDefined(urlManager) && isDefined(urlManager.frontDomain) && (
-                <StyledDomain>.{urlManager.frontDomain}</StyledDomain>
-              )}
             </StyledDomainFromWrapper>
           )}
         </Section>

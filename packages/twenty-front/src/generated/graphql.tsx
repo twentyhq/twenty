@@ -1,5 +1,5 @@
-import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -1277,6 +1277,8 @@ export type UpdateServerlessFunctionInput = {
 };
 
 export type UpdateWorkflowVersionStepInput = {
+  /** Boolean to check if we need to update stepOutput */
+  shouldUpdateStepOutput?: InputMaybe<Scalars['Boolean']>;
   /** Step to update in JSON format */
   step: Scalars['JSON'];
   /** Workflow version ID */
@@ -1403,6 +1405,7 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
   allowImpersonation: Scalars['Boolean'];
+  billingCustomers?: Maybe<Array<BillingCustomer>>;
   billingEntitlements?: Maybe<Array<BillingEntitlement>>;
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime'];
@@ -1425,6 +1428,12 @@ export type Workspace = {
   subdomain: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   workspaceMembersCount?: Maybe<Scalars['Float']>;
+};
+
+
+export type WorkspaceBillingCustomersArgs = {
+  filter?: BillingCustomerFilter;
+  sorting?: Array<BillingCustomerSort>;
 };
 
 
@@ -1514,6 +1523,27 @@ export type WorkspaceNameAndId = {
   displayName?: Maybe<Scalars['String']>;
   id: Scalars['String'];
 };
+
+export type BillingCustomer = {
+  __typename?: 'billingCustomer';
+  id: Scalars['UUID'];
+};
+
+export type BillingCustomerFilter = {
+  and?: InputMaybe<Array<BillingCustomerFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  or?: InputMaybe<Array<BillingCustomerFilter>>;
+};
+
+export type BillingCustomerSort = {
+  direction: SortDirection;
+  field: BillingCustomerSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum BillingCustomerSortFields {
+  Id = 'id'
+}
 
 export type BillingEntitlement = {
   __typename?: 'billingEntitlement';

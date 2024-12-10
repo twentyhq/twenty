@@ -32,7 +32,7 @@ export const RecordTableRecordGroupRows = () => {
 
   return (
     isRecordGroupTableSectionToggled &&
-    recordIdsByGroup.map((recordId) => {
+    recordIdsByGroup.map((recordId, rowIndexInGroup) => {
       const rowIndex = rowIndexMap.get(recordId);
 
       if (!isDefined(rowIndex)) {
@@ -43,7 +43,8 @@ export const RecordTableRecordGroupRows = () => {
         <RecordTableRow
           key={recordId}
           recordId={recordId}
-          rowIndex={rowIndex}
+          rowIndexForFocus={rowIndex}
+          rowIndexForDrag={rowIndexInGroup}
           isPendingRow={!isRecordGroupTableSectionToggled}
         />
       );
