@@ -1,11 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Command } from 'nest-commander';
-import { Repository, In } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { BaseCommandOptions } from 'src/database/commands/base.command';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 // For DX only
 type WorkspaceId = string;
@@ -41,17 +41,23 @@ export class GenerateDefaultSubdomainCommand extends ActiveWorkspacesCommandRunn
     }
 
     if (!domainName && displayName) {
-      const displayNameWords = displayName.match(/(\w| |\d)+/);
-
-      if (displayNameWords) {
-        result.subdomain = displayNameWords
-          .join('-')
-          .replace(/ /g, '')
-          .toLowerCase();
-      }
+      result.subdomain = this.sanitizeForSubdomain(displayName);
     }
 
     return result;
+  }
+
+  private sanitizeForSubdomain(input: string) {
+    const normalized = input.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+
+    const hyphenated = normalized
+      .replace(/[^a-zA-Z0-9]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .toLowerCase();
+
+    // DNS subdomain limit is 63, but we want to be conservative for duplicates
+    return hyphenated.substring(0, 60);
   }
 
   private groupBySubdomainName(
@@ -70,15 +76,22 @@ export class GenerateDefaultSubdomainCommand extends ActiveWorkspacesCommandRunn
   private async deduplicateAndSave(
     subdomain: Subdomain,
     workspaceIds: Array<WorkspaceId>,
+    existingSubdomains: Set<string>,
     options: BaseCommandOptions,
   ) {
     for (const [index, workspaceId] of workspaceIds.entries()) {
       const subdomainDeduplicated =
-        index === 0 ? subdomain : `${subdomain}-${index}`;
+        index === 0
+          ? existingSubdomains.has(subdomain)
+            ? `${subdomain}-${index}`
+            : subdomain
+          : `${subdomain}-${index}`;
 
       this.logger.log(
         `Updating workspace ${workspaceId} with subdomain ${subdomainDeduplicated}`,
       );
+
+      existingSubdomains.add(subdomainDeduplicated);
 
       if (!options.dryRun) {
         await this.workspaceRepository.update(workspaceId, {
@@ -89,7 +102,7 @@ export class GenerateDefaultSubdomainCommand extends ActiveWorkspacesCommandRunn
   }
 
   async executeActiveWorkspacesCommand(
-    passedParam: string[],
+    _passedParam: string[],
     options: BaseCommandOptions,
     activeWorkspaceIds: string[],
   ): Promise<void> {
@@ -116,8 +129,15 @@ export class GenerateDefaultSubdomainCommand extends ActiveWorkspacesCommandRunn
       ),
     );
 
+    const existingSubdomains: Set<string> = new Set();
+
     for (const [subdomain, workspaceIds] of workspaceBySubdomain) {
-      await this.deduplicateAndSave(subdomain, workspaceIds, options);
+      await this.deduplicateAndSave(
+        subdomain,
+        workspaceIds,
+        existingSubdomains,
+        options,
+      );
     }
   }
 }
