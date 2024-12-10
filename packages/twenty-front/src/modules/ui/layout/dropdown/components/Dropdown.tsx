@@ -39,7 +39,6 @@ type DropdownProps = {
   dropdownStrategy?: 'fixed' | 'absolute';
   disableBlur?: boolean;
   onClickOutside?: () => void;
-  usePortal?: boolean;
   onClose?: () => void;
   onOpen?: () => void;
 };
