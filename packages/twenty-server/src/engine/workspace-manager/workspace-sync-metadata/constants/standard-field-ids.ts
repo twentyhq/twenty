@@ -393,6 +393,7 @@ export const VIEW_GROUP_STANDARD_FIELD_IDS = {
 
 export const VIEW_FILTER_STANDARD_FIELD_IDS = {
   fieldMetadataId: '20202020-c9aa-4c94-8d0e-9592f5008fb0',
+  type: '20202020-f0ac-46a5-83b2-61560e2e2ab6',
   operand: '20202020-bd23-48c4-9fab-29d1ffb80310',
   value: '20202020-1e55-4a1e-a1d2-fefb86a5fce5',
   displayValue: '20202020-1270-4ebf-9018-c0ec10d5038e',

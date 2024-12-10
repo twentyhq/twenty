@@ -1,6 +1,8 @@
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { FilterDefinition } from './FilterDefinition';
-
+/**
+ * @deprecated
+ */
 export type Filter = {
   id: string;
   variant?: 'default' | 'danger';
