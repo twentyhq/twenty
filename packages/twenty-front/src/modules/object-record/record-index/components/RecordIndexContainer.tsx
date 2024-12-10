@@ -137,7 +137,7 @@ export const RecordIndexContainer = () => {
               viewField.aggregateOperation,
             );
           }
-        };
+        }
       },
     [columnDefinitions, setTableColumns],
   );
