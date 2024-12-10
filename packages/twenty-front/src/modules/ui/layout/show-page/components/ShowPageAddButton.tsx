@@ -30,7 +30,8 @@ export const ShowPageAddButton = ({
 }: {
   activityTargetObject: ActivityTargetableObject;
 }) => {
-  const { closeDropdown } = useDropdown('add-show-page');
+  const { closeDropdown } = useDropdown(SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID);
+
   const openNote = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Note,
   });
@@ -43,8 +44,7 @@ export const ShowPageAddButton = ({
       openNote({
         targetableObjects: [activityTargetObject],
       });
-    }
-    if (objectNameSingular === CoreObjectNameSingular.Task) {
+    } else if (objectNameSingular === CoreObjectNameSingular.Task) {
       openTask({
         targetableObjects: [activityTargetObject],
       });

@@ -1,20 +1,20 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
-  IconLink,
   Card,
   IconGoogle,
+  IconLink,
   IconMicrosoft,
   IconPassword,
 } from 'twenty-ui';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { AuthProviders } from '~/generated-metadata/graphql';
+import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { capitalize } from '~/utils/string/capitalize';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
@@ -122,13 +122,14 @@ export const SettingsSecurityOptionsList = () => {
     <StyledSettingsSecurityOptionsList>
       {currentWorkspace && (
         <>
-          <Card>
+          <Card rounded>
             <SettingsOptionCardContentToggle
               Icon={IconGoogle}
               title="Google"
               description="Allow logins through Google's single sign-on functionality."
               checked={currentWorkspace.isGoogleAuthEnabled}
               advancedMode
+              divider
               onChange={() => toggleAuthMethod('google')}
             />
             <SettingsOptionCardContentToggle
@@ -137,6 +138,7 @@ export const SettingsSecurityOptionsList = () => {
               description="Allow logins through Microsoft's single sign-on functionality."
               checked={currentWorkspace.isMicrosoftAuthEnabled}
               advancedMode
+              divider
               onChange={() => toggleAuthMethod('microsoft')}
             />
             <SettingsOptionCardContentToggle

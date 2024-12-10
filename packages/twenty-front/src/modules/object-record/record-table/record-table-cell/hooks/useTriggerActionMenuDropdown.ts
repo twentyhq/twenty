@@ -6,6 +6,7 @@ import { getActionBarIdFromActionMenuId } from '@/action-menu/utils/getActionBar
 import { getActionMenuDropdownIdFromActionMenuId } from '@/action-menu/utils/getActionMenuDropdownIdFromActionMenuId';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { isBottomBarOpenedComponentState } from '@/ui/layout/bottom-bar/states/isBottomBarOpenedComponentState';
+import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -40,6 +41,9 @@ export const useTriggerActionMenuDropdown = ({
     instanceId: getActionBarIdFromActionMenuId(actionMenuInstanceId),
   });
 
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
+    useSetActiveDropdownFocusIdAndMemorizePrevious();
+
   const triggerActionMenuDropdown = useRecoilCallback(
     ({ set, snapshot }) =>
       (event: React.MouseEvent, recordId: string) => {
@@ -61,12 +65,19 @@ export const useTriggerActionMenuDropdown = ({
 
         set(isActionBarOpenState, false);
         set(isActionMenuDropdownOpenState, true);
+
+        const actionMenuDropdownId =
+          getActionMenuDropdownIdFromActionMenuId(actionMenuInstanceId);
+
+        setActiveDropdownFocusIdAndMemorizePrevious(actionMenuDropdownId);
       },
     [
       isActionBarOpenState,
       isActionMenuDropdownOpenState,
       isRowSelectedFamilyState,
       recordIndexActionMenuDropdownPositionState,
+      setActiveDropdownFocusIdAndMemorizePrevious,
+      actionMenuInstanceId,
     ],
   );
 
