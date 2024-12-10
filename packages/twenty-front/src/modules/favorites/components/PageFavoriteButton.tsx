@@ -1,4 +1,5 @@
-import { Button, IconHeart } from 'twenty-ui';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { Button, IconButton, IconHeart } from 'twenty-ui';
 
 type PageFavoriteButtonProps = {
   isFavorite: boolean;
@@ -10,16 +11,32 @@ export const PageFavoriteButton = ({
   onClick,
 }: PageFavoriteButtonProps) => {
   const title = isFavorite ? 'Remove from favorites' : 'Add to favorites';
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
+  );
   return (
-    <Button
-      Icon={IconHeart}
-      dataTestId="favorite-button"
-      size="small"
-      variant="secondary"
-      accent={isFavorite ? 'danger' : 'default'}
-      title={title}
-      onClick={onClick}
-      ariaLabel={title}
-    />
+    <>
+      {isPageHeaderV2Enabled ? (
+        <Button
+          Icon={IconHeart}
+          dataTestId="favorite-button"
+          size="small"
+          variant="secondary"
+          accent={isFavorite ? 'danger' : 'default'}
+          title={title}
+          onClick={onClick}
+          ariaLabel={title}
+        />
+      ) : (
+        <IconButton
+          Icon={IconHeart}
+          size="medium"
+          variant="secondary"
+          data-testid="add-button"
+          accent={isFavorite ? 'danger' : 'default'}
+          onClick={onClick}
+        />
+      )}
+    </>
   );
 };
