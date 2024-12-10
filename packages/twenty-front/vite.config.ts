@@ -143,7 +143,7 @@ export default defineConfig(({ command, mode }) => {
     envPrefix: 'REACT_APP_',
 
     define: {
-      'process.env': {
+      _env_: {
         REACT_APP_SERVER_BASE_URL,
       },
     },

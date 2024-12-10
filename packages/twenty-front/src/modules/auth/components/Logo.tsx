@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
-import { getImageAbsoluteURI, isDefined } from 'twenty-ui';
+import { isNonEmptyString } from '@sniptt/guards';
+import { getImageAbsoluteURI } from 'twenty-ui';
 
 type LogoProps = {
   primaryLogo?: string | null;
@@ -48,7 +49,7 @@ export const Logo = (props: LogoProps) => {
   const primaryLogoUrl = getImageAbsoluteURI(
     props.primaryLogo ?? defaultPrimaryLogoUrl,
   );
-  const secondaryLogoUrl = isDefined(props.secondaryLogo)
+  const secondaryLogoUrl = isNonEmptyString(props.secondaryLogo)
     ? getImageAbsoluteURI(props.secondaryLogo)
     : null;
 

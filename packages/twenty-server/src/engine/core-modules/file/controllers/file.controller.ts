@@ -27,6 +27,7 @@ export class FileController {
     @Req() req: Request,
   ) {
     const folderPath = checkFilePath(params[0]);
+
     const filename = checkFilename(params['filename']);
 
     const workspaceId = (req as any)?.workspaceId;

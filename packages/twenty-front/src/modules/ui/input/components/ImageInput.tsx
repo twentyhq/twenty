@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import React from 'react';
 import {
   Button,
@@ -115,7 +116,9 @@ export const ImageInput = ({
     hiddenFileInput.current?.click();
   };
 
-  const pictureURI = isDefined(picture) ? getImageAbsoluteURI(picture) : null;
+  const pictureURI = isNonEmptyString(picture)
+    ? getImageAbsoluteURI(picture)
+    : null;
 
   return (
     <StyledContainer className={className}>
