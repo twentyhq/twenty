@@ -1,13 +1,13 @@
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { FilterableFieldType } from '@/object-record/object-filter-dropdown/types/FilterableFieldType';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { resolveBooleanViewFilterValue } from '@/views/view-filter-value/utils/resolveBooleanViewFilterValue';
 import { resolveNumberViewFilterValue } from '@/views/view-filter-value/utils/resolveNumberViewFilterValue';
 import { resolveSelectViewFilterValue } from '@/views/view-filter-value/utils/resolveSelectViewFilterValue';
 import {
   resolveDateViewFilterValue,
   ResolvedDateViewFilterValue,
 } from './resolveDateViewFilterValue';
-import { resolveBooleanViewFilterValue } from '@/views/view-filter-value/utils/resolveBooleanViewFilterValue';
 
 type ResolvedFilterValue<
   T extends FilterableFieldType,
@@ -30,6 +30,9 @@ type PartialFilter<
   operand: O;
 };
 
+/**
+ * @deprecated
+ */
 export const resolveFilterValue = <
   T extends FilterableFieldType,
   O extends ViewFilterOperand,

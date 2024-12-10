@@ -15,6 +15,11 @@ import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sy
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
+export enum ViewFilterType {
+  STATIC = 'STATIC',
+  VARIABLE = 'VARIABLE',
+}
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewFilter,
   namePlural: 'viewFilters',
@@ -33,6 +38,30 @@ export class ViewFilterWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'View Filter target field',
   })
   fieldMetadataId: string;
+
+  @WorkspaceField({
+    standardId: VIEW_FILTER_STANDARD_FIELD_IDS.type,
+    type: FieldMetadataType.SELECT,
+    label: 'Type',
+    description: 'View filter type',
+    icon: 'IconAbc',
+    options: [
+      {
+        value: ViewFilterType.STATIC,
+        label: 'Static',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: ViewFilterType.VARIABLE,
+        label: 'Variable',
+        position: 1,
+        color: 'red',
+      },
+    ],
+    defaultValue: `'${ViewFilterType.STATIC}'`,
+  })
+  type: ViewFilterType;
 
   @WorkspaceField({
     standardId: VIEW_FILTER_STANDARD_FIELD_IDS.operand,
