@@ -1,5 +1,4 @@
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import {
   OutputSchema,
@@ -112,7 +111,7 @@ export const SearchVariablesDropdownObjectItems = ({
     : options;
 
   return (
-    <DropdownMenuItemsContainer>
+    <>
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={goBack}>
         <OverflowingTextWithTooltip text={headerLabel} />
       </DropdownMenuHeader>
@@ -154,6 +153,6 @@ export const SearchVariablesDropdownObjectItems = ({
           LeftIcon={value.icon ? getIcon(value.icon) : undefined}
         />
       ))}
-    </DropdownMenuItemsContainer>
+    </>
   );
 };
