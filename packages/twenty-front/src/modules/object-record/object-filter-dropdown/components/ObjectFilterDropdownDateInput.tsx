@@ -5,13 +5,13 @@ import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropdown/utils/getRelativeDateDisplayValue';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
+import { useResolveFilterValue } from '@/views/hooks/useResolveFilterValue';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { computeVariableDateViewFilterValue } from '@/views/view-filter-value/utils/computeVariableDateViewFilterValue';
 import {
   VariableDateViewFilterValueDirection,
   VariableDateViewFilterValueUnit,
 } from '@/views/view-filter-value/utils/resolveDateViewFilterValue';
-import { resolveFilterValue } from '@/views/view-filter-value/utils/resolveFilterValue';
 import { useState } from 'react';
 import { isDefined } from 'twenty-ui';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -31,13 +31,19 @@ export const ObjectFilterDropdownDateInput = () => {
     selectedOperandInDropdownState,
   );
 
+  const { resolveFilterValue } = useResolveFilterValue();
+
   const selectedFilter = useRecoilValue(selectedFilterState) as
     | (Filter & { definition: { type: 'DATE' | 'DATE_TIME' } })
     | null
     | undefined;
 
   const initialFilterValue = selectedFilter
-    ? resolveFilterValue(selectedFilter)
+    ? resolveFilterValue(
+        selectedFilter.definition.type,
+        selectedFilter.value,
+        selectedFilter.operand,
+      )
     : null;
   const [internalDate, setInternalDate] = useState<Date | null>(
     initialFilterValue instanceof Date ? initialFilterValue : null,
@@ -98,7 +104,11 @@ export const ObjectFilterDropdownDateInput = () => {
     selectedOperandInDropdown === ViewFilterOperand.IsRelative;
 
   const resolvedValue = selectedFilter
-    ? resolveFilterValue(selectedFilter)
+    ? resolveFilterValue(
+        selectedFilter.definition.type,
+        selectedFilter.value,
+        selectedFilter.operand,
+      )
     : null;
 
   const relativeDate =

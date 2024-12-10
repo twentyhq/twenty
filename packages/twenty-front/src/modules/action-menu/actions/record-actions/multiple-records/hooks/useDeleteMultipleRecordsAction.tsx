@@ -4,10 +4,10 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
+import { useComputeContextStoreFilters } from '@/context-store/hooks/useComputeContextStoreFilters';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -53,6 +53,8 @@ export const useDeleteMultipleRecordsAction = ({
   const contextStoreFilters = useRecoilComponentValueV2(
     contextStoreFiltersComponentState,
   );
+
+  const { computeContextStoreFilters } = useComputeContextStoreFilters();
 
   const graphqlFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
