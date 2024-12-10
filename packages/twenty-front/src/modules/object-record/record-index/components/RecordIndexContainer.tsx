@@ -120,7 +120,7 @@ export const RecordIndexContainer = () => {
           set(recordIndexFieldDefinitionsState, newFieldDefinitions);
         }
 
-        viewFields.forEach((viewField) => {
+        for (const viewField of viewFields) {
           const aggregateOperationForViewField = snapshot
             .getLoadable(
               aggregateOperationForViewFieldState({
@@ -137,7 +137,7 @@ export const RecordIndexContainer = () => {
               viewField.aggregateOperation,
             );
           }
-        });
+        };
       },
     [columnDefinitions, setTableColumns],
   );
