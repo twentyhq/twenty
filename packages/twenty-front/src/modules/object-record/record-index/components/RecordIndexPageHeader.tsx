@@ -39,8 +39,13 @@ export const RecordIndexPageHeader = () => {
     contextStoreNumberOfSelectedRecordsComponentState,
   );
 
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
+  );
+
   const shouldDisplayAddButton =
-    numberOfSelectedRecords === 0 && objectMetadataItem
+    (numberOfSelectedRecords === 0 || !isPageHeaderV2Enabled) &&
+    objectMetadataItem
       ? !isObjectMetadataReadOnly(objectMetadataItem)
       : false;
 
@@ -52,10 +57,6 @@ export const RecordIndexPageHeader = () => {
   const handleAddButtonClick = () => {
     onCreateRecord();
   };
-
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
-  );
 
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>

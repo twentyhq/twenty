@@ -22,6 +22,7 @@ import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
+import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetRecordGroup';
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
@@ -36,6 +37,7 @@ import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToC
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback, useContext } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -137,6 +139,10 @@ export const RecordIndexContainer = () => {
     contextStoreTargetedRecordsRuleComponentState,
   );
 
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
+  );
+
   return (
     <StyledContainer>
       <InformationBannerWrapper />
@@ -219,6 +225,7 @@ export const RecordIndexContainer = () => {
             <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
           </StyledContainerWithPadding>
         )}
+        {!isPageHeaderV2Enabled && <RecordIndexActionMenu />}
       </RecordFieldValueSelectorContextProvider>
     </StyledContainer>
   );
