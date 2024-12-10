@@ -13,7 +13,6 @@ type SettingsOptionCardContentSelectProps = {
   title: React.ReactNode;
   description?: string;
   disabled?: boolean;
-  selectClassName?: string;
   children?: React.ReactNode;
 };
 
