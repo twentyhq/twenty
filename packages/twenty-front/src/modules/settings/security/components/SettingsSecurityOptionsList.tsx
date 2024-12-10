@@ -129,6 +129,7 @@ export const SettingsSecurityOptionsList = () => {
               description="Allow logins through Google's single sign-on functionality."
               checked={currentWorkspace.isGoogleAuthEnabled}
               advancedMode
+              divider
               onChange={() => toggleAuthMethod('google')}
             />
             <SettingsOptionCardContentToggle
@@ -137,6 +138,7 @@ export const SettingsSecurityOptionsList = () => {
               description="Allow logins through Microsoft's single sign-on functionality."
               checked={currentWorkspace.isMicrosoftAuthEnabled}
               advancedMode
+              divider
               onChange={() => toggleAuthMethod('microsoft')}
             />
             <SettingsOptionCardContentToggle
