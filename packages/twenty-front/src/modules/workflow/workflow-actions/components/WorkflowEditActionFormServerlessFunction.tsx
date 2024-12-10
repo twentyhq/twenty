@@ -30,16 +30,15 @@ import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePi
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
 import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
-import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 import { RecordShowRightDrawerActionMenu } from '@/action-menu/components/RecordShowRightDrawerActionMenu';
 import { RightDrawerActionRunButton } from '@/action-menu/components/RightDrawerActionRunButton';
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
-import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
 import { isObject } from '@sniptt/guards';
-import { BaseOutputSchema } from 'packages/twenty-front/src/modules/workflow/search-variables/types/StepOutputSchema';
+import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
+import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -115,26 +114,15 @@ export const WorkflowEditActionFormServerlessFunction = ({
 
   const headerTitle = action.name || 'Code - Serverless Function';
 
-  const updateOutputSchema = (newOutputSchema: BaseOutputSchema) => {
+  const updateOutputSchemaFromTestResult = async (testResult: object) => {
     if (actionOptions.readonly === true) {
       return;
     }
-
-    actionOptions?.onActionUpdate({
+    const newOutputSchema = getFunctionOutputSchema(testResult);
+    await updateAction({
       ...action,
-      settings: {
-        ...action.settings,
-        outputSchema: newOutputSchema,
-      },
+      settings: { ...action.settings, outputSchema: newOutputSchema },
     });
-  };
-
-  const updateOutputSchemaFromTestResult = (testResult: object) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
-    const newOutput = getFunctionOutputSchema(testResult);
-    updateOutputSchema(newOutput);
   };
 
   const { testServerlessFunction } = useTestServerlessFunction(
@@ -142,7 +130,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
     updateOutputSchemaFromTestResult,
   );
 
-  const save = async () => {
+  const handleSave = usePreventOverlapCallback(async () => {
     try {
       await updateOneServerlessFunction({
         id: serverlessFunctionId,
@@ -158,9 +146,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
         },
       );
     }
-  };
-
-  const handleSave = usePreventOverlapCallback(save, 1000);
+  }, 1_000);
 
   const onCodeChange = async (value: string) => {
     if (actionOptions.readonly === true) {
@@ -174,7 +160,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
     await handleUpdateFunctionInputSchema();
   };
 
-  const updateFunctionInputSchema = async () => {
+  const handleUpdateFunctionInputSchema = async () => {
     if (actionOptions.readonly === true) {
       return;
     }
@@ -186,57 +172,49 @@ export const WorkflowEditActionFormServerlessFunction = ({
     }
 
     const newFunctionInput = getFunctionInputFromSourceCode(sourceCode);
-    const newMergedInputSchema = mergeDefaultFunctionInputAndFunctionInput({
+    const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
       newInput: newFunctionInput,
       oldInput: action.settings.input.serverlessFunctionInput,
     });
-    const newMergedTestInputSchema = mergeDefaultFunctionInputAndFunctionInput({
+    const newMergedTestInput = mergeDefaultFunctionInputAndFunctionInput({
       newInput: newFunctionInput,
       oldInput: serverlessFunctionTestData.input,
     });
 
-    updateOutputSchema({});
-
-    setFunctionInput(newMergedInputSchema);
+    setFunctionInput(newMergedInput);
     setServerlessFunctionTestData((prev) => ({
       ...prev,
-      input: newMergedTestInputSchema,
+      input: newMergedTestInput,
     }));
 
-    await updateFunctionInput(newMergedInputSchema);
-  };
-
-  const handleUpdateFunctionInputSchema = useDebouncedCallback(
-    updateFunctionInputSchema,
-    100,
-  );
-
-  const updateFunctionInput = useDebouncedCallback(
-    async (newFunctionInput: object) => {
-      if (actionOptions.readonly === true) {
-        return;
-      }
-
-      actionOptions.onActionUpdate({
-        ...action,
-        settings: {
-          ...action.settings,
-          input: {
-            ...action.settings.input,
-            serverlessFunctionInput: newFunctionInput,
-          },
+    await updateAction({
+      ...action,
+      settings: {
+        ...action.settings,
+        outputSchema: {},
+        input: {
+          ...action.settings.input,
+          serverlessFunctionInput: newMergedInput,
         },
-      });
-    },
-    1_000,
-  );
+      },
+    });
+  };
 
   const handleInputChange = async (value: any, path: string[]) => {
     const updatedFunctionInput = setNestedValue(functionInput, path, value);
 
     setFunctionInput(updatedFunctionInput);
 
-    await updateFunctionInput(updatedFunctionInput);
+    await updateAction({
+      ...action,
+      settings: {
+        ...action.settings,
+        input: {
+          ...action.settings.input,
+          serverlessFunctionInput: updatedFunctionInput,
+        },
+      },
+    });
   };
 
   const handleTestInputChange = async (value: any, path: string[]) => {
@@ -308,16 +286,19 @@ export const WorkflowEditActionFormServerlessFunction = ({
     });
   };
 
-  const onActionUpdate = (actionUpdate: Partial<WorkflowCodeAction>) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
+  const updateAction = useDebouncedCallback(
+    (actionUpdate: Partial<WorkflowCodeAction>) => {
+      if (actionOptions.readonly === true) {
+        return;
+      }
 
-    actionOptions?.onActionUpdate({
-      ...action,
-      ...actionUpdate,
-    });
-  };
+      actionOptions?.onActionUpdate({
+        ...action,
+        ...actionUpdate,
+      });
+    },
+    500,
+  );
 
   const checkWorkflowUpdatable = async () => {
     if (actionOptions.readonly === true || !isDefined(workflow)) {
@@ -345,7 +326,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
         <StyledTabList tabListInstanceId={TAB_LIST_COMPONENT_ID} tabs={tabs} />
         <WorkflowStepHeader
           onTitleChange={(newName: string) => {
-            onActionUpdate({ name: newName });
+            updateAction({ name: newName });
           }}
           Icon={IconCode}
           iconColor={theme.color.orange}
