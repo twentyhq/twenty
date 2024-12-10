@@ -6,7 +6,7 @@ import { recordBoardVisibleFieldDefinitionsComponentSelector } from '@/object-re
 import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { RecordIndexPageKanbanAddMenuItem } from '@/object-record/record-index/components/RecordIndexPageKanbanAddMenuItem';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -15,7 +15,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 import { useRecoilValue } from 'recoil';
 
 const StyledDropdownMenuItemsContainer = styled(DropdownMenuItemsContainer)`
@@ -29,9 +29,8 @@ const StyledDropDownMenu = styled(DropdownMenu)`
 export const RecordIndexPageKanbanAddButton = () => {
   const dropdownId = `record-index-page-add-button-dropdown`;
 
-  const { recordIndexId, objectNameSingular } = useContext(
-    RecordIndexRootPropsContext,
-  );
+  const { recordIndexId, objectNameSingular } =
+    useRecordIndexRootPropsContext();
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
   const visibleRecordGroupIds = useRecoilComponentValueV2(

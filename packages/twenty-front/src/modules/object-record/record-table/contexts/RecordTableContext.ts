@@ -1,4 +1,4 @@
-import React, { createContext } from 'react';
+import React from 'react';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -7,6 +7,7 @@ import { OpenTableCellArgs } from '@/object-record/record-table/record-table-cel
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { createRequiredContext } from '~/utils/create-required-context';
 
 export type RecordTableContextProps = {
   viewBarId: string;
@@ -15,14 +16,16 @@ export type RecordTableContextProps = {
     persistField,
     recordId,
     fieldName,
+    recordGroupId,
   }: {
     persistField: () => void;
     recordId: string;
     fieldName: string;
+    recordGroupId: string | undefined;
   }) => void;
   onOpenTableCell: (args: OpenTableCellArgs) => void;
   onMoveFocus: (direction: MoveFocusDirection) => void;
-  onCloseTableCell: () => void;
+  onCloseTableCell: (recordGroupId?: string) => void;
   onMoveSoftFocusToCell: (cellPosition: TableCellPosition) => void;
   onActionMenuDropdownOpened: (
     event: React.MouseEvent,
@@ -34,6 +37,5 @@ export type RecordTableContextProps = {
   objectNameSingular: string;
 };
 
-export const RecordTableContext = createContext<RecordTableContextProps>(
-  {} as RecordTableContextProps,
-);
+export const [RecordTableContextProvider, useRecordTableContext] =
+  createRequiredContext<RecordTableContextProps>('RecordTableContext');

@@ -114,6 +114,7 @@ describe('useUpsertRecord', () => {
       await result.current.upsertRecord(
         updateOneRecordMock,
         'recordId',
+        undefined,
         'name',
       );
     });
@@ -143,6 +144,7 @@ describe('useUpsertRecord', () => {
       await result.current.upsertRecord(
         updateOneRecordMock,
         'recordId',
+        undefined,
         'name',
       );
     });

@@ -4,7 +4,7 @@ import { createComponentStateV2 } from '@/ui/utilities/state/component-state/uti
 export const recordTablePendingRecordIdComponentState = createComponentStateV2<
   string | null
 >({
-  key: 'recordTablePendingRecordIdState',
+  key: 'recordTablePendingRecordIdComponentState',
   defaultValue: null,
   componentInstanceContext: RecordTableComponentInstanceContext,
 });

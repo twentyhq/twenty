@@ -4,7 +4,8 @@ import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
+import { useRecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
@@ -12,19 +13,24 @@ import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
   const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
-    useContext(RecordTableContext);
+    useRecordTableContext();
 
   const { recordId, fieldDefinition } = useContext(FieldContext);
   const isFieldReadOnly = useIsFieldValueReadOnly();
+
+  const currentRecordGroupId = useCurrentRecordGroupId({
+    allowUndefined: true,
+  });
 
   const handleEnter: FieldInputEvent = (persistField) => {
     onUpsertRecord({
       persistField,
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
+      recordGroupId: currentRecordGroupId,
     });
 
-    onCloseTableCell();
+    onCloseTableCell(currentRecordGroupId);
     onMoveFocus('down');
   };
 
@@ -33,13 +39,14 @@ export const RecordTableCellFieldInput = () => {
       persistField,
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
+      recordGroupId: currentRecordGroupId,
     });
 
-    onCloseTableCell();
+    onCloseTableCell(currentRecordGroupId);
   };
 
   const handleCancel = () => {
-    onCloseTableCell();
+    onCloseTableCell(currentRecordGroupId);
   };
 
   const handleClickOutside = useRecoilCallback(
@@ -65,11 +72,18 @@ export const RecordTableCellFieldInput = () => {
           persistField,
           recordId,
           fieldName: fieldDefinition.metadata.fieldName,
+          recordGroupId: currentRecordGroupId,
         });
 
-        onCloseTableCell();
+        onCloseTableCell(currentRecordGroupId);
       },
-    [fieldDefinition, onCloseTableCell, onUpsertRecord, recordId],
+    [
+      currentRecordGroupId,
+      fieldDefinition,
+      onCloseTableCell,
+      onUpsertRecord,
+      recordId,
+    ],
   );
 
   const handleEscape: FieldInputEvent = (persistField) => {
@@ -77,9 +91,10 @@ export const RecordTableCellFieldInput = () => {
       persistField,
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
+      recordGroupId: currentRecordGroupId,
     });
 
-    onCloseTableCell();
+    onCloseTableCell(currentRecordGroupId);
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
@@ -87,9 +102,10 @@ export const RecordTableCellFieldInput = () => {
       persistField,
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
+      recordGroupId: currentRecordGroupId,
     });
 
-    onCloseTableCell();
+    onCloseTableCell(currentRecordGroupId);
     onMoveFocus('right');
   };
 
@@ -98,9 +114,10 @@ export const RecordTableCellFieldInput = () => {
       persistField,
       recordId,
       fieldName: fieldDefinition.metadata.fieldName,
+      recordGroupId: currentRecordGroupId,
     });
 
-    onCloseTableCell();
+    onCloseTableCell(currentRecordGroupId);
     onMoveFocus('left');
   };
 

@@ -14,12 +14,12 @@ import {
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
+import { RecordTableContextProvider } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockPerformance } from './mock';
@@ -61,7 +61,7 @@ const meta: Meta = {
     (Story) => {
       return (
         <RecordFieldValueSelectorContextProvider>
-          <RecordTableContext.Provider
+          <RecordTableContextProvider
             value={{
               viewBarId: mockPerformance.recordId,
               objectMetadataItem: mockPerformance.objectMetadataItem as any,
@@ -132,7 +132,7 @@ const meta: Meta = {
                 </RecordTableCellContext.Provider>
               </RecordTableRowContext.Provider>
             </RecordTableComponentInstance>
-          </RecordTableContext.Provider>
+          </RecordTableContextProvider>
         </RecordFieldValueSelectorContextProvider>
       );
     },

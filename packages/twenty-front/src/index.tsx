@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import ReactDOM from 'react-dom/client';
 
 import '@emotion/react';

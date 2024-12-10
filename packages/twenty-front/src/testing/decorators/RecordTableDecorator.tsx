@@ -2,7 +2,7 @@ import { Decorator } from '@storybook/react';
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableContextProvider } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isDefined } from 'twenty-ui';
 
 export const RecordTableDecorator: Decorator = (Story) => {
@@ -17,7 +17,7 @@ export const RecordTableDecorator: Decorator = (Story) => {
   }
 
   return (
-    <RecordTableContext.Provider
+    <RecordTableContextProvider
       value={{
         objectNameSingular: personObjectMetadataItem?.nameSingular,
         objectMetadataItem: personObjectMetadataItem,
@@ -34,6 +34,6 @@ export const RecordTableDecorator: Decorator = (Story) => {
       }}
     >
       <Story />
-    </RecordTableContext.Provider>
+    </RecordTableContextProvider>
   );
 };
