@@ -70,5 +70,10 @@ export const Default: Story = {
         timeout: 5000,
       }),
     ).toBeInTheDocument();
+    expect(
+      await canvas.findByText('No activity yet', undefined, {
+        timeout: 5000,
+      }),
+    ).toBeInTheDocument();
   },
 };
