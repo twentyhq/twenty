@@ -53,6 +53,7 @@ export const RecordIndexPageHeader = () => {
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
       <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
+
       {shouldDisplayAddButton &&
         (isTable ? (
           <PageAddButton onClick={handleAddButtonClick} />
