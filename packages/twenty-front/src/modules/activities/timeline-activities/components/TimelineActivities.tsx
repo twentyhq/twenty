@@ -40,10 +40,8 @@ const StyledMainContainer = styled.div`
 
 export const TimelineActivities = ({
   targetableObject,
-  isInRightDrawer = false,
 }: {
   targetableObject: ActivityTargetableObject;
-  isInRightDrawer?: boolean;
 }) => {
   const { timelineActivities, loading, fetchMoreRecords } =
     useTimelineActivities(targetableObject);
@@ -67,7 +65,7 @@ export const TimelineActivities = ({
             No activity yet
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            There are no activities associated with this record.
+            There is no activity associated with this record.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>
