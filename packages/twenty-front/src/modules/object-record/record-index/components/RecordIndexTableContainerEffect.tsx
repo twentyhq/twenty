@@ -100,7 +100,7 @@ export const RecordIndexTableContainerEffect = () => {
   useEffect(() => {
     currentViewWithSavedFiltersAndSorts?.viewFields.forEach((viewField) => {
       setViewFieldsAggregateOperations(viewField);
-    })
+    });
   }, [
     currentViewWithSavedFiltersAndSorts?.viewFields,
     setViewFieldsAggregateOperations,
