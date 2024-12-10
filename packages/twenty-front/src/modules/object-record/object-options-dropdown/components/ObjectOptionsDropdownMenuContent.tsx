@@ -44,10 +44,11 @@ export const ObjectOptionsDropdownMenuContent = () => {
   const isViewGroupEnabled = useIsFeatureEnabled('IS_VIEW_GROUPS_ENABLED');
 
   const { getIcon } = useIcons();
-  const { currentViewWithCombinedFiltersAndSorts: currView } = useGetCurrentView();
-  
-  const CurrentViewIcon = currView?.icon ? getIcon(currView.icon) : null;
-  console.log(currView);
+  const { currentViewWithCombinedFiltersAndSorts: currentView } =
+    useGetCurrentView();
+
+  const CurrentViewIcon = currentView?.icon ? getIcon(currentView.icon) : null;
+
   const { objectNamePlural } = useObjectNamePluralFromSingular({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
@@ -92,7 +93,7 @@ export const ObjectOptionsDropdownMenuContent = () => {
   return (
     <>
       <DropdownMenuHeader StartIcon={CurrentViewIcon ?? IconList}>
-        {currView?.name}
+        {currentView?.name}
       </DropdownMenuHeader>
       {/** TODO: Should be removed when view settings contains more options */}
       {viewType === ViewType.Kanban && (
