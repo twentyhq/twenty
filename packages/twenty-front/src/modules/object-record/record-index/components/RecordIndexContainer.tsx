@@ -28,6 +28,7 @@ import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetReco
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
+import { aggregateOperationForViewFieldState } from '@/object-record/record-table/record-table-footer/states/aggregateOperationForViewFieldState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewField } from '@/views/types/ViewField';
@@ -117,6 +118,25 @@ export const RecordIndexContainer = () => {
           )
         ) {
           set(recordIndexFieldDefinitionsState, newFieldDefinitions);
+        }
+
+        for (const viewField of viewFields) {
+          const aggregateOperationForViewField = snapshot
+            .getLoadable(
+              aggregateOperationForViewFieldState({
+                viewFieldId: viewField.id,
+              }),
+            )
+            .getValue();
+
+          if (aggregateOperationForViewField !== viewField.aggregateOperation) {
+            set(
+              aggregateOperationForViewFieldState({
+                viewFieldId: viewField.id,
+              }),
+              viewField.aggregateOperation,
+            );
+          }
         }
       },
     [columnDefinitions, setTableColumns],
