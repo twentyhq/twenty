@@ -19,7 +19,9 @@ import { isDefined } from '~/utils/isDefined';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
 type RecordTableCellSoftFocusModeProps = {
@@ -32,6 +34,7 @@ export const RecordTableCellSoftFocusMode = ({
   nonEditModeContent,
 }: RecordTableCellSoftFocusModeProps) => {
   const { columnIndex } = useContext(RecordTableCellContext);
+  const { recordId } = useContext(FieldContext);
 
   const isFieldReadOnly = useIsFieldValueReadOnly();
 
@@ -132,6 +135,12 @@ export const RecordTableCellSoftFocusMode = ({
     */
   };
 
+  const { onActionMenuDropdownOpened } = useContext(RecordTableContext);
+
+  const handleActionMenuDropdown = (event: React.MouseEvent) => {
+    onActionMenuDropdownOpened(event, recordId);
+  };
+
   const isFirstColumn = columnIndex === 0;
   const customButtonIcon = useGetButtonIcon();
   const buttonIcon = isFirstColumn
@@ -152,6 +161,7 @@ export const RecordTableCellSoftFocusMode = ({
         onClick={handleClick}
         scrollRef={scrollRef}
         softFocus
+        onContextMenu={handleActionMenuDropdown}
       >
         {dontShowContent ? (
           <></>
