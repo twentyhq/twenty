@@ -11,11 +11,12 @@ import {
   BaseGraphQLError,
   ConflictError,
   ErrorCode,
+  ExpiredAttachmentTokenError,
   ForbiddenError,
   MethodNotAllowedError,
   NotFoundError,
   TimeoutError,
-  ValidationError,
+  ValidationError
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 const graphQLPredefinedExceptions = {
@@ -101,12 +102,16 @@ export const convertExceptionToGraphQLError = (
 const convertHttpExceptionToGraphql = (exception: HttpException) => {
   const status = exception.getStatus();
   let error: BaseGraphQLError;
+  const message = exception.getResponse()['message'] ?? exception.message;
 
   if (status in graphQLPredefinedExceptions) {
-    const message = exception.getResponse()['message'] ?? exception.message;
-
     error = new graphQLPredefinedExceptions[exception.getStatus()](message);
-  } else {
+    
+  } else if (message.includes('attachment token expired')) {
+    // Check if the error message indicates an expired attachment token
+    error = new ExpiredAttachmentTokenError(message);
+  }
+     else {
     error = new BaseGraphQLError(
       'Internal Server Error',
       exception.getStatus().toString(),
