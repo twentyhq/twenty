@@ -13,14 +13,16 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { BillingWebhookService } from 'src/engine/core-modules/billing/services/billing-webhook.service';
+import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing/services/billing-webhook-customer.service';
+import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/services/billing-webhook-entitlement.service';
+import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/services/billing-webhook-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 
 @Module({
   imports: [
@@ -46,7 +48,9 @@ import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/doma
   controllers: [BillingController],
   providers: [
     BillingSubscriptionService,
-    BillingWebhookService,
+    BillingWebhookSubscriptionService,
+    BillingWebhookCustomerService,
+    BillingWebhookEntitlementService,
     BillingPortalWorkspaceService,
     BillingResolver,
     BillingWorkspaceMemberListener,
@@ -55,7 +59,6 @@ import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/doma
   exports: [
     BillingSubscriptionService,
     BillingPortalWorkspaceService,
-    BillingWebhookService,
     BillingService,
   ],
 })
