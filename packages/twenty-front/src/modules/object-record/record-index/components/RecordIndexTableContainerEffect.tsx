@@ -74,7 +74,7 @@ export const RecordIndexTableContainerEffect = () => {
     );
   }, [setRecordCountInCurrentView, setOnEntityCountChange]);
 
-  const setViewFieldsAggregateOperations = useRecoilCallback(
+  const setViewFieldAggregateOperation = useRecoilCallback(
     ({ set, snapshot }) =>
       (viewField: ViewField) => {
         const aggregateOperationForViewField = snapshot
@@ -99,11 +99,11 @@ export const RecordIndexTableContainerEffect = () => {
 
   useEffect(() => {
     currentViewWithSavedFiltersAndSorts?.viewFields.forEach((viewField) => {
-      setViewFieldsAggregateOperations(viewField);
+      setViewFieldAggregateOperation(viewField);
     });
   }, [
     currentViewWithSavedFiltersAndSorts?.viewFields,
-    setViewFieldsAggregateOperations,
+    setViewFieldAggregateOperation,
   ]);
 
   return <></>;
