@@ -12,7 +12,7 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-const StyledLabel = styled.div`
+const StyledText = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -26,8 +26,9 @@ const StyledIconContainer = styled.div`
 `;
 
 const StyledToggleContainer = styled.label`
-  display: flex;
   align-items: center;
+  cursor: pointer;
+  display: flex;
   justify-content: space-between;
   width: 100%;
 `;
@@ -60,7 +61,7 @@ export const AdvancedSettingsToggle = ({
         />
       </StyledIconContainer>
       <StyledToggleContainer htmlFor={inputId}>
-        <StyledLabel>Advanced:</StyledLabel>
+        <StyledText>Advanced:</StyledText>
 
         <Toggle
           id={inputId}
