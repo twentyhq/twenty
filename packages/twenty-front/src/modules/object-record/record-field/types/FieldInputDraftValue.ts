@@ -49,13 +49,13 @@ export type FieldCurrencyDraftValue = {
 export type FieldFullNameDraftValue = { firstName: string; lastName: string };
 export type FieldAddressDraftValue = {
   addressStreet1: string;
-  addressStreet2: string | null;
-  addressCity: string | null;
-  addressState: string | null;
-  addressPostcode: string | null;
-  addressCountry: string | null;
-  addressLat: number | null;
-  addressLng: number | null;
+  addressStreet2?: string | null;
+  addressCity?: string | null;
+  addressState?: string | null;
+  addressPostcode?: string | null;
+  addressCountry?: string | null;
+  addressLat?: number | null;
+  addressLng?: number | null;
 };
 export type FieldJsonDraftValue = string;
 export type FieldActorDraftValue = {
