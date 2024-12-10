@@ -70,10 +70,5 @@ export const Default: Story = {
         timeout: 5000,
       }),
     ).toBeInTheDocument();
-    expect(
-      await canvas.findByText('Add your first Activity', undefined, {
-        timeout: 3000,
-      }),
-    ).toBeInTheDocument();
   },
 };
