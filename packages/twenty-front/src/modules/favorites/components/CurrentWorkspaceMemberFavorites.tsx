@@ -3,13 +3,13 @@ import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useDeleteFavoriteFolder } from '@/favorites/hooks/useDeleteFavoriteFolder';
 import { useRenameFavoriteFolder } from '@/favorites/hooks/useRenameFavoriteFolder';
-import { useReorderFavorite } from '@/favorites/hooks/useReorderFavorite';
 import { activeFavoriteFolderIdState } from '@/favorites/states/activeFavoriteFolderIdState';
 import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
-import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { DraggableListWithoutContext } from '@/ui/layout/draggable-list/components/DraggableListWithoutContext';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { DroppableList } from '@/ui/layout/droppable-list/components/DroppableList';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -67,7 +67,6 @@ export const CurrentWorkspaceMemberFavorites = ({
   const selectedFavoriteIndex = folder.favorites.findIndex((favorite) =>
     isLocationMatchingFavorite(currentPath, currentViewPath, favorite),
   );
-  const { handleReorderFavorite } = useReorderFavorite();
 
   const { deleteFavorite } = useDeleteFavorite();
 
@@ -139,20 +138,22 @@ export const CurrentWorkspaceMemberFavorites = ({
             hotkeyScope="favorites-folder-input"
           />
         ) : (
-          <NavigationDrawerItem
-            key={folder.folderId}
-            label={folder.folderName}
-            Icon={isOpen ? IconFolderOpen : IconFolder}
-            onClick={handleToggle}
-            rightOptions={rightOptions}
-            className="navigation-drawer-item"
-            active={isFavoriteFolderEditDropdownOpen}
-          />
+          <DroppableList droppableId={`folder-header-${folder.folderId}`}>
+            <NavigationDrawerItem
+              key={folder.folderId}
+              label={folder.folderName}
+              Icon={isOpen ? IconFolderOpen : IconFolder}
+              onClick={handleToggle}
+              rightOptions={rightOptions}
+              className="navigation-drawer-item"
+              active={isFavoriteFolderEditDropdownOpen}
+            />
+          </DroppableList>
         )}
 
         {isOpen && (
-          <DraggableList
-            onDragEnd={handleReorderFavorite}
+          <DraggableListWithoutContext
+            droppableId={`folder-${folder.folderId}`}
             draggableItems={
               <>
                 {folder.favorites.map((favorite, index) => (

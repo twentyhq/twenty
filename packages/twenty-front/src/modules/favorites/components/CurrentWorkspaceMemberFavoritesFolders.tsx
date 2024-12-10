@@ -12,14 +12,14 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
 import { FavoriteFolders } from '@/favorites/components/FavoritesFolders';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
+import { FavoritesDragDropContext } from '@/favorites/contexts/FavoritesDragDropContext';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useReorderFavorite } from '@/favorites/hooks/useReorderFavorite';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
-import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
+import { DraggableListWithoutContext } from '@/ui/layout/draggable-list/components/DraggableListWithoutContext';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -34,7 +34,6 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { sortedFavorites: favorites } = useFavorites();
   const { deleteFavorite } = useDeleteFavorite();
-  const { handleReorderFavorite } = useReorderFavorite();
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
     useRecoilState(isFavoriteFolderCreatingState);
 
@@ -94,7 +93,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
       </NavigationDrawerAnimatedCollapseWrapper>
 
       {isNavigationSectionOpen && (
-        <>
+        <FavoritesDragDropContext>
           {isFavoriteFolderEnabled && (
             <FavoriteFolders
               isNavigationSectionOpen={isNavigationSectionOpen}
@@ -102,8 +101,8 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
           )}
 
           {orphanFavorites.length > 0 && (
-            <DraggableList
-              onDragEnd={handleReorderFavorite}
+            <DraggableListWithoutContext
+              droppableId="orphan-favorites"
               draggableItems={orphanFavorites.map((favorite, index) => (
                 <DraggableItem
                   key={favorite.id}
@@ -136,7 +135,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
               ))}
             />
           )}
-        </>
+        </FavoritesDragDropContext>
       )}
     </NavigationDrawerSection>
   );
