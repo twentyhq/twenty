@@ -89,11 +89,6 @@ export class UserResolver {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
-        workspaces: {
-          workspace: {
-            activationStatus: WorkspaceActivationStatus.ACTIVE,
-          },
-        },
       },
       relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
     });
@@ -101,6 +96,12 @@ export class UserResolver {
     userValidator.assertIsDefinedOrThrow(
       user,
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
+
+    user.workspaces = user.workspaces.filter(
+      (workspaceMember) =>
+        workspaceMember.workspace.activationStatus ===
+        WorkspaceActivationStatus.ACTIVE,
     );
 
     return user;
