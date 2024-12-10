@@ -30,9 +30,7 @@ const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 export const SettingsServerlessFunctionDetail = () => {
   const { serverlessFunctionId = '' } = useParams();
   const { enqueueSnackBar } = useSnackBar();
-  const { activeTabIdState, setActiveTabId } = useTabList(
-    TAB_LIST_COMPONENT_ID,
-  );
+  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(activeTabIdState);
   const [isCodeValid, setIsCodeValid] = useState(true);
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();

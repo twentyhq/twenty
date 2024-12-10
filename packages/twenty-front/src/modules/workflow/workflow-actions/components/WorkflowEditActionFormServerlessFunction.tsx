@@ -17,7 +17,7 @@ import styled from '@emotion/styled';
 import { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { Fragment, ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { CodeEditor, IconCode, isDefined, IconPlayerPlay } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
@@ -37,6 +37,9 @@ import { RecordShowRightDrawerActionMenu } from '@/action-menu/components/Record
 import { RightDrawerActionRunButton } from '@/action-menu/components/RightDrawerActionRunButton';
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
+import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
+import { isObject } from '@sniptt/guards';
+import { BaseOutputSchema } from 'packages/twenty-front/src/modules/workflow/search-variables/types/StepOutputSchema';
 
 const StyledContainer = styled.div`
   display: inline-flex;
@@ -72,10 +75,7 @@ type WorkflowEditActionFormServerlessFunctionProps = {
       }
     | {
         readonly?: false;
-        onActionUpdate: (
-          action: WorkflowCodeAction,
-          shouldUpdateStepOutput?: boolean,
-        ) => void;
+        onActionUpdate: (action: WorkflowCodeAction) => void;
       };
 };
 
@@ -96,8 +96,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
-  const { testServerlessFunction } =
-    useTestServerlessFunction(serverlessFunctionId);
   const workflowId = useRecoilValue(workflowIdState);
   const workflow = useWorkflowWithCurrentVersion(workflowId);
   const { availablePackages } = useGetAvailablePackages({
@@ -116,6 +114,33 @@ export const WorkflowEditActionFormServerlessFunction = ({
     useServerlessFunctionUpdateFormState(serverlessFunctionId);
 
   const headerTitle = action.name || 'Code - Serverless Function';
+
+  const updateOutputSchema = (newOutputSchema: BaseOutputSchema) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+
+    actionOptions?.onActionUpdate({
+      ...action,
+      settings: {
+        ...action.settings,
+        outputSchema: newOutputSchema,
+      },
+    });
+  };
+
+  const updateOutputSchemaFromTestResult = (testResult: object) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+    const newOutput = getFunctionOutputSchema(testResult);
+    updateOutputSchema(newOutput);
+  };
+
+  const { testServerlessFunction } = useTestServerlessFunction(
+    serverlessFunctionId,
+    updateOutputSchemaFromTestResult,
+  );
 
   const save = async () => {
     try {
@@ -153,20 +178,24 @@ export const WorkflowEditActionFormServerlessFunction = ({
     if (actionOptions.readonly === true) {
       return;
     }
+
     const sourceCode = formValues.code?.[INDEX_FILE_PATH];
+
     if (!isDefined(sourceCode)) {
       return;
     }
-    const functionInput = getFunctionInputFromSourceCode(sourceCode);
+
+    const newFunctionInput = getFunctionInputFromSourceCode(sourceCode);
     const newMergedInputSchema = mergeDefaultFunctionInputAndFunctionInput({
-      defaultFunctionInput: functionInput,
-      functionInput: action.settings.input.serverlessFunctionInput,
+      newInput: newFunctionInput,
+      oldInput: action.settings.input.serverlessFunctionInput,
+    });
+    const newMergedTestInputSchema = mergeDefaultFunctionInputAndFunctionInput({
+      newInput: newFunctionInput,
+      oldInput: serverlessFunctionTestData.input,
     });
 
-    const newMergedTestInputSchema = mergeDefaultFunctionInputAndFunctionInput({
-      defaultFunctionInput: functionInput,
-      functionInput: serverlessFunctionTestData.input,
-    });
+    updateOutputSchema({});
 
     setFunctionInput(newMergedInputSchema);
     setServerlessFunctionTestData((prev) => ({
@@ -183,24 +212,21 @@ export const WorkflowEditActionFormServerlessFunction = ({
   );
 
   const updateFunctionInput = useDebouncedCallback(
-    async (newFunctionInput: object, shouldUpdateStepOutput = true) => {
+    async (newFunctionInput: object) => {
       if (actionOptions.readonly === true) {
         return;
       }
 
-      actionOptions.onActionUpdate(
-        {
-          ...action,
-          settings: {
-            ...action.settings,
-            input: {
-              ...action.settings.input,
-              serverlessFunctionInput: newFunctionInput,
-            },
+      actionOptions.onActionUpdate({
+        ...action,
+        settings: {
+          ...action.settings,
+          input: {
+            ...action.settings.input,
+            serverlessFunctionInput: newFunctionInput,
           },
         },
-        shouldUpdateStepOutput,
-      );
+      });
     },
     1_000,
   );
@@ -210,7 +236,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
 
     setFunctionInput(updatedFunctionInput);
 
-    await updateFunctionInput(updatedFunctionInput, false);
+    await updateFunctionInput(updatedFunctionInput);
   };
 
   const handleTestInputChange = async (value: any, path: string[]) => {
@@ -228,34 +254,18 @@ export const WorkflowEditActionFormServerlessFunction = ({
   const renderFields = ({
     functionInput,
     path = [],
-    isRoot = true,
     VariablePicker,
     onInputChange,
   }: {
     functionInput: FunctionInput;
     path?: string[];
-    isRoot?: boolean;
     VariablePicker?: VariablePickerComponent;
     onInputChange: (value: any, path: string[]) => void;
   }): ReactNode[] => {
     return Object.entries(functionInput).map(([inputKey, inputValue]) => {
       const currentPath = [...path, inputKey];
       const pathKey = currentPath.join('.');
-
-      if (inputValue !== null && typeof inputValue === 'object') {
-        if (isRoot) {
-          return (
-            <Fragment key={pathKey}>
-              {renderFields({
-                functionInput: inputValue,
-                path: currentPath,
-                isRoot: false,
-                VariablePicker,
-                onInputChange,
-              })}
-            </Fragment>
-          );
-        }
+      if (inputValue !== null && isObject(inputValue)) {
         return (
           <StyledContainer key={pathKey}>
             <InputLabel>{inputKey}</InputLabel>
@@ -263,7 +273,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
               {renderFields({
                 functionInput: inputValue,
                 path: currentPath,
-                isRoot: false,
                 VariablePicker,
                 onInputChange,
               })}
@@ -304,13 +313,10 @@ export const WorkflowEditActionFormServerlessFunction = ({
       return;
     }
 
-    actionOptions?.onActionUpdate(
-      {
-        ...action,
-        ...actionUpdate,
-      },
-      false,
-    );
+    actionOptions?.onActionUpdate({
+      ...action,
+      ...actionUpdate,
+    });
   };
 
   const checkWorkflowUpdatable = async () => {

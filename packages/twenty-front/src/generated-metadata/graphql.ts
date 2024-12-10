@@ -1571,8 +1571,6 @@ export type UpdateServerlessFunctionInput = {
 export type UpdateWorkflowVersionStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON']['input'];
-  /** Boolean to check if we need to update stepOutput */
-  shouldUpdateStepOutput?: InputMaybe<Scalars['Boolean']['input']>;
   /** Workflow version ID */
   workflowVersionId: Scalars['String']['input'];
 };
@@ -1707,6 +1705,7 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
   allowImpersonation: Scalars['Boolean']['output'];
+  billingCustomers?: Maybe<Array<BillingCustomer>>;
   billingEntitlements?: Maybe<Array<BillingEntitlement>>;
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime']['output'];
@@ -1729,6 +1728,12 @@ export type Workspace = {
   subdomain: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   workspaceMembersCount?: Maybe<Scalars['Float']['output']>;
+};
+
+
+export type WorkspaceBillingCustomersArgs = {
+  filter?: BillingCustomerFilter;
+  sorting?: Array<BillingCustomerSort>;
 };
 
 
@@ -1818,6 +1823,27 @@ export type WorkspaceNameAndId = {
   displayName?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
 };
+
+export type BillingCustomer = {
+  __typename?: 'billingCustomer';
+  id: Scalars['UUID']['output'];
+};
+
+export type BillingCustomerFilter = {
+  and?: InputMaybe<Array<BillingCustomerFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  or?: InputMaybe<Array<BillingCustomerFilter>>;
+};
+
+export type BillingCustomerSort = {
+  direction: SortDirection;
+  field: BillingCustomerSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum BillingCustomerSortFields {
+  Id = 'id'
+}
 
 export type BillingEntitlement = {
   __typename?: 'billingEntitlement';
