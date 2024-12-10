@@ -1,11 +1,16 @@
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
+import { FormFullNameFieldInput } from '@/object-record/record-field/form-types/components/FormFullNameFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import {
+  FieldFullNameValue,
+  FieldMetadata,
+} from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
+import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
@@ -53,6 +58,13 @@ export const FormFieldInput = ({
       defaultValue={defaultValue as string | undefined}
       onPersist={onPersist}
       field={field}
+      VariablePicker={VariablePicker}
+    />
+  ) : isFieldFullName(field) ? (
+    <FormFullNameFieldInput
+      label={field.label}
+      defaultValue={defaultValue as FieldFullNameValue | undefined}
+      onPersist={onPersist}
       VariablePicker={VariablePicker}
     />
   ) : null;
