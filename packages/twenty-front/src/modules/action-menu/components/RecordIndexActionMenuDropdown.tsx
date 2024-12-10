@@ -34,6 +34,14 @@ const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
 
   transform: translateX(-50%);
   width: auto;
+
+   /* Remove focus/active visual effects */
+  outline: none;
+  &:focus,
+  &:active {
+    outline: none;
+    box-shadow: none;
+  }
 `;
 
 export const RecordIndexActionMenuDropdown = () => {
@@ -52,6 +60,11 @@ export const RecordIndexActionMenuDropdown = () => {
     ),
   );
 
+   // Prevent focus from being applied to the container
+   const handleMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
+
   //TODO: remove this
   const width = actionMenuEntries.some(
     (actionMenuEntry) => actionMenuEntry.label === 'Remove from favorites',
@@ -63,6 +76,7 @@ export const RecordIndexActionMenuDropdown = () => {
     <StyledContainerActionMenuDropdown
       position={actionMenuDropdownPosition}
       className="action-menu-dropdown"
+      onMouseDown={handleMouseDown}
     >
       <Dropdown
         dropdownId={getActionMenuDropdownIdFromActionMenuId(actionMenuId)}
