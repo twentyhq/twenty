@@ -1,4 +1,3 @@
-import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
@@ -8,7 +7,6 @@ import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
-import { FunctionInput } from '@/workflow/types/FunctionInput';
 import { WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { setNestedValue } from '@/workflow/utils/setNestedValue';
 
@@ -17,7 +15,7 @@ import styled from '@emotion/styled';
 import { Monaco } from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { CodeEditor, IconCode, isDefined, IconPlayerPlay } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
@@ -25,7 +23,6 @@ import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
 import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
@@ -36,25 +33,9 @@ import { RecordShowRightDrawerActionMenu } from '@/action-menu/components/Record
 import { RightDrawerActionRunButton } from '@/action-menu/components/RightDrawerActionRunButton';
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
-import { isObject } from '@sniptt/guards';
 import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
-
-const StyledContainer = styled.div`
-  display: inline-flex;
-  flex-direction: column;
-`;
-
-const StyledInputContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  position: relative;
-`;
+import { WorkflowEditActionFormServerlessFunctionFields } from '@/workflow/workflow-actions/components/WorkflowEditActionFormServerlessFunctionFields';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
@@ -112,8 +93,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
   const { formValues, setFormValues, loading } =
     useServerlessFunctionUpdateFormState(serverlessFunctionId);
 
-  const headerTitle = action.name || 'Code - Serverless Function';
-
   const updateOutputSchemaFromTestResult = async (testResult: object) => {
     if (actionOptions.readonly === true) {
       return;
@@ -148,24 +127,22 @@ export const WorkflowEditActionFormServerlessFunction = ({
     }
   }, 1_000);
 
-  const onCodeChange = async (value: string) => {
+  const onCodeChange = async (newCode: string) => {
     if (actionOptions.readonly === true) {
       return;
     }
     setFormValues((prevState) => ({
       ...prevState,
-      code: { ...prevState.code, [INDEX_FILE_PATH]: value },
+      code: { ...prevState.code, [INDEX_FILE_PATH]: newCode },
     }));
     await handleSave();
-    await handleUpdateFunctionInputSchema();
+    await handleUpdateFunctionInputSchema(newCode);
   };
 
-  const handleUpdateFunctionInputSchema = async () => {
+  const handleUpdateFunctionInputSchema = async (sourceCode: string) => {
     if (actionOptions.readonly === true) {
       return;
     }
-
-    const sourceCode = formValues.code?.[INDEX_FILE_PATH];
 
     if (!isDefined(sourceCode)) {
       return;
@@ -229,50 +206,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
     }));
   };
 
-  const renderFields = ({
-    functionInput,
-    path = [],
-    VariablePicker,
-    onInputChange,
-  }: {
-    functionInput: FunctionInput;
-    path?: string[];
-    VariablePicker?: VariablePickerComponent;
-    onInputChange: (value: any, path: string[]) => void;
-  }): ReactNode[] => {
-    return Object.entries(functionInput).map(([inputKey, inputValue]) => {
-      const currentPath = [...path, inputKey];
-      const pathKey = currentPath.join('.');
-      if (inputValue !== null && isObject(inputValue)) {
-        return (
-          <StyledContainer key={pathKey}>
-            <InputLabel>{inputKey}</InputLabel>
-            <StyledInputContainer>
-              {renderFields({
-                functionInput: inputValue,
-                path: currentPath,
-                VariablePicker,
-                onInputChange,
-              })}
-            </StyledInputContainer>
-          </StyledContainer>
-        );
-      } else {
-        return (
-          <FormTextFieldInput
-            key={pathKey}
-            label={inputKey}
-            placeholder="Enter value"
-            defaultValue={inputValue ? `${inputValue}` : ''}
-            readonly={actionOptions.readonly}
-            onPersist={(value) => onInputChange(value, currentPath)}
-            VariablePicker={VariablePicker}
-          />
-        );
-      }
-    });
-  };
-
   const handleEditorDidMount = async (
     editor: editor.IStandaloneCodeEditor,
     monaco: Monaco,
@@ -300,19 +233,16 @@ export const WorkflowEditActionFormServerlessFunction = ({
     500,
   );
 
-  const checkWorkflowUpdatable = async () => {
+  const handleCodeChange = async (value: string) => {
     if (actionOptions.readonly === true || !isDefined(workflow)) {
       return;
     }
     await getUpdatableWorkflowVersion(workflow);
+    await onCodeChange(value);
   };
 
   const tabs = [
-    {
-      id: 'code',
-      title: 'Code',
-      Icon: IconCode,
-    },
+    { id: 'code', title: 'Code', Icon: IconCode },
     { id: 'test', title: 'Test', Icon: IconPlayerPlay },
   ];
 
@@ -330,27 +260,25 @@ export const WorkflowEditActionFormServerlessFunction = ({
           }}
           Icon={IconCode}
           iconColor={theme.color.orange}
-          initialTitle={headerTitle}
+          initialTitle={action.name || 'Code - Serverless Function'}
           headerType="Code"
         />
         <WorkflowStepBody>
           {activeTabId === 'code' && (
             <>
-              {renderFields({
-                functionInput,
-                VariablePicker: WorkflowVariablePicker,
-                onInputChange: handleInputChange,
-              })}
+              <WorkflowEditActionFormServerlessFunctionFields
+                functionInput={functionInput}
+                VariablePicker={WorkflowVariablePicker}
+                onInputChange={handleInputChange}
+                readonly={actionOptions.readonly}
+              />
               <StyledCodeEditorContainer>
                 <InputLabel>Code</InputLabel>
                 <CodeEditor
                   height={343}
                   value={formValues.code?.[INDEX_FILE_PATH]}
                   language={'typescript'}
-                  onChange={async (value) => {
-                    await checkWorkflowUpdatable();
-                    await onCodeChange(value);
-                  }}
+                  onChange={handleCodeChange}
                   onMount={handleEditorDidMount}
                   options={{
                     readOnly: actionOptions.readonly,
@@ -362,10 +290,11 @@ export const WorkflowEditActionFormServerlessFunction = ({
           )}
           {activeTabId === 'test' && (
             <>
-              {renderFields({
-                functionInput: serverlessFunctionTestData.input,
-                onInputChange: handleTestInputChange,
-              })}
+              <WorkflowEditActionFormServerlessFunctionFields
+                functionInput={serverlessFunctionTestData.input}
+                onInputChange={handleTestInputChange}
+                readonly={actionOptions.readonly}
+              />
               <StyledCodeEditorContainer>
                 <InputLabel>Result</InputLabel>
                 <ServerlessFunctionExecutionResult
