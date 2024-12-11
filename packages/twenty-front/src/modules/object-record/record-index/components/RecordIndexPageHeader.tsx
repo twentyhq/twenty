@@ -25,9 +25,7 @@ export const RecordIndexPageHeader = () => {
     findObjectMetadataItemByNamePlural(objectNamePlural);
 
   const { getIcon } = useIcons();
-  const Icon = getIcon(
-    findObjectMetadataItemByNamePlural(objectNamePlural)?.icon,
-  );
+  const Icon = getIcon(objectMetadataItem?.icon);
 
   const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
 
