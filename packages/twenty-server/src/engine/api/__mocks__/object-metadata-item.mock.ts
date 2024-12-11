@@ -231,6 +231,7 @@ const fieldPhonesMock = {
     {
       primaryPhoneNumber: '',
       primaryPhoneCountryCode: '',
+      primaryPhoneCallingCode: '',
       additionalPhones: {},
     },
   ],
