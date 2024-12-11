@@ -112,17 +112,17 @@ export const ShowPageSubContainer = ({
 
   const visibleTabs = tabs.filter((tab) => !tab.hide);
 
+  const displaySummaryAndFields =
+    layout && !layout.hideSummaryAndFields && !isMobile && !isInRightDrawer;
+
   return (
     <>
-      {layout &&
-        !layout.hideSummaryAndFields &&
-        !isMobile &&
-        !isInRightDrawer && (
-          <ShowPageLeftContainer forceMobile={isMobile}>
-            {summaryCard}
-            {fieldsCard}
-          </ShowPageLeftContainer>
-        )}
+      {displaySummaryAndFields && (
+        <ShowPageLeftContainer forceMobile={isMobile}>
+          {summaryCard}
+          {fieldsCard}
+        </ShowPageLeftContainer>
+      )}
       <StyledShowPageRightContainer isMobile={isMobile}>
         <StyledTabListContainer shouldDisplay={visibleTabs.length > 1}>
           <TabList

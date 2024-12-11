@@ -1,7 +1,6 @@
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
@@ -19,7 +18,6 @@ import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { CodeEditor, IconCode, isDefined, IconPlayerPlay } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
 import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
@@ -107,22 +105,13 @@ export const WorkflowEditActionFormServerlessFunction = ({
     updateOutputSchemaFromTestResult,
   );
 
-  const handleSave = usePreventOverlapCallback(async () => {
-    try {
-      await updateOneServerlessFunction({
-        id: serverlessFunctionId,
-        name: formValues.name,
-        description: formValues.description,
-        code: formValues.code,
-      });
-    } catch (err) {
-      enqueueSnackBar(
-        (err as Error)?.message || 'An error occurred while updating function',
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
-    }
+  const handleSave = useDebouncedCallback(async () => {
+    await updateOneServerlessFunction({
+      id: serverlessFunctionId,
+      name: formValues.name,
+      description: formValues.description,
+      code: formValues.code,
+    });
   }, 1_000);
 
   const onCodeChange = async (newCode: string) => {

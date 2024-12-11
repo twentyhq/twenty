@@ -11,7 +11,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledInputContainer = styled.div`
+const StyledFormNestedFieldInputContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.md};
@@ -55,14 +55,14 @@ export const WorkflowEditActionFormServerlessFunctionFields = ({
         return (
           <StyledContainer key={pathKey}>
             <InputLabel>{inputKey}</InputLabel>
-            <StyledInputContainer>
+            <StyledFormNestedFieldInputContainer>
               {renderFields({
                 functionInput: inputValue,
                 path: currentPath,
                 VariablePicker,
                 onInputChange,
               })}
-            </StyledInputContainer>
+            </StyledFormNestedFieldInputContainer>
           </StyledContainer>
         );
       } else {

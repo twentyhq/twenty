@@ -20,10 +20,10 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { IconCode, IconGauge, IconSettings, IconTestPipe } from 'twenty-ui';
-import { usePreventOverlapCallback } from '~/hooks/usePreventOverlapCallback';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
+import { useDebouncedCallback } from 'use-debounce';
 
 const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 
@@ -43,25 +43,14 @@ export const SettingsServerlessFunctionDetail = () => {
     version: 'latest',
   });
 
-  const save = async () => {
-    try {
-      await updateOneServerlessFunction({
-        id: serverlessFunctionId,
-        name: formValues.name,
-        description: formValues.description,
-        code: formValues.code,
-      });
-    } catch (err) {
-      enqueueSnackBar(
-        (err as Error)?.message || 'An error occurred while updating function',
-        {
-          variant: SnackBarVariant.Error,
-        },
-      );
-    }
-  };
-
-  const handleSave = usePreventOverlapCallback(save, 1000);
+  const handleSave = useDebouncedCallback(async () => {
+    await updateOneServerlessFunction({
+      id: serverlessFunctionId,
+      name: formValues.name,
+      description: formValues.description,
+      code: formValues.code,
+    });
+  }, 1_000);
 
   const onChange = (key: string) => {
     return async (value: string) => {

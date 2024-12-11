@@ -8,19 +8,19 @@ export const getFunctionInputFromSourceCode = (
   sourceCode?: string,
 ): FunctionInput => {
   if (!isDefined(sourceCode)) {
-    throw Error('Source code is not defined');
+    throw new Error('Source code is not defined');
   }
 
   const functionInputSchema = getFunctionInputSchema(sourceCode);
 
   if (functionInputSchema.length !== 1) {
-    throw Error('Function should have one object parameter');
+    throw new Error('Function should have one object parameter');
   }
 
   const result = getDefaultFunctionInputFromInputSchema(functionInputSchema)[0];
 
   if (!isObject(result)) {
-    throw Error('Function should have one object parameter');
+    throw new Error('Function should have one object parameter');
   }
 
   return result;
