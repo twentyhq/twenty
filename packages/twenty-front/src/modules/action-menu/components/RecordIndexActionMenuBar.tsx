@@ -1,5 +1,3 @@
-import styled from '@emotion/styled';
-
 import { RecordIndexActionMenuBarAllActionsButton } from '@/action-menu/components/RecordIndexActionMenuBarAllActionsButton';
 import { RecordIndexActionMenuBarEntry } from '@/action-menu/components/RecordIndexActionMenuBarEntry';
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
@@ -10,7 +8,7 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { BottomBar } from '@/ui/layout/bottom-bar/components/BottomBar';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-
+import styled from '@emotion/styled';
 const StyledLabel = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.md};
@@ -18,26 +16,20 @@ const StyledLabel = styled.div`
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
-
 export const RecordIndexActionMenuBar = () => {
   const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
-
   const actionMenuId = useAvailableComponentInstanceIdOrThrow(
     ActionMenuComponentInstanceContext,
   );
-
   const actionMenuEntries = useRecoilComponentValueV2(
     actionMenuEntriesComponentSelector,
   );
-
   const pinnedEntries = actionMenuEntries.filter((entry) => entry.isPinned);
-
   if (contextStoreNumberOfSelectedRecords === 0) {
     return null;
   }
-
   return (
     <BottomBar
       bottomBarId={getActionBarIdFromActionMenuId(actionMenuId)}
