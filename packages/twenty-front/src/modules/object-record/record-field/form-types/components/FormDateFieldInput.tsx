@@ -9,10 +9,18 @@ import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate'
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
 import { parseStringToDate } from '@/ui/input/components/internal/date/utils/parseStringToDate';
+import { UserContext } from '@/users/contexts/UserContext';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ChangeEvent, KeyboardEvent, useId, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  useContext,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import { isDefined, Nullable, TEXT_INPUT_STYLE } from 'twenty-ui';
 
 const StyledInputContainer = styled(StyledFormFieldInputInputContainer)`
@@ -75,6 +83,8 @@ export const FormDateFieldInput = ({
   onPersist,
   VariablePicker,
 }: FormDateFieldInputProps) => {
+  const { timeZone } = useContext(UserContext);
+
   const inputId = useId();
 
   const [draftValue, setDraftValue] = useState<DraftValue>(
@@ -104,7 +114,7 @@ export const FormDateFieldInput = ({
       ? parseDateToString({
           date: dateValue,
           isDateTimeInput: false,
-          userTimezone: undefined,
+          userTimezone: timeZone,
         })
       : '',
   );
@@ -132,7 +142,7 @@ export const FormDateFieldInput = ({
         ? parseDateToString({
             date: newDate,
             isDateTimeInput: false,
-            userTimezone: undefined,
+            userTimezone: timeZone,
           })
         : '',
     );
@@ -223,7 +233,7 @@ export const FormDateFieldInput = ({
     const parsedInputDateTime = parseStringToDate({
       dateAsString: inputDateTimeTrimmed,
       isDateTimeInput: false,
-      userTimezone: undefined,
+      userTimezone: timeZone,
     });
 
     if (!isDefined(parsedInputDateTime)) {
@@ -249,7 +259,7 @@ export const FormDateFieldInput = ({
       parseDateToString({
         date: validatedDate,
         isDateTimeInput: false,
-        userTimezone: undefined,
+        userTimezone: timeZone,
       }),
     );
 
