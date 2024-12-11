@@ -45,7 +45,7 @@ export const RecordIndexPageHeader = () => {
 
   const isObjectMetadataItemReadOnly =
     isDefined(objectMetadataItem) &&
-    !isObjectMetadataReadOnly(objectMetadataItem);
+    isObjectMetadataReadOnly(objectMetadataItem);
 
   const shouldDisplayAddButton =
     (numberOfSelectedRecords === 0 || !isPageHeaderV2Enabled) &&
