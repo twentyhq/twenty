@@ -34,7 +34,7 @@ export const useCloseRecordTableCellNoGroup = () => {
   const resetRecordTablePendingRecordId =
     useResetRecoilState(pendingRecordIdState);
 
-  const closeTableCellNoGroup = useCallback(async () => {
+  const closeTableCellNoGroup = useCallback(() => {
     toggleClickOutsideListener(true);
     setDragSelectionStartEnabled(true);
     closeCurrentTableCellInEditMode();

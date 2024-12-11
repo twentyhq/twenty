@@ -32,7 +32,7 @@ export const useCloseRecordTableCellInGroup = (recordGroupId: string) => {
 
   const closeTableCellInGroup = useRecoilCallback(
     ({ reset }) =>
-      async () => {
+      () => {
         toggleClickOutsideListener(true);
         setDragSelectionStartEnabled(true);
         closeCurrentTableCellInEditMode();
