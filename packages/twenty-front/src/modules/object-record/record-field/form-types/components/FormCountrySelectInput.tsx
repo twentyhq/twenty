@@ -9,7 +9,7 @@ import { useCountries } from '@/ui/input/components/internal/hooks/useCountries'
 export const FormCountrySelectInput = ({
   selectedCountryName,
   onPersist,
-  readonly,
+  readonly = false,
   VariablePicker,
 }: {
   selectedCountryName: string;
@@ -38,6 +38,10 @@ export const FormCountrySelectInput = ({
   }, [countries]);
 
   const onChange = (countryCode: string | null) => {
+    if (readonly) {
+      return;
+    }
+
     if (countryCode === null) {
       onPersist('');
     } else {

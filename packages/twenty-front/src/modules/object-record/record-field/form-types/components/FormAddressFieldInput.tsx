@@ -75,12 +75,12 @@ export const FormAddressFieldInput = ({
           placeholder="State"
         />
         <FormTextFieldInput
-          label="Post code"
+          label="Post Code"
           defaultValue={defaultValue?.addressPostcode ?? ''}
           onPersist={handleChange('addressPostcode')}
           readonly={readonly}
           VariablePicker={VariablePicker}
-          placeholder="Post code"
+          placeholder="Post Code"
         />
         <FormCountrySelectInput
           selectedCountryName={defaultValue?.addressCountry ?? ''}
