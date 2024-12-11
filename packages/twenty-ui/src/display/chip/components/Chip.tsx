@@ -121,7 +121,6 @@ const StyledContainer = withTheme(styled.div<
     variant === ChipVariant.Transparent
       ? theme.spacing(0)
       : 'var(--chip-horizontal-padding)'};
-
 `);
 
 export const Chip = ({
