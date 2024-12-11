@@ -1,28 +1,22 @@
+import { WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/single-record/workflow-actions/constants/WorkflowSingleRecordActionsConfig';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
+
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { IconPlayerPlay, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-ui';
 
 export const useTestWorkflowWorkflowSingleRecordAction = ({
   workflowId,
 }: {
   workflowId: string;
 }) => {
-  const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
+  const { addActionMenuEntry } = useActionMenuEntries();
 
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
 
   const { runWorkflowVersion } = useRunWorkflowVersion();
 
-  const registerTestWorkflowWorkflowSingleRecordAction = ({
-    position,
-  }: {
-    position: number;
-  }) => {
+  const registerTestWorkflowWorkflowSingleRecordAction = () => {
     if (
       !isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) ||
       workflowWithCurrentVersion.currentVersion.trigger.type !== 'MANUAL' ||
@@ -34,12 +28,7 @@ export const useTestWorkflowWorkflowSingleRecordAction = ({
     }
 
     addActionMenuEntry({
-      key: 'test-workflow-single-record',
-      label: 'Test workflow',
-      position,
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
-      Icon: IconPlayerPlay,
+      ...WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG.testWorkflowSingleRecord,
       onClick: () => {
         runWorkflowVersion({
           workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
@@ -49,12 +38,7 @@ export const useTestWorkflowWorkflowSingleRecordAction = ({
     });
   };
 
-  const unregisterTestWorkflowWorkflowSingleRecordAction = () => {
-    removeActionMenuEntry('test-workflow-single-record');
-  };
-
   return {
     registerTestWorkflowWorkflowSingleRecordAction,
-    unregisterTestWorkflowWorkflowSingleRecordAction,
   };
 };

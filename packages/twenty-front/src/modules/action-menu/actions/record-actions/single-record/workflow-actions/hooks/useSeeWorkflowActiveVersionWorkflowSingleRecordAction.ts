@@ -1,21 +1,19 @@
+import { WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/single-record/workflow-actions/constants/WorkflowSingleRecordActionsConfig';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
+
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useActiveWorkflowVersion } from '@/workflow/hooks/useActiveWorkflowVersion';
 import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { IconHistory, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-ui';
 
 export const useSeeWorkflowActiveVersionWorkflowSingleRecordAction = ({
   workflowId,
 }: {
   workflowId: string;
 }) => {
-  const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
+  const { addActionMenuEntry } = useActionMenuEntries();
 
   const workflow = useRecoilValue(recordStoreFamilyState(workflowId));
 
@@ -25,22 +23,13 @@ export const useSeeWorkflowActiveVersionWorkflowSingleRecordAction = ({
 
   const navigate = useNavigate();
 
-  const registerSeeWorkflowActiveVersionWorkflowSingleRecordAction = ({
-    position,
-  }: {
-    position: number;
-  }) => {
+  const registerSeeWorkflowActiveVersionWorkflowSingleRecordAction = () => {
     if (!isDefined(workflowActiveVersion) || !isDraft) {
       return;
     }
 
     addActionMenuEntry({
-      key: 'see-workflow-active-version-single-record',
-      label: 'See active version',
-      position,
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
-      Icon: IconHistory,
+      ...WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG.seeWorkflowActiveVersionSingleRecord,
       onClick: () => {
         navigate(
           `/object/${CoreObjectNameSingular.WorkflowVersion}/${workflowActiveVersion.id}`,
@@ -49,12 +38,7 @@ export const useSeeWorkflowActiveVersionWorkflowSingleRecordAction = ({
     });
   };
 
-  const unregisterSeeWorkflowActiveVersionWorkflowSingleRecordAction = () => {
-    removeActionMenuEntry('see-workflow-active-version-single-record');
-  };
-
   return {
     registerSeeWorkflowActiveVersionWorkflowSingleRecordAction,
-    unregisterSeeWorkflowActiveVersionWorkflowSingleRecordAction,
   };
 };

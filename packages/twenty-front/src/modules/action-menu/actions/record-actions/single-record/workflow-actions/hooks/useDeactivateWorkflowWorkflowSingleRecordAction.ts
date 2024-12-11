@@ -1,18 +1,16 @@
+import { WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/single-record/workflow-actions/constants/WorkflowSingleRecordActionsConfig';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-import {
-  ActionMenuEntryScope,
-  ActionMenuEntryType,
-} from '@/action-menu/types/ActionMenuEntry';
+
 import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
-import { IconPlayerPause, isDefined } from 'twenty-ui';
+import { isDefined } from 'twenty-ui';
 
 export const useDeactivateWorkflowWorkflowSingleRecordAction = ({
   workflowId,
 }: {
   workflowId: string;
 }) => {
-  const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
+  const { addActionMenuEntry } = useActionMenuEntries();
 
   const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
 
@@ -22,34 +20,20 @@ export const useDeactivateWorkflowWorkflowSingleRecordAction = ({
     isDefined(workflowWithCurrentVersion) &&
     workflowWithCurrentVersion.currentVersion.status === 'ACTIVE';
 
-  const registerDeactivateWorkflowWorkflowSingleRecordAction = ({
-    position,
-  }: {
-    position: number;
-  }) => {
+  const registerDeactivateWorkflowWorkflowSingleRecordAction = () => {
     if (!isDefined(workflowWithCurrentVersion) || !isWorkflowActive) {
       return;
     }
 
     addActionMenuEntry({
-      key: 'deactivate-workflow-single-record',
-      label: 'Deactivate Workflow',
-      position,
-      Icon: IconPlayerPause,
-      type: ActionMenuEntryType.Standard,
-      scope: ActionMenuEntryScope.RecordSelection,
+      ...WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG.deactivateWorkflowSingleRecord,
       onClick: () => {
         deactivateWorkflowVersion(workflowWithCurrentVersion.currentVersion.id);
       },
     });
   };
 
-  const unregisterDeactivateWorkflowWorkflowSingleRecordAction = () => {
-    removeActionMenuEntry('deactivate-workflow-single-record');
-  };
-
   return {
     registerDeactivateWorkflowWorkflowSingleRecordAction,
-    unregisterDeactivateWorkflowWorkflowSingleRecordAction,
   };
 };

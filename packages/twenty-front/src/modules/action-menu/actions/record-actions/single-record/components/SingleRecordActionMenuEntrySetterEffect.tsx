@@ -18,7 +18,11 @@ export const SingleRecordActionMenuEntrySetterEffect = ({
     return () => {
       unregisterSingleRecordActions();
     };
-  }, [registerSingleRecordActions, unregisterSingleRecordActions]);
+  }, [
+    objectMetadataItem.nameSingular,
+    registerSingleRecordActions,
+    unregisterSingleRecordActions,
+  ]);
 
   return null;
 };
