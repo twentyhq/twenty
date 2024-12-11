@@ -47,7 +47,6 @@ export const FavoriteFolderNavigationDrawerItemDropdown = ({
       dropdownHotkeyScope={{
         scope: FavoriteFolderHotkeyScope.FavoriteFolderRightIconDropdown,
       }}
-      usePortal
       data-select-disable
       clickableComponent={
         <StyledIconContainer>

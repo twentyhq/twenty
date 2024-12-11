@@ -21,6 +21,10 @@ export const useShowAuthModal = () => {
   );
 
   return useMemo(() => {
+    if (isMatchingLocation(AppPath.SignInUp)) {
+      return true;
+    }
+
     if (isMatchingLocation(AppPath.Verify)) {
       return false;
     }

@@ -1,5 +1,12 @@
 import styled from '@emotion/styled';
-import { Button, IconCheckbox, IconNotes, IconPlus, MenuItem } from 'twenty-ui';
+import {
+  Button,
+  IconButton,
+  IconCheckbox,
+  IconNotes,
+  IconPlus,
+  MenuItem,
+} from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -10,6 +17,7 @@ import { SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID } from '@/ui/layout/show-page/constant
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isWorkflowSubObjectMetadata } from '@/object-metadata/utils/isWorkflowSubObjectMetadata';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { Dropdown } from '../../dropdown/components/Dropdown';
 import { DropdownMenu } from '../../dropdown/components/DropdownMenu';
 
@@ -22,7 +30,8 @@ export const ShowPageAddButton = ({
 }: {
   activityTargetObject: ActivityTargetableObject;
 }) => {
-  const { closeDropdown } = useDropdown('add-show-page');
+  const { closeDropdown } = useDropdown(SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID);
+
   const openNote = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Note,
   });
@@ -35,8 +44,7 @@ export const ShowPageAddButton = ({
       openNote({
         targetableObjects: [activityTargetObject],
       });
-    }
-    if (objectNameSingular === CoreObjectNameSingular.Task) {
+    } else if (objectNameSingular === CoreObjectNameSingular.Task) {
       openTask({
         targetableObjects: [activityTargetObject],
       });
@@ -44,6 +52,10 @@ export const ShowPageAddButton = ({
 
     closeDropdown();
   };
+
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
+  );
 
   if (
     activityTargetObject.targetObjectNameSingular ===
@@ -60,15 +72,25 @@ export const ShowPageAddButton = ({
       <Dropdown
         dropdownId={SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID}
         clickableComponent={
-          <Button
-            Icon={IconPlus}
-            dataTestId="add-button"
-            size="small"
-            variant="secondary"
-            accent="default"
-            title="New note/task"
-            ariaLabel="New note/task"
-          />
+          isPageHeaderV2Enabled ? (
+            <Button
+              Icon={IconPlus}
+              dataTestId="add-button"
+              size="small"
+              variant="secondary"
+              accent="default"
+              title="New note/task"
+              ariaLabel="New note/task"
+            />
+          ) : (
+            <IconButton
+              Icon={IconPlus}
+              size="medium"
+              dataTestId="add-showpage-button"
+              accent="default"
+              variant="secondary"
+            />
+          )
         }
         dropdownComponents={
           <DropdownMenu>

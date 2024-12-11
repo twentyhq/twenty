@@ -8,6 +8,7 @@ import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
 import { IconHeart, IconHeartOff, isDefined } from 'twenty-ui';
 
@@ -34,6 +35,10 @@ export const useManageFavoritesSingleRecordAction = ({
 
   const isFavorite = !!foundFavorite;
 
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
+  );
+
   const registerManageFavoritesSingleRecordAction = ({
     position,
   }: {
@@ -47,6 +52,7 @@ export const useManageFavoritesSingleRecordAction = ({
       type: ActionMenuEntryType.Standard,
       scope: ActionMenuEntryScope.RecordSelection,
       key: 'manage-favorites-single-record',
+      isPinned: isPageHeaderV2Enabled,
       label: isFavorite ? 'Remove from favorites' : 'Add to favorites',
       position,
       Icon: isFavorite ? IconHeartOff : IconHeart,

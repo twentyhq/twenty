@@ -5,16 +5,26 @@ import { WorkflowRunRecordActionMenuEntrySetterEffect } from '@/action-menu/acti
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const RecordActionMenuEntriesSetter = () => {
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
   );
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  if (!isDefined(contextStoreCurrentObjectMetadataId)) {
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) => item.id === contextStoreCurrentObjectMetadataId,
+  );
+
+  if (
+    !isDefined(contextStoreCurrentObjectMetadataId) ||
+    !isDefined(objectMetadataItem)
+  ) {
     return null;
   }
 
