@@ -1,3 +1,5 @@
+import { DATE_PARSER_FORMAT } from '@/ui/input/components/internal/date/constants/DateParserFormat';
+import { DATE_TIME_PARSER_FORMAT } from '@/ui/input/components/internal/date/constants/DateTimeParserFormat';
 import { DateTime } from 'luxon';
 
 type ParseDateToStringArgs = {
@@ -11,7 +13,9 @@ export const parseDateToString = ({
   isDateTimeInput,
   userTimezone,
 }: ParseDateToStringArgs) => {
-  const parsingFormat = isDateTimeInput ? 'MM/dd/yyyy HH:mm' : 'MM/dd/yyyy';
+  const parsingFormat = isDateTimeInput
+    ? DATE_TIME_PARSER_FORMAT
+    : DATE_PARSER_FORMAT;
 
   const dateParsed = DateTime.fromJSDate(date, { zone: userTimezone });
 
