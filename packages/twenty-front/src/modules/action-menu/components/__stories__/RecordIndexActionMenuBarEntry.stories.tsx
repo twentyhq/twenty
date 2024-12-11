@@ -7,15 +7,19 @@ import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
 import { ComponentDecorator, IconCheckbox, IconTrash } from 'twenty-ui';
+
 const meta: Meta<typeof RecordIndexActionMenuBarEntry> = {
   title: 'Modules/ActionMenu/RecordIndexActionMenuBarEntry',
   component: RecordIndexActionMenuBarEntry,
   decorators: [ComponentDecorator],
 };
 export default meta;
+
 type Story = StoryObj<typeof RecordIndexActionMenuBarEntry>;
+
 const deleteMock = jest.fn();
 const markAsDoneMock = jest.fn();
+
 export const Default: Story = {
   args: {
     entry: {
@@ -29,6 +33,7 @@ export const Default: Story = {
     },
   },
 };
+
 export const WithDangerAccent: Story = {
   args: {
     entry: {
@@ -43,6 +48,7 @@ export const WithDangerAccent: Story = {
     },
   },
 };
+
 export const WithInteraction: Story = {
   args: {
     entry: {

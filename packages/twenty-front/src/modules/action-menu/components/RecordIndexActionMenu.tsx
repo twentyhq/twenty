@@ -31,8 +31,11 @@ export const RecordIndexActionMenu = () => {
             onActionExecutedCallback: () => {},
           }}
         >
-          {isPageHeaderV2Enabled && <RecordIndexActionMenuButtons />}
-          {!isPageHeaderV2Enabled && <RecordIndexActionMenuBar />}
+          {isPageHeaderV2Enabled ? (
+            <RecordIndexActionMenuButtons />
+          ) : (
+            <RecordIndexActionMenuBar />
+          )}
           <RecordIndexActionMenuDropdown />
           <ActionMenuConfirmationModals />
           <RecordIndexActionMenuEffect />

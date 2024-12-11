@@ -14,7 +14,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useIcons } from 'twenty-ui';
+import { isDefined, useIcons } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const RecordIndexPageHeader = () => {
@@ -43,11 +43,13 @@ export const RecordIndexPageHeader = () => {
     'IS_PAGE_HEADER_V2_ENABLED',
   );
 
+  const isObjectMetadataItemReadOnly =
+    isDefined(objectMetadataItem) &&
+    !isObjectMetadataReadOnly(objectMetadataItem);
+
   const shouldDisplayAddButton =
     (numberOfSelectedRecords === 0 || !isPageHeaderV2Enabled) &&
-    objectMetadataItem
-      ? !isObjectMetadataReadOnly(objectMetadataItem)
-      : false;
+    !isObjectMetadataItemReadOnly;
 
   const isTable = recordIndexViewType === ViewType.Table;
 

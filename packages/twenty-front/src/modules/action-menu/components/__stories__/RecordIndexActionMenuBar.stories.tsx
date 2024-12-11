@@ -16,7 +16,9 @@ import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, waitFor, within } from '@storybook/test';
 import { RecoilRoot } from 'recoil';
 import { IconTrash, RouterDecorator } from 'twenty-ui';
+
 const deleteMock = jest.fn();
+
 const meta: Meta<typeof RecordIndexActionMenuBar> = {
   title: 'Modules/ActionMenu/RecordIndexActionMenuBar',
   component: RecordIndexActionMenuBar,
@@ -81,13 +83,17 @@ const meta: Meta<typeof RecordIndexActionMenuBar> = {
     actionMenuId: 'story-action-menu',
   },
 };
+
 export default meta;
+
 type Story = StoryObj<typeof RecordIndexActionMenuBar>;
+
 export const Default: Story = {
   args: {
     actionMenuId: 'story-action-menu',
   },
 };
+
 export const WithCustomSelection: Story = {
   args: {
     actionMenuId: 'story-action-menu',
@@ -98,6 +104,7 @@ export const WithCustomSelection: Story = {
     expect(selectionText).toBeInTheDocument();
   },
 };
+
 export const WithButtonClicks: Story = {
   args: {
     actionMenuId: 'story-action-menu',
