@@ -8,6 +8,7 @@ import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
 import { Tab } from './Tab';
+import { useEffect } from 'react';
 
 export type SingleTabProps = {
   title: string;
@@ -54,7 +55,7 @@ export const TabList = ({
 
   const { activeTabId, setActiveTabId } = useTabList(tabListInstanceId);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setActiveTabId(initialActiveTabId);
   }, [initialActiveTabId, setActiveTabId]);
 

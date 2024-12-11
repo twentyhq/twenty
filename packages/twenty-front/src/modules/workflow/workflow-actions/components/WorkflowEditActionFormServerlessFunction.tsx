@@ -71,7 +71,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
 }: WorkflowEditActionFormServerlessFunctionProps) => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
-  const { activeTabId } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabId, setActiveTabId } = useTabList(TAB_LIST_COMPONENT_ID);
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
@@ -205,10 +205,19 @@ export const WorkflowEditActionFormServerlessFunction = ({
     }));
   };
 
+  const handleRunFunction = async () => {
+    setActiveTabId('test');
+    await testServerlessFunction();
+  };
+
   const handleEditorDidMount = async (
     editor: editor.IStandaloneCodeEditor,
     monaco: Monaco,
   ) => {
+    editor.addCommand(
+      monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
+      handleRunFunction,
+    );
     await AutoTypings.create(editor, {
       monaco,
       preloadPackages: true,
@@ -252,7 +261,11 @@ export const WorkflowEditActionFormServerlessFunction = ({
   return (
     !loading && (
       <>
-        <StyledTabList tabListInstanceId={TAB_LIST_COMPONENT_ID} tabs={tabs} />
+        <StyledTabList
+          tabListInstanceId={TAB_LIST_COMPONENT_ID}
+          tabs={tabs}
+          behaveAsLinks={false}
+        />
         <WorkflowStepHeader
           onTitleChange={(newName: string) => {
             updateAction({ name: newName });
@@ -306,14 +319,10 @@ export const WorkflowEditActionFormServerlessFunction = ({
         <RightDrawerFooter
           actions={[
             <RecordShowRightDrawerActionMenu />,
-            ...(activeTabId === 'test'
-              ? [
-                  <RightDrawerActionRunButton
-                    title="Test"
-                    onClick={testServerlessFunction}
-                  />,
-                ]
-              : []),
+            <RightDrawerActionRunButton
+              title="Test"
+              onClick={handleRunFunction}
+            />,
           ]}
         />
       </>
