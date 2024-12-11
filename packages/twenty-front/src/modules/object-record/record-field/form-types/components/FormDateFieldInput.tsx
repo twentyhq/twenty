@@ -28,6 +28,7 @@ const StyledInputContainer = styled(StyledFormFieldInputInputContainer)`
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 0px;
   overflow: visible;
+  position: relative;
 `;
 
 const StyledDateInputAbsoluteContainer = styled.div`
