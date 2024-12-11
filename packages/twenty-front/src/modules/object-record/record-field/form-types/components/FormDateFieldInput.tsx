@@ -161,6 +161,16 @@ export const FormDateFieldInput = ({
 
     setTemporaryValue(newDate);
 
+    setInputDateTime(
+      isDefined(newDate)
+        ? parseDateToString({
+            date: newDate,
+            isDateTimeInput: false,
+            userTimezone: timeZone,
+          })
+        : '',
+    );
+
     persistDate(newDate);
   };
 
@@ -175,6 +185,16 @@ export const FormDateFieldInput = ({
     });
 
     setTemporaryValue(newDate);
+
+    setInputDateTime(
+      isDefined(newDate)
+        ? parseDateToString({
+            date: newDate,
+            isDateTimeInput: false,
+            userTimezone: timeZone,
+          })
+        : '',
+    );
 
     persistDate(newDate);
   };
@@ -201,6 +221,16 @@ export const FormDateFieldInput = ({
     });
 
     setTemporaryValue(newDate);
+
+    setInputDateTime(
+      isDefined(newDate)
+        ? parseDateToString({
+            date: newDate,
+            isDateTimeInput: false,
+            userTimezone: timeZone,
+          })
+        : '',
+    );
 
     persistDate(newDate);
   };
