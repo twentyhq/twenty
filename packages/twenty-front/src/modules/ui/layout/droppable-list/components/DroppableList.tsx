@@ -21,12 +21,12 @@ const StyledDroppableWrapper = styled.div<{
       &::before {
         content: '';
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 3px;
-        height: 100%;
-        background-color: ${theme.color.green};
-        border-radius: 0 ${theme.border.radius.sm} ${theme.border.radius.sm} 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: ${theme.color.blue};
+        border-radius: ${theme.border.radius.sm} ${theme.border.radius.sm} 0 0;
       }
       
       background-color: ${theme.background.transparent.lighter};
