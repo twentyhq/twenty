@@ -17,7 +17,7 @@ export const PageAddButton = ({ onClick }: PageAddButtonProps) => {
         <Button
           Icon={IconPlus}
           dataTestId="add-button"
-          size="small"
+          size={isMobile ? 'medium' : 'small'}
           variant="secondary"
           accent="default"
           title={isMobile ? '' : 'New record'}
