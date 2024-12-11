@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { textfieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -19,6 +20,7 @@ import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkey
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const setHotkeyScope = jest.fn();
 
@@ -30,7 +32,11 @@ const onColumnsChange = jest.fn();
 const recordTableId = 'scopeId';
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <RecoilRoot>
+  <RecoilRoot
+    initializeState={(snapshot) => {
+      snapshot.set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+    }}
+  >
     <RecordTableComponentInstance
       recordTableId={recordTableId}
       onColumnsChange={onColumnsChange}

@@ -1,5 +1,5 @@
-import { act, renderHook } from '@testing-library/react';
-import { ReactNode } from 'react';
+import { renderHook } from '@testing-library/react';
+import { ReactNode, act } from 'react';
 import { RecoilRoot } from 'recoil';
 import { createState } from 'twenty-ui';
 
@@ -11,6 +11,7 @@ import { textfieldDefinition } from '@/object-record/record-field/__mocks__/fiel
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
 import { useUpsertTableRecordNoGroup } from '@/object-record/record-table/hooks/internal/useUpsertTableRecordNoGroup';
+import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
@@ -70,26 +71,33 @@ const Wrapper = ({
       objectNameSingular={CoreObjectNameSingular.Person}
       viewBarId="viewBarId"
     >
-      <ViewComponentInstanceContext.Provider
-        value={{ instanceId: CoreObjectNamePlural.Person }}
+      <RecordTableComponentInstanceContext.Provider
+        value={{
+          instanceId: CoreObjectNamePlural.Person,
+          onColumnsChange: jest.fn(),
+        }}
       >
-        <FieldContext.Provider
-          value={{
-            recordId: 'recordId',
-            fieldDefinition: {
-              ...textfieldDefinition,
-              metadata: {
-                ...textfieldDefinition.metadata,
-                objectMetadataNameSingular: CoreObjectNameSingular.Person,
-              },
-            },
-            hotkeyScope: TableHotkeyScope.Table,
-            isLabelIdentifier: false,
-          }}
+        <ViewComponentInstanceContext.Provider
+          value={{ instanceId: CoreObjectNamePlural.Person }}
         >
-          {children}
-        </FieldContext.Provider>
-      </ViewComponentInstanceContext.Provider>
+          <FieldContext.Provider
+            value={{
+              recordId: 'recordId',
+              fieldDefinition: {
+                ...textfieldDefinition,
+                metadata: {
+                  ...textfieldDefinition.metadata,
+                  objectMetadataNameSingular: CoreObjectNameSingular.Person,
+                },
+              },
+              hotkeyScope: TableHotkeyScope.Table,
+              isLabelIdentifier: false,
+            }}
+          >
+            {children}
+          </FieldContext.Provider>
+        </ViewComponentInstanceContext.Provider>
+      </RecordTableComponentInstanceContext.Provider>
     </RecordTableContextProvider>
   </RecoilRoot>
 );
