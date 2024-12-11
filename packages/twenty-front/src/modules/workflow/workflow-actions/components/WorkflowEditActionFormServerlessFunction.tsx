@@ -1,4 +1,5 @@
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { StyledFormCompositeFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormCompositeFieldInputContainer';
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
@@ -42,17 +43,6 @@ const StyledLabel = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-top: ${({ theme }) => theme.spacing(2)};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledInputContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  position: relative;
 `;
 
 type WorkflowEditActionFormServerlessFunctionProps = {
@@ -223,9 +213,9 @@ export const WorkflowEditActionFormServerlessFunction = ({
         return (
           <StyledContainer key={pathKey}>
             <StyledLabel>{inputKey}</StyledLabel>
-            <StyledInputContainer>
+            <StyledFormCompositeFieldInputContainer>
               {renderFields(inputValue, currentPath, false)}
-            </StyledInputContainer>
+            </StyledFormCompositeFieldInputContainer>
           </StyledContainer>
         );
       } else {

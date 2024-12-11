@@ -77,28 +77,28 @@ export const RecordIndexPage = () => {
         <ViewComponentInstanceContext.Provider
           value={{ instanceId: recordIndexId }}
         >
-          <PageTitle title={`${capitalize(objectNamePlural)}`} />
-          <RecordIndexPageHeader />
-          <PageBody>
-            <StyledIndexContainer>
-              <ContextStoreComponentInstanceContext.Provider
-                value={{
-                  instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-                }}
-              >
-                <ActionMenuComponentInstanceContext.Provider
-                  value={{
-                    instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
-                  }}
-                >
+          <ContextStoreComponentInstanceContext.Provider
+            value={{
+              instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+            }}
+          >
+            <ActionMenuComponentInstanceContext.Provider
+              value={{
+                instanceId: getActionMenuIdFromRecordIndexId(recordIndexId),
+              }}
+            >
+              <PageTitle title={`${capitalize(objectNamePlural)}`} />
+              <RecordIndexPageHeader />
+              <PageBody>
+                <StyledIndexContainer>
                   <RecordIndexContainerContextStoreObjectMetadataEffect />
                   <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
                   <MainContextStoreComponentInstanceIdSetterEffect />
                   <RecordIndexContainer />
-                </ActionMenuComponentInstanceContext.Provider>
-              </ContextStoreComponentInstanceContext.Provider>
-            </StyledIndexContainer>
-          </PageBody>
+                </StyledIndexContainer>
+              </PageBody>
+            </ActionMenuComponentInstanceContext.Provider>
+          </ContextStoreComponentInstanceContext.Provider>
         </ViewComponentInstanceContext.Provider>
       </RecordIndexRootPropsContext.Provider>
     </PageContainer>
