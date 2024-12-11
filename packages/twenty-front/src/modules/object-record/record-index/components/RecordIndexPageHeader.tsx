@@ -55,6 +55,9 @@ export const RecordIndexPageHeader = () => {
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
       {shouldDisplayAddButton &&
+        /**
+         * TODO: Logic between Table and Kanban should be merged here when we move some states to record-index
+         */
         (isTable ? (
           <RecordIndexPageTableAddButton />
         ) : (
