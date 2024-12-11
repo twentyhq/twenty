@@ -10,14 +10,7 @@ import { parseStringToDate } from '@/ui/input/components/internal/date/utils/par
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  ChangeEvent,
-  KeyboardEvent,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { ChangeEvent, KeyboardEvent, useId, useRef, useState } from 'react';
 import { isDefined, Nullable, TEXT_INPUT_STYLE } from 'twenty-ui';
 
 const StyledInputContainer = styled(StyledFormFieldInputInputContainer)`
@@ -95,9 +88,23 @@ export const FormDateFieldInput = ({
         },
   );
 
-  const dateValue = useMemo(
-    () => (isDefined(draftValue.value) ? new Date(draftValue.value) : null),
-    [draftValue.value],
+  const dateValue = isDefined(draftValue.value)
+    ? new Date(draftValue.value)
+    : null;
+
+  const datePickerWrapperRef = useRef<HTMLDivElement>(null);
+
+  const [temporaryValue, setTemporaryValue] =
+    useState<Nullable<Date>>(dateValue);
+
+  const [inputDateTime, setInputDateTime] = useState(
+    isDefined(dateValue) && !isStandaloneVariableString(defaultValue)
+      ? parseDateToString({
+          date: dateValue,
+          isDateTimeInput: false,
+          userTimezone: undefined,
+        })
+      : '',
   );
 
   const persistDate = (newDate: Nullable<Date>) => {
@@ -185,21 +192,6 @@ export const FormDateFieldInput = ({
 
     persistDate(newDate);
   };
-
-  const datePickerWrapperRef = useRef<HTMLDivElement>(null);
-
-  const [temporaryValue, setTemporaryValue] =
-    useState<Nullable<Date>>(dateValue);
-
-  const [inputDateTime, setInputDateTime] = useState(
-    isDefined(dateValue) && !isStandaloneVariableString(defaultValue)
-      ? parseDateToString({
-          date: dateValue,
-          isDateTimeInput: false,
-          userTimezone: undefined,
-        })
-      : '',
-  );
 
   const handleInputFocus = () => {
     setDraftValue({
