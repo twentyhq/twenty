@@ -72,7 +72,6 @@ const StyledContainer = withTheme(styled.div<
     maxWidth
       ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
       : '200px'};
-  width: inherit;
   overflow: hidden;
   padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
   user-select: none;
@@ -129,6 +128,7 @@ export const Chip = ({
   accent = ChipAccent.TextPrimary,
   onClick,
   className,
+  maxWidth,
 }: ChipProps) => {
   return (
     <StyledContainer
@@ -140,6 +140,8 @@ export const Chip = ({
       variant={variant}
       onClick={onClick}
       className={className}
+      // widthStyle={widthStyle}
+      maxWidth={maxWidth}
     >
       {leftComponent}
       <OverflowingTextWithTooltip size={size} text={label} />
