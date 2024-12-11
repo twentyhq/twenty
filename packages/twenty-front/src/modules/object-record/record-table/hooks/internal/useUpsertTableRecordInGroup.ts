@@ -54,9 +54,13 @@ export const useUpsertTableRecordInGroup = (recordGroupId: string) => {
           recordGroupDefinitionFamilyState(recordGroupId),
         );
 
+        if (!isDefined(recordGroupDefinition)) {
+          return;
+        }
+
         const recordGroupFieldMetadataItem = objectMetadataItem.fields.find(
           (fieldMetadata) =>
-            fieldMetadata.id === recordGroupDefinition?.fieldMetadataId,
+            fieldMetadata.id === recordGroupDefinition.fieldMetadataId,
         );
 
         if (
