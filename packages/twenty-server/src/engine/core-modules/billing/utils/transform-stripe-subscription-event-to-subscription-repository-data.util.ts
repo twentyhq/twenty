@@ -12,9 +12,9 @@ export const transformStripeSubscriptionEventToSubscriptionRepositoryData = (
 ) => {
   return {
     workspaceId,
-    stripeCustomerId: data.object.customer as string,
+    stripeCustomerId: String(data.object.customer),
     stripeSubscriptionId: data.object.id,
-    status: data.object.status as SubscriptionStatus,
+    status: getSubscriptionStatus(data.object.status),
     interval: data.object.items.data[0].plan.interval,
     cancelAtPeriodEnd: data.object.cancel_at_period_end,
     currency: data.object.currency.toUpperCase(),
@@ -22,7 +22,9 @@ export const transformStripeSubscriptionEventToSubscriptionRepositoryData = (
     currentPeriodStart: new Date(data.object.current_period_start * 1000),
     metadata: data.object.metadata,
     collectionMethod:
-      data.object.collection_method.toUpperCase() as BillingSubscriptionCollectionMethod,
+      BillingSubscriptionCollectionMethod[
+        data.object.collection_method.toUpperCase()
+      ],
     automaticTax: data.object.automatic_tax ?? undefined,
     cancellationDetails: data.object.cancellation_details ?? undefined,
     endedAt: data.object.ended_at
@@ -43,37 +45,23 @@ export const transformStripeSubscriptionEventToSubscriptionRepositoryData = (
   };
 };
 
-export const transformStripeSubscriptionEventToSubscriptionItemRepositoryData =
-  (
-    billingSubscriptionId: string,
-    data:
-      | Stripe.CustomerSubscriptionUpdatedEvent.Data
-      | Stripe.CustomerSubscriptionCreatedEvent.Data
-      | Stripe.CustomerSubscriptionDeletedEvent.Data,
-  ) => {
-    return data.object.items.data.map((item) => {
-      return {
-        billingSubscriptionId,
-        stripeSubscriptionId: data.object.id,
-        stripeProductId: item.price.product as string,
-        stripePriceId: item.price.id,
-        stripeSubscriptionItemId: item.id,
-        quantity: item.quantity,
-        metadata: item.metadata,
-        billingThresholds: item.billing_thresholds ?? undefined,
-      };
-    });
-  };
-
-export const transformStripeSubscriptionEventToCustomerRepositoryData = (
-  workspaceId: string,
-  data:
-    | Stripe.CustomerSubscriptionUpdatedEvent.Data
-    | Stripe.CustomerSubscriptionCreatedEvent.Data
-    | Stripe.CustomerSubscriptionDeletedEvent.Data,
-) => {
-  return {
-    workspaceId,
-    stripeCustomerId: data.object.customer as string,
-  };
+const getSubscriptionStatus = (status: Stripe.Subscription.Status) => {
+  switch (status) {
+    case 'active':
+      return SubscriptionStatus.Active;
+    case 'canceled':
+      return SubscriptionStatus.Canceled;
+    case 'incomplete':
+      return SubscriptionStatus.Incomplete;
+    case 'incomplete_expired':
+      return SubscriptionStatus.IncompleteExpired;
+    case 'past_due':
+      return SubscriptionStatus.PastDue;
+    case 'paused':
+      return SubscriptionStatus.Paused;
+    case 'trialing':
+      return SubscriptionStatus.Trialing;
+    case 'unpaid':
+      return SubscriptionStatus.Unpaid;
+  }
 };

@@ -16,7 +16,6 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { WebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing/services/billing-webhook-customer.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/services/billing-webhook-entitlement.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/services/billing-webhook-subscription.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
@@ -27,7 +26,6 @@ export class BillingController {
   constructor(
     private readonly stripeService: StripeService,
     private readonly billingWebhookSubscriptionService: BillingWebhookSubscriptionService,
-    private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
     private readonly billingWebhookEntitlementService: BillingWebhookEntitlementService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
@@ -65,38 +63,16 @@ export class BillingController {
         return;
       }
 
-      await this.billingWebhookSubscriptionService.processStripeSubscriptionEvent(
+      await this.billingWebhookSubscriptionService.processStripeEvent(
         workspaceId,
         event.data,
       );
-      const customer = await this.stripeService.getCustomer(
-        event.data.object.customer as string,
-      );
-
-      if (customer.deleted) {
-        throw new BillingException(
-          'Stripe customer deleted',
-          BillingExceptionCode.BILLING_CUSTOMER_DELETED,
-        );
-      }
-
-      const stripeMetadataNeedsUpdate =
-        await this.billingWebhookCustomerService.verifyStripeCustomerMetadata(
-          customer,
-        );
-
-      if (stripeMetadataNeedsUpdate) {
-        await this.stripeService.updateCustomerMetadataWorkspaceId(
-          customer.id,
-          stripeMetadataNeedsUpdate,
-        );
-      }
     }
     if (
       event.type === WebhookEvent.CUSTOMER_ACTIVE_ENTITLEMENT_SUMMARY_UPDATED
     ) {
       try {
-        await this.billingWebhookEntitlementService.processCustomerActiveEntitlement(
+        await this.billingWebhookEntitlementService.processStripeEvent(
           event.data,
         );
       } catch (error) {
@@ -108,27 +84,7 @@ export class BillingController {
         }
       }
     }
-    if (
-      event.type === WebhookEvent.CUSTOMER_CREATED ||
-      event.type === WebhookEvent.CUSTOMER_UPDATED ||
-      event.type === WebhookEvent.CUSTOMER_DELETED
-    ) {
-      //Right now i think I did this part as an overkill
-      const customerId = event.data.object.id;
 
-      const updatedStripeWorkspaceId =
-        await this.billingWebhookCustomerService.processStripeCustomerEvent(
-          customerId,
-          event.data,
-        );
-
-      if (updatedStripeWorkspaceId) {
-        await this.stripeService.updateCustomerMetadataWorkspaceId(
-          customerId,
-          updatedStripeWorkspaceId,
-        );
-      }
-    }
     res.status(200).end();
   }
 }

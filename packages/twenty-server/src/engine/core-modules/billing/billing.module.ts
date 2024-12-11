@@ -13,7 +13,6 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing/services/billing-webhook-customer.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/services/billing-webhook-entitlement.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/services/billing-webhook-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -49,7 +48,6 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
   providers: [
     BillingSubscriptionService,
     BillingWebhookSubscriptionService,
-    BillingWebhookCustomerService,
     BillingWebhookEntitlementService,
     BillingPortalWorkspaceService,
     BillingResolver,

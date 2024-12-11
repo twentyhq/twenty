@@ -8,11 +8,10 @@ import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billin
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import {
-  transformStripeSubscriptionEventToCustomerRepositoryData,
-  transformStripeSubscriptionEventToSubscriptionItemRepositoryData,
-  transformStripeSubscriptionEventToSubscriptionRepositoryData,
-} from 'src/engine/core-modules/billing/utils/billing-webhook-subscription-transformer.util';
+import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
+import { transformStripeSubscriptionEventToCustomerRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-customer-repository-data.util';
+import { transformStripeSubscriptionEventToSubscriptionItemRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-subscription-item-repository-data.util';
+import { transformStripeSubscriptionEventToSubscriptionRepositoryData } from 'src/engine/core-modules/billing/utils/transform-stripe-subscription-event-to-subscription-repository-data.util';
 import {
   Workspace,
   WorkspaceActivationStatus,
@@ -23,6 +22,7 @@ export class BillingWebhookSubscriptionService {
     BillingWebhookSubscriptionService.name,
   );
   constructor(
+    private readonly stripeService: StripeService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(BillingSubscriptionItem, 'core')
@@ -33,7 +33,7 @@ export class BillingWebhookSubscriptionService {
     private readonly billingCustomerRepository: Repository<BillingCustomer>,
   ) {}
 
-  async processStripeSubscriptionEvent(
+  async processStripeEvent(
     workspaceId: string,
     data:
       | Stripe.CustomerSubscriptionUpdatedEvent.Data
@@ -105,5 +105,10 @@ export class BillingWebhookSubscriptionService {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       });
     }
+
+    await this.stripeService.updateCustomerMetadataWorkspaceId(
+      String(data.object.customer),
+      workspaceId,
+    );
   }
 }
