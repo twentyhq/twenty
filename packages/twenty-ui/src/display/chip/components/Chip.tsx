@@ -140,7 +140,6 @@ export const Chip = ({
       variant={variant}
       onClick={onClick}
       className={className}
-      // widthStyle={widthStyle}
       maxWidth={maxWidth}
     >
       {leftComponent}
