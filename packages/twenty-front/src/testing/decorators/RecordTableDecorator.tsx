@@ -20,7 +20,7 @@ export const RecordTableDecorator: Decorator = (Story) => {
   return (
     <RecordTableContextProvider
       value={{
-        objectNameSingular: personObjectMetadataItem?.nameSingular,
+        objectNameSingular: personObjectMetadataItem.nameSingular,
         objectMetadataItem: personObjectMetadataItem,
         recordTableId: 'persons',
         viewBarId: 'view-bar',
