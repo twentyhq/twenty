@@ -5,12 +5,9 @@ import { RecordTableRecordGroupRows } from '@/object-record/record-table/compone
 import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTableBodyRecordGroupDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupDragDropContextProvider';
-import { RecordTablePendingRecordGroupRow } from '@/object-record/record-table/record-table-row/components/RecordTablePendingRecordGroupRow';
 import { RecordTablePendingRow } from '@/object-record/record-table/record-table-row/components/RecordTablePendingRow';
 import { RecordTableRecordGroupEmptyRow } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupEmptyRow';
 import { RecordTableRecordGroupSection } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSection';
-import { RecordTableRecordGroupSectionAddNew } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew';
-import { RecordTableRecordGroupSectionLoadMore } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionLoadMore';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -46,9 +43,6 @@ export const RecordTableRecordGroupsBody = () => {
             <RecordTableBodyDroppable recordGroupId={recordGroupId}>
               <RecordTableRecordGroupSection />
               <RecordTableRecordGroupRows />
-              <RecordTableRecordGroupSectionLoadMore />
-              <RecordTablePendingRecordGroupRow />
-              <RecordTableRecordGroupSectionAddNew />
             </RecordTableBodyDroppable>
           </RecordGroupContext.Provider>
         </>
