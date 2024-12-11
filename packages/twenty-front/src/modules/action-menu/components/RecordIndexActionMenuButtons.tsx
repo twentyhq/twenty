@@ -24,7 +24,6 @@ export const RecordIndexActionMenuButtons = () => {
         <Button
           key={index}
           Icon={entry.Icon}
-          dataTestId=""
           size="small"
           variant="secondary"
           accent="default"
