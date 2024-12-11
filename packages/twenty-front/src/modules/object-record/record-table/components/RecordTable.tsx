@@ -14,12 +14,14 @@ import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/recor
 import { RecordTableNoRecordGroupBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBodyEffect';
 import { RecordTableRecordGroupBodyEffects } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupBodyEffects';
 import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
+import { RecordTableFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableFooter';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRef } from 'react';
 
 const StyledTable = styled.table`
@@ -43,6 +45,10 @@ export const RecordTable = ({
   onColumnsChange,
 }: RecordTableProps) => {
   const tableBodyRef = useRef<HTMLTableElement>(null);
+
+  const isAggregateQueryEnabled = useIsFeatureEnabled(
+    'IS_AGGREGATE_QUERY_ENABLED',
+  );
 
   const { toggleClickOutsideListener } = useClickOutsideListener(
     RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID,
@@ -111,6 +117,7 @@ export const RecordTable = ({
               ) : (
                 <RecordTableRecordGroupsBody />
               )}
+              {isAggregateQueryEnabled && <RecordTableFooter />}
               <RecordTableStickyEffect />
             </StyledTable>
             <DragSelect
