@@ -29,7 +29,6 @@ import { ServerlessFunctionExecutionResult } from '@/serverless-functions/compon
 import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
-import { RecordShowRightDrawerActionMenu } from '@/action-menu/components/RecordShowRightDrawerActionMenu';
 import { RightDrawerActionRunButton } from '@/action-menu/components/RightDrawerActionRunButton';
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
@@ -318,7 +317,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
         </WorkflowStepBody>
         <RightDrawerFooter
           actions={[
-            <RecordShowRightDrawerActionMenu />,
             <RightDrawerActionRunButton
               title="Test"
               onClick={handleRunFunction}
