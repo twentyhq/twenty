@@ -1,11 +1,5 @@
 import styled from '@emotion/styled';
-import {
-  IconButton,
-  IconCheckbox,
-  IconNotes,
-  IconPlus,
-  MenuItem,
-} from 'twenty-ui';
+import { Button, IconCheckbox, IconNotes, IconPlus, MenuItem } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -28,7 +22,7 @@ export const ShowPageAddButton = ({
 }: {
   activityTargetObject: ActivityTargetableObject;
 }) => {
-  const { closeDropdown, toggleDropdown } = useDropdown('add-show-page');
+  const { closeDropdown } = useDropdown('add-show-page');
   const openNote = useOpenCreateActivityDrawer({
     activityObjectNameSingular: CoreObjectNameSingular.Note,
   });
@@ -66,13 +60,14 @@ export const ShowPageAddButton = ({
       <Dropdown
         dropdownId={SHOW_PAGE_ADD_BUTTON_DROPDOWN_ID}
         clickableComponent={
-          <IconButton
+          <Button
             Icon={IconPlus}
-            size="medium"
-            dataTestId="add-showpage-button"
-            accent="default"
+            dataTestId="add-button"
+            size="small"
             variant="secondary"
-            onClick={toggleDropdown}
+            accent="default"
+            title="New note/task"
+            ariaLabel="New note/task"
           />
         }
         dropdownComponents={
