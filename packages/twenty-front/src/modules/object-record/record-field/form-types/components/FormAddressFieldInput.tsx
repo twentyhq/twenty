@@ -35,7 +35,7 @@ export const FormAddressFieldInput = ({
         addressLng: defaultValue?.addressLng ?? null,
         [field]: updatedAddressPart,
       };
-      onPersist?.(updatedAddress);
+      onPersist(updatedAddress);
     };
 
   return (

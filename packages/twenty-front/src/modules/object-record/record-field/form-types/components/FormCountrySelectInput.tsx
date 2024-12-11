@@ -26,15 +26,17 @@ export const FormCountrySelectInput = ({
         value: countryName,
         color: 'transparent',
         icon: (props: IconComponentProps) =>
-          Flag({ width: props.size, height: props.size }), // TODO : improve this ?
+          Flag({ width: props.size, height: props.size }),
       }),
     );
-    countryList.unshift({
-      label: 'No country',
-      value: '',
-      icon: IconCircleOff,
-    });
-    return countryList;
+    return [
+      {
+        label: 'No country',
+        value: '',
+        icon: IconCircleOff,
+      },
+      ...countryList,
+    ];
   }, [countries]);
 
   const onChange = (countryCode: string | null) => {
