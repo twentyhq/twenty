@@ -24,7 +24,7 @@ export const RecordTableRecordGroupSectionAddNew = () => {
     createNewTableRecordInGroup(currentRecordGroupId);
   };
 
-  if (isDefined(pendingRecordId)) return <></>;
+  if (isDefined(pendingRecordId)) return null;
 
   return (
     <RecordTableActionRow
