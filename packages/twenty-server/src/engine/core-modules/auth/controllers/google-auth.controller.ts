@@ -8,9 +8,10 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
 import { Response } from 'express';
+import { Repository } from 'typeorm';
 
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthOAuthExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-oauth-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { GoogleOauthGuard } from 'src/engine/core-modules/auth/guards/google-oauth.guard';
@@ -18,9 +19,8 @@ import { GoogleProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Controller('auth/google')
@@ -68,30 +68,6 @@ export class GoogleAuthController {
         fromSSO: true,
         isAuthEnabled: 'google',
       };
-
-      if (
-        this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
-        targetWorkspaceSubdomain ===
-          this.environmentService.get('DEFAULT_SUBDOMAIN')
-      ) {
-        const workspaceWithGoogleAuthActive =
-          await this.workspaceRepository.findOne({
-            where: {
-              isGoogleAuthEnabled: true,
-              workspaceUsers: {
-                user: {
-                  email,
-                },
-              },
-            },
-            relations: ['userWorkspaces', 'userWorkspaces.user'],
-          });
-
-        if (workspaceWithGoogleAuthActive) {
-          signInUpParams.targetWorkspaceSubdomain =
-            workspaceWithGoogleAuthActive.subdomain;
-        }
-      }
 
       const user = await this.authService.signInUp(signInUpParams);
 

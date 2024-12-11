@@ -26,13 +26,13 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { getImageBufferFromUrl } from 'src/utils/image';
-import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -100,7 +100,14 @@ export class SignInUpService {
     const passwordHash = password ? await hashPassword(password) : undefined;
 
     const existingUser = await this.userRepository.findOne({
-      where: { email },
+      where: {
+        email: email,
+        workspaces: {
+          workspace: {
+            subdomain: targetWorkspaceSubdomain,
+          },
+        },
+      },
       relations: ['defaultWorkspace'],
     });
 
@@ -168,6 +175,17 @@ export class SignInUpService {
     }
 
     if (!existingUser) {
+      if (
+        this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
+        targetWorkspaceSubdomain !==
+          this.environmentService.get('DEFAULT_SUBDOMAIN')
+      ) {
+        throw new AuthException(
+          'You are not allowed to sign up on this domain',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+      }
+
       return await this.signUpOnNewWorkspace({
         email,
         passwordHash,
