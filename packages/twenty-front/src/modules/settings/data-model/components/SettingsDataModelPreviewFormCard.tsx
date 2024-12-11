@@ -23,7 +23,7 @@ export const SettingsDataModelPreviewFormCard = ({
   preview,
   form,
 }: SettingsDataModelPreviewFormCardProps) => (
-  <Card className={className} fullWidth>
+  <Card className={className} fullWidth rounded>
     <StyledPreviewContainer divider={!!form}>
       <StyledFormCardTitle>Preview</StyledFormCardTitle>
       {preview}
