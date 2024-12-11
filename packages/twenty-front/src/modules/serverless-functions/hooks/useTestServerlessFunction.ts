@@ -1,14 +1,12 @@
 import { useExecuteOneServerlessFunction } from '@/settings/serverless-functions/hooks/useExecuteOneServerlessFunction';
 import { useRecoilState } from 'recoil';
 import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from 'twenty-ui';
 
 export const useTestServerlessFunction = (
   serverlessFunctionId: string,
   callback?: (testResult: object) => void,
 ) => {
-  const { enqueueSnackBar } = useSnackBar();
   const { executeOneServerlessFunction } = useExecuteOneServerlessFunction();
   const [serverlessFunctionTestData, setServerlessFunctionTestData] =
     useRecoilState(serverlessFunctionTestDataFamilyState(serverlessFunctionId));

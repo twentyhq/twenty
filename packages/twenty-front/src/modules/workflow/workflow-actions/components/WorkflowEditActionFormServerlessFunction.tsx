@@ -1,7 +1,6 @@
 import { useGetAvailablePackages } from '@/settings/serverless-functions/hooks/useGetAvailablePackages';
 import { useServerlessFunctionUpdateFormState } from '@/settings/serverless-functions/hooks/useServerlessFunctionUpdateFormState';
 import { useUpdateOneServerlessFunction } from '@/settings/serverless-functions/hooks/useUpdateOneServerlessFunction';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
 import { useGetUpdatableWorkflowVersion } from '@/workflow/hooks/useGetUpdatableWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
@@ -67,7 +66,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
   actionOptions,
 }: WorkflowEditActionFormServerlessFunctionProps) => {
   const theme = useTheme();
-  const { enqueueSnackBar } = useSnackBar();
   const { activeTabId, setActiveTabId } = useTabList(TAB_LIST_COMPONENT_ID);
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
