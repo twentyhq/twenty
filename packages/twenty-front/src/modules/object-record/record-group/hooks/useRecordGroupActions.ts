@@ -17,8 +17,7 @@ export const useRecordGroupActions = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { objectNameSingular, recordIndexId } =
-    useRecordIndexContextOrThrow();
+  const { objectNameSingular, recordIndexId } = useRecordIndexContextOrThrow();
 
   const { columnDefinition: recordGroupDefinition } = useContext(
     RecordBoardColumnContext,

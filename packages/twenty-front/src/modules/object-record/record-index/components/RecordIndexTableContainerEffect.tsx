@@ -13,8 +13,7 @@ import { ViewField } from '@/views/types/ViewField';
 import { useRecoilCallback } from 'recoil';
 
 export const RecordIndexTableContainerEffect = () => {
-  const { recordIndexId, objectNameSingular } =
-    useRecordIndexContextOrThrow();
+  const { recordIndexId, objectNameSingular } = useRecordIndexContextOrThrow();
 
   const viewBarId = recordIndexId;
 
