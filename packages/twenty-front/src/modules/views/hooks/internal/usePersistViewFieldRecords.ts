@@ -88,6 +88,7 @@ export const usePersistViewFieldRecords = () => {
                 isVisible: viewField.isVisible,
                 position: viewField.position,
                 size: viewField.size,
+                aggregateOperation: viewField.aggregateOperation,
               },
             },
             update: (cache, { data }) => {
