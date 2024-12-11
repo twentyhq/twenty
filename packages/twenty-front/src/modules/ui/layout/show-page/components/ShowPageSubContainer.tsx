@@ -77,10 +77,9 @@ export const ShowPageSubContainer = ({
   isInRightDrawer = false,
   isNewRightDrawerItemLoading = false,
 }: ShowPageSubContainerProps) => {
-  const { activeTabIdState } = useTabList(
+  const { activeTabId } = useTabList(
     `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`,
   );
-  const activeTabId = useRecoilValue(activeTabIdState);
 
   const isMobile = useIsMobile();
 

@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import * as React from 'react';
-import { useRecoilValue } from 'recoil';
 import { IconComponent } from 'twenty-ui';
 
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
@@ -53,9 +52,7 @@ export const TabList = ({
 
   const initialActiveTabId = visibleTabs[0]?.id || '';
 
-  const { activeTabIdState, setActiveTabId } = useTabList(tabListInstanceId);
-
-  const activeTabId = useRecoilValue(activeTabIdState);
+  const { activeTabId, setActiveTabId } = useTabList(tabListInstanceId);
 
   React.useEffect(() => {
     setActiveTabId(initialActiveTabId);

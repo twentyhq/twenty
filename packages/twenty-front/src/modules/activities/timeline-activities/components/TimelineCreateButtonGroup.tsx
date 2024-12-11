@@ -1,6 +1,5 @@
 import { TAB_LIST_COMPONENT_ID } from '@/ui/layout/show-page/components/ShowPageSubContainer';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { useSetRecoilState } from 'recoil';
 import {
   Button,
   ButtonGroup,
@@ -14,10 +13,9 @@ export const TimelineCreateButtonGroup = ({
 }: {
   isInRightDrawer?: boolean;
 }) => {
-  const { activeTabIdState } = useTabList(
+  const { setActiveTabId } = useTabList(
     `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`,
   );
-  const setActiveTabId = useSetRecoilState(activeTabIdState);
 
   return (
     <ButtonGroup variant={'secondary'}>
