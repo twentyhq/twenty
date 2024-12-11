@@ -30,7 +30,7 @@ const TAB_LIST_COMPONENT_ID = 'serverless-function-detail';
 export const SettingsServerlessFunctionDetail = () => {
   const { serverlessFunctionId = '' } = useParams();
   const { enqueueSnackBar } = useSnackBar();
-  const { activeTabId } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabId, setActiveTabId } = useTabList(TAB_LIST_COMPONENT_ID);
   const [isCodeValid, setIsCodeValid] = useState(true);
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
   const { publishOneServerlessFunction } = usePublishOneServerlessFunction();
@@ -126,6 +126,11 @@ export const SettingsServerlessFunctionDetail = () => {
     }
   };
 
+  const handleTestFunction = async () => {
+    setActiveTabId('test');
+    await testServerlessFunction();
+  };
+
   const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);
 
   const isAnalyticsV2Enabled = useIsFeatureEnabled('IS_ANALYTICS_V2_ENABLED');
@@ -157,7 +162,7 @@ export const SettingsServerlessFunctionDetail = () => {
         return (
           <SettingsServerlessFunctionCodeEditorTab
             files={files}
-            handleExecute={testServerlessFunction}
+            handleExecute={handleTestFunction}
             handlePublish={handlePublish}
             handleReset={handleReset}
             resetDisabled={resetDisabled}
@@ -170,7 +175,7 @@ export const SettingsServerlessFunctionDetail = () => {
         return (
           <SettingsServerlessFunctionTestTab
             serverlessFunctionId={serverlessFunctionId}
-            handleExecute={testServerlessFunction}
+            handleExecute={handleTestFunction}
           />
         );
       case 'settings':
@@ -210,7 +215,11 @@ export const SettingsServerlessFunctionDetail = () => {
         ]}
       >
         <SettingsPageContainer>
-          <TabList tabListInstanceId={TAB_LIST_COMPONENT_ID} tabs={tabs} />
+          <TabList
+            tabListInstanceId={TAB_LIST_COMPONENT_ID}
+            tabs={tabs}
+            behaveAsLinks={false}
+          />
           {renderActiveTabContent()}
         </SettingsPageContainer>
       </SubMenuTopBarContainer>

@@ -29,7 +29,7 @@ import { ServerlessFunctionExecutionResult } from '@/serverless-functions/compon
 import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
-import { RightDrawerActionRunButton } from '@/action-menu/components/RightDrawerActionRunButton';
+import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
 import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
 import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
 import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
@@ -330,10 +330,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
         </WorkflowStepBody>
         <RightDrawerFooter
           actions={[
-            <RightDrawerActionRunButton
-              title="Test"
-              onClick={handleRunFunction}
-            />,
+            <CmdEnterActionButton title="Test" onClick={handleRunFunction} />,
           ]}
         />
       </>

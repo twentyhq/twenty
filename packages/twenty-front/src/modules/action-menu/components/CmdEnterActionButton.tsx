@@ -3,7 +3,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { Key } from 'ts-key-enum';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 
-export const RightDrawerActionRunButton = ({
+export const CmdEnterActionButton = ({
   title,
   onClick,
 }: {
