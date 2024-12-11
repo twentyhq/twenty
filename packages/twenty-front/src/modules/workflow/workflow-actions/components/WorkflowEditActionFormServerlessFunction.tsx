@@ -46,6 +46,19 @@ const StyledTabList = styled(TabList)`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledContainer = styled.div`
+  display: inline-flex;
+  flex-direction: column;
+`;
+
+const StyledLabel = styled.div`
+  color: ${({ theme }) => theme.font.color.light};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  margin-top: ${({ theme }) => theme.spacing(2)};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
+`;
+
 type WorkflowEditActionFormServerlessFunctionProps = {
   action: WorkflowCodeAction;
   actionOptions:

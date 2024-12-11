@@ -108,9 +108,6 @@ export const FormSelectFieldInput = ({
     goBackToPreviousHotkeyScope();
   };
 
-  const [selectWrapperRef, setSelectWrapperRef] =
-    useState<HTMLDivElement | null>(null);
-
   const [filteredOptions, setFilteredOptions] = useState<SelectOption[]>([]);
 
   const { resetSelectedItem } = useSelectableList(
@@ -206,7 +203,6 @@ export const FormSelectFieldInput = ({
 
       <StyledFormFieldInputRowContainer>
         <StyledFormFieldInputInputContainer
-          ref={setSelectWrapperRef}
           hasRightElement={isDefined(VariablePicker)}
         >
           {draftValue.type === 'static' ? (
@@ -231,7 +227,6 @@ export const FormSelectFieldInput = ({
                   selectableItemIdArray={optionIds}
                   hotkeyScope={hotkeyScope}
                   onEnter={handleSelectEnter}
-                  selectWrapperRef={selectWrapperRef}
                   onOptionSelected={handleSubmit}
                   options={field.metadata.options}
                   onCancel={onCancel}

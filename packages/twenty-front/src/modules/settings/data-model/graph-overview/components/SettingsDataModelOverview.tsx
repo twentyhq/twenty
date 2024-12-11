@@ -3,11 +3,14 @@ import { SettingsDataModelOverviewObject } from '@/settings/data-model/graph-ove
 import { SettingsDataModelOverviewRelationMarkers } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewRelationMarkers';
 import { calculateHandlePosition } from '@/settings/data-model/graph-overview/utils/calculateHandlePosition';
 import styled from '@emotion/styled';
-import { useCallback, useState } from 'react';
-import ReactFlow, {
+import {
   Background,
-  EdgeChange,
-  NodeChange,
+  Edge,
+  Node,
+  NodeTypes,
+  OnEdgesChange,
+  OnNodesChange,
+  ReactFlow,
   applyEdgeChanges,
   applyNodeChanges,
   getIncomers,
@@ -15,7 +18,8 @@ import ReactFlow, {
   useEdgesState,
   useNodesState,
   useReactFlow,
-} from 'reactflow';
+} from '@xyflow/react';
+import { useCallback, useState } from 'react';
 import {
   Button,
   IconButtonGroup,
@@ -28,7 +32,7 @@ import {
 } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
-const NodeTypes = {
+const nodeTypes: NodeTypes = {
   object: SettingsDataModelOverviewObject,
 };
 const StyledContainer = styled.div`
@@ -67,25 +71,25 @@ const StyledCloseButton = styled.div`
 export const SettingsDataModelOverview = () => {
   const { fitView, zoomIn, zoomOut } = useReactFlow();
 
-  const [nodes, setNodes] = useNodesState([]);
-  const [edges, setEdges] = useEdgesState([]);
+  const [nodes, setNodes] = useNodesState<Node>([]);
+  const [edges, setEdges] = useEdgesState<Edge>([]);
   const [isInteractive, setInteractive] = useState(true);
 
-  const onNodesChange = useCallback(
-    (changes: NodeChange[]) =>
-      setNodes((nds) => applyNodeChanges(changes, nds)),
+  const onNodesChange: OnNodesChange = useCallback(
+    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
     [setNodes],
   );
-  const onEdgesChange = useCallback(
-    (changes: EdgeChange[]) =>
-      setEdges((eds) => applyEdgeChanges(changes, eds)),
+  const onEdgesChange: OnEdgesChange = useCallback(
+    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
     [setEdges],
   );
 
-  const handleNodesChange = useCallback(
-    (nodeChanges: any[]) => {
+  const handleNodesChange: OnNodesChange = useCallback(
+    (nodeChanges) => {
       nodeChanges.forEach((nodeChange) => {
-        const node = nodes.find((node) => node.id === nodeChange.id);
+        const node = nodes.find(
+          (node) => node.id === (nodeChange as { id: string }).id,
+        );
         if (!node) {
           return;
         }
@@ -119,8 +123,8 @@ export const SettingsDataModelOverview = () => {
                     newXPos,
                     'target',
                   );
-                  const sourceHandle = `${edge.data.sourceField}-${sourcePosition}`;
-                  const targetHandle = `${edge.data.targetField}-${targetPosition}`;
+                  const sourceHandle = `${edge.data?.sourceField}-${sourcePosition}`;
+                  const targetHandle = `${edge.data?.targetField}-${targetPosition}`;
                   ed.sourceHandle = sourceHandle;
                   ed.targetHandle = targetHandle;
                   ed.markerEnd = 'marker';
@@ -157,8 +161,8 @@ export const SettingsDataModelOverview = () => {
                     'target',
                   );
 
-                  const sourceHandle = `${edge.data.sourceField}-${sourcePosition}`;
-                  const targetHandle = `${edge.data.targetField}-${targetPosition}`;
+                  const sourceHandle = `${edge.data?.sourceField}-${sourcePosition}`;
+                  const targetHandle = `${edge.data?.targetField}-${targetPosition}`;
 
                   ed.sourceHandle = sourceHandle;
                   ed.targetHandle = targetHandle;
@@ -193,7 +197,7 @@ export const SettingsDataModelOverview = () => {
         nodes={nodes}
         edges={edges}
         onEdgesChange={onEdgesChange}
-        nodeTypes={NodeTypes}
+        nodeTypes={nodeTypes}
         onNodesChange={handleNodesChange}
         nodesDraggable={isInteractive}
         elementsSelectable={isInteractive}

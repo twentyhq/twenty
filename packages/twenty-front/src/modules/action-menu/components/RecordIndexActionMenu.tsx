@@ -2,6 +2,7 @@ import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-acti
 import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
 import { RecordIndexActionMenuBar } from '@/action-menu/components/RecordIndexActionMenuBar';
+import { RecordIndexActionMenuButtons } from '@/action-menu/components/RecordIndexActionMenuButtons';
 import { RecordIndexActionMenuDropdown } from '@/action-menu/components/RecordIndexActionMenuDropdown';
 import { RecordIndexActionMenuEffect } from '@/action-menu/components/RecordIndexActionMenuEffect';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
@@ -17,6 +18,10 @@ export const RecordIndexActionMenu = () => {
 
   const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
+  );
+
   return (
     <>
       {contextStoreCurrentObjectMetadataId && (
@@ -26,7 +31,11 @@ export const RecordIndexActionMenu = () => {
             onActionExecutedCallback: () => {},
           }}
         >
-          <RecordIndexActionMenuBar />
+          {isPageHeaderV2Enabled ? (
+            <RecordIndexActionMenuButtons />
+          ) : (
+            <RecordIndexActionMenuBar />
+          )}
           <RecordIndexActionMenuDropdown />
           <ActionMenuConfirmationModals />
           <RecordIndexActionMenuEffect />

@@ -67,8 +67,8 @@ export class KeyValuePair {
   value: JSON;
 
   @Field(() => String)
-  @Column({ nullable: false, type: 'text' })
-  textValueDeprecated: string;
+  @Column({ nullable: true, type: 'text' })
+  textValueDeprecated: string | null;
 
   @Field(() => KeyValuePairType)
   @Column({

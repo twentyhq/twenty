@@ -30,6 +30,7 @@ export type ButtonProps = {
   target?: string;
   dataTestId?: string;
   shortcut?: string;
+  ariaLabel?: string;
 } & React.ComponentProps<'button'>;
 
 const StyledButton = styled('button', {
@@ -359,22 +360,43 @@ const StyledSoonPill = styled(Pill)`
   margin-left: auto;
 `;
 
-const StyledShortcutLabel = styled.div<{ accent: ButtonAccent }>`
-  color: ${({ theme, accent }) =>
-    accent === 'blue' ? theme.font.color.blue : theme.font.color.light};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-`;
-
 const StyledSeparator = styled.div<{
   buttonSize: ButtonSize;
   accent: ButtonAccent;
 }>`
-  background: ${({ theme, accent }) =>
-    accent === 'blue' ? theme.border.color.blue : theme.border.color.light};
+  background: ${({ theme, accent }) => {
+    switch (accent) {
+      case 'blue':
+        return theme.border.color.blue;
+      case 'danger':
+        return theme.border.color.danger;
+      default:
+        return theme.font.color.light;
+    }
+  }};
   height: ${({ theme, buttonSize }) =>
-    theme.spacing(buttonSize === 'small' ? 3 : 4)};
-  margin: 0 ${({ theme }) => theme.spacing(1)};
+    theme.spacing(buttonSize === 'small' ? 2 : 4)};
+  margin: 0;
   width: 1px;
+`;
+
+const StyledShortcutLabel = styled.div<{
+  variant: ButtonVariant;
+  accent: ButtonAccent;
+}>`
+  color: ${({ theme, variant, accent }) => {
+    switch (accent) {
+      case 'blue':
+        return theme.border.color.blue;
+      case 'danger':
+        return variant === 'primary'
+          ? theme.border.color.danger
+          : theme.color.red40;
+      default:
+        return theme.font.color.light;
+    }
+  }};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
 export const Button = ({
@@ -396,6 +418,7 @@ export const Button = ({
   target,
   dataTestId,
   shortcut,
+  ariaLabel,
 }: ButtonProps) => {
   const theme = useTheme();
 
@@ -416,13 +439,16 @@ export const Button = ({
       as={to ? Link : 'button'}
       target={target}
       data-testid={dataTestId}
+      aria-label={ariaLabel}
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}
       {shortcut && (
         <>
           <StyledSeparator buttonSize={size} accent={accent} />
-          <StyledShortcutLabel accent={accent}>{shortcut}</StyledShortcutLabel>
+          <StyledShortcutLabel variant={variant} accent={accent}>
+            {shortcut}
+          </StyledShortcutLabel>
         </>
       )}
       {soon && <StyledSoonPill label="Soon" />}
