@@ -6,7 +6,6 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PageHeaderOpenCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton';
 import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddButton';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useIsMobile } from 'twenty-ui';
 
 type RecordShowPageBaseHeaderProps = {
   isFavorite: boolean;
@@ -27,35 +26,29 @@ export const RecordShowPageBaseHeader = ({
     'IS_FAVORITE_FOLDER_ENABLED',
   );
 
-  const isMobile = useIsMobile();
-
   return (
     <>
-      {!isMobile && (
-        <>
-          {isFavoriteFolderEnabled ? (
-            <PageFavoriteFoldersDropdown
-              key={FAVORITE_FOLDER_PICKER_DROPDOWN_ID}
-              dropdownId={FAVORITE_FOLDER_PICKER_DROPDOWN_ID}
-              isFavorite={isFavorite}
-              record={record}
-              objectNameSingular={objectNameSingular}
-            />
-          ) : (
-            <PageFavoriteButton
-              isFavorite={isFavorite}
-              onClick={handleFavoriteButtonClick}
-            />
-          )}
-          <ShowPageAddButton
-            key="add"
-            activityTargetObject={{
-              id: record?.id ?? '0',
-              targetObjectNameSingular: objectMetadataItem.nameSingular,
-            }}
-          />
-        </>
+      {isFavoriteFolderEnabled ? (
+        <PageFavoriteFoldersDropdown
+          key={FAVORITE_FOLDER_PICKER_DROPDOWN_ID}
+          dropdownId={FAVORITE_FOLDER_PICKER_DROPDOWN_ID}
+          isFavorite={isFavorite}
+          record={record}
+          objectNameSingular={objectNameSingular}
+        />
+      ) : (
+        <PageFavoriteButton
+          isFavorite={isFavorite}
+          onClick={handleFavoriteButtonClick}
+        />
       )}
+      <ShowPageAddButton
+        key="add"
+        activityTargetObject={{
+          id: record?.id ?? '0',
+          targetObjectNameSingular: objectMetadataItem.nameSingular,
+        }}
+      />
       <PageHeaderOpenCommandMenuButton key="more" />
     </>
   );
