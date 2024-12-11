@@ -75,6 +75,10 @@ const StyledTableHead = styled.thead`
   }
 `;
 
+const StyledDiv = styled.div`
+width: 30px
+`;
+
 export const RecordTableFooter = () => {
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
@@ -84,6 +88,7 @@ export const RecordTableFooter = () => {
     <StyledTableHead id="record-table-footer" data-select-disable>
       <tr>
         <RecordTableHeaderDragDropColumn />
+        <StyledDiv />
         {visibleTableColumns.map((column) => (
           <RecordTableFooterCell key={column.fieldMetadataId} column={column} />
         ))}
