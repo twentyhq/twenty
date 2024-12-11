@@ -35,19 +35,6 @@ const StyledTabListContainer = styled.div<{ shouldDisplay: boolean }>`
   height: 40px;
 `;
 
-const StyledButtonContainer = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  bottom: 0;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: flex-end;
-  padding: ${({ theme }) => theme.spacing(2)};
-  position: absolute;
-  width: 100%;
-`;
-
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
   flex: 1;
   overflow-y: auto;
