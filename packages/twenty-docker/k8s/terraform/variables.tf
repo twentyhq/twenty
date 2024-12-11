@@ -12,6 +12,11 @@ variable "twentycrm_app_hostname" {
   description = "The protocol, DNS fully qualified hostname, and port used to access TwentyCRM in your environment. Ex: https://crm.example.com:443"
 }
 
+variable "front_domain" {
+  type        = string
+  description = "The protocol, DNS fully qualified hostname, and port used to access TwentyCRM in your environment. Ex: https://crm.example.com:443"
+}
+
 ######################
 # Optional Variables #
 ######################

@@ -44,7 +44,7 @@ resource "kubernetes_deployment" "twentycrm_worker" {
           }
 
           env {
-            name  = "FRONT_BASE_URL"
+            name  = "FRONT_DOMAIN"
             value = var.twentycrm_app_hostname
           }
 
