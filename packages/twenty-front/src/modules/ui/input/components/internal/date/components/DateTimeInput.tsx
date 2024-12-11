@@ -1,7 +1,18 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useCallback, useEffect, useState } from 'react';
+import { useIMask } from 'react-imask';
 
-import { useDateTimeInput } from '@/ui/input/components/internal/date/hooks/useDateTimeInput';
+import { DATE_BLOCKS } from '@/ui/input/components/internal/date/constants/DateBlocks';
+import { DATE_MASK } from '@/ui/input/components/internal/date/constants/DateMask';
+import { DATE_TIME_BLOCKS } from '@/ui/input/components/internal/date/constants/DateTimeBlocks';
+import { DATE_TIME_MASK } from '@/ui/input/components/internal/date/constants/DateTimeMask';
+import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
+import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
+import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
+import { parseStringToDate } from '@/ui/input/components/internal/date/utils/parseStringToDate';
+import { isNull } from '@sniptt/guards';
+import { isDefined } from 'twenty-ui';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -45,12 +56,75 @@ export const DateTimeInput = ({
   isDateTimeInput,
   userTimezone,
 }: DateTimeInputProps) => {
-  const { ref, value, hasError } = useDateTimeInput({
-    date,
-    onChange,
-    isDateTimeInput,
-    userTimezone,
-  });
+  const [hasError, setHasError] = useState(false);
+
+  const handleParseDateToString = useCallback(
+    (date: any) => {
+      return parseDateToString({
+        date,
+        isDateTimeInput: isDateTimeInput === true,
+        userTimezone,
+      });
+    },
+    [isDateTimeInput, userTimezone],
+  );
+
+  const handleParseStringToDate = (str: string) => {
+    const date = parseStringToDate({
+      dateAsString: str,
+      isDateTimeInput: isDateTimeInput === true,
+      userTimezone,
+    });
+
+    setHasError(isNull(date) === true);
+
+    return date;
+  };
+
+  const pattern = isDateTimeInput ? DATE_TIME_MASK : DATE_MASK;
+  const blocks = isDateTimeInput ? DATE_TIME_BLOCKS : DATE_BLOCKS;
+
+  const { ref, setValue, value } = useIMask(
+    {
+      mask: Date,
+      pattern,
+      blocks,
+      min: MIN_DATE,
+      max: MAX_DATE,
+      format: handleParseDateToString,
+      parse: handleParseStringToDate,
+      lazy: false,
+      autofix: true,
+    },
+    {
+      onComplete: (value) => {
+        const parsedDate = parseStringToDate({
+          dateAsString: value,
+          isDateTimeInput: isDateTimeInput === true,
+          userTimezone,
+        });
+
+        onChange?.(parsedDate);
+      },
+      onAccept: () => {
+        setHasError(false);
+      },
+    },
+  );
+
+  useEffect(() => {
+    if (!isDefined(date)) {
+      return;
+    }
+
+    setValue(
+      parseDateToString({
+        date: date,
+        isDateTimeInput: isDateTimeInput === true,
+        userTimezone,
+      }),
+    );
+  }, [date, setValue, isDateTimeInput, userTimezone]);
 
   return (
     <StyledInputContainer>
