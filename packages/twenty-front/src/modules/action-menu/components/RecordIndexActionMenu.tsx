@@ -10,6 +10,7 @@ import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useIsMobile } from 'twenty-ui';
 
 export const RecordIndexActionMenu = () => {
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
@@ -22,6 +23,8 @@ export const RecordIndexActionMenu = () => {
     'IS_PAGE_HEADER_V2_ENABLED',
   );
 
+  const isMobile = useIsMobile();
+
   return (
     <>
       {contextStoreCurrentObjectMetadataId && (
@@ -32,7 +35,7 @@ export const RecordIndexActionMenu = () => {
           }}
         >
           {isPageHeaderV2Enabled ? (
-            <RecordIndexActionMenuButtons />
+            <>{!isMobile && <RecordIndexActionMenuButtons />}</>
           ) : (
             <RecordIndexActionMenuBar />
           )}

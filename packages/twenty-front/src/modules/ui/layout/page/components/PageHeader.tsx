@@ -170,14 +170,14 @@ export const PageHeader = ({
           <>
             <IconButton
               Icon={IconChevronUp}
-              size="small"
+              size={isMobile ? 'medium' : 'small'}
               variant="secondary"
               disabled={!hasPreviousRecord}
               onClick={() => navigateToPreviousRecord?.()}
             />
             <IconButton
               Icon={IconChevronDown}
-              size="small"
+              size={isMobile ? 'medium' : 'small'}
               variant="secondary"
               disabled={!hasNextRecord}
               onClick={() => navigateToNextRecord?.()}
