@@ -94,7 +94,7 @@ export type SelectOption = {
   // Disabled option when already select
   disabled?: boolean;
   // Option color
-  color?: ThemeColor;
+  color?: ThemeColor | 'transparent';
 };
 
 export type Input = {

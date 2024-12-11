@@ -27,7 +27,7 @@ const StyledTag = styled.h3<{
   border-radius: ${BORDER_COMMON.radius.sm};
   color: ${({ color, theme }) =>
     color === 'transparent'
-      ? theme.font.color.tertiary
+      ? theme.font.color.secondary
       : theme.tag.text[color]};
   display: inline-flex;
   font-size: ${({ theme }) => theme.font.size.md};
