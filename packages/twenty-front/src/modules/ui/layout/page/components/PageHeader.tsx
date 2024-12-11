@@ -165,7 +165,7 @@ export const PageHeader = ({
         </StyledTopBarIconStyledTitleContainer>
       </StyledLeftContainer>
 
-      <StyledPageActionContainer>
+      <StyledPageActionContainer className="page-action-container">
         {isPageHeaderV2Enabled && hasPaginationButtons && (
           <>
             <IconButton

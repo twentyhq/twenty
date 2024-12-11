@@ -64,7 +64,7 @@ const StyledContainer = withTheme(styled.div<
           : 'inherit'};
 
   display: inline-flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme, size }) =>
     size === ChipSize.Large ? theme.spacing(4) : theme.spacing(3)};
@@ -72,7 +72,6 @@ const StyledContainer = withTheme(styled.div<
     maxWidth
       ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
       : '200px'};
-
   overflow: hidden;
   padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
   user-select: none;
@@ -129,6 +128,7 @@ export const Chip = ({
   accent = ChipAccent.TextPrimary,
   onClick,
   className,
+  maxWidth,
 }: ChipProps) => {
   return (
     <StyledContainer
@@ -140,6 +140,7 @@ export const Chip = ({
       variant={variant}
       onClick={onClick}
       className={className}
+      maxWidth={maxWidth}
     >
       {leftComponent}
       <OverflowingTextWithTooltip size={size} text={label} />
