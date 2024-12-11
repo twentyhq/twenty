@@ -24,6 +24,7 @@ export type AvatarChipProps = {
   placeholderColorSeed?: string;
   onClick?: (event: MouseEvent) => void;
   to?: string;
+  linkWidth?: number;
 };
 
 export enum AvatarChipVariant {
@@ -46,6 +47,10 @@ const StyledInvertedIconContainer = styled.div<{ backgroundColor: string }>`
 const StyledLink = styled(Link)`
   text-decoration: none;
 `;
+const StyledLinkWidthForced = styled(Link)<{ linkWidth: number }>`
+  text-decoration: none;
+  width: ${({ linkWidth }) => linkWidth}px;
+`;
 
 export const AvatarChip = ({
   name,
@@ -60,6 +65,7 @@ export const AvatarChip = ({
   onClick,
   to,
   size = ChipSize.Small,
+  linkWidth,
 }: AvatarChipProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -109,11 +115,15 @@ export const AvatarChip = ({
     />
   );
 
-  return to ? (
+  if (!isDefined(to)) return chip;
+
+  return linkWidth ? (
+    <StyledLinkWidthForced to={to} onClick={onClick} linkWidth={linkWidth}>
+      {chip}
+    </StyledLinkWidthForced>
+  ) : (
     <StyledLink to={to} onClick={onClick}>
       {chip}
     </StyledLink>
-  ) : (
-    chip
   );
 };
