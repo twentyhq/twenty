@@ -1,6 +1,6 @@
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { useRecordChipData } from '@/object-record/hooks/useRecordChipData';
-import { useRecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { AvatarChip, AvatarChipVariant, ChipSize } from 'twenty-ui';
 
@@ -17,7 +17,7 @@ export const RecordIdentifierChip = ({
   variant,
   size,
 }: RecordIdentifierChipProps) => {
-  const { indexIdentifierUrl } = useRecordIndexRootPropsContext();
+  const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
   const { recordChipData } = useRecordChipData({
     objectNameSingular,
     record,

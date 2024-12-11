@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { RecordIndexRootPropsContextProvider } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { RecordIndexProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { SignInBackgroundMockContainerEffect } from '@/sign-in-background-mock/components/SignInBackgroundMockContainerEffect';
 import { ViewBar } from '@/views/components/ViewBar';
@@ -28,7 +28,7 @@ export const SignInBackgroundMockContainer = () => {
 
   return (
     <StyledContainer>
-      <RecordIndexRootPropsContextProvider
+      <RecordIndexProvider
         value={{
           recordIndexId,
           objectNamePlural,
@@ -68,7 +68,7 @@ export const SignInBackgroundMockContainer = () => {
             </ActionMenuComponentInstanceContext.Provider>
           </ContextStoreComponentInstanceContext.Provider>
         </ViewComponentInstanceContext.Provider>
-      </RecordIndexRootPropsContextProvider>
+      </RecordIndexProvider>
     </StyledContainer>
   );
 };

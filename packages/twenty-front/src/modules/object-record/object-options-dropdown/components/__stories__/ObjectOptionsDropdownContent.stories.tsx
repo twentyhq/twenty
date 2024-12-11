@@ -7,7 +7,7 @@ import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dro
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
-import { RecordIndexRootPropsContextProvider } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { RecordIndexProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -76,7 +76,7 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
       )!;
 
       return (
-        <RecordIndexRootPropsContextProvider
+        <RecordIndexProvider
           value={{
             indexIdentifierUrl: () => '',
             onIndexRecordsLoaded: () => {},
@@ -101,7 +101,7 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
               <Story />
             </DropdownMenu>
           </ObjectOptionsDropdownContext.Provider>
-        </RecordIndexRootPropsContextProvider>
+        </RecordIndexProvider>
       );
     },
   ],

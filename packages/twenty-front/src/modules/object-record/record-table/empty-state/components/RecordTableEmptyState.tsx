@@ -1,5 +1,5 @@
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useRecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyStateNoRecordAtAll } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordAtAll';
 import { RecordTableEmptyStateNoRecordFoundForFilter } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateNoRecordFoundForFilter';
 import { RecordTableEmptyStateRemote } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote';
@@ -8,8 +8,8 @@ import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-t
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const RecordTableEmptyState = () => {
-  const { objectNameSingular, recordTableId, objectMetadataItem } =
-    useRecordTableContext();
+  const { recordTableId, objectNameSingular, objectMetadataItem } =
+    useRecordTableContextOrThrow();
 
   const { totalCount } = useFindManyRecords({ objectNameSingular, limit: 1 });
   const noRecordAtAll = totalCount === 0;

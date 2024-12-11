@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { useRecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
@@ -56,7 +56,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
   const { createViewFilterGroupRecords } = usePersistViewFilterGroupRecords();
 
-  const { objectMetadataItem } = useRecordIndexRootPropsContext();
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const createViewFromCurrentView = useRecoilCallback(
     ({ snapshot, set }) =>

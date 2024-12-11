@@ -1,13 +1,11 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { RecordIndexPageKanbanAddButton } from '@/object-record/record-index/components/RecordIndexPageKanbanAddButton';
-import { useRecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { RecordIndexPageTableAddButton } from '@/object-record/record-index/components/RecordIndexPageTableAddButton';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
 import { PageHeaderOpenCommandMenuButton } from '@/ui/layout/page-header/components/PageHeaderOpenCommandMenuButton';
-import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
-import { PageHotkeysEffect } from '@/ui/layout/page/components/PageHotkeysEffect';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useRecoilValue } from 'recoil';
@@ -18,9 +16,7 @@ export const RecordIndexPageHeader = () => {
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
-  const { recordIndexId, objectNamePlural } = useRecordIndexRootPropsContext();
-
-  const { createNewTableRecord } = useCreateNewTableRecord(recordIndexId);
+  const { objectNamePlural } = useRecordIndexContextOrThrow();
 
   const objectMetadataItem =
     findObjectMetadataItemByNamePlural(objectNamePlural);
@@ -47,10 +43,9 @@ export const RecordIndexPageHeader = () => {
 
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
-      <PageHotkeysEffect onAddButtonClick={createNewTableRecord} />
       {shouldDisplayAddButton &&
         (isTable ? (
-          <PageAddButton onClick={createNewTableRecord} />
+          <RecordIndexPageTableAddButton />
         ) : (
           <RecordIndexPageKanbanAddButton />
         ))}

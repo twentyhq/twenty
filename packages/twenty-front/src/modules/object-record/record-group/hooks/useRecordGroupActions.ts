@@ -5,7 +5,7 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
-import { useRecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useContext, useMemo } from 'react';
@@ -18,7 +18,7 @@ export const useRecordGroupActions = () => {
   const location = useLocation();
 
   const { objectNameSingular, recordIndexId } =
-    useRecordIndexRootPropsContext();
+    useRecordIndexContextOrThrow();
 
   const { columnDefinition: recordGroupDefinition } = useContext(
     RecordBoardColumnContext,

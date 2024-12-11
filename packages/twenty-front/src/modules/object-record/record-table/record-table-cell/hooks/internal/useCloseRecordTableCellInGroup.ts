@@ -1,18 +1,19 @@
-import { useRecoilCallback, useResetRecoilState } from 'recoil';
+import { useRecoilCallback } from 'recoil';
 
 import { SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/SoftFocusClickOutsideListenerId';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useCloseCurrentTableCellInEditMode } from '@/object-record/record-table/hooks/internal/useCloseCurrentTableCellInEditMode';
 import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
-import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
+import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { isDefined } from '~/utils/isDefined';
-import { useCloseCurrentTableCellInEditMode } from '../../hooks/internal/useCloseCurrentTableCellInEditMode';
-import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
-export const useCloseRecordTableCell = (recordTableId: string) => {
+export const useCloseRecordTableCellInGroup = (recordGroupId: string) => {
+  const { recordTableId } = useRecordTableContextOrThrow();
+
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
 
@@ -23,35 +24,26 @@ export const useCloseRecordTableCell = (recordTableId: string) => {
   const closeCurrentTableCellInEditMode =
     useCloseCurrentTableCellInEditMode(recordTableId);
 
-  const pendingRecordIdState = useRecoilComponentCallbackStateV2(
-    recordTablePendingRecordIdComponentState,
-    recordTableId,
-  );
   const recordTablePendingRecordIdByGroupFamilyState =
     useRecoilComponentCallbackStateV2(
       recordTablePendingRecordIdByGroupComponentFamilyState,
       recordTableId,
     );
-  const resetRecordTablePendingRecordId =
-    useResetRecoilState(pendingRecordIdState);
 
-  const closeTableCell = useRecoilCallback(
+  const closeTableCellInGroup = useRecoilCallback(
     ({ reset }) =>
-      async (recordGroupId?: string) => {
+      async () => {
         toggleClickOutsideListener(true);
         setDragSelectionStartEnabled(true);
         closeCurrentTableCellInEditMode();
         setHotkeyScope(TableHotkeyScope.TableSoftFocus);
-        resetRecordTablePendingRecordId();
 
-        if (isDefined(recordGroupId)) {
-          reset(recordTablePendingRecordIdByGroupFamilyState(recordGroupId));
-        }
+        reset(recordTablePendingRecordIdByGroupFamilyState(recordGroupId));
       },
     [
       closeCurrentTableCellInEditMode,
+      recordGroupId,
       recordTablePendingRecordIdByGroupFamilyState,
-      resetRecordTablePendingRecordId,
       setDragSelectionStartEnabled,
       setHotkeyScope,
       toggleClickOutsideListener,
@@ -59,6 +51,6 @@ export const useCloseRecordTableCell = (recordTableId: string) => {
   );
 
   return {
-    closeTableCell,
+    closeTableCellInGroup,
   };
 };

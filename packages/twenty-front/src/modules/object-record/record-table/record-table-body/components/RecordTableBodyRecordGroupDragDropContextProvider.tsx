@@ -7,7 +7,7 @@ import { getDraggedRecordPosition } from '@/object-record/record-board/utils/get
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { useRecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
@@ -20,7 +20,7 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
   children: ReactNode;
 }) => {
   const { objectNameSingular, recordTableId, objectMetadataItem } =
-    useRecordTableContext();
+    useRecordTableContextOrThrow();
 
   const { updateOneRecord: updateOneRow } = useUpdateOneRecord({
     objectNameSingular,

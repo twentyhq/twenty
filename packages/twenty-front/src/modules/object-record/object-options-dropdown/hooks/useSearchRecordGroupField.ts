@@ -1,11 +1,11 @@
 import { objectOptionsDropdownSearchInputComponentState } from '@/object-record/object-options-dropdown/states/objectOptionsDropdownSearchInputComponentState';
-import { useRecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useMemo } from 'react';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const useSearchRecordGroupField = () => {
-  const { objectMetadataItem } = useRecordIndexRootPropsContext();
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const [recordGroupFieldSearchInput, setRecordGroupFieldSearchInput] =
     useRecoilComponentStateV2(objectOptionsDropdownSearchInputComponentState);

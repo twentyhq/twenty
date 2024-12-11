@@ -21,7 +21,7 @@ import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
-import { useRecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
 type RecordTableCellSoftFocusModeProps = {
@@ -33,9 +33,10 @@ export const RecordTableCellSoftFocusMode = ({
   editModeContent,
   nonEditModeContent,
 }: RecordTableCellSoftFocusModeProps) => {
-  const { onActionMenuDropdownOpened } = useRecordTableContext();
   const { columnIndex } = useContext(RecordTableCellContext);
   const { recordId } = useContext(FieldContext);
+
+  const { onActionMenuDropdownOpened } = useRecordTableBodyContextOrThrow();
 
   const isFieldReadOnly = useIsFieldValueReadOnly();
 

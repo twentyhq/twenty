@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useRecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -10,7 +10,7 @@ import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountI
 
 export const RecordIndexTableContainerEffect = () => {
   const { recordIndexId, objectNameSingular } =
-    useRecordIndexRootPropsContext();
+    useRecordIndexContextOrThrow();
 
   const viewBarId = recordIndexId;
 

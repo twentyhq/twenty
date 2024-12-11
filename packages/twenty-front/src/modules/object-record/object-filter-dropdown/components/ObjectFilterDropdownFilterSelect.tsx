@@ -9,7 +9,7 @@ import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdow
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
-import { useRecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -56,7 +56,7 @@ type ObjectFilterDropdownFilterSelectProps = {
 export const ObjectFilterDropdownFilterSelect = ({
   isAdvancedFilterButtonVisible,
 }: ObjectFilterDropdownFilterSelectProps) => {
-  const { recordIndexId } = useRecordIndexRootPropsContext();
+  const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const {
     setObjectFilterDropdownSearchInput,

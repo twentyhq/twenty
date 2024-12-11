@@ -9,7 +9,8 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { textfieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useUpsertRecord } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecord';
+import { RecordTableContextProvider } from '@/object-record/record-table/components/RecordTableContextProvider';
+import { useUpsertTableRecordNoGroup } from '@/object-record/record-table/hooks/internal/useUpsertTableRecordNoGroup';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
@@ -64,57 +65,61 @@ const Wrapper = ({
       snapshot.set(draftValueState, draftValueMockedValue);
     }}
   >
-    <ViewComponentInstanceContext.Provider
-      value={{ instanceId: CoreObjectNamePlural.Person }}
+    <RecordTableContextProvider
+      recordTableId="recordTableId"
+      objectNameSingular={CoreObjectNameSingular.Person}
+      viewBarId="viewBarId"
     >
-      <FieldContext.Provider
-        value={{
-          recordId: 'recordId',
-          fieldDefinition: {
-            ...textfieldDefinition,
-            metadata: {
-              ...textfieldDefinition.metadata,
-              objectMetadataNameSingular: CoreObjectNameSingular.Person,
-            },
-          },
-          hotkeyScope: TableHotkeyScope.Table,
-          isLabelIdentifier: false,
-        }}
+      <ViewComponentInstanceContext.Provider
+        value={{ instanceId: CoreObjectNamePlural.Person }}
       >
-        {children}
-      </FieldContext.Provider>
-    </ViewComponentInstanceContext.Provider>
+        <FieldContext.Provider
+          value={{
+            recordId: 'recordId',
+            fieldDefinition: {
+              ...textfieldDefinition,
+              metadata: {
+                ...textfieldDefinition.metadata,
+                objectMetadataNameSingular: CoreObjectNameSingular.Person,
+              },
+            },
+            hotkeyScope: TableHotkeyScope.Table,
+            isLabelIdentifier: false,
+          }}
+        >
+          {children}
+        </FieldContext.Provider>
+      </ViewComponentInstanceContext.Provider>
+    </RecordTableContextProvider>
   </RecoilRoot>
 );
 
-describe('useUpsertRecord', () => {
+describe('useUpsertTableRecordNoGroup', () => {
   beforeEach(async () => {
     createOneRecordMock.mockClear();
     updateOneRecordMock.mockClear();
   });
 
   it('calls update record if there is no pending record', async () => {
-    const { result } = renderHook(
-      () =>
-        useUpsertRecord({
+    /**
+     * {
           objectNameSingular: 'person',
           recordTableId: 'recordTableId',
+        }
+     */
+    const { result } = renderHook(() => useUpsertTableRecordNoGroup(), {
+      wrapper: ({ children }) =>
+        Wrapper({
+          pendingRecordIdMockedValue: null,
+          draftValueMockedValue: null,
+          children,
         }),
-      {
-        wrapper: ({ children }) =>
-          Wrapper({
-            pendingRecordIdMockedValue: null,
-            draftValueMockedValue: null,
-            children,
-          }),
-      },
-    );
+    });
 
     await act(async () => {
-      await result.current.upsertRecord(
+      await result.current.upsertTableRecordNoGroup(
         updateOneRecordMock,
         'recordId',
-        undefined,
         'name',
       );
     });
@@ -124,27 +129,19 @@ describe('useUpsertRecord', () => {
   });
 
   it('calls update record if pending record is empty', async () => {
-    const { result } = renderHook(
-      () =>
-        useUpsertRecord({
-          objectNameSingular: 'person',
-          recordTableId: 'recordTableId',
+    const { result } = renderHook(() => useUpsertTableRecordNoGroup(), {
+      wrapper: ({ children }) =>
+        Wrapper({
+          pendingRecordIdMockedValue: null,
+          draftValueMockedValue: draftValue,
+          children,
         }),
-      {
-        wrapper: ({ children }) =>
-          Wrapper({
-            pendingRecordIdMockedValue: null,
-            draftValueMockedValue: draftValue,
-            children,
-          }),
-      },
-    );
+    });
 
     await act(async () => {
-      await result.current.upsertRecord(
+      await result.current.upsertTableRecordNoGroup(
         updateOneRecordMock,
         'recordId',
-        undefined,
         'name',
       );
     });

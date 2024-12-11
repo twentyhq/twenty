@@ -1,5 +1,5 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
-import { useRecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
 import { recordTablePendingRecordIdByGroupComponentFamilyState } from '@/object-record/record-table/states/recordTablePendingRecordIdByGroupComponentFamilyState';
@@ -8,7 +8,7 @@ import { IconPlus } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
 export const RecordTableRecordGroupSectionAddNew = () => {
-  const { recordTableId } = useRecordTableContext();
+  const { recordTableId } = useRecordTableContextOrThrow();
 
   const currentRecordGroupId = useCurrentRecordGroupId();
 

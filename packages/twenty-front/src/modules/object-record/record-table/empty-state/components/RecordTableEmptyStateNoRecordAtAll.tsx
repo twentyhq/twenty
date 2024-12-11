@@ -1,12 +1,12 @@
 import { IconPlus } from 'twenty-ui';
 
 import { useObjectLabel } from '@/object-metadata/hooks/useObjectLabel';
-import { useRecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
 import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
 
 export const RecordTableEmptyStateNoRecordAtAll = () => {
-  const { objectMetadataItem, recordTableId } = useRecordTableContext();
+  const { objectMetadataItem, recordTableId } = useRecordTableContextOrThrow();
 
   const { createNewTableRecord } = useCreateNewTableRecord(recordTableId);
 
