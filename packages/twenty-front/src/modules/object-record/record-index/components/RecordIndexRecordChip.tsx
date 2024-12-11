@@ -9,6 +9,7 @@ export type RecordIdentifierChipProps = {
   record: ObjectRecord;
   variant?: AvatarChipVariant;
   size?: ChipSize;
+  maxWidth?: number;
 };
 
 export const RecordIdentifierChip = ({
@@ -16,6 +17,7 @@ export const RecordIdentifierChip = ({
   record,
   variant,
   size,
+  maxWidth,
 }: RecordIdentifierChipProps) => {
   const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
   const { recordChipData } = useRecordChipData({
@@ -36,6 +38,7 @@ export const RecordIdentifierChip = ({
       LeftIcon={LeftIcon}
       LeftIconColor={LeftIconColor}
       size={size}
+      maxWidth={maxWidth}
     />
   );
 };
