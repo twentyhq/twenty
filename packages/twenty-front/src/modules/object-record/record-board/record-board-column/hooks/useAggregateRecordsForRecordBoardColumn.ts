@@ -74,12 +74,13 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
     skip: !isAggregateQueryEnabled,
   });
 
-  const { value, label } = computeAggregateValueAndLabel(
+  const { value, label } = computeAggregateValueAndLabel({
     data,
     objectMetadataItem,
-    recordIndexKanbanAggregateOperation,
-    kanbanFieldName,
-  );
+    fieldMetadataId: recordIndexKanbanAggregateOperation?.fieldMetadataId,
+    aggregateOperation: recordIndexKanbanAggregateOperation?.operation,
+    fallbackFieldName: kanbanFieldName,
+  });
 
   return {
     aggregateValue: isAggregateQueryEnabled ? value : recordCount,
