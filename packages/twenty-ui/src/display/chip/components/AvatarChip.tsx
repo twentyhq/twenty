@@ -24,6 +24,7 @@ export type AvatarChipProps = {
   placeholderColorSeed?: string;
   onClick?: (event: MouseEvent) => void;
   to?: string;
+  maxWidth?: number;
 };
 
 export enum AvatarChipVariant {
@@ -60,6 +61,7 @@ export const AvatarChip = ({
   onClick,
   to,
   size = ChipSize.Small,
+  maxWidth,
 }: AvatarChipProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -106,14 +108,15 @@ export const AvatarChip = ({
       clickable={isDefined(onClick) || isDefined(to)}
       onClick={to ? undefined : onClick}
       className={className}
+      maxWidth={maxWidth}
     />
   );
 
-  return to ? (
+  if (!isDefined(to)) return chip;
+
+  return (
     <StyledLink to={to} onClick={onClick}>
       {chip}
     </StyledLink>
-  ) : (
-    chip
   );
 };
