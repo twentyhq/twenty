@@ -247,7 +247,13 @@ export const FormDateFieldInput = ({
     useState<Nullable<Date>>(dateValue);
 
   const [inputDateTime, setInputDateTime] = useState(
-    isDefined(dateValue) ? parseDateToString(dateValue) : '',
+    isDefined(dateValue) && !isStandaloneVariableString(defaultValue)
+      ? parseDateToString({
+          date: dateValue,
+          isDateTimeInput: false,
+          userTimezone: undefined,
+        })
+      : '',
   );
 
   const handleVariableTagInsert = (variableName: string) => {
@@ -255,6 +261,8 @@ export const FormDateFieldInput = ({
       type: 'variable',
       value: variableName,
     });
+
+    setInputDateTime('');
 
     onPersist(variableName);
   };
