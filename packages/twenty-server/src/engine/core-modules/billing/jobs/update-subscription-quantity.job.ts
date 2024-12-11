@@ -7,14 +7,14 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-export type UpdateSubscriptionJobData = { workspaceId: string };
+export type UpdateSubscriptionQuantityJobData = { workspaceId: string };
 
 @Processor({
   queueName: MessageQueue.billingQueue,
   scope: Scope.REQUEST,
 })
-export class UpdateSubscriptionJob {
-  protected readonly logger = new Logger(UpdateSubscriptionJob.name);
+export class UpdateSubscriptionQuantityJob {
+  protected readonly logger = new Logger(UpdateSubscriptionQuantityJob.name);
 
   constructor(
     private readonly billingSubscriptionService: BillingSubscriptionService,
@@ -22,8 +22,8 @@ export class UpdateSubscriptionJob {
     private readonly twentyORMManager: TwentyORMManager,
   ) {}
 
-  @Process(UpdateSubscriptionJob.name)
-  async handle(data: UpdateSubscriptionJobData): Promise<void> {
+  @Process(UpdateSubscriptionQuantityJob.name)
+  async handle(data: UpdateSubscriptionQuantityJobData): Promise<void> {
     const workspaceMemberRepository =
       await this.twentyORMManager.getRepository<WorkspaceMemberWorkspaceEntity>(
         'workspaceMember',
