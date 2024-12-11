@@ -1,4 +1,4 @@
-import { Button, IconButton, IconDotsVertical } from 'twenty-ui';
+import { Button, IconButton, IconDotsVertical, useIsMobile } from 'twenty-ui';
 
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -10,16 +10,18 @@ export const PageHeaderOpenCommandMenuButton = () => {
     'IS_PAGE_HEADER_V2_ENABLED',
   );
 
+  const isMobile = useIsMobile();
+
   return (
     <>
       {isPageHeaderV2Enabled ? (
         <Button
           Icon={IconDotsVertical}
           dataTestId="page-header-open-command-menu-button"
-          size="small"
+          size={isMobile ? 'medium' : 'small'}
           variant="secondary"
           accent="default"
-          shortcut="⌘K"
+          shortcut={isMobile ? '' : '⌘K'}
           ariaLabel="Open command menu"
           onClick={openCommandMenu}
         />

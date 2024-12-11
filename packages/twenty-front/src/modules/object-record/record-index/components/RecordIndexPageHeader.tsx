@@ -1,3 +1,5 @@
+import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
+import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { RecordIndexPageKanbanAddButton } from '@/object-record/record-index/components/RecordIndexPageKanbanAddButton';
@@ -7,11 +9,12 @@ import { PageHeaderOpenCommandMenuButton } from '@/ui/layout/page-header/compone
 import { PageAddButton } from '@/ui/layout/page/components/PageAddButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/components/PageHotkeysEffect';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useIcons } from 'twenty-ui';
+import { isDefined, useIcons } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const RecordIndexPageHeader = () => {
@@ -32,9 +35,21 @@ export const RecordIndexPageHeader = () => {
 
   const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
 
-  const shouldDisplayAddButton = objectMetadataItem
-    ? !isObjectMetadataReadOnly(objectMetadataItem)
-    : false;
+  const numberOfSelectedRecords = useRecoilComponentValueV2(
+    contextStoreNumberOfSelectedRecordsComponentState,
+  );
+
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
+  );
+
+  const isObjectMetadataItemReadOnly =
+    isDefined(objectMetadataItem) &&
+    isObjectMetadataReadOnly(objectMetadataItem);
+
+  const shouldDisplayAddButton =
+    (numberOfSelectedRecords === 0 || !isPageHeaderV2Enabled) &&
+    !isObjectMetadataItemReadOnly;
 
   const isTable = recordIndexViewType === ViewType.Table;
 
@@ -45,20 +60,23 @@ export const RecordIndexPageHeader = () => {
     onCreateRecord();
   };
 
-  const isPageHeaderV2Enabled = useIsFeatureEnabled(
-    'IS_PAGE_HEADER_V2_ENABLED',
-  );
-
   return (
     <PageHeader title={pageHeaderTitle} Icon={Icon}>
       <PageHotkeysEffect onAddButtonClick={handleAddButtonClick} />
+
       {shouldDisplayAddButton &&
         (isTable ? (
           <PageAddButton onClick={handleAddButtonClick} />
         ) : (
           <RecordIndexPageKanbanAddButton />
         ))}
-      {isPageHeaderV2Enabled && <PageHeaderOpenCommandMenuButton />}
+
+      {isPageHeaderV2Enabled && (
+        <>
+          <RecordIndexActionMenu />
+          <PageHeaderOpenCommandMenuButton />
+        </>
+      )}
     </PageHeader>
   );
 };

@@ -1,4 +1,5 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { SearchVariablesDropdownFieldItems } from '@/workflow/search-variables/components/SearchVariablesDropdownFieldItems';
@@ -26,7 +27,7 @@ const StyledDropdownVariableButtonContainer = styled(
   }
 `;
 
-const StyledDropdownComponetsContainer = styled.div`
+const StyledDropdownComponentsContainer = styled(DropdownMenuItemsContainer)`
   background-color: ${({ theme }) => theme.background.transparent.light};
 `;
 
@@ -136,9 +137,9 @@ const SearchVariablesDropdown = ({
         </StyledDropdownVariableButtonContainer>
       }
       dropdownComponents={
-        <StyledDropdownComponetsContainer>
+        <StyledDropdownComponentsContainer>
           {renderSearchVariablesDropdownComponents()}
-        </StyledDropdownComponetsContainer>
+        </StyledDropdownComponentsContainer>
       }
       dropdownPlacement="bottom-end"
       dropdownOffset={{ x: 0, y: 4 }}

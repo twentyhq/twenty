@@ -307,6 +307,7 @@ export const RecordBoardCard = ({
                 objectNameSingular={objectMetadataItem.nameSingular}
                 record={record as ObjectRecord}
                 variant={AvatarChipVariant.Transparent}
+                maxWidth={150}
               />
             )}
 
