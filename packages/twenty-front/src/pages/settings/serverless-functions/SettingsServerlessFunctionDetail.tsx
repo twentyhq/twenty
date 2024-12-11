@@ -127,8 +127,8 @@ export const SettingsServerlessFunctionDetail = () => {
   };
 
   const handleTestFunction = async () => {
-    setActiveTabId('test');
     await testServerlessFunction();
+    setActiveTabId('test');
   };
 
   const isAnalyticsEnabled = useRecoilValue(isAnalyticsEnabledState);

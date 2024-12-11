@@ -3,12 +3,14 @@ import {
   ArrowFunction,
   createSourceFile,
   FunctionDeclaration,
+  FunctionLikeDeclaration,
   LiteralTypeNode,
   PropertySignature,
   ScriptTarget,
   StringLiteral,
   SyntaxKind,
   TypeNode,
+  Node,
   UnionTypeNode,
   VariableStatement,
 } from 'typescript';
@@ -75,7 +77,7 @@ const getTypeString = (typeNode: TypeNode): InputSchemaProperty => {
 };
 
 const computeFunctionParameters = (
-  funcNode: FunctionDeclaration | ArrowFunction,
+  funcNode: FunctionDeclaration | FunctionLikeDeclaration | ArrowFunction,
   schema: InputSchema,
 ): InputSchema => {
   const params = funcNode.parameters;
@@ -91,6 +93,25 @@ const computeFunctionParameters = (
   }, schema);
 };
 
+const extractFunctions = (node: Node): FunctionLikeDeclaration[] => {
+  if (node.kind === SyntaxKind.FunctionDeclaration) {
+    return [node as FunctionDeclaration];
+  }
+
+  if (node.kind === SyntaxKind.VariableStatement) {
+    const varStatement = node as VariableStatement;
+    return varStatement.declarationList.declarations
+      .filter(
+        (declaration) =>
+          isDefined(declaration.initializer) &&
+          declaration.initializer.kind === SyntaxKind.ArrowFunction,
+      )
+      .map((declaration) => declaration.initializer as ArrowFunction);
+  }
+
+  return [];
+};
+
 export const getFunctionInputSchema = (fileContent: string): InputSchema => {
   const sourceFile = createSourceFile(
     'temp.ts',
@@ -98,29 +119,19 @@ export const getFunctionInputSchema = (fileContent: string): InputSchema => {
     ScriptTarget.ESNext,
     true,
   );
-
   let schema: InputSchema = [];
 
   sourceFile.forEachChild((node) => {
-    if (node.kind === SyntaxKind.FunctionDeclaration) {
-      const funcNode = node as FunctionDeclaration;
-      schema = computeFunctionParameters(funcNode, schema);
-    } else if (node.kind === SyntaxKind.VariableStatement) {
-      const varStatement = node as VariableStatement;
-      return varStatement.declarationList.declarations.reduce(
-        (updatedSchema, declaration) => {
-          if (
-            isDefined(declaration.initializer) &&
-            declaration.initializer.kind === SyntaxKind.ArrowFunction
-          ) {
-            const arrowFunction = declaration.initializer as ArrowFunction;
-            schema = computeFunctionParameters(arrowFunction, updatedSchema);
-          }
-          return updatedSchema;
-        },
-        schema,
-      );
+    if (
+      node.kind === SyntaxKind.FunctionDeclaration ||
+      node.kind === SyntaxKind.VariableStatement
+    ) {
+      const functions = extractFunctions(node);
+      functions.forEach((func) => {
+        schema = computeFunctionParameters(func, schema);
+      });
     }
   });
+
   return schema;
 };

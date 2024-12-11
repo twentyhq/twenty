@@ -16,11 +16,11 @@ const getValueType = (value: any): InputSchemaPropertyType => {
   if (typeof value === 'boolean') {
     return 'boolean';
   }
-  if (typeof value === 'object') {
-    return 'object';
-  }
   if (Array.isArray(value)) {
     return 'array';
+  }
+  if (isObject(value)) {
+    return 'object';
   }
   return 'unknown';
 };
@@ -29,7 +29,7 @@ export const getFunctionOutputSchema = (testResult: object) => {
   return testResult
     ? Object.entries(testResult).reduce(
         (acc: BaseOutputSchema, [key, value]) => {
-          if (isObject(value)) {
+          if (isObject(value) && !Array.isArray(value)) {
             acc[key] = {
               isLeaf: false,
               value: getFunctionOutputSchema(value),

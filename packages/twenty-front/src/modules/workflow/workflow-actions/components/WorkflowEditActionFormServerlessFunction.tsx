@@ -205,8 +205,8 @@ export const WorkflowEditActionFormServerlessFunction = ({
   };
 
   const handleRunFunction = async () => {
-    setActiveTabId('test');
     await testServerlessFunction();
+    setActiveTabId('test');
   };
 
   const handleEditorDidMount = async (

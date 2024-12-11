@@ -138,7 +138,7 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
                     name: headerTitle,
                     type: 'DATABASE_EVENT',
                     settings: {
-                      eventName: `${availableMetadata[0].value}.${updatedEvent}`,
+                      eventName: `${availableMetadata?.[0].value}.${updatedEvent}`,
                       outputSchema: {},
                     },
                   },

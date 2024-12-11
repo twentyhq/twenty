@@ -1,1 +1,3 @@
-export const INDEX_FILE_PATH = 'src/index.ts';
+import { join } from 'path';
+
+export const INDEX_FILE_PATH = join('src', 'index.ts');

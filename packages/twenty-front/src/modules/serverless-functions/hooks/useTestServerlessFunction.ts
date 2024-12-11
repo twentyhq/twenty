@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-ui';
 
 export const useTestServerlessFunction = (
   serverlessFunctionId: string,
-  callback?: (testResult: object) => Promise<void>,
+  callback?: (testResult: object) => void,
 ) => {
   const { enqueueSnackBar } = useSnackBar();
   const { executeOneServerlessFunction } = useExecuteOneServerlessFunction();
@@ -23,7 +23,7 @@ export const useTestServerlessFunction = (
       });
 
       if (isDefined(result?.data?.executeOneServerlessFunction?.data)) {
-        await callback?.(result?.data?.executeOneServerlessFunction?.data);
+        callback?.(result?.data?.executeOneServerlessFunction?.data);
       }
 
       setServerlessFunctionTestData((prev) => ({

@@ -18,7 +18,7 @@ describe('getFunctionInputSchema', () => {
           param1: string,
           param2: number,
         ): Promise<object> => {
-          return params;
+          return param1;
         };
       `;
     const result = getFunctionInputSchema(fileContent);

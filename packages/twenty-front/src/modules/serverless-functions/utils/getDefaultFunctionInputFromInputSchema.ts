@@ -13,7 +13,7 @@ export const getDefaultFunctionInputFromInputSchema = (
       if (isDefined(param.properties)) {
         Object.entries(param.properties).forEach(([key, val]) => {
           result[key] = getDefaultFunctionInputFromInputSchema([val])[0];
-        }, {});
+        });
       }
       return result;
     } else if (param.type === 'array' && isDefined(param.items)) {

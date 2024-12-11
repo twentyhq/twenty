@@ -13,7 +13,10 @@ import {
   ServerlessFunctionTestData,
 } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 
-const StyledContainer = styled.div``;
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 const StyledOutput = styled.div<{ status?: ServerlessFunctionExecutionStatus }>`
   align-items: center;
