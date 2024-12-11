@@ -130,7 +130,7 @@ export const ViewBarDetails = ({
   );
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural: objectNamePlural ?? '',
+    objectNamePlural: objectNamePlural,
   });
   const { toggleSoftDeleteFilterState } = useHandleToggleTrashColumnFilter({
     objectNameSingular: objectNameSingular,
