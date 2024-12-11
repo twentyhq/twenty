@@ -100,19 +100,19 @@ export const FormDateFieldInput = ({
         },
   );
 
-  const dateValue = isDefined(draftValue.value)
+  const draftValueAsDate = isDefined(draftValue.value)
     ? new Date(draftValue.value)
     : null;
 
   const datePickerWrapperRef = useRef<HTMLDivElement>(null);
 
   const [temporaryValue, setTemporaryValue] =
-    useState<Nullable<Date>>(dateValue);
+    useState<Nullable<Date>>(draftValueAsDate);
 
   const [inputDateTime, setInputDateTime] = useState(
-    isDefined(dateValue) && !isStandaloneVariableString(defaultValue)
+    isDefined(draftValueAsDate) && !isStandaloneVariableString(defaultValue)
       ? parseDateToString({
-          date: dateValue,
+          date: draftValueAsDate,
           isDateTimeInput: false,
           userTimezone: timeZone,
         })
