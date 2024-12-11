@@ -5,6 +5,8 @@ import { VariableChip } from '@/object-record/record-field/form-types/components
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { DateInput } from '@/ui/field/input/components/DateInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
+import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
 import { parseStringToDate } from '@/ui/input/components/internal/date/utils/parseStringToDate';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
@@ -223,17 +225,35 @@ export const FormDateFieldInput = ({
       isDateTimeInput: false,
       userTimezone: undefined,
     });
-    if (isDefined(parsedInputDateTime)) {
-      setDraftValue({
-        type: 'static',
-        value: parsedInputDateTime.toDateString(),
-        editingMode: 'edit',
-      });
 
-      setTemporaryValue(parsedInputDateTime);
-
-      persistDate(parsedInputDateTime);
+    if (!isDefined(parsedInputDateTime)) {
+      return;
     }
+
+    let validatedDate = parsedInputDateTime;
+    if (parsedInputDateTime < MIN_DATE) {
+      validatedDate = MIN_DATE;
+    } else if (parsedInputDateTime > MAX_DATE) {
+      validatedDate = MAX_DATE;
+    }
+
+    setDraftValue({
+      type: 'static',
+      value: validatedDate.toDateString(),
+      editingMode: 'edit',
+    });
+
+    setTemporaryValue(validatedDate);
+
+    setInputDateTime(
+      parseDateToString({
+        date: validatedDate,
+        isDateTimeInput: false,
+        userTimezone: undefined,
+      }),
+    );
+
+    persistDate(validatedDate);
   };
 
   const handleVariableTagInsert = (variableName: string) => {
