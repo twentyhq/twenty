@@ -26,7 +26,6 @@ import {
 } from 'src/engine/core-modules/auth/auth.util';
 import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
-import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
 import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
 import {
@@ -38,16 +37,17 @@ import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/works
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
-import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { userValidator } from 'src/engine/core-modules/user/user.validate';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
-import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { AvailableWorkspaceOutput } from 'src/engine/core-modules/auth/dto/available-workspaces.output';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -70,24 +70,16 @@ export class AuthService {
     private readonly appTokenRepository: Repository<AppToken>,
   ) {}
 
-  public async hasAccessToWorkspace(
-    workspace: Workspace,
-    user: User,
-  ): Promise<boolean> {
-    const userWorkspace =
-      await this.userWorkspaceService.checkUserWorkspaceExists(
-        user.id,
-        workspace.id,
-      );
-
-    return userWorkspace !== null;
-  }
-
   private async checkAccessAndUseInvitationOrThrow(
     workspace: Workspace,
     user: User,
   ) {
-    if (await this.hasAccessToWorkspace(workspace, user)) {
+    if (
+      await this.userWorkspaceService.checkUserWorkspaceExists(
+        user.id,
+        workspace.id,
+      )
+    ) {
       return;
     }
 
