@@ -1,6 +1,7 @@
 import { RecordActionMenuEntriesSetter } from '@/action-menu/actions/record-actions/components/RecordActionMenuEntriesSetter';
 import { RecordAgnosticActionsSetterEffect } from '@/action-menu/actions/record-agnostic-actions/components/RecordAgnosticActionsSetterEffect';
 import { ActionMenuConfirmationModals } from '@/action-menu/components/ActionMenuConfirmationModals';
+import { RecordShowActionMenuButtons } from '@/action-menu/components/RecordShowActionMenuButtons';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
@@ -29,6 +30,10 @@ export const RecordShowActionMenu = ({
 
   const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
+  );
+
   // TODO: refactor RecordShowPageBaseHeader to use the context store
 
   return (
@@ -40,15 +45,19 @@ export const RecordShowActionMenu = ({
             onActionExecutedCallback: () => {},
           }}
         >
-          <RecordShowPageBaseHeader
-            {...{
-              isFavorite,
-              record,
-              objectMetadataItem,
-              objectNameSingular,
-              handleFavoriteButtonClick,
-            }}
-          />
+          {isPageHeaderV2Enabled ? (
+            <RecordShowActionMenuButtons />
+          ) : (
+            <RecordShowPageBaseHeader
+              {...{
+                isFavorite,
+                record,
+                objectMetadataItem,
+                objectNameSingular,
+                handleFavoriteButtonClick,
+              }}
+            />
+          )}
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />
           {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}
