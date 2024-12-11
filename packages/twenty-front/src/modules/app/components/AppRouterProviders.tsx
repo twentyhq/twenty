@@ -6,7 +6,7 @@ import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/compone
 import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
-import { ErrorToastProvider } from '@/error-handler/components/ErrorToastProvider';
+import { ErrorToastEffect } from '@/error-handler/components/ErrorToastProvider';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
@@ -36,35 +36,34 @@ export const AppRouterProviders = () => {
         <ClientConfigProvider>
           <ChromeExtensionSidecarEffect />
           <ChromeExtensionSidecarProvider>
-            <ErrorToastProvider>
-              <UserProviderEffect />
-              <WorkspaceProviderEffect />
-              <UserProvider>
-                <AuthProvider>
-                  <ApolloMetadataClientProvider>
-                    <ObjectMetadataItemsProvider>
-                      <PrefetchDataProvider>
-                        <UserThemeProviderEffect />
-                        <SnackBarProvider>
-                          <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                            <DialogManager>
-                              <StrictMode>
-                                <PromiseRejectionEffect />
-                                <GotoHotkeysEffectsProvider />
-                                <PageTitle title={pageTitle} />
-                                <PageFavicon />
-                                <Outlet />
-                              </StrictMode>
-                            </DialogManager>
-                          </DialogManagerScope>
-                        </SnackBarProvider>
-                      </PrefetchDataProvider>
-                      <PageChangeEffect />
-                    </ObjectMetadataItemsProvider>
-                  </ApolloMetadataClientProvider>
-                </AuthProvider>
-              </UserProvider>
-            </ErrorToastProvider>
+            <ErrorToastEffect />
+            <UserProviderEffect />
+            <WorkspaceProviderEffect />
+            <UserProvider>
+              <AuthProvider>
+                <ApolloMetadataClientProvider>
+                  <ObjectMetadataItemsProvider>
+                    <PrefetchDataProvider>
+                      <UserThemeProviderEffect />
+                      <SnackBarProvider>
+                        <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                          <DialogManager>
+                            <StrictMode>
+                              <PromiseRejectionEffect />
+                              <GotoHotkeysEffectsProvider />
+                              <PageTitle title={pageTitle} />
+                              <PageFavicon />
+                              <Outlet />
+                            </StrictMode>
+                          </DialogManager>
+                        </DialogManagerScope>
+                      </SnackBarProvider>
+                    </PrefetchDataProvider>
+                    <PageChangeEffect />
+                  </ObjectMetadataItemsProvider>
+                </ApolloMetadataClientProvider>
+              </AuthProvider>
+            </UserProvider>
           </ChromeExtensionSidecarProvider>
         </ClientConfigProvider>
       </BaseThemeProvider>
