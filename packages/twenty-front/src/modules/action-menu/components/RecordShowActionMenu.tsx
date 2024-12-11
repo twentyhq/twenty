@@ -8,7 +8,6 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useIsMobile } from 'twenty-ui';
 import { RecordShowPageBaseHeader } from '~/pages/object-record/RecordShowPageBaseHeader';
 
 export const RecordShowActionMenu = ({
@@ -30,8 +29,6 @@ export const RecordShowActionMenu = ({
 
   const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
-  const isMobile = useIsMobile();
-
   // TODO: refactor RecordShowPageBaseHeader to use the context store
 
   return (
@@ -43,17 +40,15 @@ export const RecordShowActionMenu = ({
             onActionExecutedCallback: () => {},
           }}
         >
-          {!isMobile && (
-            <RecordShowPageBaseHeader
-              {...{
-                isFavorite,
-                record,
-                objectMetadataItem,
-                objectNameSingular,
-                handleFavoriteButtonClick,
-              }}
-            />
-          )}
+          <RecordShowPageBaseHeader
+            {...{
+              isFavorite,
+              record,
+              objectMetadataItem,
+              objectNameSingular,
+              handleFavoriteButtonClick,
+            }}
+          />
           <ActionMenuConfirmationModals />
           <RecordActionMenuEntriesSetter />
           {isWorkflowEnabled && <RecordAgnosticActionsSetterEffect />}

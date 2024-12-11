@@ -22,7 +22,6 @@ export const PageHeaderOpenCommandMenuButton = () => {
           variant="secondary"
           accent="default"
           shortcut={isMobile ? '' : '⌘K'}
-          title={isMobile ? 'Actions' : ''}
           ariaLabel="Open command menu"
           onClick={openCommandMenu}
         />
