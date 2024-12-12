@@ -2,15 +2,14 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSetRecordGroup = (viewId?: string) => {
-  const { objectMetadataItem } = useContext(RecordIndexRootPropsContext);
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const recordIndexRecordGroupIdsState = useRecoilComponentCallbackStateV2(
     recordGroupIdsComponentState,

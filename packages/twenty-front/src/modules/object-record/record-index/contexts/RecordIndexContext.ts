@@ -1,15 +1,14 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { createRootPropsContext } from '~/utils/createRootPropsContext';
+import { createRequiredContext } from '~/utils/createRequiredContext';
 
-export type RecordIndexRootPropsContextProps = {
+export type RecordIndexContextValue = {
   indexIdentifierUrl: (recordId: string) => string;
   onIndexRecordsLoaded: () => void;
-  onCreateRecord: () => void;
   objectNamePlural: string;
   objectNameSingular: string;
   objectMetadataItem: ObjectMetadataItem;
   recordIndexId: string;
 };
 
-export const RecordIndexRootPropsContext =
-  createRootPropsContext<RecordIndexRootPropsContextProps>();
+export const [RecordIndexContextProvider, useRecordIndexContextOrThrow] =
+  createRequiredContext<RecordIndexContextValue>('RecordIndexContext');

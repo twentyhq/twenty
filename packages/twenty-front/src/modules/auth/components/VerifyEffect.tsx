@@ -3,7 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { AppPath } from '@/types/AppPath';
+import { useSetRecoilState } from 'recoil';
 
 export const VerifyEffect = () => {
   const [searchParams] = useSearchParams();
@@ -14,11 +16,16 @@ export const VerifyEffect = () => {
 
   const { verify } = useAuth();
 
+  const setIsAppWaitingForFreshObjectMetadata = useSetRecoilState(
+    isAppWaitingForFreshObjectMetadataState,
+  );
+
   useEffect(() => {
     const getTokens = async () => {
       if (!loginToken) {
         navigate(AppPath.SignInUp);
       } else {
+        setIsAppWaitingForFreshObjectMetadata(true);
         await verify(loginToken);
       }
     };

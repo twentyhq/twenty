@@ -6,9 +6,11 @@ import { useCountries } from '@/ui/input/components/internal/hooks/useCountries'
 import { Select, SelectOption } from '@/ui/input/components/Select';
 
 export const CountrySelect = ({
+  label,
   selectedCountryName,
   onChange,
 }: {
+  label: string;
   selectedCountryName: string;
   onChange: (countryCode: string) => void;
 }) => {
@@ -36,7 +38,7 @@ export const CountrySelect = ({
       fullWidth
       dropdownId={SELECT_COUNTRY_DROPDOWN_ID}
       options={options}
-      label="COUNTRY"
+      label={label}
       withSearchInput
       onChange={onChange}
       value={selectedCountryName}

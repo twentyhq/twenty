@@ -3,11 +3,10 @@ import { computeAggregateValueAndLabel } from '@/object-record/record-board/reco
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { aggregateOperationForViewFieldState } from '@/object-record/record-table/record-table-footer/states/aggregateOperationForViewFieldState';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from '~/utils/isDefined';
 
@@ -18,7 +17,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     'IS_AGGREGATE_QUERY_ENABLED',
   );
 
-  const { objectMetadataItem } = useContext(RecordTableContext);
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { currentViewWithSavedFiltersAndSorts } = useGetCurrentView();
   const recordIndexViewFilterGroups = useRecoilValue(
     recordIndexViewFilterGroupsState,

@@ -47,12 +47,16 @@ import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hook
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
+import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
+  );
+  const setIsAppWaitingForFreshObjectMetadataState = useSetRecoilState(
+    isAppWaitingForFreshObjectMetadataState,
   );
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
@@ -240,6 +244,7 @@ export const useAuth = () => {
 
         setWorkspaces(validWorkspaces);
       }
+      setIsAppWaitingForFreshObjectMetadataState(true);
 
       return {
         user,
@@ -254,6 +259,7 @@ export const useAuth = () => {
       setCurrentUser,
       setCurrentWorkspace,
       isOnAWorkspaceSubdomain,
+      setIsAppWaitingForFreshObjectMetadataState,
       setCurrentWorkspaceMembers,
       setCurrentWorkspaceMember,
       setDateTimeFormat,

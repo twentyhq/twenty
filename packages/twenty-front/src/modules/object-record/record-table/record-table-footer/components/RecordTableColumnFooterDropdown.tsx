@@ -1,7 +1,7 @@
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
@@ -10,7 +10,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
-import { useContext, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Key } from 'ts-key-enum';
 import { MenuItem } from 'twenty-ui';
 
@@ -20,7 +20,7 @@ export const RecordTableColumnFooterDropdown = ({
   column: ColumnDefinition<FieldMetadata>;
 }) => {
   const { closeDropdown } = useDropdown(column.fieldMetadataId + '-footer');
-  const { objectMetadataItem } = useContext(RecordTableContext);
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { currentViewWithSavedFiltersAndSorts } = useGetCurrentView();
 
   const currentViewField =
