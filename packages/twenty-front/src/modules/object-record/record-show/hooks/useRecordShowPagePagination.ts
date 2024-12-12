@@ -2,8 +2,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { lastShowPageRecordIdState } from '@/object-record/record-field/states/lastShowPageRecordId';
@@ -36,10 +37,14 @@ export const useRecordShowPagePagination = (
 
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
+  const { id: currentWorkspaceMemberId } =
+    useRecoilValue(currentWorkspaceMemberState) ?? {};
+
   const { filter, orderBy } =
     useQueryVariablesFromActiveFieldsOfViewOrDefaultView({
       objectMetadataItem,
       viewId: viewIdQueryParam,
+      currentWorkspaceMemberId,
     });
 
   const { loading: loadingCursor, pageInfo: currentRecordsPageInfo } =

@@ -14,11 +14,13 @@ export const getQueryVariablesFromView = ({
   fieldMetadataItems,
   objectMetadataItem,
   isJsonFilterEnabled,
+  currentWorkspaceMemberId,
 }: {
   view: View | null | undefined;
   fieldMetadataItems: FieldMetadataItem[];
   objectMetadataItem: ObjectMetadataItem;
   isJsonFilterEnabled: boolean;
+  currentWorkspaceMemberId?: string;
 }) => {
   if (!isDefined(view)) {
     return {
@@ -42,6 +44,7 @@ export const getQueryVariablesFromView = ({
     mapViewFiltersToFilters(viewFilters, filterDefinitions),
     objectMetadataItem?.fields ?? [],
     viewFilterGroups ?? [],
+    currentWorkspaceMemberId,
   );
 
   const orderBy = turnSortsIntoOrderBy(

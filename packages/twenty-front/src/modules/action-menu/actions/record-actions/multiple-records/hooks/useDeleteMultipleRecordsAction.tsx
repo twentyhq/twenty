@@ -4,6 +4,7 @@ import {
   ActionMenuEntryScope,
   ActionMenuEntryType,
 } from '@/action-menu/types/ActionMenuEntry';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -19,6 +20,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useContext, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import { IconTrash, isDefined } from 'twenty-ui';
 
 export const useDeleteMultipleRecordsAction = ({
@@ -54,10 +56,14 @@ export const useDeleteMultipleRecordsAction = ({
     contextStoreFiltersComponentState,
   );
 
+  const { id: currentWorkspaceMemberId } =
+    useRecoilValue(currentWorkspaceMemberState) ?? {};
+
   const graphqlFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
     objectMetadataItem,
+    currentWorkspaceMemberId,
   );
 
   const { fetchAllRecordIds } = useFetchAllRecordIds({

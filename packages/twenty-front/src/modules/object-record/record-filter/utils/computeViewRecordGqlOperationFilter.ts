@@ -32,12 +32,14 @@ import { getEmptyRecordGqlOperationFilter } from '@/object-record/record-filter/
 import { ViewFilterGroup } from '@/views/types/ViewFilterGroup';
 import { ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { resolveFilterValue } from '@/views/view-filter-value/utils/resolveFilterValue';
+import { relationFilterValueSchema } from '@/views/view-filter-value/validation-schemas/relationFilterValueSchema';
 import { endOfDay, roundToNearestMinutes, startOfDay } from 'date-fns';
 import { z } from 'zod';
 
 const computeFilterRecordGqlOperationFilter = (
   filter: Filter,
   fields: Pick<Field, 'id' | 'name'>[],
+  currentWorkspaceMemberId?: string,
 ): RecordGqlOperationFilter | undefined => {
   const correspondingField = fields.find(
     (field) => field.id === filter.fieldMetadataId,
@@ -303,30 +305,27 @@ const computeFilterRecordGqlOperationFilter = (
       }
     case 'RELATION': {
       if (!isEmptyOperand) {
-        try {
-          JSON.parse(filter.value);
-        } catch (e) {
-          throw new Error(
-            `Cannot parse filter value for RELATION filter : "${filter.value}"`,
-          );
-        }
+        const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
+          relationFilterValueSchema.parse(filter.value);
 
-        const parsedRecordIds = JSON.parse(filter.value) as string[];
+        const recordIds = isCurrentWorkspaceMemberSelected
+          ? [...selectedRecordIds, currentWorkspaceMemberId]
+          : selectedRecordIds;
 
-        if (parsedRecordIds.length === 0) return;
+        if (recordIds.length === 0) return;
         switch (filter.operand) {
           case ViewFilterOperand.Is:
             return {
               [correspondingField.name + 'Id']: {
-                in: parsedRecordIds,
+                in: recordIds,
               } as RelationFilter,
             };
           case ViewFilterOperand.IsNot: {
-            if (parsedRecordIds.length === 0) return;
+            if (recordIds.length === 0) return;
             return {
               not: {
                 [correspondingField.name + 'Id']: {
-                  in: parsedRecordIds,
+                  in: recordIds,
                 } as RelationFilter,
               },
             };
@@ -873,6 +872,7 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
   fields: Pick<Field, 'id' | 'name'>[],
   viewFilterGroups: ViewFilterGroup[],
   currentViewFilterGroupId?: string,
+  currentWorkspaceMemberId?: string,
 ): RecordGqlOperationFilter | undefined => {
   const currentViewFilterGroup = viewFilterGroups.find(
     (viewFilterGroup) => viewFilterGroup.id === currentViewFilterGroupId,
@@ -887,7 +887,13 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
   );
 
   const groupRecordGqlOperationFilters = groupFilters
-    .map((filter) => computeFilterRecordGqlOperationFilter(filter, fields))
+    .map((filter) =>
+      computeFilterRecordGqlOperationFilter(
+        filter,
+        fields,
+        currentWorkspaceMemberId,
+      ),
+    )
     .filter(isDefined);
 
   const subGroupRecordGqlOperationFilters = viewFilterGroups
@@ -901,6 +907,7 @@ const computeViewFilterGroupRecordGqlOperationFilter = (
         fields,
         viewFilterGroups,
         subViewFilterGroup.id,
+        currentWorkspaceMemberId,
       ),
     )
     .filter(isDefined);
@@ -935,11 +942,16 @@ export const computeViewRecordGqlOperationFilter = (
   filters: Filter[],
   fields: Pick<Field, 'id' | 'name'>[],
   viewFilterGroups: ViewFilterGroup[],
+  currentWorkspaceMemberId?: string,
 ): RecordGqlOperationFilter => {
   const regularRecordGqlOperationFilter: RecordGqlOperationFilter[] = filters
     .filter((filter) => !filter.viewFilterGroupId)
     .map((regularFilter) =>
-      computeFilterRecordGqlOperationFilter(regularFilter, fields),
+      computeFilterRecordGqlOperationFilter(
+        regularFilter,
+        fields,
+        currentWorkspaceMemberId,
+      ),
     )
     .filter(isDefined);
 
@@ -953,6 +965,7 @@ export const computeViewRecordGqlOperationFilter = (
       fields,
       viewFilterGroups,
       outermostFilterGroupId,
+      currentWorkspaceMemberId,
     );
 
   const recordGqlOperationFilters = [
