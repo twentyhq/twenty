@@ -1,3 +1,6 @@
+import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
+import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
+import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import {
@@ -7,6 +10,7 @@ import {
   waitForElementToBeRemoved,
   within,
 } from '@storybook/test';
+import { DateTime } from 'luxon';
 import { FormDateFieldInput } from '../FormDateFieldInput';
 
 const meta: Meta<typeof FormDateFieldInput> = {
@@ -194,17 +198,36 @@ export const DefaultsToMinValueWhenTypingReallyOldDate: Story = {
       userEvent.type(input, '02/02/1500{Enter}'),
 
       waitFor(() => {
-        expect(args.onPersist).toHaveBeenCalledWith(
-          expect.stringMatching(/^1899-12-31/),
+        expect(args.onPersist).toHaveBeenCalledWith(MIN_DATE.toISOString());
+      }),
+      waitFor(() => {
+        expect(input).toHaveDisplayValue(
+          parseDateToString({
+            date: MIN_DATE,
+            isDateTimeInput: false,
+            userTimezone: undefined,
+          }),
         );
       }),
       waitFor(() => {
-        expect(input).toHaveDisplayValue('12/31/1899');
-      }),
-      waitFor(() => {
+        const expectedDate = DateTime.fromJSDate(MIN_DATE)
+          .toLocal()
+          .set({
+            day: MIN_DATE.getUTCDate(),
+            month: MIN_DATE.getUTCMonth() + 1,
+            year: MIN_DATE.getUTCFullYear(),
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
+          });
+
         const selectedDay = within(datePicker).getByRole('option', {
           selected: true,
-          name: 'Choose Sunday, December 31st, 1899',
+          name: (accessibleName) => {
+            // The name looks like "Choose Sunday, December 31st, 1899"
+            return accessibleName.includes(expectedDate.toFormat('yyyy'));
+          },
         });
         expect(selectedDay).toBeVisible();
       }),
@@ -233,17 +256,36 @@ export const DefaultsToMaxValueWhenTypingReallyFarDate: Story = {
       userEvent.type(input, '02/02/2500{Enter}'),
 
       waitFor(() => {
-        expect(args.onPersist).toHaveBeenCalledWith(
-          expect.stringMatching(/^2100-12-30/),
+        expect(args.onPersist).toHaveBeenCalledWith(MAX_DATE.toISOString());
+      }),
+      waitFor(() => {
+        expect(input).toHaveDisplayValue(
+          parseDateToString({
+            date: MAX_DATE,
+            isDateTimeInput: false,
+            userTimezone: undefined,
+          }),
         );
       }),
       waitFor(() => {
-        expect(input).toHaveDisplayValue('12/30/2100');
-      }),
-      waitFor(() => {
+        const expectedDate = DateTime.fromJSDate(MAX_DATE)
+          .toLocal()
+          .set({
+            day: MAX_DATE.getUTCDate(),
+            month: MAX_DATE.getUTCMonth() + 1,
+            year: MAX_DATE.getUTCFullYear(),
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
+          });
+
         const selectedDay = within(datePicker).getByRole('option', {
           selected: true,
-          name: 'Choose Thursday, December 30th, 2100',
+          name: (accessibleName) => {
+            // The name looks like "Choose Thursday, December 30th, 2100"
+            return accessibleName.includes(expectedDate.toFormat('yyyy'));
+          },
         });
         expect(selectedDay).toBeVisible();
       }),
