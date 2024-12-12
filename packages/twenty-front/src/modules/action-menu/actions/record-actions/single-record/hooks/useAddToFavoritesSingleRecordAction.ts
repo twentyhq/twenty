@@ -21,11 +21,12 @@ export const useAddToFavoritesSingleRecordAction: SingleRecordActionHookWithObje
 
     const shouldBeRegistered =
       isDefined(objectMetadataItem) &&
+      isDefined(selectedRecord) &&
       !objectMetadataItem.isRemote &&
       !isFavorite;
 
     const onClick = () => {
-      if (!isDefined(selectedRecord)) {
+      if (!shouldBeRegistered) {
         return;
       }
 
