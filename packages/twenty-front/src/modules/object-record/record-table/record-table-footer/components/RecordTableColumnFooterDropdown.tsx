@@ -29,7 +29,7 @@ export const RecordTableColumnFooterDropdown = ({
     );
 
   if (!currentViewField) {
-    throw new Error('View field not found');
+    throw new Error('ViewField not found');
   }
 
   useScopedHotkeys(

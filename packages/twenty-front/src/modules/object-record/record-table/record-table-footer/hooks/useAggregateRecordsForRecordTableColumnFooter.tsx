@@ -36,7 +36,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   )?.id;
 
   if (!viewFieldId) {
-    throw new Error('View field not found')
+    throw new Error('ViewField not found');
   }
 
   const aggregateOperationForViewField = useRecoilValue(

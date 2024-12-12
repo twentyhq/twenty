@@ -59,7 +59,6 @@ const StyledColumnFootContainer = styled.div`
   position: relative;
   z-index: 1;
   width: 100%;
-  overflow: auto;
 `;
 
 export const RecordTableFooterCell = ({

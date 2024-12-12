@@ -1,7 +1,7 @@
 import { RecordGqlFieldsAggregate } from '@/object-record/graphql/types/RecordGqlFieldsAggregate';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 
-export const buildRecordGqlFieldsAggregate = ({
+export const buildRecordGqlFieldsAggregateForRecordTable = ({
   aggregateOperation,
   fieldName,
 }: {

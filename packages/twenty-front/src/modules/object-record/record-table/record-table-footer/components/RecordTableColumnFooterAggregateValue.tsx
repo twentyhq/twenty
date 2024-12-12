@@ -1,10 +1,14 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { AppTooltip, IconChevronDown, TooltipDelay } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
+import {
+  AppTooltip,
+  IconChevronDown,
+  isDefined,
+  TooltipDelay,
+} from 'twenty-ui';
 
-const StyledCell = styled.div<{ hideTitle?: boolean }>`
+const StyledCell = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -39,7 +43,6 @@ const StyledIcon = styled(IconChevronDown)`
   height: 20px;
   justify-content: center;
   flex-grow: 0;
-  weight: light;
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
@@ -69,7 +72,7 @@ export const RecordTableColumnFooterAggregateValue = ({
               {aggregateValue ?? 'Calculate'}
             </StyledText>
             <StyledIcon fontWeight={'light'} size={theme.icon.size.sm} />
-            {aggregateValue && (
+            {aggregateValue && isDefined(aggregateLabel) && (
               <AppTooltip
                 anchorSelect={`#${sanitizedId}`}
                 content={aggregateLabel}

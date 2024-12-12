@@ -2,11 +2,10 @@ import styled from '@emotion/styled';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { RecordTableFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableFooterCell';
-import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-const StyledTableHead = styled.thead`
+const StyledTableFoot = styled.thead`
   cursor: pointer;
 
   th:nth-of-type(1) {
@@ -76,7 +75,7 @@ const StyledTableHead = styled.thead`
 `;
 
 const StyledDiv = styled.div`
-width: 30px
+  width: 30px;
 `;
 
 export const RecordTableFooter = () => {
@@ -85,14 +84,14 @@ export const RecordTableFooter = () => {
   );
 
   return (
-    <StyledTableHead id="record-table-footer" data-select-disable>
+    <StyledTableFoot id="record-table-footer" data-select-disable>
       <tr>
-        <RecordTableHeaderDragDropColumn />
+        <th />
         <StyledDiv />
         {visibleTableColumns.map((column) => (
           <RecordTableFooterCell key={column.fieldMetadataId} column={column} />
         ))}
       </tr>
-    </StyledTableHead>
+    </StyledTableFoot>
   );
 };
