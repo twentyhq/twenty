@@ -47,10 +47,6 @@ describe('updateOne', () => {
       const response = await makeMetadataAPIRequest(graphqlOperation);
 
       // Assert
-      console.log(
-        '*** response.body.data.updateOneField',
-        response.body.data.updateOneField,
-      );
       expect(response.body.data.updateOneField.name).toBe('newName');
     });
 
