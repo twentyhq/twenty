@@ -3,19 +3,25 @@ import { useContext } from 'react';
 
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
+import { css } from '@emotion/react';
 import { IconListViewGrip } from 'twenty-ui';
 
-const StyledContainer = styled.div`
-  cursor: grab;
-  width: 16px;
-  height: 32px;
-  z-index: 200;
-  display: flex;
-  &:hover .icon {
-    opacity: 1;
-  }
-
+const StyledContainer = styled.div<{ isPendingRow?: boolean }>`
   border-color: transparent;
+  cursor: grab;
+  display: flex;
+  height: 32px;
+  width: 16px;
+  ${({ isPendingRow }) =>
+    !isPendingRow
+      ? css`
+          &:hover .icon {
+            opacity: 1;
+          }
+        `
+      : ''};
+
+  z-index: 200;
 `;
 
 const StyledIconWrapper = styled.div<{ isDragging: boolean }>`
@@ -24,7 +30,9 @@ const StyledIconWrapper = styled.div<{ isDragging: boolean }>`
 `;
 
 export const RecordTableCellGrip = () => {
-  const { dragHandleProps, isDragging } = useContext(RecordTableRowContext);
+  const { dragHandleProps, isDragging, isPendingRow } = useContext(
+    RecordTableRowContext,
+  );
 
   return (
     <RecordTableTd
@@ -34,7 +42,7 @@ export const RecordTableCellGrip = () => {
       hasRightBorder={false}
       hasBottomBorder={false}
     >
-      <StyledContainer>
+      <StyledContainer isPendingRow={isPendingRow}>
         <StyledIconWrapper className="icon" isDragging={isDragging}>
           <IconListViewGrip />
         </StyledIconWrapper>

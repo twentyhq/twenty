@@ -4,8 +4,8 @@ import { ReactNode, useContext, useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
@@ -31,8 +31,8 @@ export const RecordTableRowWrapper = ({
 }: RecordTableRowWrapperProps) => {
   const trRef = useRef<HTMLTableRowElement>(null);
 
-  const { objectMetadataItem } = useContext(RecordTableContext);
-  const { onIndexRecordsLoaded } = useContext(RecordIndexRootPropsContext);
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
+  const { onIndexRecordsLoaded } = useRecordIndexContextOrThrow();
 
   const theme = useTheme();
 
@@ -78,7 +78,12 @@ export const RecordTableRowWrapper = ({
   }, [inView, onIndexRecordsLoaded]);
 
   return (
-    <Draggable key={recordId} draggableId={recordId} index={rowIndexForDrag}>
+    <Draggable
+      key={recordId}
+      draggableId={recordId}
+      index={rowIndexForDrag}
+      isDragDisabled={isPendingRow}
+    >
       {(draggableProvided, draggableSnapshot) => (
         <RecordTableTr
           ref={(node) => {

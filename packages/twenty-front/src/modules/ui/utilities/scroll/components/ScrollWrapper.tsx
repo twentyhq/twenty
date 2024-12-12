@@ -13,13 +13,14 @@ import { overlayScrollbarsState } from '@/ui/utilities/scroll/states/overlayScro
 
 import 'overlayscrollbars/overlayscrollbars.css';
 
-const StyledScrollWrapper = styled.div`
+const StyledScrollWrapper = styled.div<{ scrollHide?: boolean }>`
   display: flex;
   height: 100%;
   width: 100%;
 
   .os-scrollbar-handle {
-    background-color: ${({ theme }) => theme.border.color.medium};
+    background-color: ${({ theme, scrollHide }) =>
+      scrollHide ? 'transparent' : theme.border.color.medium};
   }
 `;
 
@@ -61,10 +62,7 @@ export const ScrollWrapper = ({
 
   const [initialize, instance] = useOverlayScrollbars({
     options: {
-      scrollbars: {
-        autoHide: scrollHide ? 'scroll' : 'never',
-        visibility: scrollHide ? 'hidden' : 'visible',
-      },
+      scrollbars: { autoHide: 'scroll' },
       overflow: {
         x: enableXScroll ? undefined : 'hidden',
         y: enableYScroll ? undefined : 'hidden',
@@ -92,7 +90,11 @@ export const ScrollWrapper = ({
         id: contextProviderName,
       }}
     >
-      <StyledScrollWrapper ref={scrollableRef} className={className}>
+      <StyledScrollWrapper
+        ref={scrollableRef}
+        className={className}
+        scrollHide={scrollHide}
+      >
         <StyledInnerContainer>{children}</StyledInnerContainer>
       </StyledScrollWrapper>
     </Context.Provider>
