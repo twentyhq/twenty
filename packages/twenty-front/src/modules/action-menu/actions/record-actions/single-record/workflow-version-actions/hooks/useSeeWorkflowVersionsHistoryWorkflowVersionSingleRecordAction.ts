@@ -1,27 +1,19 @@
 import { useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction';
+import { SingleRecordActionHook } from '@/action-menu/actions/types/singleRecordActionHook';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecoilValue } from 'recoil';
 
-export const useSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction = ({
-  workflowVersionId,
-}: {
-  workflowVersionId: string;
-}) => {
-  const workflowVersion = useRecoilValue(
-    recordStoreFamilyState(workflowVersionId),
-  );
+export const useSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction: SingleRecordActionHook =
+  (recordId) => {
+    const workflowVersion = useRecoilValue(recordStoreFamilyState(recordId));
 
-  const {
-    registerSeeWorkflowVersionsHistoryWorkflowSingleRecordAction:
-      registerSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction,
-    unregisterSeeWorkflowVersionsHistoryWorkflowSingleRecordAction:
-      unregisterSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction,
-  } = useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction(
-    workflowVersion?.workflow.id,
-  );
+    const { shouldBeRegistered, onClick } =
+      useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction(
+        workflowVersion?.workflow.id,
+      );
 
-  return {
-    registerSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction,
-    unregisterSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction,
+    return {
+      shouldBeRegistered,
+      onClick,
+    };
   };
-};

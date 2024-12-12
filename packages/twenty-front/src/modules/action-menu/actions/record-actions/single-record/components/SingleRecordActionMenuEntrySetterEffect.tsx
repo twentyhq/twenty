@@ -1,6 +1,8 @@
 import { WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/single-record/workflow-actions/constants/WorkflowSingleRecordActionsConfig';
+import { WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/constants/WorkflowVersionsSingleRecordActionsConfig';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useEffect } from 'react';
@@ -17,10 +19,13 @@ export const SingleRecordActionMenuEntrySetterEffect = ({
       objectMetadataItem,
     });
 
-  const actionConfig = WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG;
-  // objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow
-  //   ? WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG
-  //   : null;
+  const actionConfig =
+    objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow
+      ? WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG
+      : objectMetadataItem.nameSingular ===
+          CoreObjectNameSingular.WorkflowVersion
+        ? WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG
+        : null;
 
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
@@ -37,14 +42,10 @@ export const SingleRecordActionMenuEntrySetterEffect = ({
     throw new Error('Selected record ID is required');
   }
 
-  const actionMenuEntries = Object.values(actionConfig)
+  const actionMenuEntries = Object.values(actionConfig ?? {})
     .map((action) => {
       const { shouldBeRegistered, onClick } =
         action.actionHook(selectedRecordId);
-
-      console.log('shouldBeRegistered', shouldBeRegistered);
-      console.log('onClick', onClick);
-      console.log('action', action);
 
       if (shouldBeRegistered) {
         return {
