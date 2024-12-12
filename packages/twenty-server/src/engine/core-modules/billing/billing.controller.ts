@@ -18,7 +18,8 @@ import {
 import { WebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { BillingWebhookService } from 'src/engine/core-modules/billing/services/billing-webhook.service';
+import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/services/billing-webhook-entitlement.service';
+import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/services/billing-webhook-subscription.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
 @Controller('billing')
 @UseFilters(BillingRestApiExceptionFilter)
@@ -27,7 +28,8 @@ export class BillingController {
 
   constructor(
     private readonly stripeService: StripeService,
-    private readonly billingWehbookService: BillingWebhookService,
+    private readonly billingWebhookSubscriptionService: BillingWebhookSubscriptionService,
+    private readonly billingWebhookEntitlementService: BillingWebhookEntitlementService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
   ) {}
 
@@ -64,7 +66,7 @@ export class BillingController {
         return;
       }
 
-      await this.billingWehbookService.processStripeEvent(
+      await this.billingWebhookSubscriptionService.processStripeEvent(
         workspaceId,
         event.data,
       );
@@ -73,7 +75,7 @@ export class BillingController {
       event.type === WebhookEvent.CUSTOMER_ACTIVE_ENTITLEMENT_SUMMARY_UPDATED
     ) {
       try {
-        await this.billingWehbookService.processCustomerActiveEntitlement(
+        await this.billingWebhookEntitlementService.processStripeEvent(
           event.data,
         );
       } catch (error) {
@@ -85,6 +87,7 @@ export class BillingController {
         }
       }
     }
+
     res.status(200).end();
   }
 }

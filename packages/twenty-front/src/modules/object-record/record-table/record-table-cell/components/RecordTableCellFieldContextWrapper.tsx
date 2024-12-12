@@ -6,7 +6,7 @@ import { isFieldRelation } from '@/object-record/record-field/types/guards/isFie
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
@@ -18,8 +18,10 @@ export const RecordTableCellFieldContextWrapper = ({
 }: {
   children: ReactNode;
 }) => {
-  const { objectMetadataItem } = useContext(RecordTableContext);
+  const { objectMetadataItem } = useRecordTableContextOrThrow();
+
   const { columnDefinition } = useContext(RecordTableCellContext);
+
   const { recordId, pathToShowPage } = useContext(RecordTableRowContext);
 
   const updateRecord = useContext(RecordUpdateContext);

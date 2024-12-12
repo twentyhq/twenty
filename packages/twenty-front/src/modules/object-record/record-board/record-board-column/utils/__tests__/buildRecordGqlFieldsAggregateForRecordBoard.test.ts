@@ -1,6 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { buildRecordGqlFieldsAggregate } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregate';
+import { buildRecordGqlFieldsAggregateForRecordBoard } from '@/object-record/record-board/record-board-column/utils/buildRecordGqlFieldsAggregateForRecordBoard';
 import { KanbanAggregateOperation } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -8,7 +8,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 const MOCK_FIELD_ID = '7d2d7b5e-7b3e-4b4a-8b0a-7b3e4b4a8b0a';
 const MOCK_KANBAN_FIELD = 'stage';
 
-describe('buildRecordGqlFieldsAggregate', () => {
+describe('buildRecordGqlFieldsAggregateForRecordBoard', () => {
   const mockObjectMetadata: ObjectMetadataItem = {
     id: '123',
     nameSingular: 'opportunity',
@@ -50,7 +50,7 @@ describe('buildRecordGqlFieldsAggregate', () => {
       operation: AGGREGATE_OPERATIONS.sum,
     };
 
-    const result = buildRecordGqlFieldsAggregate({
+    const result = buildRecordGqlFieldsAggregateForRecordBoard({
       objectMetadataItem: mockObjectMetadata,
       recordIndexKanbanAggregateOperation: kanbanAggregateOperation,
       kanbanFieldName: MOCK_KANBAN_FIELD,
@@ -67,7 +67,7 @@ describe('buildRecordGqlFieldsAggregate', () => {
       operation: AGGREGATE_OPERATIONS.count,
     };
 
-    const result = buildRecordGqlFieldsAggregate({
+    const result = buildRecordGqlFieldsAggregateForRecordBoard({
       objectMetadataItem: mockObjectMetadata,
       recordIndexKanbanAggregateOperation: operation,
       kanbanFieldName: MOCK_KANBAN_FIELD,
@@ -85,7 +85,7 @@ describe('buildRecordGqlFieldsAggregate', () => {
     };
 
     expect(() =>
-      buildRecordGqlFieldsAggregate({
+      buildRecordGqlFieldsAggregateForRecordBoard({
         objectMetadataItem: mockObjectMetadata,
         recordIndexKanbanAggregateOperation: operation,
         kanbanFieldName: MOCK_KANBAN_FIELD,

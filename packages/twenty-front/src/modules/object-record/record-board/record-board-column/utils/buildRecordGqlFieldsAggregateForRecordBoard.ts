@@ -4,7 +4,7 @@ import { KanbanAggregateOperation } from '@/object-record/record-index/states/re
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { isDefined } from '~/utils/isDefined';
 
-export const buildRecordGqlFieldsAggregate = ({
+export const buildRecordGqlFieldsAggregateForRecordBoard = ({
   objectMetadataItem,
   recordIndexKanbanAggregateOperation,
   kanbanFieldName,

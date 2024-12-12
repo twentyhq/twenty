@@ -14,12 +14,13 @@ import {
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
+import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { RecordTableContextProvider } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellFieldContextWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { mockPerformance } from './mock';
@@ -61,78 +62,83 @@ const meta: Meta = {
     (Story) => {
       return (
         <RecordFieldValueSelectorContextProvider>
-          <RecordTableContext.Provider
+          <RecordTableContextProvider
             value={{
+              recordTableId: 'recordTableId',
               viewBarId: mockPerformance.recordId,
               objectMetadataItem: mockPerformance.objectMetadataItem as any,
-              onUpsertRecord: () => {},
-              onOpenTableCell: () => {},
-              onMoveFocus: () => {},
-              onCloseTableCell: () => {},
-              onMoveSoftFocusToCell: () => {},
-              onActionMenuDropdownOpened: () => {},
-              onCellMouseEnter: () => {},
               visibleTableColumns: mockPerformance.visibleTableColumns as any,
               objectNameSingular:
                 mockPerformance.objectMetadataItem.nameSingular,
-              recordTableId: 'recordTableId',
             }}
           >
             <RecordTableComponentInstance
               recordTableId="asd"
               onColumnsChange={() => {}}
             >
-              <RecordTableRowContext.Provider
+              <RecordTableBodyContextProvider
                 value={{
-                  objectNameSingular:
-                    mockPerformance.entityValue.__typename.toLocaleLowerCase(),
-                  recordId: mockPerformance.recordId,
-                  rowIndex: 0,
-                  pathToShowPage:
-                    getBasePathToShowPage({
-                      objectNameSingular:
-                        mockPerformance.entityValue.__typename.toLocaleLowerCase(),
-                    }) + mockPerformance.recordId,
-                  isSelected: false,
-                  isDragging: false,
-                  dragHandleProps: null,
-                  inView: true,
-                  isPendingRow: false,
+                  onUpsertRecord: () => {},
+                  onOpenTableCell: () => {},
+                  onMoveFocus: () => {},
+                  onCloseTableCell: () => {},
+                  onMoveSoftFocusToCell: () => {},
+                  onActionMenuDropdownOpened: () => {},
+                  onCellMouseEnter: () => {},
                 }}
               >
-                <RecordTableCellContext.Provider
+                <RecordTableRowContext.Provider
                   value={{
-                    columnDefinition: mockPerformance.fieldDefinition,
-                    columnIndex: 0,
-                    cellPosition: { row: 0, column: 0 },
-                    hasSoftFocus: false,
-                    isInEditMode: false,
+                    objectNameSingular:
+                      mockPerformance.entityValue.__typename.toLocaleLowerCase(),
+                    recordId: mockPerformance.recordId,
+                    rowIndex: 0,
+                    pathToShowPage:
+                      getBasePathToShowPage({
+                        objectNameSingular:
+                          mockPerformance.entityValue.__typename.toLocaleLowerCase(),
+                      }) + mockPerformance.recordId,
+                    isSelected: false,
+                    isDragging: false,
+                    dragHandleProps: null,
+                    inView: true,
+                    isPendingRow: false,
                   }}
                 >
-                  <FieldContext.Provider
+                  <RecordTableCellContext.Provider
                     value={{
-                      recordId: mockPerformance.recordId,
-                      basePathToShowPage: '/object-record/',
-                      isLabelIdentifier: false,
-                      fieldDefinition: {
-                        ...mockPerformance.fieldDefinition,
-                      },
-                      hotkeyScope: 'hotkey-scope',
+                      columnDefinition: mockPerformance.fieldDefinition,
+                      columnIndex: 0,
+                      cellPosition: { row: 0, column: 0 },
+                      hasSoftFocus: false,
+                      isInEditMode: false,
                     }}
                   >
-                    <RelationFieldValueSetterEffect />
-                    <table>
-                      <tbody>
-                        <tr>
-                          <Story />
-                        </tr>
-                      </tbody>
-                    </table>
-                  </FieldContext.Provider>
-                </RecordTableCellContext.Provider>
-              </RecordTableRowContext.Provider>
+                    <FieldContext.Provider
+                      value={{
+                        recordId: mockPerformance.recordId,
+                        basePathToShowPage: '/object-record/',
+                        isLabelIdentifier: false,
+                        fieldDefinition: {
+                          ...mockPerformance.fieldDefinition,
+                        },
+                        hotkeyScope: 'hotkey-scope',
+                      }}
+                    >
+                      <RelationFieldValueSetterEffect />
+                      <table>
+                        <tbody>
+                          <tr>
+                            <Story />
+                          </tr>
+                        </tbody>
+                      </table>
+                    </FieldContext.Provider>
+                  </RecordTableCellContext.Provider>
+                </RecordTableRowContext.Provider>
+              </RecordTableBodyContextProvider>
             </RecordTableComponentInstance>
-          </RecordTableContext.Provider>
+          </RecordTableContextProvider>
         </RecordFieldValueSelectorContextProvider>
       );
     },
