@@ -11,8 +11,6 @@ export const ObjectMetadataItemsGater = ({
     isAppWaitingForFreshObjectMetadataState,
   );
 
-  console.log(isAppWaitingForFreshObjectMetadata);
-
   const shouldDisplayChildren = !isAppWaitingForFreshObjectMetadata;
 
   return (
