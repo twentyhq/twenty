@@ -22,6 +22,8 @@ import { isDefined } from '~/utils/isDefined';
 
 import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
+import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
+import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -68,6 +70,9 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
   );
 
   const navigate = useNavigate();
+
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
+    useSetActiveDropdownFocusIdAndMemorizePrevious();
 
   const openTableCell = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -142,6 +147,14 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
             DEFAULT_CELL_SCOPE.customScopes,
           );
         }
+
+        setActiveDropdownFocusIdAndMemorizePrevious(
+          getDropdownFocusIdForRecordField(
+            recordId,
+            fieldDefinition.fieldMetadataId,
+            'table-cell',
+          ),
+        );
       },
     [
       getClickOutsideListenerIsActivatedState,
@@ -156,6 +169,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
       setViewableRecordNameSingular,
       openRightDrawer,
       setHotkeyScope,
+      setActiveDropdownFocusIdAndMemorizePrevious,
     ],
   );
 

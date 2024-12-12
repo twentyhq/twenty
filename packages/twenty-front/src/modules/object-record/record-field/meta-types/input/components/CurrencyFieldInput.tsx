@@ -8,10 +8,13 @@ import { FieldInputOverlay } from '../../../../../ui/field/input/components/Fiel
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-import { FieldInputEvent } from './DateTimeFieldInput';
+import {
+  FieldInputClickOutsideEvent,
+  FieldInputEvent,
+} from './DateTimeFieldInput';
 
 type CurrencyFieldInputProps = {
-  onClickOutside?: FieldInputEvent;
+  onClickOutside?: FieldInputClickOutsideEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
@@ -79,7 +82,7 @@ export const CurrencyFieldInput = ({
         amountText: newValue,
         currencyCode,
       });
-    });
+    }, event);
   };
 
   const handleTab = (newValue: string) => {

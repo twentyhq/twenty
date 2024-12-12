@@ -26,7 +26,9 @@ type CallToActionButton = {
   Icon?: IconComponent;
 };
 
-export type SelectProps<Value extends string | number | boolean | null> = {
+export type SelectValue = string | number | boolean | null;
+
+export type SelectProps<Value extends SelectValue> = {
   className?: string;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
@@ -57,7 +59,7 @@ const StyledLabel = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const Select = <Value extends string | number | boolean | null>({
+export const Select = <Value extends SelectValue>({
   className,
   disabled: disabledFromProps,
   selectSizeVariant,
@@ -166,7 +168,7 @@ export const Select = <Value extends string | number | boolean | null>({
                 <DropdownMenuSeparator />
               )}
               {!!callToActionButton && (
-                <DropdownMenuItemsContainer hasMaxHeight>
+                <DropdownMenuItemsContainer hasMaxHeight withoutScrollWrapper>
                   <MenuItem
                     onClick={callToActionButton.onClick}
                     LeftIcon={callToActionButton.Icon}

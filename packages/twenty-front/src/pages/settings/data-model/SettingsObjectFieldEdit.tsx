@@ -1,4 +1,3 @@
-import { useApolloClient } from '@apollo/client';
 import { zodResolver } from '@hookform/resolvers/zod';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
@@ -21,7 +20,6 @@ import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdate
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -65,20 +63,6 @@ export const SettingsObjectFieldEdit = () => {
   const getRelationMetadata = useGetRelationMetadata();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
 
-  const apolloClient = useApolloClient();
-
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular: objectMetadataItem?.nameSingular || '',
-  });
-
-  const refetchRecords = async () => {
-    if (!objectMetadataItem) return;
-    await apolloClient.query({
-      query: findManyRecordsQuery,
-      fetchPolicy: 'network-only',
-    });
-  };
-
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsFieldFormSchema()),
@@ -87,6 +71,7 @@ export const SettingsObjectFieldEdit = () => {
       type: fieldMetadataItem?.type as SettingsFieldType,
       label: fieldMetadataItem?.label ?? '',
       description: fieldMetadataItem?.description,
+      isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
     },
   });
 
@@ -94,7 +79,7 @@ export const SettingsObjectFieldEdit = () => {
     if (!objectMetadataItem || !fieldMetadataItem) {
       navigate(AppPath.NotFound);
     }
-  }, [fieldMetadataItem, objectMetadataItem, navigate]);
+  }, [navigate, objectMetadataItem, fieldMetadataItem]);
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isDirty && isValid && !isSubmitting;
@@ -141,16 +126,14 @@ export const SettingsObjectFieldEdit = () => {
           Object.keys(otherDirtyFields),
         );
 
+        navigate(`/settings/objects/${objectSlug}`);
+
         await updateOneFieldMetadataItem({
           objectMetadataId: objectMetadataItem.id,
           fieldMetadataIdToUpdate: fieldMetadataItem.id,
           updatePayload: formattedInput,
         });
       }
-
-      navigate(`/settings/objects/${objectSlug}`);
-
-      refetchRecords();
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
@@ -210,6 +193,9 @@ export const SettingsObjectFieldEdit = () => {
                 disabled={!fieldMetadataItem.isCustom}
                 fieldMetadataItem={fieldMetadataItem}
                 maxLength={FIELD_NAME_MAXIMUM_LENGTH}
+                canToggleSyncLabelWithName={
+                  fieldMetadataItem.type !== FieldMetadataType.Relation
+                }
               />
             </Section>
             <Section>

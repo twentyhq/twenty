@@ -67,5 +67,5 @@ export const useAllActiveWorkflowVersions = ({
     };
   }
 
-  return { records };
+  return { records: records.filter((record) => isDefined(record.workflow)) };
 };

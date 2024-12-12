@@ -18,7 +18,7 @@ export class SSOProviderEnabledGuard implements CanActivate {
     if (!this.environmentService.get('ENTERPRISE_KEY')) {
       throw new AuthException(
         'Enterprise key must be defined to use SSO',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        AuthExceptionCode.MISSING_ENVIRONMENT_VARIABLE,
       );
     }
 

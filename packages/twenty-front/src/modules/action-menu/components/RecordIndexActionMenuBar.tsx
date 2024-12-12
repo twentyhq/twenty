@@ -1,5 +1,3 @@
-import styled from '@emotion/styled';
-
 import { RecordIndexActionMenuBarAllActionsButton } from '@/action-menu/components/RecordIndexActionMenuBarAllActionsButton';
 import { RecordIndexActionMenuBarEntry } from '@/action-menu/components/RecordIndexActionMenuBarEntry';
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
@@ -10,6 +8,7 @@ import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-sto
 import { BottomBar } from '@/ui/layout/bottom-bar/components/BottomBar';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import styled from '@emotion/styled';
 
 const StyledLabel = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -33,7 +32,6 @@ export const RecordIndexActionMenuBar = () => {
   );
 
   const pinnedEntries = actionMenuEntries.filter((entry) => entry.isPinned);
-
   if (contextStoreNumberOfSelectedRecords === 0) {
     return null;
   }

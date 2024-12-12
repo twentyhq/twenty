@@ -1,13 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
-import { graphql, http, HttpResponse } from 'msw';
+import { HttpResponse, graphql, http } from 'msw';
+import { getImageAbsoluteURI } from 'twenty-ui';
 import { SettingsServerlessFunctionDetail } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetail';
 import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
 import { sleep } from '~/utils/sleep';
 
 const SOURCE_CODE_FULL_PATH =

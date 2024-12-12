@@ -41,6 +41,7 @@ type MultiItemFieldInputProps<T> = {
   newItemLabel?: string;
   fieldMetadataType: FieldMetadataType;
   renderInput?: DropdownMenuInputProps['renderInput'];
+  onClickOutside?: (event: MouseEvent | TouchEvent) => void;
 };
 
 // Todo: the API of this component does not look healthy: we have renderInput, renderItem, formatInput, ...
@@ -57,24 +58,19 @@ export const MultiItemFieldInput = <T,>({
   newItemLabel,
   fieldMetadataType,
   renderInput,
+  onClickOutside,
 }: MultiItemFieldInputProps<T>) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const handleDropdownClose = () => {
     onCancel?.();
   };
 
-  const handleDropdownCloseOutside = (event: MouseEvent | TouchEvent) => {
-    event.stopImmediatePropagation();
-    if (inputValue?.trim().length > 0) {
-      handleSubmitInput();
-    } else {
-      onCancel?.();
-    }
-  };
-
   useListenClickOutside({
     refs: [containerRef],
-    callback: handleDropdownCloseOutside,
+    callback: (event) => {
+      onClickOutside?.(event);
+    },
+    listenerId: hotkeyScope,
   });
 
   useScopedHotkeys(Key.Escape, handleDropdownClose, hotkeyScope);
@@ -111,7 +107,7 @@ export const MultiItemFieldInput = <T,>({
         break;
       case FieldMetadataType.Phones:
         item = items[index] as PhoneRecord;
-        setInputValue(item.countryCode + item.number);
+        setInputValue(item.callingCode + item.number);
         break;
       case FieldMetadataType.Emails:
         item = items[index] as string;

@@ -9,15 +9,20 @@ import {
 import { UPDATE_ONE_FIELD_METADATA_ITEM } from '../graphql/mutations';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
+import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { useSetRecoilState } from 'recoil';
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useUpdateOneFieldMetadataItem = () => {
   const apolloMetadataClient = useApolloMetadataClient();
   const apolloClient = useApolloClient();
 
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
+
+  const { findManyRecordsQuery: findManyViewsQuery } = useFindManyRecordsQuery({
     objectNameSingular: CoreObjectNameSingular.View,
     recordGqlFields: {
       id: true,
@@ -54,22 +59,23 @@ export const useUpdateOneFieldMetadataItem = () => {
       | 'name'
       | 'defaultValue'
       | 'options'
+      | 'isLabelSyncedWithName'
     >;
   }) => {
     const result = await mutate({
       variables: {
         idToUpdate: fieldMetadataIdToUpdate,
-        updatePayload: {
-          ...updatePayload,
-          label: updatePayload.label ?? undefined,
-        },
+        updatePayload: updatePayload,
       },
       awaitRefetchQueries: true,
       refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
     });
 
+    const { data } = await apolloClient.query({ query: GET_CURRENT_USER });
+    setCurrentWorkspace(data?.currentUser?.defaultWorkspace);
+
     await apolloClient.query({
-      query: findManyRecordsQuery,
+      query: findManyViewsQuery,
       variables: {
         filter: {
           objectMetadataId: {

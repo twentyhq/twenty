@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -17,7 +17,7 @@ export class BillingPortalWorkspaceService {
   protected readonly logger = new Logger(BillingPortalWorkspaceService.name);
   constructor(
     private readonly stripeService: StripeService,
-    private readonly environmentService: EnvironmentService,
+    private readonly domainManagerService: DomainManagerService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(UserWorkspace, 'core')
@@ -31,7 +31,7 @@ export class BillingPortalWorkspaceService {
     priceId: string,
     successUrlPath?: string,
   ): Promise<string> {
-    const frontBaseUrl = this.environmentService.get('FRONT_BASE_URL');
+    const frontBaseUrl = this.domainManagerService.getBaseUrl().toString();
     const successUrl = successUrlPath
       ? frontBaseUrl + successUrlPath
       : frontBaseUrl;
@@ -81,7 +81,7 @@ export class BillingPortalWorkspaceService {
       throw new Error('Error: missing stripeCustomerId');
     }
 
-    const frontBaseUrl = this.environmentService.get('FRONT_BASE_URL');
+    const frontBaseUrl = this.domainManagerService.getBaseUrl().toString();
     const returnUrl = returnUrlPath
       ? frontBaseUrl + returnUrlPath
       : frontBaseUrl;

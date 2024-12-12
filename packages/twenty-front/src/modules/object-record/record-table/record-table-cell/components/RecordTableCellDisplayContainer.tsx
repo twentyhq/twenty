@@ -26,6 +26,7 @@ export type EditableCellDisplayContainerProps = {
   onClick?: () => void;
   scrollRef?: Ref<HTMLDivElement>;
   isHovered?: boolean;
+  onContextMenu?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 };
 
 export const RecordTableCellDisplayContainer = ({
@@ -33,6 +34,7 @@ export const RecordTableCellDisplayContainer = ({
   softFocus,
   onClick,
   scrollRef,
+  onContextMenu,
 }: React.PropsWithChildren<EditableCellDisplayContainerProps>) => (
   <StyledOuterContainer
     data-testid={
@@ -41,6 +43,7 @@ export const RecordTableCellDisplayContainer = ({
     onClick={onClick}
     ref={scrollRef}
     hasSoftFocus={softFocus}
+    onContextMenu={onContextMenu}
   >
     <StyledInnerContainer>{children}</StyledInnerContainer>
   </StyledOuterContainer>

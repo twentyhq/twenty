@@ -17,6 +17,7 @@ import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawe
 
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;
 
@@ -111,6 +112,10 @@ export const PageHeader = ({
     isNavigationDrawerExpandedState,
   );
 
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
+  );
+
   return (
     <StyledTopBarContainer>
       <StyledLeftContainer>
@@ -129,7 +134,7 @@ export const PageHeader = ({
         )}
 
         <StyledTopBarIconStyledTitleContainer>
-          {hasPaginationButtons && (
+          {!isPageHeaderV2Enabled && hasPaginationButtons && (
             <>
               <IconButton
                 Icon={IconChevronUp}
@@ -159,7 +164,28 @@ export const PageHeader = ({
           )}
         </StyledTopBarIconStyledTitleContainer>
       </StyledLeftContainer>
-      <StyledPageActionContainer>{children}</StyledPageActionContainer>
+
+      <StyledPageActionContainer className="page-action-container">
+        {isPageHeaderV2Enabled && hasPaginationButtons && (
+          <>
+            <IconButton
+              Icon={IconChevronUp}
+              size={isMobile ? 'medium' : 'small'}
+              variant="secondary"
+              disabled={!hasPreviousRecord}
+              onClick={() => navigateToPreviousRecord?.()}
+            />
+            <IconButton
+              Icon={IconChevronDown}
+              size={isMobile ? 'medium' : 'small'}
+              variant="secondary"
+              disabled={!hasNextRecord}
+              onClick={() => navigateToNextRecord?.()}
+            />
+          </>
+        )}
+        {children}
+      </StyledPageActionContainer>
     </StyledTopBarContainer>
   );
 };

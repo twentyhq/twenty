@@ -17,10 +17,12 @@ import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerContentCreateMode } from '@/views/view-picker/components/ViewPickerContentCreateMode';
 import { ViewPickerContentEditMode } from '@/views/view-picker/components/ViewPickerContentEditMode';
 import { ViewPickerContentEffect } from '@/views/view-picker/components/ViewPickerContentEffect';
+import { ViewPickerFavoriteFoldersDropdown } from '@/views/view-picker/components/ViewPickerFavoriteFoldersDropdown';
 import { ViewPickerListContent } from '@/views/view-picker/components/ViewPickerListContent';
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledDropdownLabelAdornments = styled.span`
@@ -49,6 +51,9 @@ const StyledViewName = styled.span`
 
 export const ViewPickerDropdown = () => {
   const theme = useTheme();
+  const isFavoriteFolderEnabled = useIsFeatureEnabled(
+    'IS_FAVORITE_FOLDER_ENABLED',
+  );
 
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
@@ -79,6 +84,7 @@ export const ViewPickerDropdown = () => {
       dropdownId={VIEW_PICKER_DROPDOWN_ID}
       dropdownHotkeyScope={{ scope: ViewsHotkeyScope.ListDropdown }}
       dropdownOffset={{ x: 0, y: 8 }}
+      dropdownPlacement="bottom-start"
       dropdownMenuWidth={200}
       onClickOutside={handleClickOutside}
       clickableComponent={
@@ -99,21 +105,33 @@ export const ViewPickerDropdown = () => {
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>
       }
-      dropdownComponents={
-        viewPickerMode === 'list' ? (
-          <ViewPickerListContent />
-        ) : (
-          <>
-            {viewPickerMode === 'create-empty' ||
-            viewPickerMode === 'create-from-current' ? (
-              <ViewPickerContentCreateMode />
-            ) : (
-              <ViewPickerContentEditMode />
-            )}
-            <ViewPickerContentEffect />
-          </>
-        )
-      }
+      dropdownComponents={(() => {
+        switch (viewPickerMode) {
+          case 'list':
+            return <ViewPickerListContent />;
+          case 'favorite-folders-picker':
+            return (
+              isFavoriteFolderEnabled && <ViewPickerFavoriteFoldersDropdown />
+            );
+          case 'create-empty':
+          case 'create-from-current':
+            return (
+              <>
+                <ViewPickerContentCreateMode />
+                <ViewPickerContentEffect />
+              </>
+            );
+          case 'edit':
+            return (
+              <>
+                <ViewPickerContentEditMode />
+                <ViewPickerContentEffect />
+              </>
+            );
+          default:
+            return null;
+        }
+      })()}
     />
   );
 };

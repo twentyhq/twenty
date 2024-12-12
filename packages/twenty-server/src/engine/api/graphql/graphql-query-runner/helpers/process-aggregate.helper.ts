@@ -1,5 +1,6 @@
 import { SelectQueryBuilder } from 'typeorm';
 
+import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { AggregationField } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { formatColumnNameFromCompositeFieldAndSubfield } from 'src/engine/twenty-orm/utils/format-column-name-from-composite-field-and-subfield.util';
 import { isDefined } from 'src/utils/is-defined';
@@ -19,7 +20,7 @@ export class ProcessAggregateHelper {
     )) {
       if (
         !isDefined(aggregatedField?.fromField) ||
-        !isDefined(aggregatedField?.aggregationOperation)
+        !isDefined(aggregatedField?.aggregateOperation)
       ) {
         continue;
       }
@@ -28,10 +29,17 @@ export class ProcessAggregateHelper {
         aggregatedField.fromField,
         aggregatedField.fromSubField,
       );
-      const operation = aggregatedField.aggregationOperation;
+
+      if (
+        !Object.values(AGGREGATE_OPERATIONS).includes(
+          aggregatedField.aggregateOperation,
+        )
+      ) {
+        continue;
+      }
 
       queryBuilder.addSelect(
-        `${operation}("${columnName}")`,
+        `${aggregatedField.aggregateOperation}("${columnName}")`,
         `${aggregatedFieldName}`,
       );
     }

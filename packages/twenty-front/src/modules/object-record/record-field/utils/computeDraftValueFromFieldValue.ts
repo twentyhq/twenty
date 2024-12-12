@@ -1,10 +1,12 @@
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldInputDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldNumberValue } from '@/object-record/record-field/types/guards/isFieldNumberValue';
+import { isFieldPhones } from '@/object-record/record-field/types/guards/isFieldPhones';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldRawJsonValue } from '@/object-record/record-field/types/guards/isFieldRawJsonValue';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
@@ -12,6 +14,7 @@ import { computeEmptyDraftValue } from '@/object-record/record-field/utils/compu
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 type computeDraftValueFromFieldValueParams<FieldValue> = {
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type' | 'metadata'>;
@@ -40,6 +43,38 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
         : (fieldValue.amountMicros / 1000000).toString(),
       currencyCode: fieldValue?.currencyCode ?? '',
     } as unknown as FieldInputDraftValue<FieldValue>;
+  }
+
+  if (isFieldAddress(fieldDefinition)) {
+    if (
+      isFieldValueEmpty({ fieldValue, fieldDefinition }) &&
+      !!fieldDefinition?.defaultValue?.addressCountry
+    ) {
+      return {
+        ...fieldValue,
+        addressCountry: stripSimpleQuotesFromString(
+          fieldDefinition?.defaultValue?.addressCountry,
+        ),
+      } as unknown as FieldInputDraftValue<FieldValue>;
+    }
+
+    return fieldValue as FieldInputDraftValue<FieldValue>;
+  }
+
+  if (isFieldPhones(fieldDefinition)) {
+    if (
+      isFieldValueEmpty({ fieldValue, fieldDefinition }) &&
+      !!fieldDefinition?.defaultValue?.primaryPhoneCountryCode
+    ) {
+      return {
+        ...fieldValue,
+        primaryPhoneCountryCode: stripSimpleQuotesFromString(
+          fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
+        ),
+      } as unknown as FieldInputDraftValue<FieldValue>;
+    }
+
+    return fieldValue as FieldInputDraftValue<FieldValue>;
   }
 
   if (

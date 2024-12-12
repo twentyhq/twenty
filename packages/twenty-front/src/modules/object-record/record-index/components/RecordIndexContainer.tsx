@@ -26,7 +26,9 @@ import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActio
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetRecordGroup';
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
+import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
+import { aggregateOperationForViewFieldState } from '@/object-record/record-table/record-table-footer/states/aggregateOperationForViewFieldState';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { ViewBar } from '@/views/components/ViewBar';
 import { ViewField } from '@/views/types/ViewField';
@@ -36,6 +38,7 @@ import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToC
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGroupsToRecordGroupDefinitions';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback, useContext } from 'react';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -82,6 +85,9 @@ export const RecordIndexContainer = () => {
   const setRecordIndexViewKanbanFieldMetadataIdState = useSetRecoilState(
     recordIndexKanbanFieldMetadataIdState,
   );
+  const setRecordIndexViewKanbanAggregateOperationState = useSetRecoilState(
+    recordIndexKanbanAggregateOperationState,
+  );
 
   const {
     setTableViewFilterGroups,
@@ -114,6 +120,25 @@ export const RecordIndexContainer = () => {
         ) {
           set(recordIndexFieldDefinitionsState, newFieldDefinitions);
         }
+
+        for (const viewField of viewFields) {
+          const aggregateOperationForViewField = snapshot
+            .getLoadable(
+              aggregateOperationForViewFieldState({
+                viewFieldId: viewField.id,
+              }),
+            )
+            .getValue();
+
+          if (aggregateOperationForViewField !== viewField.aggregateOperation) {
+            set(
+              aggregateOperationForViewFieldState({
+                viewFieldId: viewField.id,
+              }),
+              viewField.aggregateOperation,
+            );
+          }
+        }
       },
     [columnDefinitions, setTableColumns],
   );
@@ -132,6 +157,10 @@ export const RecordIndexContainer = () => {
 
   const setContextStoreTargetedRecordsRule = useSetRecoilComponentStateV2(
     contextStoreTargetedRecordsRuleComponentState,
+  );
+
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
   );
 
   return (
@@ -180,6 +209,10 @@ export const RecordIndexContainer = () => {
               setRecordIndexViewKanbanFieldMetadataIdState(
                 view.kanbanFieldMetadataId,
               );
+              setRecordIndexViewKanbanAggregateOperationState({
+                operation: view.kanbanAggregateOperation,
+                fieldMetadataId: view.kanbanAggregateOperationFieldMetadataId,
+              });
               setRecordIndexIsCompactModeActive(view.isCompact);
             }}
           />
@@ -212,7 +245,7 @@ export const RecordIndexContainer = () => {
             <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
           </StyledContainerWithPadding>
         )}
-        <RecordIndexActionMenu />
+        {!isPageHeaderV2Enabled && <RecordIndexActionMenu />}
       </RecordFieldValueSelectorContextProvider>
     </StyledContainer>
   );

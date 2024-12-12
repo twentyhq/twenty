@@ -1,27 +1,33 @@
 import { apiConfigState } from '@/client-config/states/apiConfigState';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
 import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabledState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
-import { isSignUpDisabledState } from '@/client-config/states/isSignUpDisabledState';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
+import { isSSOEnabledState } from '@/client-config/states/isSSOEnabledState';
 
 export const ClientConfigProviderEffect = () => {
-  const setAuthProviders = useSetRecoilState(authProvidersState);
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
+  const setDomainConfiguration = useSetRecoilState(domainConfigurationState);
 
-  const setIsSignInPrefilled = useSetRecoilState(isSignInPrefilledState);
-  const setIsSignUpDisabled = useSetRecoilState(isSignUpDisabledState);
+  const setIsDeveloperDefaultSignInPrefilled = useSetRecoilState(
+    isDeveloperDefaultSignInPrefilledState,
+  );
+  const setIsMultiWorkspaceEnabled = useSetRecoilState(
+    isMultiWorkspaceEnabledState,
+  );
+  const setIsSSOEnabledState = useSetRecoilState(isSSOEnabledState);
 
   const setBilling = useSetRecoilState(billingState);
   const setSupportChat = useSetRecoilState(supportChatState);
@@ -67,18 +73,10 @@ export const ClientConfigProviderEffect = () => {
       error: undefined,
     }));
 
-    setAuthProviders({
-      google: data?.clientConfig.authProviders.google,
-      microsoft: data?.clientConfig.authProviders.microsoft,
-      password: data?.clientConfig.authProviders.password,
-      magicLink: false,
-      sso: data?.clientConfig.authProviders.sso,
-    });
     setIsDebugMode(data?.clientConfig.debugMode);
     setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
-    setIsSignInPrefilled(data?.clientConfig.signInPrefilled);
-    setIsSignUpDisabled(data?.clientConfig.signUpDisabled);
-
+    setIsDeveloperDefaultSignInPrefilled(data?.clientConfig.signInPrefilled);
+    setIsMultiWorkspaceEnabled(data?.clientConfig.isMultiWorkspaceEnabled);
     setBilling(data?.clientConfig.billing);
     setSupportChat(data?.clientConfig.support);
 
@@ -95,12 +93,16 @@ export const ClientConfigProviderEffect = () => {
 
     setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
     setApiConfig(data?.clientConfig?.api);
+    setIsSSOEnabledState(data?.clientConfig?.isSSOEnabled);
+    setDomainConfiguration({
+      defaultSubdomain: data?.clientConfig?.defaultSubdomain,
+      frontDomain: data?.clientConfig?.frontDomain,
+    });
   }, [
     data,
-    setAuthProviders,
     setIsDebugMode,
-    setIsSignInPrefilled,
-    setIsSignUpDisabled,
+    setIsDeveloperDefaultSignInPrefilled,
+    setIsMultiWorkspaceEnabled,
     setSupportChat,
     setBilling,
     setSentryConfig,
@@ -111,6 +113,8 @@ export const ClientConfigProviderEffect = () => {
     setApiConfig,
     setIsAnalyticsEnabled,
     error,
+    setDomainConfiguration,
+    setIsSSOEnabledState,
   ]);
 
   return <></>;

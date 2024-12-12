@@ -19,7 +19,7 @@ import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { AnimatedEaseIn, MainButton } from 'twenty-ui';
 import { z } from 'zod';
 import {
@@ -27,6 +27,7 @@ import {
   useValidatePasswordResetTokenQuery,
 } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 
 const validationSchema = z
   .object({
@@ -70,6 +71,8 @@ const StyledInputContainer = styled.div`
 
 export const PasswordReset = () => {
   const { enqueueSnackBar } = useSnackBar();
+
+  const workspacePublicData = useRecoilValue(workspacePublicDataState);
 
   const navigate = useNavigate();
 
@@ -163,7 +166,7 @@ export const PasswordReset = () => {
     isTokenValid && (
       <StyledMainContainer>
         <AnimatedEaseIn>
-          <Logo />
+          <Logo secondaryLogo={workspacePublicData?.logo} />
         </AnimatedEaseIn>
         <Title animate>Reset Password</Title>
         <StyledContentContainer>

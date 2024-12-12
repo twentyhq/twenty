@@ -10,9 +10,9 @@ import { Key } from 'ts-key-enum';
 
 import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { splitFullName } from '~/utils/format/spiltFullName';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { StyledTextInput } from './TextInput';
@@ -158,6 +158,7 @@ export const DoubleTextInput = ({
       });
     },
     enabled: isDefined(onClickOutside),
+    listenerId: 'double-text-input',
   });
 
   const handleOnPaste = (event: ClipboardEvent<HTMLInputElement>) => {
