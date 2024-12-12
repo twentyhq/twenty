@@ -29,7 +29,7 @@ const StyledDroppableWrapper = styled.div<{
         border-radius: ${theme.border.radius.sm} ${theme.border.radius.sm} 0 0;
       }
       
-      background-color: ${theme.background.transparent.lighter};
+      background-color: ${theme.color.blueAccent20};
     `}
 
   width: 100%;
