@@ -33,12 +33,19 @@ import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/get
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { WorkflowEditActionFormServerlessFunctionFields } from '@/workflow/workflow-actions/components/WorkflowEditActionFormServerlessFunctionFields';
 
+const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
 const StyledCodeEditorContainer = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
 const StyledTabList = styled(TabList)`
+  background: ${({ theme }) => theme.background.secondary};
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
@@ -92,7 +99,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
       return;
     }
     const newOutputSchema = getFunctionOutputSchema(testResult);
-    await updateAction({
+    updateAction({
       ...action,
       settings: { ...action.settings, outputSchema: newOutputSchema },
     });
@@ -124,50 +131,53 @@ export const WorkflowEditActionFormServerlessFunction = ({
     await handleUpdateFunctionInputSchema(newCode);
   };
 
-  const handleUpdateFunctionInputSchema = async (sourceCode: string) => {
-    if (actionOptions.readonly === true) {
-      return;
-    }
+  const handleUpdateFunctionInputSchema = useDebouncedCallback(
+    async (sourceCode: string) => {
+      if (actionOptions.readonly === true) {
+        return;
+      }
 
-    if (!isDefined(sourceCode)) {
-      return;
-    }
+      if (!isDefined(sourceCode)) {
+        return;
+      }
 
-    const newFunctionInput = getFunctionInputFromSourceCode(sourceCode);
-    const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
-      newInput: newFunctionInput,
-      oldInput: action.settings.input.serverlessFunctionInput,
-    });
-    const newMergedTestInput = mergeDefaultFunctionInputAndFunctionInput({
-      newInput: newFunctionInput,
-      oldInput: serverlessFunctionTestData.input,
-    });
+      const newFunctionInput = getFunctionInputFromSourceCode(sourceCode);
+      const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
+        newInput: newFunctionInput,
+        oldInput: action.settings.input.serverlessFunctionInput,
+      });
+      const newMergedTestInput = mergeDefaultFunctionInputAndFunctionInput({
+        newInput: newFunctionInput,
+        oldInput: serverlessFunctionTestData.input,
+      });
 
-    setFunctionInput(newMergedInput);
-    setServerlessFunctionTestData((prev) => ({
-      ...prev,
-      input: newMergedTestInput,
-    }));
+      setFunctionInput(newMergedInput);
+      setServerlessFunctionTestData((prev) => ({
+        ...prev,
+        input: newMergedTestInput,
+      }));
 
-    await updateAction({
-      ...action,
-      settings: {
-        ...action.settings,
-        outputSchema: {},
-        input: {
-          ...action.settings.input,
-          serverlessFunctionInput: newMergedInput,
+      updateAction({
+        ...action,
+        settings: {
+          ...action.settings,
+          outputSchema: {},
+          input: {
+            ...action.settings.input,
+            serverlessFunctionInput: newMergedInput,
+          },
         },
-      },
-    });
-  };
+      });
+    },
+    1_000,
+  );
 
   const handleInputChange = async (value: any, path: string[]) => {
     const updatedFunctionInput = setNestedValue(functionInput, path, value);
 
     setFunctionInput(updatedFunctionInput);
 
-    await updateAction({
+    updateAction({
       ...action,
       settings: {
         ...action.settings,
@@ -200,10 +210,6 @@ export const WorkflowEditActionFormServerlessFunction = ({
     editor: editor.IStandaloneCodeEditor,
     monaco: Monaco,
   ) => {
-    editor.addCommand(
-      monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter,
-      handleRunFunction,
-    );
     await AutoTypings.create(editor, {
       monaco,
       preloadPackages: true,
@@ -219,7 +225,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
         return;
       }
 
-      actionOptions?.onActionUpdate({
+      actionOptions.onActionUpdate({
         ...action,
         ...actionUpdate,
       });
@@ -246,7 +252,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
 
   return (
     !loading && (
-      <>
+      <StyledContainer>
         <StyledTabList
           tabListInstanceId={TAB_LIST_COMPONENT_ID}
           tabs={tabs}
@@ -302,12 +308,14 @@ export const WorkflowEditActionFormServerlessFunction = ({
             </>
           )}
         </WorkflowStepBody>
-        <RightDrawerFooter
-          actions={[
-            <CmdEnterActionButton title="Test" onClick={handleRunFunction} />,
-          ]}
-        />
-      </>
+        {activeTabId === 'test' && (
+          <RightDrawerFooter
+            actions={[
+              <CmdEnterActionButton title="Test" onClick={handleRunFunction} />,
+            ]}
+          />
+        )}
+      </StyledContainer>
     )
   );
 };

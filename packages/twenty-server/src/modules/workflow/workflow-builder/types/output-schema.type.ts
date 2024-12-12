@@ -24,9 +24,3 @@ export type RecordOutputSchema = {
 };
 
 export type OutputSchema = BaseOutputSchema | RecordOutputSchema;
-
-export type StepOutputSchema = {
-  id: string;
-  name: string;
-  outputSchema: OutputSchema;
-};

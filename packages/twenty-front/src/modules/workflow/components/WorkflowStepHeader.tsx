@@ -65,32 +65,30 @@ export const WorkflowStepHeader = ({
   };
 
   return (
-    <>
-      <StyledHeader>
-        <StyledHeaderIconContainer>
-          {
-            <Icon
-              color={iconColor}
-              stroke={theme.icon.stroke.sm}
-              size={theme.icon.size.lg}
-            />
-          }
-        </StyledHeaderIconContainer>
-        <StyledHeaderInfo>
-          <StyledHeaderTitle>
-            <TextInput
-              value={title}
-              copyButton={false}
-              hotkeyScope="workflow-step-title"
-              onEnter={onTitleChange}
-              onEscape={onTitleChange}
-              onChange={handleChange}
-              shouldTrim={false}
-            />
-          </StyledHeaderTitle>
-          <StyledHeaderType>{headerType}</StyledHeaderType>
-        </StyledHeaderInfo>
-      </StyledHeader>
-    </>
+    <StyledHeader>
+      <StyledHeaderIconContainer>
+        {
+          <Icon
+            color={iconColor}
+            stroke={theme.icon.stroke.sm}
+            size={theme.icon.size.lg}
+          />
+        }
+      </StyledHeaderIconContainer>
+      <StyledHeaderInfo>
+        <StyledHeaderTitle>
+          <TextInput
+            value={title}
+            copyButton={false}
+            hotkeyScope="workflow-step-title"
+            onEnter={onTitleChange}
+            onEscape={onTitleChange}
+            onChange={handleChange}
+            shouldTrim={false}
+          />
+        </StyledHeaderTitle>
+        <StyledHeaderType>{headerType}</StyledHeaderType>
+      </StyledHeaderInfo>
+    </StyledHeader>
   );
 };

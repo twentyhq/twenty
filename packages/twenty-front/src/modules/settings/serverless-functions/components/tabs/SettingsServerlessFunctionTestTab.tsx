@@ -25,6 +25,11 @@ const StyledInputsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(4)};
 `;
 
+const StyledCodeEditorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 export const SettingsServerlessFunctionTestTab = ({
   handleExecute,
   serverlessFunctionId,
@@ -62,7 +67,7 @@ export const SettingsServerlessFunctionTestTab = ({
         description='Insert a JSON input, then press "Run" to test your function.'
       />
       <StyledInputsContainer>
-        <div>
+        <StyledCodeEditorContainer>
           <CoreEditorHeader
             title={'Input'}
             rightNodes={[
@@ -83,7 +88,7 @@ export const SettingsServerlessFunctionTestTab = ({
             onChange={onChange}
             withHeader
           />
-        </div>
+        </StyledCodeEditorContainer>
         <ServerlessFunctionExecutionResult
           serverlessFunctionTestData={serverlessFunctionTestData}
         />

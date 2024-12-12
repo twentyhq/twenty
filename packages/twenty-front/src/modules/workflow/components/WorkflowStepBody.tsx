@@ -6,6 +6,7 @@ const StyledWorkflowStepBody = styled.div`
   overflow-y: scroll;
   padding: ${({ theme }) => theme.spacing(6)};
   row-gap: ${({ theme }) => theme.spacing(6)};
+  flex: 1 1 auto;
 `;
 
 export { StyledWorkflowStepBody as WorkflowStepBody };

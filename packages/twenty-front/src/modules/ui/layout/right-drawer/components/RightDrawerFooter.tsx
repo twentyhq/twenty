@@ -11,7 +11,6 @@ const StyledContainer = styled.div`
   justify-content: flex-end;
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(3)};
   gap: ${({ theme }) => theme.spacing(2)};
-  position: fixed;
   width: 100%;
 `;
 
