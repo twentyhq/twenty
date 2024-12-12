@@ -115,6 +115,11 @@ const StyledContainer = withTheme(styled.div<
   & > svg {
     flex-shrink: 0;
   }
+
+  padding-left: ${({ theme, variant }) =>
+    variant === ChipVariant.Transparent
+      ? theme.spacing(0)
+      : 'var(--chip-horizontal-padding)'};
 `);
 
 export const Chip = ({

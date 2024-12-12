@@ -260,6 +260,7 @@ export const AddressInput = ({
           onFocus={getFocusHandler('addressPostcode')}
         />
         <CountrySelect
+          label="COUNTRY"
           onChange={getChangeHandler('addressCountry')}
           selectedCountryName={internalValue.addressCountry ?? ''}
         />

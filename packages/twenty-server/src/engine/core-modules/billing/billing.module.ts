@@ -10,17 +10,19 @@ import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-p
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { BillingWebhookService } from 'src/engine/core-modules/billing/services/billing-webhook.service';
+import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/services/billing-webhook-entitlement.service';
+import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/services/billing-webhook-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
+import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/domain-manager.module';
 
 @Module({
   imports: [
@@ -46,16 +48,17 @@ import { DomainManagerModule } from 'src/engine/core-modules/domain-manager/doma
   controllers: [BillingController],
   providers: [
     BillingSubscriptionService,
-    BillingWebhookService,
+    BillingWebhookSubscriptionService,
+    BillingWebhookEntitlementService,
     BillingPortalWorkspaceService,
     BillingResolver,
     BillingWorkspaceMemberListener,
     BillingService,
+    BillingRestApiExceptionFilter,
   ],
   exports: [
     BillingSubscriptionService,
     BillingPortalWorkspaceService,
-    BillingWebhookService,
     BillingService,
   ],
 })
