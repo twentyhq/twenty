@@ -62,15 +62,6 @@ type DraftValue =
       value: string;
     };
 
-// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
-function assertStaticDraftValue(
-  draftValue: DraftValue,
-): asserts draftValue is DraftValue & { type: 'static' } {
-  if (draftValue.type !== 'static') {
-    throw new Error('Expected the draftValue to be static');
-  }
-}
-
 type FormDateFieldInputProps = {
   label?: string;
   defaultValue: string | undefined;
@@ -131,10 +122,9 @@ export const FormDateFieldInput = ({
   };
 
   const handlePickerChange = (newDate: Nullable<Date>) => {
-    assertStaticDraftValue(draftValue);
-
     setDraftValue({
-      ...draftValue,
+      type: 'static',
+      editingMode: 'edit',
       value: newDate?.toDateString() ?? null,
     });
 
