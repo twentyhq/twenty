@@ -1,6 +1,4 @@
-import { WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/single-record/workflow-actions/constants/WorkflowSingleRecordActionsConfig';
-import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
-
+import { SingleRecordActionHook } from '@/action-menu/actions/types/singleRecordActionHook';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -9,42 +7,35 @@ import qs from 'qs';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-ui';
 
-export const useSeeWorkflowRunsWorkflowSingleRecordAction = ({
-  workflowId,
-}: {
-  workflowId: string;
-}) => {
-  const { addActionMenuEntry } = useActionMenuEntries();
+export const useSeeWorkflowRunsWorkflowSingleRecordAction: SingleRecordActionHook =
+  (recordId) => {
+    const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
-  const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
+    const navigate = useNavigate();
 
-  const navigate = useNavigate();
+    const shouldBeRegistered = isDefined(workflowWithCurrentVersion);
 
-  const registerSeeWorkflowRunsWorkflowSingleRecordAction = () => {
-    if (!isDefined(workflowWithCurrentVersion)) {
-      return;
-    }
+    const onClick = () => {
+      if (!shouldBeRegistered) {
+        return;
+      }
 
-    const filterQueryParams: FilterQueryParams = {
-      filter: {
-        workflow: {
-          [ViewFilterOperand.Is]: [workflowWithCurrentVersion.id],
+      const filterQueryParams: FilterQueryParams = {
+        filter: {
+          workflow: {
+            [ViewFilterOperand.Is]: [workflowWithCurrentVersion.id],
+          },
         },
-      },
+      };
+      const filterLinkHref = `/objects/${CoreObjectNamePlural.WorkflowRun}?${qs.stringify(
+        filterQueryParams,
+      )}`;
+
+      navigate(filterLinkHref);
     };
-    const filterLinkHref = `/objects/${CoreObjectNamePlural.WorkflowRun}?${qs.stringify(
-      filterQueryParams,
-    )}`;
 
-    addActionMenuEntry({
-      ...WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG.seeWorkflowRunsSingleRecord,
-      onClick: () => {
-        navigate(filterLinkHref);
-      },
-    });
+    return {
+      shouldBeRegistered,
+      onClick,
+    };
   };
-
-  return {
-    registerSeeWorkflowRunsWorkflowSingleRecordAction,
-  };
-};

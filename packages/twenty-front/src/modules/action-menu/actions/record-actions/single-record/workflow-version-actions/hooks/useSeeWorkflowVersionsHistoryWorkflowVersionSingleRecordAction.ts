@@ -16,9 +16,9 @@ export const useSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction = ({
       registerSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction,
     unregisterSeeWorkflowVersionsHistoryWorkflowSingleRecordAction:
       unregisterSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction,
-  } = useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction({
-    workflowId: workflowVersion?.workflow.id,
-  });
+  } = useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction(
+    workflowVersion?.workflow.id,
+  );
 
   return {
     registerSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction,
