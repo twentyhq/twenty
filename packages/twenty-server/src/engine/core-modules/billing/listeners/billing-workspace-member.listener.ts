@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
+import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import {
-  UpdateSubscriptionJob,
-  UpdateSubscriptionJobData,
-} from 'src/engine/core-modules/billing/jobs/update-subscription.job';
+  UpdateSubscriptionQuantityJob,
+  UpdateSubscriptionQuantityJobData,
+} from 'src/engine/core-modules/billing/jobs/update-subscription-quantity.job';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -11,8 +13,6 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event.type';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class BillingWorkspaceMemberListener {
@@ -33,8 +33,8 @@ export class BillingWorkspaceMemberListener {
       return;
     }
 
-    await this.messageQueueService.add<UpdateSubscriptionJobData>(
-      UpdateSubscriptionJob.name,
+    await this.messageQueueService.add<UpdateSubscriptionQuantityJobData>(
+      UpdateSubscriptionQuantityJob.name,
       { workspaceId: payload.workspaceId },
     );
   }

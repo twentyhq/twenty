@@ -12,9 +12,8 @@ import { RecordIndexContainer } from '@/object-record/record-index/components/Re
 import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect';
 import { RecordIndexContainerContextStoreObjectMetadataEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreObjectMetadataEffect';
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
-import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
@@ -41,12 +40,6 @@ export const RecordIndexPage = () => {
     objectNameSingular,
   });
 
-  const { createNewTableRecord } = useCreateNewTableRecord(recordIndexId);
-
-  const handleCreateRecord = () => {
-    createNewTableRecord();
-  };
-
   const { indexIdentifierUrl } = useHandleIndexIdentifierClick({
     objectMetadataItem,
     recordIndexId,
@@ -63,7 +56,7 @@ export const RecordIndexPage = () => {
 
   return (
     <PageContainer>
-      <RecordIndexRootPropsContext.Provider
+      <RecordIndexContextProvider
         value={{
           recordIndexId,
           objectNamePlural,
@@ -71,7 +64,6 @@ export const RecordIndexPage = () => {
           objectMetadataItem,
           onIndexRecordsLoaded: handleIndexRecordsLoaded,
           indexIdentifierUrl,
-          onCreateRecord: handleCreateRecord,
         }}
       >
         <ViewComponentInstanceContext.Provider
@@ -100,7 +92,7 @@ export const RecordIndexPage = () => {
             </ActionMenuComponentInstanceContext.Provider>
           </ContextStoreComponentInstanceContext.Provider>
         </ViewComponentInstanceContext.Provider>
-      </RecordIndexRootPropsContext.Provider>
+      </RecordIndexContextProvider>
     </PageContainer>
   );
 };

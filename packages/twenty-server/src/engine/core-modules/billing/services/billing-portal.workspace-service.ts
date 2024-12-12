@@ -6,12 +6,11 @@ import { Repository } from 'typeorm';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 @Injectable()
 export class BillingPortalWorkspaceService {
@@ -19,7 +18,6 @@ export class BillingPortalWorkspaceService {
   constructor(
     private readonly stripeService: StripeService,
     private readonly domainManagerService: DomainManagerService,
-    private readonly environmentService: EnvironmentService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(UserWorkspace, 'core')
