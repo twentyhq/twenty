@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import { ReactNode, useContext, useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 
@@ -32,8 +31,6 @@ export const RecordTableRowWrapper = ({
 
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { onIndexRecordsLoaded } = useRecordIndexContextOrThrow();
-
-  const theme = useTheme();
 
   const currentRowSelected = useRecoilComponentFamilyValueV2(
     isRowSelectedComponentFamilyState,
