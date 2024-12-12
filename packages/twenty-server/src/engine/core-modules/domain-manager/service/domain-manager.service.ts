@@ -24,16 +24,18 @@ export class DomainManagerService {
   getFrontUrl() {
     let baseUrl: URL;
 
-    if (
-      !this.environmentService.get('FRONT_PROTOCOL') ||
-      !this.environmentService.get('FRONT_DOMAIN') ||
-      !this.environmentService.get('FRONT_PORT')
-    ) {
+    if (!this.environmentService.get('FRONT_DOMAIN')) {
       baseUrl = new URL(this.environmentService.get('SERVER_URL'));
     } else {
       baseUrl = new URL(
-        `${this.environmentService.get('FRONT_PROTOCOL')}://${this.environmentService.get('FRONT_DOMAIN')}:${this.environmentService.get('FRONT_PORT')}`,
+        `${this.environmentService.get('FRONT_PROTOCOL')}://${this.environmentService.get('FRONT_DOMAIN')}`,
       );
+
+      const port = this.environmentService.get('FRONT_PORT');
+
+      if (port) {
+        baseUrl.port = port.toString();
+      }
     }
 
     return baseUrl;
