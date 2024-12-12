@@ -28,6 +28,8 @@ export const RecordTableRecordGroupSectionLoadMore = () => {
 
   return (
     <RecordTableActionRow
+      draggableId={`load-more-records-${currentRecordGroupId}`}
+      draggableIndex={-1}
       LeftIcon={IconArrowDown}
       text="Load more"
       onClick={handleLoadMore}

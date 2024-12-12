@@ -1,5 +1,4 @@
 import { useTheme } from '@emotion/react';
-import { Draggable } from '@hello-pangea/dnd';
 import { ReactNode, useContext, useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 
@@ -7,7 +6,7 @@ import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShow
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
+import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { tableCellWidthsComponentState } from '@/object-record/record-table/states/tableCellWidthsComponentState';
 import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
@@ -78,55 +77,37 @@ export const RecordTableRowWrapper = ({
   }, [inView, onIndexRecordsLoaded]);
 
   return (
-    <Draggable
+    <RecordTableDraggableTr
       key={recordId}
+      ref={(node) => {
+        // @ts-expect-error - TS doesn't know that node.current is assignable
+        trRef.current = node;
+        elementRef(node);
+      }}
       draggableId={recordId}
-      index={rowIndexForDrag}
+      draggableIndex={rowIndexForDrag}
       isDragDisabled={isPendingRow}
     >
       {(draggableProvided, draggableSnapshot) => (
-        <RecordTableTr
-          ref={(node) => {
-            // @ts-expect-error - TS doesn't know that node.current is assignable
-            trRef.current = node;
-            elementRef(node);
-            draggableProvided.innerRef(node);
+        <RecordTableRowContext.Provider
+          value={{
+            recordId,
+            rowIndex: rowIndexForFocus,
+            pathToShowPage:
+              getBasePathToShowPage({
+                objectNameSingular: objectMetadataItem.nameSingular,
+              }) + recordId,
+            objectNameSingular: objectMetadataItem.nameSingular,
+            isSelected: currentRowSelected,
+            isPendingRow,
+            isDragging: draggableSnapshot.isDragging,
+            dragHandleProps: draggableProvided.dragHandleProps,
+            inView,
           }}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...draggableProvided.draggableProps}
-          style={{
-            ...draggableProvided.draggableProps.style,
-            background: draggableSnapshot.isDragging
-              ? theme.background.transparent.light
-              : 'none',
-            borderColor: draggableSnapshot.isDragging
-              ? `${theme.border.color.medium}`
-              : 'transparent',
-          }}
-          isDragging={draggableSnapshot.isDragging}
-          data-testid={`row-id-${recordId}`}
-          data-selectable-id={recordId}
         >
-          <RecordTableRowContext.Provider
-            value={{
-              recordId,
-              rowIndex: rowIndexForFocus,
-              pathToShowPage:
-                getBasePathToShowPage({
-                  objectNameSingular: objectMetadataItem.nameSingular,
-                }) + recordId,
-              objectNameSingular: objectMetadataItem.nameSingular,
-              isSelected: currentRowSelected,
-              isPendingRow,
-              isDragging: draggableSnapshot.isDragging,
-              dragHandleProps: draggableProvided.dragHandleProps,
-              inView,
-            }}
-          >
-            {children}
-          </RecordTableRowContext.Provider>
-        </RecordTableTr>
+          {children}
+        </RecordTableRowContext.Provider>
       )}
-    </Draggable>
+    </RecordTableDraggableTr>
   );
 };

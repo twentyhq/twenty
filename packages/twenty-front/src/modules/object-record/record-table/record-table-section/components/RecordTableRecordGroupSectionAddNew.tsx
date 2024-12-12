@@ -28,6 +28,8 @@ export const RecordTableRecordGroupSectionAddNew = () => {
 
   return (
     <RecordTableActionRow
+      draggableId={`add-new-record-${currentRecordGroupId}`}
+      draggableIndex={-1}
       LeftIcon={IconPlus}
       text="Add new"
       onClick={handleAddNewRecord}
