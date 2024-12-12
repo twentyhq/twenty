@@ -13,10 +13,6 @@ export const getFunctionInputFromSourceCode = (
 
   const functionInputSchema = getFunctionInputSchema(sourceCode);
 
-  if (functionInputSchema.length !== 1) {
-    return {};
-  }
-
   const result = getDefaultFunctionInputFromInputSchema(functionInputSchema)[0];
 
   if (!isObject(result)) {
