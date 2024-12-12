@@ -6,6 +6,7 @@ import {
   RawBodyRequest,
   Req,
   Res,
+  UseFilters,
 } from '@nestjs/common';
 
 import { Response } from 'express';
@@ -15,11 +16,13 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { WebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/services/billing-webhook-entitlement.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/services/billing-webhook-subscription.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
 @Controller('billing')
+@UseFilters(BillingRestApiExceptionFilter)
 export class BillingController {
   protected readonly logger = new Logger(BillingController.name);
 

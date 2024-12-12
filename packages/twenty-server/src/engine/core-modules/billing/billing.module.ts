@@ -10,6 +10,7 @@ import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-p
 import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -53,6 +54,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
     BillingResolver,
     BillingWorkspaceMemberListener,
     BillingService,
+    BillingRestApiExceptionFilter,
   ],
   exports: [
     BillingSubscriptionService,
