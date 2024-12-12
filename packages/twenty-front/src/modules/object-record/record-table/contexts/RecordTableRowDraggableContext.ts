@@ -1,14 +1,14 @@
 import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
-import { createContext } from 'react';
+import { createRequiredContext } from '~/utils/createRequiredContext';
 
-export type RecordTableRowDraggableContextProps = {
-  inView?: boolean;
-  isDragDisabled?: boolean;
+export type RecordTableRowDraggableContextValue = {
   isDragging: boolean;
   dragHandleProps: DraggableProvidedDragHandleProps | null;
 };
 
-export const RecordTableRowDraggableContext =
-  createContext<RecordTableRowDraggableContextProps>(
-    {} as RecordTableRowDraggableContextProps,
-  );
+export const [
+  RecordTableRowDraggableContextProvider,
+  useRecordTableRowDraggableContextOrThrow,
+] = createRequiredContext<RecordTableRowDraggableContextValue>(
+  'RecordTableRowDraggableContext',
+);

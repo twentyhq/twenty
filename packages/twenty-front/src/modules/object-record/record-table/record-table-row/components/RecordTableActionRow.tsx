@@ -59,6 +59,7 @@ export const RecordTableActionRow = ({
       draggableId={draggableId}
       draggableIndex={draggableIndex}
       onClick={onClick}
+      isDragDisabled
     >
       <td aria-hidden />
       <StyledIconContainer>

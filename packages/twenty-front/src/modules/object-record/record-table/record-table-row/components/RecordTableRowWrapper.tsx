@@ -3,7 +3,7 @@ import { ReactNode, useContext, useEffect } from 'react';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableDraggableTr } from '@/object-record/record-table/record-table-row/components/RecordTableDraggableTr';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
@@ -54,12 +54,13 @@ export const RecordTableRowWrapper = ({
 
   return (
     <RecordTableDraggableTr
+      ref={elementRef}
       key={recordId}
       draggableId={recordId}
       draggableIndex={rowIndexForDrag}
       isDragDisabled={isPendingRow}
     >
-      <RecordTableRowContext.Provider
+      <RecordTableRowContextProvider
         value={{
           recordId,
           rowIndex: rowIndexForFocus,
@@ -70,10 +71,11 @@ export const RecordTableRowWrapper = ({
           objectNameSingular: objectMetadataItem.nameSingular,
           isSelected: currentRowSelected,
           isPendingRow,
+          inView,
         }}
       >
         {children}
-      </RecordTableRowContext.Provider>
+      </RecordTableRowContextProvider>
     </RecordTableDraggableTr>
   );
 };

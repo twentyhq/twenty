@@ -1,9 +1,10 @@
 import { useTheme } from '@emotion/react';
 import { Draggable, DraggableId } from '@hello-pangea/dnd';
-import { ReactNode } from 'react';
+import { forwardRef, ReactNode } from 'react';
 
-import { RecordTableRowDraggableContext } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
+import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
+import { combineRefs } from '~/utils/combineRefs';
 
 type RecordTableDraggableTrProps = {
   draggableId: DraggableId;
@@ -13,13 +14,10 @@ type RecordTableDraggableTrProps = {
   children: ReactNode;
 };
 
-export const RecordTableDraggableTr = ({
-  draggableId,
-  draggableIndex,
-  isDragDisabled,
-  onClick,
-  children,
-}: RecordTableDraggableTrProps) => {
+export const RecordTableDraggableTr = forwardRef<
+  HTMLTableRowElement,
+  RecordTableDraggableTrProps
+>(({ draggableId, draggableIndex, isDragDisabled, onClick, children }, ref) => {
   const theme = useTheme();
 
   return (
@@ -30,7 +28,10 @@ export const RecordTableDraggableTr = ({
     >
       {(draggableProvided, draggableSnapshot) => (
         <RecordTableTr
-          ref={draggableProvided.innerRef}
+          ref={combineRefs<HTMLTableRowElement>(
+            ref,
+            draggableProvided.innerRef,
+          )}
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...draggableProvided.draggableProps}
           style={{
@@ -47,16 +48,16 @@ export const RecordTableDraggableTr = ({
           data-selectable-id={draggableId}
           onClick={onClick}
         >
-          <RecordTableRowDraggableContext.Provider
+          <RecordTableRowDraggableContextProvider
             value={{
               isDragging: draggableSnapshot.isDragging,
               dragHandleProps: draggableProvided.dragHandleProps,
             }}
           >
             {children}
-          </RecordTableRowDraggableContext.Provider>
+          </RecordTableRowDraggableContextProvider>
         </RecordTableTr>
       )}
     </Draggable>
   );
-};
+});
