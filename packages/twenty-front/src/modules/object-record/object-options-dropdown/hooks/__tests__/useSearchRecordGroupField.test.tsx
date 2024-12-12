@@ -1,5 +1,5 @@
 import { useSearchRecordGroupField } from '@/object-record/object-options-dropdown/hooks/useSearchRecordGroupField';
-import { RecordIndexProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
@@ -11,13 +11,13 @@ describe('useSearchRecordGroupField', () => {
     renderHook(() => useSearchRecordGroupField(), {
       wrapper: ({ children }) => (
         <RecoilRoot>
-          <RecordIndexProvider value={contextValue}>
+          <RecordIndexContextProvider value={contextValue}>
             <ViewComponentInstanceContext.Provider
               value={{ instanceId: 'myViewInstanceId' }}
             >
               {children}
             </ViewComponentInstanceContext.Provider>
-          </RecordIndexProvider>
+          </RecordIndexContextProvider>
         </RecoilRoot>
       ),
     });

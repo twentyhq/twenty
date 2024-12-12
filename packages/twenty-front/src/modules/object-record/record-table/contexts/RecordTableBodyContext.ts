@@ -31,4 +31,6 @@ export type RecordTableBodyContextProps = {
 export const [
   RecordTableBodyContextProvider,
   useRecordTableBodyContextOrThrow,
-] = createRequiredContext<RecordTableBodyContextProps>();
+] = createRequiredContext<RecordTableBodyContextProps>(
+  'RecordTableBodyContext',
+);

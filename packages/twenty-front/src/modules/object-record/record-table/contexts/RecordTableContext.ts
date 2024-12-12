@@ -12,4 +12,4 @@ export type RecordTableContextValue = {
 };
 
 export const [RecordTableContextProvider, useRecordTableContextOrThrow] =
-  createRequiredContext<RecordTableContextValue>();
+  createRequiredContext<RecordTableContextValue>('RecordTableContext');

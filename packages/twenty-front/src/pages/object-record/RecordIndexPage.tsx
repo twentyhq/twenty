@@ -12,7 +12,7 @@ import { RecordIndexContainer } from '@/object-record/record-index/components/Re
 import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect';
 import { RecordIndexContainerContextStoreObjectMetadataEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreObjectMetadataEffect';
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
-import { RecordIndexProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
@@ -56,7 +56,7 @@ export const RecordIndexPage = () => {
 
   return (
     <PageContainer>
-      <RecordIndexProvider
+      <RecordIndexContextProvider
         value={{
           recordIndexId,
           objectNamePlural,
@@ -92,7 +92,7 @@ export const RecordIndexPage = () => {
             </ActionMenuComponentInstanceContext.Provider>
           </ContextStoreComponentInstanceContext.Provider>
         </ViewComponentInstanceContext.Provider>
-      </RecordIndexProvider>
+      </RecordIndexContextProvider>
     </PageContainer>
   );
 };
