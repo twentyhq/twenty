@@ -10,7 +10,7 @@ import styled from '@emotion/styled';
 import { useCallback } from 'react';
 
 type RecordTableColumnFooterWithDropdownProps = {
-  column: ColumnDefinition<FieldMetadata>
+  column: ColumnDefinition<FieldMetadata>;
 };
 
 const StyledDropdown = styled(Dropdown)`
