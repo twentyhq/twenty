@@ -7,17 +7,16 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-ui';
-import { useSingleRecordActions } from '../hooks/useSingleRecordActions';
 
 export const SingleRecordActionMenuEntrySetterEffect = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const { registerSingleRecordActions, unregisterSingleRecordActions } =
-    useSingleRecordActions({
-      objectMetadataItem,
-    });
+  // const { registerSingleRecordActions, unregisterSingleRecordActions } =
+  //   useSingleRecordActions({
+  //     objectMetadataItem,
+  //   });
 
   const actionConfig =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow

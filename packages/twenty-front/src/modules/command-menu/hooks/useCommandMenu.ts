@@ -121,11 +121,49 @@ export const useCommandMenu = () => {
   );
 
   const closeCommandMenu = useRecoilCallback(
-    ({ snapshot }) =>
+    ({ snapshot, set }) =>
       () => {
         const isCommandMenuOpened = snapshot
           .getLoadable(isCommandMenuOpenedState)
           .getValue();
+
+        set(
+          contextStoreCurrentObjectMetadataIdComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          null,
+        );
+
+        set(
+          contextStoreTargetedRecordsRuleComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          {
+            mode: 'selection',
+            selectedRecordIds: [],
+          },
+        );
+
+        set(
+          contextStoreNumberOfSelectedRecordsComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          0,
+        );
+
+        set(
+          contextStoreFiltersComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          [],
+        );
+
+        set(
+          contextStoreCurrentViewIdComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          null,
+        );
 
         if (isCommandMenuOpened) {
           setIsCommandMenuOpened(false);

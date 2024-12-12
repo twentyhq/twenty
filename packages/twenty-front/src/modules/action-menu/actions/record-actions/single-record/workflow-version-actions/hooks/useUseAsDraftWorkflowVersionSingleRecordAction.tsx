@@ -1,16 +1,16 @@
 import { SingleRecordActionHook } from '@/action-menu/actions/types/singleRecordActionHook';
 
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
+import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const useUseAsDraftWorkflowVersionSingleRecordAction: SingleRecordActionHook =
   (recordId) => {
-    const workflowVersion = useRecoilValue(recordStoreFamilyState(recordId));
+    const workflowVersion = useWorkflowVersion(recordId);
 
     const workflow = useWorkflowWithCurrentVersion(
       workflowVersion?.workflow?.id ?? '',
