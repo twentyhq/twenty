@@ -1,5 +1,5 @@
-import { getFunctionInputSchema } from '@/serverless-functions/utils/getFunctionInputSchema';
 import { getDefaultFunctionInputFromInputSchema } from '@/serverless-functions/utils/getDefaultFunctionInputFromInputSchema';
+import { getFunctionInputSchema } from '@/serverless-functions/utils/getFunctionInputSchema';
 import { FunctionInput } from '@/workflow/types/FunctionInput';
 import { isObject } from '@sniptt/guards';
 import { isDefined } from 'twenty-ui';
