@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
 const StyledDropdownMenuSeparator = styled.div`
-    background-color: ${({ theme }) =>
+  background-color: ${({ theme }) =>
     theme.name === 'dark'
       ? theme.background.transparent.light
       : theme.border.color.light};
