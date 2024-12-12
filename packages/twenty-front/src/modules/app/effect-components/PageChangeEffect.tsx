@@ -66,7 +66,7 @@ export const PageChangeEffect = () => {
   useEffect(() => {
     if (isDefined(pageChangeEffectNavigateLocation)) {
       navigate(pageChangeEffectNavigateLocation);
-      setIsAppWaitingForFreshObjectMetadataDebounced();
+      // setIsAppWaitingForFreshObjectMetadataDebounced();
     }
   }, [
     navigate,
