@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useContext } from 'react';
 
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableRowDraggableContext } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
 import { css } from '@emotion/react';
 import { IconListViewGrip } from 'twenty-ui';
@@ -30,8 +31,10 @@ const StyledIconWrapper = styled.div<{ isDragging: boolean }>`
 `;
 
 export const RecordTableCellGrip = () => {
-  const { dragHandleProps, isDragging, isPendingRow } = useContext(
-    RecordTableRowContext,
+  const { isPendingRow } = useContext(RecordTableRowContext);
+
+  const { dragHandleProps, isDragging } = useContext(
+    RecordTableRowDraggableContext,
   );
 
   return (

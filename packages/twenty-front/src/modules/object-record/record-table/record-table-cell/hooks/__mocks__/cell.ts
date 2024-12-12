@@ -8,9 +8,6 @@ export const recordTableRow: RecordTableRowContextProps = {
   recordId: 'recordId',
   pathToShowPage: '/',
   objectNameSingular: 'objectNameSingular',
-  dragHandleProps: {} as any,
-  isDragging: false,
-  inView: true,
   isPendingRow: false,
 };
 

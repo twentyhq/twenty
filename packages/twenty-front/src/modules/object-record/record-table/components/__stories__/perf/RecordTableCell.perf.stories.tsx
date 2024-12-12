@@ -99,9 +99,6 @@ const meta: Meta = {
                           mockPerformance.entityValue.__typename.toLocaleLowerCase(),
                       }) + mockPerformance.recordId,
                     isSelected: false,
-                    isDragging: false,
-                    dragHandleProps: null,
-                    inView: true,
                     isPendingRow: false,
                   }}
                 >

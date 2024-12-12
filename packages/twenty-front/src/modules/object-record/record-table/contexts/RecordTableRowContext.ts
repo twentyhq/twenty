@@ -1,4 +1,3 @@
-import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
 import { createContext } from 'react';
 
 export type RecordTableRowContextProps = {
@@ -8,9 +7,6 @@ export type RecordTableRowContextProps = {
   rowIndex: number;
   isSelected: boolean;
   isPendingRow?: boolean;
-  isDragging: boolean;
-  dragHandleProps: DraggableProvidedDragHandleProps | null;
-  inView?: boolean;
   isDragDisabled?: boolean;
 };
 

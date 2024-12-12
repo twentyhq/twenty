@@ -1,11 +1,13 @@
 import { useContext } from 'react';
 
-import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableRowDraggableContext } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableCellsEmpty } from '@/object-record/record-table/record-table-row/components/RecordTableCellsEmpty';
 import { RecordTableCellsVisible } from '@/object-record/record-table/record-table-row/components/RecordTableCellsVisible';
 
 export const RecordTableCells = () => {
-  const { inView, isDragging } = useContext(RecordTableRowContext);
+  const { inView } = useContext(RecordTableRowDraggableContext);
+
+  const { isDragging } = useContext(RecordTableRowDraggableContext);
 
   const areCellsVisible = inView || isDragging;
 
