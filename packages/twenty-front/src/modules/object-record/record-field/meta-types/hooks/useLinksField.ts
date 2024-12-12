@@ -35,8 +35,10 @@ export const useLinksField = () => {
 
   const persistLinksField = (nextValue: FieldLinksValue) => {
     try {
+      console.log('persistLinksField', nextValue);
       persistField(linksSchema.parse(nextValue));
     } catch {
+      console.error('Failed to persist links field');
       return;
     }
   };
