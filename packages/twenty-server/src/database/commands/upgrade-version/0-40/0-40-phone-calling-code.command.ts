@@ -41,16 +41,25 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
     this.logger.log(
       'Running command to add calling code and change country code with default one',
     );
+    // Prerequisite : the field callingcode was creted in the codebase (PHONES type modification)
+    // Note : SyncMetadata will fail since composite field modification is not handled
 
-    // create the field callingcode in CODE
-    // locally, can run `npx nx run twenty-server:command workspace:sync-metadata`
-    this.logger.log(
-      `step 0 - The PHONES type codebase was updated to add the calling code, 
-      so we should let s Sync the Metadata`,
-    );
+    // Migration to be applied, in this order :
+    // ---------------------------------Workspace-------------------------------------------------------------
+    // 1 - Add the calling code field in all the workspaces tables having the PHONES type
+    //      the column name should be `${singularName}PrimaryPhoneCallingCode`
+    //      the value should be what was previously in the primary country code
+    // 2 - update the primary country code to be one of the counties with this calling code: +33 => FR | +1 => US (if mulitple, select first one)
+    // 3 - [IMO, not necessary] if we think it's important, update all additioanl phones to add a country code following the same logic
+
+    // ---------------------------------FieldMetada-----------------------------------------------------------
+    // 1 - Add the calling code prop in the field-metadata defaultvalue
+    // 2 - [IMO, not necessary : i believe it's always null -> to be checked] Manually add the country code prop in the field-metadata additionalPhones
+
+    this.logger.log(`Part 1 - Workspace`);
 
     this.logger.log(
-      `step 1 - let's find all the fieldsMetadata that have the PHONES type,
+      `P1 Step 1 - let's find all the fieldsMetadata that have the PHONES type,
       and extract the objectMetadataId`,
     );
     // 1 get all fields that have PHONES type from field-metadata
