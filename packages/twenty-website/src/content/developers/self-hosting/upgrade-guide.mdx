@@ -34,7 +34,7 @@ The `yarn command:prod upgrade-0.34` takes care of the data migration of all wor
 
 **Environment Variables**
 
-We have updated the way we handle the Redis connection.
+We have updated the way we handle the frontend URL. If FRONT_DOMAIN or FRONT_PORT are not set, the frontend URL will be set to the server URL.
 
 - Removed: `FRONT_BASE_URL`
 - Added: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
