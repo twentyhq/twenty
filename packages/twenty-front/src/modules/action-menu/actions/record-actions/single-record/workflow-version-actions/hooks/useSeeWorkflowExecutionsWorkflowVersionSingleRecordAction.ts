@@ -1,5 +1,4 @@
-import { SingleRecordActionHook } from '@/action-menu/actions/types/singleRecordActionHook';
-
+import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/singleRecordActionHook';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
@@ -10,8 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-export const useSeeWorkflowExecutionsWorkflowVersionSingleRecordAction: SingleRecordActionHook =
-  (recordId) => {
+export const useSeeWorkflowExecutionsWorkflowVersionSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
+  ({ recordId }) => {
     const workflowVersion = useRecoilValue(recordStoreFamilyState(recordId));
 
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(

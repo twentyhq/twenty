@@ -1,3 +1,5 @@
+import { DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1 } from '@/action-menu/actions/record-actions/single-record/constants/DefaultSingleRecordActionsConfigV1';
+import { DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2 } from '@/action-menu/actions/record-actions/single-record/constants/DefaultSingleRecordActionsConfigV2';
 import { WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/single-record/workflow-actions/constants/WorkflowSingleRecordActionsConfig';
 import { WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/constants/WorkflowVersionsSingleRecordActionsConfig';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
@@ -5,6 +7,7 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-ui';
 
@@ -13,10 +16,9 @@ export const SingleRecordActionMenuEntrySetterEffect = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  // const { registerSingleRecordActions, unregisterSingleRecordActions } =
-  //   useSingleRecordActions({
-  //     objectMetadataItem,
-  //   });
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
+  );
 
   const actionConfig =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow
@@ -24,7 +26,9 @@ export const SingleRecordActionMenuEntrySetterEffect = ({
       : objectMetadataItem.nameSingular ===
           CoreObjectNameSingular.WorkflowVersion
         ? WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG
-        : null;
+        : isPageHeaderV2Enabled
+          ? DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2
+          : DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1;
 
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
@@ -43,13 +47,17 @@ export const SingleRecordActionMenuEntrySetterEffect = ({
 
   const actionMenuEntries = Object.values(actionConfig ?? {})
     .map((action) => {
-      const { shouldBeRegistered, onClick } =
-        action.actionHook(selectedRecordId);
+      const { shouldBeRegistered, onClick, ConfirmationModal } =
+        action.actionHook({
+          recordId: selectedRecordId,
+          objectMetadataItem,
+        });
 
       if (shouldBeRegistered) {
         return {
           ...action,
           onClick,
+          ConfirmationModal,
         };
       }
 
@@ -77,18 +85,6 @@ export const SingleRecordActionMenuEntrySetterEffect = ({
     addActionMenuEntry,
     removeActionMenuEntry,
   ]);
-
-  // useEffect(() => {
-  //   registerSingleRecordActions();
-
-  //   return () => {
-  //     unregisterSingleRecordActions();
-  //   };
-  // }, [
-  //   objectMetadataItem.nameSingular,
-  //   registerSingleRecordActions,
-  //   unregisterSingleRecordActions,
-  // ]);
 
   return null;
 };

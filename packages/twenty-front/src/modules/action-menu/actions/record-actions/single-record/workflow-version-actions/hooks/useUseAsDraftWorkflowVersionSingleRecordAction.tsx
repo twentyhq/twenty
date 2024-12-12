@@ -1,5 +1,4 @@
-import { SingleRecordActionHook } from '@/action-menu/actions/types/singleRecordActionHook';
-
+import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/singleRecordActionHook';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';
@@ -8,8 +7,8 @@ import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/stat
 import { useSetRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-export const useUseAsDraftWorkflowVersionSingleRecordAction: SingleRecordActionHook =
-  (recordId) => {
+export const useUseAsDraftWorkflowVersionSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
+  ({ recordId }) => {
     const workflowVersion = useWorkflowVersion(recordId);
 
     const workflow = useWorkflowWithCurrentVersion(
