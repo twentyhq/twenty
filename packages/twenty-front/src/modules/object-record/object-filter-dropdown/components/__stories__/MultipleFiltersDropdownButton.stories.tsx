@@ -1,9 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react';
 
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
+import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { MultipleFiltersDropdownButton } from '@/object-record/object-filter-dropdown/components/MultipleFiltersDropdownButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { ObjectFilterDropdownComponentInstanceContext } from '@/object-record/object-filter-dropdown/states/contexts/ObjectFilterDropdownComponentInstanceContext';
+import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
@@ -19,6 +22,7 @@ import { FieldMetadataType } from '~/generated/graphql';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const meta: Meta<typeof MultipleFiltersDropdownButton> = {
   title:
@@ -26,6 +30,9 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
   component: MultipleFiltersDropdownButton,
   decorators: [
     (Story) => {
+      const companyObjectMetadataItem = generatedMockObjectMetadataItems.find(
+        (item) => item.nameSingular === CoreObjectNameSingular.Company,
+      )!;
       const instanceId = 'entity-tasks-filter-scope';
       const setAvailableFilterDefinitions = useSetRecoilComponentStateV2(
         availableFilterDefinitionsComponentState,
@@ -91,19 +98,30 @@ const meta: Meta<typeof MultipleFiltersDropdownButton> = {
         },
       ]);
       return (
-        <ObjectFilterDropdownComponentInstanceContext.Provider
-          value={{ instanceId }}
+        <RecordIndexContextProvider
+          value={{
+            indexIdentifierUrl: () => '',
+            onIndexRecordsLoaded: () => {},
+            objectNamePlural: CoreObjectNamePlural.Company,
+            objectNameSingular: CoreObjectNameSingular.Company,
+            objectMetadataItem: companyObjectMetadataItem,
+            recordIndexId: instanceId,
+          }}
         >
-          <RecordTableComponentInstanceContext.Provider
-            value={{ instanceId: instanceId, onColumnsChange: () => {} }}
+          <ObjectFilterDropdownComponentInstanceContext.Provider
+            value={{ instanceId }}
           >
-            <ViewComponentInstanceContext.Provider value={{ instanceId }}>
-              <ObjectFilterDropdownScope filterScopeId={instanceId}>
-                <Story />
-              </ObjectFilterDropdownScope>
-            </ViewComponentInstanceContext.Provider>
-          </RecordTableComponentInstanceContext.Provider>
-        </ObjectFilterDropdownComponentInstanceContext.Provider>
+            <RecordTableComponentInstanceContext.Provider
+              value={{ instanceId: instanceId, onColumnsChange: () => {} }}
+            >
+              <ViewComponentInstanceContext.Provider value={{ instanceId }}>
+                <ObjectFilterDropdownScope filterScopeId={instanceId}>
+                  <Story />
+                </ObjectFilterDropdownScope>
+              </ViewComponentInstanceContext.Provider>
+            </RecordTableComponentInstanceContext.Provider>
+          </ObjectFilterDropdownComponentInstanceContext.Provider>
+        </RecordIndexContextProvider>
       );
     },
     ObjectMetadataItemsDecorator,

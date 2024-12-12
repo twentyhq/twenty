@@ -1,15 +1,14 @@
 import { IconPlus } from 'twenty-ui';
 
 import { useObjectLabel } from '@/object-metadata/hooks/useObjectLabel';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
 import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
-import { useContext } from 'react';
 
 export const RecordTableEmptyStateNoRecordFoundForFilter = () => {
-  const { createNewTableRecord } = useCreateNewTableRecord();
+  const { recordTableId, objectMetadataItem } = useRecordTableContextOrThrow();
 
-  const { objectMetadataItem } = useContext(RecordTableContext);
+  const { createNewTableRecord } = useCreateNewTableRecord(recordTableId);
 
   const handleButtonClick = () => {
     createNewTableRecord();

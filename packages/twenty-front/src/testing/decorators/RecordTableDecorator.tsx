@@ -2,7 +2,8 @@ import { Decorator } from '@storybook/react';
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableBodyContextProvider } from '@/object-record/record-table/contexts/RecordTableBodyContext';
+import { RecordTableContextProvider } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isDefined } from 'twenty-ui';
 
 export const RecordTableDecorator: Decorator = (Story) => {
@@ -17,23 +18,28 @@ export const RecordTableDecorator: Decorator = (Story) => {
   }
 
   return (
-    <RecordTableContext.Provider
+    <RecordTableContextProvider
       value={{
-        objectNameSingular: personObjectMetadataItem?.nameSingular,
+        objectNameSingular: personObjectMetadataItem.nameSingular,
         objectMetadataItem: personObjectMetadataItem,
-        onCellMouseEnter: () => {},
-        onCloseTableCell: () => {},
-        onOpenTableCell: () => {},
-        onActionMenuDropdownOpened: () => {},
-        onMoveFocus: () => {},
-        onMoveSoftFocusToCell: () => {},
-        onUpsertRecord: () => {},
         recordTableId: 'persons',
         viewBarId: 'view-bar',
         visibleTableColumns: [],
       }}
     >
-      <Story />
-    </RecordTableContext.Provider>
+      <RecordTableBodyContextProvider
+        value={{
+          onCellMouseEnter: () => {},
+          onCloseTableCell: () => {},
+          onOpenTableCell: () => {},
+          onActionMenuDropdownOpened: () => {},
+          onMoveFocus: () => {},
+          onMoveSoftFocusToCell: () => {},
+          onUpsertRecord: () => {},
+        }}
+      >
+        <Story />
+      </RecordTableBodyContextProvider>
+    </RecordTableContextProvider>
   );
 };

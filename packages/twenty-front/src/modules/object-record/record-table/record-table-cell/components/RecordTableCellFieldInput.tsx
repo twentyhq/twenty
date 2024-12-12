@@ -4,17 +4,18 @@ import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useRecoilCallback } from 'recoil';
 
 export const RecordTableCellFieldInput = () => {
-  const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
-    useContext(RecordTableContext);
-
   const { recordId, fieldDefinition } = useContext(FieldContext);
+
+  const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
+    useRecordTableBodyContextOrThrow();
+
   const isFieldReadOnly = useIsFieldValueReadOnly();
 
   const handleEnter: FieldInputEvent = (persistField) => {
