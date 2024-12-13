@@ -55,7 +55,7 @@ export const useDeleteSingleRecordAction: SingleRecordActionHookWithObjectMetada
     const shouldBeRegistered = !isRemoteObject;
 
     const onClick = () => {
-      if (isRemoteObject) {
+      if (!shouldBeRegistered) {
         return;
       }
 

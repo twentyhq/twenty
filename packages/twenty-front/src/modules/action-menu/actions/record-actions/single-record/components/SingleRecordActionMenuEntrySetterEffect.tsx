@@ -66,25 +66,16 @@ export const SingleRecordActionMenuEntrySetterEffect = ({
     .filter(isDefined);
 
   useEffect(() => {
-    if (!isDefined(actionConfig)) {
-      return;
-    }
-
     for (const action of actionMenuEntries) {
       addActionMenuEntry(action);
     }
 
     return () => {
-      for (const action of Object.values(actionConfig)) {
+      for (const action of actionMenuEntries) {
         removeActionMenuEntry(action.key);
       }
     };
-  }, [
-    actionConfig,
-    actionMenuEntries,
-    addActionMenuEntry,
-    removeActionMenuEntry,
-  ]);
+  }, [actionMenuEntries, addActionMenuEntry, removeActionMenuEntry]);
 
   return null;
 };
