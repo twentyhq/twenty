@@ -9,7 +9,6 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { isDefined } from '~/utils/isDefined';
 
 export type SingleRecordSelectProps = {
-  disableBackgroundBlur?: boolean;
   width?: number;
 } & SingleRecordSelectMenuItemsWithSearchProps;
 

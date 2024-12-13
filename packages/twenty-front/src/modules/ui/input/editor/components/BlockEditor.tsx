@@ -78,6 +78,8 @@ const StyledEditor = styled.div`
     box-shadow:
       0px 0px 4px rgba(0, 0, 0, 0.08),
       0px 2px 4px rgba(0, 0, 0, 0.04);
+    background: ${({ theme }) => theme.background.transparent.primary};
+    backdrop-filter: blur(20px);
     border: 1px solid ${({ theme }) => theme.border.color.light};
   }
   & .bn-side-menu .mantine-UnstyledButton-root:not(.mantine-Menu-item) svg {

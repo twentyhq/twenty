@@ -40,7 +40,6 @@ export const SearchVariablesDropdownWorkflowStepItems = ({
       <DropdownMenuHeader StartIcon={IconX} onClick={closeDropdown}>
         <OverflowingTextWithTooltip text={'Select Step'} />
       </DropdownMenuHeader>
-      <DropdownMenuSeparator />
       <DropdownMenuSearchInput
         autoFocus
         value={searchInputValue}

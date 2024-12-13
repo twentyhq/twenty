@@ -19,6 +19,7 @@ const StyledDropdownVariableButtonContainer = styled(
     transparentBackground
       ? 'transparent'
       : theme.background.transparent.lighter};
+
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: ${({ theme }) => theme.spacing(2)};
   :hover {
@@ -123,7 +124,7 @@ export const SearchVariablesDropdown = ({
         )
       }
       dropdownPlacement="bottom-end"
-      dropdownOffset={{ x: 0, y: 4 }}
+      dropdownOffset={{ x: 2, y: 4 }}
     />
   );
 };

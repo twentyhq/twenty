@@ -2,7 +2,6 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '@/ui/layout/dropdown/hooks/useInternalHotkeyScopeManagement';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
-import { dropdownHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownHeightComponentStateV2';
 import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
@@ -22,7 +21,7 @@ import { Keys } from 'react-hotkeys-hook';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
-const StyledDropdownContentContainer = styled.div`
+export const StyledDropdownContentContainer = styled.div`
   display: flex;
   z-index: 30;
 `;
@@ -70,11 +69,6 @@ export const DropdownContent = ({
     dropdownId,
   );
 
-  const dropdownHeight = useRecoilComponentValueV2(
-    dropdownHeightComponentStateV2,
-    dropdownId,
-  );
-
   useEffect(() => {
     setDropdownPlacement(dropdownPlacement);
   }, [dropdownPlacement, setDropdownPlacement]);
@@ -117,7 +111,6 @@ export const DropdownContent = ({
   const dropdownMenuStyles = {
     ...floatingStyles,
     maxHeight: dropdownMaxHeight,
-    // height: dropdownHeight,
   };
 
   return (

@@ -75,7 +75,6 @@ export const RelationPicker = ({
         recordPickerInstanceId={recordPickerInstanceId}
         selectedRecordIds={selectedRecordId ? [selectedRecordId] : []}
         excludedRecordIds={excludedRecordIds}
-        disableBackgroundBlur
       />
     </>
   );
