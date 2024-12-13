@@ -1,5 +1,6 @@
 import { FormAddressFieldInput } from '@/object-record/record-field/form-types/components/FormAddressFieldInput';
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
+import { FormEmailsFieldInput } from '@/object-record/record-field/form-types/components/FormEmailsFieldInput';
 import { FormFullNameFieldInput } from '@/object-record/record-field/form-types/components/FormFullNameFieldInput';
 import { FormLinksFieldInput } from '@/object-record/record-field/form-types/components/FormLinksFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
@@ -9,12 +10,14 @@ import { VariablePickerComponent } from '@/object-record/record-field/form-types
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
   FieldAddressValue,
+  FieldEmailsValue,
   FieldFullNameValue,
   FieldLinksValue,
   FieldMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
+import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
@@ -85,6 +88,13 @@ export const FormFieldInput = ({
     <FormLinksFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldLinksValue | undefined}
+      onPersist={onPersist}
+      VariablePicker={VariablePicker}
+    />
+  ) : isFieldEmails(field) ? (
+    <FormEmailsFieldInput
+      label={field.label}
+      defaultValue={defaultValue as FieldEmailsValue | undefined}
       onPersist={onPersist}
       VariablePicker={VariablePicker}
     />
