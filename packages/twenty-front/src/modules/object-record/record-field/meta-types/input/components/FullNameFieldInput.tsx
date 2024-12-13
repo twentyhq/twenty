@@ -1,7 +1,6 @@
 import { useFullNameField } from '@/object-record/record-field/meta-types/hooks/useFullNameField';
 import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
 import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
-import { FieldInputOverlay } from '@/ui/field/input/components/FieldInputOverlay';
 
 import { FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/meta-types/input/constants/FirstNamePlaceholder';
 import { LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/meta-types/input/constants/LastNamePlaceholder';
@@ -79,25 +78,23 @@ export const FullNameFieldInput = ({
   };
 
   return (
-    <FieldInputOverlay>
-      <DoubleTextInput
-        firstValue={draftValue?.firstName ?? ''}
-        secondValue={draftValue?.lastName ?? ''}
-        firstValuePlaceholder={
-          FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS
-        }
-        secondValuePlaceholder={
-          LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS
-        }
-        onClickOutside={handleClickOutside}
-        onEnter={handleEnter}
-        onEscape={handleEscape}
-        onShiftTab={handleShiftTab}
-        onTab={handleTab}
-        onPaste={handlePaste}
-        hotkeyScope={hotkeyScope}
-        onChange={handleChange}
-      />
-    </FieldInputOverlay>
+    <DoubleTextInput
+      firstValue={draftValue?.firstName ?? ''}
+      secondValue={draftValue?.lastName ?? ''}
+      firstValuePlaceholder={
+        FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS
+      }
+      secondValuePlaceholder={
+        LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS
+      }
+      onClickOutside={handleClickOutside}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
+      onShiftTab={handleShiftTab}
+      onTab={handleTab}
+      onPaste={handlePaste}
+      hotkeyScope={hotkeyScope}
+      onChange={handleChange}
+    />
   );
 };

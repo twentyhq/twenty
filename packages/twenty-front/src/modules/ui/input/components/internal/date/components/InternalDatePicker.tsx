@@ -5,7 +5,6 @@ import { Key } from 'ts-key-enum';
 import {
   IconCalendarX,
   MenuItemLeftContent,
-  OVERLAY_BACKGROUND,
   StyledHoverableMenuItemBase,
 } from 'twenty-ui';
 
@@ -122,8 +121,6 @@ const StyledContainer = styled.div<{ calendarDisabled?: boolean }>`
 
   & .react-datepicker__month-dropdown,
   & .react-datepicker__year-dropdown {
-    border: ${({ theme }) => theme.border.color.light};
-    ${OVERLAY_BACKGROUND}
     overflow-y: scroll;
     top: ${({ theme }) => theme.spacing(2)};
   }

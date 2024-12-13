@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { OVERLAY_BACKGROUND } from 'twenty-ui';
 
 const StyledFieldTextAreaOverlay = styled.div`
   align-items: center;
@@ -10,7 +9,6 @@ const StyledFieldTextAreaOverlay = styled.div`
   position: absolute;
   top: 0;
   width: 100%;
-  ${OVERLAY_BACKGROUND}
 `;
 
 export const FieldTextAreaOverlay = StyledFieldTextAreaOverlay;

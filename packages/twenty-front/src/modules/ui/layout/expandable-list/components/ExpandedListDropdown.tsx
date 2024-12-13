@@ -16,8 +16,6 @@ type ExpandedListDropdownProps = {
 const StyledExpandedListContainer = styled.div<{
   withBorder?: boolean;
 }>`
-  backdrop-filter: ${({ theme }) => theme.blur.strong};
-  background-color: ${({ theme }) => theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: ${({ theme }) =>
     `0px 2px 4px ${theme.boxShadow.light}, 2px 4px 16px ${theme.boxShadow.strong}`};

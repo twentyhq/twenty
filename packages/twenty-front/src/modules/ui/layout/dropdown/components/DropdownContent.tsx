@@ -3,6 +3,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '@/ui/layout/dropdown/hooks/useInternalHotkeyScopeManagement';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
+import { StyledOverlayContainer } from '@/ui/layout/overlay/components/StyledOverlayContainer';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -32,7 +33,6 @@ export type DropdownContentProps = {
     scope: string;
   };
   onHotkeyTriggered?: () => void;
-  disableBlur?: boolean;
   dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownComponents: React.ReactNode;
   parentDropdownId?: string;
@@ -49,7 +49,6 @@ export const DropdownContent = ({
   floatingStyles,
   hotkey,
   onHotkeyTriggered,
-  disableBlur,
   dropdownMenuWidth,
   dropdownComponents,
   avoidPortal,
@@ -114,28 +113,32 @@ export const DropdownContent = ({
         <HotkeyEffect hotkey={hotkey} onHotkeyTriggered={onHotkeyTriggered} />
       )}
       {avoidPortal ? (
-        <DropdownMenu
-          className={className}
-          disableBlur={disableBlur}
-          width={dropdownMenuWidth ?? dropdownWidth}
-          data-select-disable
+        <StyledOverlayContainer
           ref={floatingUiRefs.setFloating}
           style={dropdownMenuStyles}
         >
-          {dropdownComponents}
-        </DropdownMenu>
-      ) : (
-        <FloatingPortal>
           <DropdownMenu
             className={className}
-            disableBlur={disableBlur}
             width={dropdownMenuWidth ?? dropdownWidth}
             data-select-disable
-            ref={floatingUiRefs.setFloating}
-            style={dropdownMenuStyles}
           >
             {dropdownComponents}
           </DropdownMenu>
+        </StyledOverlayContainer>
+      ) : (
+        <FloatingPortal>
+          <StyledOverlayContainer
+            ref={floatingUiRefs.setFloating}
+            style={dropdownMenuStyles}
+          >
+            <DropdownMenu
+              className={className}
+              width={dropdownMenuWidth ?? dropdownWidth}
+              data-select-disable
+            >
+              {dropdownComponents}
+            </DropdownMenu>
+          </StyledOverlayContainer>
         </FloatingPortal>
       )}
     </>

@@ -111,7 +111,7 @@ export const SettingsServerlessFunctionTabEnvironmentVariableTableRow = ({
             />
           }
           dropdownComponents={
-            <DropdownMenu disableBlur disableBorder width="auto">
+            <DropdownMenu disableBorder width="auto">
               <DropdownMenuItemsContainer>
                 <MenuItem
                   text={'Edit'}

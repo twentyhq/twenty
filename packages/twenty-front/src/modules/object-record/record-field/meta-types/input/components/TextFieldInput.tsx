@@ -1,4 +1,3 @@
-import { FieldTextAreaOverlay } from '@/ui/field/input/components/FieldTextAreaOverlay';
 import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 
 import { usePersistField } from '../../../hooks/usePersistField';
@@ -57,19 +56,17 @@ export const TextFieldInput = ({
   };
 
   return (
-    <FieldTextAreaOverlay>
-      <TextAreaInput
-        placeholder={fieldDefinition.metadata.placeHolder}
-        autoFocus
-        value={draftValue ?? ''}
-        onClickOutside={handleClickOutside}
-        onEnter={handleEnter}
-        onEscape={handleEscape}
-        onShiftTab={handleShiftTab}
-        onTab={handleTab}
-        hotkeyScope={hotkeyScope}
-        onChange={handleChange}
-      />
-    </FieldTextAreaOverlay>
+    <TextAreaInput
+      placeholder={fieldDefinition.metadata.placeHolder}
+      autoFocus
+      value={draftValue ?? ''}
+      onClickOutside={handleClickOutside}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
+      onShiftTab={handleShiftTab}
+      onTab={handleTab}
+      hotkeyScope={hotkeyScope}
+      onChange={handleChange}
+    />
   );
 };

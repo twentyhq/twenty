@@ -1,5 +1,5 @@
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
+import { SearchVariablesDropdown } from '@/workflow/search-variables/components/SearchVariablesDropdown';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -43,15 +43,10 @@ export const WorkflowVariablePicker: VariablePickerComponent = ({
   onVariableSelect,
 }) => {
   return (
-    <StyledSearchVariablesDropdownContainer
-      multiline={multiline}
-      readonly={disabled}
-    >
-      <SearchVariablesDropdown
-        inputId={inputId}
-        onVariableSelect={onVariableSelect}
-        disabled={disabled}
-      />
-    </StyledSearchVariablesDropdownContainer>
+    <SearchVariablesDropdown
+      inputId={inputId}
+      onVariableSelect={onVariableSelect}
+      disabled={disabled}
+    />
   );
 };

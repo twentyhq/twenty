@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
@@ -17,12 +16,6 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { MenuItemMultiSelectTag } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-
-const StyledRelationPickerContainer = styled.div`
-  left: -1px;
-  position: absolute;
-  top: -1px;
-`;
 
 type MultiSelectFieldInputProps = {
   onCancel?: () => void;
@@ -107,36 +100,34 @@ export const MultiSelectFieldInput = ({
         }
       }}
     >
-      <StyledRelationPickerContainer ref={containerRef}>
-        <DropdownMenu data-select-disable>
-          <DropdownMenuSearchInput
-            value={searchFilter}
-            onChange={(event) =>
-              setSearchFilter(
-                turnIntoEmptyStringIfWhitespacesOnly(event.currentTarget.value),
-              )
-            }
-            autoFocus
-          />
-          <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer hasMaxHeight>
-            {filteredOptionsInDropDown.map((option) => {
-              return (
-                <MenuItemMultiSelectTag
-                  key={option.value}
-                  selected={fieldValues?.includes(option.value) || false}
-                  text={option.label}
-                  color={option.color}
-                  onClick={() =>
-                    persistField(formatNewSelectedOptions(option.value))
-                  }
-                  isKeySelected={selectedItemId === option.value}
-                />
-              );
-            })}
-          </DropdownMenuItemsContainer>
-        </DropdownMenu>
-      </StyledRelationPickerContainer>
+      <DropdownMenu data-select-disable>
+        <DropdownMenuSearchInput
+          value={searchFilter}
+          onChange={(event) =>
+            setSearchFilter(
+              turnIntoEmptyStringIfWhitespacesOnly(event.currentTarget.value),
+            )
+          }
+          autoFocus
+        />
+        <DropdownMenuSeparator />
+        <DropdownMenuItemsContainer hasMaxHeight>
+          {filteredOptionsInDropDown.map((option) => {
+            return (
+              <MenuItemMultiSelectTag
+                key={option.value}
+                selected={fieldValues?.includes(option.value) || false}
+                text={option.label}
+                color={option.color}
+                onClick={() =>
+                  persistField(formatNewSelectedOptions(option.value))
+                }
+                isKeySelected={selectedItemId === option.value}
+              />
+            );
+          })}
+        </DropdownMenuItemsContainer>
+      </DropdownMenu>
     </SelectableList>
   );
 };

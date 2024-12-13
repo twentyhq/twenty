@@ -81,11 +81,8 @@ const StyledBoardCard = styled.div<{ selected: boolean }>`
 `;
 
 const StyledTextInput = styled(TextInput)`
-  backdrop-filter: blur(12px) saturate(200%) contrast(50%) brightness(130%);
-  background: ${({ theme }) => theme.background.primary};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  width: ${({ theme }) => theme.spacing(53)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
+  width: ${({ theme }) => theme.spacing(53)};
 `;
 
 const StyledBoardCardWrapper = styled.div`

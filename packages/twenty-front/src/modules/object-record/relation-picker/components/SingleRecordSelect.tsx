@@ -14,7 +14,6 @@ export type SingleRecordSelectProps = {
 } & SingleRecordSelectMenuItemsWithSearchProps;
 
 export const SingleRecordSelect = ({
-  disableBackgroundBlur = false,
   EmptyIcon,
   emptyLabel,
   excludedRecordIds,
@@ -45,12 +44,7 @@ export const SingleRecordSelect = ({
   });
 
   return (
-    <DropdownMenu
-      disableBlur={disableBackgroundBlur}
-      ref={containerRef}
-      width={width}
-      data-select-disable
-    >
+    <DropdownMenu ref={containerRef} width={width} data-select-disable>
       <SingleRecordSelectMenuItemsWithSearch
         {...{
           EmptyIcon,

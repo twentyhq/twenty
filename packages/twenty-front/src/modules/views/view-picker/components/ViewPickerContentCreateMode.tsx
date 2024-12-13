@@ -117,7 +117,6 @@ export const ViewPickerContentCreateMode = () => {
           <IconPicker
             onChange={onIconChange}
             selectedIconKey={selectedIcon}
-            disableBlur
             onClose={() => setHotkeyScope(ViewsHotkeyScope.ListDropdown)}
           />
           <TextInputV2
@@ -131,7 +130,6 @@ export const ViewPickerContentCreateMode = () => {
         </ViewPickerIconAndNameContainer>
         <ViewPickerSelectContainer>
           <Select
-            disableBlur
             label="View type"
             fullWidth
             value={viewPickerType}
@@ -154,7 +152,6 @@ export const ViewPickerContentCreateMode = () => {
           <>
             <ViewPickerSelectContainer>
               <Select
-                disableBlur
                 label="Stages"
                 fullWidth
                 value={viewPickerKanbanFieldMetadataId}
