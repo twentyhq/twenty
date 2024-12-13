@@ -1,3 +1,7 @@
+import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/SignInUpWithCredentials';
+import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/SignInUpWithGoogle';
+import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/SignInUpWithMicrosoft';
+import { SignInUpWithSSO } from '@/auth/sign-in-up/components/SignInUpWithSSO';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
@@ -6,10 +10,6 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 import { ActionLink, HorizontalSeparator } from 'twenty-ui';
-import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/SignInUpWithGoogle';
-import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/SignInUpWithMicrosoft';
-import { SignInUpWithSSO } from '@/auth/sign-in-up/components/SignInUpWithSSO';
-import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/SignInUpWithCredentials';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};

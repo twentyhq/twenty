@@ -27,7 +27,7 @@ export class ClientConfigResolver {
         magicLink: false,
         password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
         microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
-        sso: this.environmentService.get('AUTH_SSO_ENABLED'),
+        sso: [],
       },
       isSSOEnabled: this.environmentService.get('AUTH_SSO_ENABLED'),
       signInPrefilled: this.environmentService.get('SIGN_IN_PREFILLED'),

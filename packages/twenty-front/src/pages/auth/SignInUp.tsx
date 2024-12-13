@@ -15,7 +15,6 @@ import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/S
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useGetPublicWorkspaceDataBySubdomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataBySubdomain';
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
-import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useMemo } from 'react';
 import { AnimatedEaseIn } from 'twenty-ui';
@@ -24,7 +23,6 @@ import { isDefined } from '~/utils/isDefined';
 export const SignInUp = () => {
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
-  const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
   const { isOnAWorkspaceSubdomain } =
     useIsCurrentLocationOnAWorkspaceSubdomain();
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
@@ -56,7 +54,6 @@ export const SignInUp = () => {
 
     return <SignInUpGlobalScopeForm />;
   }, [
-    isDefaultDomain,
     isMultiWorkspaceEnabled,
     isOnAWorkspaceSubdomain,
     loading,
