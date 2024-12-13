@@ -1,6 +1,6 @@
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
 
-jest.useFakeTimers().setSystemTime(new Date('2024-10-12T00:00:00.000Z'));
+jest.useFakeTimers().setSystemTime(new Date('2024-10-01T00:00:00.000Z'));
 
 describe('getHighlightedDates', () => {
   it('should should return empty if range is undefined', () => {

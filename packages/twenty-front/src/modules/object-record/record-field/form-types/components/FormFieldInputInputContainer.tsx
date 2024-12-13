@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
-export const StyledFormFieldInputInputContainer = styled.div<{
+const StyledFormFieldInputInputContainer = styled.div<{
   hasRightElement: boolean;
   multiline?: boolean;
   readonly?: boolean;
@@ -29,3 +29,5 @@ export const StyledFormFieldInputInputContainer = styled.div<{
   overflow: ${({ multiline }) => (multiline ? 'auto' : 'hidden')};
   width: 100%;
 `;
+
+export const FormFieldInputInputContainer = StyledFormFieldInputInputContainer;

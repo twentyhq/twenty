@@ -2,19 +2,25 @@ import { mergeDefaultFunctionInputAndFunctionInput } from '../mergeDefaultFuncti
 
 describe('mergeDefaultFunctionInputAndFunctionInput', () => {
   it('should merge properly', () => {
-    const defaultFunctionInput = {
-      params: { a: null, b: null, c: { cc: null } },
+    const newInput = {
+      a: null,
+      b: null,
+      c: { cc: null },
+      d: null,
+      e: { ee: null },
     };
-    const functionInput = {
-      params: { a: 'a', c: 'c' },
-    };
+    const oldInput = { a: 'a', c: 'c', d: { da: null }, e: { ee: 'ee' } };
     const expectedResult = {
-      params: { a: 'a', b: null, c: { cc: null } },
+      a: 'a',
+      b: null,
+      c: { cc: null },
+      d: null,
+      e: { ee: 'ee' },
     };
     expect(
       mergeDefaultFunctionInputAndFunctionInput({
-        defaultFunctionInput,
-        functionInput,
+        newInput: newInput,
+        oldInput: oldInput,
       }),
     ).toEqual(expectedResult);
   });

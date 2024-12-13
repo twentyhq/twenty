@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export const StyledFormCompositeFieldInputContainer = styled.div`
+const StyledFormNestedFieldInputContainer = styled.div`
   display: flex;
   flex-direction: column;
   background: ${({ theme }) => theme.background.secondary};
@@ -9,3 +9,6 @@ export const StyledFormCompositeFieldInputContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
 `;
+
+export const FormNestedFieldInputContainer =
+  StyledFormNestedFieldInputContainer;
