@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { z } from 'zod';
 
 export const StyledOverlayContainer = styled.div`
   align-items: center;
@@ -13,7 +12,7 @@ export const StyledOverlayContainer = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
 
   background: ${({ theme }) => theme.background.transparent.primary};
-  border: 1px solid ${({ theme }) =>IP theme.border.color.medium};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
 
   overflow: hidden;
