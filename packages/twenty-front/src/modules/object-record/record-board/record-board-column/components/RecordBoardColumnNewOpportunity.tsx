@@ -4,18 +4,15 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
 import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useRecoilValue } from 'recoil';
 
 const StyledCompanyPickerContainer = styled.div`
   align-items: center;
   align-self: baseline;
-  background-color: ${({ theme }) => theme.background.primary};
-  border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme }) => theme.font.color.tertiary};
   cursor: pointer;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const RecordBoardColumnNewOpportunity = ({
@@ -36,7 +33,7 @@ export const RecordBoardColumnNewOpportunity = ({
   return (
     <>
       {newRecord.isCreating && newRecord.position === position && (
-        <StyledCompanyPickerContainer>
+        <OverlayContainer>
           <SingleRecordSelect
             onCancel={() => handleCreateSuccess(position, columnId, false)}
             onRecordSelected={(company) =>
@@ -46,7 +43,7 @@ export const RecordBoardColumnNewOpportunity = ({
             recordPickerInstanceId="relation-picker"
             selectedRecordIds={[]}
           />
-        </StyledCompanyPickerContainer>
+        </OverlayContainer>
       )}
     </>
   );

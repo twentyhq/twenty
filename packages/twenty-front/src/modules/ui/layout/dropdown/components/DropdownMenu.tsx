@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
 const StyledDropdownMenu = styled.div<{
-  disableBorder?: boolean;
   width?: `${string}px` | `${number}%` | 'auto' | number;
 }>`
   display: flex;
