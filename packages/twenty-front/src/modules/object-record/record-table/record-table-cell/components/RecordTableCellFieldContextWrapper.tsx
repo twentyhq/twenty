@@ -25,7 +25,7 @@ export const RecordTableCellFieldContextWrapper = ({
 
   const { columnDefinition } = useContext(RecordTableCellContext);
 
-  const { recordId, pathToShowPage } = useRecordTableRowContextOrThrow();
+  const { recordId } = useRecordTableRowContextOrThrow();
 
   const updateRecord = useContext(RecordUpdateContext);
 
