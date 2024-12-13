@@ -41,7 +41,7 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
     event.preventDefault(); // Prevent default link behavior
     
     try {
-      if(phoneNumber != undefined){
+      if(phoneNumber !== undefined){
         await navigator.clipboard.writeText(phoneNumber);
         enqueueSnackBar('Phone number copied to clipboard', {
           variant: SnackBarVariant.Success,
@@ -50,7 +50,11 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
         });
       }
     } catch (error) {
-      console.error('Failed to copy phone number:', error);
+      enqueueSnackBar('Error copying to clipboard', {
+        variant: SnackBarVariant.Error,
+        icon: <IconClipboard size={16} />,
+        duration: 2000
+      });
     }
   };
   const phones = useMemo(
@@ -99,7 +103,7 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
             label={
               parsedPhone ? parsedPhone.formatInternational() : invalidPhone
             }
-            onClick={(event) => handlePhoneClick(event,URI)}
+            onClick={(event) => handlePhoneClick(event,parsedPhone?.formatInternational())}
           />
         );
       })}
