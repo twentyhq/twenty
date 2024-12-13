@@ -122,7 +122,6 @@ const meta: Meta = {
                       <FieldContext.Provider
                         value={{
                           recordId: mockPerformance.recordId,
-                          basePathToShowPage: '/object-record/',
                           isLabelIdentifier: false,
                           fieldDefinition: {
                             ...mockPerformance.fieldDefinition,

@@ -50,9 +50,6 @@ export const useMockFieldContext = ({
           <FieldContext.Provider
             key={objectRecordId + fieldMetadataItem.id}
             value={{
-              basePathToShowPage: isLabelIdentifier
-                ? basePathToShowPage
-                : undefined,
               recordId: objectRecordId,
               recoilScopeId: objectRecordId + fieldMetadataItem.id,
               isLabelIdentifier,
