@@ -1,5 +1,5 @@
 export type ActionHookResult = {
   shouldBeRegistered: boolean;
   onClick: () => void;
-  ConfirmationModal?: React.ReactNode;
+  ConfirmationModal?: React.ReactElement;
 };
