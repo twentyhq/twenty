@@ -38,7 +38,6 @@ export const RecordBoardColumnNewOpportunity = ({
       {newRecord.isCreating && newRecord.position === position && (
         <StyledCompanyPickerContainer>
           <SingleRecordSelect
-            disableBackgroundBlur
             onCancel={() => handleCreateSuccess(position, columnId, false)}
             onRecordSelected={(company) =>
               company ? handleEntitySelect(position, company) : null
