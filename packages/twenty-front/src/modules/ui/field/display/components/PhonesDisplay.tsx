@@ -5,9 +5,15 @@ import { RoundedLink, THEME_COMMON } from 'twenty-ui';
 import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { IconClipboard } from '@tabler/icons-react';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
+
+
+
 
 type PhonesDisplayProps = {
   value?: FieldPhonesValue;
@@ -30,6 +36,23 @@ const StyledContainer = styled.div`
 `;
 
 export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
+  const { enqueueSnackBar } = useSnackBar();
+  const handlePhoneClick = async (event: React.MouseEvent, phoneNumber: string | undefined) => {
+    event.preventDefault(); // Prevent default link behavior
+    
+    try {
+      if(phoneNumber != undefined){
+        await navigator.clipboard.writeText(phoneNumber);
+        enqueueSnackBar('Phone number copied to clipboard', {
+          variant: SnackBarVariant.Success,
+          icon: <IconClipboard size={16} />,
+          duration: 2000
+        });
+      }
+    } catch (error) {
+      console.error('Failed to copy phone number:', error);
+    }
+  };
   const phones = useMemo(
     () =>
       [
@@ -76,6 +99,7 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
             label={
               parsedPhone ? parsedPhone.formatInternational() : invalidPhone
             }
+            onClick={(event) => handlePhoneClick(event,URI)}
           />
         );
       })}
