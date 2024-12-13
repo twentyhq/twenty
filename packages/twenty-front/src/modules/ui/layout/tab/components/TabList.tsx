@@ -55,9 +55,9 @@ export const TabList = ({
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
 
-  const initialActiveTabId = visibleTabs[0]?.id || '';
-
   const { activeTabId, setActiveTabId } = useTabList(tabListInstanceId);
+
+  const initialActiveTabId = activeTabId || visibleTabs[0]?.id || '';
 
   useEffect(() => {
     setActiveTabId(initialActiveTabId);
