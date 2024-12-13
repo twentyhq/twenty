@@ -1,7 +1,7 @@
 import { FormCountrySelectInput } from '@/object-record/record-field/form-types/components/FormCountrySelectInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/form-types/components/FormNestedFieldInputContainer';
-import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
+import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
@@ -39,7 +39,7 @@ export const FormAddressFieldInput = ({
     };
 
   return (
-    <StyledFormFieldInputContainer>
+    <FormFieldInputContainer>
       {label ? <InputLabel>{label}</InputLabel> : null}
       <FormNestedFieldInputContainer>
         <FormTextFieldInput
@@ -89,6 +89,6 @@ export const FormAddressFieldInput = ({
           VariablePicker={VariablePicker}
         />
       </FormNestedFieldInputContainer>
-    </StyledFormFieldInputContainer>
+    </FormFieldInputContainer>
   );
 };
