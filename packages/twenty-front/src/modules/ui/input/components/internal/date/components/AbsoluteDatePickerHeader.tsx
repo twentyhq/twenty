@@ -68,7 +68,7 @@ export const AbsoluteDatePickerHeader = ({
 
   return (
     <>
-      {hideInput !== true ? (
+      {!hideInput ? (
         <DateTimeInput
           date={date}
           isDateTimeInput={isDateTimeInput}
