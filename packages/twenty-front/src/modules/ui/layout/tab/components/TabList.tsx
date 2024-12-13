@@ -36,6 +36,10 @@ const StyledTabsContainer = styled.div`
   height: 40px;
   user-select: none;
   margin-bottom: -1px;
+  overflow-y: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const StyledContainer = styled.div`
