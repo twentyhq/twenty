@@ -15,16 +15,16 @@ type Story = StoryObj<typeof FormLinksFieldInput>;
 
 export const Default: Story = {
   args: {
-    label: 'Domaine Name',
+    label: 'Domain Name',
     defaultValue: {
       primaryLinkLabel: 'Google',
-      primaryLinkUrl: 'www.google.com',
+      primaryLinkUrl: 'https://www.google.com',
     },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Domaine Name');
+    await canvas.findByText('Domain Name');
     await canvas.findByText('Primary Link Label');
     await canvas.findByText('Google');
   },

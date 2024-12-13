@@ -8,7 +8,7 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 
 type FormLinksFieldInputProps = {
   label?: string;
-  defaultValue: FieldLinksValue | undefined;
+  defaultValue?: FieldLinksValue;
   onPersist: (value: FieldLinksValue) => void;
   VariablePicker?: VariablePickerComponent;
   readonly?: boolean;

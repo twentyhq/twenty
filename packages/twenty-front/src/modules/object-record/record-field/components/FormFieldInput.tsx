@@ -77,14 +77,14 @@ export const FormFieldInput = ({
   ) : isFieldAddress(field) ? (
     <FormAddressFieldInput
       label={field.label}
-      defaultValue={defaultValue as FieldAddressValue}
+      defaultValue={defaultValue as FieldAddressValue | undefined}
       onPersist={onPersist}
       VariablePicker={VariablePicker}
     />
   ) : isFieldLinks(field) ? (
     <FormLinksFieldInput
       label={field.label}
-      defaultValue={defaultValue as FieldLinksValue}
+      defaultValue={defaultValue as FieldLinksValue | undefined}
       onPersist={onPersist}
       VariablePicker={VariablePicker}
     />
