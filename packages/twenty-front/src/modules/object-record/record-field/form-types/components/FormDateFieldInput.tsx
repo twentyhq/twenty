@@ -54,7 +54,7 @@ type DraftValue =
   | {
       type: 'static';
       value: string | null;
-      editingMode: 'view' | 'edit';
+      mode: 'view' | 'edit';
     }
   | {
       type: 'variable';
@@ -87,7 +87,7 @@ export const FormDateFieldInput = ({
       : {
           type: 'static',
           value: defaultValue ?? null,
-          editingMode: 'view',
+          mode: 'view',
         },
   );
 
@@ -123,7 +123,7 @@ export const FormDateFieldInput = ({
   const handlePickerChange = (newDate: Nullable<Date>) => {
     setDraftValue({
       type: 'static',
-      editingMode: 'edit',
+      mode: 'edit',
       value: newDate?.toDateString() ?? null,
     });
 
@@ -146,7 +146,7 @@ export const FormDateFieldInput = ({
     setDraftValue({
       type: 'static',
       value: newDate?.toDateString() ?? null,
-      editingMode: 'view',
+      mode: 'view',
     });
 
     setTemporaryValue(newDate);
@@ -171,7 +171,7 @@ export const FormDateFieldInput = ({
     setDraftValue({
       type: 'static',
       value: newDate?.toDateString() ?? null,
-      editingMode: 'view',
+      mode: 'view',
     });
 
     setTemporaryValue(newDate);
@@ -193,7 +193,7 @@ export const FormDateFieldInput = ({
     setDraftValue({
       type: 'static',
       value: null,
-      editingMode: 'view',
+      mode: 'view',
     });
 
     setTemporaryValue(null);
@@ -207,7 +207,7 @@ export const FormDateFieldInput = ({
     setDraftValue({
       type: 'static',
       value: newDate?.toDateString() ?? null,
-      editingMode: 'view',
+      mode: 'view',
     });
 
     setTemporaryValue(newDate);
@@ -228,7 +228,7 @@ export const FormDateFieldInput = ({
   const handleInputFocus = () => {
     setDraftValue({
       type: 'static',
-      editingMode: 'edit',
+      mode: 'edit',
       value: draftValue.value,
     });
   };
@@ -270,7 +270,7 @@ export const FormDateFieldInput = ({
     setDraftValue({
       type: 'static',
       value: validatedDate.toDateString(),
-      editingMode: 'edit',
+      mode: 'edit',
     });
 
     setTemporaryValue(validatedDate);
@@ -301,7 +301,7 @@ export const FormDateFieldInput = ({
     setDraftValue({
       type: 'static',
       value: null,
-      editingMode: 'view',
+      mode: 'view',
     });
 
     setTemporaryValue(null);
@@ -329,7 +329,7 @@ export const FormDateFieldInput = ({
                 onKeyDown={handleInputKeydown}
               />
 
-              {draftValue.editingMode === 'edit' ? (
+              {draftValue.mode === 'edit' ? (
                 <StyledDateInputContainer>
                   <StyledDateInputAbsoluteContainer>
                     <DateInput
