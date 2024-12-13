@@ -1,5 +1,6 @@
 import { FavoriteFolderNavigationDrawerItemDropdown } from '@/favorites/components/FavoriteFolderNavigationDrawerItemDropdown';
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
+import { FavoritesDroppable } from '@/favorites/components/FavoritesDroppable';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useDeleteFavoriteFolder } from '@/favorites/hooks/useDeleteFavoriteFolder';
 import { useRenameFavoriteFolder } from '@/favorites/hooks/useRenameFavoriteFolder';
@@ -7,15 +8,14 @@ import { activeFavoriteFolderIdState } from '@/favorites/states/activeFavoriteFo
 import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { ProcessedFavorite } from '@/favorites/utils/sortFavorites';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
-import { DraggableListWithoutContext } from '@/ui/layout/draggable-list/components/DraggableListWithoutContext';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { DroppableList } from '@/ui/layout/droppable-list/components/DroppableList';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemsCollapsableContainer';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
+import { Droppable } from '@hello-pangea/dnd';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
@@ -138,9 +138,8 @@ export const CurrentWorkspaceMemberFavorites = ({
             hotkeyScope="favorites-folder-input"
           />
         ) : (
-          <DroppableList droppableId={`folder-header-${folder.folderId}`}>
+          <FavoritesDroppable droppableId={`folder-header-${folder.folderId}`}>
             <NavigationDrawerItem
-              key={folder.folderId}
               label={folder.folderName}
               Icon={isOpen ? IconFolderOpen : IconFolder}
               onClick={handleToggle}
@@ -148,14 +147,17 @@ export const CurrentWorkspaceMemberFavorites = ({
               className="navigation-drawer-item"
               active={isFavoriteFolderEditDropdownOpen}
             />
-          </DroppableList>
+          </FavoritesDroppable>
         )}
 
         {isOpen && (
-          <DraggableListWithoutContext
-            droppableId={`folder-${folder.folderId}`}
-            draggableItems={
-              <>
+          <Droppable droppableId={`folder-${folder.folderId}`}>
+            {(provided) => (
+              <div
+                ref={provided.innerRef}
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...provided.droppableProps}
+              >
                 {folder.favorites.map((favorite, index) => (
                   <DraggableItem
                     key={favorite.id}
@@ -164,7 +166,6 @@ export const CurrentWorkspaceMemberFavorites = ({
                     isInsideScrollableContainer
                     itemComponent={
                       <NavigationDrawerSubItem
-                        key={favorite.id}
                         label={favorite.labelIdentifier}
                         Icon={() => <FavoriteIcon favorite={favorite} />}
                         to={favorite.link}
@@ -186,9 +187,10 @@ export const CurrentWorkspaceMemberFavorites = ({
                     }
                   />
                 ))}
-              </>
-            }
-          />
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
         )}
       </NavigationDrawerItemsCollapsableContainer>
 

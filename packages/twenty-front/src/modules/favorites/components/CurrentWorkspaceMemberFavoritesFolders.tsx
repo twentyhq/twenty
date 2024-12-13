@@ -10,22 +10,29 @@ import {
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
+import { FavoritesDroppable } from '@/favorites/components/FavoritesDroppable';
 import { FavoriteFolders } from '@/favorites/components/FavoritesFolders';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
-import { FavoritesDragDropContext } from '@/favorites/contexts/FavoritesDragDropContext';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { useReorderFavorite } from '@/favorites/hooks/useReorderFavorite';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
-import { DraggableListWithoutContext } from '@/ui/layout/draggable-list/components/DraggableListWithoutContext';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import styled from '@emotion/styled';
+import { DragDropContext } from '@hello-pangea/dnd';
+
+const StyledEmptyContainer = styled.div`
+  height: 10px;
+  width: 100%;
+`;
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const currentPath = useLocation().pathname;
@@ -36,6 +43,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const { deleteFavorite } = useDeleteFavorite();
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
     useRecoilState(isFavoriteFolderCreatingState);
+  const { handleReorderFavorite } = useReorderFavorite();
 
   const isFavoriteFolderEnabled = useIsFeatureEnabled(
     'IS_FAVORITE_FOLDER_ENABLED',
@@ -93,17 +101,16 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
       </NavigationDrawerAnimatedCollapseWrapper>
 
       {isNavigationSectionOpen && (
-        <FavoritesDragDropContext>
+        <DragDropContext onDragEnd={handleReorderFavorite}>
           {isFavoriteFolderEnabled && (
             <FavoriteFolders
               isNavigationSectionOpen={isNavigationSectionOpen}
             />
           )}
 
-          {orphanFavorites.length > 0 && (
-            <DraggableListWithoutContext
-              droppableId="orphan-favorites"
-              draggableItems={orphanFavorites.map((favorite, index) => (
+          <FavoritesDroppable droppableId="orphan-favorites">
+            {orphanFavorites.length > 0 ? (
+              orphanFavorites.map((favorite, index) => (
                 <DraggableItem
                   key={favorite.id}
                   draggableId={favorite.id}
@@ -111,8 +118,6 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
                   isInsideScrollableContainer={true}
                   itemComponent={
                     <NavigationDrawerItem
-                      key={favorite.id}
-                      className="navigation-drawer-item"
                       label={favorite.labelIdentifier}
                       Icon={() => <FavoriteIcon favorite={favorite} />}
                       active={isLocationMatchingFavorite(
@@ -132,10 +137,12 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
                     />
                   }
                 />
-              ))}
-            />
-          )}
-        </FavoritesDragDropContext>
+              ))
+            ) : (
+              <StyledEmptyContainer />
+            )}
+          </FavoritesDroppable>
+        </DragDropContext>
       )}
     </NavigationDrawerSection>
   );
