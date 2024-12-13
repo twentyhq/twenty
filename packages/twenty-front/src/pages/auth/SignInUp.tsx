@@ -34,10 +34,6 @@ export const SignInUp = () => {
   const signInUpForm = useMemo(() => {
     if (loading) return null;
 
-    if (isDefaultDomain && isMultiWorkspaceEnabled) {
-      return <SignInUpGlobalScopeForm />;
-    }
-
     if (
       (!isMultiWorkspaceEnabled ||
         (isMultiWorkspaceEnabled && isOnAWorkspaceSubdomain)) &&
