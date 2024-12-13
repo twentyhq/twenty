@@ -1,8 +1,10 @@
 import { useSortedFavorites } from '@/favorites/hooks/useSortedFavorites';
+import { activeFavoriteFolderIdState } from '@/favorites/states/activeFavoriteFolderIdState';
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
+import { useSetRecoilState } from 'recoil';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 
 export const useReorderFavorite = () => {
@@ -11,13 +13,15 @@ export const useReorderFavorite = () => {
   const { updateOneRecord: updateOneFavorite } = useUpdateOneRecord({
     objectNameSingular: CoreObjectNameSingular.Favorite,
   });
+  const setActiveFavoriteFolderId = useSetRecoilState(
+    activeFavoriteFolderIdState,
+  );
 
   const handleReorderFavorite: OnDragEndResponder = (result) => {
     const { destination, source, draggableId } = result;
 
     if (!destination) return;
 
-    // If dropped in the same location, do nothing
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
@@ -28,7 +32,6 @@ export const useReorderFavorite = () => {
     const draggedFavorite = favorites.find((f) => f.id === draggableId);
     if (!draggedFavorite) return;
 
-    // When dropping on a folder header (folder is closed)
     if (destination.droppableId.startsWith('folder-header-')) {
       const targetFolderId = destination.droppableId.replace(
         'folder-header-',
@@ -52,10 +55,11 @@ export const useReorderFavorite = () => {
           position: newPosition,
         },
       });
+
+      setActiveFavoriteFolderId(targetFolderId);
       return;
     }
 
-    // When moving between different lists (different folders or orphan section)
     if (destination.droppableId !== source.droppableId) {
       const newFolderId =
         destination.droppableId === 'orphan-favorites'
@@ -66,7 +70,6 @@ export const useReorderFavorite = () => {
         (favorite) => favorite.favoriteFolderId === newFolderId,
       );
 
-      // Calculate position in new list
       let newPosition;
       if (destinationFavorites.length === 0) {
         newPosition = 0;
@@ -93,7 +96,6 @@ export const useReorderFavorite = () => {
       return;
     }
 
-    // When reordering within the same list
     const currentFolderId =
       source.droppableId === 'orphan-favorites'
         ? null

@@ -30,7 +30,7 @@ import styled from '@emotion/styled';
 import { DragDropContext } from '@hello-pangea/dnd';
 
 const StyledEmptyContainer = styled.div`
-  height: 10px;
+  height: ${({ theme }) => theme.spacing(2.5)};
   width: 100%;
 `;
 
