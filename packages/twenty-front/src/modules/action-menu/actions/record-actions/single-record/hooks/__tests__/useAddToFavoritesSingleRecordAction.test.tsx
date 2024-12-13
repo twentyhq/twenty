@@ -1,5 +1,6 @@
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { renderHook } from '@testing-library/react';
+import { act } from 'react';
 import {
   GetJestMetadataAndApolloMocksAndActionMenuWrapperProps,
   getJestMetadataAndApolloMocksAndActionMenuWrapper,
@@ -45,6 +46,14 @@ jest.mock('@/favorites/hooks/useFavorites', () => ({
         favoriteFolderId: undefined,
       },
     ],
+  }),
+}));
+
+const createFavoriteMock = jest.fn();
+
+jest.mock('@/favorites/hooks/useCreateFavorite', () => ({
+  useCreateFavorite: () => ({
+    createFavorite: createFavoriteMock,
   }),
 }));
 
@@ -112,5 +121,27 @@ describe('useAddToFavoritesSingleRecordAction', () => {
     );
 
     expect(result.current.shouldBeRegistered).toBe(false);
+  });
+
+  it('should call createFavorite on click', () => {
+    const { result } = renderHook(
+      () =>
+        useAddToFavoritesSingleRecordAction({
+          recordId: peopleMock[1].id,
+          objectMetadataItem: personMockObjectMetadataItem,
+        }),
+      {
+        wrapper: wrapperWithSelectedRecordNotAsFavorite,
+      },
+    );
+
+    act(() => {
+      result.current.onClick();
+    });
+
+    expect(createFavoriteMock).toHaveBeenCalledWith(
+      peopleMock[1],
+      personMockObjectMetadataItem.nameSingular,
+    );
   });
 });
