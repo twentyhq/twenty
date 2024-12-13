@@ -55,7 +55,7 @@ export class BaseGraphQLError extends GraphQLError {
     }
 
     if (extensions?.extensions) {
-      throw Error(
+      throw new Error(
         'Pass extensions directly as the third argument of the ApolloError constructor: `new ' +
           'ApolloError(message, code, {myExt: value})`, not `new ApolloError(message, code, ' +
           '{extensions: {myExt: value}})`',

@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 export const LINE_HEIGHT = 24;
 
-export const StyledFormFieldInputRowContainer = styled.div<{
+const StyledFormFieldInputRowContainer = styled.div<{
   multiline?: boolean;
 }>`
   display: flex;
@@ -21,3 +21,5 @@ export const StyledFormFieldInputRowContainer = styled.div<{
           height: 32px;
         `}
 `;
+
+export const FormFieldInputRowContainer = StyledFormFieldInputRowContainer;
