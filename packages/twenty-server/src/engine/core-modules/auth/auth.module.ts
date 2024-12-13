@@ -6,7 +6,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
-import { AuthExceptionHandlerService } from 'src/engine/core-modules/auth/auth-exception-handler.service';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
@@ -103,7 +102,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ResetPasswordService,
     SwitchWorkspaceService,
     TransientTokenService,
-    AuthExceptionHandlerService,
     ApiKeyService,
     OAuthService,
   ],

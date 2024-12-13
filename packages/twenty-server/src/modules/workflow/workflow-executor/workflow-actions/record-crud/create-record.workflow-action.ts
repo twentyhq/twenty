@@ -17,11 +17,9 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
       workflowActionInput.objectName,
     );
 
-    const objectRecord = await repository.create(
+    const objectRecord = await repository.save(
       workflowActionInput.objectRecord,
     );
-
-    await repository.save(objectRecord);
 
     return {
       result: objectRecord,

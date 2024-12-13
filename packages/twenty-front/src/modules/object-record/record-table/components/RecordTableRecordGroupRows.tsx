@@ -1,7 +1,10 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { RecordTablePendingRecordGroupRow } from '@/object-record/record-table/record-table-row/components/RecordTablePendingRecordGroupRow';
 import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
+import { RecordTableRecordGroupSectionAddNew } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew';
+import { RecordTableRecordGroupSectionLoadMore } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionLoadMore';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -30,24 +33,32 @@ export const RecordTableRecordGroupRows = () => {
     [allRecordIds],
   );
 
+  if (!isRecordGroupTableSectionToggled) {
+    return null;
+  }
+
   return (
-    isRecordGroupTableSectionToggled &&
-    recordIdsByGroup.map((recordId, rowIndexInGroup) => {
-      const rowIndex = rowIndexMap.get(recordId);
+    <>
+      {recordIdsByGroup.map((recordId, rowIndexInGroup) => {
+        const rowIndex = rowIndexMap.get(recordId);
 
-      if (!isDefined(rowIndex)) {
-        return null;
-      }
+        if (!isDefined(rowIndex)) {
+          return null;
+        }
 
-      return (
-        <RecordTableRow
-          key={recordId}
-          recordId={recordId}
-          rowIndexForFocus={rowIndex}
-          rowIndexForDrag={rowIndexInGroup}
-          isPendingRow={!isRecordGroupTableSectionToggled}
-        />
-      );
-    })
+        return (
+          <RecordTableRow
+            key={recordId}
+            recordId={recordId}
+            rowIndexForFocus={rowIndex}
+            rowIndexForDrag={rowIndexInGroup}
+            isPendingRow={!isRecordGroupTableSectionToggled}
+          />
+        );
+      })}
+      <RecordTableRecordGroupSectionLoadMore />
+      <RecordTablePendingRecordGroupRow />
+      <RecordTableRecordGroupSectionAddNew />
+    </>
   );
 };

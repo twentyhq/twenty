@@ -1,17 +1,19 @@
-import { useGetPublicWorkspaceDataBySubdomainQuery } from '~/generated/graphql';
-import { isDefined } from '~/utils/isDefined';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
-import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
+import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
+import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
+import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useGetPublicWorkspaceDataBySubdomainQuery } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const useGetPublicWorkspaceDataBySubdomain = () => {
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
   const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
-  const setAuthProviders = useSetRecoilState(authProvidersState);
+  const setWorkspaceAuthProviders = useSetRecoilState(
+    workspaceAuthProvidersState,
+  );
   const workspacePublicData = useRecoilValue(workspacePublicDataState);
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
   const setWorkspacePublicDataState = useSetRecoilState(
@@ -25,7 +27,9 @@ export const useGetPublicWorkspaceDataBySubdomain = () => {
       (isMultiWorkspaceEnabled && isDefaultDomain) ||
       isDefined(workspacePublicData),
     onCompleted: (data) => {
-      setAuthProviders(data.getPublicWorkspaceDataBySubdomain.authProviders);
+      setWorkspaceAuthProviders(
+        data.getPublicWorkspaceDataBySubdomain.authProviders,
+      );
       setWorkspacePublicDataState(data.getPublicWorkspaceDataBySubdomain);
     },
     onError: (error) => {

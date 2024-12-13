@@ -1,12 +1,11 @@
 import styled from '@emotion/styled';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableHeaderCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCell';
 import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn';
 import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
 import { RecordTableHeaderLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastColumn';
-import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 const StyledTableHead = styled.thead`
   cursor: pointer;
@@ -77,14 +76,8 @@ const StyledTableHead = styled.thead`
   }
 `;
 
-export const RecordTableHeader = ({
-  objectNameSingular,
-}: {
-  objectNameSingular: string;
-}) => {
-  const visibleTableColumns = useRecoilComponentValueV2(
-    visibleTableColumnsComponentSelector,
-  );
+export const RecordTableHeader = () => {
+  const { visibleTableColumns } = useRecordTableContextOrThrow();
 
   return (
     <StyledTableHead id="record-table-header" data-select-disable>
@@ -92,11 +85,7 @@ export const RecordTableHeader = ({
         <RecordTableHeaderDragDropColumn />
         <RecordTableHeaderCheckboxColumn />
         {visibleTableColumns.map((column) => (
-          <RecordTableHeaderCell
-            key={column.fieldMetadataId}
-            column={column}
-            objectNameSingular={objectNameSingular}
-          />
+          <RecordTableHeaderCell key={column.fieldMetadataId} column={column} />
         ))}
         <RecordTableHeaderLastColumn />
       </tr>
