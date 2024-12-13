@@ -116,11 +116,34 @@ export const triggerCreateRecordsOptimisticEffect = ({
               );
 
               if (recordToCreateReference && !recordAlreadyInCache) {
-                nextRootQueryCachedRecordEdges.unshift({
+                const edge = {
                   __typename: getEdgeTypename(objectMetadataItem.nameSingular),
                   node: recordToCreateReference,
                   cursor: '',
-                });
+                };
+
+                if (
+                  !isDefined(recordToCreate.position) ||
+                  recordToCreate.position === 'first'
+                ) {
+                  nextRootQueryCachedRecordEdges.unshift(edge);
+                } else if (recordToCreate.position === 'last') {
+                  nextRootQueryCachedRecordEdges.push(edge);
+                } else if (typeof recordToCreate.position === 'number') {
+                  const deducedIndex = Math.round(
+                    nextRootQueryCachedRecordEdges.length *
+                      recordToCreate.position,
+                  );
+                  const index = Math.max(
+                    0,
+                    Math.min(
+                      deducedIndex,
+                      nextRootQueryCachedRecordEdges.length,
+                    ),
+                  );
+
+                  nextRootQueryCachedRecordEdges.splice(index, 0, edge);
+                }
 
                 return true;
               }
