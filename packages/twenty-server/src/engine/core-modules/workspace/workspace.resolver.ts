@@ -28,8 +28,8 @@ import {
   PublicWorkspaceDataOutput,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
-import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/getAuthProvidersByWorkspace';
-import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspaceGraphqlApiExceptionHandler';
+import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
+import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,

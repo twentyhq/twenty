@@ -1,6 +1,5 @@
+import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-
-import { getAuthProvidersByWorkspace } from './getAuthProvidersByWorkspace';
 
 describe('getAuthProvidersByWorkspace', () => {
   const mockWorkspace = {
@@ -20,7 +19,14 @@ describe('getAuthProvidersByWorkspace', () => {
 
   it('should return correct auth providers for given workspace', () => {
     const result = getAuthProvidersByWorkspace({
-      ...mockWorkspace,
+      workspace: mockWorkspace,
+      systemEnabledProviders: {
+        google: true,
+        magicLink: false,
+        password: true,
+        microsoft: true,
+        sso: [],
+      },
     });
 
     expect(result).toEqual({
@@ -42,8 +48,14 @@ describe('getAuthProvidersByWorkspace', () => {
 
   it('should handle workspace with no SSO providers', () => {
     const result = getAuthProvidersByWorkspace({
-      ...mockWorkspace,
-      workspaceSSOIdentityProviders: [],
+      workspace: { ...mockWorkspace, workspaceSSOIdentityProviders: [] },
+      systemEnabledProviders: {
+        google: true,
+        magicLink: false,
+        password: true,
+        microsoft: true,
+        sso: [],
+      },
     });
 
     expect(result).toEqual({
@@ -57,8 +69,14 @@ describe('getAuthProvidersByWorkspace', () => {
 
   it('should disable Microsoft auth if isMicrosoftAuthEnabled is false', () => {
     const result = getAuthProvidersByWorkspace({
-      ...mockWorkspace,
-      isMicrosoftAuthEnabled: false,
+      workspace: { ...mockWorkspace, isMicrosoftAuthEnabled: false },
+      systemEnabledProviders: {
+        google: true,
+        magicLink: false,
+        password: true,
+        microsoft: true,
+        sso: [],
+      },
     });
 
     expect(result).toEqual({

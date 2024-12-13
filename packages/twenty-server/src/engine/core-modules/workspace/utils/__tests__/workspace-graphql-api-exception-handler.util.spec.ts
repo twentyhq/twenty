@@ -3,12 +3,11 @@ import {
   InternalServerError,
   NotFoundError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,
 } from 'src/engine/core-modules/workspace/workspace.exception';
-
-import { workspaceGraphqlApiExceptionHandler } from './workspaceGraphqlApiExceptionHandler';
 
 describe('workspaceGraphqlApiExceptionHandler', () => {
   it('should throw NotFoundError when WorkspaceExceptionCode is SUBDOMAIN_NOT_FOUND', () => {

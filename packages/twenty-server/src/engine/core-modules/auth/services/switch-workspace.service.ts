@@ -7,13 +7,13 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/getAuthProvidersByWorkspace';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class SwitchWorkspaceService {
