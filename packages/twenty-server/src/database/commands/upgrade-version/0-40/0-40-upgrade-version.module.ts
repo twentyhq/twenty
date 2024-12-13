@@ -12,7 +12,6 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
     TypeOrmModule.forFeature([Workspace], 'core'),
     WorkspaceSyncMetadataCommandsModule,
     RecordPositionBackfillModule,
-    WorkspaceSyncMetadataCommandsModule,
   ],
   providers: [UpgradeTo0_40Command, RecordPositionBackfillCommand],
 })

@@ -32,7 +32,9 @@ const commonFieldPropertiesToIgnore = [
 
 const fieldPropertiesToStringify = ['defaultValue'] as const;
 
-const shouldNotOverrideDefaultValue = (fieldMetadata: FieldMetadataEntity) => {
+const shouldNotOverrideDefaultValue = (
+  fieldMetadata: FieldMetadataEntity | ComputedPartialFieldMetadata,
+) => {
   return [
     FieldMetadataType.BOOLEAN,
     FieldMetadataType.SELECT,
@@ -97,7 +99,17 @@ export class WorkspaceFieldComparator {
     const standardFieldMetadataMap = transformMetadataForComparison(
       standardFieldMetadataCollection,
       {
-        shouldIgnoreProperty: (property) => {
+        shouldIgnoreProperty: (
+          property,
+          fieldMetadata: ComputedPartialFieldMetadata,
+        ) => {
+          if (
+            property === 'defaultValue' &&
+            shouldNotOverrideDefaultValue(fieldMetadata)
+          ) {
+            return true;
+          }
+
           if (commonFieldPropertiesToIgnore.includes(property)) {
             return true;
           }
