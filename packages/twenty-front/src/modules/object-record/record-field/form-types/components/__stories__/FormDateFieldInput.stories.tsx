@@ -332,3 +332,39 @@ export const SwitchesToStandaloneVariable: Story = {
     ]);
   },
 };
+
+export const ClickingOutsideDoesNotResetInputState: Story = {
+  args: {
+    label: 'Created At',
+    defaultValue: '2024-12-09T13:20:19.631Z',
+    onPersist: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const defaultValueAsDisplayString = parseDateToString({
+      date: new Date(args.defaultValue!),
+      isDateTimeInput: false,
+      userTimezone: undefined,
+    });
+
+    const canvas = within(canvasElement);
+
+    const input = await canvas.findByPlaceholderText('mm/dd/yyyy');
+    expect(input).toBeVisible();
+    expect(input).toHaveDisplayValue(defaultValueAsDisplayString);
+
+    await userEvent.type(input, '{Backspace}{Backspace}');
+
+    const datePicker = await canvas.findByRole('dialog');
+    expect(datePicker).toBeVisible();
+
+    await Promise.all([
+      userEvent.click(canvasElement),
+
+      waitForElementToBeRemoved(datePicker),
+    ]);
+
+    expect(args.onPersist).not.toHaveBeenCalled();
+
+    expect(input).toHaveDisplayValue(defaultValueAsDisplayString.slice(0, -2));
+  },
+};

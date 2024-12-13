@@ -142,51 +142,22 @@ export const FormDateFieldInput = ({
 
   const handlePickerEnter = () => {};
 
-  const handlePickerEscape = (newDate: Nullable<Date>) => {
+  const handlePickerEscape = () => {
+    // FIXME: Escape key is not handled properly by the underlying DateInput component. We need to solve that.
+
     setDraftValue({
       type: 'static',
-      value: newDate?.toDateString() ?? null,
+      value: draftValue.value,
       mode: 'view',
     });
-
-    setTemporaryValue(newDate);
-
-    setInputDateTime(
-      isDefined(newDate)
-        ? parseDateToString({
-            date: newDate,
-            isDateTimeInput: false,
-            userTimezone: timeZone,
-          })
-        : '',
-    );
-
-    persistDate(newDate);
   };
 
-  const handlePickerClickOutside = (
-    _event: MouseEvent | TouchEvent,
-    newDate: Nullable<Date>,
-  ) => {
+  const handlePickerClickOutside = () => {
     setDraftValue({
       type: 'static',
-      value: newDate?.toDateString() ?? null,
+      value: draftValue.value,
       mode: 'view',
     });
-
-    setTemporaryValue(newDate);
-
-    setInputDateTime(
-      isDefined(newDate)
-        ? parseDateToString({
-            date: newDate,
-            isDateTimeInput: false,
-            userTimezone: timeZone,
-          })
-        : '',
-    );
-
-    persistDate(newDate);
   };
 
   const handlePickerClear = () => {
@@ -204,6 +175,7 @@ export const FormDateFieldInput = ({
   };
 
   const handlePickerSubmit = (newDate: Nullable<Date>) => {
+    // 2
     setDraftValue({
       type: 'static',
       value: newDate?.toDateString() ?? null,
