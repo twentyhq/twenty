@@ -45,10 +45,9 @@ const StyledDateInput = styled.input<{ hasError?: boolean }>`
     `};
 `;
 
-// Inspired by the StyledInlineCellInput component.
 const StyledDateInputContainer = styled.div`
   position: relative;
-  z-index: 1000;
+  z-index: 1;
 `;
 
 type DraftValue =
