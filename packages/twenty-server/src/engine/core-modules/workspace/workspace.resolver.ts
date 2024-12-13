@@ -23,7 +23,10 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import { ActivateWorkspaceOutput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-output';
-import { PublicWorkspaceDataOutput } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
+import {
+  AuthProviders,
+  PublicWorkspaceDataOutput,
+} from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/getAuthProvidersByWorkspace';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspaceGraphqlApiExceptionHandler';
@@ -207,12 +210,23 @@ export class WorkspaceResolver {
       }
     }
 
+    const systemEnabledProviders: AuthProviders = {
+      google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
+      magicLink: false,
+      password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
+      microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+      sso: [],
+    };
+
     return {
       id: workspace.id,
       logo: workspaceLogoWithToken,
       displayName: workspace.displayName,
       subdomain: workspace.subdomain,
-      authProviders: getAuthProvidersByWorkspace(workspace),
+      authProviders: getAuthProvidersByWorkspace(
+        workspace,
+        systemEnabledProviders,
+      ),
     };
   }
 }
