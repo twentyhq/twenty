@@ -44,11 +44,6 @@ resource "kubernetes_deployment" "twentycrm_worker" {
           }
 
           env {
-            name  = "FRONT_BASE_URL"
-            value = var.twentycrm_app_hostname
-          }
-
-          env {
             name  = "PG_DATABASE_URL"
             value = "postgres://twenty:${var.twentycrm_pgdb_admin_password}@${kubernetes_service.twentycrm_db.metadata.0.name}.${kubernetes_namespace.twentycrm.metadata.0.name}.svc.cluster.local/default"
           }

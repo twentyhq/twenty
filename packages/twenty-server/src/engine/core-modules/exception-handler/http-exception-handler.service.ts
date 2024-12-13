@@ -6,11 +6,11 @@ import { Response } from 'express';
 import { ExceptionHandlerUser } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-user.interface';
 import { ExceptionHandlerWorkspace } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-workspace.interface';
 
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { CustomException } from 'src/utils/custom-exception';
 
 export const handleException = (
-  exception: AuthException,
+  exception: CustomException,
   exceptionHandlerService: ExceptionHandlerService,
   user?: ExceptionHandlerUser,
   workspace?: ExceptionHandlerWorkspace,
@@ -24,7 +24,7 @@ interface RequestAndParams {
 }
 
 @Injectable({ scope: Scope.REQUEST })
-export class AuthExceptionHandlerService {
+export class HttpExceptionHandlerService {
   constructor(
     private readonly exceptionHandlerService: ExceptionHandlerService,
     @Inject(REQUEST)
@@ -32,7 +32,7 @@ export class AuthExceptionHandlerService {
   ) {}
 
   handleError = (
-    exception: AuthException,
+    exception: CustomException,
     response: Response<any, Record<string, any>>,
     errorCode?: number,
     user?: ExceptionHandlerUser,
