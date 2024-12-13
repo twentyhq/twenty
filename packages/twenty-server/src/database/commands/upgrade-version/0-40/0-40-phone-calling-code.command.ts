@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import {
   ActiveWorkspacesCommandOptions,
@@ -14,7 +15,18 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
+import {
+  WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationTableAction,
+  WorkspaceMigrationTableActionType,
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
+import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { isDefined } from 'src/utils/is-defined';
 
 @Command({
   name: 'upgrade-0.40:phone-calling-code',
@@ -29,6 +41,9 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
+    private readonly workspaceMigrationService: WorkspaceMigrationService,
+    private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
+    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
   ) {
     super(workspaceRepository);
   }
@@ -41,151 +56,162 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
     this.logger.log(
       'Running command to add calling code and change country code with default one',
     );
+
     // Prerequisite : the field callingcode was creted in the codebase (PHONES type modification)
     // Note : SyncMetadata will fail since composite field modification is not handled
 
     // Migration to be applied, in this order :
     // ---------------------------------Workspace-------------------------------------------------------------
     // 1 - Add the calling code field in all the workspaces tables having the PHONES type
-    //      the column name should be `${singularName}PrimaryPhoneCallingCode`
-    //      the value should be what was previously in the primary country code
-    // 2 - update the primary country code to be one of the counties with this calling code: +33 => FR | +1 => US (if mulitple, select first one)
-    // 3 - [IMO, not necessary] if we think it's important, update all additioanl phones to add a country code following the same logic
+    //      the column name should be `${nameSingular}PrimaryPhoneCallingCode`
+    // 2 - calling code value should be what was previously in the primary country code
+    // 3 - update the primary country code to be one of the counties with this calling code: +33 => FR | +1 => US (if mulitple, select first one)
+    // Note: ask Felix if tit's ok for this breaking change TEXT to TEXT. At the same time, should we tranform countrycode en ENUM postgres & graphql ?
+    // 4 - [IMO, not necessary] if we think it's important, update all additioanl phones to add a country code following the same logic
+
+    // Note : other consequesnces to check : zapier @martin + REST api @martin
+    // Note : other consequesnces to check : timeline activities @coco
 
     // ---------------------------------FieldMetada-----------------------------------------------------------
     // 1 - Add the calling code prop in the field-metadata defaultvalue
-    // 2 - [IMO, not necessary : i believe it's always null -> to be checked] Manually add the country code prop in the field-metadata additionalPhones
+    // 1bis - cahnge country code prop in the field-metadata defaultvalue cf above +33 => FR
+    // Note: no additionalPhgones in the default value
 
     this.logger.log(`Part 1 - Workspace`);
 
-    this.logger.log(
-      `P1 Step 1 - let's find all the fieldsMetadata that have the PHONES type,
-      and extract the objectMetadataId`,
-    );
-    // 1 get all fields that have PHONES type from field-metadata
-    // get the objectmetadaid of this field
-
-    this.logger.log(
-      `step 2 - from objectmetadaid, let's find the "nameSingular" of this table`,
-    );
-
-    this.logger.log(`step 3 - get the table we want to update`);
-    // get await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
-    //   workspaceId,
-    //   'nameSingular',
-    // );
-
-    // migraiton de la default value
-
     // ------------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------
+    const workspaceIterator = 1;
 
     for (const workspaceId of workspaceIds) {
-      this.logger.log(`Running command for workspace ${workspaceId}`);
+      this.logger.log(
+        `Running command for workspace ${workspaceId} ${workspaceIterator}/${workspaceIds.length}`,
+      );
 
-      const phonesFieldMetadata = await this.fieldMetadataRepository.findOne({
+      this.logger.log(
+        `P1 Step 1 - let's find all the fieldsMetadata that have the PHONES type, and extract the objectMetadataId`,
+      );
+
+      const phonesFieldMetadata = await this.fieldMetadataRepository.find({
         where: {
           workspaceId,
           type: FieldMetadataType.PHONES,
         },
       });
 
-      this.logger.log(`phonesFieldMetadata ${phonesFieldMetadata?.id}`);
-
-      if (phonesFieldMetadata) {
-        const objectMetadataObj = await this.objectMetadataRepository.find({
-          where: {
-            id: phonesFieldMetadata.objectMetadataId,
-          },
-        })?.[0];
-
+      this.logger.log(`phonesFieldMetadata: ${phonesFieldMetadata?.length}`);
+      for (const phoneFieldMetadata of phonesFieldMetadata) {
         this.logger.log(
-          `phonesFieldMetadata ${objectMetadataObj?.nameSingular || 'not found'}`,
+          `before loop, phonesFieldMetadata: ${phoneFieldMetadata.name}`,
         );
       }
-      // try {
-      //   const repository =
-      //     await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
-      //       workspaceId,
-      //       'view',
-      //     );
+      for (const phoneFieldMetadata of phonesFieldMetadata) {
+        if (
+          isDefined(phoneFieldMetadata) &&
+          isDefined(phoneFieldMetadata.name)
+        ) {
+          const [objectMetadata] = await this.objectMetadataRepository.find({
+            where: {
+              id: phoneFieldMetadata?.objectMetadataId,
+            },
+          });
 
-      //   const viewGroupRepository =
-      //     await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewGroupWorkspaceEntity>(
-      //       workspaceId,
-      //       'viewGroup',
-      //     );
+          this.logger.log(
+            `P1 Step 1 - Let's find the "nameSingular" of this objectMetadata: ${objectMetadata.nameSingular || 'not found'}`,
+          );
 
-      //   const kanbanViews = await repository.find({
-      //     where: {
-      //       type: 'kanban',
-      //     },
-      //   });
+          if (!objectMetadata || !objectMetadata.nameSingular) break;
 
-      //   const kanbanFieldMetadataIds = kanbanViews.map(
-      //     (view) => view.kanbanFieldMetadataId,
-      //   );
+          this.logger.log(
+            `P1 Step 1 - Create migration for field ${phoneFieldMetadata.name}`,
+          );
 
-      //   const kanbanFieldMetadataItems =
-      //     await this.fieldMetadataRepository.find({
-      //       where: {
-      //         id: In(kanbanFieldMetadataIds),
-      //       },
-      //     });
+          await this.workspaceMigrationService.createCustomMigration(
+            generateMigrationName(
+              `create-${objectMetadata.nameSingular}PrimaryPhoneCallingCode-for-field-${phoneFieldMetadata.name}`,
+            ),
+            workspaceId,
+            [
+              {
+                name: computeObjectTargetTable(objectMetadata),
+                action: WorkspaceMigrationTableActionType.ALTER,
+                columns: this.workspaceMigrationFactory.createColumnActions(
+                  WorkspaceMigrationColumnActionType.CREATE,
+                  {
+                    id: v4(),
+                    type: FieldMetadataType.TEXT,
+                    name: `${phoneFieldMetadata.name}PrimaryPhoneCallingCode`,
+                    label: `${phoneFieldMetadata.name}PrimaryPhoneCallingCode`,
+                    objectMetadataId: objectMetadata.id,
+                    workspaceId: workspaceId,
+                    isNullable: true,
+                    defaultValue: "''",
+                  },
+                ),
+              } satisfies WorkspaceMigrationTableAction,
+            ],
+          );
+        }
+      }
 
-      //   for (const kanbanView of kanbanViews) {
-      //     const kanbanFieldMetadataItem = kanbanFieldMetadataItems.find(
-      //       (item) => item.id === kanbanView.kanbanFieldMetadataId,
-      //     );
+      this.logger.log(
+        `P1 Step1 - RUN migration to create callingCodes for ${workspaceId.slice(0, 5)}`,
+      );
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        workspaceId,
+      );
 
-      //     if (!kanbanFieldMetadataItem) {
-      //       this.logger.log(
-      //         chalk.red(
-      //           `Kanban field metadata with id ${kanbanView.kanbanFieldMetadataId} not found`,
-      //         ),
-      //       );
-      //       continue;
-      //     }
+      this.logger.log(
+        `P1 Step 2 - Migrations for callingCode creation must be done first because we now use twentyORMGlobalManager to update country codes`,
+      );
+      for (const phoneFieldMetadata of phonesFieldMetadata) {
+        this.logger.log(`P1 Step 2 - for ${phoneFieldMetadata.name}`);
+        if (
+          isDefined(phoneFieldMetadata) &&
+          isDefined(phoneFieldMetadata.name)
+        ) {
+          const [objectMetadata] = await this.objectMetadataRepository.find({
+            where: {
+              id: phoneFieldMetadata?.objectMetadataId,
+            },
+          });
 
-      //     for (const option of kanbanFieldMetadataItem.options) {
-      //       const viewGroup = await viewGroupRepository.findOne({
-      //         where: {
-      //           fieldMetadataId: kanbanFieldMetadataItem.id,
-      //           fieldValue: option.value,
-      //           viewId: kanbanView.id,
-      //         },
-      //       });
+          const repository =
+            await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+              workspaceId,
+              objectMetadata.nameSingular,
+            );
+          const records = await repository.find();
 
-      //       if (viewGroup) {
-      //         this.logger.log(
-      //           chalk.red(`View group with id ${option.value} already exists`),
-      //         );
-      //         continue;
-      //       }
+          await Promise.all(
+            records.map(async (record) => {
+              this.logger.log(
+                `
+                objectMetadata.nameSingular: ${objectMetadata.nameSingular} (objectMetadataId: ${objectMetadata.id}) - record.id: ${record.id} - phoneFieldMetadata.name: ${phoneFieldMetadata.name}`,
+              );
+              // this.logger.log(record[phoneFieldMetadata.name]);
+              this.logger.log(
+                record[phoneFieldMetadata.name]?.primaryPhoneCountryCode,
+              );
+              // this.logger.log(formatData(objectMetadata,record));
+              if (
+                record &&
+                record[phoneFieldMetadata.name] &&
+                record[phoneFieldMetadata.name].primaryPhoneCountryCode
+              ) {
+                const res = await repository.update(record.id, {
+                  [`${phoneFieldMetadata.name}PrimaryPhoneCallingCode`]:
+                    record[phoneFieldMetadata.name].primaryPhoneCountryCode,
+                });
 
-      //       await viewGroupRepository.save({
-      //         fieldMetadataId: kanbanFieldMetadataItem.id,
-      //         fieldValue: option.value,
-      //         isVisible: true,
-      //         viewId: kanbanView.id,
-      //         position: option.position,
-      //       });
-      //     }
-      //   }
-      // } catch (error) {
-      //   this.logger.log(
-      //     chalk.red(
-      //       `Running command on workspace ${workspaceId} failed with error: ${error}`,
-      //     ),
-      //   );
-      //   continue;
-      // } finally {
-      //   this.logger.log(
-      //     chalk.green(`Finished running command for workspace ${workspaceId}.`),
-      //   );
-      // }
-
-      this.logger.log(chalk.green(`Command completed!`));
+                this.logger.log(`after record updated !`);
+                console.log(res);
+              }
+            }),
+          );
+        }
+      }
     }
+    this.logger.log(chalk.green(`Command completed!`));
   }
 }

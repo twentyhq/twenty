@@ -31,13 +31,8 @@ export class UpgradeTo0_40Command extends ActiveWorkspacesCommandRunner {
     options: UpdateTo0_40CommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
-    await this.syncWorkspaceMetadataCommand.executeActiveWorkspacesCommand(
-      passedParam,
-      {
-        ...options,
-        force: true,
-      },
-      workspaceIds,
+    this.logger.log(
+      'Running command to upgrade to 0.40: must start with phone calling code otherwise SyncMetadata will fail',
     );
 
     await this.phoneCallingCodeCommand.executeActiveWorkspacesCommand(
@@ -45,5 +40,14 @@ export class UpgradeTo0_40Command extends ActiveWorkspacesCommandRunner {
       options,
       workspaceIds,
     );
+
+    // await this.syncWorkspaceMetadataCommand.executeActiveWorkspacesCommand(
+    //   passedParam,
+    //   {
+    //     ...options,
+    //     force: true,
+    //   },
+    //   workspaceIds,
+    // );
   }
 }

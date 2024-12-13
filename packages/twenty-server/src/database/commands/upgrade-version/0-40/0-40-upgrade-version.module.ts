@@ -7,6 +7,8 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SearchModule } from 'src/engine/metadata-modules/search/search.module';
+import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
+import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/workspace-sync-metadata-commands.module';
 
@@ -20,7 +22,12 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
     WorkspaceSyncMetadataCommandsModule,
     SearchModule,
     WorkspaceMigrationRunnerModule,
+    WorkspaceMigrationModule,
   ],
-  providers: [UpgradeTo0_40Command, PhoneCallingCodeCommand],
+  providers: [
+    UpgradeTo0_40Command,
+    PhoneCallingCodeCommand,
+    WorkspaceMigrationFactory,
+  ],
 })
 export class UpgradeTo0_40CommandModule {}
