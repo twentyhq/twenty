@@ -43,5 +43,6 @@ export type OutputSchema =
 export type StepOutputSchema = {
   id: string;
   name: string;
+  icon?: string;
   outputSchema: OutputSchema;
 };

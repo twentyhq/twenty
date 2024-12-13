@@ -19,13 +19,12 @@ import {
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useSetRecoilState } from 'recoil';
 import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
 import { isLinkOutputSchema } from '@/workflow/search-variables/utils/isLinkOutputSchema';
+import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/states/workflowDiagramTriggerNodeSelectionState';
 
 type SearchVariablesDropdownFieldItemsProps = {
   step: StepOutputSchema;
@@ -42,10 +41,12 @@ export const SearchVariablesDropdownFieldItems = ({
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [searchInputValue, setSearchInputValue] = useState('');
   const { getIcon } = useIcons();
-  const { openRightDrawer } = useRightDrawer();
   const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
   const { setActiveTabId } = useTabList(
     WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
+  );
+  const setWorkflowDiagramTriggerNodeSelection = useSetRecoilState(
+    workflowDiagramTriggerNodeSelectionState,
   );
 
   const getCurrentSubStep = (): OutputSchema => {
@@ -91,11 +92,11 @@ export const SearchVariablesDropdownFieldItems = ({
     const handleSelectLinkOutputSchema = (
       linkOutputSchema: LinkOutputSchema,
     ) => {
+      setWorkflowSelectedNode(step.id);
+      setWorkflowDiagramTriggerNodeSelection(step.id);
       if (isDefined(linkOutputSchema.link.tab)) {
         setActiveTabId(linkOutputSchema.link.tab);
       }
-      setWorkflowSelectedNode(step.id);
-      openRightDrawer(RightDrawerPages.WorkflowStepEdit);
     };
 
     if (isLinkOutputSchema(currentSubStep)) {
