@@ -4,6 +4,7 @@ import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifie
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -20,9 +21,11 @@ export const RecordTableCellFieldContextWrapper = ({
 }) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
 
+  const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
+
   const { columnDefinition } = useContext(RecordTableCellContext);
 
-  const { recordId, pathToShowPage } = useRecordTableRowContextOrThrow();
+  const { recordId } = useRecordTableRowContextOrThrow();
 
   const updateRecord = useContext(RecordUpdateContext);
 
@@ -44,7 +47,7 @@ export const RecordTableCellFieldContextWrapper = ({
         fieldDefinition: columnDefinition,
         useUpdateRecord: () => [updateRecord, {}],
         hotkeyScope: customHotkeyScope,
-        basePathToShowPage: pathToShowPage,
+        labelIdentifierLink: indexIdentifierUrl(recordId),
         isLabelIdentifier: isLabelIdentifierField({
           fieldMetadataItem: {
             id: columnDefinition.fieldMetadataId,
