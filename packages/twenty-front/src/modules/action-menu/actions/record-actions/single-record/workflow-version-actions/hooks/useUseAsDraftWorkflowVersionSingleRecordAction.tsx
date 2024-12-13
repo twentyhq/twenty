@@ -56,7 +56,7 @@ export const useUseAsDraftWorkflowVersionSingleRecordAction: SingleRecordActionH
           trigger: workflowVersion.trigger,
         }}
       />
-    ) : null;
+    ) : undefined;
 
     return {
       shouldBeRegistered,

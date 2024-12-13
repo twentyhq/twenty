@@ -1,9 +1,9 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
 import {
-    percentage,
-    sleep,
-    useExportFetchRecords,
+  percentage,
+  sleep,
+  useExportFetchRecords,
 } from '../useExportFetchRecords';
 
 import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
@@ -130,17 +130,15 @@ const mocks: MockedResponse[] = [
   },
 ];
 
-const WrapperWithResponse = getJestMetadataAndApolloMocksAndActionMenuWrapper(
-  {
-    apolloMocks: mocks,
-    componentInstanceId: 'recordIndexId',
-    contextStoreTargetedRecordsRule: {
-      mode: 'selection',
-      selectedRecordIds: [],
-    },
-    contextStoreCurrentObjectMetadataNameSingular: 'person',
+const WrapperWithResponse = getJestMetadataAndApolloMocksAndActionMenuWrapper({
+  apolloMocks: mocks,
+  componentInstanceId: 'recordIndexId',
+  contextStoreTargetedRecordsRule: {
+    mode: 'selection',
+    selectedRecordIds: [],
   },
-);
+  contextStoreCurrentObjectMetadataNameSingular: 'person',
+});
 
 const graphqlEmptyResponse = [
   {
