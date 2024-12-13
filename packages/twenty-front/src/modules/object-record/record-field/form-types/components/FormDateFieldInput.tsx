@@ -1,6 +1,6 @@
-import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
-import { StyledFormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputInputContainer';
-import { StyledFormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputRowContainer';
+import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
+import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { DateInput } from '@/ui/field/input/components/DateInput';
@@ -23,7 +23,7 @@ import {
 } from 'react';
 import { isDefined, Nullable, TEXT_INPUT_STYLE } from 'twenty-ui';
 
-const StyledInputContainer = styled(StyledFormFieldInputInputContainer)`
+const StyledInputContainer = styled(FormFieldInputInputContainer)`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 0px;
@@ -282,10 +282,10 @@ export const FormDateFieldInput = ({
   };
 
   return (
-    <StyledFormFieldInputContainer>
+    <FormFieldInputContainer>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
-      <StyledFormFieldInputRowContainer>
+      <FormFieldInputRowContainer>
         <StyledInputContainer
           ref={datePickerWrapperRef}
           hasRightElement={isDefined(VariablePicker)}
@@ -335,7 +335,7 @@ export const FormDateFieldInput = ({
             onVariableSelect={handleVariableTagInsert}
           />
         ) : null}
-      </StyledFormFieldInputRowContainer>
-    </StyledFormFieldInputContainer>
+      </FormFieldInputRowContainer>
+    </FormFieldInputContainer>
   );
 };
