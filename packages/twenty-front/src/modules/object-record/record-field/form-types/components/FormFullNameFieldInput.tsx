@@ -1,5 +1,5 @@
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { StyledFormCompositeFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormCompositeFieldInputContainer';
+import { FormNestedFieldInputContainer } from '@/object-record/record-field/form-types/components/FormNestedFieldInputContainer';
 import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/meta-types/input/constants/FirstNamePlaceholder';
@@ -39,7 +39,7 @@ export const FormFullNameFieldInput = ({
   return (
     <StyledFormFieldInputContainer>
       {label ? <InputLabel>{label}</InputLabel> : null}
-      <StyledFormCompositeFieldInputContainer>
+      <FormNestedFieldInputContainer>
         <FormTextFieldInput
           label="First Name"
           defaultValue={defaultValue?.firstName}
@@ -60,7 +60,7 @@ export const FormFullNameFieldInput = ({
           readonly={readonly}
           VariablePicker={VariablePicker}
         />
-      </StyledFormCompositeFieldInputContainer>
+      </FormNestedFieldInputContainer>
     </StyledFormFieldInputContainer>
   );
 };

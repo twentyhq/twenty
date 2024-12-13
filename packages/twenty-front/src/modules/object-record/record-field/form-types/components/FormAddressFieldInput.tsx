@@ -1,6 +1,6 @@
 import { FormCountrySelectInput } from '@/object-record/record-field/form-types/components/FormCountrySelectInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
-import { StyledFormCompositeFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormCompositeFieldInputContainer';
+import { FormNestedFieldInputContainer } from '@/object-record/record-field/form-types/components/FormNestedFieldInputContainer';
 import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
@@ -41,7 +41,7 @@ export const FormAddressFieldInput = ({
   return (
     <StyledFormFieldInputContainer>
       {label ? <InputLabel>{label}</InputLabel> : null}
-      <StyledFormCompositeFieldInputContainer>
+      <FormNestedFieldInputContainer>
         <FormTextFieldInput
           label="Address 1"
           defaultValue={defaultValue?.addressStreet1 ?? ''}
@@ -88,7 +88,7 @@ export const FormAddressFieldInput = ({
           readonly={readonly}
           VariablePicker={VariablePicker}
         />
-      </StyledFormCompositeFieldInputContainer>
+      </FormNestedFieldInputContainer>
     </StyledFormFieldInputContainer>
   );
 };

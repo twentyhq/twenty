@@ -5,21 +5,11 @@ import { InputLabel } from '@/ui/input/components/InputLabel';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
+import { FormNestedFieldInputContainer } from '@/object-record/record-field/form-types/components/FormNestedFieldInputContainer';
 
 const StyledContainer = styled.div`
   display: inline-flex;
   flex-direction: column;
-`;
-
-const StyledFormNestedFieldInputContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  position: relative;
 `;
 
 export const WorkflowEditActionFormServerlessFunctionFields = ({
@@ -55,14 +45,14 @@ export const WorkflowEditActionFormServerlessFunctionFields = ({
         return (
           <StyledContainer key={pathKey}>
             <InputLabel>{inputKey}</InputLabel>
-            <StyledFormNestedFieldInputContainer>
+            <FormNestedFieldInputContainer>
               {renderFields({
                 functionInput: inputValue,
                 path: currentPath,
                 VariablePicker,
                 onInputChange,
               })}
-            </StyledFormNestedFieldInputContainer>
+            </FormNestedFieldInputContainer>
           </StyledContainer>
         );
       } else {
