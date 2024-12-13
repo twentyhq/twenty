@@ -1,1 +1,2 @@
-export const TAB_LIST_COMPONENT_ID = 'serverless-function-code-step';
+export const WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID =
+  'workflow-serverless-function-tab-list-component-id';

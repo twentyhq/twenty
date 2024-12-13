@@ -15,7 +15,7 @@ import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { CodeEditor, IconCode, isDefined, IconPlayerPlay } from 'twenty-ui';
+import { CodeEditor, IconCode, IconPlayerPlay, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
 import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 import { TabList } from '@/ui/layout/tab/components/TabList';
@@ -32,6 +32,7 @@ import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctio
 import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
 import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { WorkflowEditActionFormServerlessFunctionFields } from '@/workflow/workflow-actions/components/WorkflowEditActionFormServerlessFunctionFields';
+import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -66,14 +67,14 @@ type ServerlessFunctionInputFormData = {
   [field: string]: string | ServerlessFunctionInputFormData;
 };
 
-const TAB_LIST_COMPONENT_ID = 'serverless-function-code-step';
-
 export const WorkflowEditActionFormServerlessFunction = ({
   action,
   actionOptions,
 }: WorkflowEditActionFormServerlessFunctionProps) => {
   const theme = useTheme();
-  const { activeTabId, setActiveTabId } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabId, setActiveTabId } = useTabList(
+    WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
+  );
   const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
@@ -161,7 +162,15 @@ export const WorkflowEditActionFormServerlessFunction = ({
         ...action,
         settings: {
           ...action.settings,
-          outputSchema: {},
+          outputSchema: {
+            link: {
+              isLeaf: true,
+              icon: 'IconVariable',
+              tab: 'test',
+              label: 'Generate Function Input',
+            },
+            _outputSchemaType: 'LINK',
+          },
           input: {
             ...action.settings.input,
             serverlessFunctionInput: newMergedInput,
@@ -254,7 +263,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
     !loading && (
       <StyledContainer>
         <StyledTabList
-          tabListInstanceId={TAB_LIST_COMPONENT_ID}
+          tabListInstanceId={WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID}
           tabs={tabs}
           behaveAsLinks={false}
         />

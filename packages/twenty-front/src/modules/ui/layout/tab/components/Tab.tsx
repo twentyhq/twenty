@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 import { IconComponent, Pill } from 'twenty-ui';
-import { EllipsisDisplay } from 'packages/twenty-front/src/modules/ui/field/display/components/EllipsisDisplay';
+import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 
 type TabProps = {
   id: string;
