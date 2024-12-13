@@ -1,10 +1,6 @@
-import { DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1 } from '@/action-menu/actions/record-actions/single-record/constants/DefaultSingleRecordActionsConfigV1';
-import { DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2 } from '@/action-menu/actions/record-actions/single-record/constants/DefaultSingleRecordActionsConfigV2';
-import { WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/single-record/workflow-actions/constants/WorkflowSingleRecordActionsConfig';
-import { WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/constants/WorkflowVersionsSingleRecordActionsConfig';
+import { getActionConfig } from '@/action-menu/actions/record-actions/single-record/utils/getActionConfig';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -20,15 +16,10 @@ export const SingleRecordActionMenuEntrySetterEffect = ({
     'IS_PAGE_HEADER_V2_ENABLED',
   );
 
-  const actionConfig =
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.Workflow
-      ? WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG
-      : objectMetadataItem.nameSingular ===
-          CoreObjectNameSingular.WorkflowVersion
-        ? WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG
-        : isPageHeaderV2Enabled
-          ? DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V2
-          : DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1;
+  const actionConfig = getActionConfig(
+    objectMetadataItem,
+    isPageHeaderV2Enabled,
+  );
 
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
 
