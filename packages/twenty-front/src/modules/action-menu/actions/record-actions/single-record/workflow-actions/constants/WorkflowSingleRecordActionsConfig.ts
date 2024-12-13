@@ -1,11 +1,11 @@
-import { useActivateWorkflowDraftWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useActivateWorkflowDraftWorkflowSingleRecordAction';
-import { useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction';
-import { useDeactivateWorkflowWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useDeactivateWorkflowWorkflowSingleRecordAction';
+import { useActivateDraftWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useActivateDraftWorkflowSingleRecordAction';
+import { useActivateLastPublishedVersionWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useActivateLastPublishedVersionWorkflowSingleRecordAction';
+import { useDeactivateWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useDeactivateWorkflowSingleRecordAction';
 import { useDiscardDraftWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useDiscardDraftWorkflowSingleRecordAction';
-import { useSeeWorkflowActiveVersionWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeWorkflowActiveVersionWorkflowSingleRecordAction';
-import { useSeeWorkflowRunsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeWorkflowRunsWorkflowSingleRecordAction';
-import { useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction';
-import { useTestWorkflowWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useTestWorkflowWorkflowSingleRecordAction';
+import { useSeeActiveVersionWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeActiveVersionWorkflowSingleRecordAction';
+import { useSeeRunsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeRunsWorkflowSingleRecordAction';
+import { useSeeVersionsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeVersionsWorkflowSingleRecordAction';
+import { useTestWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useTestWorkflowSingleRecordAction';
 import { SingleRecordActionHook } from '@/action-menu/actions/types/singleRecordActionHook';
 import {
   ActionMenuEntry,
@@ -35,7 +35,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconPower,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    actionHook: useActivateWorkflowDraftWorkflowSingleRecordAction,
+    actionHook: useActivateDraftWorkflowSingleRecordAction,
   },
   activateWorkflowLastPublishedVersionSingleRecord: {
     key: 'activate-workflow-last-published-version-single-record',
@@ -45,8 +45,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconPower,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    actionHook:
-      useActivateWorkflowLastPublishedVersionWorkflowSingleRecordAction,
+    actionHook: useActivateLastPublishedVersionWorkflowSingleRecordAction,
   },
   deactivateWorkflowSingleRecord: {
     key: 'deactivate-workflow-single-record',
@@ -56,7 +55,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconPlayerPause,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    actionHook: useDeactivateWorkflowWorkflowSingleRecordAction,
+    actionHook: useDeactivateWorkflowSingleRecordAction,
   },
   discardWorkflowDraftSingleRecord: {
     key: 'discard-workflow-draft-single-record',
@@ -76,7 +75,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconHistory,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    actionHook: useSeeWorkflowActiveVersionWorkflowSingleRecordAction,
+    actionHook: useSeeActiveVersionWorkflowSingleRecordAction,
   },
   seeWorkflowRunsSingleRecord: {
     key: 'see-workflow-runs-single-record',
@@ -86,7 +85,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconHistoryToggle,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    actionHook: useSeeWorkflowRunsWorkflowSingleRecordAction,
+    actionHook: useSeeRunsWorkflowSingleRecordAction,
   },
   seeWorkflowVersionsHistorySingleRecord: {
     key: 'see-workflow-versions-history-single-record',
@@ -96,7 +95,7 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconHistory,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    actionHook: useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction,
+    actionHook: useSeeVersionsWorkflowSingleRecordAction,
   },
   testWorkflowSingleRecord: {
     key: 'test-workflow-single-record',
@@ -106,6 +105,6 @@ export const WORKFLOW_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     Icon: IconPlayerPlay,
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
-    actionHook: useTestWorkflowWorkflowSingleRecordAction,
+    actionHook: useTestWorkflowSingleRecordAction,
   },
 };

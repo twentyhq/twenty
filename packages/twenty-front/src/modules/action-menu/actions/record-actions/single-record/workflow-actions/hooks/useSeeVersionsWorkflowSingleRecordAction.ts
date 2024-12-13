@@ -7,7 +7,7 @@ import qs from 'qs';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-ui';
 
-export const useSeeWorkflowVersionsHistoryWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
+export const useSeeVersionsWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
   ({ recordId }) => {
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 

@@ -5,7 +5,7 @@ import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithC
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-ui';
 
-export const useSeeWorkflowActiveVersionWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
+export const useSeeActiveVersionWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
   ({ recordId }) => {
     const workflow = useWorkflowWithCurrentVersion(recordId);
 

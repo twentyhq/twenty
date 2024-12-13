@@ -1,29 +1,27 @@
 import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/singleRecordActionHook';
-import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
+import { useActivateWorkflowVersion } from '@/workflow/hooks/useActivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-ui';
 
-export const useTestWorkflowWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
+export const useActivateDraftWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
   ({ recordId }) => {
-    const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
+    const { activateWorkflowVersion } = useActivateWorkflowVersion();
 
-    const { runWorkflowVersion } = useRunWorkflowVersion();
+    const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
     const shouldBeRegistered =
       isDefined(workflowWithCurrentVersion?.currentVersion?.trigger) &&
-      workflowWithCurrentVersion.currentVersion.trigger.type === 'MANUAL' &&
-      !isDefined(
-        workflowWithCurrentVersion.currentVersion.trigger.settings.objectType,
-      );
+      isDefined(workflowWithCurrentVersion.currentVersion?.steps) &&
+      workflowWithCurrentVersion.currentVersion.status === 'DRAFT';
 
     const onClick = () => {
       if (!shouldBeRegistered) {
         return;
       }
 
-      runWorkflowVersion({
+      activateWorkflowVersion({
         workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
-        workflowName: workflowWithCurrentVersion.name,
+        workflowId: workflowWithCurrentVersion.id,
       });
     };
 

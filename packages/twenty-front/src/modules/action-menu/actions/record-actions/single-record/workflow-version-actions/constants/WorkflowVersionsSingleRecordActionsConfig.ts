@@ -1,5 +1,5 @@
-import { useSeeWorkflowExecutionsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeWorkflowExecutionsWorkflowVersionSingleRecordAction';
-import { useSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction';
+import { useSeeExecutionsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeExecutionsWorkflowVersionSingleRecordAction';
+import { useSeeVersionsWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useSeeVersionsWorkflowVersionSingleRecordAction';
 import { useUseAsDraftWorkflowVersionSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-version-actions/hooks/useUseAsDraftWorkflowVersionSingleRecordAction';
 import { SingleRecordActionHook } from '@/action-menu/actions/types/singleRecordActionHook';
 import {
@@ -32,7 +32,7 @@ export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     Icon: IconHistoryToggle,
-    actionHook: useSeeWorkflowExecutionsWorkflowVersionSingleRecordAction,
+    actionHook: useSeeExecutionsWorkflowVersionSingleRecordAction,
   },
   seeWorkflowVersionsHistorySingleRecord: {
     key: 'see-workflow-versions-history-single-record',
@@ -41,6 +41,6 @@ export const WORKFLOW_VERSIONS_SINGLE_RECORD_ACTIONS_CONFIG: Record<
     type: ActionMenuEntryType.Standard,
     scope: ActionMenuEntryScope.RecordSelection,
     Icon: IconHistory,
-    actionHook: useSeeWorkflowVersionsHistoryWorkflowVersionSingleRecordAction,
+    actionHook: useSeeVersionsWorkflowVersionSingleRecordAction,
   },
 };

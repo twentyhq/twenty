@@ -3,7 +3,7 @@ import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWork
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-ui';
 
-export const useDeactivateWorkflowWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
+export const useDeactivateWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
   ({ recordId }) => {
     const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
 
