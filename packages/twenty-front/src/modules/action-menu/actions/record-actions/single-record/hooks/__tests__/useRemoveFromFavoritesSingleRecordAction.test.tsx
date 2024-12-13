@@ -7,7 +7,7 @@ import {
 } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 import { getPeopleMock } from '~/testing/mock-data/people';
-import { useAddToFavoritesSingleRecordAction } from '../useAddToFavoritesSingleRecordAction';
+import { useRemoveFromFavoritesSingleRecordAction } from '../useRemoveFromFavoritesSingleRecordAction';
 
 const personMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'person',
@@ -37,11 +37,11 @@ jest.mock('@/favorites/hooks/useFavorites', () => ({
   }),
 }));
 
-const createFavoriteMock = jest.fn();
+const deleteFavoriteMock = jest.fn();
 
-jest.mock('@/favorites/hooks/useCreateFavorite', () => ({
-  useCreateFavorite: () => ({
-    createFavorite: createFavoriteMock,
+jest.mock('@/favorites/hooks/useDeleteFavorite', () => ({
+  useDeleteFavorite: () => ({
+    deleteFavorite: deleteFavoriteMock,
   }),
 }));
 
@@ -80,26 +80,11 @@ const wrapperWithSelectedRecordNotAsFavorite =
     wrapperConfigWithSelectedRecordNotAsFavorite,
   );
 
-describe('useAddToFavoritesSingleRecordAction', () => {
-  it('should be registered when the record is not a favorite', () => {
+describe('useRemoveFromFavoritesSingleRecordAction', () => {
+  it('should be registered when the record is a favorite', () => {
     const { result } = renderHook(
       () =>
-        useAddToFavoritesSingleRecordAction({
-          recordId: peopleMock[1].id,
-          objectMetadataItem: personMockObjectMetadataItem,
-        }),
-      {
-        wrapper: wrapperWithSelectedRecordNotAsFavorite,
-      },
-    );
-
-    expect(result.current.shouldBeRegistered).toBe(true);
-  });
-
-  it('should not be registered when the record is a favorite', () => {
-    const { result } = renderHook(
-      () =>
-        useAddToFavoritesSingleRecordAction({
+        useRemoveFromFavoritesSingleRecordAction({
           recordId: peopleMock[0].id,
           objectMetadataItem: personMockObjectMetadataItem,
         }),
@@ -108,13 +93,13 @@ describe('useAddToFavoritesSingleRecordAction', () => {
       },
     );
 
-    expect(result.current.shouldBeRegistered).toBe(false);
+    expect(result.current.shouldBeRegistered).toBe(true);
   });
 
-  it('should call createFavorite on click', () => {
+  it('should not be registered when the record is not a favorite', () => {
     const { result } = renderHook(
       () =>
-        useAddToFavoritesSingleRecordAction({
+        useRemoveFromFavoritesSingleRecordAction({
           recordId: peopleMock[1].id,
           objectMetadataItem: personMockObjectMetadataItem,
         }),
@@ -123,13 +108,25 @@ describe('useAddToFavoritesSingleRecordAction', () => {
       },
     );
 
+    expect(result.current.shouldBeRegistered).toBe(false);
+  });
+
+  it('should call deleteFavorite on click', () => {
+    const { result } = renderHook(
+      () =>
+        useRemoveFromFavoritesSingleRecordAction({
+          recordId: peopleMock[0].id,
+          objectMetadataItem: personMockObjectMetadataItem,
+        }),
+      {
+        wrapper: wrapperWithSelectedRecordAsFavorite,
+      },
+    );
+
     act(() => {
       result.current.onClick();
     });
 
-    expect(createFavoriteMock).toHaveBeenCalledWith(
-      peopleMock[1],
-      personMockObjectMetadataItem.nameSingular,
-    );
+    expect(deleteFavoriteMock).toHaveBeenCalledWith(favoritesMock[0].id);
   });
 });
