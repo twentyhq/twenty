@@ -238,7 +238,7 @@ export class WorkspaceMigrationEnumService {
 
     if (!result) {
       throw new WorkspaceMigrationException(
-        `Column ${columnName} not found in table ${tableName} while trying to alter enum`,
+        `Enum type name not found for column ${columnName} in table ${tableName} while trying to alter enum`,
         WorkspaceMigrationExceptionCode.ENUM_TYPE_NAME_NOT_FOUND,
       );
     }
