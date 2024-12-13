@@ -1,9 +1,9 @@
 import { renderHook, waitFor } from '@testing-library/react';
 import { act } from 'react';
 import {
-  percentage,
-  sleep,
-  useExportFetchRecords,
+    percentage,
+    sleep,
+    useExportFetchRecords,
 } from '../useExportFetchRecords';
 
 import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
@@ -14,7 +14,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { MockedResponse } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
 import gql from 'graphql-tag';
-import { getJestMetadataAndApolloMocksAndContextStoreWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const defaultResponseData = {
@@ -130,7 +130,7 @@ const mocks: MockedResponse[] = [
   },
 ];
 
-const WrapperWithResponse = getJestMetadataAndApolloMocksAndContextStoreWrapper(
+const WrapperWithResponse = getJestMetadataAndApolloMocksAndActionMenuWrapper(
   {
     apolloMocks: mocks,
     componentInstanceId: 'recordIndexId',
@@ -157,7 +157,7 @@ const graphqlEmptyResponse = [
 ];
 
 const WrapperWithEmptyResponse =
-  getJestMetadataAndApolloMocksAndContextStoreWrapper({
+  getJestMetadataAndApolloMocksAndActionMenuWrapper({
     apolloMocks: graphqlEmptyResponse,
     componentInstanceId: 'recordIndexId',
     contextStoreTargetedRecordsRule: {
