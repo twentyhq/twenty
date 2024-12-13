@@ -17,9 +17,11 @@ import { useDropdown } from '../hooks/useDropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownUnmountEffect } from '@/ui/layout/dropdown/components/DropdownUnmountEffect';
 import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponeInstanceContext';
+import { dropdownHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownHeightComponentStateV2';
 import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { flushSync } from 'react-dom';
+import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import { DropdownOnToggleEffect } from './DropdownOnToggleEffect';
 
@@ -68,6 +70,11 @@ export const Dropdown = ({
     dropdownId,
   );
 
+  const setDropdownHeight = useSetRecoilComponentStateV2(
+    dropdownHeightComponentStateV2,
+    dropdownId,
+  );
+
   if (isDefined(dropdownOffset.x)) {
     offsetMiddlewares.push(offset({ crossAxis: dropdownOffset.x }));
   }
@@ -76,17 +83,75 @@ export const Dropdown = ({
     offsetMiddlewares.push(offset({ mainAxis: dropdownOffset.y }));
   }
 
+  const process = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (availableHeight: any, elements: any) => {
+        flushSync(() => {
+          const elementRect = elements.floating.getBoundingClientRect();
+
+          const dropdownHeight = elementRect.height;
+          const childRect =
+            elements.floating.firstElementChild?.getBoundingClientRect();
+
+          const dropdownContentHeight = childRect?.height ?? 0;
+
+          const actualHeight = snapshot
+            .getLoadable(
+              dropdownHeightComponentStateV2.atomFamily({
+                instanceId: dropdownId,
+              }),
+            )
+            .getValue();
+
+          console.log({
+            dropdownHeight,
+            dropdownContentHeight,
+            actualHeight,
+          });
+
+          // if (dropdownHeight > dropdownContentHeight) {
+          //   if (actualHeight !== '100%') {
+          //     setDropdownHeight('100%');
+          //   }
+          // } else {
+          //   if (actualHeight !== 'fit-content') {
+          //     setDropdownHeight('fit-content');
+          //   }
+          // }
+
+          setDropdownMaxHeight(availableHeight);
+        });
+      },
+    [],
+  );
+
   const { refs, floatingStyles, placement } = useFloating({
     placement: dropdownPlacement,
     middleware: [
       flip(),
       size({
         padding: 32,
-        apply: ({ availableHeight }) => {
-          flushSync(() => {
-            setDropdownMaxHeight(availableHeight);
-          });
+        apply: ({ availableHeight, elements }) => {
+          process(availableHeight, elements);
+          // flushSync(() => {
+          //   const elementRect = elements.floating.getBoundingClientRect();
+
+          //   const dropdownHeight = elementRect.height;
+          //   const childRect =
+          //     elements.floating.firstElementChild?.getBoundingClientRect();
+
+          //   const dropdownContentHeight = childRect?.height ?? 0;
+
+          //   if (dropdownHeight > dropdownContentHeight) {
+          //     setDropdownHeight('fit-content');
+          //   } else {
+          //     setDropdownHeight('100%');
+          //   }
+
+          //   setDropdownMaxHeight(availableHeight);
+          // });
         },
+
         boundary: document.querySelector('#root') ?? undefined,
       }),
       ...offsetMiddlewares,

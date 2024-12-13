@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 
-export const StyledOverlayContainer = styled.div`
+// eslint-disable-next-line @nx/workspace-styled-components-prefixed-with-styled
+export const OverlayContainer = styled.div`
   align-items: center;
   display: flex;
 
@@ -18,5 +19,4 @@ export const StyledOverlayContainer = styled.div`
   overflow: hidden;
 
   z-index: 30;
-  height: fit-content;
 `;

@@ -1,5 +1,5 @@
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
-import { StyledOverlayContainer } from '@/ui/layout/overlay/components/StyledOverlayContainer';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { useContext } from 'react';
@@ -51,9 +51,9 @@ export const RecordInlineCellEditMode = ({
       data-testid="inline-cell-edit-mode-container"
     >
       {createPortal(
-        <StyledOverlayContainer ref={refs.setFloating} style={floatingStyles}>
+        <OverlayContainer ref={refs.setFloating} style={floatingStyles}>
           {children}
-        </StyledOverlayContainer>,
+        </OverlayContainer>,
         document.body,
       )}
     </StyledInlineCellEditModeContainer>

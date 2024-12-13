@@ -1,4 +1,4 @@
-import { StyledOverlayContainer } from '@/ui/layout/overlay/components/StyledOverlayContainer';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { ReactElement } from 'react';
@@ -40,9 +40,9 @@ export const RecordTableCellEditMode = ({
       ref={refs.setReference}
       data-testid="editable-cell-edit-mode-container"
     >
-      <StyledOverlayContainer ref={refs.setFloating} style={floatingStyles}>
+      <OverlayContainer ref={refs.setFloating} style={floatingStyles}>
         {children}
-      </StyledOverlayContainer>
+      </OverlayContainer>
     </StyledEditableCellEditModeContainer>
   );
 };

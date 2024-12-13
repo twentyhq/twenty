@@ -2,14 +2,16 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '@/ui/layout/dropdown/hooks/useInternalHotkeyScopeManagement';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { dropdownHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownHeightComponentStateV2';
 import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
-import { StyledOverlayContainer } from '@/ui/layout/overlay/components/StyledOverlayContainer';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import styled from '@emotion/styled';
 import {
   FloatingPortal,
   Placement,
@@ -19,6 +21,11 @@ import { useEffect } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
+
+const StyledDropdownContentContainer = styled.div`
+  display: flex;
+  z-index: 30;
+`;
 
 export type DropdownContentProps = {
   className?: string;
@@ -58,8 +65,13 @@ export const DropdownContent = ({
 
   const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
 
-  const [dropdownMaxHeight] = useRecoilComponentStateV2(
+  const dropdownMaxHeight = useRecoilComponentValueV2(
     dropdownMaxHeightComponentStateV2,
+    dropdownId,
+  );
+
+  const dropdownHeight = useRecoilComponentValueV2(
+    dropdownHeightComponentStateV2,
     dropdownId,
   );
 
@@ -105,6 +117,7 @@ export const DropdownContent = ({
   const dropdownMenuStyles = {
     ...floatingStyles,
     maxHeight: dropdownMaxHeight,
+    // height: dropdownHeight,
   };
 
   return (
@@ -113,24 +126,11 @@ export const DropdownContent = ({
         <HotkeyEffect hotkey={hotkey} onHotkeyTriggered={onHotkeyTriggered} />
       )}
       {avoidPortal ? (
-        <StyledOverlayContainer
+        <StyledDropdownContentContainer
           ref={floatingUiRefs.setFloating}
           style={dropdownMenuStyles}
         >
-          <DropdownMenu
-            className={className}
-            width={dropdownMenuWidth ?? dropdownWidth}
-            data-select-disable
-          >
-            {dropdownComponents}
-          </DropdownMenu>
-        </StyledOverlayContainer>
-      ) : (
-        <FloatingPortal>
-          <StyledOverlayContainer
-            ref={floatingUiRefs.setFloating}
-            style={dropdownMenuStyles}
-          >
+          <OverlayContainer>
             <DropdownMenu
               className={className}
               width={dropdownMenuWidth ?? dropdownWidth}
@@ -138,7 +138,24 @@ export const DropdownContent = ({
             >
               {dropdownComponents}
             </DropdownMenu>
-          </StyledOverlayContainer>
+          </OverlayContainer>
+        </StyledDropdownContentContainer>
+      ) : (
+        <FloatingPortal>
+          <StyledDropdownContentContainer
+            ref={floatingUiRefs.setFloating}
+            style={dropdownMenuStyles}
+          >
+            <OverlayContainer>
+              <DropdownMenu
+                className={className}
+                width={dropdownMenuWidth ?? dropdownWidth}
+                data-select-disable
+              >
+                {dropdownComponents}
+              </DropdownMenu>
+            </OverlayContainer>
+          </StyledDropdownContentContainer>
         </FloatingPortal>
       )}
     </>
