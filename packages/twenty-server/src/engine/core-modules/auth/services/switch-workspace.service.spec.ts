@@ -53,7 +53,9 @@ describe('SwitchWorkspaceService', () => {
         },
         {
           provide: EnvironmentService,
-          useValue: {},
+          useValue: {
+            get: jest.fn(),
+          },
         },
       ],
     }).compile();
