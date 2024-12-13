@@ -35,9 +35,9 @@ export const RecordTableRecordGroupsBody = () => {
           key={recordGroupId}
           recordGroupId={recordGroupId}
         >
-          {index > 0 && <RecordTableRecordGroupEmptyRow />}
           <RecordGroupContext.Provider value={{ recordGroupId }}>
             <RecordTableBodyDroppable recordGroupId={recordGroupId}>
+              {index > 0 && <RecordTableRecordGroupEmptyRow />}
               <RecordTableRecordGroupSection />
               <RecordTableRecordGroupRows />
             </RecordTableBodyDroppable>
