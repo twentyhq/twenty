@@ -41,6 +41,10 @@ export const VariableTag = Node.create({
     ];
   },
 
+  renderText: ({ node }) => {
+    return node.attrs.variable;
+  },
+
   addCommands: () => ({
     insertVariableTag:
       (variableName: string) =>
