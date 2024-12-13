@@ -8,7 +8,7 @@ describe('getHighlightedDates', () => {
     expect(getHighlightedDates(dateRange)).toEqual([]);
   });
 
-  it('should should return empty if range is one day', () => {
+  it('should should return one day if range is one day', () => {
     const dateRange = {
       start: new Date('2024-10-12T00:00:00.000Z'),
       end: new Date('2024-10-12T00:00:00.000Z'),
@@ -18,7 +18,7 @@ describe('getHighlightedDates', () => {
     ]);
   });
 
-  it('should should return empty if range is 2 days', () => {
+  it('should should return two days if range is 2 days', () => {
     const dateRange = {
       start: new Date('2024-10-12T00:00:00.000Z'),
       end: new Date('2024-10-13T00:00:00.000Z'),
@@ -29,7 +29,7 @@ describe('getHighlightedDates', () => {
     ]);
   });
 
-  it('should should return empty if range is 10 days', () => {
+  it('should should return 10 days if range is 10 days', () => {
     const dateRange = {
       start: new Date('2024-10-12T00:00:00.000Z'),
       end: new Date('2024-10-21T00:00:00.000Z'),
@@ -46,5 +46,13 @@ describe('getHighlightedDates', () => {
       new Date('2024-10-20T00:00:00.000Z'),
       new Date('2024-10-21T00:00:00.000Z'),
     ]);
+  });
+
+  it('should should return empty if range is 10 days but out of range', () => {
+    const dateRange = {
+      start: new Date('2023-10-01T00:00:00.000Z'),
+      end: new Date('2023-10-10T00:00:00.000Z'),
+    };
+    expect(getHighlightedDates(dateRange)).toEqual([]);
   });
 });
