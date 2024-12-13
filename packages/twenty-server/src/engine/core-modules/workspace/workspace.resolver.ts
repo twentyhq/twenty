@@ -223,10 +223,10 @@ export class WorkspaceResolver {
       logo: workspaceLogoWithToken,
       displayName: workspace.displayName,
       subdomain: workspace.subdomain,
-      authProviders: getAuthProvidersByWorkspace(
+      authProviders: getAuthProvidersByWorkspace({
         workspace,
         systemEnabledProviders,
-      ),
+      }),
     };
   }
 }
