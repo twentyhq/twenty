@@ -43,36 +43,34 @@ export const CodeEditor = ({
   const theme = useTheme();
 
   return (
-    <div>
-      <StyledEditor
-        height={height}
-        withHeader={withHeader}
-        value={value}
-        language={language}
-        onMount={(editor, monaco) => {
-          monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
-          monaco.editor.setTheme('codeEditorTheme');
+    <StyledEditor
+      height={height}
+      withHeader={withHeader}
+      value={value}
+      language={language}
+      onMount={(editor, monaco) => {
+        monaco.editor.defineTheme('codeEditorTheme', codeEditorTheme(theme));
+        monaco.editor.setTheme('codeEditorTheme');
 
-          onMount?.(editor, monaco);
-        }}
-        onChange={(value) => {
-          if (isDefined(value)) {
-            onChange?.(value);
-          }
-        }}
-        onValidate={onValidate}
-        options={{
-          overviewRulerLanes: 0,
-          scrollbar: {
-            vertical: 'hidden',
-            horizontal: 'hidden',
-          },
-          minimap: {
-            enabled: false,
-          },
-          ...options,
-        }}
-      />
-    </div>
+        onMount?.(editor, monaco);
+      }}
+      onChange={(value) => {
+        if (isDefined(value)) {
+          onChange?.(value);
+        }
+      }}
+      onValidate={onValidate}
+      options={{
+        overviewRulerLanes: 0,
+        scrollbar: {
+          vertical: 'hidden',
+          horizontal: 'hidden',
+        },
+        minimap: {
+          enabled: false,
+        },
+        ...options,
+      }}
+    />
   );
 };

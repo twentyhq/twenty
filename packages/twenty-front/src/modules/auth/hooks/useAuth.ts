@@ -13,7 +13,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { workspacesState } from '@/auth/states/workspaces';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
@@ -48,6 +47,7 @@ import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useL
 import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
+import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -90,7 +90,7 @@ export const useAuth = () => {
         const emptySnapshot = snapshot_UNSTABLE();
         const iconsValue = snapshot.getLoadable(iconsState).getValue();
         const authProvidersValue = snapshot
-          .getLoadable(authProvidersState)
+          .getLoadable(workspaceAuthProvidersState)
           .getValue();
         const billing = snapshot.getLoadable(billingState).getValue();
         const isDeveloperDefaultSignInPrefilled = snapshot
@@ -115,7 +115,7 @@ export const useAuth = () => {
           .getValue();
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
-          set(authProvidersState, authProvidersValue);
+          set(workspaceAuthProvidersState, authProvidersValue);
           set(billingState, billing);
           set(
             isDeveloperDefaultSignInPrefilledState,

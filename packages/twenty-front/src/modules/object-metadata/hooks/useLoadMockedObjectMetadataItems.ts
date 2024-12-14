@@ -1,3 +1,4 @@
+import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useRecoilCallback } from 'recoil';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
@@ -14,6 +15,14 @@ export const useLoadMockedObjectMetadataItems = () => {
           )
         ) {
           set(objectMetadataItemsState, generatedMockObjectMetadataItems);
+        }
+
+        if (
+          snapshot
+            .getLoadable(isAppWaitingForFreshObjectMetadataState)
+            .getValue() === true
+        ) {
+          set(isAppWaitingForFreshObjectMetadataState, false);
         }
       },
     [],

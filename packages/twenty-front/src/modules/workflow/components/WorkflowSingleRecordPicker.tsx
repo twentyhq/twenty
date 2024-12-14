@@ -6,8 +6,8 @@ import {
 } from 'twenty-ui';
 
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
-import { StyledFormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputRowContainer';
+import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
+import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
 import { useRecordPicker } from '@/object-record/relation-picker/hooks/useRecordPicker';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
@@ -137,9 +137,9 @@ export const WorkflowSingleRecordPicker = ({
   };
 
   return (
-    <StyledFormFieldInputContainer>
+    <FormFieldInputContainer>
       {label ? <InputLabel>{label}</InputLabel> : null}
-      <StyledFormFieldInputRowContainer>
+      <FormFieldInputRowContainer>
         <StyledFormSelectContainer>
           <WorkflowSingleRecordFieldChip
             draftValue={draftValue}
@@ -193,7 +193,7 @@ export const WorkflowSingleRecordPicker = ({
             objectNameSingularToSelect={objectNameSingular}
           />
         </StyledSearchVariablesDropdownContainer>
-      </StyledFormFieldInputRowContainer>
-    </StyledFormFieldInputContainer>
+      </FormFieldInputRowContainer>
+    </FormFieldInputContainer>
   );
 };

@@ -1,6 +1,7 @@
 import { FavoriteFolderNavigationDrawerItemDropdown } from '@/favorites/components/FavoriteFolderNavigationDrawerItemDropdown';
 import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
 import { FavoritesDroppable } from '@/favorites/components/FavoritesDroppable';
+import { FavoritesDragContext } from '@/favorites/contexts/useFavoritesDragContext';
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useDeleteFavoriteFolder } from '@/favorites/hooks/useDeleteFavoriteFolder';
 import { useRenameFavoriteFolder } from '@/favorites/hooks/useRenameFavoriteFolder';
@@ -16,7 +17,7 @@ import { NavigationDrawerItemsCollapsableContainer } from '@/ui/navigation/navig
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { Droppable } from '@hello-pangea/dnd';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -42,7 +43,7 @@ export const CurrentWorkspaceMemberFavorites = ({
 }: CurrentWorkspaceMemberFavoritesProps) => {
   const currentPath = useLocation().pathname;
   const currentViewPath = useLocation().pathname + useLocation().search;
-
+  const { isDragging } = useContext(FavoritesDragContext);
   const [isFavoriteFolderRenaming, setIsFavoriteFolderRenaming] =
     useState(false);
   const [favoriteFolderName, setFavoriteFolderName] = useState(
@@ -187,7 +188,7 @@ export const CurrentWorkspaceMemberFavorites = ({
                             accent="tertiary"
                           />
                         }
-                        isDraggable
+                        isDragging={isDragging}
                       />
                     }
                   />

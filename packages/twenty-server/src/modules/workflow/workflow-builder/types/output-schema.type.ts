@@ -1,9 +1,9 @@
-import { InputSchemaPropertyType } from 'src/modules/code-introspection/types/input-schema.type';
+import { InputSchemaPropertyType } from 'src/modules/workflow/workflow-builder/types/input-schema.type';
 
 export type Leaf = {
   isLeaf: true;
-  icon?: string;
   type?: InputSchemaPropertyType;
+  icon?: string;
   label?: string;
   value: any;
 };

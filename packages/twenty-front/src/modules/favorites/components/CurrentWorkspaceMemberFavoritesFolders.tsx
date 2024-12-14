@@ -1,46 +1,26 @@
 import { useTheme } from '@emotion/react';
-import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import {
-  IconFolderPlus,
-  IconHeartOff,
-  LightIconButton,
-  isDefined,
-} from 'twenty-ui';
+import { IconFolderPlus, isDefined } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { FavoriteIcon } from '@/favorites/components/FavoriteIcon';
-import { FavoritesDroppable } from '@/favorites/components/FavoritesDroppable';
+import { CurrentWorkspaceMemberOrphanFavorites } from '@/favorites/components/CurrentWorkspaceMemberOrphanFavorites';
+import { FavoritesDragProvider } from '@/favorites/components/FavoritesDragProvider';
 import { FavoriteFolders } from '@/favorites/components/FavoritesFolders';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
-import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useReorderFavorite } from '@/favorites/hooks/useReorderFavorite';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
-import { isLocationMatchingFavorite } from '@/favorites/utils/isLocationMatchingFavorite';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import styled from '@emotion/styled';
-import { DragDropContext } from '@hello-pangea/dnd';
-
-const StyledEmptyContainer = styled.div`
-  height: ${({ theme }) => theme.spacing(2.5)};
-  width: 100%;
-`;
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
-  const currentPath = useLocation().pathname;
-  const currentViewPath = useLocation().pathname + useLocation().search;
   const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { sortedFavorites: favorites } = useFavorites();
-  const { deleteFavorite } = useDeleteFavorite();
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
     useRecoilState(isFavoriteFolderCreatingState);
   const { handleReorderFavorite } = useReorderFavorite();
@@ -61,6 +41,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
     openNavigationSection();
     setIsFavoriteFolderCreating((current) => !current);
   };
+
   const shouldDisplayFavoritesWithFeatureFlagEnabled = true;
 
   //todo: remove this logic once feature flag gating is removed
@@ -74,10 +55,6 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   if (loading && isDefined(currentWorkspaceMember)) {
     return <FavoritesSkeletonLoader />;
   }
-
-  const orphanFavorites = favorites.filter(
-    (favorite) => !favorite.favoriteFolderId,
-  );
 
   if (!shouldDisplayFavorites) {
     return null;
@@ -101,48 +78,14 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
       </NavigationDrawerAnimatedCollapseWrapper>
 
       {isNavigationSectionOpen && (
-        <DragDropContext onDragEnd={handleReorderFavorite}>
+        <FavoritesDragProvider onReorder={handleReorderFavorite}>
           {isFavoriteFolderEnabled && (
             <FavoriteFolders
               isNavigationSectionOpen={isNavigationSectionOpen}
             />
           )}
-
-          <FavoritesDroppable droppableId="orphan-favorites">
-            {orphanFavorites.length > 0 ? (
-              orphanFavorites.map((favorite, index) => (
-                <DraggableItem
-                  key={favorite.id}
-                  draggableId={favorite.id}
-                  index={index}
-                  isInsideScrollableContainer={true}
-                  itemComponent={
-                    <NavigationDrawerItem
-                      label={favorite.labelIdentifier}
-                      Icon={() => <FavoriteIcon favorite={favorite} />}
-                      active={isLocationMatchingFavorite(
-                        currentPath,
-                        currentViewPath,
-                        favorite,
-                      )}
-                      to={favorite.link}
-                      rightOptions={
-                        <LightIconButton
-                          Icon={IconHeartOff}
-                          onClick={() => deleteFavorite(favorite.id)}
-                          accent="tertiary"
-                        />
-                      }
-                      isDraggable={true}
-                    />
-                  }
-                />
-              ))
-            ) : (
-              <StyledEmptyContainer />
-            )}
-          </FavoritesDroppable>
-        </DragDropContext>
+          <CurrentWorkspaceMemberOrphanFavorites />
+        </FavoritesDragProvider>
       )}
     </NavigationDrawerSection>
   );
