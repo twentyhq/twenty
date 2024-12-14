@@ -1,5 +1,5 @@
 import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext';
-import { useReorderFavorite } from '@/favorites/hooks/useReorderFavorite';
+import { useHandleFavoriteDragAndDrop } from '@/favorites/hooks/useHandleFavoriteDragAndDrop';
 import {
   DragDropContext,
   DragStart,
@@ -16,7 +16,7 @@ export const FavoritesDragProvider = ({
   children,
 }: FavoritesDragProviderProps) => {
   const [isDragging, setIsDragging] = useState(false);
-  const { handleReorderFavorite } = useReorderFavorite();
+  const { handleFavoriteDragAndDrop } = useHandleFavoriteDragAndDrop();
 
   const handleDragStart = (_: DragStart) => {
     setIsDragging(true);
@@ -24,7 +24,7 @@ export const FavoritesDragProvider = ({
 
   const handleDragEnd = (result: DropResult, provided: ResponderProvided) => {
     setIsDragging(false);
-    handleReorderFavorite(result, provided);
+    handleFavoriteDragAndDrop(result, provided);
   };
 
   return (

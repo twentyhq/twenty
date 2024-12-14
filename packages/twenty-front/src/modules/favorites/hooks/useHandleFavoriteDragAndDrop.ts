@@ -7,7 +7,7 @@ import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useSetRecoilState } from 'recoil';
 import { usePrefetchedFavoritesData } from './usePrefetchedFavoritesData';
 
-export const useReorderFavorite = () => {
+export const useHandleFavoriteDragAndDrop = () => {
   const { favorites } = usePrefetchedFavoritesData();
   const { favoritesSorted } = useSortedFavorites();
   const { updateOneRecord: updateOneFavorite } = useUpdateOneRecord({
@@ -17,7 +17,7 @@ export const useReorderFavorite = () => {
     activeFavoriteFolderIdState,
   );
 
-  const handleReorderFavorite: OnDragEndResponder = (result) => {
+  const handleFavoriteDragAndDrop: OnDragEndResponder = (result) => {
     const { destination, source, draggableId } = result;
 
     if (!destination) return;
@@ -117,5 +117,5 @@ export const useReorderFavorite = () => {
     });
   };
 
-  return { handleReorderFavorite };
+  return { handleFavoriteDragAndDrop };
 };
