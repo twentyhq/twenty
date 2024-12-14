@@ -4,7 +4,6 @@ import { FavoritesDragProvider } from '@/favorites/components/FavoritesDragProvi
 import { FavoriteFolders } from '@/favorites/components/FavoritesFolders';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useReorderFavorite } from '@/favorites/hooks/useReorderFavorite';
 import { isFavoriteFolderCreatingState } from '@/favorites/states/isFavoriteFolderCreatingState';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
@@ -22,7 +21,6 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const { sortedFavorites: favorites } = useFavorites();
   const [isFavoriteFolderCreating, setIsFavoriteFolderCreating] =
     useRecoilState(isFavoriteFolderCreatingState);
-  const { handleReorderFavorite } = useReorderFavorite();
 
   const isFavoriteFolderEnabled = useIsFeatureEnabled(
     'IS_FAVORITE_FOLDER_ENABLED',
@@ -77,7 +75,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
       </NavigationDrawerAnimatedCollapseWrapper>
 
       {isNavigationSectionOpen && (
-        <FavoritesDragProvider onReorder={handleReorderFavorite}>
+        <FavoritesDragProvider>
           {isFavoriteFolderEnabled && (
             <FavoriteFolders
               isNavigationSectionOpen={isNavigationSectionOpen}
