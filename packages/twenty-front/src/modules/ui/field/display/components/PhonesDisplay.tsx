@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { RoundedLink, THEME_COMMON } from 'twenty-ui';
 
 import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
@@ -7,10 +7,12 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { IconClipboard } from '@tabler/icons-react';
+// import { IconClipboard } from '@tabler/icons-react';
 import { parsePhoneNumber } from 'libphonenumber-js';
+import { useIcons } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
+// import { IconClipboardCopy } from '@tabler/icons-react';
 
 
 
@@ -37,6 +39,8 @@ const StyledContainer = styled.div`
 
 export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
   const { enqueueSnackBar } = useSnackBar();
+  const { getIcon } = useIcons();
+  const IconClipboard = getIcon('IconClipboardCopy');
   const handlePhoneClick = async (event: React.MouseEvent, phoneNumber: string | undefined) => {
     event.preventDefault(); // Prevent default link behavior
     
