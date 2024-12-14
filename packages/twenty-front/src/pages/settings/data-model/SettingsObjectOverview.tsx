@@ -1,4 +1,4 @@
-import { ReactFlowProvider } from 'reactflow';
+import { ReactFlowProvider } from '@xyflow/react';
 
 import { SettingsDataModelOverview } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverview';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';

@@ -14,7 +14,6 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
 import {
   Button,
   getImageAbsoluteURI,
@@ -68,10 +67,9 @@ const StyledContentContainer = styled.div`
 export const SettingsAdminFeatureFlags = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
 
-  const { activeTabIdState, setActiveTabId } = useTabList(
+  const { activeTabId, setActiveTabId } = useTabList(
     SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID,
   );
-  const activeTabId = useRecoilValue(activeTabIdState);
 
   const {
     userLookupResult,

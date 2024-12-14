@@ -1,15 +1,15 @@
+import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/SignInUpWithCredentials';
+import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/SignInUpWithGoogle';
+import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/SignInUpWithMicrosoft';
+import { SignInUpWithSSO } from '@/auth/sign-in-up/components/SignInUpWithSSO';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { SignInUpStep } from '@/auth/states/signInUpStepState';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { ActionLink, HorizontalSeparator } from 'twenty-ui';
-import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/SignInUpWithGoogle';
-import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/SignInUpWithMicrosoft';
-import { SignInUpWithSSO } from '@/auth/sign-in-up/components/SignInUpWithSSO';
-import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/SignInUpWithCredentials';
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -17,7 +17,7 @@ const StyledContentContainer = styled.div`
 `;
 
 export const SignInUpWorkspaceScopeForm = () => {
-  const [authProviders] = useRecoilState(authProvidersState);
+  const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
 
   const { form } = useSignInUpForm();
   const { handleResetPassword } = useHandleResetPassword();
@@ -27,20 +27,20 @@ export const SignInUpWorkspaceScopeForm = () => {
   return (
     <>
       <StyledContentContainer>
-        {authProviders.google && <SignInUpWithGoogle />}
+        {workspaceAuthProviders.google && <SignInUpWithGoogle />}
 
-        {authProviders.microsoft && <SignInUpWithMicrosoft />}
+        {workspaceAuthProviders.microsoft && <SignInUpWithMicrosoft />}
 
-        {authProviders.sso.length > 0 && <SignInUpWithSSO />}
+        {workspaceAuthProviders.sso.length > 0 && <SignInUpWithSSO />}
 
-        {(authProviders.google ||
-          authProviders.microsoft ||
-          authProviders.sso.length > 0) &&
-        authProviders.password ? (
+        {(workspaceAuthProviders.google ||
+          workspaceAuthProviders.microsoft ||
+          workspaceAuthProviders.sso.length > 0) &&
+        workspaceAuthProviders.password ? (
           <HorizontalSeparator visible />
         ) : null}
 
-        {authProviders.password && <SignInUpWithCredentials />}
+        {workspaceAuthProviders.password && <SignInUpWithCredentials />}
       </StyledContentContainer>
       {signInUpStep === SignInUpStep.Password && (
         <ActionLink onClick={handleResetPassword(form.getValues('email'))}>

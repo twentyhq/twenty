@@ -39,8 +39,6 @@ export const FavoriteFolderNavigationDrawerItemDropdown = ({
       dropdownHotkeyScope={{
         scope: FavoriteFolderHotkeyScope.FavoriteFolderRightIconDropdown,
       }}
-      dropdownMenuWidth="160px"
-      usePortal
       data-select-disable
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />

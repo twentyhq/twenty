@@ -10,6 +10,7 @@ export const BORDER_LIGHT = {
     secondaryInverted: GRAY_SCALE.gray50,
     inverted: GRAY_SCALE.gray60,
     danger: COLOR.red20,
+    blue: COLOR.blue30,
   },
   ...BORDER_COMMON,
 };

@@ -1,6 +1,6 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
+import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
 import { MANUAL_TRIGGER_AVAILABILITY_OPTIONS } from '@/workflow/constants/ManualTriggerAvailabilityOptions';
 import {
   WorkflowManualTrigger,
@@ -9,6 +9,7 @@ import {
 import { getManualTriggerDefaultSettings } from '@/workflow/utils/getManualTriggerDefaultSettings';
 import { useTheme } from '@emotion/react';
 import { IconHandMove, isDefined, useIcons } from 'twenty-ui';
+import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 
 type WorkflowEditTriggerManualFormProps = {
   trigger: WorkflowManualTrigger;
@@ -47,67 +48,70 @@ export const WorkflowEditTriggerManualForm = ({
   const headerTitle = isDefined(trigger.name) ? trigger.name : 'Manual Trigger';
 
   return (
-    <WorkflowEditGenericFormBase
-      onTitleChange={(newName: string) => {
-        if (triggerOptions.readonly === true) {
-          return;
-        }
-
-        triggerOptions.onTriggerUpdate({
-          ...trigger,
-          name: newName,
-        });
-      }}
-      Icon={IconHandMove}
-      iconColor={theme.font.color.tertiary}
-      initialTitle={headerTitle}
-      headerType="Trigger · Manual"
-    >
-      <Select
-        dropdownId="workflow-edit-manual-trigger-availability"
-        label="Available"
-        fullWidth
-        disabled={triggerOptions.readonly}
-        value={manualTriggerAvailability}
-        options={MANUAL_TRIGGER_AVAILABILITY_OPTIONS}
-        onChange={(updatedTriggerType) => {
+    <>
+      <WorkflowStepHeader
+        onTitleChange={(newName: string) => {
           if (triggerOptions.readonly === true) {
             return;
           }
 
           triggerOptions.onTriggerUpdate({
             ...trigger,
-            settings: getManualTriggerDefaultSettings({
-              availability: updatedTriggerType,
-              activeObjectMetadataItems,
-            }),
+            name: newName,
           });
         }}
+        Icon={IconHandMove}
+        iconColor={theme.font.color.tertiary}
+        initialTitle={headerTitle}
+        headerType="Trigger · Manual"
       />
-
-      {manualTriggerAvailability === 'WHEN_RECORD_SELECTED' ? (
+      <WorkflowStepBody>
         <Select
-          dropdownId="workflow-edit-manual-trigger-object"
-          label="Object"
+          dropdownId="workflow-edit-manual-trigger-availability"
+          label="Available"
           fullWidth
-          value={trigger.settings.objectType}
-          options={availableMetadata}
           disabled={triggerOptions.readonly}
-          onChange={(updatedObject) => {
+          value={manualTriggerAvailability}
+          options={MANUAL_TRIGGER_AVAILABILITY_OPTIONS}
+          onChange={(updatedTriggerType) => {
             if (triggerOptions.readonly === true) {
               return;
             }
 
             triggerOptions.onTriggerUpdate({
               ...trigger,
-              settings: {
-                objectType: updatedObject,
-                outputSchema: {},
-              },
+              settings: getManualTriggerDefaultSettings({
+                availability: updatedTriggerType,
+                activeObjectMetadataItems,
+              }),
             });
           }}
         />
-      ) : null}
-    </WorkflowEditGenericFormBase>
+
+        {manualTriggerAvailability === 'WHEN_RECORD_SELECTED' ? (
+          <Select
+            dropdownId="workflow-edit-manual-trigger-object"
+            label="Object"
+            fullWidth
+            value={trigger.settings.objectType}
+            options={availableMetadata}
+            disabled={triggerOptions.readonly}
+            onChange={(updatedObject) => {
+              if (triggerOptions.readonly === true) {
+                return;
+              }
+
+              triggerOptions.onTriggerUpdate({
+                ...trigger,
+                settings: {
+                  objectType: updatedObject,
+                  outputSchema: {},
+                },
+              });
+            }}
+          />
+        ) : null}
+      </WorkflowStepBody>
+    </>
   );
 };
