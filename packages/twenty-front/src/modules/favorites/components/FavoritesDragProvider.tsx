@@ -1,9 +1,9 @@
 import { FavoritesDragContext } from '@/favorites/contexts/useFavoritesDragContext';
 import {
-    DragDropContext,
-    DragStart,
-    DropResult,
-    ResponderProvided,
+  DragDropContext,
+  DragStart,
+  DropResult,
+  ResponderProvided,
 } from '@hello-pangea/dnd';
 import { ReactNode, useState } from 'react';
 

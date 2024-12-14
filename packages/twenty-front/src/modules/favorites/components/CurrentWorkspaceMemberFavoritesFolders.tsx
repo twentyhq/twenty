@@ -1,7 +1,3 @@
-import { useTheme } from '@emotion/react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconFolderPlus, isDefined } from 'twenty-ui';
-
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CurrentWorkspaceMemberOrphanFavorites } from '@/favorites/components/CurrentWorkspaceMemberOrphanFavorites';
 import { FavoritesDragProvider } from '@/favorites/components/FavoritesDragProvider';
@@ -16,6 +12,9 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { useTheme } from '@emotion/react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { IconFolderPlus, isDefined } from 'twenty-ui';
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const theme = useTheme();
