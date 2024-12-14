@@ -92,6 +92,10 @@ export const ViewPickerContentCreateMode = () => {
   const defaultIcon =
     viewPickerType === ViewType.Kanban ? 'IconLayoutKanban' : 'IconTable';
 
+  if (!hasManuallySelectedIcon) {
+    setViewPickerSelectedIcon(defaultIcon);
+  }
+
   const selectedIcon = hasManuallySelectedIcon
     ? viewPickerSelectedIcon
     : defaultIcon;
