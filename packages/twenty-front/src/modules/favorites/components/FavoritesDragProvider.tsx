@@ -1,4 +1,4 @@
-import { FavoritesDragContext } from '@/favorites/contexts/useFavoritesDragContext';
+import { FavoritesDragContext } from '@/favorites/contexts/FavoritesDragContext';
 import { useReorderFavorite } from '@/favorites/hooks/useReorderFavorite';
 import {
   DragDropContext,
