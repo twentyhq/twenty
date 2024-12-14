@@ -1,6 +1,8 @@
+import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
 import { useSortedFavorites } from '@/favorites/hooks/useSortedFavorites';
 import { activeFavoriteFolderIdState } from '@/favorites/states/activeFavoriteFolderIdState';
 import { calculateNewPosition } from '@/favorites/utils/calculateNewPosition';
+import { validateAndExtractFolderId } from '@/favorites/utils/validateAndExtractFolderId';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
@@ -32,42 +34,43 @@ export const useHandleFavoriteDragAndDrop = () => {
     const draggedFavorite = favorites.find((f) => f.id === draggableId);
     if (!draggedFavorite) return;
 
-    if (destination.droppableId.startsWith('folder-header-')) {
-      const targetFolderId = destination.droppableId.replace(
-        'folder-header-',
-        '',
-      );
+    const destinationFolderId = validateAndExtractFolderId(
+      destination.droppableId,
+    );
+    const sourceFolderId = validateAndExtractFolderId(source.droppableId);
+
+    if (
+      destination.droppableId.startsWith(
+        FAVORITE_DROPPABLE_IDS.FOLDER_HEADER_PREFIX,
+      )
+    ) {
+      if (destinationFolderId === null)
+        throw new Error('Invalid folder header ID');
+
       const folderFavorites = favoritesSorted.filter(
-        (favorite) => favorite.favoriteFolderId === targetFolderId,
+        (favorite) => favorite.favoriteFolderId === destinationFolderId,
       );
 
-      let newPosition;
-      if (folderFavorites.length === 0) {
-        newPosition = 0;
-      } else {
-        newPosition = folderFavorites[folderFavorites.length - 1].position + 1;
-      }
+      const newPosition =
+        folderFavorites.length === 0
+          ? 0
+          : folderFavorites[folderFavorites.length - 1].position + 1;
 
       updateOneFavorite({
         idToUpdate: draggableId,
         updateOneRecordInput: {
-          favoriteFolderId: targetFolderId,
+          favoriteFolderId: destinationFolderId,
           position: newPosition,
         },
       });
 
-      setActiveFavoriteFolderId(targetFolderId);
+      setActiveFavoriteFolderId(destinationFolderId);
       return;
     }
 
     if (destination.droppableId !== source.droppableId) {
-      const newFolderId =
-        destination.droppableId === 'orphan-favorites'
-          ? null
-          : destination.droppableId.replace('folder-', '');
-
       const destinationFavorites = favoritesSorted.filter(
-        (favorite) => favorite.favoriteFolderId === newFolderId,
+        (favorite) => favorite.favoriteFolderId === destinationFolderId,
       );
 
       let newPosition;
@@ -89,20 +92,15 @@ export const useHandleFavoriteDragAndDrop = () => {
       updateOneFavorite({
         idToUpdate: draggableId,
         updateOneRecordInput: {
-          favoriteFolderId: newFolderId,
+          favoriteFolderId: destinationFolderId,
           position: newPosition,
         },
       });
       return;
     }
 
-    const currentFolderId =
-      source.droppableId === 'orphan-favorites'
-        ? null
-        : source.droppableId.replace('folder-', '');
-
     const favoritesInSameList = favoritesSorted.filter(
-      (favorite) => favorite.favoriteFolderId === currentFolderId,
+      (favorite) => favorite.favoriteFolderId === sourceFolderId,
     );
 
     const newPosition = calculateNewPosition({

@@ -4,7 +4,10 @@ import { act } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { FAVORITE_DROPPABLE_IDS } from '@/favorites/constants/FavoriteDroppableIds';
 import { useHandleFavoriteDragAndDrop } from '@/favorites/hooks/useHandleFavoriteDragAndDrop';
+import { createFolderDroppableId } from '@/favorites/utils/createFolderDroppableId';
+import { createFolderHeaderDroppableId } from '@/favorites/utils/createFolderHeaderDroppableId';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
@@ -53,7 +56,7 @@ describe('useHandleFavoriteDragAndDrop', () => {
     act(() => {
       result.current.hook.handleFavoriteDragAndDrop(
         {
-          source: { index: 0, droppableId: 'folder-1' },
+          source: { index: 0, droppableId: createFolderDroppableId('1') },
           destination: null,
           draggableId: '1',
         } as DropResult,
@@ -68,12 +71,13 @@ describe('useHandleFavoriteDragAndDrop', () => {
 
   it('should not update when destination is same as source', () => {
     const { result } = setupHook();
+    const folderOneId = createFolderDroppableId('1');
 
     act(() => {
       result.current.hook.handleFavoriteDragAndDrop(
         {
-          source: { index: 0, droppableId: 'folder-1' },
-          destination: { index: 0, droppableId: 'folder-1' },
+          source: { index: 0, droppableId: folderOneId },
+          destination: { index: 0, droppableId: folderOneId },
           draggableId: '1',
         } as DropResult,
         mockResponderProvided,
@@ -84,15 +88,16 @@ describe('useHandleFavoriteDragAndDrop', () => {
     expect(mocks[3].result).not.toHaveBeenCalled();
     expect(mocks[4].result).not.toHaveBeenCalled();
   });
-  //fails
+
   it('should reorder within same folder', async () => {
     const { result } = setupHook();
+    const folderOneId = createFolderDroppableId('1');
 
     act(() => {
       result.current.hook.handleFavoriteDragAndDrop(
         {
-          source: { index: 0, droppableId: 'folder-1' },
-          destination: { index: 2, droppableId: 'folder-1' },
+          source: { index: 0, droppableId: folderOneId },
+          destination: { index: 2, droppableId: folderOneId },
           draggableId: '1',
         } as DropResult,
         mockResponderProvided,
@@ -110,8 +115,8 @@ describe('useHandleFavoriteDragAndDrop', () => {
     act(() => {
       result.current.hook.handleFavoriteDragAndDrop(
         {
-          source: { index: 0, droppableId: 'folder-1' },
-          destination: { index: 0, droppableId: 'folder-2' },
+          source: { index: 0, droppableId: createFolderDroppableId('1') },
+          destination: { index: 0, droppableId: createFolderDroppableId('2') },
           draggableId: '1',
         } as DropResult,
         mockResponderProvided,
@@ -129,8 +134,11 @@ describe('useHandleFavoriteDragAndDrop', () => {
     act(() => {
       result.current.hook.handleFavoriteDragAndDrop(
         {
-          source: { index: 0, droppableId: 'folder-1' },
-          destination: { index: 0, droppableId: 'orphan-favorites' },
+          source: { index: 0, droppableId: createFolderDroppableId('1') },
+          destination: {
+            index: 0,
+            droppableId: FAVORITE_DROPPABLE_IDS.ORPHAN_FAVORITES,
+          },
           draggableId: '1',
         } as DropResult,
         mockResponderProvided,
@@ -141,15 +149,18 @@ describe('useHandleFavoriteDragAndDrop', () => {
       expect(mocks[4].result).toHaveBeenCalled();
     });
   });
-  //fails
+
   it('should handle dropping into folder header', async () => {
     const { result } = setupHook();
 
     act(() => {
       result.current.hook.handleFavoriteDragAndDrop(
         {
-          source: { index: 0, droppableId: 'folder-1' },
-          destination: { index: 0, droppableId: 'folder-header-2' },
+          source: { index: 0, droppableId: createFolderDroppableId('1') },
+          destination: {
+            index: 0,
+            droppableId: createFolderHeaderDroppableId('2'),
+          },
           draggableId: '1',
         } as DropResult,
         mockResponderProvided,
