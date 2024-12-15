@@ -1,4 +1,3 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -11,7 +10,6 @@ import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useContext, useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
 
 export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
   () => {
@@ -42,9 +40,6 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       contextStoreFiltersComponentState,
     );
 
-    const { id: currentWorkspaceMemberId } =
-      useRecoilValue(currentWorkspaceMemberState) ?? {};
-
     const { totalCount } = useFindManyRecords({
       ...findManyRecordsParams,
       recordGqlFields: {
@@ -54,7 +49,6 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
         contextStoreTargetedRecordsRule,
         contextStoreFilters,
         objectMetadataItem,
-        currentWorkspaceMemberId,
       ),
       limit: 1,
       skip: contextStoreTargetedRecordsRule.mode === 'selection',

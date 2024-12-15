@@ -5,7 +5,6 @@ import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefin
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
@@ -18,7 +17,6 @@ import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
-import { useRecoilValue } from 'recoil';
 
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -90,14 +88,10 @@ export const useExportFetchRecords = ({
     contextStoreFiltersComponentState,
   );
 
-  const { id: currentWorkspaceMemberId } =
-    useRecoilValue(currentWorkspaceMemberState) ?? {};
-
   const queryFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
     objectMetadataItem,
-    currentWorkspaceMemberId,
   );
 
   const findManyRecordsParams = useFindManyRecordIndexTableParams(

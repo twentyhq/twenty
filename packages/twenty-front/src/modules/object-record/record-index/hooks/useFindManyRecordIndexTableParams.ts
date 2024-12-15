@@ -1,4 +1,3 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
@@ -8,7 +7,6 @@ import { tableSortsComponentState } from '@/object-record/record-table/states/ta
 import { tableViewFilterGroupsComponentState } from '@/object-record/record-table/states/tableViewFilterGroupsComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useMemo } from 'react';
-import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const useFindManyRecordIndexTableParams = (
@@ -34,14 +32,10 @@ export const useFindManyRecordIndexTableParams = (
     recordTableId,
   );
 
-  const { id: currentWorkspaceMemberId } =
-    useRecoilValue(currentWorkspaceMemberState) ?? {};
-
   const stateFilter = computeViewRecordGqlOperationFilter(
     tableFilters,
     objectMetadataItem?.fields ?? [],
     tableViewFilterGroups,
-    currentWorkspaceMemberId,
   );
 
   const recordGroupFilter = useMemo(() => {

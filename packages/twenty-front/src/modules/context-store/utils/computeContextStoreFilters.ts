@@ -9,7 +9,6 @@ export const computeContextStoreFilters = (
   contextStoreTargetedRecordsRule: ContextStoreTargetedRecordsRule,
   contextStoreFilters: Filter[],
   objectMetadataItem: ObjectMetadataItem,
-  currentWorkspaceMemberId?: string,
 ) => {
   let queryFilter: RecordGqlOperationFilter | undefined;
 
@@ -43,7 +42,6 @@ export const computeContextStoreFilters = (
             contextStoreFilters,
             objectMetadataItem?.fields ?? [],
             [],
-            currentWorkspaceMemberId,
           );
   }
 

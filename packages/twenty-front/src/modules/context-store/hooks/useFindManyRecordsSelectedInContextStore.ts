@@ -1,4 +1,3 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useContextStoreCurrentObjectMetadataIdOrThrow } from '@/context-store/hooks/useContextStoreCurrentObjectMetadataIdOrThrow';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -6,7 +5,6 @@ import { computeContextStoreFilters } from '@/context-store/utils/computeContext
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useRecoilValue } from 'recoil';
 
 export const useFindManyRecordsSelectedInContextStore = ({
   instanceId,
@@ -32,14 +30,10 @@ export const useFindManyRecordsSelectedInContextStore = ({
     instanceId,
   );
 
-  const { id: currentWorkspaceMemberId } =
-    useRecoilValue(currentWorkspaceMemberState) ?? {};
-
   const queryFilter = computeContextStoreFilters(
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
     objectMetadataItem,
-    currentWorkspaceMemberId,
   );
 
   const { records, loading, totalCount } = useFindManyRecords({

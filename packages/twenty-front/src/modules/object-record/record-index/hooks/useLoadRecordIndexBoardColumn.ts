@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
@@ -44,14 +43,10 @@ export const useLoadRecordIndexBoardColumn = ({
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
   const recordIndexSorts = useRecoilValue(recordIndexSortsState);
 
-  const { id: currentWorkspaceMemberId } =
-    useRecoilValue(currentWorkspaceMemberState) ?? {};
-
   const requestFilters = computeViewRecordGqlOperationFilter(
     recordIndexFilters,
     objectMetadataItem?.fields ?? [],
     recordIndexViewFilterGroups,
-    currentWorkspaceMemberId,
   );
   const orderBy = turnSortsIntoOrderBy(objectMetadataItem, recordIndexSorts);
 

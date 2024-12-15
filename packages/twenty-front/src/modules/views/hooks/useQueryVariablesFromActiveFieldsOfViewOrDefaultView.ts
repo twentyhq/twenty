@@ -7,11 +7,9 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 export const useQueryVariablesFromActiveFieldsOfViewOrDefaultView = ({
   objectMetadataItem,
   viewId,
-  currentWorkspaceMemberId,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   viewId: string | null | undefined;
-  currentWorkspaceMemberId?: string;
 }) => {
   const { view } = useViewOrDefaultViewFromPrefetchedViews({
     objectMetadataItemId: objectMetadataItem.id,
@@ -29,7 +27,6 @@ export const useQueryVariablesFromActiveFieldsOfViewOrDefaultView = ({
     objectMetadataItem,
     view,
     isJsonFilterEnabled,
-    currentWorkspaceMemberId,
   });
 
   return {

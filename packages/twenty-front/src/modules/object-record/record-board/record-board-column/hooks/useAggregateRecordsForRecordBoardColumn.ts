@@ -1,4 +1,3 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
@@ -54,15 +53,10 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
   );
 
   const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
-
-  const { id: currentWorkspaceMemberId } =
-    useRecoilValue(currentWorkspaceMemberState) ?? {};
-
   const requestFilters = computeViewRecordGqlOperationFilter(
     recordIndexFilters,
     objectMetadataItem.fields,
     recordIndexViewFilterGroups,
-    currentWorkspaceMemberId,
   );
 
   const filter = {
