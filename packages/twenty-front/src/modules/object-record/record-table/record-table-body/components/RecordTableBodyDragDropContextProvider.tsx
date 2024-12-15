@@ -1,12 +1,12 @@
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
-import { ReactNode, useContext } from 'react';
+import { ReactNode } from 'react';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -18,7 +18,7 @@ export const RecordTableBodyDragDropContextProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const { objectNameSingular, recordTableId } = useContext(RecordTableContext);
+  const { objectNameSingular, recordTableId } = useRecordTableContextOrThrow();
 
   const { updateOneRecord: updateOneRow } = useUpdateOneRecord({
     objectNameSingular,

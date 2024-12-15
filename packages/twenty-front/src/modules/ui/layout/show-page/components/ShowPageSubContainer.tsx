@@ -13,6 +13,7 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -34,19 +35,6 @@ const StyledTabListContainer = styled.div<{ shouldDisplay: boolean }>`
   height: 40px;
 `;
 
-const StyledButtonContainer = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  bottom: 0;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: flex-end;
-  padding: ${({ theme }) => theme.spacing(2)};
-  position: absolute;
-  width: 100%;
-`;
-
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
   flex: 1;
   overflow-y: auto;
@@ -57,7 +45,7 @@ const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
 export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
 
 type ShowPageSubContainerProps = {
-  layout: RecordLayout;
+  layout?: RecordLayout;
   tabs: SingleTabProps[];
   targetableObject: Pick<
     ActivityTargetableObject,
@@ -76,10 +64,9 @@ export const ShowPageSubContainer = ({
   isInRightDrawer = false,
   isNewRightDrawerItemLoading = false,
 }: ShowPageSubContainerProps) => {
-  const { activeTabIdState } = useTabList(
+  const { activeTabId } = useTabList(
     `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`,
   );
-  const activeTabId = useRecoilValue(activeTabIdState);
 
   const isMobile = useIsMobile();
 
@@ -125,9 +112,12 @@ export const ShowPageSubContainer = ({
 
   const visibleTabs = tabs.filter((tab) => !tab.hide);
 
+  const displaySummaryAndFields =
+    layout && !layout.hideSummaryAndFields && !isMobile && !isInRightDrawer;
+
   return (
     <>
-      {!layout.hideSummaryAndFields && !isMobile && !isInRightDrawer && (
+      {displaySummaryAndFields && (
         <ShowPageLeftContainer forceMobile={isMobile}>
           {summaryCard}
           {fieldsCard}
@@ -147,9 +137,7 @@ export const ShowPageSubContainer = ({
           {renderActiveTabContent()}
         </StyledContentContainer>
         {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
-          <StyledButtonContainer>
-            <RecordShowRightDrawerActionMenu />
-          </StyledButtonContainer>
+          <RightDrawerFooter actions={[<RecordShowRightDrawerActionMenu />]} />
         )}
       </StyledShowPageRightContainer>
     </>

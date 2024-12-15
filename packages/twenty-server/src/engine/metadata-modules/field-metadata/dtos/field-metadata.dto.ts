@@ -147,7 +147,7 @@ export class FieldMetadataDTO<
 
   @IsBoolean()
   @IsOptional()
-  @Field()
+  @Field({ nullable: true })
   isLabelSyncedWithName?: boolean;
 
   @IsDateString()

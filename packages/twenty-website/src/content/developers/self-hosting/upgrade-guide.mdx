@@ -32,7 +32,14 @@ yarn command:prod upgrade-0.34
 The `yarn database:migrate:prod` command will apply the migrations to the database structure (core and metadata schemas)
 The `yarn command:prod upgrade-0.34` takes care of the data migration of all workspaces.
 
+**Environment Variables**
 
+- Removed: `FRONT_BASE_URL`
+- Added: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
+
+We have updated the way we handle the frontend URL. 
+You can now set the frontend URL using the `FRONT_DOMAIN`, `FRONT_PROTOCOL` and `FRONT_PORT` variables.
+If FRONT_DOMAIN is not set, the frontend URL will fallback to `SERVER_URL`.
 
 ### v0.32.0 to v0.33.0
 

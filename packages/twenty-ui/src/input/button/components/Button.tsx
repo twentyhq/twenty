@@ -367,7 +367,7 @@ const StyledSeparator = styled.div<{
   background: ${({ theme, accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.color.blue30;
+        return theme.border.color.blue;
       case 'danger':
         return theme.border.color.danger;
       default:
@@ -387,7 +387,7 @@ const StyledShortcutLabel = styled.div<{
   color: ${({ theme, variant, accent }) => {
     switch (accent) {
       case 'blue':
-        return theme.color.blue30;
+        return theme.border.color.blue;
       case 'danger':
         return variant === 'primary'
           ? theme.border.color.danger
