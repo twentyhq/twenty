@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "compilerOptions": {
     "jsx": "react-jsx",
     "allowJs": false,

@@ -11,7 +11,7 @@
     "outDir": "../../.cache/tsc",
     "paths": {
       "@ui/*": ["packages/twenty-ui/src/*"],
-      "twenty-shared": ["packages/twenty-shared/src/*"]
+      "twenty-shared": ["packages/twenty-shared/dist"]
     }
   },
   "files": [],
