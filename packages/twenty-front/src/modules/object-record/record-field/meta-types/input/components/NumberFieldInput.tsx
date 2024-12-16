@@ -1,6 +1,7 @@
 import { TextInput } from '@/ui/field/input/components/TextInput';
 
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
+import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { useNumberField } from '../../hooks/useNumberField';
 
 export type FieldInputEvent = (persist: () => void) => void;
@@ -56,17 +57,19 @@ export const NumberFieldInput = ({
   };
 
   return (
-    <TextInput
-      placeholder={fieldDefinition.metadata.placeHolder}
-      autoFocus
-      value={draftValue?.toString() ?? ''}
-      onClickOutside={handleClickOutside}
-      onEnter={handleEnter}
-      onEscape={handleEscape}
-      onShiftTab={handleShiftTab}
-      onTab={handleTab}
-      hotkeyScope={hotkeyScope}
-      onChange={handleChange}
-    />
+    <FieldInputContainer>
+      <TextInput
+        placeholder={fieldDefinition.metadata.placeHolder}
+        autoFocus
+        value={draftValue?.toString() ?? ''}
+        onClickOutside={handleClickOutside}
+        onEnter={handleEnter}
+        onEscape={handleEscape}
+        onShiftTab={handleShiftTab}
+        onTab={handleTab}
+        hotkeyScope={hotkeyScope}
+        onChange={handleChange}
+      />
+    </FieldInputContainer>
   );
 };

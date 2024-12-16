@@ -37,14 +37,6 @@ const StyledTextArea = styled(TextareaAutosize)`
   line-height: 18px;
 `;
 
-const StyledTextAreaContainer = styled.div`
-  align-items: center;
-  display: flex;
-  min-height: 32px;
-  min-width: 200px;
-  width: 100%;
-`;
-
 const StyledLightIconButtonContainer = styled.div`
   background: transparent;
   position: absolute;
@@ -103,7 +95,7 @@ export const TextAreaInput = ({
   });
 
   return (
-    <StyledTextAreaContainer>
+    <>
       <StyledTextArea
         placeholder={placeholder}
         disabled={disabled}
@@ -119,6 +111,6 @@ export const TextAreaInput = ({
           <LightCopyIconButton copyText={internalText} />
         </StyledLightIconButtonContainer>
       )}
-    </StyledTextAreaContainer>
+    </>
   );
 };

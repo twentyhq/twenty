@@ -3,6 +3,7 @@ import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useTextField } from '../../hooks/useTextField';
 
+import { FieldInputContainer } from '@/ui/field/input/components/FieldInputContainer';
 import { turnIntoUndefinedIfWhitespacesOnly } from '~/utils/string/turnIntoUndefinedIfWhitespacesOnly';
 import {
   FieldInputClickOutsideEvent,
@@ -56,17 +57,19 @@ export const TextFieldInput = ({
   };
 
   return (
-    <TextAreaInput
-      placeholder={fieldDefinition.metadata.placeHolder}
-      autoFocus
-      value={draftValue ?? ''}
-      onClickOutside={handleClickOutside}
-      onEnter={handleEnter}
-      onEscape={handleEscape}
-      onShiftTab={handleShiftTab}
-      onTab={handleTab}
-      hotkeyScope={hotkeyScope}
-      onChange={handleChange}
-    />
+    <FieldInputContainer>
+      <TextAreaInput
+        placeholder={fieldDefinition.metadata.placeHolder}
+        autoFocus
+        value={draftValue ?? ''}
+        onClickOutside={handleClickOutside}
+        onEnter={handleEnter}
+        onEscape={handleEscape}
+        onShiftTab={handleShiftTab}
+        onTab={handleTab}
+        hotkeyScope={hotkeyScope}
+        onChange={handleChange}
+      />
+    </FieldInputContainer>
   );
 };
