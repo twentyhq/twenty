@@ -96,7 +96,11 @@ export const RecordTable = () => {
               <RecordTableRecordGroupsBody />
             )}
             <RecordTableStickyEffect />
-            {isAggregateQueryEnabled && <RecordTableFooter />}
+            {isAggregateQueryEnabled === true && !hasRecordGroups ? (
+              <RecordTableFooter />
+            ) : (
+              <></>
+            )}
           </StyledTable>
           <DragSelect
             dragSelectable={tableBodyRef}
