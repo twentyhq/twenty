@@ -4,7 +4,6 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
-import { useTheme } from '@emotion/react';
 import { useState } from 'react';
 import {
   IconX,
@@ -24,7 +23,6 @@ export const SearchVariablesDropdownWorkflowStepItems = ({
   steps,
   onSelect,
 }: SearchVariablesDropdownWorkflowStepItemsProps) => {
-  const theme = useTheme();
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const { closeDropdown } = useDropdown(dropdownId);
