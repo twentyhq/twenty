@@ -34,10 +34,12 @@ jobs:
         with:
           files: |
             packages/twenty-shared/**
-
       - name: Skip if no relevant changes
         if: steps.changed-files.outputs.any_changed == 'false'
         run: echo "No relevant changes. Skipping CI."
+      - name: Install dependencies
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: ./.github/workflows/actions/yarn-install
       - name: Run ${{ matrix.task }} task
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/nx-affected
