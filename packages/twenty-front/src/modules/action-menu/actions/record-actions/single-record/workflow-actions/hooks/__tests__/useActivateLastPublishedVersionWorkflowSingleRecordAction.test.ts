@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-import { useActivateDraftWorkflowSingleRecordAction } from '../useActivateDraftWorkflowSingleRecordAction';
+import { useActivateLastPublishedVersionWorkflowSingleRecordAction } from '../useActivateLastPublishedVersionWorkflowSingleRecordAction';
 
 const workflowMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
   (item) => item.nameSingular === 'workflow',
@@ -12,11 +12,12 @@ const workflowMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
 const workflowMock = {
   __typename: 'Workflow',
   id: 'workflowId',
+  lastPublishedVersionId: 'lastPublishedVersionId',
   currentVersion: {
     __typename: 'WorkflowVersion',
-    id: 'currentVersionId',
+    id: 'lastPublishedVersionId',
     trigger: 'trigger',
-    status: 'DRAFT',
+    status: 'DEACTIVATED',
     steps: [
       {
         __typename: 'WorkflowStep',
@@ -52,11 +53,11 @@ const wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
   },
 });
 
-describe('useActivateDraftWorkflowSingleRecordAction', () => {
+describe('useActivateLastPublishedVersionWorkflowSingleRecordAction', () => {
   it('should be registered', () => {
     const { result } = renderHook(
       () =>
-        useActivateDraftWorkflowSingleRecordAction({
+        useActivateLastPublishedVersionWorkflowSingleRecordAction({
           recordId: workflowMock.id,
         }),
       {
@@ -70,7 +71,7 @@ describe('useActivateDraftWorkflowSingleRecordAction', () => {
   it('should call activateWorkflowVersion on click', () => {
     const { result } = renderHook(
       () =>
-        useActivateDraftWorkflowSingleRecordAction({
+        useActivateLastPublishedVersionWorkflowSingleRecordAction({
           recordId: workflowMock.id,
         }),
       {
