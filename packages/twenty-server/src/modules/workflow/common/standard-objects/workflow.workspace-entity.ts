@@ -1,6 +1,10 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import {
+  ActorMetadata,
+  FieldActorSource,
+} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -21,10 +25,6 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import {
-  ActorMetadata,
-  FieldActorSource,
-} from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
 
 export enum WorkflowStatus {
   DRAFT = 'DRAFT',
@@ -103,10 +103,10 @@ export class WorkflowWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Position',
     description: 'Workflow record position',
     icon: 'IconHierarchy2',
+    defaultValue: 0,
   })
   @WorkspaceIsSystem()
-  @WorkspaceIsNullable()
-  position: number | null;
+  position: number;
 
   // Relations
   @WorkspaceRelation({

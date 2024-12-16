@@ -18,6 +18,23 @@ describe('QueryRunnerArgsFactory', () => {
     objectMetadataItemWithFieldMaps: {
       isCustom: true,
       nameSingular: 'testNumber',
+      fields: [
+        {
+          type: FieldMetadataType.POSITION,
+          isCustom: true,
+          nameSingular: 'position',
+        },
+        {
+          type: FieldMetadataType.NUMBER,
+          isCustom: true,
+          nameSingular: 'testNumber',
+        },
+        {
+          type: FieldMetadataType.TEXT,
+          isCustom: true,
+          nameSingular: 'otherField',
+        },
+      ],
       fieldsByName: {
         position: {
           type: FieldMetadataType.POSITION,
