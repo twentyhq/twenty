@@ -45,6 +45,9 @@ export class BuildServerlessFunctionJob {
         });
 
       if (isDefined(serverlessFunction)) {
+        await this.serverlessFunctionRepository.update(serverlessFunction.id, {
+          syncStatus: ServerlessFunctionSyncStatus.NOT_READY,
+        });
         await this.serverlessService.build(
           serverlessFunction,
           serverlessFunctionVersion,
