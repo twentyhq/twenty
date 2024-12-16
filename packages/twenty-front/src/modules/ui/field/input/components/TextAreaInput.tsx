@@ -38,6 +38,10 @@ const StyledTextArea = styled(TextareaAutosize)`
 `;
 
 const StyledTextAreaContainer = styled.div`
+  align-items: center;
+  display: flex;
+  min-height: 32px;
+  min-width: 200px;
   width: 100%;
 `;
 

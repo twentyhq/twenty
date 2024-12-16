@@ -5,10 +5,8 @@ export const OverlayContainer = styled.div`
   align-items: center;
   display: flex;
 
-  min-height: 32px;
   backdrop-filter: ${({ theme }) => theme.blur.medium};
   width: fit-content;
-  min-width: 150px;
 
   border-radius: ${({ theme }) => theme.border.radius.md};
 
