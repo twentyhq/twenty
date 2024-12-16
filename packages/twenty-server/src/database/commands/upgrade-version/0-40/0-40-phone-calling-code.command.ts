@@ -99,9 +99,11 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
     // Note: ask Felix if tit's ok for this breaking change TEXT to TEXT. At the same time, should we tranform countrycode en ENUM postgres & graphql ? answer : no need to worry about this breaking change.
     // 4 - [IMO, not necessary] if we think it's important, update all additioanl phones to add a country code following the same logic
 
-    // Note : other consequesnces to check : zapier @martin + REST api @martin
-    // Note : other consequesnces to check : timeline activities @coco
-
+    console.log(
+      `   Note : other consequesnces to check : zapier @martin + REST api @martin
+          Note : other consequesnces to check : timeline activities @coco
+    `,
+    );
     // ---------------------------------FieldMetada-----------------------------------------------------------
     // 1 - Add the calling code prop in the field-metadata defaultvalue
     // 1bis - cahnge country code prop in the field-metadata defaultvalue cf above +33 => FR
@@ -199,6 +201,10 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
         `P1 Step 3 (same time) - update primaryCountryCode to be country letters: +33 => FR || +1 => US (if mulitple, first one)`,
       );
 
+      this.logger.log(
+        `P1 Step 4 (same time) - update all additioanl phones to add a country code following the same logic`,
+      );
+
       for (const phoneFieldMetadata of phonesFieldMetadata) {
         this.logger.log(`P1 Step 2 - for ${phoneFieldMetadata.name}`);
         if (
@@ -233,18 +239,18 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
                 )
               ) {
                 // let's process the additional phones
-                // if (record[phoneFieldMetadata.name].additionalPhones) {
-                //   const additionalPhones = record[
-                //     phoneFieldMetadata.name
-                //   ].additionalPhones.map((phone) => {
-                //     return {
-                //       ...phone,
-                //       primaryPhoneCountryCode: callingCodeToCountryCode(
-                //         record[phoneFieldMetadata.name].primaryPhoneCountryCode,
-                //       ),
-                //     };
-                //   });
-                // }
+                let additionalPhones = null;
+
+                if (record[phoneFieldMetadata.name].additionalPhones) {
+                  additionalPhones = record[
+                    phoneFieldMetadata.name
+                  ].additionalPhones.map((phone) => {
+                    return {
+                      ...phone,
+                      countryCode: callingCodeToCountryCode(phone.callingCode),
+                    };
+                  });
+                }
 
                 const res = await repository.update(record.id, {
                   [`${phoneFieldMetadata.name}PrimaryPhoneCallingCode`]:
@@ -253,6 +259,8 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
                     callingCodeToCountryCode(
                       record[phoneFieldMetadata.name].primaryPhoneCountryCode,
                     ),
+                  [`${phoneFieldMetadata.name}AdditionalPhones`]:
+                    additionalPhones,
                 });
               }
             }),
@@ -260,6 +268,9 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
         }
       }
     }
+
+    this.logger.log(`Part 2 - FieldMetadata`);
+
     this.logger.log(chalk.green(`Command completed!`));
   }
 }
