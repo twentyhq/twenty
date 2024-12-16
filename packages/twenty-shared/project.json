@@ -6,6 +6,7 @@
   "tags": ["scope:shared"],
   "targets": {
     "build": {
+      "dependsOn": ["^build"],
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/dist"
