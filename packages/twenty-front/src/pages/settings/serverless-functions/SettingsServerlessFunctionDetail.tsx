@@ -32,7 +32,8 @@ export const SettingsServerlessFunctionDetail = () => {
   const { enqueueSnackBar } = useSnackBar();
   const { activeTabId, setActiveTabId } = useTabList(TAB_LIST_COMPONENT_ID);
   const [isCodeValid, setIsCodeValid] = useState(true);
-  const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
+  const { updateOneServerlessFunction } =
+    useUpdateOneServerlessFunction(serverlessFunctionId);
   const { publishOneServerlessFunction } = usePublishOneServerlessFunction();
   const { formValues, setFormValues, loading } =
     useServerlessFunctionUpdateFormState(serverlessFunctionId);
@@ -45,7 +46,6 @@ export const SettingsServerlessFunctionDetail = () => {
 
   const handleSave = useDebouncedCallback(async () => {
     await updateOneServerlessFunction({
-      id: serverlessFunctionId,
       name: formValues.name,
       description: formValues.description,
       code: formValues.code,

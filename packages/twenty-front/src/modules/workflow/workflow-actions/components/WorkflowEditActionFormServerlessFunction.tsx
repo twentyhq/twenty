@@ -71,13 +71,15 @@ export const WorkflowEditActionFormServerlessFunction = ({
   action,
   actionOptions,
 }: WorkflowEditActionFormServerlessFunctionProps) => {
+  const serverlessFunctionId = action.settings.input.serverlessFunctionId;
   const theme = useTheme();
   const { activeTabId, setActiveTabId } = useTabList(
     WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
-  const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
+  const { updateOneServerlessFunction, isReady } =
+    useUpdateOneServerlessFunction(serverlessFunctionId);
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
-  const serverlessFunctionId = action.settings.input.serverlessFunctionId;
+
   const workflowId = useRecoilValue(workflowIdState);
   const workflow = useWorkflowWithCurrentVersion(workflowId);
   const { availablePackages } = useGetAvailablePackages({
@@ -113,12 +115,11 @@ export const WorkflowEditActionFormServerlessFunction = ({
 
   const handleSave = useDebouncedCallback(async () => {
     await updateOneServerlessFunction({
-      id: serverlessFunctionId,
       name: formValues.name,
       description: formValues.description,
       code: formValues.code,
     });
-  }, 1_000);
+  }, 500);
 
   const onCodeChange = async (newCode: string) => {
     if (actionOptions.readonly === true) {
@@ -178,7 +179,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
         },
       });
     },
-    1_000,
+    500,
   );
 
   const handleInputChange = async (value: any, path: string[]) => {
@@ -286,7 +287,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
                 readonly={actionOptions.readonly}
               />
               <StyledCodeEditorContainer>
-                <InputLabel>Code</InputLabel>
+                <InputLabel>Code {!isReady && <span>•</span>}</InputLabel>
                 <CodeEditor
                   height={343}
                   value={formValues.code?.[INDEX_FILE_PATH]}
