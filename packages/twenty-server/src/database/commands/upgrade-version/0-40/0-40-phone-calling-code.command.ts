@@ -109,11 +109,14 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
     // 1bis - cahnge country code prop in the field-metadata defaultvalue cf above +33 => FR
     // Note: no additionalPhgones in the default value
 
+    // ---------------------------------Seeds-----------------------------------------------------------
+    // 1 - Adjust seeders : update getDevSeedCompanyCustomFields and seedPeople
+
     this.logger.log(`Part 1 - Workspace`);
 
     // ------------------------------------------------------------------------------------------------------------------
     // ------------------------------------------------------------------------------------------------------------------
-    const workspaceIterator = 1;
+    let workspaceIterator = 1;
 
     for (const workspaceId of workspaceIds) {
       this.logger.log(
@@ -131,12 +134,6 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
         },
       });
 
-      this.logger.log(`phonesFieldMetadata: ${phonesFieldMetadata?.length}`);
-      for (const phoneFieldMetadata of phonesFieldMetadata) {
-        this.logger.log(
-          `before loop, phonesFieldMetadata: ${phoneFieldMetadata.name}`,
-        );
-      }
       for (const phoneFieldMetadata of phonesFieldMetadata) {
         if (
           isDefined(phoneFieldMetadata) &&
@@ -187,18 +184,18 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
       }
 
       this.logger.log(
-        `P1 Step1 - RUN migration to create callingCodes for ${workspaceId.slice(0, 5)}`,
+        `P1 Step 1 - RUN migration to create callingCodes for ${workspaceId.slice(0, 5)}`,
       );
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
         workspaceId,
       );
 
       this.logger.log(
-        `P1 Step 2 - Migrations for callingCode creation must be done first because we now use twentyORMGlobalManager to update country codes`,
+        `P1 Step 2 - Migrations for callingCode must be first. Now can use twentyORMGlobalManager to update countryCode`,
       );
 
       this.logger.log(
-        `P1 Step 3 (same time) - update primaryCountryCode to be country letters: +33 => FR || +1 => US (if mulitple, first one)`,
+        `P1 Step 3 (same time) - update CountryCode to letters: +33 => FR || +1 => US (if mulitple, first one)`,
       );
 
       this.logger.log(
@@ -252,7 +249,7 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
                   });
                 }
 
-                const res = await repository.update(record.id, {
+                await repository.update(record.id, {
                   [`${phoneFieldMetadata.name}PrimaryPhoneCallingCode`]:
                     record[phoneFieldMetadata.name].primaryPhoneCountryCode,
                   [`${phoneFieldMetadata.name}PrimaryPhoneCountryCode`]:
@@ -267,10 +264,67 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
           );
         }
       }
+      workspaceIterator++;
     }
 
-    this.logger.log(`Part 2 - FieldMetadata`);
+    this.logger.log(`
+      
+      Part 2 - FieldMetadata`);
 
+    workspaceIterator = 1;
+    for (const workspaceId of workspaceIds) {
+      this.logger.log(
+        `Running command for workspace ${workspaceId} ${workspaceIterator}/${workspaceIds.length}`,
+      );
+
+      this.logger.log(
+        `P2 Step 1 - let's find all the fieldsMetadata that have the PHONES type, and extract the objectMetadataId`,
+      );
+
+      const phonesFieldMetadata = await this.fieldMetadataRepository.find({
+        where: {
+          workspaceId,
+          type: FieldMetadataType.PHONES,
+        },
+      });
+
+      for (const phoneFieldMetadata of phonesFieldMetadata) {
+        if (
+          !isDefined(phoneFieldMetadata) ||
+          !isDefined(phoneFieldMetadata.defaultValue)
+        )
+          continue;
+        let defaultValue = phoneFieldMetadata.defaultValue;
+
+        // some cases look like it's an array. let's flatten it (not sure the case is supposed to happen but I saw it in my local db)
+        if (Array.isArray(defaultValue) && isDefined(defaultValue[0]))
+          defaultValue = phoneFieldMetadata.defaultValue[0];
+
+        if (!isDefined(defaultValue)) continue;
+        if (typeof defaultValue !== 'object') continue;
+        if (!('primaryPhoneCountryCode' in defaultValue)) continue;
+        if (!defaultValue.primaryPhoneCountryCode) continue;
+
+        const primaryPhoneCountryCode = defaultValue.primaryPhoneCountryCode;
+
+        const countryCode = callingCodeToCountryCode(
+          primaryPhoneCountryCode.replace(/["']/g, ''),
+        );
+
+        await this.fieldMetadataRepository.update(phoneFieldMetadata.id, {
+          defaultValue: {
+            ...defaultValue,
+            primaryPhoneCountryCode: countryCode ? `'${countryCode}'` : "''",
+            primaryPhoneCallingCode: isCallingCode(
+              primaryPhoneCountryCode.replace(/["']/g, ''),
+            )
+              ? primaryPhoneCountryCode
+              : "''",
+          },
+        });
+      }
+      workspaceIterator++;
+    }
     this.logger.log(chalk.green(`Command completed!`));
   }
 }
