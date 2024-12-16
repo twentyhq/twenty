@@ -5,7 +5,7 @@ module.exports = {
     {
       files: ['*.ts', '*.tsx'],
       parserOptions: {
-        project: ['packages/twenty-emails/tsconfig.{json,*.json}'],
+        project: ['packages/twenty-shared/tsconfig.{json,*.json}'],
       },
       rules: {
         '@nx/dependency-checks': 'error',
