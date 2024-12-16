@@ -1,9 +1,6 @@
 {
   "name": "twenty-shared",
   "version": "0.40.0-canary",
-  "description": "",
-  "author": "",
-  "private": true,
   "license": "AGPL-3.0",
   "main": "./dist/index.js",
   "scripts": {

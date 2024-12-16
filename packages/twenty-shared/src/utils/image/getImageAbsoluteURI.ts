@@ -11,14 +11,9 @@ export const getImageAbsoluteURI = ({
     return imageUrl;
   }
 
-  const absoluteImageUrl = new URL(baseUrl);
-
   if (imageUrl.startsWith('/')) {
-    absoluteImageUrl.pathname = `/files${imageUrl}`;
-    return absoluteImageUrl.toString();
+    return new URL(`/files${imageUrl}`, baseUrl).toString();
   }
 
-  absoluteImageUrl.pathname = `files/${imageUrl}`;
-
-  return absoluteImageUrl.toString();
+  return new URL(`/files/${imageUrl}`, baseUrl).toString();
 };
