@@ -6,10 +6,11 @@ import { useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useImpersonateMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { sleep } from '~/utils/sleep';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
 export const useImpersonate = () => {
   const { clearSession } = useAuth();
+  const { redirect } = useRedirect();
   const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
   const setTokenPair = useSetRecoilState(tokenPairState);
   const [impersonate] = useImpersonateMutation();
@@ -43,8 +44,7 @@ export const useImpersonate = () => {
       await clearSession();
       setCurrentUser(user);
       setTokenPair(tokens);
-      await sleep(0); // This hacky workaround is necessary to ensure the tokens stored in the cookie are updated correctly.
-      window.location.href = AppPath.Index;
+      redirect(AppPath.Index);
     } catch (error) {
       setError('Failed to impersonate user. Please try again.');
       setIsLoading(false);

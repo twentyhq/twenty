@@ -48,6 +48,7 @@ import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/h
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -65,6 +66,7 @@ export const useAuth = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
   const setWorkspaces = useSetRecoilState(workspacesState);
+  const { redirect } = useRedirect();
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
@@ -367,9 +369,9 @@ export const useAuth = () => {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
     }) => {
-      window.location.href = buildRedirectUrl('/auth/google', params);
+      redirect(buildRedirectUrl('/auth/google', params));
     },
-    [buildRedirectUrl],
+    [buildRedirectUrl, redirect],
   );
 
   const handleMicrosoftLogin = useCallback(
@@ -377,9 +379,9 @@ export const useAuth = () => {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
     }) => {
-      window.location.href = buildRedirectUrl('/auth/microsoft', params);
+      redirect(buildRedirectUrl('/auth/microsoft', params));
     },
-    [buildRedirectUrl],
+    [buildRedirectUrl, redirect],
   );
 
   return {
