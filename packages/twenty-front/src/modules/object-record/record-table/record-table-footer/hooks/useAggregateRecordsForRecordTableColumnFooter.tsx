@@ -1,6 +1,7 @@
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { computeAggregateValueAndLabel } from '@/object-record/record-board/record-board-column/utils/computeAggregateValueAndLabel';
 import { computeViewRecordGqlOperationFilter } from '@/object-record/record-filter/utils/computeViewRecordGqlOperationFilter';
+import { useRecordGroupFilter } from '@/object-record/record-group/hooks/useRecordGroupFilter';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexViewFilterGroupsState } from '@/object-record/record-index/states/recordIndexViewFilterGroupsState';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -16,8 +17,9 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const isAggregateQueryEnabled = useIsFeatureEnabled(
     'IS_AGGREGATE_QUERY_ENABLED',
   );
-
   const { objectMetadataItem } = useRecordTableContextOrThrow();
+  const { recordGroupFilter } = useRecordGroupFilter(objectMetadataItem.fields);
+
   const { currentViewWithSavedFiltersAndSorts } = useGetCurrentView();
   const recordIndexViewFilterGroups = useRecoilValue(
     recordIndexViewFilterGroupsState,
@@ -56,7 +58,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { data } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
-    filter: { ...requestFilters },
+    filter: { ...requestFilters, ...recordGroupFilter },
     skip:
       !isAggregateQueryEnabled || !isDefined(aggregateOperationForViewField),
   });
