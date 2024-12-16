@@ -140,7 +140,7 @@ export const MultiRecordSelect = ({
           onSubmit?.();
         }}
       />
-      <DropdownMenu ref={containerRef} data-select-disable width={150}>
+      <DropdownMenu ref={containerRef} data-select-disable width={200}>
         {dropdownPlacement?.includes('end') && (
           <>
             {isDefined(onCreate) && (

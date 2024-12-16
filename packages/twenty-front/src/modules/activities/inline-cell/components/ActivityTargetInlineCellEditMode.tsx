@@ -282,7 +282,7 @@ export const ActivityTargetInlineCellEditMode = ({
   );
 
   return (
-    <StyledSelectContainer>
+    <>
       <RecordPickerComponentInstanceContext.Provider
         value={{ instanceId: recordPickerInstanceId }}
       >
@@ -295,6 +295,6 @@ export const ActivityTargetInlineCellEditMode = ({
         <ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect />
         <MultiRecordSelect onSubmit={handleSubmit} onChange={handleChange} />
       </RecordPickerComponentInstanceContext.Provider>
-    </StyledSelectContainer>
+    </>
   );
 };
