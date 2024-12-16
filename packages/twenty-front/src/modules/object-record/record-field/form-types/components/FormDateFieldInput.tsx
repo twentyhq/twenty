@@ -3,12 +3,20 @@ import { FormFieldInputInputContainer } from '@/object-record/record-field/form-
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { DateInput } from '@/ui/field/input/components/DateInput';
+import { StyledCalendarContainer } from '@/ui/field/input/components/DateInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import {
+  InternalDatePicker,
+  MONTH_AND_YEAR_DROPDOWN_ID,
+  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+} from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
 import { parseStringToDate } from '@/ui/input/components/internal/date/utils/parseStringToDate';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { UserContext } from '@/users/contexts/UserContext';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css } from '@emotion/react';
@@ -95,10 +103,10 @@ export const FormDateFieldInput = ({
     ? new Date(draftValue.value)
     : null;
 
-  const datePickerWrapperRef = useRef<HTMLDivElement>(null);
-
-  const [temporaryValue, setTemporaryValue] =
+  const [pickerDate, setPickerDate] =
     useState<Nullable<Date>>(draftValueAsDate);
+
+  const datePickerWrapperRef = useRef<HTMLDivElement>(null);
 
   const [inputDateTime, setInputDateTime] = useState(
     isDefined(draftValueAsDate) && !isStandaloneVariableString(defaultValue)
@@ -120,6 +128,31 @@ export const FormDateFieldInput = ({
     }
   };
 
+  const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
+  const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
+    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  );
+  const { closeDropdown: closeDropdownYearSelect } = useDropdown(
+    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+  );
+
+  const displayDatePicker =
+    draftValue.type === 'static' && draftValue.mode === 'edit';
+
+  useListenClickOutside({
+    refs: [datePickerWrapperRef],
+    listenerId: 'FormDateFieldInput',
+    callback: (event) => {
+      event.stopImmediatePropagation();
+
+      closeDropdownYearSelect();
+      closeDropdownMonthSelect();
+      closeDropdown();
+      handlePickerClickOutside();
+    },
+    enabled: displayDatePicker,
+  });
+
   const handlePickerChange = (newDate: Nullable<Date>) => {
     setDraftValue({
       type: 'static',
@@ -136,6 +169,8 @@ export const FormDateFieldInput = ({
           })
         : '',
     );
+
+    setPickerDate(newDate);
 
     persistDate(newDate);
   };
@@ -167,22 +202,21 @@ export const FormDateFieldInput = ({
       mode: 'view',
     });
 
-    setTemporaryValue(null);
+    setPickerDate(null);
 
     setInputDateTime('');
 
     persistDate(null);
   };
 
-  const handlePickerSubmit = (newDate: Nullable<Date>) => {
-    // 2
+  const handlePickerMouseSelect = (newDate: Nullable<Date>) => {
     setDraftValue({
       type: 'static',
       value: newDate?.toDateString() ?? null,
       mode: 'view',
     });
 
-    setTemporaryValue(newDate);
+    setPickerDate(newDate);
 
     setInputDateTime(
       isDefined(newDate)
@@ -245,7 +279,7 @@ export const FormDateFieldInput = ({
       mode: 'edit',
     });
 
-    setTemporaryValue(validatedDate);
+    setPickerDate(validatedDate);
 
     setInputDateTime(
       parseDateToString({
@@ -276,7 +310,7 @@ export const FormDateFieldInput = ({
       mode: 'view',
     });
 
-    setTemporaryValue(null);
+    setPickerDate(null);
 
     onPersist(null);
   };
@@ -304,19 +338,18 @@ export const FormDateFieldInput = ({
               {draftValue.mode === 'edit' ? (
                 <StyledDateInputContainer>
                   <StyledDateInputAbsoluteContainer>
-                    <DateInput
-                      clearable
-                      onChange={handlePickerChange}
-                      onEscape={handlePickerEscape}
-                      onClickOutside={handlePickerClickOutside}
-                      onEnter={handlePickerEnter}
-                      onClear={handlePickerClear}
-                      onSubmit={handlePickerSubmit}
-                      hideHeaderInput
-                      wrapperRef={datePickerWrapperRef}
-                      temporaryValue={temporaryValue}
-                      setTemporaryValue={setTemporaryValue}
-                    />
+                    <StyledCalendarContainer>
+                      <InternalDatePicker
+                        date={pickerDate ?? new Date()}
+                        isDateTimeInput={false}
+                        onChange={handlePickerChange}
+                        onMouseSelect={handlePickerMouseSelect}
+                        onEnter={handlePickerEnter}
+                        onEscape={handlePickerEscape}
+                        onClear={handlePickerClear}
+                        hideHeaderInput
+                      />
+                    </StyledCalendarContainer>
                   </StyledDateInputAbsoluteContainer>
                 </StyledDateInputContainer>
               ) : null}
