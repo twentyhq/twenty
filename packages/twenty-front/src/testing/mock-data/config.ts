@@ -1,10 +1,17 @@
-import { ClientConfig } from '~/generated-metadata/graphql';
-import { CaptchaDriverType } from '~/generated/graphql';
+import { CaptchaDriverType, ClientConfig } from '~/generated/graphql';
 
 export const mockedClientConfig: ClientConfig = {
   signInPrefilled: true,
   isMultiWorkspaceEnabled: false,
   isSSOEnabled: false,
+  authProviders: {
+    google: true,
+    magicLink: false,
+    password: true,
+    microsoft: false,
+    sso: [],
+    __typename: 'AuthProviders',
+  },
   frontDomain: 'localhost',
   defaultSubdomain: 'app',
   chromeExtensionId: 'MOCKED_EXTENSION_ID',

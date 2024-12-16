@@ -12,9 +12,7 @@ type SettingsOptionCardContentSelectProps = {
   Icon?: IconComponent;
   title: React.ReactNode;
   description?: string;
-  divider?: boolean;
   disabled?: boolean;
-  selectClassName?: string;
   children?: React.ReactNode;
 };
 
@@ -26,12 +24,11 @@ export const SettingsOptionCardContentSelect = ({
   Icon,
   title,
   description,
-  divider,
   disabled = false,
   children,
 }: SettingsOptionCardContentSelectProps) => {
   return (
-    <StyledSettingsOptionCardContent divider={divider} disabled={disabled}>
+    <StyledSettingsOptionCardContent disabled={disabled}>
       {Icon && (
         <StyledSettingsOptionCardIcon>
           <SettingsOptionIconCustomizer Icon={Icon} />

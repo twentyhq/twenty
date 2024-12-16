@@ -26,8 +26,12 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { DragStart, DropResult, ResponderProvided } from '@hello-pangea/dnd';
+import { useState } from 'react';
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
+  const [isDragging, setIsDragging] = useState(false);
+
   const currentPath = useLocation().pathname;
   const currentViewPath = useLocation().pathname + useLocation().search;
   const theme = useTheme();
@@ -54,6 +58,16 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
     openNavigationSection();
     setIsFavoriteFolderCreating((current) => !current);
   };
+
+  const handleDragStart = (_: DragStart) => {
+    setIsDragging(true);
+  };
+
+  const handleDragEnd = (result: DropResult, provided: ResponderProvided) => {
+    setIsDragging(false);
+    handleReorderFavorite(result, provided);
+  };
+
   const shouldDisplayFavoritesWithFeatureFlagEnabled = true;
 
   //todo: remove this logic once feature flag gating is removed
@@ -103,7 +117,8 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
 
           {orphanFavorites.length > 0 && (
             <DraggableList
-              onDragEnd={handleReorderFavorite}
+              onDragEnd={handleDragEnd}
+              onDragStart={handleDragStart}
               draggableItems={orphanFavorites.map((favorite, index) => (
                 <DraggableItem
                   key={favorite.id}
@@ -129,7 +144,7 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
                           accent="tertiary"
                         />
                       }
-                      isDraggable={true}
+                      isDragging={isDragging}
                     />
                   }
                 />

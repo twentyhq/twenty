@@ -147,9 +147,9 @@ export class CompanyWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Position',
     description: 'Company record position',
     icon: 'IconHierarchy2',
+    defaultValue: 0,
   })
   @WorkspaceIsSystem()
-  @WorkspaceIsNullable()
   position: number;
 
   @WorkspaceField({

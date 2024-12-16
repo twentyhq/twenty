@@ -78,10 +78,9 @@ export const SettingsObjectDetailPage = () => {
     findActiveObjectMetadataItemBySlug(objectSlug) ??
     findActiveObjectMetadataItemBySlug(updatedObjectSlug);
 
-  const { activeTabIdState } = useTabList(
+  const { activeTabId } = useTabList(
     SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
   );
-  const activeTabId = useRecoilValue(activeTabIdState);
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(

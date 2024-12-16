@@ -21,20 +21,39 @@ export class DomainManagerService {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  getBaseUrl() {
-    const baseUrl = new URL(
-      `${this.environmentService.get('FRONT_PROTOCOL')}://${this.environmentService.get('FRONT_DOMAIN')}`,
-    );
+  getFrontUrl() {
+    let baseUrl: URL;
+    const frontPort = this.environmentService.get('FRONT_PORT');
+    const frontDomain = this.environmentService.get('FRONT_DOMAIN');
+    const frontProtocol = this.environmentService.get('FRONT_PROTOCOL');
+
+    const serverUrl = this.environmentService.get('SERVER_URL');
+
+    if (!frontDomain) {
+      baseUrl = new URL(serverUrl);
+    } else {
+      baseUrl = new URL(`${frontProtocol}://${frontDomain}`);
+    }
+
+    if (frontPort) {
+      baseUrl.port = frontPort.toString();
+    }
+
+    if (frontProtocol) {
+      baseUrl.protocol = frontProtocol;
+    }
+
+    return baseUrl;
+  }
+
+  getBaseUrl(): URL {
+    const baseUrl = this.getFrontUrl();
 
     if (
       this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
       this.environmentService.get('DEFAULT_SUBDOMAIN')
     ) {
       baseUrl.hostname = `${this.environmentService.get('DEFAULT_SUBDOMAIN')}.${baseUrl.hostname}`;
-    }
-
-    if (this.environmentService.get('FRONT_PORT')) {
-      baseUrl.port = this.environmentService.get('FRONT_PORT').toString();
     }
 
     return baseUrl;
@@ -87,10 +106,9 @@ export class DomainManagerService {
   getWorkspaceSubdomainByOrigin = (origin: string) => {
     const { hostname: originHostname } = new URL(origin);
 
-    const subdomain = originHostname.replace(
-      `.${this.environmentService.get('FRONT_DOMAIN')}`,
-      '',
-    );
+    const frontDomain = this.getFrontUrl().hostname;
+
+    const subdomain = originHostname.replace(`.${frontDomain}`, '');
 
     if (this.isDefaultSubdomain(subdomain)) {
       return;

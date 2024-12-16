@@ -9,7 +9,7 @@ import { OBJECT_FILTER_DROPDOWN_ID } from '@/object-record/object-filter-dropdow
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { useSelectFilter } from '@/object-record/object-filter-dropdown/hooks/useSelectFilter';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -20,7 +20,6 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { availableFilterDefinitionsComponentState } from '@/views/states/availableFilterDefinitionsComponentState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useContext } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
@@ -57,7 +56,7 @@ type ObjectFilterDropdownFilterSelectProps = {
 export const ObjectFilterDropdownFilterSelect = ({
   isAdvancedFilterButtonVisible,
 }: ObjectFilterDropdownFilterSelectProps) => {
-  const { recordIndexId } = useContext(RecordIndexRootPropsContext);
+  const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const {
     setObjectFilterDropdownSearchInput,

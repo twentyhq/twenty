@@ -1,9 +1,8 @@
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { RecordUpdateHookParams } from '@/object-record/record-field/contexts/FieldContext';
 import { RecordIndexRemoveSortingModal } from '@/object-record/record-index/components/RecordIndexRemoveSortingModal';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
-import { useContext } from 'react';
 
 type RecordIndexTableContainerProps = {
   recordTableId: string;
@@ -14,7 +13,7 @@ export const RecordIndexTableContainer = ({
   recordTableId,
   viewBarId,
 }: RecordIndexTableContainerProps) => {
-  const { objectNameSingular } = useContext(RecordIndexRootPropsContext);
+  const { objectNameSingular } = useRecordIndexContextOrThrow();
 
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular,

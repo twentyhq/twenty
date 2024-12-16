@@ -3,10 +3,12 @@ import { RecoilRoot } from 'recoil';
 
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import {
-  recordTableCell,
-  recordTableRow,
+  recordTableCellContextValue,
+  recordTableRowContextValue,
+  recordTableRowDraggableContextValue,
 } from '@/object-record/record-table/record-table-cell/hooks/__mocks__/cell';
 import { useIsSoftFocusOnCurrentTableCell } from '@/object-record/record-table/record-table-cell/hooks/useIsSoftFocusOnCurrentTableCell';
 
@@ -16,11 +18,15 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
       recordTableId="scopeId"
       onColumnsChange={jest.fn()}
     >
-      <RecordTableRowContext.Provider value={recordTableRow}>
-        <RecordTableCellContext.Provider value={recordTableCell}>
-          {children}
-        </RecordTableCellContext.Provider>
-      </RecordTableRowContext.Provider>
+      <RecordTableRowContextProvider value={recordTableRowContextValue}>
+        <RecordTableRowDraggableContextProvider
+          value={recordTableRowDraggableContextValue}
+        >
+          <RecordTableCellContext.Provider value={recordTableCellContextValue}>
+            {children}
+          </RecordTableCellContext.Provider>
+        </RecordTableRowDraggableContextProvider>
+      </RecordTableRowContextProvider>
     </RecordTableComponentInstance>
   </RecoilRoot>
 );
