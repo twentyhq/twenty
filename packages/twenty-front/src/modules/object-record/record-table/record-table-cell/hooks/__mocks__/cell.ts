@@ -1,20 +1,24 @@
-import { RecordTableCellContextProps } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { RecordTableRowContextProps } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { RecordTableCellContextValue } from '@/object-record/record-table/contexts/RecordTableCellContext';
+import { RecordTableRowContextValue } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableRowDraggableContextValue } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
+import { FieldMetadataType } from '~/generated/graphql';
 
-export const recordTableRow: RecordTableRowContextProps = {
+export const recordTableRowContextValue: RecordTableRowContextValue = {
   rowIndex: 2,
   isSelected: false,
   recordId: 'recordId',
   pathToShowPage: '/',
   objectNameSingular: 'objectNameSingular',
-  dragHandleProps: {} as any,
-  isDragging: false,
-  inView: true,
   isPendingRow: false,
+  inView: true,
 };
 
-export const recordTableCell: RecordTableCellContextProps = {
+export const recordTableRowDraggableContextValue: RecordTableRowDraggableContextValue = {
+  dragHandleProps: {} as any,
+  isDragging: false,
+};
+
+export const recordTableCellContextValue: RecordTableCellContextValue = {
   columnIndex: 3,
   columnDefinition: {
     size: 1,

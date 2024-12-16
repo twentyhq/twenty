@@ -1,4 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -25,6 +26,7 @@ const StyledSettingsSecurityOptionsList = styled.div`
 export const SettingsSecurityOptionsList = () => {
   const { enqueueSnackBar } = useSnackBar();
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
+  const authProviders = useRecoilValue(authProvidersState);
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -123,32 +125,38 @@ export const SettingsSecurityOptionsList = () => {
       {currentWorkspace && (
         <>
           <Card rounded>
-            <SettingsOptionCardContentToggle
-              Icon={IconGoogle}
-              title="Google"
-              description="Allow logins through Google's single sign-on functionality."
-              checked={currentWorkspace.isGoogleAuthEnabled}
-              advancedMode
-              divider
-              onChange={() => toggleAuthMethod('google')}
-            />
-            <SettingsOptionCardContentToggle
-              Icon={IconMicrosoft}
-              title="Microsoft"
-              description="Allow logins through Microsoft's single sign-on functionality."
-              checked={currentWorkspace.isMicrosoftAuthEnabled}
-              advancedMode
-              divider
-              onChange={() => toggleAuthMethod('microsoft')}
-            />
-            <SettingsOptionCardContentToggle
-              Icon={IconPassword}
-              title="Password"
-              description="Allow users to sign in with an email and password."
-              checked={currentWorkspace.isPasswordAuthEnabled}
-              advancedMode
-              onChange={() => toggleAuthMethod('password')}
-            />
+            {authProviders.google === true && (
+              <SettingsOptionCardContentToggle
+                Icon={IconGoogle}
+                title="Google"
+                description="Allow logins through Google's single sign-on functionality."
+                checked={currentWorkspace.isGoogleAuthEnabled}
+                advancedMode
+                divider
+                onChange={() => toggleAuthMethod('google')}
+              />
+            )}
+            {authProviders.microsoft === true && (
+              <SettingsOptionCardContentToggle
+                Icon={IconMicrosoft}
+                title="Microsoft"
+                description="Allow logins through Microsoft's single sign-on functionality."
+                checked={currentWorkspace.isMicrosoftAuthEnabled}
+                advancedMode
+                divider
+                onChange={() => toggleAuthMethod('microsoft')}
+              />
+            )}
+            {authProviders.password === true && (
+              <SettingsOptionCardContentToggle
+                Icon={IconPassword}
+                title="Password"
+                description="Allow users to sign in with an email and password."
+                checked={currentWorkspace.isPasswordAuthEnabled}
+                advancedMode
+                onChange={() => toggleAuthMethod('password')}
+              />
+            )}
           </Card>
           <Card rounded>
             <SettingsOptionCardContentToggle

@@ -1,4 +1,5 @@
 import { apiConfigState } from '@/client-config/states/apiConfigState';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
@@ -7,19 +8,20 @@ import { isAnalyticsEnabledState } from '@/client-config/states/isAnalyticsEnabl
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { isSSOEnabledState } from '@/client-config/states/isSSOEnabledState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { supportChatState } from '@/client-config/states/supportChatState';
+import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import { useGetClientConfigQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { isSSOEnabledState } from '@/client-config/states/isSSOEnabledState';
 
 export const ClientConfigProviderEffect = () => {
   const setIsDebugMode = useSetRecoilState(isDebugModeState);
   const setIsAnalyticsEnabled = useSetRecoilState(isAnalyticsEnabledState);
   const setDomainConfiguration = useSetRecoilState(domainConfigurationState);
+  const setAuthProviders = useSetRecoilState(authProvidersState);
 
   const setIsDeveloperDefaultSignInPrefilled = useSetRecoilState(
     isDeveloperDefaultSignInPrefilledState,
@@ -73,6 +75,13 @@ export const ClientConfigProviderEffect = () => {
       error: undefined,
     }));
 
+    setAuthProviders({
+      google: data?.clientConfig.authProviders.google,
+      microsoft: data?.clientConfig.authProviders.microsoft,
+      password: data?.clientConfig.authProviders.password,
+      magicLink: false,
+      sso: data?.clientConfig.authProviders.sso,
+    });
     setIsDebugMode(data?.clientConfig.debugMode);
     setIsAnalyticsEnabled(data?.clientConfig.analyticsEnabled);
     setIsDeveloperDefaultSignInPrefilled(data?.clientConfig.signInPrefilled);
@@ -115,6 +124,7 @@ export const ClientConfigProviderEffect = () => {
     error,
     setDomainConfiguration,
     setIsSSOEnabledState,
+    setAuthProviders,
   ]);
 
   return <></>;

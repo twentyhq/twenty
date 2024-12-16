@@ -11,7 +11,6 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import {
   Button,
@@ -47,10 +46,9 @@ export const SettingsServerlessFunctionCodeEditorTab = ({
   onChange: (filePath: string, value: string) => void;
   setIsCodeValid: (isCodeValid: boolean) => void;
 }) => {
-  const { activeTabIdState } = useTabList(
+  const { activeTabId } = useTabList(
     SETTINGS_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
   );
-  const activeTabId = useRecoilValue(activeTabIdState);
   const TestButton = (
     <Button
       title="Test"
