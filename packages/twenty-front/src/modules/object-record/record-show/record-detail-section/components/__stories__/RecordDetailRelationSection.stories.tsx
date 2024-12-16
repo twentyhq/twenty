@@ -35,7 +35,6 @@ const meta: Meta<typeof RecordDetailRelationSection> = {
       <FieldContext.Provider
         value={{
           recordId: companiesMock[0].id,
-          basePathToShowPage: '/object-record/',
           isLabelIdentifier: false,
           fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
             field: mockedCompanyObjectMetadataItem.fields.find(

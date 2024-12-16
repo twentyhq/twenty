@@ -61,8 +61,8 @@ export const RecordTableRecordGroupRows = () => {
           />
         );
       })}
-      <RecordTableRecordGroupSectionLoadMore />
       <RecordTablePendingRecordGroupRow />
+      <RecordTableRecordGroupSectionLoadMore />
       <RecordTableRecordGroupSectionAddNew />
       {isAggregateQueryEnabled === true && (
         <RecordTableFooter

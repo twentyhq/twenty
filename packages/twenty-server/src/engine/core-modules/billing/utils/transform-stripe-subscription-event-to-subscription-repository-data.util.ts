@@ -18,8 +18,8 @@ export const transformStripeSubscriptionEventToSubscriptionRepositoryData = (
     interval: data.object.items.data[0].plan.interval,
     cancelAtPeriodEnd: data.object.cancel_at_period_end,
     currency: data.object.currency.toUpperCase(),
-    currentPeriodEnd: new Date(data.object.current_period_end * 1000),
-    currentPeriodStart: new Date(data.object.current_period_start * 1000),
+    currentPeriodEnd: getDateFromTimestamp(data.object.current_period_end),
+    currentPeriodStart: getDateFromTimestamp(data.object.current_period_start),
     metadata: data.object.metadata,
     collectionMethod:
       BillingSubscriptionCollectionMethod[
@@ -28,19 +28,19 @@ export const transformStripeSubscriptionEventToSubscriptionRepositoryData = (
     automaticTax: data.object.automatic_tax ?? undefined,
     cancellationDetails: data.object.cancellation_details ?? undefined,
     endedAt: data.object.ended_at
-      ? new Date(data.object.ended_at * 1000)
+      ? getDateFromTimestamp(data.object.ended_at)
       : undefined,
     trialStart: data.object.trial_start
-      ? new Date(data.object.trial_start * 1000)
+      ? getDateFromTimestamp(data.object.trial_start)
       : undefined,
     trialEnd: data.object.trial_end
-      ? new Date(data.object.trial_end * 1000)
+      ? getDateFromTimestamp(data.object.trial_end)
       : undefined,
     cancelAt: data.object.cancel_at
-      ? new Date(data.object.cancel_at * 1000)
+      ? getDateFromTimestamp(data.object.cancel_at)
       : undefined,
     canceledAt: data.object.canceled_at
-      ? new Date(data.object.canceled_at * 1000)
+      ? getDateFromTimestamp(data.object.canceled_at)
       : undefined,
   };
 };
@@ -64,4 +64,8 @@ const getSubscriptionStatus = (status: Stripe.Subscription.Status) => {
     case 'unpaid':
       return SubscriptionStatus.Unpaid;
   }
+};
+
+const getDateFromTimestamp = (timestamp: number) => {
+  return new Date(timestamp * 1000);
 };

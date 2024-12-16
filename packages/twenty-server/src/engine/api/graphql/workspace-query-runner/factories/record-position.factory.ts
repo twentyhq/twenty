@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
   RecordPositionQueryArgs,
   RecordPositionQueryFactory,
   RecordPositionQueryType,
 } from 'src/engine/api/graphql/workspace-query-builder/factories/record-position-query.factory';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
 export class RecordPositionFactory {

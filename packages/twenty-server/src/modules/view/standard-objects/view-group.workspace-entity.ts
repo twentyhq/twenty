@@ -59,6 +59,7 @@ export class ViewGroupWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconList',
     defaultValue: 0,
   })
+  @WorkspaceIsSystem()
   position: number;
 
   @WorkspaceRelation({

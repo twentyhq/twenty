@@ -7,7 +7,7 @@ import { TelemetryService } from './telemetry.service';
   providers: [TelemetryService],
   imports: [
     HttpModule.register({
-      baseURL: 'https://t.twenty.com/api/v2',
+      baseURL: 'https://twenty-telemetry.com/api/v2',
     }),
   ],
   exports: [TelemetryService],
