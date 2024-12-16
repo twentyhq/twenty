@@ -7,15 +7,15 @@ import {
 } from 'class-validator';
 
 @ValidatorConstraint({ async: false })
-export class ForbiddenWordsConstraint implements ValidatorConstraintInterface {
-  private forbiddenWords: Array<string | RegExp>;
+export class NotInConstraint implements ValidatorConstraintInterface {
+  private expressionsList: Array<string | RegExp>;
 
   constructor() {}
 
   validate(value: string, validationArguments: ValidationArguments) {
-    this.forbiddenWords = validationArguments.constraints[0];
+    this.expressionsList = validationArguments.constraints[0];
 
-    for (const elm of this.forbiddenWords) {
+    for (const elm of this.expressionsList) {
       if (typeof elm === 'string') {
         if (elm.toLowerCase() === value.toLowerCase()) {
           return false;
@@ -33,12 +33,12 @@ export class ForbiddenWordsConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage() {
-    return `${Array.from(this.forbiddenWords).join(', ')} are not allowed`;
+    return `${Array.from(this.expressionsList).join(', ')} are not allowed`;
   }
 }
 
-export function ForbiddenWords(
-  forbiddenWords: Array<string | RegExp>,
+export function NotIn(
+  expressionsList: Array<string | RegExp>,
   validationOptions?: ValidationOptions,
 ) {
   return function (object: object, propertyName: string) {
@@ -46,8 +46,8 @@ export function ForbiddenWords(
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      constraints: [forbiddenWords],
-      validator: ForbiddenWordsConstraint,
+      constraints: [expressionsList],
+      validator: NotInConstraint,
     });
   };
 }

@@ -1,29 +1,29 @@
 import { validate } from 'class-validator';
 
-import { ForbiddenWords } from 'src/engine/utils/custom-class-validator/ForbiddenWords';
+import { NotIn } from 'src/engine/utils/custom-class-validator/NotIn';
 
-describe('ForbiddenWordsConstraint', () => {
+describe('NotInConstraint', () => {
   test('should throw error when word is forbidden', async () => {
     class Test {
-      @ForbiddenWords(['forbidden', 'restricted'])
+      @NotIn(['forbidden', 'restricted'])
       subdomain: string;
     }
 
     const instance = new Test();
 
-    instance.subdomain = 'forbidden';
+    instance.subdomain = 'Forbidden';
 
     const errors = await validate(instance);
 
     expect(errors.length).toBeGreaterThan(0);
     expect(errors[0].constraints).toEqual({
-      ForbiddenWordsConstraint: 'forbidden, restricted are not allowed',
+      NotInConstraint: 'forbidden, restricted are not allowed',
     });
   });
 
   test('should throw error when regex is forbidden', async () => {
     class Test {
-      @ForbiddenWords(['forbidden', 'restricted', /api-(.*?)+/])
+      @NotIn(['forbidden', 'restricted', /api-(.*?)+/])
       subdomain: string;
     }
 
@@ -35,14 +35,13 @@ describe('ForbiddenWordsConstraint', () => {
 
     expect(errors.length).toBeGreaterThan(0);
     expect(errors[0].constraints).toEqual({
-      ForbiddenWordsConstraint:
-        'forbidden, restricted, /api-(.*?)+/ are not allowed',
+      NotInConstraint: 'forbidden, restricted, /api-(.*?)+/ are not allowed',
     });
   });
 
   test('should pass validation word is not in the list', async () => {
     class Test {
-      @ForbiddenWords(['forbidden', 'restricted'])
+      @NotIn(['forbidden', 'restricted'])
       subdomain: string;
     }
 
