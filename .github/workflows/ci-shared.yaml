@@ -1,4 +1,4 @@
-name: CI Front
+name: CI Shared
 on:
   push:
     branches:
