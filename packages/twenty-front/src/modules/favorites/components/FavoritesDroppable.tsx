@@ -21,7 +21,7 @@ const StyledDroppableWrapper = styled.div<{
     isDraggingOver &&
     isDragIndicatorVisible &&
     `
-        background-color: ${theme.color.blueAccent20};
+        background-color: ${theme.background.transparent.blue};
         
         ${
           showDropLine &&
