@@ -1,7 +1,8 @@
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isDefined } from '~/utils/isDefined';
 
 export const createCursor = (record: ObjectRecord) => {
-  if (!('id' in record)) {
+  if (!('id' in record) || !isDefined(record.id)) {
     throw new Error('Record does not have an id');
   }
 
