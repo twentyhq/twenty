@@ -68,7 +68,11 @@ export const TabList = ({
         componentInstanceId={tabListInstanceId}
         tabListIds={tabs.map((tab) => tab.id)}
       />
-      <ScrollWrapper enableYScroll={false} contextProviderName="tabList">
+      <ScrollWrapper
+        defaultEnableYScroll={false}
+        contextProviderName="tabList"
+        componentInstanceId={`scroll-wrapper-tab-list-${tabListInstanceId}`}
+      >
         <StyledContainer className={className}>
           {visibleTabs.map((tab) => (
             <Tab
