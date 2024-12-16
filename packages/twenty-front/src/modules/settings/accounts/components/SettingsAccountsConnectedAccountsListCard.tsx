@@ -8,6 +8,9 @@ import { SettingsPath } from '@/types/SettingsPath';
 
 import { SettingsAccountsConnectedAccountsRowRightContainer } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer';
 import { SettingsListCard } from '../../components/SettingsListCard';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useRecoilValue } from 'recoil';
+import { isDefined } from '~/utils/isDefined';
 
 const ProviderIcons: { [k: string]: IconComponent } = {
   google: IconGoogle,
@@ -22,10 +25,16 @@ export const SettingsAccountsConnectedAccountsListCard = ({
   loading?: boolean;
 }) => {
   const navigate = useNavigate();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   if (!accounts.length) {
     return <SettingsAccountsListEmptyStateCard />;
   }
+
+  const atLeastOneProviderAvailable =
+    isDefined(currentWorkspace) &&
+    (currentWorkspace?.isGoogleAuthEnabled ||
+      currentWorkspace?.isMicrosoftAuthEnabled);
 
   return (
     <SettingsListCard
@@ -36,7 +45,7 @@ export const SettingsAccountsConnectedAccountsListCard = ({
       RowRightComponent={({ item: account }) => (
         <SettingsAccountsConnectedAccountsRowRightContainer account={account} />
       )}
-      hasFooter
+      hasFooter={atLeastOneProviderAvailable}
       footerButtonLabel="Add account"
       onFooterButtonClick={() =>
         navigate(getSettingsPagePath(SettingsPath.NewAccount))
