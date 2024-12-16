@@ -78,13 +78,7 @@ describe('RecordPositionBackfillService', () => {
   });
 
   it('when objectMetadata without position, should do nothing', async () => {
-    objectMetadataRepository.find.mockReturnValue([
-      {
-        id: '1',
-        nameSingular: 'name',
-        fields: [],
-      },
-    ]);
+    objectMetadataRepository.find.mockReturnValue([]);
     await service.backfill('workspaceId', false);
     expect(workspaceDataSourceService.executeRawQuery).not.toHaveBeenCalled();
   });
