@@ -21,6 +21,25 @@ describe('ForbiddenWordsConstraint', () => {
     });
   });
 
+  test('should throw error when regex is forbidden', async () => {
+    class Test {
+      @ForbiddenWords(['forbidden', 'restricted', /api-(.*?)/])
+      subdomain: string;
+    }
+
+    const instance = new Test();
+
+    instance.subdomain = 'api-unauthorized';
+
+    const errors = await validate(instance);
+
+    expect(errors.length).toBeGreaterThan(0);
+    expect(errors[0].constraints).toEqual({
+      ForbiddenWordsConstraint:
+        'forbidden, restricted, /api-(.*?)/ are not allowed',
+    });
+  });
+
   test('should pass validation word is not in the list', async () => {
     class Test {
       @ForbiddenWords(['forbidden', 'restricted'])

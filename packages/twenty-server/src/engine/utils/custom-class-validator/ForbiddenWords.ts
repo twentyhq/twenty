@@ -8,14 +8,28 @@ import {
 
 @ValidatorConstraint({ async: false })
 export class ForbiddenWordsConstraint implements ValidatorConstraintInterface {
-  private forbiddenWords: Set<string>;
+  private forbiddenWords: Array<string | RegExp>;
 
   constructor() {}
 
   validate(value: string, validationArguments: ValidationArguments) {
-    this.forbiddenWords = new Set(validationArguments.constraints[0]);
+    this.forbiddenWords = validationArguments.constraints[0];
 
-    return !this.forbiddenWords.has(value);
+    for (const elm of this.forbiddenWords) {
+      if (typeof elm === 'string') {
+        if (elm.toLowerCase() === value.toLowerCase()) {
+          return false;
+        }
+      }
+
+      if (elm instanceof RegExp) {
+        if (elm.test(value)) {
+          return false;
+        }
+      }
+    }
+
+    return true;
   }
 
   defaultMessage() {
@@ -24,7 +38,7 @@ export class ForbiddenWordsConstraint implements ValidatorConstraintInterface {
 }
 
 export function ForbiddenWords(
-  forbiddenWords: string[],
+  forbiddenWords: Array<string | RegExp>,
   validationOptions?: ValidationOptions,
 ) {
   return function (object: object, propertyName: string) {
