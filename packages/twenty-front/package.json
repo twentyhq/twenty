@@ -40,6 +40,7 @@
     "@tiptap/extension-text-style": "^2.8.0",
     "@tiptap/react": "^2.8.0",
     "@xyflow/react": "^12.0.4",
+    "buffer": "^6.0.3",
     "transliteration": "^2.3.5"
   }
 }
