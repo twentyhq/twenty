@@ -7,7 +7,7 @@
     "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
-      "twenty-shared": ["packages/twenty-shared/src/*"]
+      "twenty-shared": ["packages/twenty-shared/dist"]
     }
   },
   "files": [],
@@ -15,7 +15,10 @@
   "references": [
     {
       "path": "./tsconfig.lib.json"
-    }
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    },
   ],
   "extends": "../../tsconfig.base.json"
 }
