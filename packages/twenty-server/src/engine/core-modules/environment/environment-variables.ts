@@ -246,6 +246,14 @@ export class EnvironmentVariables {
   @IsBoolean()
   IS_MULTIWORKSPACE_ENABLED = false;
 
+  @IsString()
+  @ValidateIf((env) => env.CLOUDFLARE_ZONE_ID)
+  CLOUDFLARE_USER_SERVICE_KEY: string;
+
+  @IsString()
+  @ValidateIf((env) => env.CLOUDFLARE_USER_SERVICE_KEY)
+  CLOUDFLARE_ZONE_ID: string;
+
   // Custom Code Engine
   @IsEnum(ServerlessDriverType)
   @IsOptional()
