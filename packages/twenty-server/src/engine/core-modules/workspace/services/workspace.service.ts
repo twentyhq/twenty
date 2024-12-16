@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
+import Cloudflare from 'cloudflare';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
@@ -46,6 +47,48 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     super(workspaceRepository);
   }
 
+  private async validateSubdomainUpdate(newSubdomain: string) {
+    const subdomainAvailable = await this.isSubdomainAvailable(newSubdomain);
+
+    if (
+      !subdomainAvailable ||
+      this.environmentService.get('DEFAULT_SUBDOMAIN') === newSubdomain
+    ) {
+      throw new WorkspaceException(
+        'Subdomain already taken',
+        WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,
+      );
+    }
+  }
+
+  async validateDomain(newDomain: string, workspaceId: string) {
+    const existingWorkspace = await this.isDomainAvailable(newDomain);
+
+    if (existingWorkspace) {
+      throw new WorkspaceException(
+        'Domain already taken',
+        WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN,
+      );
+    }
+
+    const client = new Cloudflare({
+      userServiceKey: this.environmentService.get(
+        'CLOUDFLARE_USER_SERVICE_KEY',
+      ),
+    });
+
+    const customHostname = await client.customHostnames.create({
+      zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
+      hostname: newDomain,
+      ssl: {},
+      custom_metadata: {
+        workspaceId,
+      },
+    });
+
+    console.log('>>>>>>>>>>>>>>', customHostname);
+  }
+
   async updateWorkspaceById(payload: Partial<Workspace> & { id: string }) {
     const workspace = await this.workspaceRepository.findOneBy({
       id: payload.id,
@@ -60,19 +103,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     );
 
     if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
-      const subdomainAvailable = await this.isSubdomainAvailable(
-        payload.subdomain,
-      );
+      await this.validateSubdomainUpdate(payload.subdomain);
+    }
 
-      if (
-        !subdomainAvailable ||
-        this.environmentService.get('DEFAULT_SUBDOMAIN') === payload.subdomain
-      ) {
-        throw new WorkspaceException(
-          'Subdomain already taken',
-          WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,
-        );
-      }
+    if (payload.domain && workspace.domain !== payload.domain) {
+      await this.validateDomain(payload.domain, workspace.id);
     }
 
     return this.workspaceRepository.save({
@@ -210,6 +245,14 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   async isSubdomainAvailable(subdomain: string) {
     const existingWorkspace = await this.workspaceRepository.findOne({
       where: { subdomain: subdomain },
+    });
+
+    return !existingWorkspace;
+  }
+
+  async isDomainAvailable(domain: string) {
+    const existingWorkspace = await this.workspaceRepository.findOne({
+      where: { domain },
     });
 
     return !existingWorkspace;

@@ -51,6 +51,7 @@ export class Workspace {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  // @deprecated. Use domain field
   @Field({ nullable: true })
   @Column({ nullable: true })
   domainName?: string;
@@ -146,6 +147,10 @@ export class Workspace {
   @Field()
   @Column({ unique: true })
   subdomain: string;
+
+  @Field()
+  @Column({ unique: true })
+  domain: string;
 
   @Field()
   @Column({ default: true })
