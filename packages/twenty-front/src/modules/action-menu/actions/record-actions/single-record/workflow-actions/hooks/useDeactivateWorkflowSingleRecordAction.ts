@@ -1,27 +1,24 @@
 import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/singleRecordActionHook';
-import { useDeleteOneWorkflowVersion } from '@/workflow/hooks/useDeleteOneWorkflowVersion';
+import { useDeactivateWorkflowVersion } from '@/workflow/hooks/useDeactivateWorkflowVersion';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { isDefined } from 'twenty-ui';
 
-export const useDiscardDraftWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
+export const useDeactivateWorkflowSingleRecordAction: SingleRecordActionHookWithoutObjectMetadataItem =
   ({ recordId }) => {
-    const { deleteOneWorkflowVersion } = useDeleteOneWorkflowVersion();
+    const { deactivateWorkflowVersion } = useDeactivateWorkflowVersion();
 
     const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(recordId);
 
     const shouldBeRegistered =
       isDefined(workflowWithCurrentVersion) &&
-      workflowWithCurrentVersion.versions.length > 1 &&
-      workflowWithCurrentVersion.currentVersion.status === 'DRAFT';
+      workflowWithCurrentVersion.currentVersion.status === 'ACTIVE';
 
     const onClick = () => {
       if (!shouldBeRegistered) {
         return;
       }
 
-      deleteOneWorkflowVersion({
-        workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
-      });
+      deactivateWorkflowVersion(workflowWithCurrentVersion.currentVersion.id);
     };
 
     return {
