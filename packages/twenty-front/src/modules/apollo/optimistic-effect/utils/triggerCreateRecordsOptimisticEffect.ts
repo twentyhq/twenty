@@ -152,16 +152,24 @@ export const triggerCreateRecordsOptimisticEffect = ({
                   nextRootQueryCachedRecordEdges.push(edge);
                   nextQueryCachedPageInfo.endCursor = cursor;
                 } else if (typeof recordToCreate.position === 'number') {
-                  const deducedIndex = Math.round(
+                  let index = Math.round(
                     nextRootQueryCachedRecordEdges.length *
                       recordToCreate.position,
                   );
-                  const index = Math.max(
+
+                  if (recordToCreate.position < 0) {
+                    index = Math.max(
+                      0,
+                      nextRootQueryCachedRecordEdges.length +
+                        Math.round(recordToCreate.position),
+                    );
+                  } else if (recordToCreate.position > 1) {
+                    index = nextRootQueryCachedRecordEdges.length;
+                  }
+
+                  index = Math.max(
                     0,
-                    Math.min(
-                      deducedIndex,
-                      nextRootQueryCachedRecordEdges.length,
-                    ),
+                    Math.min(index, nextRootQueryCachedRecordEdges.length),
                   );
 
                   nextRootQueryCachedRecordEdges.splice(index, 0, edge);
