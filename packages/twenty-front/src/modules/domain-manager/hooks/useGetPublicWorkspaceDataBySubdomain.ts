@@ -7,7 +7,6 @@ import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthPro
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useGetPublicWorkspaceDataBySubdomainQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { sleep } from '~/utils/sleep';
 
 export const useGetPublicWorkspaceDataBySubdomain = () => {
   const { isDefaultDomain } = useIsCurrentLocationOnDefaultDomain();
@@ -33,11 +32,10 @@ export const useGetPublicWorkspaceDataBySubdomain = () => {
       );
       setWorkspacePublicDataState(data.getPublicWorkspaceDataBySubdomain);
     },
-    onError: async (error) => {
+    onError: (error) => {
       // eslint-disable-next-line no-console
       console.error(error);
       setLastAuthenticateWorkspaceDomain(null);
-      await sleep(0);
       redirectToDefaultDomain();
     },
   });
