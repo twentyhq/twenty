@@ -1,3 +1,4 @@
+import { ActionAvailableOn } from '@/action-menu/actions/types/actionAvailableOn';
 import { MouseEvent, ReactElement } from 'react';
 import { IconComponent, MenuItemAccent } from 'twenty-ui';
 
@@ -20,6 +21,7 @@ export type ActionMenuEntry = {
   Icon: IconComponent;
   isPinned?: boolean;
   accent?: MenuItemAccent;
+  availableOn?: ActionAvailableOn[];
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   ConfirmationModal?: ReactElement;
 };
