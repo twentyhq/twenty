@@ -14,7 +14,7 @@ export const PageFavicon = () => {
           type="image/x-icon"
           href={
             getImageAbsoluteURI({
-              imageUrl: workspacePublicData?.logo,
+              imageUrl: workspacePublicData.logo,
               baseUrl: REACT_APP_SERVER_BASE_URL,
             }) ?? ''
           }

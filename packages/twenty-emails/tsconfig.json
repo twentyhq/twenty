@@ -9,7 +9,7 @@
     "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
-      "twenty-shared": ["packages/twenty-shared/src/*"]
+      "twenty-shared": ["../../packages/twenty-shared/dist"]
     }
   },
   "files": [],

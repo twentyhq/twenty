@@ -30,7 +30,7 @@ export const SendInviteLinkEmail = ({
   serverUrl,
 }: SendInviteLinkEmailProps) => {
   const workspaceLogo = workspace.logo
-    ? getImageAbsoluteURI(workspace.logo, serverUrl)
+    ? getImageAbsoluteURI({ imageUrl: workspace.logo, baseUrl: serverUrl })
     : null;
 
   return (
