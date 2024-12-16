@@ -100,7 +100,7 @@ export class UpdateWorkspaceInput {
     'asia',
     'africa',
     'america',
-    /api-(.*?)/,
+    /api-(.*?)+/,
   ])
   subdomain?: string;
 

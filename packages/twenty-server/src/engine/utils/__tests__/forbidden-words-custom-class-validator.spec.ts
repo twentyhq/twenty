@@ -23,7 +23,7 @@ describe('ForbiddenWordsConstraint', () => {
 
   test('should throw error when regex is forbidden', async () => {
     class Test {
-      @ForbiddenWords(['forbidden', 'restricted', /api-(.*?)/])
+      @ForbiddenWords(['forbidden', 'restricted', /api-(.*?)+/])
       subdomain: string;
     }
 
@@ -36,7 +36,7 @@ describe('ForbiddenWordsConstraint', () => {
     expect(errors.length).toBeGreaterThan(0);
     expect(errors[0].constraints).toEqual({
       ForbiddenWordsConstraint:
-        'forbidden, restricted, /api-(.*?)/ are not allowed',
+        'forbidden, restricted, /api-(.*?)+/ are not allowed',
     });
   });
 
