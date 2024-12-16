@@ -27,6 +27,13 @@ const jestConfig: JestConfigWithTsJest = {
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageDirectory: './coverage',
+  coverageThreshold: {
+    global: {
+      statements: 100,
+      lines: 100,
+      functions: 100,
+    },
+  },
 };
 
 export default jestConfig;
