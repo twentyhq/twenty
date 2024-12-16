@@ -7,7 +7,10 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { ServerlessService } from 'src/engine/core-modules/serverless/serverless.service';
-import { ServerlessFunctionEntity } from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
+import {
+  ServerlessFunctionEntity,
+  ServerlessFunctionSyncStatus,
+} from 'src/engine/metadata-modules/serverless-function/serverless-function.entity';
 import { isDefined } from 'src/utils/is-defined';
 
 export type BuildServerlessFunctionBatchEvent = {
@@ -46,6 +49,9 @@ export class BuildServerlessFunctionJob {
           serverlessFunction,
           serverlessFunctionVersion,
         );
+        await this.serverlessFunctionRepository.update(serverlessFunction.id, {
+          syncStatus: ServerlessFunctionSyncStatus.READY,
+        });
       }
     }
   }
