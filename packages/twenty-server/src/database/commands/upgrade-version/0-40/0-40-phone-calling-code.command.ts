@@ -1,6 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
+import { getCountries, getCountryCallingCode } from 'libphonenumber-js';
 import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -27,6 +28,35 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { isDefined } from 'src/utils/is-defined';
+
+const callingCodeToCountryCode = (callingCode: string): string => {
+  let callingCodeWithoutPlus = callingCode;
+
+  if (callingCode.startsWith('+')) {
+    callingCodeWithoutPlus = callingCode.slice(1);
+  }
+
+  return (
+    getCountries().find(
+      (countryCode) =>
+        getCountryCallingCode(countryCode) === callingCodeWithoutPlus,
+    ) || ''
+  );
+};
+
+// console.log('33', callingCodeToCountryCode('33'));
+// console.log('+33', callingCodeToCountryCode('+33'));
+// console.log('', callingCodeToCountryCode(''));
+// console.log('FR', callingCodeToCountryCode('FR'));
+
+const isCallingCode = (callingCode: string): boolean => {
+  return callingCodeToCountryCode(callingCode) !== '';
+};
+
+// console.log('33', isCallingCode('33'));
+// console.log('+33', isCallingCode('+33'));
+// console.log('', isCallingCode(''));
+// console.log('FR', isCallingCode('FR'));
 
 @Command({
   name: 'upgrade-0.40:phone-calling-code',
@@ -66,7 +96,7 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
     //      the column name should be `${nameSingular}PrimaryPhoneCallingCode`
     // 2 - calling code value should be what was previously in the primary country code
     // 3 - update the primary country code to be one of the counties with this calling code: +33 => FR | +1 => US (if mulitple, select first one)
-    // Note: ask Felix if tit's ok for this breaking change TEXT to TEXT. At the same time, should we tranform countrycode en ENUM postgres & graphql ?
+    // Note: ask Felix if tit's ok for this breaking change TEXT to TEXT. At the same time, should we tranform countrycode en ENUM postgres & graphql ? answer : no need to worry about this breaking change.
     // 4 - [IMO, not necessary] if we think it's important, update all additioanl phones to add a country code following the same logic
 
     // Note : other consequesnces to check : zapier @martin + REST api @martin
@@ -164,6 +194,11 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
       this.logger.log(
         `P1 Step 2 - Migrations for callingCode creation must be done first because we now use twentyORMGlobalManager to update country codes`,
       );
+
+      this.logger.log(
+        `P1 Step 3 (same time) - update primaryCountryCode to be country letters: +33 => FR || +1 => US (if mulitple, first one)`,
+      );
+
       for (const phoneFieldMetadata of phonesFieldMetadata) {
         this.logger.log(`P1 Step 2 - for ${phoneFieldMetadata.name}`);
         if (
@@ -185,27 +220,40 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
 
           await Promise.all(
             records.map(async (record) => {
-              this.logger.log(
-                `
-                objectMetadata.nameSingular: ${objectMetadata.nameSingular} (objectMetadataId: ${objectMetadata.id}) - record.id: ${record.id} - phoneFieldMetadata.name: ${phoneFieldMetadata.name}`,
-              );
-              // this.logger.log(record[phoneFieldMetadata.name]);
-              this.logger.log(
-                record[phoneFieldMetadata.name]?.primaryPhoneCountryCode,
-              );
-              // this.logger.log(formatData(objectMetadata,record));
+              // this.logger.log( `P1 Step 2 - obj.nameSingular: ${objectMetadata.nameSingular} (objId: ${objectMetadata.id}) - record.id: ${record.id} - phoneFieldMetadata.name: ${phoneFieldMetadata.name}` );
+              // this.logger.log(
+              //   `P1 Step 3 - obj.nameSingular: ${objectMetadata.nameSingular} (objId: ${objectMetadata.id}) - record.id: ${record.id} - fieldMetadata: ${phoneFieldMetadata.name}  - code : ${record[phoneFieldMetadata.name]?.primaryPhoneCountryCode} `,
+              // );
               if (
                 record &&
                 record[phoneFieldMetadata.name] &&
-                record[phoneFieldMetadata.name].primaryPhoneCountryCode
+                record[phoneFieldMetadata.name].primaryPhoneCountryCode &&
+                isCallingCode(
+                  record[phoneFieldMetadata.name].primaryPhoneCountryCode,
+                )
               ) {
+                // let's process the additional phones
+                // if (record[phoneFieldMetadata.name].additionalPhones) {
+                //   const additionalPhones = record[
+                //     phoneFieldMetadata.name
+                //   ].additionalPhones.map((phone) => {
+                //     return {
+                //       ...phone,
+                //       primaryPhoneCountryCode: callingCodeToCountryCode(
+                //         record[phoneFieldMetadata.name].primaryPhoneCountryCode,
+                //       ),
+                //     };
+                //   });
+                // }
+
                 const res = await repository.update(record.id, {
                   [`${phoneFieldMetadata.name}PrimaryPhoneCallingCode`]:
                     record[phoneFieldMetadata.name].primaryPhoneCountryCode,
+                  [`${phoneFieldMetadata.name}PrimaryPhoneCountryCode`]:
+                    callingCodeToCountryCode(
+                      record[phoneFieldMetadata.name].primaryPhoneCountryCode,
+                    ),
                 });
-
-                this.logger.log(`after record updated !`);
-                console.log(res);
               }
             }),
           );
