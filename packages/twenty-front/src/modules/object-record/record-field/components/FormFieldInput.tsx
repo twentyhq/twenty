@@ -4,6 +4,7 @@ import { FormEmailsFieldInput } from '@/object-record/record-field/form-types/co
 import { FormFullNameFieldInput } from '@/object-record/record-field/form-types/components/FormFullNameFieldInput';
 import { FormLinksFieldInput } from '@/object-record/record-field/form-types/components/FormLinksFieldInput';
 import { FormDateFieldInput } from '@/object-record/record-field/form-types/components/FormDateFieldInput';
+import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
@@ -22,6 +23,7 @@ import { isFieldEmails } from '@/object-record/record-field/types/guards/isField
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
+import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
@@ -106,6 +108,14 @@ export const FormFieldInput = ({
       defaultValue={defaultValue as string | undefined}
       onPersist={onPersist}
       VariablePicker={VariablePicker}
+    />
+  ) : isFieldMultiSelect(field) ? (
+    <FormMultiSelectFieldInput
+      label={field.label}
+      defaultValue={defaultValue as string[] | undefined}
+      onPersist={onPersist}
+      VariablePicker={VariablePicker}
+      options={field.metadata.options}
     />
   ) : null;
 };

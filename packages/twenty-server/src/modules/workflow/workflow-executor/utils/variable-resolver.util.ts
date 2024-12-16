@@ -81,14 +81,21 @@ const resolveString = (
   });
 };
 
-const evalFromContext = (
-  input: string,
-  context: Record<string, unknown>,
-): string => {
+const evalFromContext = (input: string, context: Record<string, unknown>) => {
   try {
-    const inferredInput = Handlebars.compile(input)(context);
+    Handlebars.registerHelper('json', (input: string) => JSON.stringify(input));
 
-    return inferredInput ?? '';
+    const inputWithHelper = input
+      .replace('{{', '{{{ json ')
+      .replace('}}', ' }}}');
+
+    const inferredInput = Handlebars.compile(inputWithHelper)(context, {
+      helpers: {
+        json: (toto: string) => JSON.stringify(toto),
+      },
+    });
+
+    return JSON.parse(inferredInput) ?? '';
   } catch (exception) {
     throw new WorkflowExecutorException(
       `Failed to evaluate variable ${input}: ${exception}`,
