@@ -1,11 +1,11 @@
 module.exports = {
-  extends: ['../../.eslintrc.cjs'],
+  extends: ['../../.eslintrc.cjs', '../../.eslintrc.react.cjs'],
   ignorePatterns: ['!**/*'],
   overrides: [
     {
-      files: ['*.ts'],
+      files: ['*.ts', '*.tsx'],
       parserOptions: {
-        project: ['packages/twenty-shared/tsconfig.{json,*.json}'],
+        project: ['packages/twenty-emails/tsconfig.{json,*.json}'],
       },
       rules: {
         '@nx/dependency-checks': 'error',

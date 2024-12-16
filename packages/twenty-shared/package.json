@@ -1,16 +1,23 @@
 {
-  "name": "twenty-shared",
-  "version": "0.1.0",
-  "type": "module",
+  "name": "twenty-emails",
+  "version": "0.40.0-canary",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "AGPL-3.0",
   "main": "./dist/index.js",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    }
-  },
   "scripts": {
     "build": "npx vite build"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "engines": {
+    "node": "^18.17.1",
+    "npm": "please-use-yarn",
+    "yarn": "^4.0.2"
   }
 }

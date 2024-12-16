@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "allowJs": false,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
     "types": ["vite/client"],
+    "baseUrl": ".",
     "paths": {
-      "twenty-shared": ["./src"]
+      "twenty-shared": ["packages/twenty-shared/src/*"]
     }
   },
   "files": [],
