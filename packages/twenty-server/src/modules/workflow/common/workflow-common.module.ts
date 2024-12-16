@@ -9,7 +9,6 @@ import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/common
 import { WorkflowBuilderModule } from 'src/modules/workflow/workflow-builder/workflow-builder.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ServerlessFunctionModule } from 'src/engine/metadata-modules/serverless-function/serverless-function.module';
-import { CodeIntrospectionModule } from 'src/modules/code-introspection/code-introspection.module';
 
 @Module({
   imports: [
@@ -17,7 +16,6 @@ import { CodeIntrospectionModule } from 'src/modules/code-introspection/code-int
     WorkflowCommandModule,
     WorkflowBuilderModule,
     ServerlessFunctionModule,
-    CodeIntrospectionModule,
     NestjsQueryTypeOrmModule.forFeature([ObjectMetadataEntity], 'metadata'),
   ],
   providers: [

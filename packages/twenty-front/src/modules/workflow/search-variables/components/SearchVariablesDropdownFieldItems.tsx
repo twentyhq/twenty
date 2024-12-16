@@ -1,5 +1,4 @@
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import {
   BaseOutputSchema,
@@ -100,8 +99,14 @@ export const SearchVariablesDropdownFieldItems = ({
     : options;
 
   return (
-    <DropdownMenuItemsContainer>
-      <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={goBack}>
+    <>
+      <DropdownMenuHeader
+        StartIcon={IconChevronLeft}
+        onClick={goBack}
+        style={{
+          position: 'fixed',
+        }}
+      >
         <OverflowingTextWithTooltip text={headerLabel} />
       </DropdownMenuHeader>
       <HorizontalSeparator
@@ -128,6 +133,6 @@ export const SearchVariablesDropdownFieldItems = ({
           LeftIcon={value.icon ? getIcon(value.icon) : undefined}
         />
       ))}
-    </DropdownMenuItemsContainer>
+    </>
   );
 };

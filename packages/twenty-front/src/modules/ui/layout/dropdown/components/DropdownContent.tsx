@@ -36,6 +36,7 @@ export type DropdownContentProps = {
   dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownComponents: React.ReactNode;
   parentDropdownId?: string;
+  avoidPortal?: boolean;
 };
 
 export const DropdownContent = ({
@@ -51,6 +52,7 @@ export const DropdownContent = ({
   disableBlur,
   dropdownMenuWidth,
   dropdownComponents,
+  avoidPortal,
 }: DropdownContentProps) => {
   const { isDropdownOpen, closeDropdown, dropdownWidth, setDropdownPlacement } =
     useDropdown(dropdownId);
@@ -111,7 +113,7 @@ export const DropdownContent = ({
       {hotkey && onHotkeyTriggered && (
         <HotkeyEffect hotkey={hotkey} onHotkeyTriggered={onHotkeyTriggered} />
       )}
-      <FloatingPortal>
+      {avoidPortal ? (
         <DropdownMenu
           className={className}
           disableBlur={disableBlur}
@@ -122,7 +124,20 @@ export const DropdownContent = ({
         >
           {dropdownComponents}
         </DropdownMenu>
-      </FloatingPortal>
+      ) : (
+        <FloatingPortal>
+          <DropdownMenu
+            className={className}
+            disableBlur={disableBlur}
+            width={dropdownMenuWidth ?? dropdownWidth}
+            data-select-disable
+            ref={floatingUiRefs.setFloating}
+            style={dropdownMenuStyles}
+          >
+            {dropdownComponents}
+          </DropdownMenu>
+        </FloatingPortal>
+      )}
     </>
   );
 };

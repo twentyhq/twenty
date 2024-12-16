@@ -24,7 +24,6 @@ services:
       PORT: 3000
       PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
       SERVER_URL: ${SERVER_URL}
-      FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
       ENABLE_DB_MIGRATIONS: "true"
@@ -54,9 +53,7 @@ services:
     environment:
       PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
       SERVER_URL: ${SERVER_URL}
-      FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
-
       ENABLE_DB_MIGRATIONS: "false" # it already runs on the server
 
       STORAGE_TYPE: ${STORAGE_TYPE}

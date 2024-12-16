@@ -64,7 +64,7 @@ describe('useGetObjectRecordIdentifierByNameSingular', () => {
 
     expect(result.current.linkToShowPage).toBe('/object/company/recordId');
     expect(result.current.avatarUrl).toBe(
-      'https://favicon.twenty.com/cool-company.com',
+      'https://twenty-icons.com/cool-company.com',
     );
     expect(result.current.avatarType).toBe('squared');
   });

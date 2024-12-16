@@ -14,12 +14,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { getImageAbsoluteURI } from 'twenty-shared';
 import {
   IconChevronDown,
   MenuItemSelectAvatar,
   UndecoratedLink,
 } from 'twenty-ui';
-import { getImageAbsoluteURI } from 'twenty-shared';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledLogo = styled.div<{ logo: string }>`
@@ -104,10 +104,10 @@ export const MultiWorkspaceDropdownButton = ({
         >
           <StyledLogo
             logo={
-              getImageAbsoluteURI(
-                currentWorkspace?.logo ?? '',
-                REACT_APP_SERVER_BASE_URL,
-              ) ?? ''
+              getImageAbsoluteURI({
+                imageUrl: currentWorkspace?.logo ?? '',
+                baseUrl: REACT_APP_SERVER_BASE_URL,
+              }) ?? ''
             }
           />
           <NavigationDrawerAnimatedCollapseWrapper>
@@ -137,10 +137,10 @@ export const MultiWorkspaceDropdownButton = ({
                 avatar={
                   <StyledLogo
                     logo={
-                      getImageAbsoluteURI(
-                        workspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-                        REACT_APP_SERVER_BASE_URL,
-                      ) ?? ''
+                      getImageAbsoluteURI({
+                        imageUrl: workspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                        baseUrl: REACT_APP_SERVER_BASE_URL,
+                      }) ?? ''
                     }
                   />
                 }

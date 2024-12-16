@@ -39,9 +39,9 @@ type DropdownProps = {
   dropdownStrategy?: 'fixed' | 'absolute';
   disableBlur?: boolean;
   onClickOutside?: () => void;
-  usePortal?: boolean;
   onClose?: () => void;
   onOpen?: () => void;
+  avoidPortal?: boolean;
 };
 
 export const Dropdown = ({
@@ -59,6 +59,7 @@ export const Dropdown = ({
   onClickOutside,
   onClose,
   onOpen,
+  avoidPortal,
 }: DropdownProps) => {
   const { isDropdownOpen, toggleDropdown } = useDropdown(dropdownId);
 
@@ -132,6 +133,7 @@ export const Dropdown = ({
               hotkey={hotkey}
               onClickOutside={onClickOutside}
               onHotkeyTriggered={toggleDropdown}
+              avoidPortal={avoidPortal}
             />
           )}
           <DropdownOnToggleEffect

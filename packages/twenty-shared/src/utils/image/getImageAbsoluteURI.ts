@@ -1,29 +1,24 @@
-export const getImageAbsoluteURI = (
-  imageUrl: string | null | undefined,
-  serverUrl: string | null | undefined,
-): string | null => {
-  if (!imageUrl) {
-    return null;
-  }
+type getImageAbsoluteURIProps = {
+  imageUrl: string;
+  baseUrl: string;
+};
 
+export const getImageAbsoluteURI = ({
+  imageUrl,
+  baseUrl,
+}: getImageAbsoluteURIProps): string => {
   if (imageUrl.startsWith('https:') || imageUrl.startsWith('http:')) {
     return imageUrl;
   }
 
-  if (!serverUrl) {
-    return null;
-  }
+  const absoluteImageUrl = new URL(baseUrl);
 
-  const baseUrl = new URL(serverUrl);
-
-  let fullUrl: URL;
   if (imageUrl.startsWith('/')) {
-    // Append the `/files/` prefix to paths starting with `/`
-    fullUrl = new URL(`/files${imageUrl}`, baseUrl.origin);
-  } else {
-    // Treat as a relative path under `/files/`
-    fullUrl = new URL(imageUrl, `${baseUrl.origin}/files/`);
+    absoluteImageUrl.pathname = `/files${imageUrl}`;
+    return absoluteImageUrl.toString();
   }
 
-  return fullUrl.toString();
+  absoluteImageUrl.pathname = `files/${imageUrl}`;
+
+  return absoluteImageUrl.toString();
 };

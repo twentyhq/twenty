@@ -52,10 +52,10 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Position',
     type: FieldMetadataType.POSITION,
     icon: 'IconHierarchy2',
+    defaultValue: 0,
   })
-  @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  position: number | null;
+  position: number;
 
   @WorkspaceField({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.createdBy,

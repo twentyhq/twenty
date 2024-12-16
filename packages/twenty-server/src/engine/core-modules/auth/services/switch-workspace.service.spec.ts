@@ -6,9 +6,10 @@ import { Repository } from 'typeorm';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 import { SwitchWorkspaceService } from './switch-workspace.service';
 
@@ -48,6 +49,12 @@ describe('SwitchWorkspaceService', () => {
           provide: UserService,
           useValue: {
             saveDefaultWorkspaceIfUserHasAccessOrThrow: jest.fn(),
+          },
+        },
+        {
+          provide: EnvironmentService,
+          useValue: {
+            get: jest.fn(),
           },
         },
       ],

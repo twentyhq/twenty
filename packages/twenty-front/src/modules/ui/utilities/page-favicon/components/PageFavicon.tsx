@@ -13,10 +13,10 @@ export const PageFavicon = () => {
           rel="icon"
           type="image/x-icon"
           href={
-            getImageAbsoluteURI(
-              workspacePublicData?.logo,
-              REACT_APP_SERVER_BASE_URL,
-            ) ?? ''
+            getImageAbsoluteURI({
+              imageUrl: workspacePublicData?.logo,
+              baseUrl: REACT_APP_SERVER_BASE_URL,
+            }) ?? ''
           }
         />
       )}

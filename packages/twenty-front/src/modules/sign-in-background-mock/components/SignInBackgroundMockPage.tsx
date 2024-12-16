@@ -20,7 +20,7 @@ export const SignInBackgroundMockPage = () => {
     <PageContainer>
       <PageHeader title="Companies" Icon={IconBuildingSkyscraper}>
         <PageHotkeysEffect onAddButtonClick={() => {}} />
-        <PageAddButton onClick={() => {}} />
+        <PageAddButton />
       </PageHeader>
       <PageBody>
         <RecordFieldValueSelectorContextProvider>

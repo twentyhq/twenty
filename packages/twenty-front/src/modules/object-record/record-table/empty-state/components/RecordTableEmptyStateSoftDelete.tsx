@@ -2,16 +2,15 @@ import { IconFilterOff } from 'twenty-ui';
 
 import { useObjectLabel } from '@/object-metadata/hooks/useObjectLabel';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableEmptyStateDisplay } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateDisplay';
 import { tableFiltersComponentState } from '@/object-record/record-table/states/tableFiltersComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
-import { useContext } from 'react';
 
 export const RecordTableEmptyStateSoftDelete = () => {
   const { objectMetadataItem, objectNameSingular, recordTableId } =
-    useContext(RecordTableContext);
+    useRecordTableContextOrThrow();
 
   const { deleteCombinedViewFilter } =
     useDeleteCombinedViewFilters(recordTableId);

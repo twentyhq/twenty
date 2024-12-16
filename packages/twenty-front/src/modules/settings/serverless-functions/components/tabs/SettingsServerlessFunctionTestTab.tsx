@@ -7,20 +7,17 @@ import {
   Section,
 } from 'twenty-ui';
 
-import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
-import { SettingsServerlessFunctionsOutputMetadataInfo } from '@/settings/serverless-functions/components/SettingsServerlessFunctionsOutputMetadataInfo';
-import { settingsServerlessFunctionCodeEditorOutputParamsState } from '@/settings/serverless-functions/states/settingsServerlessFunctionCodeEditorOutputParamsState';
-import { settingsServerlessFunctionInputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionInputState';
-import { settingsServerlessFunctionOutputState } from '@/settings/serverless-functions/states/settingsServerlessFunctionOutputState';
 import { SettingsServerlessFunctionHotkeyScope } from '@/settings/serverless-functions/types/SettingsServerlessFunctionHotKeyScope';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import styled from '@emotion/styled';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useHotkeyScopeOnMount } from '~/hooks/useHotkeyScopeOnMount';
+import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
+import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
 
 const StyledInputsContainer = styled.div`
   display: flex;
@@ -28,24 +25,27 @@ const StyledInputsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(4)};
 `;
 
+const StyledCodeEditorContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 export const SettingsServerlessFunctionTestTab = ({
   handleExecute,
+  serverlessFunctionId,
 }: {
   handleExecute: () => void;
+  serverlessFunctionId: string;
 }) => {
-  const settingsServerlessFunctionCodeEditorOutputParams = useRecoilValue(
-    settingsServerlessFunctionCodeEditorOutputParamsState,
-  );
-  const settingsServerlessFunctionOutput = useRecoilValue(
-    settingsServerlessFunctionOutputState,
-  );
-  const [settingsServerlessFunctionInput, setSettingsServerlessFunctionInput] =
-    useRecoilState(settingsServerlessFunctionInputState);
+  const [serverlessFunctionTestData, setServerlessFunctionTestData] =
+    useRecoilState(serverlessFunctionTestDataFamilyState(serverlessFunctionId));
 
-  const result =
-    settingsServerlessFunctionOutput.data ||
-    settingsServerlessFunctionOutput.error ||
-    '';
+  const onChange = (newInput: string) => {
+    setServerlessFunctionTestData((prev) => ({
+      ...prev,
+      input: JSON.parse(newInput),
+    }));
+  };
 
   const navigate = useNavigate();
   useHotkeyScopeOnMount(
@@ -67,7 +67,7 @@ export const SettingsServerlessFunctionTestTab = ({
         description='Insert a JSON input, then press "Run" to test your function.'
       />
       <StyledInputsContainer>
-        <div>
+        <StyledCodeEditorContainer>
           <CoreEditorHeader
             title={'Input'}
             rightNodes={[
@@ -82,26 +82,16 @@ export const SettingsServerlessFunctionTestTab = ({
             ]}
           />
           <CodeEditor
-            value={settingsServerlessFunctionInput}
+            value={JSON.stringify(serverlessFunctionTestData.input, null, 4)}
             language="json"
             height={200}
-            onChange={setSettingsServerlessFunctionInput}
+            onChange={onChange}
             withHeader
           />
-        </div>
-        <div>
-          <CoreEditorHeader
-            leftNodes={[<SettingsServerlessFunctionsOutputMetadataInfo />]}
-            rightNodes={[<LightCopyIconButton copyText={result} />]}
-          />
-          <CodeEditor
-            value={result}
-            language={settingsServerlessFunctionCodeEditorOutputParams.language}
-            height={settingsServerlessFunctionCodeEditorOutputParams.height}
-            options={{ readOnly: true, domReadOnly: true }}
-            withHeader
-          />
-        </div>
+        </StyledCodeEditorContainer>
+        <ServerlessFunctionExecutionResult
+          serverlessFunctionTestData={serverlessFunctionTestData}
+        />
       </StyledInputsContainer>
     </Section>
   );
