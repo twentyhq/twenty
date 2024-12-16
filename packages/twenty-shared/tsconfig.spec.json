@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["jest", "node"]
+  },
+  "include": [
+    "**/__mocks__/**/*",
+    "jest.config.ts",
+    "setupTests.ts",
+    "src/**/*.d.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.spec.tsx",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "tsup.config.ts",
+    "tsup.ui.index.tsx",
+    "vite.config.ts"
+  ]
+}

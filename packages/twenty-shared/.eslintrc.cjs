@@ -1,5 +1,5 @@
 module.exports = {
-  extends: ['../../.eslintrc.cjs', '../../.eslintrc.react.cjs'],
+  extends: ['../../.eslintrc.cjs'],
   ignorePatterns: ['!**/*'],
   overrides: [
     {
