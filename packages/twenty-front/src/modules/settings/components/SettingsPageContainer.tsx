@@ -32,7 +32,7 @@ export const SettingsPageContainer = ({
 }) => (
   <ScrollWrapper
     contextProviderName="settingsPageContainer"
-    componentInstanceId={`scroll-wrapper-settings-page-container`}
+    componentInstanceId={'scroll-wrapper-settings-page-container'}
   >
     <StyledSettingsPageContainer>{children}</StyledSettingsPageContainer>
   </ScrollWrapper>

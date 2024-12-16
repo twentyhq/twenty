@@ -33,7 +33,7 @@ export const ShowPageContainer = ({ children }: ShowPageContainerProps) => {
     <StyledOuterContainer>
       <StyledScrollWrapper
         contextProviderName="showPageContainer"
-        componentInstanceId={`scroll-wrapper-show-page-container`}
+        componentInstanceId={'scroll-wrapper-show-page-container'}
       >
         <StyledInnerContainer>{children}</StyledInnerContainer>
       </StyledScrollWrapper>

@@ -3,12 +3,12 @@ import { useCurrentRecordGroupDefinition } from '@/object-record/record-group/ho
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-ui';
 
-export const useRecordGroupFilter = (fields?: FieldMetadataItem[]) => {
+export const useRecordGroupFilter = (fields: FieldMetadataItem[]) => {
   const currentRecordGroupDefinition = useCurrentRecordGroupDefinition();
 
   const recordGroupFilter = useMemo(() => {
     if (isDefined(currentRecordGroupDefinition)) {
-      const fieldMetadataItem = fields?.find(
+      const fieldMetadataItem = fields.find(
         (fieldMetadataItem) =>
           fieldMetadataItem.id === currentRecordGroupDefinition.fieldMetadataId,
       );

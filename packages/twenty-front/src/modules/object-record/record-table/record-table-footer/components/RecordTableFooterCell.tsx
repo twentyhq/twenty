@@ -67,7 +67,7 @@ export const RecordTableFooterCell = ({
   currentRecordGroupId,
 }: {
   column: ColumnDefinition<FieldMetadata>;
-  isFirstCell: boolean;
+  isFirstCell?: boolean;
   currentRecordGroupId?: string;
 }) => {
   const tableColumns = useRecoilComponentValueV2(tableColumnsComponentState);

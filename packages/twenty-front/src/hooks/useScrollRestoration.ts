@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation, useNavigation } from 'react-router-dom';
+import { useNavigation } from 'react-router-dom';
 
 import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
 import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
@@ -14,7 +14,6 @@ import { isDefined } from '~/utils/isDefined';
  * not share the same scroll position.
  */
 export const useScrollRestoration = (viewportHeight?: number) => {
-  const key = `scroll-position-${useLocation().key}`;
   const { state } = useNavigation();
 
   const [scrollTop, setScrollTop] = useRecoilComponentStateV2(
@@ -34,5 +33,5 @@ export const useScrollRestoration = (viewportHeight?: number) => {
     } else if (state === 'idle' && isDefined(scrollWrapper) && !skip) {
       scrollWrapper.scrollTo({ top: scrollTop });
     }
-  }, [key, state, scrollWrapper, skip, scrollTop, setScrollTop]);
+  }, [state, scrollWrapper, skip, scrollTop, setScrollTop]);
 };

@@ -18,9 +18,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     'IS_AGGREGATE_QUERY_ENABLED',
   );
   const { objectMetadataItem } = useRecordTableContextOrThrow();
-  const { recordGroupFilter } = useRecordGroupFilter(
-    objectMetadataItem?.fields,
-  );
+  const { recordGroupFilter } = useRecordGroupFilter(objectMetadataItem.fields);
 
   const { currentViewWithSavedFiltersAndSorts } = useGetCurrentView();
   const recordIndexViewFilterGroups = useRecoilValue(
