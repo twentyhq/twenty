@@ -106,14 +106,12 @@ export const getDevSeedPeopleCustomFields = (
       isActive: true,
       isNullable: false,
       isUnique: false,
-      defaultValue: [
-        {
-          primaryPhoneNumber: '',
-          primaryPhoneCountryCode: '',
-          primaryPhoneCallingCode: '',
-          additionalPhones: {},
-        },
-      ],
+      defaultValue: {
+        primaryPhoneNumber: '',
+        primaryPhoneCountryCode: 'FR',
+        primaryPhoneCallingCode: '+33',
+        additionalPhones: {},
+      },
       objectMetadataId,
     },
     {
