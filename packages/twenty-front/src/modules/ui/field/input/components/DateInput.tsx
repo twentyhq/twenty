@@ -9,8 +9,9 @@ import {
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useRef, useState } from 'react';
 
-const StyledCalendarContainer = styled.div`
+export const StyledCalendarContainer = styled.div`
   background: ${({ theme }) => theme.background.transparent.secondary};
   backdrop-filter: ${({ theme }) => theme.blur.medium};
   border: 1px solid ${({ theme }) => theme.border.color.light};
@@ -19,6 +20,7 @@ const StyledCalendarContainer = styled.div`
 `;
 
 export type DateInputProps = {
+  value: Nullable<Date>;
   onEnter: (newDate: Nullable<Date>) => void;
   onEscape: (newDate: Nullable<Date>) => void;
   onClickOutside: (
@@ -31,12 +33,10 @@ export type DateInputProps = {
   onClear?: () => void;
   onSubmit?: (newDate: Nullable<Date>) => void;
   hideHeaderInput?: boolean;
-  temporaryValue: Nullable<Date>;
-  setTemporaryValue: (newValue: Nullable<Date>) => void;
-  wrapperRef: React.RefObject<HTMLElement>;
 };
 
 export const DateInput = ({
+  value,
   onEnter,
   onEscape,
   onClickOutside,
@@ -46,22 +46,23 @@ export const DateInput = ({
   onClear,
   onSubmit,
   hideHeaderInput,
-  wrapperRef,
-  temporaryValue,
-  setTemporaryValue,
 }: DateInputProps) => {
+  const [internalValue, setInternalValue] = useState(value);
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
   const handleChange = (newDate: Date | null) => {
-    setTemporaryValue(newDate);
+    setInternalValue(newDate);
     onChange?.(newDate);
   };
 
   const handleClear = () => {
-    setTemporaryValue(null);
+    setInternalValue(null);
     onClear?.();
   };
 
   const handleMouseSelect = (newDate: Date | null) => {
-    setTemporaryValue(newDate);
+    setInternalValue(newDate);
     onSubmit?.(newDate);
   };
 
@@ -78,26 +79,29 @@ export const DateInput = ({
     listenerId: 'DateInput',
     callback: (event) => {
       event.stopImmediatePropagation();
+
       closeDropdownYearSelect();
       closeDropdownMonthSelect();
       closeDropdown();
-      onClickOutside(event, temporaryValue);
+      onClickOutside(event, internalValue);
     },
   });
 
   return (
-    <StyledCalendarContainer>
-      <InternalDatePicker
-        date={temporaryValue ?? new Date()}
-        onChange={handleChange}
-        onMouseSelect={handleMouseSelect}
-        clearable={clearable ? clearable : false}
-        isDateTimeInput={isDateTimeInput}
-        onEnter={onEnter}
-        onEscape={onEscape}
-        onClear={handleClear}
-        hideHeaderInput={hideHeaderInput}
-      />
-    </StyledCalendarContainer>
+    <div ref={wrapperRef}>
+      <StyledCalendarContainer>
+        <InternalDatePicker
+          date={internalValue ?? new Date()}
+          onChange={handleChange}
+          onMouseSelect={handleMouseSelect}
+          clearable={clearable ? clearable : false}
+          isDateTimeInput={isDateTimeInput}
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClear={handleClear}
+          hideHeaderInput={hideHeaderInput}
+        />
+      </StyledCalendarContainer>
+    </div>
   );
 };
