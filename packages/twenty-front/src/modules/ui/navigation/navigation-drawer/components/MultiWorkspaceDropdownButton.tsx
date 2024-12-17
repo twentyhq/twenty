@@ -21,15 +21,6 @@ import {
   UndecoratedLink,
 } from 'twenty-ui';
 
-const StyledLogo = styled.div<{ logo: string }>`
-  background: url(${({ logo }) => logo});
-  background-position: center;
-  background-size: cover;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  height: 16px;
-  width: 16px;
-`;
-
 const StyledContainer = styled.div<{ isNavigationDrawerExpanded: boolean }>`
   align-items: center;
   cursor: pointer;
