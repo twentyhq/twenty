@@ -206,3 +206,41 @@ export const ClearField: Story = {
     ]);
   },
 };
+
+/**
+ * Line breaks are not authorized in JSON strings. Users should instead put newlines characters themselves.
+ * See https://stackoverflow.com/a/42073.
+ */
+export const BreaksWhenUserInsertsNewlineInJsonString: Story = {
+  args: {
+    placeholder: 'Enter valid json',
+    onPersist: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const editor = canvasElement.querySelector('.ProseMirror > p');
+    expect(editor).toBeVisible();
+
+    await userEvent.type(editor, '"a{Enter}b"');
+
+    await userEvent.click(canvasElement);
+
+    expect(args.onPersist).not.toHaveBeenCalled();
+  },
+};
+
+export const AcceptsJsonEncodedNewline: Story = {
+  args: {
+    placeholder: 'Enter valid json',
+    onPersist: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const editor = canvasElement.querySelector('.ProseMirror > p');
+    expect(editor).toBeVisible();
+
+    await userEvent.type(editor, '"a\\nb"');
+
+    await userEvent.click(canvasElement);
+
+    expect(args.onPersist).toHaveBeenCalledWith('"a\\nb"');
+  },
+};
