@@ -46,6 +46,7 @@ import { WorkspaceService } from './services/workspace.service';
         DataSourceModule,
         OnboardingModule,
         TypeORMModule,
+        TypeORMModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

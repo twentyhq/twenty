@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
-import Cloudflare from 'cloudflare';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
@@ -26,6 +25,8 @@ import {
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -43,6 +44,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly environmentService: EnvironmentService,
+    private readonly domainManagerService: DomainManagerService,
   ) {
     super(workspaceRepository);
   }
@@ -61,32 +63,25 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
-  async validateDomain(newDomain: string, workspaceId: string) {
-    const existingWorkspace = await this.isDomainAvailable(newDomain);
-
-    if (existingWorkspace) {
-      throw new WorkspaceException(
-        'Domain already taken',
-        WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN,
+  private async updateDomain(workspace: Workspace, hostname: string) {
+    if (
+      hostname &&
+      workspace.domain !== hostname &&
+      isDefined(workspace.domain)
+    ) {
+      await this.domainManagerService.updateCustomDomain(
+        { hostnameName: workspace.domain },
+        hostname,
       );
     }
 
-    const client = new Cloudflare({
-      userServiceKey: this.environmentService.get(
-        'CLOUDFLARE_USER_SERVICE_KEY',
-      ),
-    });
-
-    const customHostname = await client.customHostnames.create({
-      zone_id: this.environmentService.get('CLOUDFLARE_ZONE_ID'),
-      hostname: newDomain,
-      ssl: {},
-      custom_metadata: {
-        workspaceId,
-      },
-    });
-
-    console.log('>>>>>>>>>>>>>>', customHostname);
+    if (
+      hostname &&
+      workspace.domain !== hostname &&
+      !isDefined(workspace.domain)
+    ) {
+      await this.domainManagerService.registerCustomDomain(hostname);
+    }
   }
 
   async updateWorkspaceById(payload: Partial<Workspace> & { id: string }) {
@@ -94,20 +89,14 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       id: payload.id,
     });
 
-    workspaceValidator.assertIsExist(
-      workspace,
-      new WorkspaceException(
-        'Workspace not found',
-        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
-      ),
-    );
+    workspaceValidator.assertIsExist(workspace);
 
     if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
       await this.validateSubdomainUpdate(payload.subdomain);
     }
 
     if (payload.domain && workspace.domain !== payload.domain) {
-      await this.validateDomain(payload.domain, workspace.id);
+      await this.updateDomain(workspace, payload.domain);
     }
 
     return this.workspaceRepository.save({

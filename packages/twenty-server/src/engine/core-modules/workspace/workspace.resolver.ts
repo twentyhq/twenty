@@ -30,10 +30,6 @@ import {
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
-import {
-  WorkspaceException,
-  WorkspaceExceptionCode,
-} from 'src/engine/core-modules/workspace/workspace.exception';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -188,13 +184,7 @@ export class WorkspaceResolver {
     const workspace =
       await this.domainManagerService.getWorkspaceByOrigin(origin);
 
-    workspaceValidator.assertIsExist(
-      workspace,
-      new WorkspaceException(
-        'Workspace not found',
-        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
-      ),
-    );
+    workspaceValidator.assertIsExist(workspace);
 
     let workspaceLogoWithToken = '';
 
