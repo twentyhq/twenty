@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 import { useCreateBlockNote } from '@blocknote/react';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
@@ -271,9 +271,7 @@ export const RichTextEditor = ({
     editor,
   );
 
-  useEffect(() => {
-    replaceBlockEditorContent();
-  }, [replaceBlockEditorContent, activityId, editor]);
+  replaceBlockEditorContent();
 
   useScopedHotkeys(
     Key.Escape,

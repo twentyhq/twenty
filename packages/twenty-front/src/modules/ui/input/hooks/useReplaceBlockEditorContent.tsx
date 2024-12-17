@@ -20,9 +20,7 @@ export const useReplaceBlockEditorContent = (
             ? JSON.parse(activityInStore?.body)
             : [{ type: 'paragraph', content: '' }];
 
-          console.log(editor.document, content);
           if (!isDeeplyEqual(editor.document, content)) {
-            console.log('replacing');
             editor.replaceBlocks(editor.document, content);
           }
         }
