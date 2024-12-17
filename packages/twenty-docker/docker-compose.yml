@@ -26,8 +26,6 @@ services:
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
-      ENABLE_DB_MIGRATIONS: "true"
-
       SIGN_IN_PREFILLED: ${SIGN_IN_PREFILLED}
       STORAGE_TYPE: ${STORAGE_TYPE}
       STORAGE_S3_REGION: ${STORAGE_S3_REGION}
@@ -54,7 +52,7 @@ services:
       PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
       SERVER_URL: ${SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
-      ENABLE_DB_MIGRATIONS: "false" # it already runs on the server
+      DISABLE_DB_MIGRATIONS: "true" # it already runs on the server
 
       STORAGE_TYPE: ${STORAGE_TYPE}
       STORAGE_S3_REGION: ${STORAGE_S3_REGION}

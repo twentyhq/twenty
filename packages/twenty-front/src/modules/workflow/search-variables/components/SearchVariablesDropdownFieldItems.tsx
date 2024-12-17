@@ -2,6 +2,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import {
   BaseOutputSchema,
+  LinkOutputSchema,
   OutputSchema,
   StepOutputSchema,
 } from '@/workflow/search-variables/types/StepOutputSchema';
@@ -13,10 +14,17 @@ import { useState } from 'react';
 import {
   HorizontalSeparator,
   IconChevronLeft,
+  isDefined,
   MenuItemSelect,
   OverflowingTextWithTooltip,
   useIcons,
 } from 'twenty-ui';
+import { useSetRecoilState } from 'recoil';
+import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
+import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
+import { isLinkOutputSchema } from '@/workflow/search-variables/utils/isLinkOutputSchema';
+import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/states/workflowDiagramTriggerNodeSelectionState';
 
 type SearchVariablesDropdownFieldItemsProps = {
   step: StepOutputSchema;
@@ -33,6 +41,13 @@ export const SearchVariablesDropdownFieldItems = ({
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [searchInputValue, setSearchInputValue] = useState('');
   const { getIcon } = useIcons();
+  const setWorkflowSelectedNode = useSetRecoilState(workflowSelectedNodeState);
+  const { setActiveTabId } = useTabList(
+    WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
+  );
+  const setWorkflowDiagramTriggerNodeSelection = useSetRecoilState(
+    workflowDiagramTriggerNodeSelectionState,
+  );
 
   const getCurrentSubStep = (): OutputSchema => {
     let currentSubStep = step.outputSchema;
@@ -51,7 +66,9 @@ export const SearchVariablesDropdownFieldItems = ({
   const getDisplayedSubStepFields = () => {
     const currentSubStep = getCurrentSubStep();
 
-    if (isRecordOutputSchema(currentSubStep)) {
+    if (isLinkOutputSchema(currentSubStep)) {
+      return { link: currentSubStep.link };
+    } else if (isRecordOutputSchema(currentSubStep)) {
       return currentSubStep.fields;
     } else if (isBaseOutputSchema(currentSubStep)) {
       return currentSubStep;
@@ -60,6 +77,7 @@ export const SearchVariablesDropdownFieldItems = ({
 
   const handleSelectField = (key: string) => {
     const currentSubStep = getCurrentSubStep();
+
     const handleSelectBaseOutputSchema = (
       baseOutputSchema: BaseOutputSchema,
     ) => {
@@ -71,7 +89,19 @@ export const SearchVariablesDropdownFieldItems = ({
       }
     };
 
-    if (isRecordOutputSchema(currentSubStep)) {
+    const handleSelectLinkOutputSchema = (
+      linkOutputSchema: LinkOutputSchema,
+    ) => {
+      setWorkflowSelectedNode(step.id);
+      setWorkflowDiagramTriggerNodeSelection(step.id);
+      if (isDefined(linkOutputSchema.link.tab)) {
+        setActiveTabId(linkOutputSchema.link.tab);
+      }
+    };
+
+    if (isLinkOutputSchema(currentSubStep)) {
+      handleSelectLinkOutputSchema(currentSubStep);
+    } else if (isRecordOutputSchema(currentSubStep)) {
       handleSelectBaseOutputSchema(currentSubStep.fields);
     } else if (isBaseOutputSchema(currentSubStep)) {
       handleSelectBaseOutputSchema(currentSubStep);

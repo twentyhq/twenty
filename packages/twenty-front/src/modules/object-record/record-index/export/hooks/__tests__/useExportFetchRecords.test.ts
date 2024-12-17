@@ -14,7 +14,7 @@ import { ViewType } from '@/views/types/ViewType';
 import { MockedResponse } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
 import gql from 'graphql-tag';
-import { getJestMetadataAndApolloMocksAndContextStoreWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
 
 const defaultResponseData = {
@@ -130,17 +130,15 @@ const mocks: MockedResponse[] = [
   },
 ];
 
-const WrapperWithResponse = getJestMetadataAndApolloMocksAndContextStoreWrapper(
-  {
-    apolloMocks: mocks,
-    componentInstanceId: 'recordIndexId',
-    contextStoreTargetedRecordsRule: {
-      mode: 'selection',
-      selectedRecordIds: [],
-    },
-    contextStoreCurrentObjectMetadataNameSingular: 'person',
+const WrapperWithResponse = getJestMetadataAndApolloMocksAndActionMenuWrapper({
+  apolloMocks: mocks,
+  componentInstanceId: 'recordIndexId',
+  contextStoreTargetedRecordsRule: {
+    mode: 'selection',
+    selectedRecordIds: [],
   },
-);
+  contextStoreCurrentObjectMetadataNameSingular: 'person',
+});
 
 const graphqlEmptyResponse = [
   {
@@ -157,7 +155,7 @@ const graphqlEmptyResponse = [
 ];
 
 const WrapperWithEmptyResponse =
-  getJestMetadataAndApolloMocksAndContextStoreWrapper({
+  getJestMetadataAndApolloMocksAndActionMenuWrapper({
     apolloMocks: graphqlEmptyResponse,
     componentInstanceId: 'recordIndexId',
     contextStoreTargetedRecordsRule: {

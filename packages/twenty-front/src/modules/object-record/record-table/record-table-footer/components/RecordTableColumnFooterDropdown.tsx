@@ -16,10 +16,12 @@ import { MenuItem } from 'twenty-ui';
 
 export const RecordTableColumnFooterDropdown = ({
   column,
+  dropdownId,
 }: {
   column: ColumnDefinition<FieldMetadata>;
+  dropdownId: string;
 }) => {
-  const { closeDropdown } = useDropdown(column.fieldMetadataId + '-footer');
+  const { closeDropdown } = useDropdown(dropdownId);
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { currentViewWithSavedFiltersAndSorts } = useGetCurrentView();
 
@@ -67,6 +69,7 @@ export const RecordTableColumnFooterDropdown = ({
             key={aggregation}
             onClick={() => {
               handleAggregationChange(aggregation);
+              closeDropdown();
             }}
             text={getAggregateOperationLabel(aggregation)}
           />

@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
+import { TABLE_CELL_CHECKBOX_MIN_WIDTH } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
+import { TABLE_CELL_GRIP_WIDTH } from '@/object-record/record-table/record-table-cell/components/RecordTableCellGrip';
 import { RecordTableFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableFooterCell';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -75,21 +77,33 @@ const StyledTableFoot = styled.thead`
 `;
 
 const StyledDiv = styled.div`
-  width: 30px;
+  width: calc(${TABLE_CELL_GRIP_WIDTH} + ${TABLE_CELL_CHECKBOX_MIN_WIDTH});
 `;
 
-export const RecordTableFooter = () => {
+export const RecordTableFooter = ({
+  currentRecordGroupId,
+}: {
+  currentRecordGroupId?: string;
+}) => {
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
   );
 
   return (
-    <StyledTableFoot id="record-table-footer" data-select-disable>
+    <StyledTableFoot
+      id={`record-table-footer${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
+      data-select-disable
+    >
       <tr>
         <th />
         <StyledDiv />
-        {visibleTableColumns.map((column) => (
-          <RecordTableFooterCell key={column.fieldMetadataId} column={column} />
+        {visibleTableColumns.map((column, index) => (
+          <RecordTableFooterCell
+            key={`${column.fieldMetadataId}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
+            column={column}
+            currentRecordGroupId={currentRecordGroupId}
+            isFirstCell={index === 0}
+          />
         ))}
       </tr>
     </StyledTableFoot>

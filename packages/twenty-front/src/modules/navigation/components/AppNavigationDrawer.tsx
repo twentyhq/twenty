@@ -8,11 +8,14 @@ import {
   NavigationDrawerProps,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { getImageAbsoluteURI } from 'twenty-shared';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 
-import { AdvancedSettingsToggle, getImageAbsoluteURI } from 'twenty-ui';
-import { MainNavigationDrawerItems } from './MainNavigationDrawerItems';
+import { MainNavigationDrawerItems } from '@/navigation/components/MainNavigationDrawerItems';
+import { isNonEmptyString } from '@sniptt/guards';
+import { AdvancedSettingsToggle } from 'twenty-ui';
 
 export type AppNavigationDrawerProps = {
   className?: string;
@@ -40,10 +43,12 @@ export const AppNavigationDrawer = ({
         ),
       }
     : {
-        logo:
-          (currentWorkspace?.logo &&
-            getImageAbsoluteURI(currentWorkspace.logo)) ??
-          undefined,
+        logo: isNonEmptyString(currentWorkspace?.logo)
+          ? getImageAbsoluteURI({
+              imageUrl: currentWorkspace.logo,
+              baseUrl: REACT_APP_SERVER_BASE_URL,
+            })
+          : undefined,
         title: currentWorkspace?.displayName ?? undefined,
         children: <MainNavigationDrawerItems />,
         footer: <SupportDropdown />,

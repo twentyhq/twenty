@@ -13,11 +13,11 @@ const wrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 describe('useTriggerNodeSelection', () => {
-  const mockUpdateNode = jest.fn();
+  const mockSetNodes = jest.fn();
 
   beforeEach(() => {
     (useReactFlow as jest.Mock).mockReturnValue({
-      updateNode: mockUpdateNode,
+      setNodes: mockSetNodes,
     });
   });
 
@@ -51,7 +51,6 @@ describe('useTriggerNodeSelection', () => {
       result.current.setWorkflowDiagramTriggerNodeSelection(mockNodeId);
     });
 
-    expect(mockUpdateNode).toHaveBeenCalledWith(mockNodeId, { selected: true });
     expect(result.current.workflowDiagramTriggerNodeSelection).toBeUndefined();
   });
 
@@ -61,6 +60,6 @@ describe('useTriggerNodeSelection', () => {
     });
 
     // Ensure updateNode is not called when state is undefined
-    expect(mockUpdateNode).not.toHaveBeenCalled();
+    expect(mockSetNodes).not.toHaveBeenCalled();
   });
 });

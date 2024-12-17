@@ -17,7 +17,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isDefined } from '~/utils/isDefined';
-import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 
 const validationSchema = z
   .object({
@@ -54,7 +54,7 @@ export const SettingsDomain = () => {
 
   const { enqueueSnackBar } = useSnackBar();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
-  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -97,7 +97,7 @@ export const SettingsDomain = () => {
         subdomain: values.subdomain,
       });
 
-      window.location.href = buildWorkspaceUrl(values.subdomain);
+      redirectToWorkspaceDomain(values.subdomain);
     } catch (error) {
       if (
         error instanceof Error &&

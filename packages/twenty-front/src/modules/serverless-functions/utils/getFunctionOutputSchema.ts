@@ -32,6 +32,7 @@ export const getFunctionOutputSchema = (testResult: object) => {
           if (isObject(value) && !Array.isArray(value)) {
             acc[key] = {
               isLeaf: false,
+              icon: 'IconVariable',
               value: getFunctionOutputSchema(value),
             };
           } else {
@@ -39,6 +40,7 @@ export const getFunctionOutputSchema = (testResult: object) => {
               isLeaf: true,
               value,
               type: getValueType(value),
+              icon: 'IconVariable',
             };
           }
           return acc;
