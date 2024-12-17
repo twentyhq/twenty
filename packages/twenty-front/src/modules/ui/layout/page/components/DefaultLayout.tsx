@@ -126,24 +126,24 @@ export const DefaultLayout = () => {
           ) : (
             <StyledAppNavigationDrawer />
           )}
-          <StyledMainContainer>
-            {showAuthModal ? (
-              <>
-                <SignInBackgroundMockPage />
-                <AnimatePresence mode="wait">
-                  <LayoutGroup>
-                    <AuthModal>
-                      <Outlet />
-                    </AuthModal>
-                  </LayoutGroup>
-                </AnimatePresence>
-              </>
-            ) : (
+          {showAuthModal ? (
+            <>
+              <SignInBackgroundMockPage />
+              <AnimatePresence mode="wait">
+                <LayoutGroup>
+                  <AuthModal>
+                    <Outlet />
+                  </AuthModal>
+                </LayoutGroup>
+              </AnimatePresence>
+            </>
+          ) : (
+            <StyledMainContainer>
               <AppErrorBoundary>
                 <Outlet />
               </AppErrorBoundary>
-            )}
-          </StyledMainContainer>
+            </StyledMainContainer>
+          )}
         </StyledPageContainer>
         {isMobile && <MobileNavigationBar />}
       </StyledLayout>
