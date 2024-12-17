@@ -16,14 +16,13 @@ import { EnvironmentService } from 'src/engine/core-modules/environment/environm
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
 import { UnhandledExceptionFilter } from 'src/utils/apply-cors-to-exceptions';
+import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 import { AppModule } from './app.module';
 import './instrument';
 
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
-
-import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
