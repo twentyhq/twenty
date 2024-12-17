@@ -14,22 +14,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { getImageAbsoluteURI } from 'twenty-shared';
 import {
+  Avatar,
   IconChevronDown,
   MenuItemSelectAvatar,
   UndecoratedLink,
 } from 'twenty-ui';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
-
-const StyledLogo = styled.div<{ logo: string }>`
-  background: url(${({ logo }) => logo});
-  background-position: center;
-  background-size: cover;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  height: 16px;
-  width: 16px;
-`;
 
 const StyledContainer = styled.div<{ isNavigationDrawerExpanded: boolean }>`
   align-items: center;
@@ -102,13 +92,9 @@ export const MultiWorkspaceDropdownButton = ({
           data-testid="workspace-dropdown"
           isNavigationDrawerExpanded={isNavigationDrawerExpanded}
         >
-          <StyledLogo
-            logo={
-              getImageAbsoluteURI({
-                imageUrl: currentWorkspace?.logo ?? '',
-                baseUrl: REACT_APP_SERVER_BASE_URL,
-              }) ?? ''
-            }
+          <Avatar
+            placeholder={currentWorkspace?.displayName || ''}
+            avatarUrl={currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO}
           />
           <NavigationDrawerAnimatedCollapseWrapper>
             <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
@@ -135,13 +121,9 @@ export const MultiWorkspaceDropdownButton = ({
               <MenuItemSelectAvatar
                 text={workspace.displayName ?? '(No name)'}
                 avatar={
-                  <StyledLogo
-                    logo={
-                      getImageAbsoluteURI({
-                        imageUrl: workspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-                        baseUrl: REACT_APP_SERVER_BASE_URL,
-                      }) ?? ''
-                    }
+                  <Avatar
+                    placeholder={workspace.displayName || ''}
+                    avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
                   />
                 }
                 selected={currentWorkspace?.id === workspace.id}
