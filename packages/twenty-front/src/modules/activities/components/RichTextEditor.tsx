@@ -1,14 +1,13 @@
 import { useApolloClient } from '@apollo/client';
 import { useCreateBlockNote } from '@blocknote/react';
 import { isArray, isNonEmptyString } from '@sniptt/guards';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
-import { activityBodyFamilyState } from '@/activities/states/activityBodyFamilyState';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
@@ -27,6 +26,7 @@ import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttac
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useReplaceBlockEditorContent } from '@/ui/input/hooks/useReplaceBlockEditorContent';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import '@blocknote/react/style.css';
@@ -51,12 +51,6 @@ export const RichTextEditor = ({
 
   const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
     activityTitleHasBeenSetFamilyState({
-      activityId: activityId,
-    }),
-  );
-
-  const [activityBody, setActivityBody] = useRecoilState(
-    activityBodyFamilyState({
       activityId: activityId,
     }),
   );
@@ -241,24 +235,14 @@ export const RichTextEditor = ({
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
 
-  // See https://github.com/twentyhq/twenty/issues/6724 for explanation
-  const setActivityBodyDebouncedToAvoidDragBug = useDebouncedCallback(
-    setActivityBody,
-    100,
-  );
-
   const handleEditorChange = () => {
     const newStringifiedBody = JSON.stringify(editor.document) ?? '';
-
-    setActivityBodyDebouncedToAvoidDragBug(newStringifiedBody);
 
     handleBodyChangeDebounced(newStringifiedBody);
   };
 
   const initialBody = useMemo(() => {
-    if (isNonEmptyString(activityBody) && activityBody !== '{}') {
-      return JSON.parse(activityBody);
-    } else if (
+    if (
       isDefined(activity) &&
       isNonEmptyString(activity.body) &&
       activity?.body !== '{}'
@@ -267,7 +251,7 @@ export const RichTextEditor = ({
     } else {
       return undefined;
     }
-  }, [activity, activityBody]);
+  }, [activity]);
 
   const handleEditorBuiltInUploadFile = async (file: File) => {
     const { attachementAbsoluteURL } = await handleUploadAttachment(file);
@@ -281,6 +265,15 @@ export const RichTextEditor = ({
     schema: BLOCK_SCHEMA,
     uploadFile: handleEditorBuiltInUploadFile,
   });
+
+  const { replaceBlockEditorContent } = useReplaceBlockEditorContent(
+    activityId,
+    editor,
+  );
+
+  useEffect(() => {
+    replaceBlockEditorContent();
+  }, [replaceBlockEditorContent, activityId, editor]);
 
   useScopedHotkeys(
     Key.Escape,
