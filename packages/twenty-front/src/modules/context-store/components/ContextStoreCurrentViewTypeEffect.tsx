@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 export const ContextStoreCurrentViewTypeEffect = ({
   viewType,
 }: {
-  viewType: ContextStoreViewType | undefined;
+  viewType: ContextStoreViewType | null;
 }) => {
   const setContextStoreCurrentViewType = useSetRecoilComponentStateV2(
     contextStoreCurrentViewTypeComponentState,

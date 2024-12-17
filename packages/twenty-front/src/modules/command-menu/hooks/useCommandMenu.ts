@@ -185,7 +185,7 @@ export const useCommandMenu = () => {
           contextStoreCurrentViewTypeComponentState.atomFamily({
             instanceId: 'command-menu',
           }),
-          undefined,
+          null,
         );
 
         if (isCommandMenuOpened) {
