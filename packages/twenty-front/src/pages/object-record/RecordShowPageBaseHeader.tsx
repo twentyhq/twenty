@@ -34,13 +34,20 @@ export const RecordShowPageBaseHeader = ({
       {!isMobile && (
         <>
           {isFavoriteFolderEnabled ? (
-            <PageFavoriteFoldersDropdown
-              key={FAVORITE_FOLDER_PICKER_DROPDOWN_ID}
-              dropdownId={FAVORITE_FOLDER_PICKER_DROPDOWN_ID}
-              isFavorite={isFavorite}
-              record={record}
-              objectNameSingular={objectNameSingular}
-            />
+            isFavorite ? (
+              <PageFavoriteFoldersDropdown
+                key={FAVORITE_FOLDER_PICKER_DROPDOWN_ID}
+                dropdownId={FAVORITE_FOLDER_PICKER_DROPDOWN_ID}
+                isFavorite={isFavorite}
+                record={record}
+                objectNameSingular={objectNameSingular}
+              />
+            ) : (
+              <PageFavoriteButton
+                isFavorite={isFavorite}
+                onClick={handleFavoriteButtonClick}
+              />
+            )
           ) : (
             <PageFavoriteButton
               isFavorite={isFavorite}

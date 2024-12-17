@@ -1,4 +1,3 @@
-import { useTheme } from '@emotion/react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
@@ -26,15 +25,19 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import styled from '@emotion/styled';
 import { DragStart, DropResult, ResponderProvided } from '@hello-pangea/dnd';
 import { useState } from 'react';
+
+const StyledOrphanFavoritesContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.betweenSiblingsGap};
+`;
 
 export const CurrentWorkspaceMemberFavoritesFolders = () => {
   const [isDragging, setIsDragging] = useState(false);
 
   const currentPath = useLocation().pathname;
   const currentViewPath = useLocation().pathname + useLocation().search;
-  const theme = useTheme();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { sortedFavorites: favorites } = useFavorites();
   const { deleteFavorite } = useDeleteFavorite();
@@ -98,11 +101,12 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
           onClick={toggleNavigationSection}
           rightIcon={
             isFavoriteFolderEnabled ? (
-              <IconFolderPlus size={theme.icon.size.sm} />
+              <LightIconButton
+                Icon={IconFolderPlus}
+                onClick={toggleNewFolder}
+                accent="tertiary"
+              />
             ) : undefined
-          }
-          onRightIconClick={
-            isFavoriteFolderEnabled ? toggleNewFolder : undefined
           }
         />
       </NavigationDrawerAnimatedCollapseWrapper>
@@ -126,26 +130,28 @@ export const CurrentWorkspaceMemberFavoritesFolders = () => {
                   index={index}
                   isInsideScrollableContainer={true}
                   itemComponent={
-                    <NavigationDrawerItem
-                      key={favorite.id}
-                      className="navigation-drawer-item"
-                      label={favorite.labelIdentifier}
-                      Icon={() => <FavoriteIcon favorite={favorite} />}
-                      active={isLocationMatchingFavorite(
-                        currentPath,
-                        currentViewPath,
-                        favorite,
-                      )}
-                      to={favorite.link}
-                      rightOptions={
-                        <LightIconButton
-                          Icon={IconHeartOff}
-                          onClick={() => deleteFavorite(favorite.id)}
-                          accent="tertiary"
-                        />
-                      }
-                      isDragging={isDragging}
-                    />
+                    <StyledOrphanFavoritesContainer>
+                      <NavigationDrawerItem
+                        key={favorite.id}
+                        className="navigation-drawer-item"
+                        label={favorite.labelIdentifier}
+                        Icon={() => <FavoriteIcon favorite={favorite} />}
+                        active={isLocationMatchingFavorite(
+                          currentPath,
+                          currentViewPath,
+                          favorite,
+                        )}
+                        to={favorite.link}
+                        rightOptions={
+                          <LightIconButton
+                            Icon={IconHeartOff}
+                            onClick={() => deleteFavorite(favorite.id)}
+                            accent="tertiary"
+                          />
+                        }
+                        isDragging={isDragging}
+                      />
+                    </StyledOrphanFavoritesContainer>
                   }
                 />
               ))}
