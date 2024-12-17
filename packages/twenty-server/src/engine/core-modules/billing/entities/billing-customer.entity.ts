@@ -8,7 +8,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -18,10 +17,6 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 
 @Entity({ name: 'billingCustomer', schema: 'core' })
 @ObjectType('billingCustomer')
-@Unique('IndexOnWorkspaceIdAndStripeCustomerIdUnique', [
-  'workspaceId',
-  'stripeCustomerId',
-]) //overkill?
 export class BillingCustomer {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')

@@ -143,7 +143,10 @@ export class StripeService {
       stripeSubscriptionItem.stripeSubscriptionItemId,
       {
         price: stripePriceId,
-        quantity: stripeSubscriptionItem.quantity ?? undefined,
+        quantity:
+          stripeSubscriptionItem.quantity === null
+            ? undefined
+            : stripeSubscriptionItem.quantity,
       },
     );
   }

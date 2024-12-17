@@ -16,10 +16,6 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
   'billingSubscriptionId',
   'stripeProductId',
 ])
-@Unique('IndexOnBillingSubscriptionIdAndStripeSubscriptionItemIdUnique', [
-  'billingSubscriptionId',
-  'stripeSubscriptionItemId',
-])
 export class BillingSubscriptionItem {
   @PrimaryGeneratedColumn('uuid')
   id: string;
