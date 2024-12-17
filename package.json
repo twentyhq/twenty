@@ -249,7 +249,6 @@
     "@types/express": "^4.17.13",
     "@types/graphql-fields": "^1.3.6",
     "@types/graphql-upload": "^8.0.12",
-    "@types/jest": "^29.5.11",
     "@types/js-cookie": "^3.0.3",
     "@types/js-levenshtein": "^1.1.3",
     "@types/lodash.camelcase": "^4.3.7",
@@ -365,6 +364,7 @@
       "packages/twenty-zapier",
       "packages/twenty-website",
       "packages/twenty-e2e-testing",
+      "packages/twenty-shared",
       "tools/eslint-rules"
     ]
   }

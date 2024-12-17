@@ -23,6 +23,7 @@ export type DateInputProps = {
   isDateTimeInput?: boolean;
   onClear?: () => void;
   onSubmit?: (newDate: Nullable<Date>) => void;
+  hideHeaderInput?: boolean;
 };
 
 export const DateInput = ({
@@ -35,6 +36,7 @@ export const DateInput = ({
   isDateTimeInput,
   onClear,
   onSubmit,
+  hideHeaderInput,
 }: DateInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
@@ -87,6 +89,7 @@ export const DateInput = ({
         onEnter={onEnter}
         onEscape={onEscape}
         onClear={handleClear}
+        hideHeaderInput={hideHeaderInput}
       />
     </div>
   );

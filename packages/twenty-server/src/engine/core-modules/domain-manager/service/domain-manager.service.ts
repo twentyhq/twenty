@@ -23,19 +23,24 @@ export class DomainManagerService {
 
   getFrontUrl() {
     let baseUrl: URL;
+    const frontPort = this.environmentService.get('FRONT_PORT');
+    const frontDomain = this.environmentService.get('FRONT_DOMAIN');
+    const frontProtocol = this.environmentService.get('FRONT_PROTOCOL');
 
-    if (!this.environmentService.get('FRONT_DOMAIN')) {
-      baseUrl = new URL(this.environmentService.get('SERVER_URL'));
+    const serverUrl = this.environmentService.get('SERVER_URL');
+
+    if (!frontDomain) {
+      baseUrl = new URL(serverUrl);
     } else {
-      baseUrl = new URL(
-        `${this.environmentService.get('FRONT_PROTOCOL')}://${this.environmentService.get('FRONT_DOMAIN')}`,
-      );
+      baseUrl = new URL(`${frontProtocol}://${frontDomain}`);
+    }
 
-      const port = this.environmentService.get('FRONT_PORT');
+    if (frontPort) {
+      baseUrl.port = frontPort.toString();
+    }
 
-      if (port) {
-        baseUrl.port = port.toString();
-      }
+    if (frontProtocol) {
+      baseUrl.protocol = frontProtocol;
     }
 
     return baseUrl;
