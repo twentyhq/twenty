@@ -1,6 +1,6 @@
 import { MultipleRecordsActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/multiple-records/components/MultipleRecordsActionMenuEntrySetterEffect';
 import { NoSelectionActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/no-selection/components/NoSelectionActionMenuEntrySetterEffect';
-import { SingleRecordActionMenuEntrySetter } from '@/action-menu/actions/record-actions/single-record/components/SingleRecordActionMenuEntrySetter';
+import { SingleRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/single-record/components/SingleRecordActionMenuEntrySetterEffect';
 import { WorkflowRunRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/workflow-run-record-actions/components/WorkflowRunRecordActionMenuEntrySetter';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -59,7 +59,7 @@ const ActionEffects = ({
       {contextStoreTargetedRecordsRule.mode === 'selection' &&
         contextStoreTargetedRecordsRule.selectedRecordIds.length === 1 && (
           <>
-            <SingleRecordActionMenuEntrySetter
+            <SingleRecordActionMenuEntrySetterEffect
               objectMetadataItem={objectMetadataItem}
             />
             {isWorkflowEnabled && (

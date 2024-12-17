@@ -1,6 +1,6 @@
 import { QueryFailedError } from 'typeorm';
 
-import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
+import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -20,7 +20,7 @@ import {
 
 export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
   error: Error,
-  context: WorkspaceSchemaBuilderContext,
+  context: WorkspaceQueryRunnerOptions,
 ) => {
   if (error instanceof QueryFailedError) {
     if (
@@ -96,6 +96,7 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       case GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR:
       case GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT:
       case GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND:
+      case GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
         throw new UserInputError(error.message);
       case GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND:
         throw new NotFoundError(error.message);

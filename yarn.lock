@@ -43950,6 +43950,7 @@ __metadata:
     "@tiptap/extension-text-style": "npm:^2.8.0"
     "@tiptap/react": "npm:^2.8.0"
     "@xyflow/react": "npm:^12.0.4"
+    buffer: "npm:^6.0.3"
     transliteration: "npm:^2.3.5"
   languageName: unknown
   linkType: soft

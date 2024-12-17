@@ -97,8 +97,9 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     type: FieldMetadataType.POSITION,
     label: 'Position',
     description: 'View position',
+    defaultValue: 0,
   })
-  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
   position: number;
 
   @WorkspaceField({
