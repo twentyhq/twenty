@@ -7,13 +7,15 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/getAuthProvidersByWorkspace';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
+import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class SwitchWorkspaceService {
@@ -25,6 +27,7 @@ export class SwitchWorkspaceService {
     private readonly userService: UserService,
     private readonly accessTokenService: AccessTokenService,
     private readonly refreshTokenService: RefreshTokenService,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   async switchWorkspace(user: User, workspaceId: string) {
@@ -65,12 +68,23 @@ export class SwitchWorkspaceService {
       defaultWorkspace: workspace,
     });
 
+    const systemEnabledProviders: AuthProviders = {
+      google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
+      magicLink: false,
+      password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
+      microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+      sso: [],
+    };
+
     return {
       id: workspace.id,
       subdomain: workspace.subdomain,
       logo: workspace.logo,
       displayName: workspace.displayName,
-      authProviders: getAuthProvidersByWorkspace(workspace),
+      authProviders: getAuthProvidersByWorkspace({
+        workspace,
+        systemEnabledProviders,
+      }),
     };
   }
 

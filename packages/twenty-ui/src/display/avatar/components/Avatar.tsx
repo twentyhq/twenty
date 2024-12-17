@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { invalidAvatarUrlsState } from '@ui/display/avatar/components/states/isInvalidAvatarUrlState';
@@ -9,12 +9,9 @@ import { AvatarSize } from '@ui/display/avatar/types/AvatarSize';
 import { AvatarType } from '@ui/display/avatar/types/AvatarType';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { ThemeContext } from '@ui/theme';
-import {
-  Nullable,
-  getImageAbsoluteURI,
-  isDefined,
-  stringToHslColor,
-} from '@ui/utilities';
+import { Nullable, stringToHslColor } from '@ui/utilities';
+import { REACT_APP_SERVER_BASE_URL } from '@ui/utilities/config';
+import { getImageAbsoluteURI } from 'twenty-shared';
 
 const StyledAvatar = styled.div<{
   size: AvatarSize;
@@ -86,10 +83,12 @@ export const Avatar = ({
     invalidAvatarUrlsState,
   );
 
-  const avatarImageURI = useMemo(
-    () => (isDefined(avatarUrl) ? getImageAbsoluteURI(avatarUrl) : null),
-    [avatarUrl],
-  );
+  const avatarImageURI = isNonEmptyString(avatarUrl)
+    ? getImageAbsoluteURI({
+        imageUrl: avatarUrl,
+        baseUrl: REACT_APP_SERVER_BASE_URL,
+      })
+    : null;
 
   const noAvatarUrl = !isNonEmptyString(avatarImageURI);
 

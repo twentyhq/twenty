@@ -1,7 +1,7 @@
 import dagre from '@dagrejs/dagre';
 import { useTheme } from '@emotion/react';
+import { Edge, Node } from '@xyflow/react';
 import { useEffect } from 'react';
-import { Edge, Node } from 'reactflow';
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';

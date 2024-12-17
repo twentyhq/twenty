@@ -33,21 +33,6 @@ import {
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
 
-const StyledTabListContainer = styled.div`
-  align-items: center;
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: ${({ theme }) => theme.spacing(10)};
-  .tab-list {
-    padding-left: 0px;
-  }
-  .tab-list > div {
-    padding: ${({ theme }) => theme.spacing(3) + ' 0'};
-  }
-`;
-
 const StyledContentContainer = styled.div`
   flex: 1;
   width: 100%;
@@ -78,10 +63,9 @@ export const SettingsObjectDetailPage = () => {
     findActiveObjectMetadataItemBySlug(objectSlug) ??
     findActiveObjectMetadataItemBySlug(updatedObjectSlug);
 
-  const { activeTabIdState } = useTabList(
+  const { activeTabId } = useTabList(
     SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
   );
-  const activeTabId = useRecoilValue(activeTabIdState);
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
@@ -178,15 +162,13 @@ export const SettingsObjectDetailPage = () => {
         }
       >
         <SettingsPageContainer>
-          <StyledTabListContainer>
-            <TabList
-              tabListInstanceId={
-                SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
-              }
-              tabs={tabs}
-              className="tab-list"
-            />
-          </StyledTabListContainer>
+          <TabList
+            tabListInstanceId={
+              SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
+            }
+            tabs={tabs}
+            className="tab-list"
+          />
           <StyledContentContainer>
             {renderActiveTabContent()}
           </StyledContentContainer>

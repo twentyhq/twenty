@@ -1,7 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { HttpResponse, graphql, http } from 'msw';
-import { getImageAbsoluteURI } from 'twenty-ui';
+import { getImageAbsoluteURI } from 'twenty-shared';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { SettingsServerlessFunctionDetail } from '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetail';
 import {
   PageDecorator,
@@ -43,9 +44,15 @@ const meta: Meta<PageDecoratorArgs> = {
             },
           });
         }),
-        http.get(getImageAbsoluteURI(SOURCE_CODE_FULL_PATH) || '', () => {
-          return HttpResponse.text('export const handler = () => {}');
-        }),
+        http.get(
+          getImageAbsoluteURI({
+            imageUrl: SOURCE_CODE_FULL_PATH,
+            baseUrl: REACT_APP_SERVER_BASE_URL,
+          }) || '',
+          () => {
+            return HttpResponse.text('export const handler = () => {}');
+          },
+        ),
       ],
     },
   },

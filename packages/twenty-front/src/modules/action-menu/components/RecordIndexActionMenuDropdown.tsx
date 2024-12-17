@@ -21,10 +21,6 @@ type StyledContainerProps = {
 
 const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
   align-items: flex-start;
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   display: flex;
   flex-direction: column;
 
@@ -33,7 +29,8 @@ const StyledContainerActionMenuDropdown = styled.div<StyledContainerProps>`
   top: ${(props) => `${props.position.y}px`};
 
   transform: translateX(-50%);
-  width: auto;
+  width: 0;
+  height: 0;
 `;
 
 export const RecordIndexActionMenuDropdown = () => {
@@ -84,6 +81,7 @@ export const RecordIndexActionMenuDropdown = () => {
             ))}
           </DropdownMenuItemsContainer>
         }
+        avoidPortal
       />
     </StyledContainerActionMenuDropdown>
   );

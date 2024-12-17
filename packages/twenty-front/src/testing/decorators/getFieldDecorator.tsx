@@ -128,7 +128,6 @@ export const getFieldDecorator =
         <FieldContext.Provider
           value={{
             recordId: record.id,
-            basePathToShowPage: '/object-record/',
             isLabelIdentifier,
             fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
               field: fieldMetadataItem,

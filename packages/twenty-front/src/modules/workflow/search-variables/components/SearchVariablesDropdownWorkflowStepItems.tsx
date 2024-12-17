@@ -1,5 +1,4 @@
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
@@ -11,6 +10,7 @@ import {
   MenuItem,
   MenuItemSelect,
   OverflowingTextWithTooltip,
+  useIcons,
 } from 'twenty-ui';
 
 type SearchVariablesDropdownWorkflowStepItemsProps = {
@@ -25,6 +25,7 @@ export const SearchVariablesDropdownWorkflowStepItems = ({
   onSelect,
 }: SearchVariablesDropdownWorkflowStepItemsProps) => {
   const theme = useTheme();
+  const { getIcon } = useIcons();
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const { closeDropdown } = useDropdown(dropdownId);
@@ -36,7 +37,7 @@ export const SearchVariablesDropdownWorkflowStepItems = ({
   );
 
   return (
-    <DropdownMenuItemsContainer>
+    <>
       <DropdownMenuHeader StartIcon={IconX} onClick={closeDropdown}>
         <OverflowingTextWithTooltip text={'Select Step'} />
       </DropdownMenuHeader>
@@ -61,7 +62,7 @@ export const SearchVariablesDropdownWorkflowStepItems = ({
             hovered={false}
             onClick={() => onSelect(item.id)}
             text={item.name}
-            LeftIcon={undefined}
+            LeftIcon={item.icon ? getIcon(item.icon) : undefined}
             hasSubMenu
           />
         ))
@@ -74,6 +75,6 @@ export const SearchVariablesDropdownWorkflowStepItems = ({
           hasSubMenu={false}
         />
       )}
-    </DropdownMenuItemsContainer>
+    </>
   );
 };

@@ -1,4 +1,3 @@
-import { v4 } from 'uuid';
 import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -65,7 +64,7 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
     );
 
     const noValueColumn = {
-      id: viewGroup?.id ?? v4(),
+      id: viewGroup?.id ?? '20202020-c05f-46c9-ae1e-2b3c5c702049',
       title: 'No Value',
       type: RecordGroupDefinitionType.NoValue,
       value: null,

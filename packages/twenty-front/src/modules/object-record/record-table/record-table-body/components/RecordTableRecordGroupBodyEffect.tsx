@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -7,13 +7,13 @@ import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useC
 import { useLazyLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLazyLoadRecordIndexTable';
 import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
 import { ROW_HEIGHT } from '@/object-record/record-table/constants/RowHeight';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
 import { isNonEmptyString, isNull } from '@sniptt/guards';
 import { useScrollToPosition } from '~/hooks/useScrollToPosition';
 
 export const RecordTableRecordGroupBodyEffect = () => {
-  const { objectNameSingular } = useContext(RecordTableContext);
+  const { objectNameSingular } = useRecordTableContextOrThrow();
 
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
