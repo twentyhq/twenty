@@ -2,16 +2,14 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { recordGroupIdsComponentState } from '@/object-record/record-group/states/recordGroupIdsComponentState';
 import { RecordGroupDefinition } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
-import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
-import { isDefined } from '~/utils/isDefined';
 
 export const useSetRecordGroup = (viewId?: string) => {
-  const { objectMetadataItem } = useContext(RecordIndexRootPropsContext);
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const recordIndexRecordGroupIdsState = useRecoilComponentCallbackStateV2(
     recordGroupIdsComponentState,
@@ -26,28 +24,23 @@ export const useSetRecordGroup = (viewId?: string) => {
   return useRecoilCallback(
     ({ snapshot, set }) =>
       (recordGroups: RecordGroupDefinition[]) => {
-        if (recordGroups.length === 0) {
-          return;
-        }
-
-        const currentRecordGroupId = getSnapshotValue(
+        const currentRecordGroupIds = getSnapshotValue(
           snapshot,
           recordIndexRecordGroupIdsState,
         );
-        const fieldMetadataId = recordGroups[0].fieldMetadataId;
-        const fieldMetadata = objectMetadataItem.fields.find(
-          (field) => field.id === fieldMetadataId,
-        );
+        const fieldMetadataId = recordGroups?.[0]?.fieldMetadataId;
+        const fieldMetadata = fieldMetadataId
+          ? objectMetadataItem.fields.find(
+              (field) => field.id === fieldMetadataId,
+            )
+          : undefined;
         const currentFieldMetadata = getSnapshotValue(
           snapshot,
           recordGroupFieldMetadataState,
         );
 
         // Set the field metadata linked to the record groups
-        if (
-          isDefined(fieldMetadata) &&
-          !isDeeplyEqual(fieldMetadata, currentFieldMetadata)
-        ) {
+        if (!isDeeplyEqual(fieldMetadata, currentFieldMetadata)) {
           set(recordGroupFieldMetadataState, fieldMetadata);
         }
 
@@ -67,7 +60,17 @@ export const useSetRecordGroup = (viewId?: string) => {
 
         const recordGroupIds = recordGroups.map(({ id }) => id);
 
-        if (isDeeplyEqual(currentRecordGroupId, recordGroupIds)) {
+        // Get ids that has been removed between the current and new record groups
+        const removedRecordGroupIds = currentRecordGroupIds.filter(
+          (id) => !recordGroupIds.includes(id),
+        );
+
+        // Remove the record groups that has been removed
+        removedRecordGroupIds.forEach((id) => {
+          set(recordGroupDefinitionFamilyState(id), undefined);
+        });
+
+        if (isDeeplyEqual(currentRecordGroupIds, recordGroupIds)) {
           return;
         }
 

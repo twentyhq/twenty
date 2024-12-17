@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "compilerOptions": {
     "jsx": "react-jsx",
     "allowJs": false,
@@ -6,7 +7,10 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "types": ["vite/client"],
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "twenty-shared": ["../../packages/twenty-shared/dist"]
+    }
   },
   "files": [],
   "include": [],

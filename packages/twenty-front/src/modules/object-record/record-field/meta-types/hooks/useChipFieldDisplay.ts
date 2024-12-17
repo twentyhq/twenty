@@ -12,7 +12,7 @@ import { isFieldActor } from '@/object-record/record-field/types/guards/isFieldA
 import { FieldContext } from '../../contexts/FieldContext';
 
 export const useChipFieldDisplay = () => {
-  const { recordId, fieldDefinition, isLabelIdentifier } =
+  const { recordId, fieldDefinition, isLabelIdentifier, labelIdentifierLink } =
     useContext(FieldContext);
 
   const { chipGeneratorPerObjectPerField } = useContext(
@@ -41,5 +41,6 @@ export const useChipFieldDisplay = () => {
     objectNameSingular,
     recordValue,
     isLabelIdentifier,
+    labelIdentifierLink,
   };
 };

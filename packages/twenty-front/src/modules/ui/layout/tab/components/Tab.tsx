@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 import { IconComponent, Pill } from 'twenty-ui';
+import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 
 type TabProps = {
   id: string;
@@ -93,7 +94,7 @@ export const Tab = ({
       <StyledHover>
         {logo && <StyledLogo src={logo} alt={`${title} logo`} />}
         {Icon && <Icon size={theme.icon.size.md} />}
-        {title}
+        <EllipsisDisplay>{title}</EllipsisDisplay>
         {pill && typeof pill === 'string' ? <Pill label={pill} /> : pill}
       </StyledHover>
     </StyledTab>

@@ -10,6 +10,7 @@ export type ObjectOptionsDropdownContextValue = {
   currentContentId: ObjectOptionsContentId | null;
   onContentChange: (key: ObjectOptionsContentId) => void;
   resetContent: () => void;
+  dropdownId: string;
 };
 
 export const ObjectOptionsDropdownContext =

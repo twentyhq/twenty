@@ -6,6 +6,7 @@ import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/va
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
+import { Select } from '@/ui/input/components/Select';
 import { IconCurrencyDollar } from 'twenty-ui';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
@@ -57,13 +58,17 @@ export const SettingsDataModelFieldCurrencyForm = ({
             Icon={IconCurrencyDollar}
             title="Default Value"
             description="Choose the default currency that will apply"
-            value={value}
-            onChange={onChange}
-            disabled={disabled}
-            fullWidth
-            dropdownId="object-field-default-value-select-currency"
-            options={OPTIONS}
-          />
+          >
+            <Select<string>
+              dropdownWidth={'auto'}
+              value={value}
+              onChange={onChange}
+              disabled={disabled}
+              dropdownId="object-field-default-value-select-currency"
+              options={OPTIONS}
+              selectSizeVariant="small"
+            />
+          </SettingsOptionCardContentSelect>
         )}
       />
     </>

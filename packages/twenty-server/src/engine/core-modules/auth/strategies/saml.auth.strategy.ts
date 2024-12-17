@@ -69,30 +69,34 @@ export class SamlAuthStrategy extends PassportStrategy(
   }
 
   validate: VerifyWithRequest = async (request, profile, done) => {
-    if (!profile) {
-      return done(new Error('Profile is must be provided'));
+    try {
+      if (!profile) {
+        return done(new Error('Profile is must be provided'));
+      }
+
+      const email = profile.email ?? profile.mail ?? profile.nameID;
+
+      if (!isEmail(email)) {
+        return done(new Error('Invalid email'));
+      }
+
+      const result: {
+        user: Record<string, string>;
+        identityProviderId?: string;
+      } = { user: { email } };
+
+      if (
+        'RelayState' in request.body &&
+        typeof request.body.RelayState === 'string'
+      ) {
+        const RelayState = JSON.parse(request.body.RelayState);
+
+        result.identityProviderId = RelayState.identityProviderId;
+      }
+
+      done(null, result);
+    } catch (err) {
+      done(err);
     }
-
-    const email = profile.email ?? profile.mail ?? profile.nameID;
-
-    if (!isEmail(email)) {
-      return done(new Error('Invalid email'));
-    }
-
-    const result: {
-      user: Record<string, string>;
-      identityProviderId?: string;
-    } = { user: { email } };
-
-    if (
-      'RelayState' in request.body &&
-      typeof request.body.RelayState === 'string'
-    ) {
-      const RelayState = JSON.parse(request.body.RelayState);
-
-      result.identityProviderId = RelayState.identityProviderId;
-    }
-
-    done(null, result);
   };
 }

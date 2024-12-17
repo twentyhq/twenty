@@ -31,7 +31,7 @@ export const useOpenCreateActivityDrawer = ({
   const setHotkeyScope = useSetHotkeyScope();
 
   const { createOneRecord: createOneActivity } = useCreateOneRecord<
-    Task | Note
+    (Task | Note) & { position: 'first' | 'last' }
   >({
     objectNameSingular: activityObjectNameSingular,
   });
@@ -74,6 +74,7 @@ export const useOpenCreateActivityDrawer = ({
 
     const activity = await createOneActivity({
       assigneeId: customAssignee?.id,
+      position: 'last',
     });
 
     if (targetableObjects.length > 0) {

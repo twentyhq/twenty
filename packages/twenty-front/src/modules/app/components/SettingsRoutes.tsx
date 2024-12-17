@@ -83,11 +83,11 @@ const SettingsServerlessFunctions = lazy(() =>
   ).then((module) => ({ default: module.SettingsServerlessFunctions })),
 );
 
-const SettingsServerlessFunctionDetailWrapper = lazy(() =>
+const SettingsServerlessFunctionDetail = lazy(() =>
   import(
-    '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetailWrapper'
+    '~/pages/settings/serverless-functions/SettingsServerlessFunctionDetail'
   ).then((module) => ({
-    default: module.SettingsServerlessFunctionDetailWrapper,
+    default: module.SettingsServerlessFunctionDetail,
   })),
 );
 
@@ -102,6 +102,12 @@ const SettingsServerlessFunctionsNew = lazy(() =>
 const SettingsWorkspace = lazy(() =>
   import('~/pages/settings/SettingsWorkspace').then((module) => ({
     default: module.SettingsWorkspace,
+  })),
+);
+
+const SettingsDomain = lazy(() =>
+  import('~/pages/settings/workspace/SettingsDomain').then((module) => ({
+    default: module.SettingsDomain,
   })),
 );
 
@@ -288,6 +294,8 @@ export const SettingsRoutes = ({
       {isBillingEnabled && (
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
       )}
+      <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
+      <Route path={SettingsPath.Domain} element={<SettingsDomain />} />
       <Route
         path={SettingsPath.WorkspaceMembersPage}
         element={<SettingsWorkspaceMembers />}
@@ -345,7 +353,7 @@ export const SettingsRoutes = ({
           />
           <Route
             path={SettingsPath.ServerlessFunctionDetail}
-            element={<SettingsServerlessFunctionDetailWrapper />}
+            element={<SettingsServerlessFunctionDetail />}
           />
         </>
       )}
@@ -382,14 +390,12 @@ export const SettingsRoutes = ({
         element={<SettingsObjectFieldEdit />}
       />
       <Route path={SettingsPath.Releases} element={<Releases />} />
+      <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
       {isSSOEnabled && (
-        <>
-          <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
-          <Route
-            path={SettingsPath.NewSSOIdentityProvider}
-            element={<SettingsSecuritySSOIdentifyProvider />}
-          />
-        </>
+        <Route
+          path={SettingsPath.NewSSOIdentityProvider}
+          element={<SettingsSecuritySSOIdentifyProvider />}
+        />
       )}
       {isAdminPageEnabled && (
         <>

@@ -26,11 +26,12 @@ type CallToActionButton = {
   Icon?: IconComponent;
 };
 
-export type SelectProps<Value extends string | number | boolean | null> = {
+export type SelectValue = string | number | boolean | null;
+
+export type SelectProps<Value extends SelectValue> = {
   className?: string;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
-  disableBlur?: boolean;
   dropdownId: string;
   dropdownWidth?: `${string}px` | 'auto' | number;
   dropdownWidthAuto?: boolean;
@@ -57,11 +58,10 @@ const StyledLabel = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const Select = <Value extends string | number | boolean | null>({
+export const Select = <Value extends SelectValue>({
   className,
   disabled: disabledFromProps,
   selectSizeVariant,
-  disableBlur = false,
   dropdownId,
   dropdownWidth = 176,
   dropdownWidthAuto = false,
@@ -133,7 +133,6 @@ export const Select = <Value extends string | number | boolean | null>({
               selectSizeVariant={selectSizeVariant}
             />
           }
-          disableBlur={disableBlur}
           dropdownComponents={
             <>
               {!!withSearchInput && (
@@ -166,7 +165,7 @@ export const Select = <Value extends string | number | boolean | null>({
                 <DropdownMenuSeparator />
               )}
               {!!callToActionButton && (
-                <DropdownMenuItemsContainer hasMaxHeight>
+                <DropdownMenuItemsContainer hasMaxHeight withoutScrollWrapper>
                   <MenuItem
                     onClick={callToActionButton.onClick}
                     LeftIcon={callToActionButton.Icon}

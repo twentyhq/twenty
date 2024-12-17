@@ -20,7 +20,7 @@ jobs:
         image: twentycrm/twenty-postgres-spilo
         env:
           PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: twenty
+          PGPASSWORD_SUPERUSER: postgres
           ALLOW_NOSSL: "true"
           SPILO_PROVIDER: "local"
         ports:
@@ -46,18 +46,18 @@ jobs:
 
       - name: Server / Create DB
         if: steps.changed-files.outputs.any_changed == 'true'
-        run: PGPASSWORD=twenty psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+        run: PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
 
       - name: Website / Run migrations
         if: steps.changed-files.outputs.changed == 'true' 
         run: npx nx database:migrate twenty-website 
         env:
-          DATABASE_PG_URL: postgres://postgres:twenty@localhost:5432/default
+          DATABASE_PG_URL: postgres://postgres:postgres@localhost:5432/default
       - name: Website / Build Website
         if: steps.changed-files.outputs.changed == 'true' 
         run: npx nx build twenty-website
         env:
-          DATABASE_PG_URL: postgres://postgres:twenty@localhost:5432/default
+          DATABASE_PG_URL: postgres://postgres:postgres@localhost:5432/default
 
       - name: Mark as VALID
         if: steps.changed-files.outputs.changed != 'true'  # If no changes, mark as valid

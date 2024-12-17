@@ -22,7 +22,17 @@ export const ACTIONS: Array<{
   },
   {
     label: 'Create Record',
-    type: 'RECORD_CRUD.CREATE',
+    type: 'CREATE_RECORD',
+    icon: IconAddressBook,
+  },
+  {
+    label: 'Update Record',
+    type: 'UPDATE_RECORD',
+    icon: IconAddressBook,
+  },
+  {
+    label: 'Delete Record',
+    type: 'DELETE_RECORD',
     icon: IconAddressBook,
   },
 ];

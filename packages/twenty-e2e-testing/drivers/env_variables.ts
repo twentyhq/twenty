@@ -3,8 +3,7 @@ import path from 'path';
 
 export const envVariables = (variables: string) => {
   let payload = `
-  PG_DATABASE_URL=postgres://postgres:twenty@localhost:5432/default
-  FRONT_BASE_URL=http://localhost:3001
+  PG_DATABASE_URL=postgres://postgres:postgres@localhost:5432/default
   ACCESS_TOKEN_SECRET=replace_me_with_a_random_string_access
   LOGIN_TOKEN_SECRET=replace_me_with_a_random_string_login
   REFRESH_TOKEN_SECRET=replace_me_with_a_random_string_refresh

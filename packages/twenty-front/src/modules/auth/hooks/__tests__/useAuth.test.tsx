@@ -7,12 +7,13 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 import { iconsState } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
+import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { email, mocks, password, results, token } from '../__mocks__/useAuth';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -76,21 +77,29 @@ describe('useAuth', () => {
       () => {
         const client = useApolloClient();
         const icons = useRecoilValue(iconsState);
-        const authProviders = useRecoilValue(authProvidersState);
+        const workspaceAuthProviders = useRecoilValue(
+          workspaceAuthProvidersState,
+        );
         const billing = useRecoilValue(billingState);
-        const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
+        const isDeveloperDefaultSignInPrefilled = useRecoilValue(
+          isDeveloperDefaultSignInPrefilledState,
+        );
         const supportChat = useRecoilValue(supportChatState);
         const isDebugMode = useRecoilValue(isDebugModeState);
+        const isMultiWorkspaceEnabled = useRecoilValue(
+          isMultiWorkspaceEnabledState,
+        );
         return {
           ...useAuth(),
           client,
           state: {
             icons,
-            authProviders,
+            workspaceAuthProviders,
             billing,
-            isSignInPrefilled,
+            isDeveloperDefaultSignInPrefilled,
             supportChat,
             isDebugMode,
+            isMultiWorkspaceEnabled,
           },
         };
       },
@@ -111,15 +120,15 @@ describe('useAuth', () => {
     const { state } = result.current;
 
     expect(state.icons).toEqual({});
-    expect(state.authProviders).toEqual({
-      google: false,
+    expect(state.workspaceAuthProviders).toEqual({
+      google: true,
       microsoft: false,
       magicLink: false,
-      password: false,
-      sso: false,
+      password: true,
+      sso: [],
     });
     expect(state.billing).toBeNull();
-    expect(state.isSignInPrefilled).toBe(false);
+    expect(state.isDeveloperDefaultSignInPrefilled).toBe(false);
     expect(state.supportChat).toEqual({
       supportDriver: 'none',
       supportFrontChatId: null,

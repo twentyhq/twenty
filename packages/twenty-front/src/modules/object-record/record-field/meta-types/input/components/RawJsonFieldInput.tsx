@@ -1,12 +1,14 @@
-import { FieldTextAreaOverlay } from '@/ui/field/input/components/FieldTextAreaOverlay';
 import { TextAreaInput } from '@/ui/field/input/components/TextAreaInput';
 
 import { useJsonField } from '../../hooks/useJsonField';
 
-import { FieldInputEvent } from './DateTimeFieldInput';
+import {
+  FieldInputClickOutsideEvent,
+  FieldInputEvent,
+} from './DateTimeFieldInput';
 
 type RawJsonFieldInputProps = {
-  onClickOutside?: FieldInputEvent;
+  onClickOutside?: FieldInputClickOutsideEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
@@ -37,10 +39,10 @@ export const RawJsonFieldInput = ({
   };
 
   const handleClickOutside = (
-    _event: MouseEvent | TouchEvent,
+    event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    onClickOutside?.(() => persistJsonField(newText));
+    onClickOutside?.(() => persistJsonField(newText), event);
   };
 
   const handleTab = (newText: string) => {
@@ -56,20 +58,18 @@ export const RawJsonFieldInput = ({
   };
 
   return (
-    <FieldTextAreaOverlay>
-      <TextAreaInput
-        placeholder={fieldDefinition.metadata.placeHolder}
-        autoFocus
-        value={draftValue ?? ''}
-        onClickOutside={handleClickOutside}
-        onEnter={handleEnter}
-        onEscape={handleEscape}
-        onShiftTab={handleShiftTab}
-        onTab={handleTab}
-        hotkeyScope={hotkeyScope}
-        onChange={handleChange}
-        maxRows={25}
-      />
-    </FieldTextAreaOverlay>
+    <TextAreaInput
+      placeholder={fieldDefinition.metadata.placeHolder}
+      autoFocus
+      value={draftValue ?? ''}
+      onClickOutside={handleClickOutside}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
+      onShiftTab={handleShiftTab}
+      onTab={handleTab}
+      hotkeyScope={hotkeyScope}
+      onChange={handleChange}
+      maxRows={25}
+    />
   );
 };

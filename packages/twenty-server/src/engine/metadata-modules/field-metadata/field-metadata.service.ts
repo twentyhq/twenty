@@ -32,6 +32,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { isSelectFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-select-field-metadata-type.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { validateNameAndLabelAreSyncOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import {
   RelationMetadataEntity,
   RelationMetadataType,
@@ -174,6 +175,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataForCreate,
         objectMetadata,
       );
+
+      if (fieldMetadataForCreate.isLabelSyncedWithName === true) {
+        validateNameAndLabelAreSyncOrThrow(
+          fieldMetadataForCreate.label,
+          fieldMetadataForCreate.name,
+        );
+      }
 
       console.time('createOne save');
       const createdFieldMetadata = await fieldMetadataRepository.save(
@@ -406,6 +414,17 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         fieldMetadataForUpdate,
         objectMetadata,
       );
+
+      const isLabelSyncedWithName =
+        fieldMetadataForUpdate.isLabelSyncedWithName ??
+        existingFieldMetadata.isLabelSyncedWithName;
+
+      if (isLabelSyncedWithName) {
+        validateNameAndLabelAreSyncOrThrow(
+          fieldMetadataForUpdate.label ?? existingFieldMetadata.label,
+          fieldMetadataForUpdate.name ?? existingFieldMetadata.name,
+        );
+      }
 
       // We're running field update under a transaction, so we can rollback if migration fails
       await fieldMetadataRepository.update(id, fieldMetadataForUpdate);

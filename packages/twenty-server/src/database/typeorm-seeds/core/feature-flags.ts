@@ -95,6 +95,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKey.IsPageHeaderV2Enabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

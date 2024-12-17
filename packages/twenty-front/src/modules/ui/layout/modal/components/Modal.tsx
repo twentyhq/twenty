@@ -3,8 +3,8 @@ import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousH
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
   ClickOutsideMode,
-  useListenClickOutsideV2,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
+  useListenClickOutside,
+} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
@@ -29,7 +29,8 @@ const StyledModalDiv = styled(motion.div)<{
     if (isMobile) return `0`;
     return theme.border.radius.md;
   }};
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   z-index: 10000; // should be higher than Backdrop's z-index
 
   width: ${({ isMobile, size, theme }) => {
@@ -79,7 +80,6 @@ const StyledContent = styled.div`
   flex: 1;
   flex: 1 1 0%;
   flex-direction: column;
-  overflow-y: auto;
   padding: ${({ theme }) => theme.spacing(10)};
 `;
 
@@ -207,7 +207,7 @@ export const Modal = ({
     hotkeyScope,
   );
 
-  useListenClickOutsideV2({
+  useListenClickOutside({
     refs: [modalRef],
     listenerId: 'MODAL_CLICK_OUTSIDE_LISTENER_ID',
     callback: () => {

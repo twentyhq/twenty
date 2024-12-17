@@ -14,8 +14,8 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 @Entity({ name: 'billingEntitlement', schema: 'core' })
 @ObjectType('billingEntitlement')
 @Unique('IndexOnFeatureKeyAndWorkspaceIdUnique', ['key', 'workspaceId'])
@@ -32,12 +32,6 @@ export class BillingEntitlement {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.billingEntitlements, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  workspace: Relation<Workspace>;
-
   @Column({ nullable: false })
   stripeCustomerId: string;
 
@@ -53,4 +47,17 @@ export class BillingEntitlement {
 
   @Column({ nullable: true, type: 'timestamptz' })
   deletedAt?: Date;
+  @ManyToOne(
+    () => BillingCustomer,
+    (billingCustomer) => billingCustomer.billingEntitlements,
+    {
+      onDelete: 'CASCADE',
+      createForeignKeyConstraints: false, // TODO: remove this once the customer table is populated
+    },
+  )
+  @JoinColumn({
+    referencedColumnName: 'stripeCustomerId',
+    name: 'stripeCustomerId',
+  })
+  billingCustomer: Relation<BillingCustomer>;
 }

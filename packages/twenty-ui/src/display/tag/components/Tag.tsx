@@ -38,20 +38,10 @@ const StyledTag = styled.h3<{
     }
   }};
   border-radius: ${BORDER_COMMON.radius.sm};
-  color: ${({ color, theme }) => {
-    if (color === 'transparent') {
-      return theme.font.color.tertiary;
-    } else {
-      const themeColor = theme.tag.text[color];
-
-      if (!isDefined(themeColor)) {
-        console.warn(`Tag font color ${color} is not defined in the theme`);
-        return theme.tag.text.gray;
-      } else {
-        return themeColor;
-      }
-    }
-  }};
+  color: ${({ color, theme }) =>
+    color === 'transparent'
+      ? theme.font.color.secondary
+      : theme.tag.text[color]};
   display: inline-flex;
   font-size: ${({ theme }) => theme.font.size.md};
   font-style: normal;

@@ -10,7 +10,6 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewField } from '@/views/types/ViewField';
 
@@ -89,12 +88,13 @@ export const usePersistViewFieldRecords = () => {
                 isVisible: viewField.isVisible,
                 position: viewField.position,
                 size: viewField.size,
+                aggregateOperation: viewField.aggregateOperation,
               },
             },
             update: (cache, { data }) => {
               const record = data?.['updateViewField'];
               if (!record) return;
-              const cachedRecord = getRecordFromCache<ObjectRecord>(record.id);
+              const cachedRecord = getRecordFromCache<ViewField>(record.id);
 
               if (!cachedRecord) return;
 

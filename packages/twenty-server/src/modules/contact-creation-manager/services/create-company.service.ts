@@ -25,7 +25,7 @@ export class CreateCompanyService {
 
   constructor(private readonly twentyORMGlobalManager: TwentyORMGlobalManager) {
     this.httpService = axios.create({
-      baseURL: 'https://companies.twenty.com',
+      baseURL: 'https://twenty-companies.com',
     });
   }
 

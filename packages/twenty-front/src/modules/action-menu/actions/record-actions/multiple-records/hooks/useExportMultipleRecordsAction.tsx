@@ -12,10 +12,8 @@ import {
 } from '@/object-record/record-index/export/hooks/useExportRecords';
 
 export const useExportMultipleRecordsAction = ({
-  position,
   objectMetadataItem,
 }: {
-  position: number;
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
@@ -27,7 +25,11 @@ export const useExportMultipleRecordsAction = ({
     filename: `${objectMetadataItem.nameSingular}.csv`,
   });
 
-  const registerExportMultipleRecordsAction = () => {
+  const registerExportMultipleRecordsAction = ({
+    position,
+  }: {
+    position: number;
+  }) => {
     addActionMenuEntry({
       type: ActionMenuEntryType.Standard,
       scope: ActionMenuEntryScope.RecordSelection,

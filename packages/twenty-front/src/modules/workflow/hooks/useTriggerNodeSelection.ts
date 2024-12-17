@@ -5,27 +5,28 @@ import {
 } from '@/workflow/types/WorkflowDiagram';
 import { useReactFlow } from '@xyflow/react';
 import { useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
 export const useTriggerNodeSelection = () => {
   const reactflow = useReactFlow<WorkflowDiagramNode, WorkflowDiagramEdge>();
 
-  const workflowDiagramTriggerNodeSelection = useRecoilValue(
-    workflowDiagramTriggerNodeSelectionState,
-  );
-  const setWorkflowDiagramTriggerNodeSelection = useSetRecoilState(
-    workflowDiagramTriggerNodeSelectionState,
-  );
+  const [
+    workflowDiagramTriggerNodeSelection,
+    setWorkflowDiagramTriggerNodeSelection,
+  ] = useRecoilState(workflowDiagramTriggerNodeSelectionState);
 
   useEffect(() => {
     if (!isDefined(workflowDiagramTriggerNodeSelection)) {
       return;
     }
 
-    reactflow.updateNode(workflowDiagramTriggerNodeSelection, {
-      selected: true,
-    });
+    reactflow.setNodes((nodes) =>
+      nodes.map((node) => ({
+        ...node,
+        selected: workflowDiagramTriggerNodeSelection === node.id,
+      })),
+    );
 
     setWorkflowDiagramTriggerNodeSelection(undefined);
   }, [

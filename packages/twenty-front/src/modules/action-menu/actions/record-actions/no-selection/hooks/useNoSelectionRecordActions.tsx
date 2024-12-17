@@ -1,4 +1,4 @@
-import { useExportViewNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useExportMultipleRecordsAction';
+import { useExportViewNoSelectionRecordAction } from '@/action-menu/actions/record-actions/no-selection/hooks/useExportViewNoSelectionRecordAction';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const useNoSelectionRecordActions = ({
@@ -10,12 +10,11 @@ export const useNoSelectionRecordActions = ({
     registerExportViewNoSelectionRecordsAction,
     unregisterExportViewNoSelectionRecordsAction,
   } = useExportViewNoSelectionRecordAction({
-    position: 0,
     objectMetadataItem,
   });
 
   const registerNoSelectionRecordActions = () => {
-    registerExportViewNoSelectionRecordsAction();
+    registerExportViewNoSelectionRecordsAction({ position: 1 });
   };
 
   const unregisterNoSelectionRecordActions = () => {

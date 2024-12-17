@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataEntity,
+  FieldMetadataType,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { buildMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/build-migrations-for-custom-object-relations.util';
@@ -263,5 +266,44 @@ export class ObjectMetadataMigrationService {
         },
       ],
     );
+  }
+
+  public async recomputeEnumNames(
+    updatedObjectMetadata: ObjectMetadataEntity,
+    workspaceId: string,
+  ) {
+    const fieldMetadataToUpdate = await this.fieldMetadataRepository.find({
+      where: {
+        objectMetadataId: updatedObjectMetadata.id,
+        workspaceId,
+        type: In([
+          FieldMetadataType.SELECT,
+          FieldMetadataType.MULTI_SELECT,
+          FieldMetadataType.RATING,
+          FieldMetadataType.ACTOR,
+        ]),
+      },
+    });
+
+    for (const fieldMetadata of fieldMetadataToUpdate) {
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`update-${fieldMetadata.name}-enum-name`),
+        workspaceId,
+        [
+          {
+            name: computeTableName(
+              updatedObjectMetadata.nameSingular,
+              updatedObjectMetadata.isCustom,
+            ),
+            action: WorkspaceMigrationTableActionType.ALTER,
+            columns: this.workspaceMigrationFactory.createColumnActions(
+              WorkspaceMigrationColumnActionType.ALTER,
+              fieldMetadata,
+              fieldMetadata,
+            ),
+          },
+        ],
+      );
+    }
   }
 }

@@ -11,7 +11,7 @@ type MenuItemMultiSelectTagProps = {
   className?: string;
   isKeySelected?: boolean;
   onClick?: () => void;
-  color: ThemeColor;
+  color: ThemeColor | 'transparent';
   text: string;
 };
 

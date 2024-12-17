@@ -1,5 +1,5 @@
 import { WorkflowStepDetail } from '@/workflow/components/WorkflowStepDetail';
-import { useUpdateWorkflowVersionStep } from '@/workflow/hooks/useUpdateWorkflowVersionStep';
+import { useUpdateStep } from '@/workflow/hooks/useUpdateStep';
 import { useUpdateWorkflowVersionTrigger } from '@/workflow/hooks/useUpdateWorkflowVersionTrigger';
 import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
 import { WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
@@ -19,9 +19,8 @@ export const RightDrawerWorkflowEditStepContent = ({
   }
 
   const { updateTrigger } = useUpdateWorkflowVersionTrigger({ workflow });
-  const { updateStep } = useUpdateWorkflowVersionStep({
+  const { updateStep } = useUpdateStep({
     workflow,
-    stepId: workflowSelectedNode,
   });
 
   return (

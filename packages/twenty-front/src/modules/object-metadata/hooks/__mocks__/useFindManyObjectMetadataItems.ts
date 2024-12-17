@@ -1,11 +1,9 @@
 import { gql } from '@apollo/client';
+import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/mock-metadata-query-result';
 
 export const query = gql`
-  query ObjectMetadataItems(
-    $objectFilter: objectFilter
-    $fieldFilter: fieldFilter
-  ) {
-    objects(paging: { first: 1000 }, filter: $objectFilter) {
+  query ObjectMetadataItems($objectFilter: objectFilter, $fieldFilter: fieldFilter) {
+    objects(paging: {first: 1000}, filter: $objectFilter) {
       edges {
         node {
           id
@@ -26,7 +24,31 @@ export const query = gql`
           imageIdentifierFieldMetadataId
           shortcut
           isLabelSyncedWithName
-          fields(paging: { first: 1000 }, filter: $fieldFilter) {
+          indexMetadatas(paging: {first: 100}) {
+            edges {
+              node {
+                id
+                createdAt
+                updatedAt
+                name
+                indexWhereClause
+                indexType
+                isUnique
+                indexFieldMetadatas(paging: {first: 100}) {
+                  edges {
+                    node {
+                      id
+                      createdAt
+                      updatedAt
+                      order
+                      fieldMetadataId
+                    }
+                  }
+                }
+              }
+            }
+          }
+          fields(paging: {first: 1000}, filter: $fieldFilter) {
             edges {
               node {
                 id
@@ -39,8 +61,13 @@ export const query = gql`
                 isActive
                 isSystem
                 isNullable
+                isUnique
                 createdAt
                 updatedAt
+                defaultValue
+                options
+                settings
+                isLabelSyncedWithName
                 relationDefinition {
                   relationId
                   direction
@@ -63,8 +90,6 @@ export const query = gql`
                     name
                   }
                 }
-                defaultValue
-                options
               }
             }
             pageInfo {
@@ -88,6 +113,4 @@ export const query = gql`
 
 export const variables = { objectFilter: undefined, fieldFilter: undefined };
 
-export const responseData = {
-  objects: { edges: [] },
-};
+export const responseData = mockedStandardObjectMetadataQueryResult;

@@ -1,28 +1,51 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
+import {
+  SignInUpStep,
+  signInUpStepState,
+} from '@/auth/states/signInUpStepState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
+import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
+import { isDefined } from '~/utils/isDefined';
 
-export const validationSchema = z
-  .object({
-    exist: z.boolean(),
-    email: z.string().trim().email('Email must be a valid email'),
-    password: z
-      .string()
-      .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
-    captchaToken: z.string().default(''),
-  })
-  .required();
+const makeValidationSchema = (signInUpStep: SignInUpStep) =>
+  z
+    .object({
+      exist: z.boolean(),
+      email: z.string().trim().email('Email must be a valid email'),
+      password:
+        signInUpStep === SignInUpStep.Password
+          ? z
+              .string()
+              .regex(
+                PASSWORD_REGEX,
+                'Password must contain at least 8 characters',
+              )
+          : z.string().optional(),
+      captchaToken: z.string().default(''),
+    })
+    .required();
 
-export type Form = z.infer<typeof validationSchema>;
+export type Form = z.infer<ReturnType<typeof makeValidationSchema>>;
 export const useSignInUpForm = () => {
-  const isSignInPrefilled = useRecoilValue(isSignInPrefilledState);
+  const location = useLocation();
+  const signInUpStep = useRecoilValue(signInUpStepState);
+
+  const validationSchema = makeValidationSchema(signInUpStep); // Create schema based on the current step
+
+  const isDeveloperDefaultSignInPrefilled = useRecoilValue(
+    isDeveloperDefaultSignInPrefilledState,
+  );
+  const [searchParams] = useSearchParams();
+  const prefilledEmail = searchParams.get('email');
+
   const form = useForm<Form>({
-    mode: 'onChange',
+    mode: 'onSubmit',
     defaultValues: {
       exist: false,
       email: '',
@@ -33,10 +56,19 @@ export const useSignInUpForm = () => {
   });
 
   useEffect(() => {
-    if (isSignInPrefilled === true) {
-      form.setValue('email', 'tim@apple.dev');
+    if (isDefined(prefilledEmail)) {
+      form.setValue('email', prefilledEmail);
+    }
+
+    if (isDeveloperDefaultSignInPrefilled === true) {
+      form.setValue('email', prefilledEmail ?? 'tim@apple.dev');
       form.setValue('password', 'Applecar2025');
     }
-  }, [form, isSignInPrefilled]);
-  return { form: form };
+  }, [
+    form,
+    isDeveloperDefaultSignInPrefilled,
+    prefilledEmail,
+    location.search,
+  ]);
+  return { form: form, validationSchema };
 };

@@ -45,9 +45,9 @@ export class WorkspaceEventEmitter {
     });
   }
 
-  public emitCustomBatchEvent(
+  public emitCustomBatchEvent<T extends object>(
     eventName: CustomEventName,
-    events: object[],
+    events: T[],
     workspaceId: string,
   ) {
     if (!events.length) {
