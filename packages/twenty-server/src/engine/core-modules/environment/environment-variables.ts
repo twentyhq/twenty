@@ -248,10 +248,10 @@ export class EnvironmentVariables {
 
   @IsString()
   @ValidateIf((env) => env.CLOUDFLARE_ZONE_ID)
-  CLOUDFLARE_USER_SERVICE_KEY: string;
+  CLOUDFLARE_API_KEY: string;
 
   @IsString()
-  @ValidateIf((env) => env.CLOUDFLARE_USER_SERVICE_KEY)
+  @ValidateIf((env) => env.CLOUDFLARE_API_KEY)
   CLOUDFLARE_ZONE_ID: string;
 
   // Custom Code Engine
