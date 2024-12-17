@@ -88,13 +88,14 @@ export const SignInUpGlobalScopeForm = () => {
             isDefined(data?.checkUserExists.availableWorkspaces) &&
             data.checkUserExists.availableWorkspaces.length >= 1
           ) {
-            return redirectToWorkspaceDomain(
-              data?.checkUserExists.availableWorkspaces[0].subdomain,
-              pathname,
-              {
-                email: form.getValues('email'),
-              },
-            );
+            const workspace =
+              data?.checkUserExists.availableWorkspaces.find(
+                (workspace) =>
+                  workspace.id === data?.checkUserExists.defaultWorkspaceId,
+              ) ?? data?.checkUserExists.availableWorkspaces[0];
+            return redirectToWorkspaceDomain(workspace.subdomain, pathname, {
+              email: form.getValues('email'),
+            });
           }
         }
         if (data.checkUserExists.__typename === 'UserNotExists') {
