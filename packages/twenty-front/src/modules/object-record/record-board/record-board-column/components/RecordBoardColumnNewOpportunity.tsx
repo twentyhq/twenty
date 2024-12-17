@@ -5,13 +5,13 @@ import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-b
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
+import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import { isDefined } from '~/utils/isDefined';
-
 export const RecordBoardColumnNewOpportunity = ({
   columnId,
   position,
@@ -61,16 +61,19 @@ export const RecordBoardColumnNewOpportunity = ({
     <>
       {newRecord.isCreating && newRecord.position === position && (
         <OverlayContainer>
-          <SingleRecordSelect
-            onCancel={() => handleCreateSuccess(position, columnId, false)}
-            onRecordSelected={(company) =>
-              company ? handleEntitySelect(position, company) : null
-            }
-            objectNameSingular={CoreObjectNameSingular.Company}
-            recordPickerInstanceId="relation-picker"
-            selectedRecordIds={[]}
-            onCreate={createCompanyOpportunityAndOpenRightDrawer}
-          />
+          <RecordPickerComponentInstanceContext.Provider
+            value={{ instanceId: 'relation-picker' }}
+          >
+            <SingleRecordSelect
+              onCancel={() => handleCreateSuccess(position, columnId, false)}
+              onRecordSelected={(company) =>
+                company ? handleEntitySelect(position, company) : null
+              }
+              objectNameSingular={CoreObjectNameSingular.Company}
+              selectedRecordIds={[]}
+              onCreate={createCompanyOpportunityAndOpenRightDrawer}
+            />
+          </RecordPickerComponentInstanceContext.Provider>
         </OverlayContainer>
       )}
     </>
