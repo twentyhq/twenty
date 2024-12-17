@@ -9,6 +9,8 @@ import {
   IconGoogle,
   IconMicrosoft,
 } from 'twenty-ui';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useRecoilValue } from 'recoil';
 
 const StyledHeader = styled(CardHeader)`
   align-items: center;
@@ -30,6 +32,7 @@ export const SettingsAccountsListEmptyStateCard = ({
   label,
 }: SettingsAccountsListEmptyStateCardProps) => {
   const { triggerApisOAuth } = useTriggerApisOAuth();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const isMicrosoftSyncEnabled = useIsFeatureEnabled(
     'IS_MICROSOFT_SYNC_ENABLED',
   );
@@ -38,13 +41,15 @@ export const SettingsAccountsListEmptyStateCard = ({
     <Card>
       <StyledHeader>{label || 'No connected account'}</StyledHeader>
       <StyledBody>
-        <Button
-          Icon={IconGoogle}
-          title="Connect with Google"
-          variant="secondary"
-          onClick={() => triggerApisOAuth('google')}
-        />
-        {isMicrosoftSyncEnabled && (
+        {currentWorkspace?.isGoogleAuthEnabled && (
+          <Button
+            Icon={IconGoogle}
+            title="Connect with Google"
+            variant="secondary"
+            onClick={() => triggerApisOAuth('google')}
+          />
+        )}
+        {isMicrosoftSyncEnabled && currentWorkspace?.isMicrosoftAuthEnabled && (
           <Button
             Icon={IconMicrosoft}
             title="Connect with Microsoft"

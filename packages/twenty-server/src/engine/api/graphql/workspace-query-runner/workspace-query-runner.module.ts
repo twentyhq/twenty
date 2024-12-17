@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceQueryBuilderModule } from 'src/engine/api/graphql/workspace-query-builder/workspace-query-builder.module';
-import { RecordPositionBackfillCommand } from 'src/engine/api/graphql/workspace-query-runner/commands/0-20-record-position-backfill.command';
 import { workspaceQueryRunnerFactories } from 'src/engine/api/graphql/workspace-query-runner/factories';
 import { TelemetryListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/telemetry.listener';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
@@ -35,7 +34,6 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     ...workspaceQueryRunnerFactories,
     EntityEventsToDbListener,
     TelemetryListener,
-    RecordPositionBackfillCommand,
   ],
   exports: [...workspaceQueryRunnerFactories],
 })

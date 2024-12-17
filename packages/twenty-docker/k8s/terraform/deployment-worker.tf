@@ -59,8 +59,8 @@ resource "kubernetes_deployment" "twentycrm_worker" {
           }
 
           env {
-            name  = "ENABLE_DB_MIGRATIONS"
-            value = "false" #it already runs on the server
+            name  = "DISABLE_DB_MIGRATIONS"
+            value = "true" #it already runs on the server
           }
 
           env {

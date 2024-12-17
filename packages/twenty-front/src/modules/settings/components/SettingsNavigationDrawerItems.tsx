@@ -68,9 +68,14 @@ const StyledIconPoint = styled(IconPoint)`
 
 export const SettingsNavigationDrawerItems = () => {
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
-  const { contentRef, motionAnimationVariants } = useExpandedAnimation(
-    isAdvancedModeEnabled,
-  );
+  const {
+    contentRef: securityRef,
+    motionAnimationVariants: securityAnimationVariants,
+  } = useExpandedAnimation(isAdvancedModeEnabled);
+  const {
+    contentRef: developersRef,
+    motionAnimationVariants: developersAnimationVariants,
+  } = useExpandedAnimation(isAdvancedModeEnabled);
   const { signOut } = useAuth();
 
   const billing = useRecoilValue(billingState);
@@ -188,32 +193,42 @@ export const SettingsNavigationDrawerItems = () => {
             Icon={IconCode}
           />
         )}
-        {isAdvancedModeEnabled && (
-          <StyledContainer>
-            <StyledIconContainer>
-              <StyledIconPoint
-                size={12}
-                color={MAIN_COLORS.yellow}
-                fill={MAIN_COLORS.yellow}
-              />
-            </StyledIconContainer>
-            <SettingsNavigationDrawerItem
-              label="Security"
-              path={SettingsPath.Security}
-              Icon={IconKey}
-            />
-          </StyledContainer>
-        )}
+        <AnimatePresence>
+          {isAdvancedModeEnabled && (
+            <motion.div
+              ref={securityRef}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              variants={securityAnimationVariants}
+            >
+              <StyledContainer>
+                <StyledIconContainer>
+                  <StyledIconPoint
+                    size={12}
+                    color={MAIN_COLORS.yellow}
+                    fill={MAIN_COLORS.yellow}
+                  />
+                </StyledIconContainer>
+                <SettingsNavigationDrawerItem
+                  label="Security"
+                  path={SettingsPath.Security}
+                  Icon={IconKey}
+                />
+              </StyledContainer>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </NavigationDrawerSection>
 
       <AnimatePresence>
         {isAdvancedModeEnabled && (
           <motion.div
-            ref={contentRef}
+            ref={developersRef}
             initial="initial"
             animate="animate"
             exit="exit"
-            variants={motionAnimationVariants}
+            variants={developersAnimationVariants}
           >
             <NavigationDrawerSection>
               <NavigationDrawerSectionTitle label="Developers" />

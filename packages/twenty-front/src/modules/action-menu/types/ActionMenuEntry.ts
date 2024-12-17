@@ -1,4 +1,4 @@
-import { MouseEvent, ReactNode } from 'react';
+import { MouseEvent, ReactElement } from 'react';
 import { IconComponent, MenuItemAccent } from 'twenty-ui';
 
 export enum ActionMenuEntryType {
@@ -21,5 +21,5 @@ export type ActionMenuEntry = {
   isPinned?: boolean;
   accent?: MenuItemAccent;
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
-  ConfirmationModal?: ReactNode;
+  ConfirmationModal?: ReactElement;
 };

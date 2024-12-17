@@ -4,6 +4,6 @@ import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewCompon
 export const recordIndexRecordGroupHideComponentState =
   createComponentStateV2<boolean>({
     key: 'recordIndexRecordGroupHideComponentState',
-    defaultValue: false,
+    defaultValue: true,
     componentInstanceContext: ViewComponentInstanceContext,
   });

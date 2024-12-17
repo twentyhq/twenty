@@ -6,6 +6,7 @@ import {
 import { isBaseOutputSchema } from '@/workflow/search-variables/utils/isBaseOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/search-variables/utils/isRecordOutputSchema';
 import { isDefined } from 'twenty-ui';
+import { isLinkOutputSchema } from '@/workflow/search-variables/utils/isLinkOutputSchema';
 
 const isValidRecordOutputSchema = (
   outputSchema: RecordOutputSchema,
@@ -105,7 +106,9 @@ export const filterOutputSchema = (
     return outputSchema;
   }
 
-  if (isRecordOutputSchema(outputSchema)) {
+  if (isLinkOutputSchema(outputSchema)) {
+    return outputSchema;
+  } else if (isRecordOutputSchema(outputSchema)) {
     return filterRecordOutputSchema(outputSchema, objectNameSingularToSelect);
   } else if (isBaseOutputSchema(outputSchema)) {
     return filterBaseOutputSchema(outputSchema, objectNameSingularToSelect);
