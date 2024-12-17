@@ -45,7 +45,7 @@ export const FormRawJsonFieldInput = ({
 
       const textWithReplacedVariables = text.replaceAll(
         new RegExp(CAPTURE_VARIABLE_TAG_REGEX, 'g'),
-        '""',
+        '0',
       );
 
       let isValidJson;
