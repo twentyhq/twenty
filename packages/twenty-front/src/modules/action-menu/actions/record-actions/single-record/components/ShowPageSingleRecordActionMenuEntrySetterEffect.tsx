@@ -8,7 +8,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-ui';
 
-export const SingleRecordActionMenuEntrySetterEffect = ({
+export const ShowPageSingleRecordActionMenuEntrySetterEffect = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;
@@ -39,9 +39,7 @@ export const SingleRecordActionMenuEntrySetterEffect = ({
 
   const actionMenuEntries = Object.values(actionConfig ?? {})
     .filter((action) =>
-      action.availableOn?.includes(
-        ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      ),
+      action.availableOn?.includes(ActionAvailableOn.SHOW_PAGE),
     )
     .map((action) => {
       const { shouldBeRegistered, onClick, ConfirmationModal } =
