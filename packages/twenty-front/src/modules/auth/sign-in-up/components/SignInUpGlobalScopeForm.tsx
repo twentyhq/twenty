@@ -83,22 +83,19 @@ export const SignInUpGlobalScopeForm = () => {
       },
       onCompleted: (data) => {
         requestFreshCaptchaToken();
-        if (data.checkUserExists.__typename === 'UserExists') {
-          if (
-            isDefined(data?.checkUserExists.availableWorkspaces) &&
-            data.checkUserExists.availableWorkspaces.length >= 1
-          ) {
+        const response = data.checkUserExists;
+        if (response.__typename === 'UserExists') {
+          if (response.availableWorkspaces.length >= 1) {
             const workspace =
-              data?.checkUserExists.availableWorkspaces.find(
-                (workspace) =>
-                  workspace.id === data?.checkUserExists.defaultWorkspaceId,
-              ) ?? data?.checkUserExists.availableWorkspaces[0];
+              response.availableWorkspaces.find(
+                (workspace) => workspace.id === response.defaultWorkspaceId,
+              ) ?? response.availableWorkspaces[0];
             return redirectToWorkspaceDomain(workspace.subdomain, pathname, {
               email: form.getValues('email'),
             });
           }
         }
-        if (data.checkUserExists.__typename === 'UserNotExists') {
+        if (response.__typename === 'UserNotExists') {
           setSignInUpMode(SignInUpMode.SignUp);
           setSignInUpStep(SignInUpStep.Password);
         }
