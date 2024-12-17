@@ -2,11 +2,6 @@ import { isNil, isString } from '@nestjs/common/utils/shared.utils';
 
 import Handlebars from 'handlebars';
 
-import {
-  WorkflowExecutorException,
-  WorkflowExecutorExceptionCode,
-} from 'src/modules/workflow/workflow-executor/exceptions/workflow-executor.exception';
-
 const VARIABLE_PATTERN = RegExp('\\{\\{(.*?)\\}\\}', 'g');
 
 export const resolveInput = (
@@ -97,9 +92,6 @@ const evalFromContext = (input: string, context: Record<string, unknown>) => {
 
     return JSON.parse(inferredInput) ?? '';
   } catch (exception) {
-    throw new WorkflowExecutorException(
-      `Failed to evaluate variable ${input}: ${exception}`,
-      WorkflowExecutorExceptionCode.VARIABLE_EVALUATION_FAILED,
-    );
+    return undefined;
   }
 };
