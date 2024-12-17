@@ -166,24 +166,6 @@ export const PageHeader = ({
       </StyledLeftContainer>
 
       <StyledPageActionContainer className="page-action-container">
-        {isPageHeaderV2Enabled && hasPaginationButtons && (
-          <>
-            <IconButton
-              Icon={IconChevronUp}
-              size={isMobile ? 'medium' : 'small'}
-              variant="secondary"
-              disabled={!hasPreviousRecord}
-              onClick={() => navigateToPreviousRecord?.()}
-            />
-            <IconButton
-              Icon={IconChevronDown}
-              size={isMobile ? 'medium' : 'small'}
-              variant="secondary"
-              disabled={!hasNextRecord}
-              onClick={() => navigateToNextRecord?.()}
-            />
-          </>
-        )}
         {children}
       </StyledPageActionContainer>
     </StyledTopBarContainer>

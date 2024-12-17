@@ -17,6 +17,7 @@ export type ActionMenuEntry = {
   scope: ActionMenuEntryScope;
   key: string;
   label: string;
+  shortLabel?: string;
   position: number;
   Icon: IconComponent;
   isPinned?: boolean;
