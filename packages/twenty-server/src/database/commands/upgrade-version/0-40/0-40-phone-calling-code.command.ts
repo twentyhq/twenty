@@ -154,7 +154,7 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
               `P1 Step 1 - Let's find the "nameSingular" of this objectMetadata: ${objectMetadata.nameSingular || 'not found'}`,
             );
 
-            if (!objectMetadata || !objectMetadata.nameSingular) break;
+            if (!objectMetadata || !objectMetadata.nameSingular) continue;
 
             this.logger.log(
               `P1 Step 1 - Create migration for field ${phoneFieldMetadata.name}`,
