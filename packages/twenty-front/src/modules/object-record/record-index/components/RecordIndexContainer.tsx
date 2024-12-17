@@ -23,6 +23,7 @@ import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTabl
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 
 import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
+import { ContextStoreCurrentViewTypeEffect } from '@/context-store/components/ContextStoreCurrentViewTypeEffect';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetRecordGroup';
@@ -41,7 +42,6 @@ import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGrou
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback } from 'react';
-import { ContextStoreCurrentViewTypeEffect } from '~/pages/object-record/ContextStoreCurrentViewTypeEffect';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContainer = styled.div`

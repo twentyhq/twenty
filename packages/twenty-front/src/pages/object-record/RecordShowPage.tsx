@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { RecordShowActionMenu } from '@/action-menu/components/RecordShowActionMenu';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
+import { ContextStoreCurrentViewTypeEffect } from '@/context-store/components/ContextStoreCurrentViewTypeEffect';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -16,7 +17,6 @@ import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { RecordShowPageWorkflowHeader } from '@/workflow/components/RecordShowPageWorkflowHeader';
 import { RecordShowPageWorkflowVersionHeader } from '@/workflow/components/RecordShowPageWorkflowVersionHeader';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { ContextStoreCurrentViewTypeEffect } from '~/pages/object-record/ContextStoreCurrentViewTypeEffect';
 import { RecordShowPageHeader } from '~/pages/object-record/RecordShowPageHeader';
 
 export const RecordShowPage = () => {
