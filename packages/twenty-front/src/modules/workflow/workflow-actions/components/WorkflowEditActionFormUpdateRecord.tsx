@@ -1,7 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
 import { WorkflowSingleRecordPicker } from '@/workflow/components/WorkflowSingleRecordPicker';
+import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
 import { WorkflowUpdateRecordAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
 import { useEffect, useState } from 'react';
@@ -12,9 +12,9 @@ import {
   useIcons,
 } from 'twenty-ui';
 
+import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
-import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 
 type WorkflowEditActionFormUpdateRecordProps = {
   action: WorkflowUpdateRecordAction;
