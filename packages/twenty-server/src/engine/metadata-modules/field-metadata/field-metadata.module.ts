@@ -86,6 +86,6 @@ import { UpdateFieldInput } from './dtos/update-field.input';
     FieldMetadataService,
     FieldMetadataResolver,
   ],
-  exports: [FieldMetadataService],
+  exports: [FieldMetadataService, FieldMetadataRelatedRecordsService],
 })
 export class FieldMetadataModule {}

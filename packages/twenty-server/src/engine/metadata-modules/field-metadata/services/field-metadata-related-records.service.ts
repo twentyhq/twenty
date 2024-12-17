@@ -106,7 +106,7 @@ export class FieldMetadataRelatedRecordsService {
     }
   }
 
-  private async syncNoValueViewGroup(
+  async syncNoValueViewGroup(
     fieldMetadata: FieldMetadataEntity,
     view: ViewWorkspaceEntity,
     viewGroupRepository: WorkspaceRepository<ViewGroupWorkspaceEntity>,
