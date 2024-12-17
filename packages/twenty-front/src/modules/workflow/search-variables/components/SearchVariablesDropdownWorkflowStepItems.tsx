@@ -10,6 +10,7 @@ import {
   MenuItem,
   MenuItemSelect,
   OverflowingTextWithTooltip,
+  useIcons,
 } from 'twenty-ui';
 
 type SearchVariablesDropdownWorkflowStepItemsProps = {
@@ -24,6 +25,7 @@ export const SearchVariablesDropdownWorkflowStepItems = ({
   onSelect,
 }: SearchVariablesDropdownWorkflowStepItemsProps) => {
   const theme = useTheme();
+  const { getIcon } = useIcons();
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const { closeDropdown } = useDropdown(dropdownId);
@@ -60,7 +62,7 @@ export const SearchVariablesDropdownWorkflowStepItems = ({
             hovered={false}
             onClick={() => onSelect(item.id)}
             text={item.name}
-            LeftIcon={undefined}
+            LeftIcon={item.icon ? getIcon(item.icon) : undefined}
             hasSubMenu
           />
         ))
