@@ -1,7 +1,5 @@
 {
-  "type": "module",
   "compilerOptions": {
-    "jsx": "react-jsx",
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
@@ -9,7 +7,7 @@
     "types": ["vite/client"],
     "baseUrl": ".",
     "paths": {
-      "twenty-shared": ["../../packages/twenty-shared/dist"]
+      "twenty-shared": ["packages/twenty-shared/dist"]
     }
   },
   "files": [],
@@ -17,6 +15,9 @@
   "references": [
     {
       "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
     }
   ],
   "extends": "../../tsconfig.base.json"
