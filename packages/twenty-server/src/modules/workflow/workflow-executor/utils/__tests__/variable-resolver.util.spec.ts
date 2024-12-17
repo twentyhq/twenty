@@ -74,4 +74,40 @@ describe('resolveInput', () => {
 
     expect(resolveInput(input, context)).toEqual(expected);
   });
+
+  it('does not wrap string variables with double quotes', () => {
+    expect(
+      resolveInput('{ {{test}}: 2 }', {
+        test: 'prop',
+      }),
+    ).toBe('{ prop: 2 }');
+  });
+
+  it('does not modify static JSON', () => {
+    expect(resolveInput('{ "a": 2 }', {})).toBe('{ "a": 2 }');
+  });
+
+  it('supports variable as JSON object property name', () => {
+    expect(
+      resolveInput('{ "{{test}}": 2 }', {
+        test: 'prop',
+      }),
+    ).toBe('{ "prop": 2 }');
+  });
+
+  it('supports variable as JSON number value', () => {
+    expect(
+      resolveInput('{ "a": {{test}} }', {
+        test: 2,
+      }),
+    ).toBe('{ "a": 2 }');
+  });
+
+  it('supports variable as JSON string value', () => {
+    expect(
+      resolveInput('{ "a": "{{test}}" }', {
+        test: 'str',
+      }),
+    ).toBe('{ "a": "str" }');
+  });
 });
