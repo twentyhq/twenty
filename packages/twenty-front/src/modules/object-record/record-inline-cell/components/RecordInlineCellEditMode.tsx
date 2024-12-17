@@ -20,7 +20,6 @@ type RecordInlineCellEditModeProps = {
   children: React.ReactNode;
 };
 
-// TODO: Refactor this to avoid setting absolute px values.
 export const RecordInlineCellEditMode = ({
   children,
 }: RecordInlineCellEditModeProps) => {
