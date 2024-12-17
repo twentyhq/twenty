@@ -24,6 +24,7 @@ import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/compone
 
 import { RecordIndexActionMenu } from '@/action-menu/components/RecordIndexActionMenu';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useSetRecordGroup } from '@/object-record/record-group/hooks/useSetRecordGroup';
 import { RecordIndexFiltersToContextStoreEffect } from '@/object-record/record-index/components/RecordIndexFiltersToContextStoreEffect';
 import { recordIndexKanbanAggregateOperationState } from '@/object-record/record-index/states/recordIndexKanbanAggregateOperationState';
@@ -40,6 +41,7 @@ import { mapViewGroupsToRecordGroupDefinitions } from '@/views/utils/mapViewGrou
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback } from 'react';
+import { ContextStoreCurrentViewTypeEffect } from '~/pages/object-record/ContextStoreCurrentViewTypeEffect';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 const StyledContainer = styled.div`
@@ -164,89 +166,98 @@ export const RecordIndexContainer = () => {
   );
 
   return (
-    <StyledContainer>
-      <InformationBannerWrapper />
-      <RecordFieldValueSelectorContextProvider>
-        <SpreadsheetImportProvider>
-          <ViewBar
-            viewBarId={recordIndexId}
-            optionsDropdownButton={
-              <ObjectOptionsDropdown
-                recordIndexId={recordIndexId}
-                objectMetadataItem={objectMetadataItem}
-                viewType={recordIndexViewType ?? ViewType.Table}
-              />
-            }
-            onCurrentViewChange={(view) => {
-              if (!view) {
-                return;
+    <>
+      <ContextStoreCurrentViewTypeEffect
+        viewType={
+          recordIndexViewType === ViewType.Table
+            ? ContextStoreViewType.Table
+            : ContextStoreViewType.Kanban
+        }
+      />
+      <StyledContainer>
+        <InformationBannerWrapper />
+        <RecordFieldValueSelectorContextProvider>
+          <SpreadsheetImportProvider>
+            <ViewBar
+              viewBarId={recordIndexId}
+              optionsDropdownButton={
+                <ObjectOptionsDropdown
+                  recordIndexId={recordIndexId}
+                  objectMetadataItem={objectMetadataItem}
+                  viewType={recordIndexViewType ?? ViewType.Table}
+                />
               }
+              onCurrentViewChange={(view) => {
+                if (!view) {
+                  return;
+                }
 
-              onViewFieldsChange(view.viewFields);
-              onViewGroupsChange(view.viewGroups);
-              setTableViewFilterGroups(view.viewFilterGroups ?? []);
-              setTableFilters(
-                mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
-              );
-              setRecordIndexFilters(
-                mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
-              );
-              setRecordIndexViewFilterGroups(view.viewFilterGroups ?? []);
-              setContextStoreTargetedRecordsRule((prev) => ({
-                ...prev,
-                filters: mapViewFiltersToFilters(
-                  view.viewFilters,
-                  filterDefinitions,
-                ),
-              }));
-              setTableSorts(
-                mapViewSortsToSorts(view.viewSorts, sortDefinitions),
-              );
-              setRecordIndexSorts(
-                mapViewSortsToSorts(view.viewSorts, sortDefinitions),
-              );
-              setRecordIndexViewType(view.type);
-              setRecordIndexViewKanbanFieldMetadataIdState(
-                view.kanbanFieldMetadataId,
-              );
-              setRecordIndexViewKanbanAggregateOperationState({
-                operation: view.kanbanAggregateOperation,
-                fieldMetadataId: view.kanbanAggregateOperationFieldMetadataId,
-              });
-              setRecordIndexIsCompactModeActive(view.isCompact);
-            }}
-          />
-          <RecordIndexViewBarEffect
-            objectNamePlural={objectNamePlural}
-            viewBarId={recordIndexId}
-          />
-        </SpreadsheetImportProvider>
-        <RecordIndexFiltersToContextStoreEffect />
-        {recordIndexViewType === ViewType.Table && (
-          <>
-            <RecordIndexTableContainer
-              recordTableId={recordIndexId}
+                onViewFieldsChange(view.viewFields);
+                onViewGroupsChange(view.viewGroups);
+                setTableViewFilterGroups(view.viewFilterGroups ?? []);
+                setTableFilters(
+                  mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
+                );
+                setRecordIndexFilters(
+                  mapViewFiltersToFilters(view.viewFilters, filterDefinitions),
+                );
+                setRecordIndexViewFilterGroups(view.viewFilterGroups ?? []);
+                setContextStoreTargetedRecordsRule((prev) => ({
+                  ...prev,
+                  filters: mapViewFiltersToFilters(
+                    view.viewFilters,
+                    filterDefinitions,
+                  ),
+                }));
+                setTableSorts(
+                  mapViewSortsToSorts(view.viewSorts, sortDefinitions),
+                );
+                setRecordIndexSorts(
+                  mapViewSortsToSorts(view.viewSorts, sortDefinitions),
+                );
+                setRecordIndexViewType(view.type);
+                setRecordIndexViewKanbanFieldMetadataIdState(
+                  view.kanbanFieldMetadataId,
+                );
+                setRecordIndexViewKanbanAggregateOperationState({
+                  operation: view.kanbanAggregateOperation,
+                  fieldMetadataId: view.kanbanAggregateOperationFieldMetadataId,
+                });
+                setRecordIndexIsCompactModeActive(view.isCompact);
+              }}
+            />
+            <RecordIndexViewBarEffect
+              objectNamePlural={objectNamePlural}
               viewBarId={recordIndexId}
             />
-            <RecordIndexTableContainerEffect />
-          </>
-        )}
-        {recordIndexViewType === ViewType.Kanban && (
-          <StyledContainerWithPadding>
-            <RecordIndexBoardContainer
-              recordBoardId={recordIndexId}
-              viewBarId={recordIndexId}
-              objectNameSingular={objectNameSingular}
-            />
-            <RecordIndexBoardDataLoader
-              objectNameSingular={objectNameSingular}
-              recordBoardId={recordIndexId}
-            />
-            <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
-          </StyledContainerWithPadding>
-        )}
-        {!isPageHeaderV2Enabled && <RecordIndexActionMenu />}
-      </RecordFieldValueSelectorContextProvider>
-    </StyledContainer>
+          </SpreadsheetImportProvider>
+          <RecordIndexFiltersToContextStoreEffect />
+          {recordIndexViewType === ViewType.Table && (
+            <>
+              <RecordIndexTableContainer
+                recordTableId={recordIndexId}
+                viewBarId={recordIndexId}
+              />
+              <RecordIndexTableContainerEffect />
+            </>
+          )}
+          {recordIndexViewType === ViewType.Kanban && (
+            <StyledContainerWithPadding>
+              <RecordIndexBoardContainer
+                recordBoardId={recordIndexId}
+                viewBarId={recordIndexId}
+                objectNameSingular={objectNameSingular}
+              />
+              <RecordIndexBoardDataLoader
+                objectNameSingular={objectNameSingular}
+                recordBoardId={recordIndexId}
+              />
+              <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
+            </StyledContainerWithPadding>
+          )}
+          {!isPageHeaderV2Enabled && <RecordIndexActionMenu />}
+        </RecordFieldValueSelectorContextProvider>
+      </StyledContainer>
+    </>
   );
 };
