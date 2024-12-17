@@ -53,7 +53,7 @@ const StyledEditor = styled.div`
   }
   & .bn-drag-handle-menu {
     background: ${({ theme }) => theme.background.transparent.secondary};
-    backdrop-filter: blur(12px) saturate(200%) contrast(50%) brightness(130%);
+    backdrop-filter: ${({ theme }) => theme.blur.medium};
     box-shadow:
       0px 2px 4px rgba(0, 0, 0, 0.04),
       2px 4px 16px rgba(0, 0, 0, 0.12);
@@ -64,6 +64,19 @@ const StyledEditor = styled.div`
     border: 1px solid ${({ theme }) => theme.border.color.medium};
     left: 26px;
   }
+
+  & .bn-container .bn-suggestion-menu-item:hover {
+    background-color: blue;
+  }
+
+  & .bn-suggestion-menu {
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid ${({ theme }) => theme.border.color.medium};
+    background: ${({ theme }) => theme.background.transparent.secondary};
+    backdrop-filter: ${({ theme }) => theme.blur.medium};
+  }
+
   & .mantine-Menu-item {
     background-color: transparent;
     min-width: 152px;

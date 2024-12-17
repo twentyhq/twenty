@@ -50,8 +50,10 @@ export const RecordTableColumnFooterAggregateValue = ({
   dropdownId,
   aggregateValue,
   aggregateLabel,
+  isFirstCell,
 }: {
   dropdownId: string;
+  isFirstCell: boolean;
   aggregateValue?: string | number | null;
   aggregateLabel?: string;
 }) => {
@@ -66,13 +68,13 @@ export const RecordTableColumnFooterAggregateValue = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       <StyledCell>
-        {isHovered || isDefined(aggregateValue) ? (
+        {isHovered || isDefined(aggregateValue) || isFirstCell ? (
           <>
             <StyledText id={sanitizedId}>
               {aggregateValue ?? 'Calculate'}
             </StyledText>
             <StyledIcon fontWeight={'light'} size={theme.icon.size.sm} />
-            {aggregateValue && isDefined(aggregateLabel) && (
+            {isDefined(aggregateValue) && isDefined(aggregateLabel) && (
               <AppTooltip
                 anchorSelect={`#${sanitizedId}`}
                 content={aggregateLabel}

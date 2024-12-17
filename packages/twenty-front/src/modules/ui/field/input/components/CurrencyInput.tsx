@@ -21,10 +21,6 @@ export const StyledIMaskInput = styled(IMaskInput)<StyledInputProps>`
 const StyledContainer = styled.div`
   align-items: center;
 
-  border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-
   display: flex;
   justify-content: center;
 `;

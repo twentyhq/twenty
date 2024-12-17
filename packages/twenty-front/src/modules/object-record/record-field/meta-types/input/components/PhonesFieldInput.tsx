@@ -18,7 +18,6 @@ export const DEFAULT_PHONE_COUNTRY_CODE = '1';
 
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
   font-family: ${({ theme }) => theme.font.family};
-  height: 32px;
   ${TEXT_INPUT_STYLE}
   padding: 0;
 

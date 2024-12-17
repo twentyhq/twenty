@@ -144,7 +144,7 @@ export class Workspace {
   databaseSchema: string;
 
   @Field()
-  @Column()
+  @Column({ unique: true })
   subdomain: string;
 
   @Field()

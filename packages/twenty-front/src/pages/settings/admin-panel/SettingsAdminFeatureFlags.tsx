@@ -13,10 +13,11 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import { getImageAbsoluteURI } from 'twenty-shared';
 import {
   Button,
-  getImageAbsoluteURI,
   H1Title,
   H1TitleFontColor,
   H2Title,
@@ -25,6 +26,7 @@ import {
   Section,
   Toggle,
 } from 'twenty-ui';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -104,9 +106,12 @@ export const SettingsAdminFeatureFlags = () => {
       id: workspace.id,
       title: workspace.name,
       logo:
-        getImageAbsoluteURI(
-          isDefined(workspace.logo) ? workspace.logo : DEFAULT_WORKSPACE_LOGO,
-        ) ?? '',
+        getImageAbsoluteURI({
+          imageUrl: isNonEmptyString(workspace.logo)
+            ? workspace.logo
+            : DEFAULT_WORKSPACE_LOGO,
+          baseUrl: REACT_APP_SERVER_BASE_URL,
+        }) ?? '',
     })) ?? [];
 
   const renderWorkspaceContent = () => {

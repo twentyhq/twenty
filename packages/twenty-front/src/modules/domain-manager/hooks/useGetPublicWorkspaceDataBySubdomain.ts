@@ -19,7 +19,7 @@ export const useGetPublicWorkspaceDataBySubdomain = () => {
     workspacePublicDataState,
   );
 
-  const { loading } = useGetPublicWorkspaceDataBySubdomainQuery({
+  const { loading, data, error } = useGetPublicWorkspaceDataBySubdomainQuery({
     skip:
       (isMultiWorkspaceEnabled && isDefaultDomain) ||
       isDefined(workspacePublicData),
@@ -38,5 +38,7 @@ export const useGetPublicWorkspaceDataBySubdomain = () => {
 
   return {
     loading,
+    data: data?.getPublicWorkspaceDataBySubdomain,
+    error,
   };
 };
