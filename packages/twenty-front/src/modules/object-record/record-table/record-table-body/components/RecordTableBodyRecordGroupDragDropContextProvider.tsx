@@ -19,7 +19,7 @@ export const RecordTableBodyRecordGroupDragDropContextProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const { objectNameSingular, recordTableId, objectMetadataItem } =
+  const { objectNameSingular, objectMetadataItem } =
     useRecordTableContextOrThrow();
 
   const { updateOneRecord: updateOneRow } = useUpdateOneRecord({
