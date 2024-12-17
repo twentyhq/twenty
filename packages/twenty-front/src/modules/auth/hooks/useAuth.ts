@@ -130,7 +130,6 @@ export const useAuth = () => {
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
           set(isMultiWorkspaceEnabledState, isMultiWorkspaceEnabled);
           set(domainConfigurationState, domainConfiguration);
-          set(domainConfigurationState, domainConfiguration);
           return undefined;
         });
         goToRecoilSnapshot(initialSnapshot);
