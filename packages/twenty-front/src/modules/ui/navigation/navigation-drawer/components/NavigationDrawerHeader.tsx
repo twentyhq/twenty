@@ -67,7 +67,7 @@ export const NavigationDrawerHeader = ({
         <MultiWorkspaceDropdownButton workspaces={workspaces} />
       ) : (
         <StyledSingleWorkspaceContainer>
-          <Avatar placeholder={name.charAt(0)} avatarUrl={logo} />
+          <Avatar placeholder={name} avatarUrl={logo} />
           <NavigationDrawerAnimatedCollapseWrapper>
             <StyledName>{name}</StyledName>
           </NavigationDrawerAnimatedCollapseWrapper>
