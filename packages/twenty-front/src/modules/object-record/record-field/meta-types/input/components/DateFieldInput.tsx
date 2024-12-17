@@ -4,8 +4,8 @@ import { useDateField } from '@/object-record/record-field/meta-types/hooks/useD
 import { DateInput } from '@/ui/field/input/components/DateInput';
 import { isDefined } from '~/utils/isDefined';
 
-import { usePersistField } from '../../../hooks/usePersistField';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
+import { usePersistField } from '../../../hooks/usePersistField';
 
 type FieldInputEvent = (persist: () => void) => void;
 

@@ -3,6 +3,7 @@ import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/c
 import { FormEmailsFieldInput } from '@/object-record/record-field/form-types/components/FormEmailsFieldInput';
 import { FormFullNameFieldInput } from '@/object-record/record-field/form-types/components/FormFullNameFieldInput';
 import { FormLinksFieldInput } from '@/object-record/record-field/form-types/components/FormLinksFieldInput';
+import { FormDateFieldInput } from '@/object-record/record-field/form-types/components/FormDateFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
@@ -20,6 +21,7 @@ import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFiel
 import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
+import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
@@ -95,6 +97,13 @@ export const FormFieldInput = ({
     <FormEmailsFieldInput
       label={field.label}
       defaultValue={defaultValue as FieldEmailsValue | undefined}
+      onPersist={onPersist}
+      VariablePicker={VariablePicker}
+    />
+  ) : isFieldDate(field) ? (
+    <FormDateFieldInput
+      label={field.label}
+      defaultValue={defaultValue as string | undefined}
       onPersist={onPersist}
       VariablePicker={VariablePicker}
     />

@@ -9,11 +9,11 @@ import {
   StyledHoverableMenuItemBase,
 } from 'twenty-ui';
 
-import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { isDefined } from '~/utils/isDefined';
 
 import { AbsoluteDatePickerHeader } from '@/ui/input/components/internal/date/components/AbsoluteDatePickerHeader';
+import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 import { RelativeDatePickerHeader } from '@/ui/input/components/internal/date/components/RelativeDatePickerHeader';
 import { getHighlightedDates } from '@/ui/input/components/internal/date/utils/getHighlightedDates';
 import { UserContext } from '@/users/contexts/UserContext';
@@ -276,6 +276,7 @@ const StyledButton = styled(MenuItemLeftContent)`
 
 type InternalDatePickerProps = {
   isRelative?: boolean;
+  hideHeaderInput?: boolean;
   date: Date | null;
   relativeDate?: {
     direction: VariableDateViewFilterValueDirection;
@@ -317,6 +318,7 @@ export const InternalDatePicker = ({
   relativeDate,
   onRelativeDateChange,
   highlightedDateRange,
+  hideHeaderInput,
 }: InternalDatePickerProps) => {
   const internalDate = date ?? new Date();
 
@@ -510,6 +512,7 @@ export const InternalDatePicker = ({
                 nextMonthButtonDisabled={nextMonthButtonDisabled}
                 isDateTimeInput={isDateTimeInput}
                 timeZone={timeZone}
+                hideInput={hideHeaderInput}
               />
             )
           }
