@@ -10,7 +10,7 @@ import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 
 import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
-import { createCursor } from '@/apollo/utils/createCursor';
+import { encodeCursor } from '@/apollo/utils/encodeCursor';
 import { isDefined } from '~/utils/isDefined';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
@@ -128,7 +128,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
               );
 
               if (recordToCreateReference && !recordAlreadyInCache) {
-                const cursor = createCursor(recordToCreate);
+                const cursor = encodeCursor(recordToCreate);
 
                 const edge = {
                   __typename: getEdgeTypename(objectMetadataItem.nameSingular),

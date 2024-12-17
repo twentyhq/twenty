@@ -1,10 +1,10 @@
-import { createCursor } from '@/apollo/utils/createCursor';
+import { encodeCursor } from '@/apollo/utils/encodeCursor';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-describe('createCursor', () => {
+describe('encodeCursor', () => {
   it('should create a cursor with id only', () => {
     const record: ObjectRecord = { __typename: 'ObjectRecord', id: '123' };
-    const cursor = createCursor(record);
+    const cursor = encodeCursor(record);
     const decoded = JSON.parse(Buffer.from(cursor, 'base64').toString('utf-8'));
 
     expect(decoded).toEqual({ id: '123' });
@@ -16,7 +16,7 @@ describe('createCursor', () => {
       id: '123',
       position: 1,
     };
-    const cursor = createCursor(record);
+    const cursor = encodeCursor(record);
     const decoded = JSON.parse(Buffer.from(cursor, 'base64').toString('utf-8'));
 
     expect(decoded).toEqual({ id: '123', position: 1 });
@@ -28,7 +28,7 @@ describe('createCursor', () => {
       id: '123',
       position: 0,
     };
-    const cursor = createCursor(record);
+    const cursor = encodeCursor(record);
     const decoded = JSON.parse(Buffer.from(cursor, 'base64').toString('utf-8'));
 
     expect(decoded).toEqual({ id: '123', position: 0 });
@@ -41,7 +41,7 @@ describe('createCursor', () => {
       position: 1,
       extra: 'extra',
     };
-    const cursor = createCursor(record);
+    const cursor = encodeCursor(record);
     const decoded = JSON.parse(Buffer.from(cursor, 'base64').toString('utf-8'));
 
     expect(decoded).toEqual({ id: '123', position: 1 });
@@ -50,6 +50,6 @@ describe('createCursor', () => {
   it('should throw an error if record does not have an id', () => {
     const record = { position: 1 } as any;
 
-    expect(() => createCursor(record)).toThrow();
+    expect(() => encodeCursor(record)).toThrow();
   });
 });
