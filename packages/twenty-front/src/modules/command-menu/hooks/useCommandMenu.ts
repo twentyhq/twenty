@@ -11,6 +11,7 @@ import { isDefined } from '~/utils/isDefined';
 
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
@@ -108,6 +109,21 @@ export const useCommandMenu = () => {
             }),
             contextStoreCurrentViewId,
           );
+
+          const contextStoreCurrentViewType = snapshot
+            .getLoadable(
+              contextStoreCurrentViewTypeComponentState.atomFamily({
+                instanceId: mainContextStoreComponentInstanceId,
+              }),
+            )
+            .getValue();
+
+          set(
+            contextStoreCurrentViewTypeComponentState.atomFamily({
+              instanceId: 'command-menu',
+            }),
+            contextStoreCurrentViewType,
+          );
         }
 
         setIsCommandMenuOpened(true);
@@ -160,6 +176,13 @@ export const useCommandMenu = () => {
 
         set(
           contextStoreCurrentViewIdComponentState.atomFamily({
+            instanceId: 'command-menu',
+          }),
+          null,
+        );
+
+        set(
+          contextStoreCurrentViewTypeComponentState.atomFamily({
             instanceId: 'command-menu',
           }),
           null,
