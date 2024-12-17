@@ -153,13 +153,13 @@ export const useRecordShowPagePagination = (
 
   const rankInView = recordIdsInCache.findIndex((id) => id === objectRecordId);
 
-  const rankFoundInFiew = rankInView > -1;
+  const rankFoundInView = rankInView > -1;
 
   const objectLabel = capitalize(objectMetadataItem.labelPlural);
 
   const totalCount = Math.max(1, totalCountBefore, totalCountAfter);
 
-  const viewNameWithCount = rankFoundInFiew
+  const viewNameWithCount = rankFoundInView
     ? `${rankInView + 1} of ${totalCount} in ${objectLabel}`
     : `${objectLabel} (${totalCount})`;
 
