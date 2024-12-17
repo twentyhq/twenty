@@ -14,6 +14,10 @@ export const ContextStoreCurrentViewTypeEffect = ({
 
   useEffect(() => {
     setContextStoreCurrentViewType(viewType);
+
+    return () => {
+      setContextStoreCurrentViewType(null);
+    };
   }, [setContextStoreCurrentViewType, viewType]);
 
   return null;
