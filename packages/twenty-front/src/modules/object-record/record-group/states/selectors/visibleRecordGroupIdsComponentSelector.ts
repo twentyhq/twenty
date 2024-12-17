@@ -75,12 +75,7 @@ export const visibleRecordGroupIdsComponentSelector = createComponentSelectorV2<
           continue;
         }
 
-        if (
-          isDefined(recordGroupDefinition) &&
-          recordGroupDefinition.isVisible
-        ) {
-          recordGroupSortedInsert(result, recordGroupDefinition, comparator);
-        }
+        recordGroupSortedInsert(result, recordGroupDefinition, comparator);
       }
 
       return result.map(({ id }) => id);
