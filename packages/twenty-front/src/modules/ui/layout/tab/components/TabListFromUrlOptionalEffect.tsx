@@ -1,7 +1,6 @@
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
 
 type TabListFromUrlOptionalEffectProps = {
   componentInstanceId: string;
@@ -13,11 +12,9 @@ export const TabListFromUrlOptionalEffect = ({
   tabListIds,
 }: TabListFromUrlOptionalEffectProps) => {
   const location = useLocation();
-  const { activeTabIdState } = useTabList(componentInstanceId);
-  const { setActiveTabId } = useTabList(componentInstanceId);
+  const { activeTabId, setActiveTabId } = useTabList(componentInstanceId);
 
   const hash = location.hash.replace('#', '');
-  const activeTabId = useRecoilValue(activeTabIdState);
 
   useEffect(() => {
     if (hash === activeTabId) {

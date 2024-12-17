@@ -49,10 +49,14 @@ jobs:
             package.json
             packages/twenty-server/**
             packages/twenty-emails/**
+            packages/twenty-shared/**
 
       - name: Install dependencies
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/yarn-install
+      - name: Build twenty-shared
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: npx nx build twenty-shared
       - name: Server / Restore Task Cache
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: ./.github/workflows/actions/task-cache
@@ -120,6 +124,7 @@ jobs:
             package.json
             packages/twenty-server/**
             packages/twenty-emails/**
+            packages/twenty-shared/**
 
       - name: Install dependencies
         if: steps.changed-files.outputs.any_changed == 'true'

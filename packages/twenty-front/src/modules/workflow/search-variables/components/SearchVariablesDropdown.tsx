@@ -28,7 +28,8 @@ const StyledDropdownVariableButtonContainer = styled(
 `;
 
 const StyledDropdownComponentsContainer = styled(DropdownMenuItemsContainer)`
-  background-color: ${({ theme }) => theme.background.transparent.light};
+  display: flex;
+  flex-direction: column;
 `;
 
 const SearchVariablesDropdown = ({

@@ -5,8 +5,8 @@ import { BORDER_COMMON, ThemeContext } from 'twenty-ui';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { CellHotkeyScopeContext } from '@/object-record/record-table/contexts/CellHotkeyScopeContext';
+import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import {
   DEFAULT_CELL_SCOPE,
   useOpenRecordTableCellFromCell,
@@ -47,7 +47,7 @@ export const RecordTableCellBaseContainer = ({
   const { hasSoftFocus, cellPosition } = useContext(RecordTableCellContext);
 
   const { onMoveSoftFocusToCell, onCellMouseEnter } =
-    useContext(RecordTableContext);
+    useRecordTableBodyContextOrThrow();
 
   const handleContainerMouseMove = () => {
     setIsFocused(true);

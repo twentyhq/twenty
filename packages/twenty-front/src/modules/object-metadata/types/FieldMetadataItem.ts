@@ -39,5 +39,5 @@ export type FieldMetadataItem = Omit<
   settings?: {
     displayAsRelativeDate?: boolean;
   };
-  isLabelSyncedWithName?: boolean;
+  isLabelSyncedWithName?: boolean | null;
 };

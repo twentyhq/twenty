@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import {
   setSessionId,
@@ -8,14 +8,12 @@ import {
 } from '@/analytics/hooks/useEventTracker';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
-import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { useDebouncedCallback } from 'use-debounce';
 import { useCleanRecoilState } from '~/hooks/useCleanRecoilState';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
@@ -52,27 +50,11 @@ export const PageChangeEffect = () => {
     }
   }, [location, previousLocation]);
 
-  const setIsAppWaitingForFreshObjectMetadata = useSetRecoilState(
-    isAppWaitingForFreshObjectMetadataState,
-  );
-
-  const setIsAppWaitingForFreshObjectMetadataDebounced = useDebouncedCallback(
-    () => {
-      setIsAppWaitingForFreshObjectMetadata(false);
-    },
-    100,
-  );
-
   useEffect(() => {
     if (isDefined(pageChangeEffectNavigateLocation)) {
       navigate(pageChangeEffectNavigateLocation);
-      setIsAppWaitingForFreshObjectMetadataDebounced();
     }
-  }, [
-    navigate,
-    pageChangeEffectNavigateLocation,
-    setIsAppWaitingForFreshObjectMetadataDebounced,
-  ]);
+  }, [navigate, pageChangeEffectNavigateLocation]);
 
   useEffect(() => {
     switch (true) {

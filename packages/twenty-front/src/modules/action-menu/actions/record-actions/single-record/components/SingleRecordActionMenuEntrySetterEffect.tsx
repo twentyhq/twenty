@@ -1,24 +1,72 @@
+import { getActionConfig } from '@/action-menu/actions/record-actions/single-record/utils/getActionConfig';
+import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useEffect } from 'react';
-import { useSingleRecordActions } from '../hooks/useSingleRecordActions';
+import { isDefined } from 'twenty-ui';
 
 export const SingleRecordActionMenuEntrySetterEffect = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const { registerSingleRecordActions, unregisterSingleRecordActions } =
-    useSingleRecordActions({
-      objectMetadataItem,
-    });
+  const isPageHeaderV2Enabled = useIsFeatureEnabled(
+    'IS_PAGE_HEADER_V2_ENABLED',
+  );
+
+  const actionConfig = getActionConfig(
+    objectMetadataItem,
+    isPageHeaderV2Enabled,
+  );
+
+  const { addActionMenuEntry, removeActionMenuEntry } = useActionMenuEntries();
+
+  const contextStoreTargetedRecordsRule = useRecoilComponentValueV2(
+    contextStoreTargetedRecordsRuleComponentState,
+  );
+
+  const selectedRecordId =
+    contextStoreTargetedRecordsRule.mode === 'selection'
+      ? contextStoreTargetedRecordsRule.selectedRecordIds[0]
+      : undefined;
+
+  if (!isDefined(selectedRecordId)) {
+    throw new Error('Selected record ID is required');
+  }
+
+  const actionMenuEntries = Object.values(actionConfig ?? {})
+    .map((action) => {
+      const { shouldBeRegistered, onClick, ConfirmationModal } =
+        action.actionHook({
+          recordId: selectedRecordId,
+          objectMetadataItem,
+        });
+
+      if (shouldBeRegistered) {
+        return {
+          ...action,
+          onClick,
+          ConfirmationModal,
+        };
+      }
+
+      return undefined;
+    })
+    .filter(isDefined);
 
   useEffect(() => {
-    registerSingleRecordActions();
+    for (const action of actionMenuEntries) {
+      addActionMenuEntry(action);
+    }
 
     return () => {
-      unregisterSingleRecordActions();
+      for (const action of actionMenuEntries) {
+        removeActionMenuEntry(action.key);
+      }
     };
-  }, [registerSingleRecordActions, unregisterSingleRecordActions]);
+  }, [actionMenuEntries, addActionMenuEntry, removeActionMenuEntry]);
 
   return null;
 };

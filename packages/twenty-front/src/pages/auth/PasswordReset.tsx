@@ -154,7 +154,9 @@ export const PasswordReset = () => {
     } catch (err) {
       logError(err);
       enqueueSnackBar(
-        (err as Error)?.message || 'An error occurred while updating password',
+        err instanceof Error
+          ? err.message
+          : 'An error occurred while updating password',
         {
           variant: SnackBarVariant.Error,
         },

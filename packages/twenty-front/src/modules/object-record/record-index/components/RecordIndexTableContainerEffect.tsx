@@ -1,8 +1,8 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
@@ -13,9 +13,7 @@ import { ViewField } from '@/views/types/ViewField';
 import { useRecoilCallback } from 'recoil';
 
 export const RecordIndexTableContainerEffect = () => {
-  const { recordIndexId, objectNameSingular } = useContext(
-    RecordIndexRootPropsContext,
-  );
+  const { recordIndexId, objectNameSingular } = useRecordIndexContextOrThrow();
 
   const viewBarId = recordIndexId;
 

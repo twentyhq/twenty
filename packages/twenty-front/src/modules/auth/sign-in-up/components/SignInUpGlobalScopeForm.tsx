@@ -1,37 +1,31 @@
 import styled from '@emotion/styled';
-import {
-  IconGoogle,
-  IconMicrosoft,
-  Loader,
-  MainButton,
-  HorizontalSeparator,
-} from 'twenty-ui';
-import { useTheme } from '@emotion/react';
-import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
-import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
-import { FormProvider } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { FormProvider } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { HorizontalSeparator, Loader, MainButton } from 'twenty-ui';
 
-import { isDefined } from '~/utils/isDefined';
+import { useAuth } from '@/auth/hooks/useAuth';
+import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailField';
+import { SignInUpPasswordField } from '@/auth/sign-in-up/components/SignInUpPasswordField';
+import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/SignInUpWithGoogle';
+import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/SignInUpWithMicrosoft';
+import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
+import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { signInUpModeState } from '@/auth/states/signInUpModeState';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
-import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { SignInUpEmailField } from '@/auth/sign-in-up/components/SignInUpEmailField';
-import { SignInUpPasswordField } from '@/auth/sign-in-up/components/SignInUpPasswordField';
-import { useAuth } from '@/auth/hooks/useAuth';
-import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { signInUpModeState } from '@/auth/states/signInUpModeState';
-import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { SignInUpMode } from '@/auth/types/signInUpMode';
+import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledContentContainer = styled(motion.div)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -46,11 +40,9 @@ const StyledForm = styled.form`
 `;
 
 export const SignInUpGlobalScopeForm = () => {
-  const theme = useTheme();
+  const authProviders = useRecoilValue(authProvidersState);
   const signInUpStep = useRecoilValue(signInUpStepState);
 
-  const { signInWithGoogle } = useSignInWithGoogle();
-  const { signInWithMicrosoft } = useSignInWithMicrosoft();
   const { checkUserExists } = useAuth();
   const { readCaptchaToken } = useReadCaptchaToken();
   const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
@@ -116,20 +108,9 @@ export const SignInUpGlobalScopeForm = () => {
   return (
     <>
       <StyledContentContainer>
-        <MainButton
-          Icon={() => <IconGoogle size={theme.icon.size.lg} />}
-          title="Continue with Google"
-          onClick={signInWithGoogle}
-          fullWidth
-        />
-        <HorizontalSeparator visible={false} />
-        <MainButton
-          Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
-          title="Continue with Microsoft"
-          onClick={signInWithMicrosoft}
-          fullWidth
-        />
-        <HorizontalSeparator visible={false} />
+        {authProviders.google && <SignInUpWithGoogle />}
+
+        {authProviders.microsoft && <SignInUpWithMicrosoft />}
         <HorizontalSeparator visible />
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         <FormProvider {...form}>

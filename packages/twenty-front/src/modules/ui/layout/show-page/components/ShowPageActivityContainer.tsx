@@ -23,7 +23,10 @@ export const ShowPageActivityContainer = ({
   );
 
   return !isNewViewableRecordLoading ? (
-    <ScrollWrapper contextProviderName="showPageActivityContainer">
+    <ScrollWrapper
+      contextProviderName="showPageActivityContainer"
+      componentInstanceId={`scroll-wrapper-tab-list-${targetableObject.id}`}
+    >
       <StyledShowPageActivityContainer>
         <RichTextEditor
           activityId={targetableObject.id}

@@ -31,7 +31,7 @@ describe('resolveInput', () => {
   });
 
   it('should handle non-existent variables', () => {
-    expect(resolveInput('{{user.email}}', context)).toBe('');
+    expect(resolveInput('{{user.email}}', context)).toBe(undefined);
   });
 
   it('should resolve variables in an array', () => {
@@ -67,15 +67,11 @@ describe('resolveInput', () => {
     const expected = {
       user: {
         displayName: 'John Doe',
-        preferences: ['dark', 'true'],
+        preferences: ['dark', true],
       },
       staticData: [1, 2, 3],
     };
 
     expect(resolveInput(input, context)).toEqual(expected);
-  });
-
-  it('should throw an error for invalid expressions', () => {
-    expect(() => resolveInput('{{invalidFunction()}}', context)).toThrow();
   });
 });

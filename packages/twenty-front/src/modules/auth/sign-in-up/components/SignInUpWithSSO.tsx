@@ -1,25 +1,25 @@
-import { IconLock, MainButton, HorizontalSeparator } from 'twenty-ui';
+import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
 import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
+import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useTheme } from '@emotion/react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { HorizontalSeparator, IconLock, MainButton } from 'twenty-ui';
 
 export const SignInUpWithSSO = () => {
   const theme = useTheme();
   const setSignInUpStep = useSetRecoilState(signInUpStepState);
-  const authProviders = useRecoilValue(authProvidersState);
+  const workspaceAuthProviders = useRecoilValue(workspaceAuthProvidersState);
 
   const signInUpStep = useRecoilValue(signInUpStepState);
 
   const { redirectToSSOLoginPage } = useSSO();
 
   const signInWithSSO = () => {
-    if (authProviders.sso.length === 1) {
-      return redirectToSSOLoginPage(authProviders.sso[0].id);
+    if (workspaceAuthProviders.sso.length === 1) {
+      return redirectToSSOLoginPage(workspaceAuthProviders.sso[0].id);
     }
 
     setSignInUpStep(SignInUpStep.SSOIdentityProviderSelection);

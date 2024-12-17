@@ -610,7 +610,10 @@ export const CommandMenu = () => {
             setCommandMenuSearch={setCommandMenuSearch}
           />
           <StyledList>
-            <ScrollWrapper contextProviderName="commandMenu">
+            <ScrollWrapper
+              contextProviderName="commandMenu"
+              componentInstanceId={`scroll-wrapper-command-menu`}
+            >
               <StyledInnerList isMobile={isMobile}>
                 <SelectableList
                   selectableListId="command-menu-list"
