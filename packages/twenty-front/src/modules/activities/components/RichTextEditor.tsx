@@ -8,6 +8,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
+import { activityBodyFamilyState } from '@/activities/states/activityBodyFamilyState';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
@@ -50,6 +51,12 @@ export const RichTextEditor = ({
 
   const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
     activityTitleHasBeenSetFamilyState({
+      activityId: activityId,
+    }),
+  );
+
+  const [activityBody, setActivityBody] = useRecoilState(
+    activityBodyFamilyState({
       activityId: activityId,
     }),
   );
@@ -233,6 +240,12 @@ export const RichTextEditor = ({
   );
 
   const handleBodyChangeDebounced = useDebouncedCallback(handleBodyChange, 500);
+
+  // See https://github.com/twentyhq/twenty/issues/6724 for explanation
+  const setActivityBodyDebouncedToAvoidDragBug = useDebouncedCallback(
+    setActivityBody,
+    100,
+  );
 
   const handleEditorChange = () => {
     const newStringifiedBody = JSON.stringify(editor.document) ?? '';
