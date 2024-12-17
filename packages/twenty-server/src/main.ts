@@ -1,4 +1,4 @@
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationError, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
@@ -54,6 +54,15 @@ const bootstrap = async () => {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      exceptionFactory: (validationErrors: ValidationError[] = []) => {
+        console.log('>>>>>>>>>>>>>>', validationErrors);
+        // return new BadRequestException(
+        //   validationErrors.map((error) => ({
+        //     field: error.property,
+        //     error: Object.values(error.constraints).join(', '),
+        //   })),
+        // );
+      },
     }),
   );
   app.useBodyParser('json', { limit: settings.storage.maxFileSize });
