@@ -59,15 +59,13 @@ const StyledTableFoot = styled.thead`
     }
   }
 
-  &.header-sticky {
-    th {
-      position: sticky;
-      top: 0;
-      z-index: 5;
-    }
+  tr {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
   }
 
-  &.header-sticky.first-columns-sticky {
+  &.first-columns-sticky {
     th:nth-of-type(1),
     th:nth-of-type(2),
     th:nth-of-type(3) {

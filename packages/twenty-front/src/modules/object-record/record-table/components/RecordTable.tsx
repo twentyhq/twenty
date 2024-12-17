@@ -88,7 +88,7 @@ export const RecordTable = () => {
         <RecordTableEmptyState />
       ) : (
         <>
-          <StyledTable className="entity-table-cell" ref={tableBodyRef}>
+          <StyledTable ref={tableBodyRef}>
             <RecordTableHeader />
             {!hasRecordGroups ? (
               <RecordTableNoRecordGroupBody />
