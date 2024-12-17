@@ -107,9 +107,9 @@ export const getDevSeedPeopleCustomFields = (
       isNullable: false,
       isUnique: false,
       defaultValue: {
-        primaryPhoneNumber: '',
-        primaryPhoneCountryCode: 'FR',
-        primaryPhoneCallingCode: '+33',
+        primaryPhoneNumber: "''",
+        primaryPhoneCountryCode: "'FR'",
+        primaryPhoneCallingCode: "'+33'",
         additionalPhones: {},
       },
       objectMetadataId,
