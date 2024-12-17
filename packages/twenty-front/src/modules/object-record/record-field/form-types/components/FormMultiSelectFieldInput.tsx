@@ -6,7 +6,7 @@ import { FormFieldInputRowContainer } from '@/object-record/record-field/form-ty
 import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
-import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
 import { SelectOption } from '@/spreadsheet-import/types';
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
@@ -56,7 +56,7 @@ export const FormMultiSelectFieldInput = ({
 }: FormMultiSelectFieldInputProps) => {
   const inputId = useId();
 
-  const hotkeyScope = InlineCellHotkeyScope.InlineCell;
+  const hotkeyScope = MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID;
 
   const {
     setHotkeyScopeAndMemorizePreviousScope,
