@@ -4,6 +4,7 @@ import { IconComponent, MenuItemSuggestion } from 'twenty-ui';
 
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 
 export type SuggestionItem = {
   title: string;
@@ -18,11 +19,13 @@ const StyledSlashMenu = styled.div`
   * {
     box-sizing: content-box;
   }
+
+  max-height: 200px;
 `;
 
 export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
   return (
-    <StyledSlashMenu>
+    <OverlayContainer>
       <DropdownMenu style={{ zIndex: 2001 }}>
         <DropdownMenuItemsContainer>
           {props.items.map((item, index) => (
@@ -36,6 +39,6 @@ export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
           ))}
         </DropdownMenuItemsContainer>
       </DropdownMenu>
-    </StyledSlashMenu>
+    </OverlayContainer>
   );
 };

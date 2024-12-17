@@ -64,6 +64,19 @@ const StyledEditor = styled.div`
     border: 1px solid ${({ theme }) => theme.border.color.medium};
     left: 26px;
   }
+
+  & .bn-container .bn-suggestion-menu-item:hover {
+    background-color: blue;
+  }
+
+  & .bn-suggestion-menu {
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid ${({ theme }) => theme.border.color.medium};
+    background: ${({ theme }) => theme.background.transparent.secondary};
+    backdrop-filter: ${({ theme }) => theme.blur.medium};
+  }
+
   & .mantine-Menu-item {
     background-color: transparent;
     min-width: 152px;
