@@ -99,8 +99,6 @@ export const PageHeader = ({
   hasClosePageButton,
   onClosePage,
   hasPaginationButtons,
-  hasPreviousRecord,
-  hasNextRecord,
   navigateToPreviousRecord,
   navigateToNextRecord,
   Icon,
@@ -140,14 +138,12 @@ export const PageHeader = ({
                 Icon={IconChevronUp}
                 size="small"
                 variant="secondary"
-                disabled={!hasPreviousRecord}
                 onClick={() => navigateToPreviousRecord?.()}
               />
               <IconButton
                 Icon={IconChevronDown}
                 size="small"
                 variant="secondary"
-                disabled={!hasNextRecord}
                 onClick={() => navigateToNextRecord?.()}
               />
             </>
