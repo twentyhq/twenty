@@ -180,9 +180,28 @@ export const CanUseVariableAsObjectProperty: Story = {
 
     await userEvent.type(editor, '": 2 }');
 
+    await waitFor(() => {
+      expect(args.onPersist).toHaveBeenCalledWith('{ "{{test}}": 2 }');
+    });
+  },
+};
+
+export const ClearField: Story = {
+  args: {
+    placeholder: 'Enter valid json',
+    defaultValue: '{ "a": 2 }',
+  },
+  play: async ({ canvasElement, args }) => {
+    const defaultValueStringLength = args.defaultValue!.length;
+
+    const editor = canvasElement.querySelector('.ProseMirror > p');
+    expect(editor).toBeVisible();
+
     await Promise.all([
+      userEvent.type(editor, `{Backspace>${defaultValueStringLength}}`),
+
       waitFor(() => {
-        expect(args.onPersist).toHaveBeenCalledWith('{ "{{test}}": 2 }');
+        expect(args.onPersist).toHaveBeenCalledWith(null);
       }),
     ]);
   },
