@@ -20,7 +20,6 @@ import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/Snac
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { OnboardingStatus } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -162,55 +161,53 @@ export const CreateProfile = () => {
             description="Your name as it will be displayed on the app"
           />
           {/* TODO: When react-web-hook-form is added to edit page we should create a dedicated component with context */}
-          <ScrollWrapper contextProviderName="modalContent">
-            <StyledComboInputContainer>
-              <Controller
-                name="firstName"
-                control={control}
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState: { error },
-                }) => (
-                  <TextInputV2
-                    autoFocus
-                    label="First Name"
-                    value={value}
-                    onFocus={() => setIsEditingMode(true)}
-                    onBlur={() => {
-                      onBlur();
-                      setIsEditingMode(false);
-                    }}
-                    onChange={onChange}
-                    placeholder="Tim"
-                    error={error?.message}
-                    fullWidth
-                  />
-                )}
-              />
-              <Controller
-                name="lastName"
-                control={control}
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState: { error },
-                }) => (
-                  <TextInputV2
-                    label="Last Name"
-                    value={value}
-                    onFocus={() => setIsEditingMode(true)}
-                    onBlur={() => {
-                      onBlur();
-                      setIsEditingMode(false);
-                    }}
-                    onChange={onChange}
-                    placeholder="Cook"
-                    error={error?.message}
-                    fullWidth
-                  />
-                )}
-              />
-            </StyledComboInputContainer>
-          </ScrollWrapper>
+          <StyledComboInputContainer>
+            <Controller
+              name="firstName"
+              control={control}
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <TextInputV2
+                  autoFocus
+                  label="First Name"
+                  value={value}
+                  onFocus={() => setIsEditingMode(true)}
+                  onBlur={() => {
+                    onBlur();
+                    setIsEditingMode(false);
+                  }}
+                  onChange={onChange}
+                  placeholder="Tim"
+                  error={error?.message}
+                  fullWidth
+                />
+              )}
+            />
+            <Controller
+              name="lastName"
+              control={control}
+              render={({
+                field: { onChange, onBlur, value },
+                fieldState: { error },
+              }) => (
+                <TextInputV2
+                  label="Last Name"
+                  value={value}
+                  onFocus={() => setIsEditingMode(true)}
+                  onBlur={() => {
+                    onBlur();
+                    setIsEditingMode(false);
+                  }}
+                  onChange={onChange}
+                  placeholder="Cook"
+                  error={error?.message}
+                  fullWidth
+                />
+              )}
+            />
+          </StyledComboInputContainer>
         </StyledSectionContainer>
       </StyledContentContainer>
       <StyledButtonContainer>
