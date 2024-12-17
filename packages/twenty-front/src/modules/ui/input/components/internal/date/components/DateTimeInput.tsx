@@ -1,6 +1,5 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { DateTime } from 'luxon';
 import { useCallback, useEffect, useState } from 'react';
 import { useIMask } from 'react-imask';
 
@@ -10,6 +9,10 @@ import { DATE_TIME_BLOCKS } from '@/ui/input/components/internal/date/constants/
 import { DATE_TIME_MASK } from '@/ui/input/components/internal/date/constants/DateTimeMask';
 import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
 import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
+import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
+import { parseStringToDate } from '@/ui/input/components/internal/date/utils/parseStringToDate';
+import { isNull } from '@sniptt/guards';
+import { isDefined } from 'twenty-ui';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -53,53 +56,29 @@ export const DateTimeInput = ({
   isDateTimeInput,
   userTimezone,
 }: DateTimeInputProps) => {
-  const parsingFormat = isDateTimeInput ? 'MM/dd/yyyy HH:mm' : 'MM/dd/yyyy';
-
   const [hasError, setHasError] = useState(false);
 
-  const parseDateToString = useCallback(
+  const handleParseDateToString = useCallback(
     (date: any) => {
-      const dateParsed = DateTime.fromJSDate(date, { zone: userTimezone });
-
-      const dateWithoutTime = DateTime.fromJSDate(date)
-        .toLocal()
-        .set({
-          day: date.getUTCDate(),
-          month: date.getUTCMonth() + 1,
-          year: date.getUTCFullYear(),
-          hour: 0,
-          minute: 0,
-          second: 0,
-          millisecond: 0,
-        });
-
-      const formattedDate = isDateTimeInput
-        ? dateParsed.setZone(userTimezone).toFormat(parsingFormat)
-        : dateWithoutTime.toFormat(parsingFormat);
-
-      return formattedDate;
+      return parseDateToString({
+        date,
+        isDateTimeInput: isDateTimeInput === true,
+        userTimezone,
+      });
     },
-    [parsingFormat, isDateTimeInput, userTimezone],
+    [isDateTimeInput, userTimezone],
   );
 
-  const parseStringToDate = (str: string) => {
-    setHasError(false);
+  const handleParseStringToDate = (str: string) => {
+    const date = parseStringToDate({
+      dateAsString: str,
+      isDateTimeInput: isDateTimeInput === true,
+      userTimezone,
+    });
 
-    const parsedDate = isDateTimeInput
-      ? DateTime.fromFormat(str, parsingFormat, { zone: userTimezone })
-      : DateTime.fromFormat(str, parsingFormat, { zone: 'utc' });
+    setHasError(isNull(date) === true);
 
-    const isValid = parsedDate.isValid;
-
-    if (!isValid) {
-      setHasError(true);
-
-      return null;
-    }
-
-    const jsDate = parsedDate.toJSDate();
-
-    return jsDate;
+    return date;
   };
 
   const pattern = isDateTimeInput ? DATE_TIME_MASK : DATE_MASK;
@@ -112,14 +91,18 @@ export const DateTimeInput = ({
       blocks,
       min: MIN_DATE,
       max: MAX_DATE,
-      format: parseDateToString,
-      parse: parseStringToDate,
+      format: handleParseDateToString,
+      parse: handleParseStringToDate,
       lazy: false,
       autofix: true,
     },
     {
       onComplete: (value) => {
-        const parsedDate = parseStringToDate(value);
+        const parsedDate = parseStringToDate({
+          dateAsString: value,
+          isDateTimeInput: isDateTimeInput === true,
+          userTimezone,
+        });
 
         onChange?.(parsedDate);
       },
@@ -130,8 +113,18 @@ export const DateTimeInput = ({
   );
 
   useEffect(() => {
-    setValue(parseDateToString(date));
-  }, [date, setValue, parseDateToString]);
+    if (!isDefined(date)) {
+      return;
+    }
+
+    setValue(
+      parseDateToString({
+        date: date,
+        isDateTimeInput: isDateTimeInput === true,
+        userTimezone,
+      }),
+    );
+  }, [date, setValue, isDateTimeInput, userTimezone]);
 
   return (
     <StyledInputContainer>
