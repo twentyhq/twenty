@@ -109,7 +109,7 @@ export const SelectInput = ({
             selected={false}
             text={`No ${clearLabel}`}
             color="transparent"
-            variant="outline"
+            variant={'outline'}
             onClick={() => {
               setSelectedOption(undefined);
               onClear();
@@ -122,8 +122,9 @@ export const SelectInput = ({
               key={option.value}
               selected={selectedOption?.value === option.value}
               text={option.label}
-              color={option.color as TagColor}
+              color={(option.color as TagColor) ?? 'transparent'}
               onClick={() => handleOptionChange(option)}
+              LeftIcon={option.icon}
             />
           );
         })}

@@ -1,10 +1,11 @@
-import { Tag, ThemeColor } from 'twenty-ui';
+import { IconComponent, Tag, ThemeColor } from 'twenty-ui';
 
 type SelectDisplayProps = {
-  color: ThemeColor;
+  color: ThemeColor | 'transparent';
   label: string;
+  Icon?: IconComponent;
 };
 
-export const SelectDisplay = ({ color, label }: SelectDisplayProps) => {
-  return <Tag preventShrink color={color} text={label} />;
+export const SelectDisplay = ({ color, label, Icon }: SelectDisplayProps) => {
+  return <Tag preventShrink color={color} text={label} Icon={Icon} />;
 };

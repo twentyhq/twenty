@@ -35,6 +35,7 @@ jobs:
             package.json
             packages/twenty-front/**
             packages/twenty-ui/**
+            packages/twenty-shared/**
 
       - name: Skip if no relevant changes
         if: steps.changed-files.outputs.any_changed == 'false'

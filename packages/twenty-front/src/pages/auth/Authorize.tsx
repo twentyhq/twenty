@@ -6,6 +6,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { MainButton, UndecoratedLink } from 'twenty-ui';
 import { useAuthorizeAppMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
 type App = { id: string; name: string; logo: string };
 
@@ -55,6 +56,7 @@ const StyledButtonContainer = styled.div`
 export const Authorize = () => {
   const navigate = useNavigate();
   const [searchParam] = useSearchParams();
+  const { redirect } = useRedirect();
   //TODO: Replace with db call for registered third party apps
   const [apps] = useState<App[]>([
     {
@@ -89,7 +91,7 @@ export const Authorize = () => {
           redirectUrl,
         },
         onCompleted: (data) => {
-          window.location.href = data.authorizeApp.redirectUrl;
+          redirect(data.authorizeApp.redirectUrl);
         },
       });
     }

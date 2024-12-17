@@ -13,7 +13,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { workspacesState } from '@/auth/states/workspaces';
-import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
@@ -42,17 +41,23 @@ import { getTimeFormatFromWorkspaceTimeFormat } from '@/localization/utils/getTi
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
 
-import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useIsCurrentLocationOnAWorkspaceSubdomain } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspaceSubdomain';
+import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/hooks/useReadWorkspaceSubdomainFromCurrentLocation';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
+import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
+import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
   const setCurrentUser = useSetRecoilState(currentUserState);
   const setCurrentWorkspaceMember = useSetRecoilState(
     currentWorkspaceMemberState,
+  );
+  const setIsAppWaitingForFreshObjectMetadataState = useSetRecoilState(
+    isAppWaitingForFreshObjectMetadataState,
   );
   const setCurrentWorkspaceMembers = useSetRecoilState(
     currentWorkspaceMembersState,
@@ -61,6 +66,7 @@ export const useAuth = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
   const setWorkspaces = useSetRecoilState(workspacesState);
+  const { redirect } = useRedirect();
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
@@ -86,7 +92,7 @@ export const useAuth = () => {
         const emptySnapshot = snapshot_UNSTABLE();
         const iconsValue = snapshot.getLoadable(iconsState).getValue();
         const authProvidersValue = snapshot
-          .getLoadable(authProvidersState)
+          .getLoadable(workspaceAuthProvidersState)
           .getValue();
         const billing = snapshot.getLoadable(billingState).getValue();
         const isDeveloperDefaultSignInPrefilled = snapshot
@@ -111,7 +117,7 @@ export const useAuth = () => {
           .getValue();
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
-          set(authProvidersState, authProvidersValue);
+          set(workspaceAuthProvidersState, authProvidersValue);
           set(billingState, billing);
           set(
             isDeveloperDefaultSignInPrefilledState,
@@ -240,6 +246,7 @@ export const useAuth = () => {
 
         setWorkspaces(validWorkspaces);
       }
+      setIsAppWaitingForFreshObjectMetadataState(true);
 
       return {
         user,
@@ -254,6 +261,7 @@ export const useAuth = () => {
       setCurrentUser,
       setCurrentWorkspace,
       isOnAWorkspaceSubdomain,
+      setIsAppWaitingForFreshObjectMetadataState,
       setCurrentWorkspaceMembers,
       setCurrentWorkspaceMember,
       setDateTimeFormat,
@@ -361,9 +369,9 @@ export const useAuth = () => {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
     }) => {
-      window.location.href = buildRedirectUrl('/auth/google', params);
+      redirect(buildRedirectUrl('/auth/google', params));
     },
-    [buildRedirectUrl],
+    [buildRedirectUrl, redirect],
   );
 
   const handleMicrosoftLogin = useCallback(
@@ -371,9 +379,9 @@ export const useAuth = () => {
       workspacePersonalInviteToken?: string;
       workspaceInviteHash?: string;
     }) => {
-      window.location.href = buildRedirectUrl('/auth/microsoft', params);
+      redirect(buildRedirectUrl('/auth/microsoft', params));
     },
-    [buildRedirectUrl],
+    [buildRedirectUrl, redirect],
   );
 
   return {

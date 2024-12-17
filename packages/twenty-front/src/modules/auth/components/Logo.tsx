@@ -1,5 +1,8 @@
 import styled from '@emotion/styled';
-import { getImageAbsoluteURI, isDefined } from 'twenty-ui';
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { getImageAbsoluteURI } from 'twenty-shared';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type LogoProps = {
   primaryLogo?: string | null;
@@ -45,16 +48,21 @@ const StyledPrimaryLogo = styled.div<{ src: string }>`
 export const Logo = (props: LogoProps) => {
   const defaultPrimaryLogoUrl = `${window.location.origin}/icons/android/android-launchericon-192-192.png`;
 
-  const primaryLogoUrl = getImageAbsoluteURI(
-    props.primaryLogo ?? defaultPrimaryLogoUrl,
-  );
-  const secondaryLogoUrl = isDefined(props.secondaryLogo)
-    ? getImageAbsoluteURI(props.secondaryLogo)
+  const primaryLogoUrl = getImageAbsoluteURI({
+    imageUrl: props.primaryLogo ?? defaultPrimaryLogoUrl,
+    baseUrl: REACT_APP_SERVER_BASE_URL,
+  });
+
+  const secondaryLogoUrl = isNonEmptyString(props.secondaryLogo)
+    ? getImageAbsoluteURI({
+        imageUrl: props.secondaryLogo,
+        baseUrl: REACT_APP_SERVER_BASE_URL,
+      })
     : null;
 
   return (
     <StyledContainer>
-      <StyledPrimaryLogo src={primaryLogoUrl} />
+      <StyledPrimaryLogo src={primaryLogoUrl ?? ''} />
       {secondaryLogoUrl && (
         <StyledSecondaryLogoContainer>
           <StyledSecondaryLogo src={secondaryLogoUrl} />

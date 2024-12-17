@@ -10,7 +10,7 @@ export class LoginPage {
   private readonly forgotPasswordButton: Locator;
   private readonly passwordField: Locator;
   private readonly revealPasswordButton: Locator;
-  private readonly signInButton: Locator;
+  readonly signInButton: Locator;
   private readonly signUpButton: Locator;
   private readonly previewImageButton: Locator;
   private readonly uploadImageButton: Locator;

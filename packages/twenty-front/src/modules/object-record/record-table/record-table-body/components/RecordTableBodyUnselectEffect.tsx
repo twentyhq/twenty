@@ -1,6 +1,7 @@
 import { Key } from 'ts-key-enum';
 
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
@@ -9,13 +10,13 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 
 type RecordTableBodyUnselectEffectProps = {
   tableBodyRef: React.RefObject<HTMLDivElement>;
-  recordTableId: string;
 };
 
 export const RecordTableBodyUnselectEffect = ({
   tableBodyRef,
-  recordTableId,
 }: RecordTableBodyUnselectEffectProps) => {
+  const { recordTableId } = useRecordTableContextOrThrow();
+
   const leaveTableFocus = useLeaveTableFocus(recordTableId);
 
   const { resetTableRowSelection, useMapKeyboardToSoftFocus } = useRecordTable({

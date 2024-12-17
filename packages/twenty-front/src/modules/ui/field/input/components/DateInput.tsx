@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRef, useState } from 'react';
 import { Nullable } from 'twenty-ui';
 
 import {
@@ -10,8 +9,9 @@ import {
 } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useRef, useState } from 'react';
 
-const StyledCalendarContainer = styled.div`
+export const StyledCalendarContainer = styled.div`
   background: ${({ theme }) => theme.background.transparent.secondary};
   backdrop-filter: ${({ theme }) => theme.blur.medium};
   border: 1px solid ${({ theme }) => theme.border.color.light};
@@ -32,6 +32,7 @@ export type DateInputProps = {
   isDateTimeInput?: boolean;
   onClear?: () => void;
   onSubmit?: (newDate: Nullable<Date>) => void;
+  hideHeaderInput?: boolean;
 };
 
 export const DateInput = ({
@@ -44,6 +45,7 @@ export const DateInput = ({
   isDateTimeInput,
   onClear,
   onSubmit,
+  hideHeaderInput,
 }: DateInputProps) => {
   const [internalValue, setInternalValue] = useState(value);
 
@@ -97,6 +99,7 @@ export const DateInput = ({
           onEnter={onEnter}
           onEscape={onEscape}
           onClear={handleClear}
+          hideHeaderInput={hideHeaderInput}
         />
       </StyledCalendarContainer>
     </div>

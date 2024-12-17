@@ -4,13 +4,11 @@ import { Command } from 'nest-commander';
 import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
+import { BaseCommandOptions } from 'src/database/commands/base.command';
 import { PhoneCallingCodeCommand } from 'src/database/commands/upgrade-version/0-40/0-40-phone-calling-code.command';
+import { RecordPositionBackfillCommand } from 'src/database/commands/upgrade-version/0-40/0-40-record-position-backfill.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
-
-interface UpdateTo0_40CommandOptions {
-  workspaceId?: string;
-}
 
 @Command({
   name: 'upgrade-0.40',
@@ -22,13 +20,14 @@ export class UpgradeTo0_40Command extends ActiveWorkspacesCommandRunner {
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
     private readonly phoneCallingCodeCommand: PhoneCallingCodeCommand,
+    private readonly recordPositionBackfillCommand: RecordPositionBackfillCommand,
   ) {
     super(workspaceRepository);
   }
 
   async executeActiveWorkspacesCommand(
     passedParam: string[],
-    options: UpdateTo0_40CommandOptions,
+    options: BaseCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(
@@ -41,13 +40,19 @@ export class UpgradeTo0_40Command extends ActiveWorkspacesCommandRunner {
       workspaceIds,
     );
 
-    // await this.syncWorkspaceMetadataCommand.executeActiveWorkspacesCommand(
-    //   passedParam,
-    //   {
-    //     ...options,
-    //     force: true,
-    //   },
-    //   workspaceIds,
-    // );
+    await this.recordPositionBackfillCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
+
+    await this.syncWorkspaceMetadataCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      {
+        ...options,
+        force: true,
+      },
+      workspaceIds,
+    );
   }
 }

@@ -3,9 +3,9 @@ import { useCallback, useMemo, useState } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { IconPlus, LightIconButton } from 'twenty-ui';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-metadata/utils/isObjectMetadataReadOnly';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useCreateNewTableRecord } from '@/object-record/record-table/hooks/useCreateNewTableRecords';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
@@ -95,16 +95,14 @@ const StyledHeaderIcon = styled.div`
   margin: ${({ theme }) => theme.spacing(1, 1, 1, 1.5)};
 `;
 
+type RecordTableHeaderCellProps = {
+  column: ColumnDefinition<FieldMetadata>;
+};
+
 export const RecordTableHeaderCell = ({
   column,
-  objectNameSingular,
-}: {
-  column: ColumnDefinition<FieldMetadata>;
-  objectNameSingular: string;
-}) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+}: RecordTableHeaderCellProps) => {
+  const { recordTableId, objectMetadataItem } = useRecordTableContextOrThrow();
 
   const resizeFieldOffsetState = useRecoilComponentCallbackStateV2(
     resizeFieldOffsetComponentState,
@@ -199,7 +197,7 @@ export const RecordTableHeaderCell = ({
   const disableColumnResize =
     column.isLabelIdentifier && isMobile && !isRecordTableScrolledLeft;
 
-  const { createNewTableRecord } = useCreateNewTableRecord();
+  const { createNewTableRecord } = useCreateNewTableRecord(recordTableId);
 
   const handlePlusButtonClick = () => {
     createNewTableRecord();

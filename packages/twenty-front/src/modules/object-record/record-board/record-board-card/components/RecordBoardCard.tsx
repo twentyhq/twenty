@@ -15,6 +15,7 @@ import {
 } from '@/object-record/record-field/contexts/FieldContext';
 import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 import { RecordIdentifierChip } from '@/object-record/record-index/components/RecordIndexRecordChip';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { RecordInlineCellEditMode } from '@/object-record/record-inline-cell/components/RecordInlineCellEditMode';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
@@ -187,6 +188,7 @@ export const RecordBoardCard = ({
     );
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
+  const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
 
   const recordBoardId = useAvailableScopeIdOrThrow(
     RecordBoardScopeInternalContext,
@@ -308,6 +310,7 @@ export const RecordBoardCard = ({
                 record={record as ObjectRecord}
                 variant={AvatarChipVariant.Transparent}
                 maxWidth={150}
+                to={indexIdentifierUrl(recordId)}
               />
             )}
 

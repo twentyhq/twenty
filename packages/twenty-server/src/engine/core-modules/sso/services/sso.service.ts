@@ -25,7 +25,6 @@ import {
   OIDCResponseType,
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
-import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Injectable()
 export class SSOService {
@@ -35,8 +34,6 @@ export class SSOService {
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectRepository(WorkspaceSSOIdentityProvider, 'core')
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
-    @InjectRepository(User, 'core')
-    private readonly userRepository: Repository<User>,
     private readonly environmentService: EnvironmentService,
     private readonly billingService: BillingService,
   ) {}
