@@ -1,4 +1,3 @@
-import styled from '@emotion/styled';
 import { isNull } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
@@ -31,12 +30,6 @@ import { ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect } from '
 import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
 import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
-
-const StyledSelectContainer = styled.div`
-  position: absolute;
-  left: 0;
-  top: 0;
-`;
 
 type ActivityTargetInlineCellEditModeProps = {
   activity: Task | Note;
@@ -282,7 +275,7 @@ export const ActivityTargetInlineCellEditMode = ({
   );
 
   return (
-    <StyledSelectContainer>
+    <>
       <RecordPickerComponentInstanceContext.Provider
         value={{ instanceId: recordPickerInstanceId }}
       >
@@ -295,6 +288,6 @@ export const ActivityTargetInlineCellEditMode = ({
         <ActivityTargetInlineCellEditModeMultiRecordsSearchFilterEffect />
         <MultiRecordSelect onSubmit={handleSubmit} onChange={handleChange} />
       </RecordPickerComponentInstanceContext.Provider>
-    </StyledSelectContainer>
+    </>
   );
 };

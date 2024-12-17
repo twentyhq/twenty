@@ -76,7 +76,6 @@ export const ViewPickerContentEditMode = () => {
           <IconPicker
             onChange={onIconChange}
             selectedIconKey={viewPickerSelectedIcon}
-            disableBlur
             onClose={() => setHotkeyScope(ViewsHotkeyScope.ListDropdown)}
           />
           <TextInputV2

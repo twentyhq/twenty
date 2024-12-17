@@ -32,7 +32,6 @@ export type SelectProps<Value extends SelectValue> = {
   className?: string;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
-  disableBlur?: boolean;
   dropdownId: string;
   dropdownWidth?: `${string}px` | 'auto' | number;
   dropdownWidthAuto?: boolean;
@@ -63,7 +62,6 @@ export const Select = <Value extends SelectValue>({
   className,
   disabled: disabledFromProps,
   selectSizeVariant,
-  disableBlur = false,
   dropdownId,
   dropdownWidth = 176,
   dropdownWidthAuto = false,
@@ -135,7 +133,6 @@ export const Select = <Value extends SelectValue>({
               selectSizeVariant={selectSizeVariant}
             />
           }
-          disableBlur={disableBlur}
           dropdownComponents={
             <>
               {!!withSearchInput && (

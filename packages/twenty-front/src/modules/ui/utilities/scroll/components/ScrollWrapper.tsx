@@ -17,7 +17,7 @@ import 'overlayscrollbars/overlayscrollbars.css';
 
 const StyledScrollWrapper = styled.div<{ scrollHide?: boolean }>`
   display: flex;
-  height: 100%;
+  height: fit-content;
   width: 100%;
 
   .os-scrollbar-handle {

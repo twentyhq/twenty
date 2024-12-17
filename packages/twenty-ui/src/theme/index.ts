@@ -25,7 +25,6 @@ export * from './constants/MainColorNames';
 export * from './constants/MainColors';
 export * from './constants/MobileViewport';
 export * from './constants/Modal';
-export * from './constants/OverlayBackground';
 export * from './constants/Rgba';
 export * from './constants/SecondaryColors';
 export * from './constants/SnackBarCommon';

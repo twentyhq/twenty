@@ -9,6 +9,7 @@ import { SelectOption } from '@/spreadsheet-import/types';
 import { SelectDisplay } from '@/ui/field/display/components/SelectDisplay';
 import { SelectInput } from '@/ui/field/input/components/SelectInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -238,19 +239,21 @@ export const FormSelectFieldInput = ({
         <StyledSelectInputContainer>
           {draftValue.type === 'static' &&
             draftValue.editingMode === 'edit' && (
-              <SelectInput
-                selectableListId={SINGLE_RECORD_SELECT_BASE_LIST}
-                selectableItemIdArray={optionIds}
-                hotkeyScope={hotkeyScope}
-                onEnter={handleSelectEnter}
-                onOptionSelected={handleSubmit}
-                options={options}
-                onCancel={onCancel}
-                defaultOption={selectedOption}
-                onFilterChange={setFilteredOptions}
-                onClear={handleClearField}
-                clearLabel={clearLabel}
-              />
+              <OverlayContainer>
+                <SelectInput
+                  selectableListId={SINGLE_RECORD_SELECT_BASE_LIST}
+                  selectableItemIdArray={optionIds}
+                  hotkeyScope={hotkeyScope}
+                  onEnter={handleSelectEnter}
+                  onOptionSelected={handleSubmit}
+                  options={options}
+                  onCancel={onCancel}
+                  defaultOption={selectedOption}
+                  onFilterChange={setFilteredOptions}
+                  onClear={handleClearField}
+                  clearLabel={clearLabel}
+                />
+              </OverlayContainer>
             )}
         </StyledSelectInputContainer>
 
