@@ -22,7 +22,6 @@ export const SingleRecordSelect = ({
   onCreate,
   onRecordSelected,
   objectNameSingular,
-  recordPickerInstanceId,
   selectedRecordIds,
   width = 200,
 }: SingleRecordSelectProps) => {
@@ -60,7 +59,6 @@ export const SingleRecordSelect = ({
           onCreate,
           onRecordSelected,
           objectNameSingular,
-          recordPickerInstanceId,
           selectedRecordIds,
         }}
       />

@@ -4,6 +4,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useAddNewCard } from '@/object-record/record-board/record-board-column/hooks/useAddNewCard';
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
 import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
+import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
 import { useRecoilValue } from 'recoil';
 
 const StyledCompanyPickerContainer = styled.div`
@@ -37,16 +38,20 @@ export const RecordBoardColumnNewOpportunity = ({
     <>
       {newRecord.isCreating && newRecord.position === position && (
         <StyledCompanyPickerContainer>
-          <SingleRecordSelect
-            disableBackgroundBlur
-            onCancel={() => handleCreateSuccess(position, columnId, false)}
-            onRecordSelected={(company) =>
-              company ? handleEntitySelect(position, company) : null
-            }
-            objectNameSingular={CoreObjectNameSingular.Company}
-            recordPickerInstanceId="relation-picker"
-            selectedRecordIds={[]}
-          />
+          <RecordPickerComponentInstanceContext.Provider
+            value={{ instanceId: 'relation-picker' }}
+          >
+            <SingleRecordSelect
+              disableBackgroundBlur
+              onCancel={() => handleCreateSuccess(position, columnId, false)}
+              onRecordSelected={(company) =>
+                company ? handleEntitySelect(position, company) : null
+              }
+              objectNameSingular={CoreObjectNameSingular.Company}
+              recordPickerInstanceId="relation-picker"
+              selectedRecordIds={[]}
+            />
+          </RecordPickerComponentInstanceContext.Provider>
         </StyledCompanyPickerContainer>
       )}
     </>
