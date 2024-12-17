@@ -86,7 +86,7 @@ const evalFromContext = (input: string, context: Record<string, unknown>) => {
 
     const inferredInput = Handlebars.compile(inputWithHelper)(context, {
       helpers: {
-        json: (toto: string) => JSON.stringify(toto),
+        json: (input: string) => JSON.stringify(input),
       },
     });
 

@@ -144,7 +144,7 @@ export const FormMultiSelectFieldInput = ({
       editingMode: 'view',
     });
 
-    onPersist(null);
+    onPersist([]);
   };
 
   const selectedNames =
