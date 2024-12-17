@@ -60,8 +60,6 @@ const bootstrap = async () => {
     new ValidationPipe({
       transform: true,
       exceptionFactory: (validationErrors: ValidationErrorType[] = []) => {
-        console.log('>>>>>>>>>>>>>>', validationErrors);
-
         return new ValidationError(
           validationErrors.reduce(
             (acc, validationError) =>
@@ -72,12 +70,6 @@ const bootstrap = async () => {
             '',
           ),
         );
-        // return new BadRequestException(
-        //   validationErrors.map((error) => ({
-        //     field: error.property,
-        //     error: Object.values(error.constraints).join(', '),
-        //   })),
-        // );
       },
     }),
   );
