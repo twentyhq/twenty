@@ -21,7 +21,7 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 @Unique('IndexOnWorkspaceIdAndStripeCustomerIdUnique', [
   'workspaceId',
   'stripeCustomerId',
-])
+]) //overkill?
 export class BillingCustomer {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -36,7 +36,7 @@ export class BillingCustomer {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @Column({ nullable: false, type: 'uuid' })
+  @Column({ nullable: false, type: 'uuid', unique: true })
   workspaceId: string;
 
   @Column({ nullable: false, unique: true })
