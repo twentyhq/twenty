@@ -28,8 +28,8 @@ export const RecordTableCellEditMode = ({
     middleware: [
       flip(),
       offset({
-        mainAxis: -31,
-        crossAxis: -2,
+        mainAxis: -33,
+        crossAxis: -3,
       }),
     ],
     whileElementsMounted: autoUpdate,
