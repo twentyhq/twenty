@@ -41,7 +41,7 @@ const StyledNoKanbanFieldAvailableContainer = styled.div`
 `;
 
 export const ViewPickerContentCreateMode = () => {
-  const { setViewPickerMode } = useViewPickerMode();
+  const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
   const [hasManuallySelectedIcon, setHasManuallySelectedIcon] = useState(false);
 
   const [viewPickerInputName, setViewPickerInputName] =
@@ -92,13 +92,11 @@ export const ViewPickerContentCreateMode = () => {
   const defaultIcon =
     viewPickerType === ViewType.Kanban ? 'IconLayoutKanban' : 'IconTable';
 
-  if (!hasManuallySelectedIcon) {
-    setViewPickerSelectedIcon(defaultIcon);
-  }
-
   const selectedIcon = hasManuallySelectedIcon
     ? viewPickerSelectedIcon
-    : defaultIcon;
+    : viewPickerMode === 'create-from-current'
+      ? viewPickerSelectedIcon || defaultIcon
+      : defaultIcon;
 
   const onIconChange = ({ iconKey }: { iconKey: string }) => {
     setViewPickerIsDirty(true);
