@@ -1,5 +1,6 @@
 import { encodeCursor } from '@/apollo/utils/encodeCursor';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { Buffer } from 'buffer';
 
 describe('encodeCursor', () => {
   it('should create a cursor with id only', () => {
