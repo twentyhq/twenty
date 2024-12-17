@@ -1,7 +1,6 @@
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { workflowCreateStepFromParentStepIdState } from '@/workflow/states/workflowCreateStepFromParentStepIdState';
-import { workflowDiagramTriggerNodeSelectionState } from '@/workflow/states/workflowDiagramTriggerNodeSelectionState';
 import { workflowSelectedNodeState } from '@/workflow/states/workflowSelectedNodeState';
 import {
   WorkflowStepType,
@@ -23,10 +22,6 @@ export const useCreateStep = ({
 
   const workflowCreateStepFromParentStepId = useRecoilValue(
     workflowCreateStepFromParentStepIdState,
-  );
-
-  const setWorkflowDiagramTriggerNodeSelection = useSetRecoilState(
-    workflowDiagramTriggerNodeSelectionState,
   );
 
   const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
@@ -51,15 +46,6 @@ export const useCreateStep = ({
 
     setWorkflowSelectedNode(createdStep.id);
     openRightDrawer(RightDrawerPages.WorkflowStepEdit);
-
-    /**
-     * After the step has been created, select it.
-     * As the `insertNodeAndSave` function mutates the cached workflow before resolving,
-     * we are sure that the new node will have been created at this stage.
-     *
-     * Selecting the node will cause a right drawer to open in order to edit the step.
-     */
-    setWorkflowDiagramTriggerNodeSelection(createdStep.id);
   };
 
   return {

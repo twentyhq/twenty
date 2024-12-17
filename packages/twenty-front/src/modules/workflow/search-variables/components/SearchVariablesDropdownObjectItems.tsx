@@ -60,6 +60,10 @@ export const SearchVariablesDropdownObjectItems = ({
   const getDisplayedSubStepObject = () => {
     const currentSubStep = getCurrentSubStep();
 
+    if (!isRecordOutputSchema(currentSubStep)) {
+      return;
+    }
+
     return currentSubStep.object;
   };
 

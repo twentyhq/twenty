@@ -81,6 +81,15 @@ export class WorkflowVersionStepWorkspaceService {
           valid: false,
           settings: {
             ...BASE_STEP_DEFINITION,
+            outputSchema: {
+              link: {
+                isLeaf: true,
+                icon: 'IconVariable',
+                tab: 'test',
+                label: 'Generate Function Input',
+              },
+              _outputSchemaType: 'LINK',
+            },
             input: {
               serverlessFunctionId: newServerlessFunction.id,
               serverlessFunctionVersion: 'draft',
