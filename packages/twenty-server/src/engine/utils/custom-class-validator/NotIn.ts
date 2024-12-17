@@ -32,8 +32,10 @@ export class NotInConstraint implements ValidatorConstraintInterface {
     return true;
   }
 
-  defaultMessage() {
-    return `${Array.from(this.expressionsList).join(', ')} are not allowed`;
+  defaultMessage(validationArguments: ValidationArguments) {
+    const userInput = validationArguments.value;
+
+    return `"${userInput}" is not allowed`;
   }
 }
 

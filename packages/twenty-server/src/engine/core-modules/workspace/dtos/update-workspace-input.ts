@@ -14,7 +14,7 @@ export class UpdateWorkspaceInput {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  @Matches(/^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/)
+  @Matches(/^(?!api-).*^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/)
   @NotIn([
     'demo',
     'api',
@@ -98,7 +98,6 @@ export class UpdateWorkspaceInput {
     'asia',
     'africa',
     'america',
-    /api-(.*?)+/,
   ])
   subdomain?: string;
 

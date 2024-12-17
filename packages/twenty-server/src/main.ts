@@ -1,4 +1,7 @@
-import { ValidationError, ValidationPipe } from '@nestjs/common';
+import {
+  ValidationError as ValidationErrorType,
+  ValidationPipe,
+} from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
@@ -19,6 +22,8 @@ import './instrument';
 
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
+
+import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 const bootstrap = async () => {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -54,8 +59,19 @@ const bootstrap = async () => {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      exceptionFactory: (validationErrors: ValidationError[] = []) => {
+      exceptionFactory: (validationErrors: ValidationErrorType[] = []) => {
         console.log('>>>>>>>>>>>>>>', validationErrors);
+
+        return new ValidationError(
+          validationErrors.reduce(
+            (acc, validationError) =>
+              Object.values(validationError.constraints ?? {}).reduce(
+                (accC, message) => `${accC}\n${message}`,
+                acc,
+              ),
+            '',
+          ),
+        );
         // return new BadRequestException(
         //   validationErrors.map((error) => ({
         //     field: error.property,

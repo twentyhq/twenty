@@ -101,7 +101,8 @@ export const SettingsDomain = () => {
     } catch (error) {
       if (
         error instanceof Error &&
-        error.message === 'Subdomain already taken'
+        (error.message === 'Subdomain already taken' ||
+          error.message.endsWith('not allowed'))
       ) {
         control.setError('subdomain', {
           type: 'manual',

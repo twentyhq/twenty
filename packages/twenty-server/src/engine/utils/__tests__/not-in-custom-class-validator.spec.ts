@@ -17,7 +17,7 @@ describe('NotInConstraint', () => {
 
     expect(errors.length).toBeGreaterThan(0);
     expect(errors[0].constraints).toEqual({
-      NotInConstraint: 'forbidden, restricted are not allowed',
+      NotInConstraint: '"Forbidden" is not allowed',
     });
   });
 
@@ -35,7 +35,7 @@ describe('NotInConstraint', () => {
 
     expect(errors.length).toBeGreaterThan(0);
     expect(errors[0].constraints).toEqual({
-      NotInConstraint: 'forbidden, restricted, /api-(.*?)+/ are not allowed',
+      NotInConstraint: '"api-unauthorized" is not allowed',
     });
   });
 
