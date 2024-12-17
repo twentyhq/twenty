@@ -31,6 +31,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 import { isDefined } from 'src/utils/is-defined';
 
 const callingCodeToCountryCode = (callingCode: string): string => {
+  if (!callingCode) return '';
   let callingCodeWithoutPlus = callingCode;
 
   if (callingCode.startsWith('+')) {
@@ -103,7 +104,8 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
 
     console.log(
       `   Note : other consequesnces to check : zapier @martin + REST api @martin
-          Note : other consequesnces to check : timeline activities @coco
+          Note : other consequesnces to check : timeline activities @coco : ✅
+          Note : test with cutom object (not cutom field)
     `,
     );
     // ---------------------------------FieldMetada-----------------------------------------------------------
@@ -129,106 +131,106 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
         `P1 Step 1 - let's find all the fieldsMetadata that have the PHONES type, and extract the objectMetadataId`,
       );
 
-      const phonesFieldMetadata = await this.fieldMetadataRepository.find({
-        where: {
-          workspaceId,
-          type: FieldMetadataType.PHONES,
-        },
-      });
-
-      for (const phoneFieldMetadata of phonesFieldMetadata) {
-        if (
-          isDefined(phoneFieldMetadata) &&
-          isDefined(phoneFieldMetadata.name)
-        ) {
-          const [objectMetadata] = await this.objectMetadataRepository.find({
-            where: {
-              id: phoneFieldMetadata?.objectMetadataId,
-            },
-          });
-
-          this.logger.log(
-            `P1 Step 1 - Let's find the "nameSingular" of this objectMetadata: ${objectMetadata.nameSingular || 'not found'}`,
-          );
-
-          if (!objectMetadata || !objectMetadata.nameSingular) break;
-
-          this.logger.log(
-            `P1 Step 1 - Create migration for field ${phoneFieldMetadata.name}`,
-          );
-
-          await this.workspaceMigrationService.createCustomMigration(
-            generateMigrationName(
-              `create-${objectMetadata.nameSingular}PrimaryPhoneCallingCode-for-field-${phoneFieldMetadata.name}`,
-            ),
+      try {
+        const phonesFieldMetadata = await this.fieldMetadataRepository.find({
+          where: {
             workspaceId,
-            [
-              {
-                name: computeObjectTargetTable(objectMetadata),
-                action: WorkspaceMigrationTableActionType.ALTER,
-                columns: this.workspaceMigrationFactory.createColumnActions(
-                  WorkspaceMigrationColumnActionType.CREATE,
-                  {
-                    id: v4(),
-                    type: FieldMetadataType.TEXT,
-                    name: `${phoneFieldMetadata.name}PrimaryPhoneCallingCode`,
-                    label: `${phoneFieldMetadata.name}PrimaryPhoneCallingCode`,
-                    objectMetadataId: objectMetadata.id,
-                    workspaceId: workspaceId,
-                    isNullable: true,
-                    defaultValue: "''",
-                  },
-                ),
-              } satisfies WorkspaceMigrationTableAction,
-            ],
-          );
-        }
-      }
+            type: FieldMetadataType.PHONES,
+          },
+        });
 
-      this.logger.log(
-        `P1 Step 1 - RUN migration to create callingCodes for ${workspaceId.slice(0, 5)}`,
-      );
-      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-        workspaceId,
-      );
+        for (const phoneFieldMetadata of phonesFieldMetadata) {
+          if (
+            isDefined(phoneFieldMetadata) &&
+            isDefined(phoneFieldMetadata.name)
+          ) {
+            const [objectMetadata] = await this.objectMetadataRepository.find({
+              where: {
+                id: phoneFieldMetadata?.objectMetadataId,
+              },
+            });
 
-      await this.workspaceMetadataVersionService.incrementMetadataVersion(
-        workspaceId,
-      );
-
-      this.logger.log(
-        `P1 Step 2 - Migrations for callingCode must be first. Now can use twentyORMGlobalManager to update countryCode`,
-      );
-
-      this.logger.log(
-        `P1 Step 3 (same time) - update CountryCode to letters: +33 => FR || +1 => US (if mulitple, first one)`,
-      );
-
-      this.logger.log(
-        `P1 Step 4 (same time) - update all additioanl phones to add a country code following the same logic`,
-      );
-
-      for (const phoneFieldMetadata of phonesFieldMetadata) {
-        this.logger.log(`P1 Step 2 - for ${phoneFieldMetadata.name}`);
-        if (
-          isDefined(phoneFieldMetadata) &&
-          isDefined(phoneFieldMetadata.name)
-        ) {
-          const [objectMetadata] = await this.objectMetadataRepository.find({
-            where: {
-              id: phoneFieldMetadata?.objectMetadataId,
-            },
-          });
-
-          const repository =
-            await this.twentyORMGlobalManager.getRepositoryForWorkspace(
-              workspaceId,
-              objectMetadata.nameSingular,
+            this.logger.log(
+              `P1 Step 1 - Let's find the "nameSingular" of this objectMetadata: ${objectMetadata.nameSingular || 'not found'}`,
             );
-          const records = await repository.find();
 
-          await Promise.all(
-            records.map(async (record) => {
+            if (!objectMetadata || !objectMetadata.nameSingular) break;
+
+            this.logger.log(
+              `P1 Step 1 - Create migration for field ${phoneFieldMetadata.name}`,
+            );
+
+            await this.workspaceMigrationService.createCustomMigration(
+              generateMigrationName(
+                `create-${objectMetadata.nameSingular}PrimaryPhoneCallingCode-for-field-${phoneFieldMetadata.name}`,
+              ),
+              workspaceId,
+              [
+                {
+                  name: computeObjectTargetTable(objectMetadata),
+                  action: WorkspaceMigrationTableActionType.ALTER,
+                  columns: this.workspaceMigrationFactory.createColumnActions(
+                    WorkspaceMigrationColumnActionType.CREATE,
+                    {
+                      id: v4(),
+                      type: FieldMetadataType.TEXT,
+                      name: `${phoneFieldMetadata.name}PrimaryPhoneCallingCode`,
+                      label: `${phoneFieldMetadata.name}PrimaryPhoneCallingCode`,
+                      objectMetadataId: objectMetadata.id,
+                      workspaceId: workspaceId,
+                      isNullable: true,
+                      defaultValue: "''",
+                    },
+                  ),
+                } satisfies WorkspaceMigrationTableAction,
+              ],
+            );
+          }
+        }
+
+        this.logger.log(
+          `P1 Step 1 - RUN migration to create callingCodes for ${workspaceId.slice(0, 5)}`,
+        );
+        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+          workspaceId,
+        );
+
+        await this.workspaceMetadataVersionService.incrementMetadataVersion(
+          workspaceId,
+        );
+
+        this.logger.log(
+          `P1 Step 2 - Migrations for callingCode must be first. Now can use twentyORMGlobalManager to update countryCode`,
+        );
+
+        this.logger.log(
+          `P1 Step 3 (same time) - update CountryCode to letters: +33 => FR || +1 => US (if mulitple, first one)`,
+        );
+
+        this.logger.log(
+          `P1 Step 4 (same time) - update all additioanl phones to add a country code following the same logic`,
+        );
+
+        for (const phoneFieldMetadata of phonesFieldMetadata) {
+          this.logger.log(`P1 Step 2 - for ${phoneFieldMetadata.name}`);
+          if (
+            isDefined(phoneFieldMetadata) &&
+            isDefined(phoneFieldMetadata.name)
+          ) {
+            const [objectMetadata] = await this.objectMetadataRepository.find({
+              where: {
+                id: phoneFieldMetadata?.objectMetadataId,
+              },
+            });
+
+            const repository =
+              await this.twentyORMGlobalManager.getRepositoryForWorkspace(
+                workspaceId,
+                objectMetadata.nameSingular,
+              );
+            const records = await repository.find();
+
+            for (const record of records) {
               // this.logger.log( `P1 Step 2 - obj.nameSingular: ${objectMetadata.nameSingular} (objId: ${objectMetadata.id}) - record.id: ${record.id} - phoneFieldMetadata.name: ${phoneFieldMetadata.name}` );
               // this.logger.log(
               //   `P1 Step 3 - obj.nameSingular: ${objectMetadata.nameSingular} (objId: ${objectMetadata.id}) - record.id: ${record.id} - fieldMetadata: ${phoneFieldMetadata.name}  - code : ${record[phoneFieldMetadata.name]?.primaryPhoneCountryCode} `,
@@ -266,9 +268,11 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
                     additionalPhones,
                 });
               }
-            }),
-          );
+            }
+          }
         }
+      } catch (error) {
+        throw new Error(`Error in workspace ${workspaceId} : ${error}`);
       }
       workspaceIterator++;
     }
@@ -287,47 +291,51 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
         `P2 Step 1 - let's find all the fieldsMetadata that have the PHONES type, and extract the objectMetadataId`,
       );
 
-      const phonesFieldMetadata = await this.fieldMetadataRepository.find({
-        where: {
-          workspaceId,
-          type: FieldMetadataType.PHONES,
-        },
-      });
-
-      for (const phoneFieldMetadata of phonesFieldMetadata) {
-        if (
-          !isDefined(phoneFieldMetadata) ||
-          !isDefined(phoneFieldMetadata.defaultValue)
-        )
-          continue;
-        let defaultValue = phoneFieldMetadata.defaultValue;
-
-        // some cases look like it's an array. let's flatten it (not sure the case is supposed to happen but I saw it in my local db)
-        if (Array.isArray(defaultValue) && isDefined(defaultValue[0]))
-          defaultValue = phoneFieldMetadata.defaultValue[0];
-
-        if (!isDefined(defaultValue)) continue;
-        if (typeof defaultValue !== 'object') continue;
-        if (!('primaryPhoneCountryCode' in defaultValue)) continue;
-        if (!defaultValue.primaryPhoneCountryCode) continue;
-
-        const primaryPhoneCountryCode = defaultValue.primaryPhoneCountryCode;
-
-        const countryCode = callingCodeToCountryCode(
-          primaryPhoneCountryCode.replace(/["']/g, ''),
-        );
-
-        await this.fieldMetadataRepository.update(phoneFieldMetadata.id, {
-          defaultValue: {
-            ...defaultValue,
-            primaryPhoneCountryCode: countryCode ? `'${countryCode}'` : "''",
-            primaryPhoneCallingCode: isCallingCode(
-              primaryPhoneCountryCode.replace(/["']/g, ''),
-            )
-              ? primaryPhoneCountryCode
-              : "''",
+      try {
+        const phonesFieldMetadata = await this.fieldMetadataRepository.find({
+          where: {
+            workspaceId,
+            type: FieldMetadataType.PHONES,
           },
         });
+
+        for (const phoneFieldMetadata of phonesFieldMetadata) {
+          if (
+            !isDefined(phoneFieldMetadata) ||
+            !isDefined(phoneFieldMetadata.defaultValue)
+          )
+            continue;
+          let defaultValue = phoneFieldMetadata.defaultValue;
+
+          // some cases look like it's an array. let's flatten it (not sure the case is supposed to happen but I saw it in my local db)
+          if (Array.isArray(defaultValue) && isDefined(defaultValue[0]))
+            defaultValue = phoneFieldMetadata.defaultValue[0];
+
+          if (!isDefined(defaultValue)) continue;
+          if (typeof defaultValue !== 'object') continue;
+          if (!('primaryPhoneCountryCode' in defaultValue)) continue;
+          if (!defaultValue.primaryPhoneCountryCode) continue;
+
+          const primaryPhoneCountryCode = defaultValue.primaryPhoneCountryCode;
+
+          const countryCode = callingCodeToCountryCode(
+            primaryPhoneCountryCode.replace(/["']/g, ''),
+          );
+
+          await this.fieldMetadataRepository.update(phoneFieldMetadata.id, {
+            defaultValue: {
+              ...defaultValue,
+              primaryPhoneCountryCode: countryCode ? `'${countryCode}'` : "''",
+              primaryPhoneCallingCode: isCallingCode(
+                primaryPhoneCountryCode.replace(/["']/g, ''),
+              )
+                ? primaryPhoneCountryCode
+                : "''",
+            },
+          });
+        }
+      } catch (error) {
+        throw new Error(`Error in workspace ${workspaceId} : ${error}`);
       }
       workspaceIterator++;
     }
