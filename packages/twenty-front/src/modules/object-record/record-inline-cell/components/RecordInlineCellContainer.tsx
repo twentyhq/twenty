@@ -1,9 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { ReactElement, useContext } from 'react';
+import { useContext } from 'react';
 import {
   AppTooltip,
-  IconComponent,
   OverflowingTextWithTooltip,
   TooltipDelay,
 } from 'twenty-ui';
@@ -12,8 +11,10 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordInlineCellValue } from '@/object-record/record-inline-cell/components/RecordInlineCellValue';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
-import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
+import { assertFieldMetadata } from '@/object-record/record-field/types/guards/assertFieldMetadata';
+import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useRecordInlineCellContext } from './RecordInlineCellContext';
 
 const StyledIconContainer = styled.div`
@@ -36,6 +37,8 @@ const StyledLabelAndIconContainer = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+  height: 18px;
+  padding-top: 3px;
 `;
 
 const StyledValueContainer = styled.div`
@@ -51,12 +54,16 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   width: ${({ width }) => width}px;
 `;
 
-const StyledInlineCellBaseContainer = styled.div`
-  align-items: center;
+const StyledInlineCellBaseContainer = styled.div<{
+  isDisplayModeFixHeight?: boolean;
+}>`
+  align-items: flex-start;
   box-sizing: border-box;
   width: 100%;
   display: flex;
-  height: 24px;
+  height: fit-content;
+  line-height: ${({ isDisplayModeFixHeight }) =>
+    isDisplayModeFixHeight ? `24px` : `18px`};
   gap: ${({ theme }) => theme.spacing(1)};
   user-select: none;
   justify-content: center;
@@ -66,27 +73,21 @@ export const StyledSkeletonDiv = styled.div`
   height: 24px;
 `;
 
-export type RecordInlineCellContainerProps = {
-  readonly?: boolean;
-  IconLabel?: IconComponent;
-  label?: string;
-  labelWidth?: number;
-  showLabel?: boolean;
-  buttonIcon?: IconComponent;
-  editModeContent?: ReactElement;
-  editModeContentOnly?: boolean;
-  displayModeContent: ReactElement;
-  customEditHotkeyScope?: HotkeyScope;
-  isDisplayModeFixHeight?: boolean;
-  disableHoverEffect?: boolean;
-  loading?: boolean;
-};
-
 export const RecordInlineCellContainer = () => {
-  const { readonly, IconLabel, label, labelWidth, showLabel } =
-    useRecordInlineCellContext();
+  const {
+    readonly,
+    IconLabel,
+    label,
+    labelWidth,
+    showLabel,
+    isDisplayModeFixHeight,
+  } = useRecordInlineCellContext();
 
   const { recordId, fieldDefinition } = useContext(FieldContext);
+
+  if (isFieldText(fieldDefinition)) {
+    assertFieldMetadata(FieldMetadataType.Text, isFieldText, fieldDefinition);
+  }
 
   const { setIsFocused } = useFieldFocus();
 
@@ -110,6 +111,7 @@ export const RecordInlineCellContainer = () => {
 
   return (
     <StyledInlineCellBaseContainer
+      isDisplayModeFixHeight={isDisplayModeFixHeight}
       onMouseEnter={handleContainerMouseEnter}
       onMouseLeave={handleContainerMouseLeave}
     >
@@ -122,7 +124,7 @@ export const RecordInlineCellContainer = () => {
           )}
           {showLabel && label && (
             <StyledLabelContainer width={labelWidth}>
-              <OverflowingTextWithTooltip text={label} />
+              <OverflowingTextWithTooltip text={label} displayedMaxRows={1} />
             </StyledLabelContainer>
           )}
           {/* TODO: Displaying Tooltips on the board is causing performance issues https://react-tooltip.com/docs/examples/render */}

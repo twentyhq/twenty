@@ -5,7 +5,7 @@ import {
   CardContent,
   CardFooter,
   IconPlus,
-  IconTool,
+  IconPoint,
   LightButton,
   MAIN_COLORS,
 } from 'twenty-ui';
@@ -28,9 +28,8 @@ import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
-import { EXPANDED_WIDTH_ANIMATION_VARIANTS } from '@/settings/constants/ExpandedWidthAnimationVariants';
+import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { AnimatePresence, motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
@@ -105,7 +104,7 @@ const StyledIconContainer = styled.div`
   margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
-const StyledIconTool = styled(IconTool)`
+const StyledIconPoint = styled(IconPoint)`
   margin-right: ${({ theme }) => theme.spacing(0.5)};
 `;
 
@@ -251,26 +250,18 @@ export const SettingsDataModelFieldSelectForm = ({
           <>
             <StyledContainer>
               <StyledLabelContainer>
-                <AnimatePresence>
-                  {isAdvancedModeEnabled && (
-                    <motion.div
-                      initial="initial"
-                      animate="animate"
-                      exit="exit"
-                      variants={EXPANDED_WIDTH_ANIMATION_VARIANTS}
-                    >
-                      <StyledApiKeyContainer>
-                        <StyledIconContainer>
-                          <StyledIconTool
-                            size={12}
-                            color={MAIN_COLORS.yellow}
-                          />
-                        </StyledIconContainer>
-                        <StyledApiKey>API keys</StyledApiKey>
-                      </StyledApiKeyContainer>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <AdvancedSettingsWrapper dimension="width" hideIcon={true}>
+                  <StyledApiKeyContainer>
+                    <StyledIconContainer>
+                      <StyledIconPoint
+                        size={12}
+                        color={MAIN_COLORS.yellow}
+                        fill={MAIN_COLORS.yellow}
+                      />
+                    </StyledIconContainer>
+                    <StyledApiKey>API values</StyledApiKey>
+                  </StyledApiKeyContainer>
+                </AdvancedSettingsWrapper>
                 <StyledOptionsLabel
                   isAdvancedModeEnabled={isAdvancedModeEnabled}
                 >

@@ -45,7 +45,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             xLink: {
               primaryLinkLabel: 'asd',
               primaryLinkUrl: 'asd.com',
-              secondaryLinks: null,
+              secondaryLinks: [],
               __typename: 'Links',
             },
             name: {
@@ -58,7 +58,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
             linkedinLink: {
               primaryLinkLabel: 'asd',
               primaryLinkUrl: 'asd.com',
-              secondaryLinks: null,
+              secondaryLinks: [],
               __typename: 'Links',
             },
           },
@@ -85,7 +85,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     xLink: {
       primaryLinkLabel: null,
       primaryLinkUrl: null,
-      secondaryLinks: null,
+      secondaryLinks: [],
       __typename: 'Links',
     },
     annualRecurringRevenue: {

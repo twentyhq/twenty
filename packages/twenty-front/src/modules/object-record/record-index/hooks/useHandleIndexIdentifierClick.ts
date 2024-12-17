@@ -21,7 +21,6 @@ export const useHandleIndexIdentifierClick = ({
       recordId,
       currentViewId,
     );
-
     return showPageURL;
   };
 

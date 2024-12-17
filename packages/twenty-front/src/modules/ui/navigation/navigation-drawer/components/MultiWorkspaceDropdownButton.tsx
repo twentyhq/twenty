@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Workspaces } from '@/auth/states/workspaces';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -13,8 +14,13 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { IconChevronDown, MenuItemSelectAvatar } from 'twenty-ui';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
+import { getImageAbsoluteURI } from 'twenty-shared';
+import {
+  IconChevronDown,
+  MenuItemSelectAvatar,
+  UndecoratedLink,
+} from 'twenty-ui';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledLogo = styled.div<{ logo: string }>`
   background: url(${({ logo }) => logo});
@@ -72,6 +78,7 @@ export const MultiWorkspaceDropdownButton = ({
     useState(false);
 
   const { switchWorkspace } = useWorkspaceSwitching();
+  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
 
   const { closeDropdown } = useDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
 
@@ -97,11 +104,10 @@ export const MultiWorkspaceDropdownButton = ({
         >
           <StyledLogo
             logo={
-              getImageAbsoluteURI(
-                currentWorkspace?.logo === null
-                  ? DEFAULT_WORKSPACE_LOGO
-                  : currentWorkspace?.logo,
-              ) ?? ''
+              getImageAbsoluteURI({
+                imageUrl: currentWorkspace?.logo ?? '',
+                baseUrl: REACT_APP_SERVER_BASE_URL,
+              }) ?? ''
             }
           />
           <NavigationDrawerAnimatedCollapseWrapper>
@@ -118,23 +124,29 @@ export const MultiWorkspaceDropdownButton = ({
       dropdownComponents={
         <DropdownMenuItemsContainer>
           {workspaces.map((workspace) => (
-            <MenuItemSelectAvatar
+            <UndecoratedLink
               key={workspace.id}
-              text={workspace.displayName ?? ''}
-              avatar={
-                <StyledLogo
-                  logo={
-                    getImageAbsoluteURI(
-                      workspace.logo === null
-                        ? DEFAULT_WORKSPACE_LOGO
-                        : workspace.logo,
-                    ) ?? ''
-                  }
-                />
-              }
-              selected={currentWorkspace?.id === workspace.id}
-              onClick={() => handleChange(workspace.id)}
-            />
+              to={buildWorkspaceUrl(workspace.subdomain)}
+              onClick={(event) => {
+                event?.preventDefault();
+                handleChange(workspace.id);
+              }}
+            >
+              <MenuItemSelectAvatar
+                text={workspace.displayName ?? '(No name)'}
+                avatar={
+                  <StyledLogo
+                    logo={
+                      getImageAbsoluteURI({
+                        imageUrl: workspace.logo ?? DEFAULT_WORKSPACE_LOGO,
+                        baseUrl: REACT_APP_SERVER_BASE_URL,
+                      }) ?? ''
+                    }
+                  />
+                }
+                selected={currentWorkspace?.id === workspace.id}
+              />
+            </UndecoratedLink>
           ))}
         </DropdownMenuItemsContainer>
       }

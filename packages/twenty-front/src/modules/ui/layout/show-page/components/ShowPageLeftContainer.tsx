@@ -46,7 +46,10 @@ export const ShowPageLeftContainer = ({
           {children}
         </StyledInnerContainer>
       ) : (
-        <ScrollWrapper contextProviderName="showPageLeftContainer">
+        <ScrollWrapper
+          contextProviderName="showPageLeftContainer"
+          componentInstanceId={`scroll-wrapper-show-page-left-container`}
+        >
           <StyledIntermediateContainer>
             <StyledInnerContainer isMobile={isMobile}>
               {children}

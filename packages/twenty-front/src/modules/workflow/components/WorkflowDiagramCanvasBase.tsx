@@ -28,6 +28,8 @@ import '@xyflow/react/dist/style.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { GRAY_SCALE, isDefined, THEME_COMMON } from 'twenty-ui';
+import { useListenRightDrawerClose } from '@/ui/layout/right-drawer/hooks/useListenRightDrawerClose';
+import { workflowReactFlowRefState } from '@/workflow/states/workflowReactFlowRefState';
 
 const StyledResetReactflowStyles = styled.div`
   height: 100%;
@@ -86,6 +88,9 @@ export const WorkflowDiagramCanvasBase = ({
   children?: React.ReactNode;
 }) => {
   const reactflow = useReactFlow();
+  const setWorkflowReactFlowRefState = useSetRecoilState(
+    workflowReactFlowRefState,
+  );
 
   const { nodes, edges } = useMemo(
     () => getOrganizedDiagram(diagram),
@@ -144,6 +149,12 @@ export const WorkflowDiagramCanvasBase = ({
     });
   };
 
+  useListenRightDrawerClose(() => {
+    reactflow.setNodes((nodes) =>
+      nodes.map((node) => ({ ...node, selected: false })),
+    );
+  });
+
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -176,6 +187,11 @@ export const WorkflowDiagramCanvasBase = ({
   return (
     <StyledResetReactflowStyles ref={containerRef}>
       <ReactFlow
+        ref={(node) => {
+          if (isDefined(node)) {
+            setWorkflowReactFlowRefState({ current: node });
+          }
+        }}
         onInit={() => {
           if (!isDefined(containerRef.current)) {
             throw new Error('Expect the container ref to be defined');
@@ -192,11 +208,16 @@ export const WorkflowDiagramCanvasBase = ({
         minZoom={defaultFitViewOptions.minZoom}
         maxZoom={defaultFitViewOptions.maxZoom}
         nodeTypes={nodeTypes}
-        nodes={nodes.map((node) => ({ ...node, draggable: false }))}
+        nodes={nodes}
         edges={edges}
         onNodesChange={handleNodesChange}
         onEdgesChange={handleEdgesChange}
         proOptions={{ hideAttribution: true }}
+        multiSelectionKeyCode={null}
+        nodesFocusable={false}
+        edgesFocusable={false}
+        nodesDraggable={false}
+        paneClickDistance={10} // Fix small unwanted user dragging does not select node
       >
         <Background color={GRAY_SCALE.gray25} size={2} />
 

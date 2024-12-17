@@ -50,7 +50,7 @@ export const mapViewFieldsToColumnDefinitions = ({
         isSortable: correspondingColumnDefinition.isSortable,
         isFilterable: correspondingColumnDefinition.isFilterable,
         defaultValue: correspondingColumnDefinition.defaultValue,
-        settings: correspondingColumnDefinition.settings,
+        settings: correspondingColumnDefinition.metadata.settings,
       } as ColumnDefinition<FieldMetadata>;
     })
     .filter(isDefined);

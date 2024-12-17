@@ -39,6 +39,7 @@ const StyledEndIcon = styled.div`
 `;
 
 const StyledChildrenWrapper = styled.span`
+  overflow: hidden;
   padding: 0 ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -47,6 +48,7 @@ type DropdownMenuHeaderProps = ComponentProps<'li'> & {
   EndIcon?: IconComponent;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
   testId?: string;
+  className?: string;
 };
 
 export const DropdownMenuHeader = ({
@@ -55,12 +57,17 @@ export const DropdownMenuHeader = ({
   EndIcon,
   onClick,
   testId,
+  className,
 }: DropdownMenuHeaderProps) => {
   const theme = useTheme();
   return (
     <>
       {EndIcon && (
-        <StyledHeader data-testid={testId} onClick={onClick}>
+        <StyledHeader
+          data-testid={testId}
+          onClick={onClick}
+          className={className}
+        >
           <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
           <StyledEndIcon>
             <EndIcon size={theme.icon.size.md} />
@@ -68,7 +75,7 @@ export const DropdownMenuHeader = ({
         </StyledHeader>
       )}
       {StartIcon && (
-        <StyledHeader data-testid={testId}>
+        <StyledHeader data-testid={testId} className={className}>
           <LightIconButton
             testId="dropdown-menu-header-end-icon"
             Icon={StartIcon}

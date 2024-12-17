@@ -11,6 +11,7 @@ COPY ./packages/twenty-emails/package.json /app/packages/twenty-emails/
 COPY ./packages/twenty-server/package.json /app/packages/twenty-server/
 COPY ./packages/twenty-server/patches /app/packages/twenty-server/patches
 COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/
+COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
 COPY ./packages/twenty-front/package.json /app/packages/twenty-front/
 
 # Install all dependencies
@@ -22,6 +23,7 @@ FROM common-deps as twenty-server-build
 
 # Copy sourcecode after installing dependences to accelerate subsequents builds
 COPY ./packages/twenty-emails /app/packages/twenty-emails
+COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-server /app/packages/twenty-server
 
 RUN npx nx run twenty-server:build
@@ -31,7 +33,7 @@ RUN mv /app/packages/twenty-server/dist/package.json /app/packages/twenty-server
 RUN rm -rf /app/packages/twenty-server/dist
 RUN mv /app/packages/twenty-server/build /app/packages/twenty-server/dist
 
-RUN yarn workspaces focus --production twenty-emails twenty-server
+RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-server
 
 
 # Build the front
@@ -41,6 +43,7 @@ ARG REACT_APP_SERVER_BASE_URL
 
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-ui /app/packages/twenty-ui
+COPY ./packages/twenty-shared /app/packages/twenty-shared
 RUN npx nx build twenty-front
 
 
@@ -52,9 +55,10 @@ RUN apk add --no-cache curl jq
 
 RUN npm install -g tsx
 
+RUN apk add --no-cache postgresql-client
+
 COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
-
 WORKDIR /app/packages/twenty-server
 
 ARG REACT_APP_SERVER_BASE_URL

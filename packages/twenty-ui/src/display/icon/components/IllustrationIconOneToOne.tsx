@@ -17,8 +17,8 @@ export const IllustrationIconOneToOne = (
       <IllustrationIconOneToOneRaw
         height={size}
         width={size}
-        fill={fill}
-        color={color}
+        fill={fill.blue}
+        color={color.blue}
       />
     </IllustrationIconWrapper>
   );

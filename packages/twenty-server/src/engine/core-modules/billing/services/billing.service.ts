@@ -2,11 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'class-validator';
 
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Injectable()
 export class BillingService {
@@ -21,7 +22,10 @@ export class BillingService {
     return this.environmentService.get('IS_BILLING_ENABLED');
   }
 
-  async hasWorkspaceActiveSubscriptionOrFreeAccess(workspaceId: string) {
+  async hasWorkspaceActiveSubscriptionOrFreeAccessOrEntitlement(
+    workspaceId: string,
+    entitlementKey?: BillingEntitlementKey,
+  ) {
     const isBillingEnabled = this.isBillingEnabled();
 
     if (!isBillingEnabled) {
@@ -36,6 +40,13 @@ export class BillingService {
 
     if (isFreeAccessEnabled) {
       return true;
+    }
+
+    if (entitlementKey) {
+      return this.billingSubscriptionService.getWorkspaceEntitlementByKey(
+        workspaceId,
+        entitlementKey,
+      );
     }
 
     const currentBillingSubscription =

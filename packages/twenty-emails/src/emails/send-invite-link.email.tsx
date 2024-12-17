@@ -1,4 +1,5 @@
 import { Img } from '@react-email/components';
+import { emailTheme } from 'src/common-style';
 
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
@@ -9,7 +10,7 @@ import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 import { WhatIsTwenty } from 'src/components/WhatIsTwenty';
 import { capitalize } from 'src/utils/capitalize';
-import { getImageAbsoluteURI } from 'src/utils/getImageAbsoluteURI';
+import { getImageAbsoluteURI } from 'twenty-shared';
 
 type SendInviteLinkEmailProps = {
   link: string;
@@ -17,8 +18,9 @@ type SendInviteLinkEmailProps = {
   sender: {
     email: string;
     firstName: string;
+    lastName: string;
   };
-  serverUrl?: string;
+  serverUrl: string;
 };
 
 export const SendInviteLinkEmail = ({
@@ -27,14 +29,21 @@ export const SendInviteLinkEmail = ({
   sender,
   serverUrl,
 }: SendInviteLinkEmailProps) => {
-  const workspaceLogo = getImageAbsoluteURI(workspace.logo, serverUrl);
+  const workspaceLogo = workspace.logo
+    ? getImageAbsoluteURI({ imageUrl: workspace.logo, baseUrl: serverUrl })
+    : null;
+
   return (
     <BaseEmail width={333}>
       <Title value="Join your team on Twenty" />
       <MainText>
         {capitalize(sender.firstName)} (
-        <Link href={sender.email} value={sender.email} />) has invited you to
-        join a workspace called <b>{workspace.name}</b>
+        <Link
+          href={`mailto:${sender.email}`}
+          value={sender.email}
+          color={emailTheme.font.colors.blue}
+        />
+        ) has invited you to join a workspace called <b>{workspace.name}</b>
         <br />
       </MainText>
       <HighlightedContainer>

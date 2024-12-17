@@ -7,14 +7,17 @@ import {
 } from '@/ui/layout/modal/components/ConfirmationModal';
 import { openOverrideWorkflowDraftConfirmationModalState } from '@/workflow/states/openOverrideWorkflowDraftConfirmationModalState';
 import { WorkflowVersion } from '@/workflow/types/Workflow';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 
 export const OverrideWorkflowDraftConfirmationModal = ({
   draftWorkflowVersionId,
   workflowVersionUpdateInput,
+  workflowId,
 }: {
   draftWorkflowVersionId: string;
   workflowVersionUpdateInput: Pick<WorkflowVersion, 'trigger' | 'steps'>;
+  workflowId: string;
 }) => {
   const [
     openOverrideWorkflowDraftConfirmationModal,
@@ -26,11 +29,15 @@ export const OverrideWorkflowDraftConfirmationModal = ({
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
+  const navigate = useNavigate();
+
   const handleOverrideDraft = async () => {
     await updateOneWorkflowVersion({
       idToUpdate: draftWorkflowVersionId,
       updateOneRecordInput: workflowVersionUpdateInput,
     });
+
+    navigate(buildShowPageURL(CoreObjectNameSingular.Workflow, workflowId));
   };
 
   return (

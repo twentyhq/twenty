@@ -1,26 +1,19 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
-import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
-import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
-import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
-import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
-import { unselectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/unselectedRowIdsComponentSelector';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { aggregateOperationForViewFieldState } from '@/object-record/record-table/record-table-footer/states/aggregateOperationForViewFieldState';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
-import { useRecoilValue } from 'recoil';
+import { ViewField } from '@/views/types/ViewField';
+import { useRecoilCallback } from 'recoil';
 
 export const RecordIndexTableContainerEffect = () => {
-  const { recordIndexId, objectNameSingular } = useContext(
-    RecordIndexRootPropsContext,
-  );
+  const { recordIndexId, objectNameSingular } = useRecordIndexContextOrThrow();
 
   const viewBarId = recordIndexId;
 
@@ -57,6 +50,8 @@ export const RecordIndexTableContainerEffect = () => {
     viewBarId,
   });
 
+  const { currentViewWithSavedFiltersAndSorts } = useGetCurrentView();
+
   useEffect(() => {
     setOnToggleColumnFilter(
       () => (fieldMetadataId: string) =>
@@ -77,61 +72,37 @@ export const RecordIndexTableContainerEffect = () => {
     );
   }, [setRecordCountInCurrentView, setOnEntityCountChange]);
 
-  const setContextStoreTargetedRecords = useSetRecoilComponentStateV2(
-    contextStoreTargetedRecordsRuleComponentState,
-  );
-  const hasUserSelectedAllRows = useRecoilComponentValueV2(
-    hasUserSelectedAllRowsComponentState,
-    recordIndexId,
-  );
-  const selectedRowIds = useRecoilComponentValueV2(
-    selectedRowIdsComponentSelector,
-    recordIndexId,
-  );
-  const unselectedRowIds = useRecoilComponentValueV2(
-    unselectedRowIdsComponentSelector,
-    recordIndexId,
-  );
+  const setViewFieldAggregateOperation = useRecoilCallback(
+    ({ set, snapshot }) =>
+      (viewField: ViewField) => {
+        const aggregateOperationForViewField = snapshot
+          .getLoadable(
+            aggregateOperationForViewFieldState({
+              viewFieldId: viewField.id,
+            }),
+          )
+          .getValue();
 
-  const recordIndexFilters = useRecoilValue(recordIndexFiltersState);
+        if (aggregateOperationForViewField !== viewField.aggregateOperation) {
+          set(
+            aggregateOperationForViewFieldState({
+              viewFieldId: viewField.id,
+            }),
+            viewField.aggregateOperation,
+          );
+        }
+      },
+    [],
+  );
 
   useEffect(() => {
-    if (hasUserSelectedAllRows) {
-      setContextStoreTargetedRecords({
-        mode: 'exclusion',
-        excludedRecordIds: unselectedRowIds,
-      });
-    } else {
-      setContextStoreTargetedRecords({
-        mode: 'selection',
-        selectedRecordIds: selectedRowIds,
-      });
-    }
-
-    return () => {
-      setContextStoreTargetedRecords({
-        mode: 'selection',
-        selectedRecordIds: [],
-      });
-    };
+    currentViewWithSavedFiltersAndSorts?.viewFields.forEach((viewField) => {
+      setViewFieldAggregateOperation(viewField);
+    });
   }, [
-    hasUserSelectedAllRows,
-    selectedRowIds,
-    setContextStoreTargetedRecords,
-    unselectedRowIds,
+    currentViewWithSavedFiltersAndSorts?.viewFields,
+    setViewFieldAggregateOperation,
   ]);
-
-  const setContextStoreFilters = useSetRecoilComponentStateV2(
-    contextStoreFiltersComponentState,
-  );
-
-  useEffect(() => {
-    setContextStoreFilters(recordIndexFilters);
-
-    return () => {
-      setContextStoreFilters([]);
-    };
-  }, [recordIndexFilters, setContextStoreFilters]);
 
   return <></>;
 };

@@ -142,7 +142,7 @@ export const useFetchMoreRecordsWithPagination = <
                 const pageInfo =
                   fetchMoreResult?.[objectMetadataItem.namePlural]?.pageInfo;
 
-                if (isDefined(data?.[objectMetadataItem.namePlural])) {
+                if (isDefined(pageInfo)) {
                   set(
                     cursorFamilyState(queryIdentifier),
                     pageInfo.endCursor ?? '',
@@ -188,6 +188,7 @@ export const useFetchMoreRecordsWithPagination = <
             };
           } catch (error) {
             handleFindManyRecordsError(error as ApolloError);
+            return { error: error as ApolloError };
           } finally {
             setIsFetchingMoreObjects(false);
           }
@@ -200,7 +201,6 @@ export const useFetchMoreRecordsWithPagination = <
       fetchMore,
       filter,
       orderBy,
-      data,
       onCompleted,
       handleFindManyRecordsError,
       queryIdentifier,

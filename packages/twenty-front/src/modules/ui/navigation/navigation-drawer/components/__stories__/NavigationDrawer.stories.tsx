@@ -22,7 +22,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
-import { CurrentWorkspaceMemberFavorites } from '@/favorites/components/CurrentWorkspaceMemberFavorites';
+import { CurrentWorkspaceMemberFavoritesFolders } from '@/favorites/components/CurrentWorkspaceMemberFavoritesFolders';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import jsonPage from '../../../../../../../package.json';
 import { NavigationDrawer } from '../NavigationDrawer';
@@ -71,7 +71,7 @@ export const Default: Story = {
           />
         </NavigationDrawerSection>
 
-        <CurrentWorkspaceMemberFavorites />
+        <CurrentWorkspaceMemberFavoritesFolders />
 
         <NavigationDrawerSection>
           <NavigationDrawerSectionTitle label="Workspace" />

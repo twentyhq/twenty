@@ -13,8 +13,12 @@ import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
-import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
+import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
+import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
 import { getRecordFieldInputId } from '@/object-record/utils/getRecordFieldInputId';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
+import { useRecoilCallback } from 'recoil';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
   RecordInlineCellContext,
@@ -26,20 +30,16 @@ type RecordInlineCellProps = {
   loading?: boolean;
 };
 
-export const RecordInlineCell = ({
-  readonly,
-  loading,
-}: RecordInlineCellProps) => {
-  const { fieldDefinition, recordId, isCentered } = useContext(FieldContext);
+export const RecordInlineCell = ({ loading }: RecordInlineCellProps) => {
+  const { fieldDefinition, recordId, isCentered, isDisplayModeFixHeight } =
+    useContext(FieldContext);
   const buttonIcon = useGetButtonIcon();
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const isFieldReadOnly = useIsFieldReadOnly();
+  const isFieldReadOnly = useIsFieldValueReadOnly();
 
   const { closeInlineCell } = useInlineCell();
-
-  const cellIsReadOnly = readonly || isFieldReadOnly;
 
   const handleEnter: FieldInputEvent = (persistField) => {
     persistField();
@@ -69,15 +69,35 @@ export const RecordInlineCell = ({
     closeInlineCell();
   };
 
-  const handleClickOutside: FieldInputEvent = (persistField) => {
-    persistField();
-    closeInlineCell();
-  };
+  const handleClickOutside: FieldInputClickOutsideEvent = useRecoilCallback(
+    ({ snapshot }) =>
+      (persistField, event) => {
+        const recordFieldDropdownId = getDropdownFocusIdForRecordField(
+          recordId,
+          fieldDefinition.fieldMetadataId,
+          'inline-cell',
+        );
+
+        const activeDropdownFocusId = snapshot
+          .getLoadable(activeDropdownFocusIdState)
+          .getValue();
+
+        if (recordFieldDropdownId !== activeDropdownFocusId) {
+          return;
+        }
+
+        event.stopImmediatePropagation();
+
+        persistField();
+        closeInlineCell();
+      },
+    [closeInlineCell, fieldDefinition.fieldMetadataId, recordId],
+  );
 
   const { getIcon } = useIcons();
 
   const RecordInlineCellContextValue: RecordInlineCellContextProps = {
-    readonly: cellIsReadOnly,
+    readonly: isFieldReadOnly,
     buttonIcon: buttonIcon,
     customEditHotkeyScope: isFieldRelation(fieldDefinition)
       ? { scope: RelationPickerHotkeyScope.RelationPicker }
@@ -102,11 +122,11 @@ export const RecordInlineCell = ({
         onTab={handleTab}
         onShiftTab={handleShiftTab}
         onClickOutside={handleClickOutside}
-        isReadOnly={cellIsReadOnly}
+        isReadOnly={isFieldReadOnly}
       />
     ),
     displayModeContent: <FieldDisplay />,
-    isDisplayModeFixHeight: undefined,
+    isDisplayModeFixHeight: isDisplayModeFixHeight,
     editModeContentOnly: isFieldInputOnly,
     loading: loading,
   };

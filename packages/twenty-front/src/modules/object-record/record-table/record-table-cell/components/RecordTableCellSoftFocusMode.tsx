@@ -10,19 +10,18 @@ import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEm
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
-import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useCloseCurrentTableCellInEditMode } from '@/object-record/record-table/hooks/internal/useCloseCurrentTableCellInEditMode';
 import { RecordTableCellButton } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
-import { useIsFieldReadOnly } from '@/object-record/record-field/hooks/useIsFieldReadOnly';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useIsFieldValueReadOnly } from '@/object-record/record-field/hooks/useIsFieldValueReadOnly';
+import { useRecordTableBodyContextOrThrow } from '@/object-record/record-table/contexts/RecordTableBodyContext';
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
 type RecordTableCellSoftFocusModeProps = {
@@ -35,12 +34,11 @@ export const RecordTableCellSoftFocusMode = ({
   nonEditModeContent,
 }: RecordTableCellSoftFocusModeProps) => {
   const { columnIndex } = useContext(RecordTableCellContext);
-  const closeCurrentTableCell = useCloseCurrentTableCellInEditMode();
-  const { isReadOnly: isRowReadOnly } = useContext(RecordTableRowContext);
+  const { recordId } = useContext(FieldContext);
 
-  const isFieldReadOnly = useIsFieldReadOnly();
+  const { onActionMenuDropdownOpened } = useRecordTableBodyContextOrThrow();
 
-  const isCellReadOnly = isFieldReadOnly || isRowReadOnly;
+  const isFieldReadOnly = useIsFieldValueReadOnly();
 
   const { openTableCell } = useOpenRecordTableCellFromCell();
 
@@ -78,7 +76,7 @@ export const RecordTableCellSoftFocusMode = ({
   useScopedHotkeys(
     Key.Enter,
     () => {
-      if (isCellReadOnly) {
+      if (isFieldReadOnly) {
         return;
       }
 
@@ -95,7 +93,7 @@ export const RecordTableCellSoftFocusMode = ({
   useScopedHotkeys(
     '*',
     (keyboardEvent) => {
-      if (isCellReadOnly) {
+      if (isFieldReadOnly) {
         return;
       }
 
@@ -124,7 +122,7 @@ export const RecordTableCellSoftFocusMode = ({
   );
 
   const handleClick = () => {
-    if (!isFieldInputOnly && !isCellReadOnly) {
+    if (!isFieldInputOnly && !isFieldReadOnly) {
       openTableCell();
     }
   };
@@ -139,12 +137,9 @@ export const RecordTableCellSoftFocusMode = ({
     */
   };
 
-  useListenClickOutside({
-    refs: [scrollRef],
-    callback: () => {
-      closeCurrentTableCell();
-    },
-  });
+  const handleActionMenuDropdown = (event: React.MouseEvent) => {
+    onActionMenuDropdownOpened(event, recordId);
+  };
 
   const isFirstColumn = columnIndex === 0;
   const customButtonIcon = useGetButtonIcon();
@@ -156,9 +151,9 @@ export const RecordTableCellSoftFocusMode = ({
     isDefined(buttonIcon) &&
     !editModeContentOnly &&
     (!isFirstColumn || !isEmpty) &&
-    !isCellReadOnly;
+    !isFieldReadOnly;
 
-  const dontShowContent = isEmpty && isCellReadOnly;
+  const dontShowContent = isEmpty && isFieldReadOnly;
 
   return (
     <>
@@ -166,6 +161,7 @@ export const RecordTableCellSoftFocusMode = ({
         onClick={handleClick}
         scrollRef={scrollRef}
         softFocus
+        onContextMenu={handleActionMenuDropdown}
       >
         {dontShowContent ? (
           <></>

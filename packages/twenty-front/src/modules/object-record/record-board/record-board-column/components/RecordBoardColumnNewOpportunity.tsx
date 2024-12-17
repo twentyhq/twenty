@@ -4,25 +4,13 @@ import { useAddNewCard } from '@/object-record/record-board/record-board-column/
 import { recordBoardNewRecordByColumnIdSelector } from '@/object-record/record-board/states/selectors/recordBoardNewRecordByColumnIdSelector';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
-import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
+import { SingleRecordSelect } from '@/object-record/relation-picker/components/SingleRecordSelect';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 import { isDefined } from '~/utils/isDefined';
-
-const StyledCompanyPickerContainer = styled.div`
-  align-items: center;
-  align-self: baseline;
-  background-color: ${({ theme }) => theme.background.primary};
-  border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme }) => theme.font.color.tertiary};
-  cursor: pointer;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
 
 export const RecordBoardColumnNewOpportunity = ({
   columnId,
@@ -72,23 +60,18 @@ export const RecordBoardColumnNewOpportunity = ({
   return (
     <>
       {newRecord.isCreating && newRecord.position === position && (
-        <StyledCompanyPickerContainer>
-          <SingleEntitySelect
-            disableBackgroundBlur
-            onCancel={() => {
-              handleCreateSuccess(position, columnId, false);
-            }}
-            onEntitySelected={(company) => {
-              if (isDefined(company)) {
-                handleEntitySelect(position, company);
-              }
-            }}
-            relationObjectNameSingular={CoreObjectNameSingular.Company}
-            relationPickerScopeId="relation-picker"
-            selectedRelationRecordIds={[]}
+        <OverlayContainer>
+          <SingleRecordSelect
+            onCancel={() => handleCreateSuccess(position, columnId, false)}
+            onRecordSelected={(company) =>
+              company ? handleEntitySelect(position, company) : null
+            }
+            objectNameSingular={CoreObjectNameSingular.Company}
+            recordPickerInstanceId="relation-picker"
+            selectedRecordIds={[]}
             onCreate={createCompanyOpportunityAndOpenRightDrawer}
           />
-        </StyledCompanyPickerContainer>
+        </OverlayContainer>
       )}
     </>
   );

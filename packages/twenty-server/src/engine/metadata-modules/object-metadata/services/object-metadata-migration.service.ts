@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import {
+  FieldMetadataEntity,
+  FieldMetadataType,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { buildMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/build-migrations-for-custom-object-relations.util';
@@ -35,7 +38,7 @@ export class ObjectMetadataMigrationService {
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
   ) {}
 
-  public async createObjectMigration(
+  public async createTableMigration(
     createdObjectMetadata: ObjectMetadataEntity,
   ) {
     await this.workspaceMigrationService.createCustomMigration(
@@ -50,7 +53,7 @@ export class ObjectMetadataMigrationService {
     );
   }
 
-  public async createFieldMigrations(
+  public async createColumnsMigrations(
     createdObjectMetadata: ObjectMetadataEntity,
     fieldMetadataCollection: FieldMetadataEntity[],
   ) {
@@ -115,96 +118,55 @@ export class ObjectMetadataMigrationService {
     );
   }
 
-  public async createRelationsUpdatesMigrations(
+  public async createUpdateForeignKeysMigrations(
     existingObjectMetadata: ObjectMetadataEntity,
     updatedObjectMetadata: ObjectMetadataEntity,
+    relationsAndForeignKeysMetadata: {
+      relatedObjectMetadata: ObjectMetadataEntity;
+      foreignKeyFieldMetadata: FieldMetadataEntity;
+    }[],
     workspaceId: string,
   ) {
-    const existingTableName = computeObjectTargetTable(existingObjectMetadata);
-    const newTableName = computeObjectTargetTable(updatedObjectMetadata);
-
-    if (existingTableName !== newTableName) {
-      const searchCriteria = {
-        isCustom: false,
-        settings: {
-          isForeignKey: true,
-        },
-        name: `${existingObjectMetadata.nameSingular}Id`,
-        workspaceId: workspaceId,
-      };
-
-      const fieldsWihStandardRelation = await this.fieldMetadataRepository.find(
-        {
-          where: {
-            isCustom: false,
-            settings: {
-              isForeignKey: true,
-            },
-            name: `${existingObjectMetadata.nameSingular}Id`,
-          },
-        },
+    for (const {
+      relatedObjectMetadata,
+      foreignKeyFieldMetadata,
+    } of relationsAndForeignKeysMetadata) {
+      const relatedObjectTableName = computeObjectTargetTable(
+        relatedObjectMetadata,
+      );
+      const columnName = `${existingObjectMetadata.nameSingular}Id`;
+      const columnType = fieldMetadataTypeToColumnType(
+        foreignKeyFieldMetadata.type,
       );
 
-      await this.fieldMetadataRepository.update(searchCriteria, {
-        name: `${updatedObjectMetadata.nameSingular}Id`,
-      });
-
-      await Promise.all(
-        fieldsWihStandardRelation.map(async (fieldWihStandardRelation) => {
-          const relatedObject = await this.objectMetadataRepository.findOneBy({
-            id: fieldWihStandardRelation.objectMetadataId,
-            workspaceId: workspaceId,
-          });
-
-          if (relatedObject) {
-            await this.fieldMetadataRepository.update(
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(
+          `rename-${existingObjectMetadata.nameSingular}-to-${updatedObjectMetadata.nameSingular}-in-${relatedObjectMetadata.nameSingular}`,
+        ),
+        workspaceId,
+        [
+          {
+            name: relatedObjectTableName,
+            action: WorkspaceMigrationTableActionType.ALTER,
+            columns: [
               {
-                name: existingObjectMetadata.nameSingular,
-                label: existingObjectMetadata.labelSingular,
-              },
-              {
-                name: updatedObjectMetadata.nameSingular,
-                label: updatedObjectMetadata.labelSingular,
-              },
-            );
-
-            const relationTableName = computeObjectTargetTable(relatedObject);
-            const columnName = `${existingObjectMetadata.nameSingular}Id`;
-            const columnType = fieldMetadataTypeToColumnType(
-              fieldWihStandardRelation.type,
-            );
-
-            await this.workspaceMigrationService.createCustomMigration(
-              generateMigrationName(
-                `rename-${existingObjectMetadata.nameSingular}-to-${updatedObjectMetadata.nameSingular}-in-${relatedObject.nameSingular}`,
-              ),
-              workspaceId,
-              [
-                {
-                  name: relationTableName,
-                  action: WorkspaceMigrationTableActionType.ALTER,
-                  columns: [
-                    {
-                      action: WorkspaceMigrationColumnActionType.ALTER,
-                      currentColumnDefinition: {
-                        columnName,
-                        columnType,
-                        isNullable: true,
-                        defaultValue: null,
-                      },
-                      alteredColumnDefinition: {
-                        columnName: `${updatedObjectMetadata.nameSingular}Id`,
-                        columnType,
-                        isNullable: true,
-                        defaultValue: null,
-                      },
-                    },
-                  ],
+                action: WorkspaceMigrationColumnActionType.ALTER,
+                currentColumnDefinition: {
+                  columnName,
+                  columnType,
+                  isNullable: true,
+                  defaultValue: null,
                 },
-              ],
-            );
-          }
-        }),
+                alteredColumnDefinition: {
+                  columnName: `${updatedObjectMetadata.nameSingular}Id`,
+                  columnType,
+                  isNullable: true,
+                  defaultValue: null,
+                },
+              },
+            ],
+          },
+        ],
       );
     }
   }
@@ -304,5 +266,44 @@ export class ObjectMetadataMigrationService {
         },
       ],
     );
+  }
+
+  public async recomputeEnumNames(
+    updatedObjectMetadata: ObjectMetadataEntity,
+    workspaceId: string,
+  ) {
+    const fieldMetadataToUpdate = await this.fieldMetadataRepository.find({
+      where: {
+        objectMetadataId: updatedObjectMetadata.id,
+        workspaceId,
+        type: In([
+          FieldMetadataType.SELECT,
+          FieldMetadataType.MULTI_SELECT,
+          FieldMetadataType.RATING,
+          FieldMetadataType.ACTOR,
+        ]),
+      },
+    });
+
+    for (const fieldMetadata of fieldMetadataToUpdate) {
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`update-${fieldMetadata.name}-enum-name`),
+        workspaceId,
+        [
+          {
+            name: computeTableName(
+              updatedObjectMetadata.nameSingular,
+              updatedObjectMetadata.isCustom,
+            ),
+            action: WorkspaceMigrationTableActionType.ALTER,
+            columns: this.workspaceMigrationFactory.createColumnActions(
+              WorkspaceMigrationColumnActionType.ALTER,
+              fieldMetadata,
+              fieldMetadata,
+            ),
+          },
+        ],
+      );
+    }
   }
 }

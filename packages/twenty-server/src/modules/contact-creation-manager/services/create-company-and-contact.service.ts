@@ -5,9 +5,8 @@ import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
 import { Any, EntityManager, Repository } from 'typeorm';
 
-import { ObjectRecordCreateEvent } from 'src/engine/core-modules/event-emitter/types/object-record-create.event';
+import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { FieldActorSource } from 'src/engine/metadata-modules/field-metadata/composite-types/actor.composite-type';
-import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
@@ -25,7 +24,6 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { isWorkEmail } from 'src/utils/is-work-email';
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -37,8 +35,6 @@ export class CreateCompanyAndContactService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     @InjectRepository(ObjectMetadataEntity, 'metadata')
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
-    @InjectRepository(FieldMetadataEntity, 'metadata')
-    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
   ) {}
 
@@ -195,21 +191,19 @@ export class CreateCompanyAndContactService {
         source,
       );
 
-      this.workspaceEventEmitter.emit(
-        `person.${DatabaseEventAction.CREATED}`,
-        createdPeople.map(
-          (createdPerson) =>
-            ({
-              // FixMe: TypeORM typing issue... id is always returned when using save
-              recordId: createdPerson.id as string,
-              objectMetadata,
-              properties: {
-                after: createdPerson,
-              },
-            }) satisfies ObjectRecordCreateEvent<any>,
-        ),
+      this.workspaceEventEmitter.emitDatabaseBatchEvent({
+        objectMetadataNameSingular: 'person',
+        action: DatabaseEventAction.CREATED,
+        events: createdPeople.map((createdPerson) => ({
+          // Fix ' as string': TypeORM typing issue... id is always returned when using save
+          recordId: createdPerson.id as string,
+          objectMetadata,
+          properties: {
+            after: createdPerson,
+          },
+        })),
         workspaceId,
-      );
+      });
     }
   }
 }

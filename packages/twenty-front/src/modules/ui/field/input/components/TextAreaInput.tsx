@@ -33,20 +33,14 @@ const StyledTextArea = styled(TextareaAutosize)`
   resize: none;
   max-height: 400px;
   width: calc(100% - ${({ theme }) => theme.spacing(7)});
-`;
 
-const StyledTextAreaContainer = styled.div`
-  border: ${({ theme }) => `1px solid ${theme.border.color.medium}`};
-  position: relative;
-  width: 100%;
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(0)};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  background: ${({ theme }) => theme.background.primary};
+  line-height: 18px;
 `;
 
 const StyledLightIconButtonContainer = styled.div`
+  background: transparent;
   position: absolute;
-  top: 50%;
+  top: 16px;
   transform: translateY(-50%);
   right: 0;
 `;
@@ -101,7 +95,7 @@ export const TextAreaInput = ({
   });
 
   return (
-    <StyledTextAreaContainer>
+    <>
       <StyledTextArea
         placeholder={placeholder}
         disabled={disabled}
@@ -117,6 +111,6 @@ export const TextAreaInput = ({
           <LightCopyIconButton copyText={internalText} />
         </StyledLightIconButtonContainer>
       )}
-    </StyledTextAreaContainer>
+    </>
   );
 };

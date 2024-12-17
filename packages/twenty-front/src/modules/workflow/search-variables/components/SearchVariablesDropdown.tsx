@@ -1,48 +1,59 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { SearchVariablesDropdownStepItem } from '@/workflow/search-variables/components/SearchVariablesDropdownStepItem';
-import SearchVariablesDropdownStepSubItem from '@/workflow/search-variables/components/SearchVariablesDropdownStepSubItem';
+import { SearchVariablesDropdownFieldItems } from '@/workflow/search-variables/components/SearchVariablesDropdownFieldItems';
+import { SearchVariablesDropdownObjectItems } from '@/workflow/search-variables/components/SearchVariablesDropdownObjectItems';
+import { SearchVariablesDropdownWorkflowStepItems } from '@/workflow/search-variables/components/SearchVariablesDropdownWorkflowStepItems';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/search-variables/constants/SearchVariablesDropdownId';
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/search-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Editor } from '@tiptap/react';
 import { useState } from 'react';
-import { IconVariable } from 'twenty-ui';
+import { IconVariablePlus, isDefined } from 'twenty-ui';
 
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
-)`
-  background-color: ${({ theme }) => theme.background.transparent.lighter};
+)<{ transparentBackground?: boolean; disabled?: boolean }>`
+  background-color: ${({ theme, transparentBackground }) =>
+    transparentBackground
+      ? 'transparent'
+      : theme.background.transparent.lighter};
+
   color: ${({ theme }) => theme.font.color.tertiary};
-  padding: ${({ theme }) => theme.spacing(0)};
-  margin: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(2)};
+  :hover {
+    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  }
 `;
 
-const SearchVariablesDropdown = ({
+export const SearchVariablesDropdown = ({
   inputId,
-  editor,
+  onVariableSelect,
+  disabled,
+  objectNameSingularToSelect,
 }: {
   inputId: string;
-  editor: Editor;
+  onVariableSelect: (variableName: string) => void;
+  disabled?: boolean;
+  objectNameSingularToSelect?: string;
 }) => {
   const theme = useTheme();
 
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${inputId}`;
-  const { isDropdownOpen } = useDropdown(dropdownId);
-  const availableVariablesInWorkflowStep =
-    useAvailableVariablesInWorkflowStep();
+  const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
+  const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
+    objectNameSingularToSelect,
+  });
+
+  const initialStep =
+    availableVariablesInWorkflowStep.length === 1
+      ? availableVariablesInWorkflowStep[0]
+      : undefined;
 
   const [selectedStep, setSelectedStep] = useState<
     StepOutputSchema | undefined
-  >(undefined);
-
-  const insertVariableTag = (variable: string) => {
-    editor.commands.insertVariableTag(variable);
-  };
+  >(initialStep);
 
   const handleStepSelect = (stepId: string) => {
     setSelectedStep(
@@ -51,44 +62,69 @@ const SearchVariablesDropdown = ({
   };
 
   const handleSubItemSelect = (subItem: string) => {
-    insertVariableTag(subItem);
+    onVariableSelect(subItem);
+    setSelectedStep(undefined);
+    closeDropdown();
   };
 
   const handleBack = () => {
     setSelectedStep(undefined);
   };
 
+  if (disabled === true) {
+    return (
+      <StyledDropdownVariableButtonContainer
+        isUnfolded={isDropdownOpen}
+        disabled={disabled}
+        transparentBackground
+      >
+        <IconVariablePlus
+          size={theme.icon.size.sm}
+          color={theme.font.color.light}
+        />
+      </StyledDropdownVariableButtonContainer>
+    );
+  }
+
   return (
     <Dropdown
+      dropdownMenuWidth={320}
       dropdownId={dropdownId}
       dropdownHotkeyScope={{
         scope: dropdownId,
       }}
       clickableComponent={
-        <StyledDropdownVariableButtonContainer isUnfolded={isDropdownOpen}>
-          <IconVariable size={theme.icon.size.sm} />
+        <StyledDropdownVariableButtonContainer
+          isUnfolded={isDropdownOpen}
+          disabled={disabled}
+          transparentBackground
+        >
+          <IconVariablePlus size={theme.icon.size.sm} />
         </StyledDropdownVariableButtonContainer>
       }
       dropdownComponents={
-        <DropdownMenuItemsContainer>
-          {selectedStep ? (
-            <SearchVariablesDropdownStepSubItem
-              step={selectedStep}
-              onSelect={handleSubItemSelect}
-              onBack={handleBack}
-            />
-          ) : (
-            <SearchVariablesDropdownStepItem
-              steps={availableVariablesInWorkflowStep}
-              onSelect={handleStepSelect}
-            />
-          )}
-        </DropdownMenuItemsContainer>
+        !isDefined(selectedStep) ? (
+          <SearchVariablesDropdownWorkflowStepItems
+            dropdownId={dropdownId}
+            steps={availableVariablesInWorkflowStep}
+            onSelect={handleStepSelect}
+          />
+        ) : isDefined(objectNameSingularToSelect) ? (
+          <SearchVariablesDropdownObjectItems
+            step={selectedStep}
+            onSelect={handleSubItemSelect}
+            onBack={handleBack}
+          />
+        ) : (
+          <SearchVariablesDropdownFieldItems
+            step={selectedStep}
+            onSelect={handleSubItemSelect}
+            onBack={handleBack}
+          />
+        )
       }
       dropdownPlacement="bottom-end"
-      dropdownOffset={{ x: 0, y: 4 }}
+      dropdownOffset={{ x: 2, y: 4 }}
     />
   );
 };
-
-export default SearchVariablesDropdown;

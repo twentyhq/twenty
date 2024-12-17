@@ -15,8 +15,8 @@ export const IllustrationIconToggle = (props: IllustrationIconToggleProps) => {
       <IllustrationIconToggleRaw
         height={size}
         width={size}
-        fill={fill}
-        color={color}
+        fill={fill.blue}
+        color={color.blue}
       />
     </IllustrationIconWrapper>
   );

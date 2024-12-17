@@ -5,7 +5,7 @@ import { IconChevronDown, MenuItem, useIcons } from 'twenty-ui';
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useObjectSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -16,8 +16,6 @@ import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/Styl
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useContext } from 'react';
 import { SORT_DIRECTIONS } from '../types/SortDirection';
 
 export const StyledInput = styled.input`
@@ -78,7 +76,7 @@ export const ObjectSortDropdownButton = ({
     resetSearchInput,
   } = useObjectSortDropdown();
 
-  const { recordIndexId } = useContext(RecordIndexRootPropsContext);
+  const { recordIndexId } = useRecordIndexContextOrThrow();
 
   const { isDropdownOpen } = useDropdown(OBJECT_SORT_DROPDOWN_ID);
 
@@ -184,41 +182,37 @@ export const ObjectSortDropdownButton = ({
                 setObjectSortDropdownSearchInput(event.target.value)
               }
             />
-            <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-              <DropdownMenuItemsContainer>
-                {visibleColumnsSortDefinitions.map(
-                  (visibleSortDefinition, index) => (
-                    <MenuItem
-                      testId={`visible-select-sort-${index}`}
-                      key={index}
-                      onClick={() => {
-                        setObjectSortDropdownSearchInput('');
-                        handleAddSort(visibleSortDefinition);
-                      }}
-                      LeftIcon={getIcon(visibleSortDefinition.iconName)}
-                      text={visibleSortDefinition.label}
-                    />
-                  ),
-                )}
-              </DropdownMenuItemsContainer>
+            <DropdownMenuItemsContainer>
+              {visibleColumnsSortDefinitions.map(
+                (visibleSortDefinition, index) => (
+                  <MenuItem
+                    testId={`visible-select-sort-${index}`}
+                    key={index}
+                    onClick={() => {
+                      setObjectSortDropdownSearchInput('');
+                      handleAddSort(visibleSortDefinition);
+                    }}
+                    LeftIcon={getIcon(visibleSortDefinition.iconName)}
+                    text={visibleSortDefinition.label}
+                  />
+                ),
+              )}
               {shoudShowSeparator && <DropdownMenuSeparator />}
-              <DropdownMenuItemsContainer>
-                {hiddenColumnsSortDefinitions.map(
-                  (hiddenSortDefinition, index) => (
-                    <MenuItem
-                      testId={`hidden-select-sort-${index}`}
-                      key={index}
-                      onClick={() => {
-                        setObjectSortDropdownSearchInput('');
-                        handleAddSort(hiddenSortDefinition);
-                      }}
-                      LeftIcon={getIcon(hiddenSortDefinition.iconName)}
-                      text={hiddenSortDefinition.label}
-                    />
-                  ),
-                )}
-              </DropdownMenuItemsContainer>
-            </ScrollWrapper>
+              {hiddenColumnsSortDefinitions.map(
+                (hiddenSortDefinition, index) => (
+                  <MenuItem
+                    testId={`hidden-select-sort-${index}`}
+                    key={index}
+                    onClick={() => {
+                      setObjectSortDropdownSearchInput('');
+                      handleAddSort(hiddenSortDefinition);
+                    }}
+                    LeftIcon={getIcon(hiddenSortDefinition.iconName)}
+                    text={hiddenSortDefinition.label}
+                  />
+                ),
+              )}
+            </DropdownMenuItemsContainer>
           </>
         }
         onClose={handleDropdownButtonClose}

@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
-import graphqlFields from 'graphql-fields';
-
-import { ResolverService } from 'src/engine/api/graphql/graphql-query-runner/interfaces/resolver-service.interface';
 import {
-  Record as IRecord,
+  GraphqlQueryBaseResolverService,
+  GraphqlQueryResolverExecutionArgs,
+} from 'src/engine/api/graphql/graphql-query-runner/interfaces/base-resolver-service';
+import {
+  ObjectRecord,
+  ObjectRecordFilter,
+  ObjectRecordOrderBy,
   OrderByDirection,
-  RecordFilter,
-  RecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
+} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { IConnection } from 'src/engine/api/graphql/workspace-query-runner/interfaces/connection.interface';
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -19,134 +19,128 @@ import {
   GraphqlQueryRunnerException,
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
-import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
+import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { computeCursorArgFilter } from 'src/engine/api/graphql/graphql-query-runner/utils/compute-cursor-arg-filter';
 import {
   getCursor,
   getPaginationInfo,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.manager';
+import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
+import { isDefined } from 'src/utils/is-defined';
 
 @Injectable()
-export class GraphqlQueryFindManyResolverService
-  implements ResolverService<FindManyResolverArgs, IConnection<IRecord>>
-{
-  constructor(
-    private readonly twentyORMGlobalManager: TwentyORMGlobalManager,
-  ) {}
+export class GraphqlQueryFindManyResolverService extends GraphqlQueryBaseResolverService<
+  FindManyResolverArgs,
+  IConnection<ObjectRecord>
+> {
+  constructor(private readonly featureFlagService: FeatureFlagService) {
+    super();
+  }
 
-  async resolve<
-    ObjectRecord extends IRecord = IRecord,
-    Filter extends RecordFilter = RecordFilter,
-    OrderBy extends RecordOrderBy = RecordOrderBy,
-  >(
-    args: FindManyResolverArgs<Filter, OrderBy>,
-    options: WorkspaceQueryRunnerOptions,
+  async resolve(
+    executionArgs: GraphqlQueryResolverExecutionArgs<FindManyResolverArgs>,
   ): Promise<IConnection<ObjectRecord>> {
-    const { authContext, objectMetadataMapItem, info, objectMetadataMap } =
-      options;
+    const { authContext, objectMetadataItemWithFieldMaps, objectMetadataMaps } =
+      executionArgs.options;
 
-    const dataSource =
-      await this.twentyORMGlobalManager.getDataSourceForWorkspace(
-        authContext.workspace.id,
-      );
-
-    const repository = dataSource.getRepository(
-      objectMetadataMapItem.nameSingular,
+    const queryBuilder = executionArgs.repository.createQueryBuilder(
+      objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const queryBuilder = repository.createQueryBuilder(
-      objectMetadataMapItem.nameSingular,
+    const aggregateQueryBuilder = queryBuilder.clone();
+
+    let appliedFilters =
+      executionArgs.args.filter ?? ({} as ObjectRecordFilter);
+
+    executionArgs.graphqlQueryParser.applyFilterToBuilder(
+      aggregateQueryBuilder,
+      objectMetadataItemWithFieldMaps.nameSingular,
+      appliedFilters,
     );
 
-    const countQueryBuilder = repository.createQueryBuilder(
-      objectMetadataMapItem.nameSingular,
+    executionArgs.graphqlQueryParser.applyDeletedAtToBuilder(
+      aggregateQueryBuilder,
+      appliedFilters,
     );
-
-    const graphqlQueryParser = new GraphqlQueryParser(
-      objectMetadataMapItem.fields,
-      objectMetadataMap,
-    );
-
-    const withFilterCountQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
-      countQueryBuilder,
-      objectMetadataMapItem.nameSingular,
-      args.filter ?? ({} as Filter),
-    );
-
-    const selectedFields = graphqlFields(info);
-
-    const { relations } = graphqlQueryParser.parseSelectedFields(
-      objectMetadataMapItem,
-      selectedFields,
-    );
-    const isForwardPagination = !isDefined(args.before);
-
-    const limit = args.first ?? args.last ?? QUERY_MAX_RECORDS;
-
-    const withDeletedCountQueryBuilder =
-      graphqlQueryParser.applyDeletedAtToBuilder(
-        withFilterCountQueryBuilder,
-        args.filter ?? ({} as Filter),
-      );
-
-    const totalCount = isDefined(selectedFields.totalCount)
-      ? await withDeletedCountQueryBuilder.getCount()
-      : 0;
-
-    const cursor = getCursor(args);
-
-    let appliedFilters = args.filter ?? ({} as Filter);
 
     const orderByWithIdCondition = [
-      ...(args.orderBy ?? []),
+      ...(executionArgs.args.orderBy ?? []),
       { id: OrderByDirection.AscNullsFirst },
-    ] as OrderBy;
+    ] as ObjectRecordOrderBy;
+
+    const isForwardPagination = !isDefined(executionArgs.args.before);
+
+    const cursor = getCursor(executionArgs.args);
 
     if (cursor) {
       const cursorArgFilter = computeCursorArgFilter(
         cursor,
         orderByWithIdCondition,
-        objectMetadataMapItem.fields,
+        objectMetadataItemWithFieldMaps.fieldsByName,
         isForwardPagination,
       );
 
-      appliedFilters = (args.filter
+      appliedFilters = (executionArgs.args.filter
         ? {
-            and: [args.filter, { or: cursorArgFilter }],
+            and: [executionArgs.args.filter, { or: cursorArgFilter }],
           }
-        : { or: cursorArgFilter }) as unknown as Filter;
+        : { or: cursorArgFilter }) as unknown as ObjectRecordFilter;
     }
 
-    const withFilterQueryBuilder = graphqlQueryParser.applyFilterToBuilder(
+    executionArgs.graphqlQueryParser.applyFilterToBuilder(
       queryBuilder,
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
       appliedFilters,
     );
 
-    const withOrderByQueryBuilder = graphqlQueryParser.applyOrderToBuilder(
-      withFilterQueryBuilder,
+    executionArgs.graphqlQueryParser.applyOrderToBuilder(
+      queryBuilder,
       orderByWithIdCondition,
-      objectMetadataMapItem.nameSingular,
+      objectMetadataItemWithFieldMaps.nameSingular,
       isForwardPagination,
     );
 
-    const withDeletedQueryBuilder = graphqlQueryParser.applyDeletedAtToBuilder(
-      withOrderByQueryBuilder,
-      args.filter ?? ({} as Filter),
+    executionArgs.graphqlQueryParser.applyDeletedAtToBuilder(
+      queryBuilder,
+      appliedFilters,
     );
 
-    const nonFormattedObjectRecords = await withDeletedQueryBuilder
+    const isAggregationsEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IsAggregateQueryEnabled,
+        authContext.workspace.id,
+      );
+
+    if (!isAggregationsEnabled) {
+      executionArgs.graphqlQuerySelectedFieldsResult.aggregate = {
+        totalCount:
+          executionArgs.graphqlQuerySelectedFieldsResult.aggregate.totalCount,
+      };
+    }
+
+    const processAggregateHelper = new ProcessAggregateHelper();
+
+    processAggregateHelper.addSelectedAggregatedFieldsQueriesToQueryBuilder({
+      selectedAggregatedFields:
+        executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
+      queryBuilder: aggregateQueryBuilder,
+    });
+
+    const limit =
+      executionArgs.args.first ?? executionArgs.args.last ?? QUERY_MAX_RECORDS;
+
+    const nonFormattedObjectRecords = await queryBuilder
       .take(limit + 1)
       .getMany();
 
-    const objectRecords = formatResult(
+    const objectRecords = formatResult<ObjectRecord[]>(
       nonFormattedObjectRecords,
-      objectMetadataMapItem,
-      objectMetadataMap,
+      objectMetadataItemWithFieldMaps,
+      objectMetadataMaps,
     );
 
     const { hasNextPage, hasPreviousPage } = getPaginationInfo(
@@ -159,37 +153,43 @@ export class GraphqlQueryFindManyResolverService
       objectRecords.pop();
     }
 
+    const parentObjectRecordsAggregatedValues =
+      await aggregateQueryBuilder.getRawOne();
+
     const processNestedRelationsHelper = new ProcessNestedRelationsHelper();
 
-    if (relations) {
-      await processNestedRelationsHelper.processNestedRelations(
-        objectMetadataMap,
-        objectMetadataMapItem,
-        objectRecords,
-        relations,
+    if (executionArgs.graphqlQuerySelectedFieldsResult.relations) {
+      await processNestedRelationsHelper.processNestedRelations({
+        objectMetadataMaps,
+        parentObjectMetadataItem: objectMetadataItemWithFieldMaps,
+        parentObjectRecords: objectRecords,
+        parentObjectRecordsAggregatedValues,
+        relations: executionArgs.graphqlQuerySelectedFieldsResult.relations,
+        aggregate: executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
         limit,
         authContext,
-        dataSource,
-      );
+        dataSource: executionArgs.dataSource,
+      });
     }
 
     const typeORMObjectRecordsParser =
-      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMap);
+      new ObjectRecordsToGraphqlConnectionHelper(objectMetadataMaps);
 
-    const result = typeORMObjectRecordsParser.createConnection({
+    return typeORMObjectRecordsParser.createConnection({
       objectRecords,
-      objectName: objectMetadataMapItem.nameSingular,
+      objectRecordsAggregatedValues: parentObjectRecordsAggregatedValues,
+      selectedAggregatedFields:
+        executionArgs.graphqlQuerySelectedFieldsResult.aggregate,
+      objectName: objectMetadataItemWithFieldMaps.nameSingular,
       take: limit,
-      totalCount,
+      totalCount: parentObjectRecordsAggregatedValues?.totalCount,
       order: orderByWithIdCondition,
       hasNextPage,
       hasPreviousPage,
     });
-
-    return result;
   }
 
-  async validate<Filter extends RecordFilter>(
+  async validate<Filter extends ObjectRecordFilter>(
     args: FindManyResolverArgs<Filter>,
     _options: WorkspaceQueryRunnerOptions,
   ): Promise<void> {

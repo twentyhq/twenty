@@ -12,6 +12,7 @@ import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
+import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
@@ -54,6 +55,10 @@ export const useCreateOneRecord = <
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();
+
+  const { refetchAggregateQueries } = useRefetchAggregateQueries({
+    objectMetadataNamePlural: objectMetadataItem.namePlural,
+  });
 
   const createOneRecord = async (input: Partial<CreatedObjectRecord>) => {
     setLoading(true);
@@ -131,6 +136,7 @@ export const useCreateOneRecord = <
         throw error;
       });
 
+    await refetchAggregateQueries();
     return createdObject.data?.[mutationResponseField] ?? null;
   };
 

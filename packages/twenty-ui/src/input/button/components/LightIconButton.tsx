@@ -56,7 +56,7 @@ const StyledButton = styled.button<
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: center;
-  padding: 0;
+  padding: ${({ theme }) => theme.spacing(1)};
   transition: background 0.1s ease;
 
   white-space: nowrap;

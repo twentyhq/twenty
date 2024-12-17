@@ -2,12 +2,12 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
+import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { RecordGroupAction } from '@/object-record/record-group/types/RecordGroupActions';
-import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useContext, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
@@ -17,9 +17,7 @@ export const useRecordGroupActions = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { objectNameSingular, recordIndexId } = useContext(
-    RecordIndexRootPropsContext,
-  );
+  const { objectNameSingular, recordIndexId } = useRecordIndexContextOrThrow();
 
   const { columnDefinition: recordGroupDefinition } = useContext(
     RecordBoardColumnContext,
@@ -29,9 +27,9 @@ export const useRecordGroupActions = () => {
     objectNameSingular,
   });
 
-  const { viewGroupFieldMetadataItem } = useRecordGroups({
-    objectNameSingular,
-  });
+  const recordGroupFieldMetadata = useRecoilComponentValueV2(
+    recordGroupFieldMetadataComponentState,
+  );
 
   const { handleVisibilityChange: handleRecordGroupVisibilityChange } =
     useRecordGroupVisibility({
@@ -45,11 +43,11 @@ export const useRecordGroupActions = () => {
   const navigateToSelectSettings = useCallback(() => {
     setNavigationMemorizedUrl(location.pathname + location.search);
 
-    if (!isDefined(viewGroupFieldMetadataItem)) {
-      throw new Error('viewGroupFieldMetadataItem is not a non-empty string');
+    if (!isDefined(recordGroupFieldMetadata)) {
+      throw new Error('recordGroupFieldMetadata is not a non-empty string');
     }
 
-    const settingsPath = `/settings/objects/${getObjectSlug(objectMetadataItem)}/${getFieldSlug(viewGroupFieldMetadataItem)}`;
+    const settingsPath = `/settings/objects/${getObjectSlug(objectMetadataItem)}/${getFieldSlug(recordGroupFieldMetadata)}`;
 
     navigate(settingsPath);
   }, [
@@ -58,7 +56,7 @@ export const useRecordGroupActions = () => {
     location.search,
     navigate,
     objectMetadataItem,
-    viewGroupFieldMetadataItem,
+    recordGroupFieldMetadata,
   ]);
 
   const recordGroupActions: RecordGroupAction[] = useMemo(
@@ -73,17 +71,15 @@ export const useRecordGroupActions = () => {
             navigateToSelectSettings();
           },
         },
-        recordGroupDefinition.type !== RecordGroupDefinitionType.NoValue
-          ? {
-              id: 'hide',
-              label: 'Hide',
-              icon: IconEyeOff,
-              position: 1,
-              callback: () => {
-                handleRecordGroupVisibilityChange(recordGroupDefinition);
-              },
-            }
-          : undefined,
+        {
+          id: 'hide',
+          label: 'Hide',
+          icon: IconEyeOff,
+          position: 1,
+          callback: () => {
+            handleRecordGroupVisibilityChange(recordGroupDefinition);
+          },
+        },
       ].filter(isDefined),
     [
       handleRecordGroupVisibilityChange,

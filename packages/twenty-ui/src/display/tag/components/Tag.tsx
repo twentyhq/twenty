@@ -27,7 +27,7 @@ const StyledTag = styled.h3<{
   border-radius: ${BORDER_COMMON.radius.sm};
   color: ${({ color, theme }) =>
     color === 'transparent'
-      ? theme.font.color.tertiary
+      ? theme.font.color.secondary
       : theme.tag.text[color]};
   display: inline-flex;
   font-size: ${({ theme }) => theme.font.size.md};
@@ -43,12 +43,11 @@ const StyledTag = styled.h3<{
   border: ${({ variant, theme }) =>
     variant === 'outline' || variant === 'border'
       ? `1px ${variant === 'border' ? 'solid' : 'dashed'} ${theme.border.color.strong}`
-      : ''};
+      : 'none'};
 
   gap: ${spacing1};
 
-  min-width: ${({ preventShrink }) =>
-    preventShrink ? 'fit-content' : 'none;'};
+  min-width: ${({ preventShrink }) => (preventShrink ? 'fit-content' : 'none')};
 `;
 
 const StyledContent = styled.span`

@@ -8,8 +8,7 @@ import {
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
 
-import { GraphqlQueryRunnerService } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-runner.service';
-import { workspaceQueryRunnerGraphqlApiExceptionHandler } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
+import { GraphqlQuerySearchResolverService } from 'src/engine/api/graphql/graphql-query-runner/resolvers/graphql-query-search-resolver.service';
 
 @Injectable()
 export class SearchResolverFactory
@@ -18,28 +17,26 @@ export class SearchResolverFactory
   public static methodName = 'search' as const;
 
   constructor(
-    private readonly graphqlQueryRunnerService: GraphqlQueryRunnerService,
+    private readonly graphqlQueryRunnerService: GraphqlQuerySearchResolverService,
   ) {}
 
   create(context: WorkspaceSchemaBuilderContext): Resolver<SearchResolverArgs> {
     const internalContext = context;
 
     return async (_source, args, _context, info) => {
-      try {
-        const options: WorkspaceQueryRunnerOptions = {
-          authContext: internalContext.authContext,
-          objectMetadataItem: internalContext.objectMetadataItem,
-          info,
-          fieldMetadataCollection: internalContext.fieldMetadataCollection,
-          objectMetadataCollection: internalContext.objectMetadataCollection,
-          objectMetadataMap: internalContext.objectMetadataMap,
-          objectMetadataMapItem: internalContext.objectMetadataMapItem,
-        };
+      const options: WorkspaceQueryRunnerOptions = {
+        authContext: internalContext.authContext,
+        info,
+        objectMetadataMaps: internalContext.objectMetadataMaps,
+        objectMetadataItemWithFieldMaps:
+          internalContext.objectMetadataItemWithFieldMaps,
+      };
 
-        return await this.graphqlQueryRunnerService.search(args, options);
-      } catch (error) {
-        workspaceQueryRunnerGraphqlApiExceptionHandler(error, internalContext);
-      }
+      return await this.graphqlQueryRunnerService.execute(
+        args,
+        options,
+        SearchResolverFactory.methodName,
+      );
     };
   }
 }

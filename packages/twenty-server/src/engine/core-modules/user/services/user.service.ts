@@ -6,7 +6,6 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { ObjectRecordDeleteEvent } from 'src/engine/core-modules/event-emitter/types/object-record-delete.event';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import {
@@ -18,12 +17,20 @@ import { TwentyORMGlobalManager } from 'src/engine/twenty-orm/twenty-orm-global.
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
 export class UserService extends TypeOrmQueryService<User> {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
@@ -44,13 +51,11 @@ export class UserService extends TypeOrmQueryService<User> {
         'workspaceMember',
       );
 
-    const workspaceMember = await workspaceMemberRepository.findOne({
+    return await workspaceMemberRepository.findOne({
       where: {
         userId: user.id,
       },
     });
-
-    return workspaceMember;
   }
 
   async loadWorkspaceMembers(workspace: Workspace) {
@@ -64,9 +69,7 @@ export class UserService extends TypeOrmQueryService<User> {
         'workspaceMember',
       );
 
-    const workspaceMembers = workspaceMemberRepository.find();
-
-    return workspaceMembers;
+    return workspaceMemberRepository.find();
   }
 
   async deleteUser(userId: string): Promise<User> {
@@ -107,20 +110,60 @@ export class UserService extends TypeOrmQueryService<User> {
     await workspaceDataSource?.query(
       `DELETE FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${userId}'`,
     );
-    const payload =
-      new ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>();
 
-    payload.properties = {
-      before: workspaceMember,
-    };
-    payload.recordId = workspaceMember.id;
+    const objectMetadata = await this.objectMetadataRepository.findOneOrFail({
+      where: {
+        nameSingular: 'workspaceMember',
+      },
+    });
 
-    this.workspaceEventEmitter.emit(
-      `workspaceMember.${DatabaseEventAction.DELETED}`,
-      [payload],
+    this.workspaceEventEmitter.emitDatabaseBatchEvent({
+      objectMetadataNameSingular: 'workspaceMember',
+      action: DatabaseEventAction.DELETED,
+      events: [
+        {
+          recordId: workspaceMember.id,
+          objectMetadata,
+          properties: {
+            before: workspaceMember,
+          },
+        },
+      ],
       workspaceId,
-    );
+    });
 
     return user;
+  }
+
+  async hasUserAccessToWorkspaceOrThrow(userId: string, workspaceId: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+        workspaces: {
+          workspaceId,
+        },
+      },
+      relations: ['workspaces'],
+    });
+
+    userValidator.assertIsDefinedOrThrow(
+      user,
+      new AuthException(
+        'User does not have access to this workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      ),
+    );
+  }
+
+  async saveDefaultWorkspaceIfUserHasAccessOrThrow(
+    userId: string,
+    workspaceId: string,
+  ) {
+    await this.hasUserAccessToWorkspaceOrThrow(userId, workspaceId);
+
+    return await this.userRepository.save({
+      id: userId,
+      defaultWorkspaceId: workspaceId,
+    });
   }
 }

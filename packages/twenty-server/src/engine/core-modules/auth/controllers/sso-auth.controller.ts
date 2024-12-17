@@ -25,14 +25,14 @@ import { SAMLAuthGuard } from 'src/engine/core-modules/auth/guards/saml-auth.gua
 import { SSOProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/sso-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
 import {
   IdentityProviderType,
   WorkspaceSSOIdentityProvider,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 @Controller('auth')
 @UseFilters(AuthRestApiExceptionFilter)
@@ -40,9 +40,9 @@ export class SSOAuthController {
   constructor(
     private readonly loginTokenService: LoginTokenService,
     private readonly authService: AuthService,
-    private readonly workspaceInvitationService: WorkspaceInvitationService,
-    private readonly environmentService: EnvironmentService,
+    private readonly domainManagerService: DomainManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly environmentService: EnvironmentService,
     private readonly ssoService: SSOService,
     @InjectRepository(WorkspaceSSOIdentityProvider, 'core')
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProvider>,
@@ -50,7 +50,7 @@ export class SSOAuthController {
 
   @Get('saml/metadata/:identityProviderId')
   @UseGuards(SSOProviderEnabledGuard)
-  async generateMetadata(@Req() req: any): Promise<string> {
+  async generateMetadata(@Req() req: any): Promise<string | void> {
     return generateServiceProviderMetadata({
       wantAssertionsSigned: false,
       issuer: this.ssoService.buildIssuerURL({
@@ -81,14 +81,26 @@ export class SSOAuthController {
   @UseGuards(SSOProviderEnabledGuard, OIDCAuthGuard)
   async oidcAuthCallback(@Req() req: any, @Res() res: Response) {
     try {
-      const loginToken = await this.generateLoginToken(req.user);
+      const { loginToken, identityProvider } = await this.generateLoginToken(
+        req.user,
+      );
 
       return res.redirect(
-        this.authService.computeRedirectURI(loginToken.token),
+        await this.authService.computeRedirectURI(
+          loginToken.token,
+          identityProvider.workspace.subdomain,
+        ),
       );
     } catch (err) {
-      // TODO: improve error management
-      res.status(403).send(err.message);
+      if (err instanceof AuthException) {
+        return res.redirect(
+          this.domainManagerService.computeRedirectErrorUrl({
+            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+            errorMessage: err.message,
+          }),
+        );
+      }
+      throw err;
     }
   }
 
@@ -96,15 +108,26 @@ export class SSOAuthController {
   @UseGuards(SSOProviderEnabledGuard, SAMLAuthGuard)
   async samlAuthCallback(@Req() req: any, @Res() res: Response) {
     try {
-      const loginToken = await this.generateLoginToken(req.user);
+      const { loginToken, identityProvider } = await this.generateLoginToken(
+        req.user,
+      );
 
       return res.redirect(
-        this.authService.computeRedirectURI(loginToken.token),
+        await this.authService.computeRedirectURI(
+          loginToken.token,
+          identityProvider.workspace.subdomain,
+        ),
       );
     } catch (err) {
-      // TODO: improve error management
-      res.status(403).send(err.message);
-      res.redirect(`${this.environmentService.get('FRONT_BASE_URL')}/verify`);
+      if (err instanceof AuthException) {
+        return res.redirect(
+          this.domainManagerService.computeRedirectErrorUrl({
+            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+            errorMessage: err.message,
+          }),
+        );
+      }
+      throw err;
     }
   }
 
@@ -115,6 +138,13 @@ export class SSOAuthController {
     identityProviderId?: string;
     user: { email: string } & Record<string, string>;
   }) {
+    if (!identityProviderId) {
+      throw new AuthException(
+        'Identity provider ID is required',
+        AuthExceptionCode.INVALID_DATA,
+      );
+    }
+
     const identityProvider =
       await this.workspaceSSOIdentityProviderRepository.findOne({
         where: { id: identityProviderId },
@@ -128,20 +158,15 @@ export class SSOAuthController {
       );
     }
 
-    const invitation =
-      await this.workspaceInvitationService.getOneWorkspaceInvitation(
-        identityProvider.workspaceId,
-        user.email,
-      );
-
-    if (invitation) {
-      await this.authService.signInUp({
-        ...user,
-        workspacePersonalInviteToken: invitation.value,
-        workspaceInviteHash: identityProvider.workspace.inviteHash,
-        fromSSO: true,
-      });
-    }
+    await this.authService.signInUp({
+      ...user,
+      ...(this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')
+        ? {
+            targetWorkspaceSubdomain: identityProvider.workspace.subdomain,
+          }
+        : {}),
+      fromSSO: true,
+    });
 
     const isUserExistInWorkspace =
       await this.userWorkspaceService.checkUserWorkspaceExistsByEmail(
@@ -156,6 +181,9 @@ export class SSOAuthController {
       );
     }
 
-    return this.loginTokenService.generateLoginToken(user.email);
+    return {
+      identityProvider,
+      loginToken: await this.loginTokenService.generateLoginToken(user.email),
+    };
   }
 }

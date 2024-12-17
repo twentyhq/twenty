@@ -1,8 +1,11 @@
 import { RecordIndexActionMenuBarEntry } from '@/action-menu/components/RecordIndexActionMenuBarEntry';
+import {
+  ActionMenuEntryScope,
+  ActionMenuEntryType,
+} from '@/action-menu/types/ActionMenuEntry';
 import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
-
 import { ComponentDecorator, IconCheckbox, IconTrash } from 'twenty-ui';
 
 const meta: Meta<typeof RecordIndexActionMenuBarEntry> = {
@@ -10,7 +13,6 @@ const meta: Meta<typeof RecordIndexActionMenuBarEntry> = {
   component: RecordIndexActionMenuBarEntry,
   decorators: [ComponentDecorator],
 };
-
 export default meta;
 
 type Story = StoryObj<typeof RecordIndexActionMenuBarEntry>;
@@ -21,7 +23,8 @@ const markAsDoneMock = jest.fn();
 export const Default: Story = {
   args: {
     entry: {
-      type: 'standard',
+      type: ActionMenuEntryType.Standard,
+      scope: ActionMenuEntryScope.RecordSelection,
       key: 'delete',
       label: 'Delete',
       position: 0,
@@ -34,7 +37,8 @@ export const Default: Story = {
 export const WithDangerAccent: Story = {
   args: {
     entry: {
-      type: 'standard',
+      type: ActionMenuEntryType.Standard,
+      scope: ActionMenuEntryScope.RecordSelection,
       key: 'delete',
       label: 'Delete',
       position: 0,
@@ -48,7 +52,8 @@ export const WithDangerAccent: Story = {
 export const WithInteraction: Story = {
   args: {
     entry: {
-      type: 'standard',
+      type: ActionMenuEntryType.Standard,
+      scope: ActionMenuEntryScope.RecordSelection,
       key: 'markAsDone',
       label: 'Mark as done',
       position: 0,

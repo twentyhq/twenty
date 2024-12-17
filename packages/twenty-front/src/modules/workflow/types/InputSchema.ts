@@ -1,18 +1,23 @@
-type InputSchemaPropertyType =
+import { FieldMetadataType } from '~/generated/graphql';
+
+export type InputSchemaPropertyType =
   | 'string'
   | 'number'
   | 'boolean'
   | 'object'
   | 'array'
-  | 'unknown';
+  | 'unknown'
+  | FieldMetadataType;
 
-type InputSchemaProperty = {
+export type InputSchemaProperty = {
   type: InputSchemaPropertyType;
   enum?: string[];
   items?: InputSchemaProperty;
-  properties?: InputSchema;
+  properties?: Properties;
 };
 
-export type InputSchema = {
+type Properties = {
   [name: string]: InputSchemaProperty;
 };
+
+export type InputSchema = InputSchemaProperty[];

@@ -1,8 +1,19 @@
-import { MouseEvent, ReactNode } from 'react';
+import { MouseEvent, ReactElement } from 'react';
 import { IconComponent, MenuItemAccent } from 'twenty-ui';
 
+export enum ActionMenuEntryType {
+  Standard = 'Standard',
+  WorkflowRun = 'WorkflowRun',
+}
+
+export enum ActionMenuEntryScope {
+  Global = 'Global',
+  RecordSelection = 'RecordSelection',
+}
+
 export type ActionMenuEntry = {
-  type: 'standard' | 'workflow-run';
+  type: ActionMenuEntryType;
+  scope: ActionMenuEntryScope;
   key: string;
   label: string;
   position: number;
@@ -10,5 +21,5 @@ export type ActionMenuEntry = {
   isPinned?: boolean;
   accent?: MenuItemAccent;
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
-  ConfirmationModal?: ReactNode;
+  ConfirmationModal?: ReactElement;
 };

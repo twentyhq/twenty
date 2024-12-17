@@ -12,11 +12,13 @@ import { SelectControl } from '@/ui/input/components/SelectControl';
 import { isDefined } from '~/utils/isDefined';
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
-export type SelectOption<Value extends string | number | null> = {
+export type SelectOption<Value extends string | number | boolean | null> = {
   value: Value;
   label: string;
   Icon?: IconComponent;
 };
+
+export type SelectSizeVariant = 'small' | 'default';
 
 type CallToActionButton = {
   text: string;
@@ -24,10 +26,12 @@ type CallToActionButton = {
   Icon?: IconComponent;
 };
 
-export type SelectProps<Value extends string | number | null> = {
+export type SelectValue = string | number | boolean | null;
+
+export type SelectProps<Value extends SelectValue> = {
   className?: string;
   disabled?: boolean;
-  disableBlur?: boolean;
+  selectSizeVariant?: SelectSizeVariant;
   dropdownId: string;
   dropdownWidth?: `${string}px` | 'auto' | number;
   dropdownWidthAuto?: boolean;
@@ -54,10 +58,10 @@ const StyledLabel = styled.span`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const Select = <Value extends string | number | null>({
+export const Select = <Value extends SelectValue>({
   className,
   disabled: disabledFromProps,
-  disableBlur = false,
+  selectSizeVariant,
   dropdownId,
   dropdownWidth = 176,
   dropdownWidthAuto = false,
@@ -115,6 +119,7 @@ export const Select = <Value extends string | number | null>({
         <SelectControl
           selectedOption={selectedOption}
           isDisabled={isDisabled}
+          selectSizeVariant={selectSizeVariant}
         />
       ) : (
         <Dropdown
@@ -125,9 +130,9 @@ export const Select = <Value extends string | number | null>({
             <SelectControl
               selectedOption={selectedOption}
               isDisabled={isDisabled}
+              selectSizeVariant={selectSizeVariant}
             />
           }
-          disableBlur={disableBlur}
           dropdownComponents={
             <>
               {!!withSearchInput && (
@@ -144,7 +149,7 @@ export const Select = <Value extends string | number | null>({
                 <DropdownMenuItemsContainer hasMaxHeight>
                   {filteredOptions.map((option) => (
                     <MenuItem
-                      key={option.value}
+                      key={`${option.value}-${option.label}`}
                       LeftIcon={option.Icon}
                       text={option.label}
                       onClick={() => {
@@ -160,7 +165,7 @@ export const Select = <Value extends string | number | null>({
                 <DropdownMenuSeparator />
               )}
               {!!callToActionButton && (
-                <DropdownMenuItemsContainer hasMaxHeight>
+                <DropdownMenuItemsContainer hasMaxHeight withoutScrollWrapper>
                   <MenuItem
                     onClick={callToActionButton.onClick}
                     LeftIcon={callToActionButton.Icon}

@@ -22,12 +22,12 @@ export const workflowRunsAllView = (
           ],
         position: 0,
         isVisible: true,
-        size: 210,
+        size: 150,
       },
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.workflowRun].fields[
-            WORKFLOW_RUN_STANDARD_FIELD_IDS.status
+            WORKFLOW_RUN_STANDARD_FIELD_IDS.workflow
           ],
         position: 1,
         isVisible: true,
@@ -36,7 +36,7 @@ export const workflowRunsAllView = (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.workflowRun].fields[
-            WORKFLOW_RUN_STANDARD_FIELD_IDS.startedAt
+            WORKFLOW_RUN_STANDARD_FIELD_IDS.status
           ],
         position: 2,
         isVisible: true,
@@ -45,9 +45,27 @@ export const workflowRunsAllView = (
       {
         fieldMetadataId:
           objectMetadataMap[STANDARD_OBJECT_IDS.workflowRun].fields[
-            WORKFLOW_RUN_STANDARD_FIELD_IDS.endedAt
+            WORKFLOW_RUN_STANDARD_FIELD_IDS.startedAt
           ],
         position: 3,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.workflowRun].fields[
+            WORKFLOW_RUN_STANDARD_FIELD_IDS.createdBy
+          ],
+        position: 4,
+        isVisible: true,
+        size: 150,
+      },
+      {
+        fieldMetadataId:
+          objectMetadataMap[STANDARD_OBJECT_IDS.workflowRun].fields[
+            WORKFLOW_RUN_STANDARD_FIELD_IDS.workflowVersion
+          ],
+        position: 5,
         isVisible: true,
         size: 150,
       },

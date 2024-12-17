@@ -1,5 +1,5 @@
-import { Ref } from 'react';
 import { styled } from '@linaria/react';
+import { Ref } from 'react';
 
 const StyledOuterContainer = styled.div<{
   hasSoftFocus?: boolean;
@@ -8,7 +8,7 @@ const StyledOuterContainer = styled.div<{
   display: flex;
   height: 100%;
   overflow: hidden;
-  padding-left: 6px;
+  padding-left: 8px;
   width: 100%;
 `;
 
@@ -18,7 +18,7 @@ const StyledInnerContainer = styled.div`
   height: 100%;
   overflow: hidden;
   width: 100%;
-  flex-wrap: wrap;
+  white-space: nowrap;
 `;
 
 export type EditableCellDisplayContainerProps = {
@@ -26,6 +26,7 @@ export type EditableCellDisplayContainerProps = {
   onClick?: () => void;
   scrollRef?: Ref<HTMLDivElement>;
   isHovered?: boolean;
+  onContextMenu?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 };
 
 export const RecordTableCellDisplayContainer = ({
@@ -33,6 +34,7 @@ export const RecordTableCellDisplayContainer = ({
   softFocus,
   onClick,
   scrollRef,
+  onContextMenu,
 }: React.PropsWithChildren<EditableCellDisplayContainerProps>) => (
   <StyledOuterContainer
     data-testid={
@@ -41,6 +43,7 @@ export const RecordTableCellDisplayContainer = ({
     onClick={onClick}
     ref={scrollRef}
     hasSoftFocus={softFocus}
+    onContextMenu={onContextMenu}
   >
     <StyledInnerContainer>{children}</StyledInnerContainer>
   </StyledOuterContainer>

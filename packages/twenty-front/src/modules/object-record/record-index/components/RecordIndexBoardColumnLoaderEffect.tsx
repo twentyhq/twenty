@@ -5,7 +5,7 @@ import { isRecordBoardFetchingRecordsByColumnFamilyState } from '@/object-record
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
 import { useLoadRecordIndexBoardColumn } from '@/object-record/record-index/hooks/useLoadRecordIndexBoardColumn';
 import { isRecordIndexBoardColumnLoadingFamilyState } from '@/object-record/states/isRecordBoardColumnLoadingFamilyState';
-import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
+import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
 
 export const RecordIndexBoardColumnLoaderEffect = ({
   objectNameSingular,
@@ -18,20 +18,14 @@ export const RecordIndexBoardColumnLoaderEffect = ({
   boardFieldMetadataId: string | null;
   columnId: string;
 }) => {
-  const [shouldFetchMore, setShouldFetchMore] = useRecoilState(
-    recordBoardShouldFetchMoreInColumnComponentFamilyState({
-      scopeId: getScopeIdFromComponentId(recordBoardId),
-      familyKey: columnId,
-    }),
+  const [shouldFetchMore, setShouldFetchMore] = useRecoilComponentFamilyStateV2(
+    recordBoardShouldFetchMoreInColumnComponentFamilyState,
+    columnId,
+    recordBoardId,
   );
 
   const [loadingRecordsForThisColumn, setLoadingRecordsForThisColumn] =
-    useRecoilState(
-      isRecordBoardFetchingRecordsByColumnFamilyState({
-        scopeId: getScopeIdFromComponentId(recordBoardId),
-        familyKey: { columnId },
-      }),
-    );
+    useRecoilState(isRecordBoardFetchingRecordsByColumnFamilyState(columnId));
 
   const { fetchMoreRecords, loading, records, hasNextPage } =
     useLoadRecordIndexBoardColumn({

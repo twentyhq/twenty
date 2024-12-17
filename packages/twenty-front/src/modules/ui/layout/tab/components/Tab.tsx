@@ -1,8 +1,10 @@
+import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 import { IconComponent, Pill } from 'twenty-ui';
+import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 
 type TabProps = {
   id: string;
@@ -14,13 +16,12 @@ type TabProps = {
   disabled?: boolean;
   pill?: string | ReactElement;
   to?: string;
+  logo?: string;
 };
 
-const StyledTab = styled.button<{
-  active?: boolean;
-  disabled?: boolean;
-  to?: string;
-}>`
+const StyledTab = styled('button', {
+  shouldForwardProp: (prop) => isPropValid(prop) && prop !== 'active',
+})<{ active?: boolean; disabled?: boolean; to?: string }>`
   align-items: center;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-color: ${({ theme, active }) =>
@@ -62,6 +63,10 @@ const StyledHover = styled.span`
     background: ${({ theme }) => theme.background.quaternary};
   }
 `;
+const StyledLogo = styled.img`
+  height: 14px;
+  width: 14px;
+`;
 
 export const Tab = ({
   id,
@@ -73,6 +78,7 @@ export const Tab = ({
   disabled,
   pill,
   to,
+  logo,
 }: TabProps) => {
   const theme = useTheme();
   return (
@@ -86,8 +92,9 @@ export const Tab = ({
       to={to}
     >
       <StyledHover>
+        {logo && <StyledLogo src={logo} alt={`${title} logo`} />}
         {Icon && <Icon size={theme.icon.size.md} />}
-        {title}
+        <EllipsisDisplay>{title}</EllipsisDisplay>
         {pill && typeof pill === 'string' ? <Pill label={pill} /> : pill}
       </StyledHover>
     </StyledTab>

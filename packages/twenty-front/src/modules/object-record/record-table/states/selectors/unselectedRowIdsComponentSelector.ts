@@ -1,6 +1,6 @@
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
-import { tableRowIdsComponentState } from '@/object-record/record-table/states/tableRowIdsComponentState';
 import { createComponentSelectorV2 } from '@/ui/utilities/state/component-state/utils/createComponentSelectorV2';
 
 export const unselectedRowIdsComponentSelector = createComponentSelectorV2<
@@ -11,14 +11,19 @@ export const unselectedRowIdsComponentSelector = createComponentSelectorV2<
   get:
     ({ instanceId }) =>
     ({ get }) => {
-      const rowIds = get(tableRowIdsComponentState.atomFamily({ instanceId }));
+      const allRecordIds = get(
+        // TODO: Working because instanceId is the same, but we're not in the same context, should be changed !
+        recordIndexAllRecordIdsComponentSelector.selectorFamily({
+          instanceId,
+        }),
+      );
 
-      return rowIds.filter(
-        (rowId) =>
+      return allRecordIds.filter(
+        (recordId) =>
           get(
             isRowSelectedComponentFamilyState.atomFamily({
               instanceId,
-              familyKey: rowId,
+              familyKey: recordId,
             }),
           ) === false,
       );

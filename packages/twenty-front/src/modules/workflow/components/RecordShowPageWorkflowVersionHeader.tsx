@@ -82,7 +82,7 @@ export const RecordShowPageWorkflowVersionHeader = ({
     <>
       {showUseAsDraftButton ? (
         <Button
-          title={`Use as Draft${hasAlreadyDraftVersion ? ' (override)' : ''}`}
+          title={'Use as Draft'}
           variant="secondary"
           Icon={IconPencil}
           disabled={isWaitingForWorkflowVersion}
@@ -131,6 +131,7 @@ export const RecordShowPageWorkflowVersionHeader = ({
       {isDefined(workflowVersion) && isDefined(draftWorkflowVersion) ? (
         <OverrideWorkflowDraftConfirmationModal
           draftWorkflowVersionId={draftWorkflowVersion.id}
+          workflowId={workflowVersion.workflowId}
           workflowVersionUpdateInput={{
             steps: workflowVersion.steps,
             trigger: workflowVersion.trigger,

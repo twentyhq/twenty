@@ -19,6 +19,7 @@ export enum SettingsPath {
   ServerlessFunctionDetail = 'functions/:serverlessFunctionId',
   WorkspaceMembersPage = 'workspace-members',
   Workspace = 'workspace',
+  Domain = 'domain',
   CRMMigration = 'crm-migration',
   Developers = 'developers',
   ServerlessFunctions = 'functions',
@@ -35,4 +36,6 @@ export enum SettingsPath {
   DevelopersNewWebhook = 'webhooks/new',
   DevelopersNewWebhookDetail = 'webhooks/:webhookId',
   Releases = 'releases',
+  AdminPanel = 'admin-panel',
+  FeatureFlags = 'admin-panel/feature-flags',
 }

@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Key } from 'ts-key-enum';
 import { Button, IconSend } from 'twenty-ui';
 import { z } from 'zod';
 
@@ -105,12 +104,6 @@ export const WorkspaceInviteTeam = () => {
     }
   });
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === Key.Enter) {
-      submit();
-    }
-  };
-
   const { isSubmitSuccessful, errors } = formState;
 
   useEffect(() => {
@@ -133,7 +126,6 @@ export const WorkspaceInviteTeam = () => {
                   value={value}
                   onChange={onChange}
                   error={error?.message}
-                  onKeyDown={handleKeyDown}
                   fullWidth
                 />
               );

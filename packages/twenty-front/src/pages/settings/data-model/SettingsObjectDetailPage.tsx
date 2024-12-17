@@ -24,29 +24,14 @@ import {
   IconCodeCircle,
   IconListDetails,
   IconPlus,
+  IconPoint,
   IconSettings,
-  IconTool,
   MAIN_COLORS,
   UndecoratedLink,
   isDefined,
 } from 'twenty-ui';
 import { SETTINGS_OBJECT_DETAIL_TABS } from '~/pages/settings/data-model/constants/SettingsObjectDetailTabs';
 import { updatedObjectSlugState } from '~/pages/settings/data-model/states/updatedObjectSlugState';
-
-const StyledTabListContainer = styled.div`
-  align-items: center;
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  box-sizing: border-box;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  height: ${({ theme }) => theme.spacing(10)};
-  .tab-list {
-    padding-left: 0px;
-  }
-  .tab-list > div {
-    padding: ${({ theme }) => theme.spacing(3) + ' 0'};
-  }
-`;
 
 const StyledContentContainer = styled.div`
   flex: 1;
@@ -78,10 +63,9 @@ export const SettingsObjectDetailPage = () => {
     findActiveObjectMetadataItemBySlug(objectSlug) ??
     findActiveObjectMetadataItemBySlug(updatedObjectSlug);
 
-  const { activeTabIdState } = useTabList(
+  const { activeTabId } = useTabList(
     SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
   );
-  const activeTabId = useRecoilValue(activeTabIdState);
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
@@ -119,7 +103,13 @@ export const SettingsObjectDetailPage = () => {
       title: 'Indexes',
       Icon: IconCodeCircle,
       hide: !isAdvancedModeEnabled || !isUniqueIndexesEnabled,
-      pill: <IconTool size={12} color={MAIN_COLORS.yellow} />,
+      pill: (
+        <IconPoint
+          size={12}
+          color={MAIN_COLORS.yellow}
+          fill={MAIN_COLORS.yellow}
+        />
+      ),
     },
   ];
 
@@ -141,6 +131,12 @@ export const SettingsObjectDetailPage = () => {
   return (
     <>
       <SubMenuTopBarContainer
+        title={
+          <StyledTitleContainer>
+            <H3Title title={objectMetadataItem.labelPlural} />
+            <StyledObjectTypeTag objectTypeLabel={objectTypeLabel} />
+          </StyledTitleContainer>
+        }
         links={[
           {
             children: 'Workspace',
@@ -166,19 +162,13 @@ export const SettingsObjectDetailPage = () => {
         }
       >
         <SettingsPageContainer>
-          <StyledTitleContainer>
-            <H3Title title={objectMetadataItem.labelPlural} />
-            <StyledObjectTypeTag objectTypeLabel={objectTypeLabel} />
-          </StyledTitleContainer>
-          <StyledTabListContainer>
-            <TabList
-              tabListInstanceId={
-                SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
-              }
-              tabs={tabs}
-              className="tab-list"
-            />
-          </StyledTabListContainer>
+          <TabList
+            tabListInstanceId={
+              SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
+            }
+            tabs={tabs}
+            className="tab-list"
+          />
           <StyledContentContainer>
             {renderActiveTabContent()}
           </StyledContentContainer>

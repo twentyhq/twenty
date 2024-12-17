@@ -1,6 +1,6 @@
 import { QueryFailedError } from 'typeorm';
 
-import { WorkspaceSchemaBuilderContext } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-schema-builder-context.interface';
+import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 
 import {
   GraphqlQueryRunnerException,
@@ -20,7 +20,7 @@ import {
 
 export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
   error: Error,
-  context: WorkspaceSchemaBuilderContext,
+  context: WorkspaceQueryRunnerOptions,
 ) => {
   if (error instanceof QueryFailedError) {
     if (
@@ -31,22 +31,23 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       if (indexNameMatch) {
         const indexName = indexNameMatch[1];
 
-        const deletedAtFieldMetadata = context.objectMetadataItem.fields.find(
-          (field) => field.name === 'deletedAt',
-        );
+        const deletedAtFieldMetadata =
+          context.objectMetadataItemWithFieldMaps.fieldsByName['deletedAt'];
 
-        const affectedColumns = context.objectMetadataItem.indexMetadatas
-          .find((index) => index.name === indexName)
-          ?.indexFieldMetadatas?.filter(
-            (field) => field.fieldMetadataId !== deletedAtFieldMetadata?.id,
-          )
-          .map((indexField) => {
-            const fieldMetadata = context.objectMetadataItem.fields.find(
-              (objectField) => indexField.fieldMetadataId === objectField.id,
-            );
+        const affectedColumns =
+          context.objectMetadataItemWithFieldMaps.indexMetadatas
+            .find((index) => index.name === indexName)
+            ?.indexFieldMetadatas?.filter(
+              (field) => field.fieldMetadataId !== deletedAtFieldMetadata?.id,
+            )
+            .map((indexField) => {
+              const fieldMetadata =
+                context.objectMetadataItemWithFieldMaps.fieldsById[
+                  indexField.fieldMetadataId
+                ];
 
-            return fieldMetadata?.label;
-          });
+              return fieldMetadata?.label;
+            });
 
         const columnNames = affectedColumns?.join(', ');
 
@@ -95,6 +96,7 @@ export const workspaceQueryRunnerGraphqlApiExceptionHandler = (
       case GraphqlQueryRunnerExceptionCode.UNSUPPORTED_OPERATOR:
       case GraphqlQueryRunnerExceptionCode.ARGS_CONFLICT:
       case GraphqlQueryRunnerExceptionCode.FIELD_NOT_FOUND:
+      case GraphqlQueryRunnerExceptionCode.INVALID_QUERY_INPUT:
         throw new UserInputError(error.message);
       case GraphqlQueryRunnerExceptionCode.RECORD_NOT_FOUND:
         throw new NotFoundError(error.message);

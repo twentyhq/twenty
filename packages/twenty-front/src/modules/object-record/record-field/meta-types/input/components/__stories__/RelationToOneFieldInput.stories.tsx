@@ -1,19 +1,11 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react';
-import {
-  expect,
-  fireEvent,
-  fn,
-  userEvent,
-  waitFor,
-  within,
-} from '@storybook/test';
+import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 import { useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated/graphql';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
@@ -26,6 +18,8 @@ import {
 } from '~/testing/mock-data/users';
 
 import { FieldContextProvider } from '@/object-record/record-field/meta-types/components/FieldContextProvider';
+import { RecordPickerComponentInstanceContext } from '@/object-record/relation-picker/states/contexts/RecordPickerComponentInstanceContext';
+import { getCanvasElementForDropdownTesting } from 'twenty-ui';
 import {
   RelationToOneFieldInput,
   RelationToOneFieldInputProps,
@@ -80,12 +74,12 @@ const RelationToOneFieldInputWithContext = ({
         }}
         recordId={recordId}
       >
-        <RelationPickerScope
-          relationPickerScopeId={'relation-to-one-field-input'}
+        <RecordPickerComponentInstanceContext.Provider
+          value={{ instanceId: 'relation-to-one-field-input' }}
         >
           <RelationWorkspaceSetterEffect />
           <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />
-        </RelationPickerScope>
+        </RecordPickerComponentInstanceContext.Provider>
       </FieldContextProvider>
       <div data-testid="data-field-input-click-outside-div" />
     </div>
@@ -136,8 +130,8 @@ export const Default: Story = {
 
 export const Submit: Story = {
   decorators: [ComponentWithRecoilScopeDecorator],
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     expect(submitJestFn).toHaveBeenCalledTimes(0);
 
@@ -154,16 +148,16 @@ export const Submit: Story = {
 
 export const Cancel: Story = {
   decorators: [ComponentWithRecoilScopeDecorator],
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  play: async () => {
+    const canvas = within(getCanvasElementForDropdownTesting());
 
     expect(cancelJestFn).toHaveBeenCalledTimes(0);
     await canvas.findByText('John Wick', undefined, { timeout: 3000 });
 
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
-    fireEvent.click(emptyDiv);
 
     await waitFor(() => {
+      userEvent.click(emptyDiv);
       expect(cancelJestFn).toHaveBeenCalledTimes(1);
     });
   },

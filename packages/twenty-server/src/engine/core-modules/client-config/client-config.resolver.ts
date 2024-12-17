@@ -1,23 +1,20 @@
 import { Query, Resolver } from '@nestjs/graphql';
 
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 
 import { ClientConfig } from './client-config.entity';
 
 @Resolver()
 export class ClientConfigResolver {
-  constructor(private environmentService: EnvironmentService) {}
+  constructor(
+    private environmentService: EnvironmentService,
+    private domainManagerService: DomainManagerService,
+  ) {}
 
   @Query(() => ClientConfig)
   async clientConfig(): Promise<ClientConfig> {
     const clientConfig: ClientConfig = {
-      authProviders: {
-        google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
-        magicLink: false,
-        password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
-        microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
-        sso: this.environmentService.get('AUTH_SSO_ENABLED'),
-      },
       billing: {
         isBillingEnabled: this.environmentService.get('IS_BILLING_ENABLED'),
         billingUrl: this.environmentService.get('BILLING_PLAN_REQUIRED_LINK'),
@@ -25,8 +22,20 @@ export class ClientConfigResolver {
           'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
         ),
       },
+      authProviders: {
+        google: this.environmentService.get('AUTH_GOOGLE_ENABLED'),
+        magicLink: false,
+        password: this.environmentService.get('AUTH_PASSWORD_ENABLED'),
+        microsoft: this.environmentService.get('AUTH_MICROSOFT_ENABLED'),
+        sso: [],
+      },
+      isSSOEnabled: this.environmentService.get('AUTH_SSO_ENABLED'),
       signInPrefilled: this.environmentService.get('SIGN_IN_PREFILLED'),
-      signUpDisabled: this.environmentService.get('IS_SIGN_UP_DISABLED'),
+      isMultiWorkspaceEnabled: this.environmentService.get(
+        'IS_MULTIWORKSPACE_ENABLED',
+      ),
+      defaultSubdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+      frontDomain: this.domainManagerService.getFrontUrl().hostname,
       debugMode: this.environmentService.get('DEBUG_MODE'),
       support: {
         supportDriver: this.environmentService.get('SUPPORT_DRIVER'),
