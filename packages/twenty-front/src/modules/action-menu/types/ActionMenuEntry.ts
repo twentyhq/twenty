@@ -22,7 +22,7 @@ export type ActionMenuEntry = {
   Icon: IconComponent;
   isPinned?: boolean;
   accent?: MenuItemAccent;
-  availableOn?: ActionAvailableOn[];
+  availableOn: ActionAvailableOn[];
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   ConfirmationModal?: ReactElement;
 };
