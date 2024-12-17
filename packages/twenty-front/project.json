@@ -8,7 +8,15 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "{projectRoot}/build"
-      }
+      },
+      "dependsOn": ["^build"]
+    },
+    "build:sourcemaps": {
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "{projectRoot}/build"
+      },
+      "dependsOn": ["^build"]
     },
     "serve": {
       "executor": "nx:run-commands",
