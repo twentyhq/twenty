@@ -30,7 +30,7 @@ import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 const StyledNoKanbanFieldAvailableContainer = styled.div`
   color: ${({ theme }) => theme.font.color.light};
@@ -92,11 +92,20 @@ export const ViewPickerContentCreateMode = () => {
   const defaultIcon =
     viewPickerType === ViewType.Kanban ? 'IconLayoutKanban' : 'IconTable';
 
-  const selectedIcon = hasManuallySelectedIcon
-    ? viewPickerSelectedIcon
-    : viewPickerMode === 'create-from-current'
-      ? viewPickerSelectedIcon || defaultIcon
-      : defaultIcon;
+  const selectedIcon = useMemo(() => {
+    if (hasManuallySelectedIcon) {
+      return viewPickerSelectedIcon;
+    }
+    if (viewPickerMode === 'create-from-current') {
+      return viewPickerSelectedIcon || defaultIcon;
+    }
+    return defaultIcon;
+  }, [
+    hasManuallySelectedIcon,
+    viewPickerSelectedIcon,
+    viewPickerMode,
+    defaultIcon,
+  ]);
 
   const onIconChange = ({ iconKey }: { iconKey: string }) => {
     setViewPickerIsDirty(true);
