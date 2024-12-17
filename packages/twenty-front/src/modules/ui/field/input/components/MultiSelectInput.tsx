@@ -127,6 +127,7 @@ export const MultiSelectInput = ({
                 selected={values?.includes(option.value) || false}
                 text={option.label}
                 color={option.color ?? 'transparent'}
+                Icon={option.icon ?? undefined}
                 onClick={() =>
                   onOptionSelected(formatNewSelectedOptions(option.value))
                 }
