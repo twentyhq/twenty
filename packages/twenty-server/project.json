@@ -178,17 +178,30 @@
     "database:reset": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
-      "options": {
-        "cwd": "packages/twenty-server",
-        "commands": [
-          "nx ts-node-no-deps -- ./scripts/truncate-db.ts",
-          "nx ts-node-no-deps -- ./scripts/setup-db.ts",
-          "nx database:migrate",
-          "nx command-no-deps -- cache:flush",
-          "nx command-no-deps -- workspace:seed:dev"
-        ],
-        "parallel": false
-      }
+      "configurations": {
+        "no-seed": {
+          "cwd": "packages/twenty-server",
+          "commands": [
+            "nx ts-node-no-deps -- ./scripts/truncate-db.ts",
+            "nx ts-node-no-deps -- ./scripts/setup-db.ts",
+            "nx database:migrate",
+            "nx command-no-deps -- cache:flush"
+          ],
+          "parallel": false
+        },
+        "seed": {
+          "cwd": "packages/twenty-server",
+          "commands": [
+            "nx ts-node-no-deps -- ./scripts/truncate-db.ts",
+            "nx ts-node-no-deps -- ./scripts/setup-db.ts",
+            "nx database:migrate",
+            "nx command-no-deps -- cache:flush",
+            "nx command-no-deps -- workspace:seed:dev"
+          ],
+          "parallel": false
+        }
+      },
+      "defaultConfiguration": "seed"
     }
   }
 }
