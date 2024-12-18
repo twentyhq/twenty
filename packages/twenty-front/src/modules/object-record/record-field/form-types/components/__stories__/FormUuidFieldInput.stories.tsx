@@ -85,7 +85,7 @@ export const SetInvalidUuidWithNoValidation: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
 
-    const uuid = 'invalid uuid';
+    const uuid = 'invalid';
 
     const input = await canvas.findByPlaceholderText('Enter UUID');
     expect(input).toBeVisible();
