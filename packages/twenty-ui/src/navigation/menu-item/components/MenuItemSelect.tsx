@@ -68,6 +68,7 @@ export const MenuItemSelect = ({
       disabled={disabled}
       hovered={hovered}
       role="option"
+      aria-selected={selected}
     >
       <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
       {selected && <IconCheck size={theme.icon.size.md} />}
