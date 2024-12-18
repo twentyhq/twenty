@@ -4,6 +4,7 @@ import { MOBILE_VIEWPORT } from 'twenty-ui';
 import { TABLE_CELL_CHECKBOX_MIN_WIDTH } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
 import { TABLE_CELL_GRIP_WIDTH } from '@/object-record/record-table/record-table-cell/components/RecordTableCellGrip';
 import { RecordTableFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableFooterCell';
+import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -11,7 +12,7 @@ const StyledTableFoot = styled.thead`
   cursor: pointer;
 
   th:nth-of-type(1) {
-    width: 9px;
+    width: ${FIRST_TH_WIDTH};
     left: 0;
     border-right-color: ${({ theme }) => theme.background.primary};
   }
