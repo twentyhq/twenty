@@ -60,7 +60,6 @@ export const MainNavigationDrawerItems = () => {
         contextProviderName="navigationDrawer"
         componentInstanceId={`scroll-wrapper-navigation-drawer`}
         defaultEnableXScroll={false}
-        scrollHide={true}
       >
         <NavigationDrawerOpenedSection />
         <CurrentWorkspaceMemberFavoritesFolders />

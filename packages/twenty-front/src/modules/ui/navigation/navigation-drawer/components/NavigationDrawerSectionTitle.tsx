@@ -21,6 +21,7 @@ const StyledTitle = styled.div`
   padding-right: ${({ theme }) => theme.spacing(0.5)};
   padding-top: ${({ theme }) => theme.spacing(1)};
   padding-bottom: ${({ theme }) => theme.spacing(1)};
+  margin-right: ${({ theme }) => theme.spacing(2.5)};
   justify-content: space-between;
 
   &:hover {

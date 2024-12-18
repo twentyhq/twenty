@@ -80,15 +80,16 @@ const StyledItem = styled('button', {
   padding-right: ${({ theme }) => theme.spacing(0.5)};
   padding-top: ${({ theme }) => theme.spacing(1)};
 
-  margin-top: ${({ indentationLevel }) =>
-    indentationLevel === 2 ? '2px' : '0'};
+  margin-top: ${({ indentationLevel, theme }) =>
+    indentationLevel === 2 ? theme.spacing(0.5) : '0'};
 
   pointer-events: ${(props) => (props.soon ? 'none' : 'auto')};
 
   width: ${(props) =>
     !props.isNavigationDrawerExpanded
       ? `${NAV_DRAWER_WIDTHS.menu.desktop.collapsed - 24}px`
-      : '100%'};
+      : `${NAV_DRAWER_WIDTHS.menu.desktop.expanded - 34}px`};
+
   ${({ isDragging }) =>
     isDragging &&
     ` 
@@ -115,13 +116,19 @@ const StyledItemElementsContainer = styled.span`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
+  min-width: 0;
   width: 100%;
+
+  & > span:nth-of-type(1) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: break-word;
+  }
 `;
 
 const StyledItemLabel = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledItemCount = styled.span`
@@ -251,7 +258,7 @@ export const NavigationDrawerItem = ({
             <StyledItemLabel>{label}</StyledItemLabel>
           </NavigationDrawerAnimatedCollapseWrapper>
 
-          <StyledSpacer />
+          {(soon || count || keyboard || rightOptions) && <StyledSpacer />}
 
           {soon && (
             <NavigationDrawerAnimatedCollapseWrapper>
@@ -272,8 +279,9 @@ export const NavigationDrawerItem = ({
               </StyledKeyBoardShortcut>
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
-          <NavigationDrawerAnimatedCollapseWrapper>
-            {rightOptions && (
+          
+          {rightOptions && (
+            <NavigationDrawerAnimatedCollapseWrapper>
               <StyledRightOptionsContainer
                 isMobile={isMobile}
                 active={active || false}
@@ -284,8 +292,8 @@ export const NavigationDrawerItem = ({
               >
                 {rightOptions}
               </StyledRightOptionsContainer>
-            )}
-          </NavigationDrawerAnimatedCollapseWrapper>
+            </NavigationDrawerAnimatedCollapseWrapper>
+          )}
         </StyledItemElementsContainer>
       </StyledItem>
     </StyledNavigationDrawerItemContainer>
