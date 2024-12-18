@@ -102,6 +102,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     labelBySubField: {
       primaryPhoneNumber: 'Primary Phone Number',
       primaryPhoneCountryCode: 'Primary Phone Country Code',
+      primaryPhoneCallingCode: 'Primary Phone Calling Code',
       additionalPhones: 'Additional Phones',
     },
     category: 'Basic',
