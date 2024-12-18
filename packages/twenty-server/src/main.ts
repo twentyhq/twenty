@@ -38,7 +38,7 @@ const bootstrap = async () => {
   const logger = app.get(LoggerService);
   const environmentService = app.get(EnvironmentService);
 
-  // TODO: Double check this as it's not working for now, it's going to be heplful for durable trees in twenty "orm"
+  // TODO: Double check this as it's not working for now, it's going to be helpful for durable trees in twenty "orm"
   // // Apply context id strategy for durable trees
   // ContextIdFactory.apply(new AggregateByWorkspaceContextIdStrategy());
 

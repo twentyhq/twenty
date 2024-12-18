@@ -1,6 +1,5 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
-import { Buffer } from 'buffer';
 
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -11,6 +10,7 @@ import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 
 import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
+import { encodeCursor } from '@/apollo/utils/encodeCursor';
 import { isDefined } from '~/utils/isDefined';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
@@ -128,13 +128,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
               );
 
               if (recordToCreateReference && !recordAlreadyInCache) {
-                const cursor = Buffer.from(
-                  JSON.stringify({
-                    position: recordToCreate.position,
-                    id: recordToCreate.id,
-                  }),
-                  'utf-8',
-                ).toString('base64');
+                const cursor = encodeCursor(recordToCreate);
 
                 const edge = {
                   __typename: getEdgeTypename(objectMetadataItem.nameSingular),

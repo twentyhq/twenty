@@ -63,8 +63,12 @@ const StyledColumnFootContainer = styled.div`
 
 export const RecordTableFooterCell = ({
   column,
+  isFirstCell = false,
+  currentRecordGroupId,
 }: {
   column: ColumnDefinition<FieldMetadata>;
+  isFirstCell?: boolean;
+  currentRecordGroupId?: string;
 }) => {
   const tableColumns = useRecoilComponentValueV2(tableColumnsComponentState);
   const tableColumnsByKey = useMemo(
@@ -82,7 +86,11 @@ export const RecordTableFooterCell = ({
       )}
     >
       <StyledColumnFootContainer>
-        <RecordTableColumnFooterWithDropdown column={column} />
+        <RecordTableColumnFooterWithDropdown
+          column={column}
+          currentRecordGroupId={currentRecordGroupId}
+          isFirstCell={isFirstCell}
+        />
       </StyledColumnFootContainer>
     </StyledColumnFooterCell>
   );

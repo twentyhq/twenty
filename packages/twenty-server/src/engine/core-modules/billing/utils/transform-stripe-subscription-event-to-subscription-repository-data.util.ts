@@ -25,8 +25,14 @@ export const transformStripeSubscriptionEventToSubscriptionRepositoryData = (
       BillingSubscriptionCollectionMethod[
         data.object.collection_method.toUpperCase()
       ],
-    automaticTax: data.object.automatic_tax ?? undefined,
-    cancellationDetails: data.object.cancellation_details ?? undefined,
+    automaticTax:
+      data.object.automatic_tax === null
+        ? undefined
+        : data.object.automatic_tax,
+    cancellationDetails:
+      data.object.cancellation_details === null
+        ? undefined
+        : data.object.cancellation_details,
     endedAt: data.object.ended_at
       ? getDateFromTimestamp(data.object.ended_at)
       : undefined,

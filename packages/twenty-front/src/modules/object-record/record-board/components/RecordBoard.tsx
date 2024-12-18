@@ -193,7 +193,10 @@ export const RecordBoard = () => {
       <RecordBoardComponentInstanceContext.Provider
         value={{ instanceId: recordBoardId }}
       >
-        <ScrollWrapper contextProviderName="recordBoard">
+        <ScrollWrapper
+          contextProviderName="recordBoard"
+          componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
+        >
           <RecordBoardStickyHeaderEffect />
           <StyledContainerContainer>
             <RecordBoardHeader />

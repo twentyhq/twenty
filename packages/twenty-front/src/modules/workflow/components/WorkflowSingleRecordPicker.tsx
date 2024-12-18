@@ -17,7 +17,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { WorkflowSingleRecordFieldChip } from '@/workflow/components/WorkflowSingleRecordFieldChip';
-import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
+import { SearchVariablesDropdown } from '@/workflow/search-variables/components/SearchVariablesDropdown';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
