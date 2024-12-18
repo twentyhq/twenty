@@ -90,6 +90,13 @@ export class RefreshTokenService {
       );
     }
 
+    if (!token.workspaceId) {
+      throw new AuthException(
+        'This refresh token is malformed',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
     return { user, token };
   }
 
@@ -115,10 +122,12 @@ export class RefreshTokenService {
     const refreshTokenPayload = {
       userId,
       expiresAt,
+      workspaceId,
       type: AppTokenType.RefreshToken,
     };
     const jwtPayload = {
       sub: userId,
+      workspaceId,
     };
 
     const refreshToken = this.appTokenRepository.create(refreshTokenPayload);
