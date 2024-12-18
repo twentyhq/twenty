@@ -23,7 +23,7 @@ export const RecordTableBodyDroppable = ({
     >
       {(provided) => (
         <RecordTableBody
-          id={`record-table-body${recordGroupId ? `-${recordGroupId}` : ''}`}
+          id="record-table-body"
           ref={provided.innerRef}
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...provided.droppableProps}
