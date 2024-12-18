@@ -33,6 +33,7 @@ const mockPerson = {
   whatsapp: {
     primaryPhoneNumber: '+1',
     primaryPhoneCountryCode: '234-567-890',
+    primaryPhoneCallingCode: '+33',
     additionalPhones: [],
   },
   linkedinLink: {
