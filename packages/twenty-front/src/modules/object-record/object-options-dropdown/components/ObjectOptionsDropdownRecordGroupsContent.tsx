@@ -18,6 +18,7 @@ import { recordGroupFieldMetadataComponentState } from '@/object-record/record-g
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
 import { recordIndexRecordGroupHideComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentState';
+import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexRecordGroupIsDraggableSortComponentSelector';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -49,6 +50,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
 
   const hideEmptyRecordGroup = useRecoilComponentValueV2(
     recordIndexRecordGroupHideComponentState,
+  );
+
+  const recordGroupSort = useRecoilComponentValueV2(
+    recordIndexRecordGroupSortComponentState,
   );
 
   const {
@@ -83,17 +88,15 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
             <MenuItem
               onClick={() => onContentChange('recordGroupFields')}
               LeftIcon={IconLayoutList}
-              text={
-                !recordGroupFieldMetadata
-                  ? 'Group by'
-                  : `Group by "${recordGroupFieldMetadata.label}"`
-              }
+              text="Group by"
+              contextualText={recordGroupFieldMetadata?.label}
               hasSubMenu
             />
             <MenuItem
               onClick={() => onContentChange('recordGroupSort')}
               LeftIcon={IconSortDescending}
               text="Sort"
+              contextualText={recordGroupSort}
               hasSubMenu
             />
           </>
