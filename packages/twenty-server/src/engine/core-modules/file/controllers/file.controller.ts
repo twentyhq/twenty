@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Req,
+  Res,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 
 import { Response } from 'express';
 
@@ -7,6 +15,7 @@ import {
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
+import { AuthFileApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-file-api-exception.filter';
 import {
   checkFilePath,
   checkFilename,
@@ -16,6 +25,7 @@ import { FileService } from 'src/engine/core-modules/file/services/file.service'
 
 // TODO: Add cookie authentication
 @Controller('files')
+@UseFilters(AuthFileApiExceptionFilter)
 @UseGuards(FilePathGuard)
 export class FileController {
   constructor(private readonly fileService: FileService) {}
@@ -27,7 +37,6 @@ export class FileController {
     @Req() req: Request,
   ) {
     const folderPath = checkFilePath(params[0]);
-
     const filename = checkFilename(params['filename']);
 
     const workspaceId = (req as any)?.workspaceId;
