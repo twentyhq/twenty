@@ -7,7 +7,6 @@ import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
 
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useEffect } from 'react';
 import { Tab } from './Tab';
 
@@ -75,32 +74,26 @@ export const TabList = ({
           componentInstanceId={tabListInstanceId}
           tabListIds={tabs.map((tab) => tab.id)}
         />
-        <ScrollWrapper
-          defaultEnableYScroll={false}
-          contextProviderName="tabList"
-          componentInstanceId={`scroll-wrapper-tab-list-${tabListInstanceId}`}
-        >
-          <StyledTabsContainer>
-            {visibleTabs.map((tab) => (
-              <Tab
-                id={tab.id}
-                key={tab.id}
-                title={tab.title}
-                Icon={tab.Icon}
-                logo={tab.logo}
-                active={tab.id === activeTabId}
-                disabled={tab.disabled ?? loading}
-                pill={tab.pill}
-                to={behaveAsLinks ? `#${tab.id}` : undefined}
-                onClick={() => {
-                  if (!behaveAsLinks) {
-                    setActiveTabId(tab.id);
-                  }
-                }}
-              />
-            ))}
-          </StyledTabsContainer>
-        </ScrollWrapper>
+        <StyledTabsContainer>
+          {visibleTabs.map((tab) => (
+            <Tab
+              id={tab.id}
+              key={tab.id}
+              title={tab.title}
+              Icon={tab.Icon}
+              logo={tab.logo}
+              active={tab.id === activeTabId}
+              disabled={tab.disabled ?? loading}
+              pill={tab.pill}
+              to={behaveAsLinks ? `#${tab.id}` : undefined}
+              onClick={() => {
+                if (!behaveAsLinks) {
+                  setActiveTabId(tab.id);
+                }
+              }}
+            />
+          ))}
+        </StyledTabsContainer>
       </TabListScope>
     </StyledContainer>
   );
