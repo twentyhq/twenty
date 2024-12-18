@@ -70,12 +70,22 @@ export class BillingSyncCustomerDataCommand extends ActiveWorkspacesCommandRunne
     });
 
     if (!options.dryRun && !billingCustomer) {
-      const customerData =
-        await this.stripeService.getCustomerData(workspaceId);
+      const stripeCustomerId =
+        await this.stripeService.getStripeCustomerIdFromWorkspaceId(
+          workspaceId,
+        );
 
-      await this.billingCustomerRepository.upsert(customerData, {
-        conflictPaths: ['workspaceId'],
-      });
+      if (stripeCustomerId) {
+        await this.billingCustomerRepository.upsert(
+          {
+            stripeCustomerId,
+            workspaceId,
+          },
+          {
+            conflictPaths: ['workspaceId'],
+          },
+        );
+      }
     }
 
     if (options.verbose) {
