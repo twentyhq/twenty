@@ -16,8 +16,6 @@ import { isDefined } from 'twenty-ui';
 
 const StyledInputContainer = styled.div`
   align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.secondary};
-  backdrop-filter: ${({ theme }) => theme.blur.medium};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-top-left-radius: ${({ theme }) => theme.border.radius.md};
   border-top-right-radius: ${({ theme }) => theme.border.radius.md};

@@ -19,6 +19,7 @@ import { WebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webh
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/services/billing-webhook-entitlement.service';
+import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/services/billing-webhook-price.service';
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/services/billing-webhook-subscription.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
@@ -33,6 +34,7 @@ export class BillingController {
     private readonly billingWebhookEntitlementService: BillingWebhookEntitlementService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingWebhookProductService: BillingWebhookProductService,
+    private readonly billingWebhookPriceService: BillingWebhookPriceService,
   ) {}
 
   @Post('/webhooks')
@@ -95,6 +97,21 @@ export class BillingController {
       event.type === WebhookEvent.PRODUCT_UPDATED
     ) {
       await this.billingWebhookProductService.processStripeEvent(event.data);
+    }
+    if (
+      event.type === WebhookEvent.PRICE_CREATED ||
+      event.type === WebhookEvent.PRICE_UPDATED
+    ) {
+      try {
+        await this.billingWebhookPriceService.processStripeEvent(event.data);
+      } catch (error) {
+        if (
+          error instanceof BillingException &&
+          error.code === BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND
+        ) {
+          res.status(404).end();
+        }
+      }
     }
 
     res.status(200).end();

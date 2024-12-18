@@ -7,11 +7,11 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { isNonEmptyString } from '@sniptt/guards';
+import { Avatar } from 'twenty-ui';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -19,18 +19,10 @@ const StyledContainer = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
   user-select: none;
 `;
+
 const StyledSingleWorkspaceContainer = styled(StyledContainer)`
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledLogo = styled.div<{ logo: string }>`
-  background: url(${({ logo }) => logo});
-  background-position: center;
-  background-size: cover;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  height: 16px;
-  width: 16px;
 `;
 
 const StyledName = styled.div`
@@ -75,9 +67,7 @@ export const NavigationDrawerHeader = ({
         <MultiWorkspaceDropdownButton workspaces={workspaces} />
       ) : (
         <StyledSingleWorkspaceContainer>
-          <StyledLogo
-            logo={isNonEmptyString(logo) ? logo : DEFAULT_WORKSPACE_LOGO}
-          />
+          <Avatar placeholder={name} avatarUrl={logo} />
           <NavigationDrawerAnimatedCollapseWrapper>
             <StyledName>{name}</StyledName>
           </NavigationDrawerAnimatedCollapseWrapper>

@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { Editor } from '@tiptap/react';
 
-const CAPTURE_VARIABLE_TAG_REGEX = /({{[^{}]+}})/;
+export const CAPTURE_VARIABLE_TAG_REGEX = /({{[^{}]+}})/;
 
 export const initializeEditorContent = (editor: Editor, content: string) => {
   const lines = content.split(/\n/);

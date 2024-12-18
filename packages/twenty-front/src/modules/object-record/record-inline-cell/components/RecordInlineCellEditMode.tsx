@@ -1,4 +1,5 @@
 import { RecordInlineCellContext } from '@/object-record/record-inline-cell/components/RecordInlineCellContext';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import styled from '@emotion/styled';
 import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 import { useContext } from 'react';
@@ -11,24 +12,14 @@ const StyledInlineCellEditModeContainer = styled.div`
   width: 100%;
   position: absolute;
   height: 24px;
-`;
 
-const StyledInlineCellInput = styled.div`
-  align-items: center;
-  display: flex;
-
-  min-height: 32px;
-
-  width: 240px;
-
-  z-index: 30;
+  background: transparent;
 `;
 
 type RecordInlineCellEditModeProps = {
   children: React.ReactNode;
 };
 
-// TODO: Refactor this to avoid setting absolute px values.
 export const RecordInlineCellEditMode = ({
   children,
 }: RecordInlineCellEditModeProps) => {
@@ -46,7 +37,7 @@ export const RecordInlineCellEditMode = ({
             }
           : {
               mainAxis: -29,
-              crossAxis: -4,
+              crossAxis: -5,
             },
       ),
     ],
@@ -59,9 +50,9 @@ export const RecordInlineCellEditMode = ({
       data-testid="inline-cell-edit-mode-container"
     >
       {createPortal(
-        <StyledInlineCellInput ref={refs.setFloating} style={floatingStyles}>
+        <OverlayContainer ref={refs.setFloating} style={floatingStyles}>
           {children}
-        </StyledInlineCellInput>,
+        </OverlayContainer>,
         document.body,
       )}
     </StyledInlineCellEditModeContainer>

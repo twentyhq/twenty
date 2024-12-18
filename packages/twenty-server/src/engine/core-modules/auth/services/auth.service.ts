@@ -257,6 +257,7 @@ export class AuthService {
     if (userValidator.isDefined(user)) {
       return {
         exists: true,
+        defaultWorkspaceId: user.defaultWorkspaceId,
         availableWorkspaces: await this.findAvailableWorkspacesByEmail(email),
       };
     }
