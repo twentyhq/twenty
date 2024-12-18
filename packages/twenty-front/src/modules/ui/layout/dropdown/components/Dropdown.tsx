@@ -120,7 +120,6 @@ export const Dropdown = ({
           )}
           {isDropdownOpen && (
             <DropdownContent
-              id={"currency-picker-options"}
               className={className}
               floatingStyles={floatingStyles}
               dropdownMenuWidth={dropdownMenuWidth}
