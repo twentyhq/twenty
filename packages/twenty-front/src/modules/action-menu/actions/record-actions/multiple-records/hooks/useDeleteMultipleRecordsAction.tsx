@@ -13,13 +13,14 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
-import { useFetchAllRecordIds } from '@/object-record/hooks/useFetchAllRecordIds';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useContext, useState } from 'react';
 import { IconTrash, isDefined } from 'twenty-ui';
+import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
+import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 
 export const useDeleteMultipleRecordsAction = ({
   objectMetadataItem,
@@ -60,15 +61,18 @@ export const useDeleteMultipleRecordsAction = ({
     objectMetadataItem,
   );
 
-  const { fetchAllRecordIds } = useFetchAllRecordIds({
+  const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     filter: graphqlFilter,
+    limit: DEFAULT_QUERY_PAGE_SIZE,
+    recordGqlFields: { id: true },
   });
 
   const { closeRightDrawer } = useRightDrawer();
 
   const handleDeleteClick = useCallback(async () => {
-    const recordIdsToDelete = await fetchAllRecordIds();
+    const recordsToDelete = await fetchAllRecordIds();
+    const recordIdsToDelete = recordsToDelete.map((record) => record.id);
 
     resetTableRowSelection();
 

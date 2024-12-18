@@ -3,8 +3,6 @@ import { useRecoilValue } from 'recoil';
 
 import { workspacesState } from '@/auth/states/workspaces';
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdownButton';
-import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -41,14 +39,14 @@ const StyledNavigationDrawerCollapseButton = styled(
 `;
 
 type NavigationDrawerHeaderProps = {
-  name?: string;
-  logo?: string;
+  name: string;
+  logo: string;
   showCollapseButton: boolean;
 };
 
 export const NavigationDrawerHeader = ({
-  name = DEFAULT_WORKSPACE_NAME,
-  logo = DEFAULT_WORKSPACE_LOGO,
+  name,
+  logo,
   showCollapseButton,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
