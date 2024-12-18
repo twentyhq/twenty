@@ -6,6 +6,7 @@ import { FormFullNameFieldInput } from '@/object-record/record-field/form-types/
 import { FormLinksFieldInput } from '@/object-record/record-field/form-types/components/FormLinksFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/form-types/components/FormMultiSelectFieldInput';
 import { FormNumberFieldInput } from '@/object-record/record-field/form-types/components/FormNumberFieldInput';
+import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
@@ -26,6 +27,7 @@ import { isFieldFullName } from '@/object-record/record-field/types/guards/isFie
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
+import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { JsonValue } from 'type-fest';
@@ -117,6 +119,14 @@ export const FormFieldInput = ({
       onPersist={onPersist}
       VariablePicker={VariablePicker}
       options={field.metadata.options}
+    />
+  ) : isFieldRawJson(field) ? (
+    <FormRawJsonFieldInput
+      label={field.label}
+      defaultValue={defaultValue as string | undefined}
+      onPersist={onPersist}
+      placeholder={field.label}
+      VariablePicker={VariablePicker}
     />
   ) : null;
 };
