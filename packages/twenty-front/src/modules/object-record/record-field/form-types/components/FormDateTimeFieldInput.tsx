@@ -1,23 +1,23 @@
 import { FormDateishFieldInputBase } from '@/object-record/record-field/form-types/components/FormDateishFieldInputBase';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 
-type FormDateFieldInputProps = {
+type FormDateTimeFieldInputProps = {
   label?: string;
   defaultValue: string | undefined;
   onPersist: (value: string | null) => void;
   VariablePicker?: VariablePickerComponent;
 };
 
-export const FormDateFieldInput = ({
+export const FormDateTimeFieldInput = ({
   label,
   defaultValue,
   onPersist,
   VariablePicker,
-}: FormDateFieldInputProps) => {
+}: FormDateTimeFieldInputProps) => {
   return (
     <FormDateishFieldInputBase
-      mode="date"
-      placeholder="mm/dd/yyyy"
+      mode="datetime"
+      placeholder="mm/dd/yyyy hh:mm"
       {...{ label, defaultValue, onPersist, VariablePicker }}
     />
   );
