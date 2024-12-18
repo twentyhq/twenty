@@ -84,14 +84,18 @@ export const useLazyFetchAllRecords = <T>({
         break;
       }
 
+      if (!isDefined(fetchMore)) {
+        break;
+      }
+
       if (delayMs > 0) {
         await sleep(delayMs);
       }
 
-      const rawResult = await fetchMore?.({
+      const rawResult = await fetchMore({
         variables: {
           lastCursor: lastCursor,
-          limit: limit,
+          limit,
         },
       });
 
