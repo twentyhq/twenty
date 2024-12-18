@@ -1,7 +1,7 @@
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { useRichTextField } from '@/object-record/record-field/meta-types/hooks/useRichTextField';
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { getFirstNonEmptyLineOfRichText } from '@/ui/input/editor/utils/getFirstNonEmptyLineOfRichText';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -24,7 +24,7 @@ const StyledRichTextDropdownMenu = styled(DropdownMenu)`
 `;
 
 export type RichTextFieldInputProps = {
-  onClickOutside?: FieldInputEvent;
+  onClickOutside?: FieldInputClickOutsideEvent;
 };
 
 export const RichTextFieldInput = ({
@@ -66,8 +66,8 @@ export const RichTextFieldInput = ({
     strategy: 'absolute',
   });
 
-  const handleClickOutside = () => {
-    onClickOutside?.(() => persistRichTextField(editor.document));
+  const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+    onClickOutside?.(() => persistRichTextField(editor.document), event);
   };
 
   useRegisterInputEvents<PartialBlock[]>({

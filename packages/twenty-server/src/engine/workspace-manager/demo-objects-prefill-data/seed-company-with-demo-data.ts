@@ -18,20 +18,6 @@ export const seedCompanyWithDemoData = async (
       'createdBySource',
       'createdByWorkspaceMemberId',
       'createdByName',
-      'demoUUID', 
-      'demoRichText',
-      'demoArray',
-      'demoRating',
-      'demoSelect',
-      'demoMultiSelect',
-      'demoRawJSON',
-      'demoEmailsPrimaryEmail',
-      'demoEmailsAdditionalEmails',
-      'demoPhonesPrimaryPhoneNumber',
-      'demoPhonesPrimaryPhoneCountryCode',
-      'demoPhonesAdditionalPhones',
-      'demoFullNameFirstName',
-      'demoFullNameLastName',
       'position'
     ])
     .orIgnore()

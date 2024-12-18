@@ -8,19 +8,18 @@ import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
 
 export type FieldUuidMetadata = {
-  metadataType: 'FieldUuidMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldBooleanMetadata = {
-  metadataType: 'FieldBooleanMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldTextMetadata = {
-  metadataType: 'FieldTextMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
@@ -30,7 +29,6 @@ export type FieldTextMetadata = {
 };
 
 export type FieldDateTimeMetadata = {
-  metadataType: 'FieldDateTimeMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
@@ -40,7 +38,6 @@ export type FieldDateTimeMetadata = {
 };
 
 export type FieldDateMetadata = {
-  metadataType: 'FieldDateMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
@@ -52,7 +49,6 @@ export type FieldDateMetadata = {
 export type FieldNumberVariant = 'number' | 'percentage';
 
 export type FieldNumberMetadata = {
-  metadataType: 'FieldNumberMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
   placeHolder: string;
@@ -64,87 +60,86 @@ export type FieldNumberMetadata = {
 };
 
 export type FieldLinkMetadata = {
-  metadataType: 'FieldLinkMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldLinksMetadata = {
-  metadataType: 'FieldLinksMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldCurrencyMetadata = {
-  metadataType: 'FieldCurrencyMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
   placeHolder: string;
   isPositive?: boolean;
+  settings?: null;
 };
 
 export type FieldFullNameMetadata = {
-  metadataType: 'FieldFullNameMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldEmailMetadata = {
-  metadataType: 'FieldEmailMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldEmailsMetadata = {
-  metadataType: 'FieldEmailsMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldPhoneMetadata = {
-  metadataType: 'FieldPhoneMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldRatingMetadata = {
-  metadataType: 'FieldRatingMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldAddressMetadata = {
-  metadataType: 'FieldAddressMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldRawJsonMetadata = {
-  metadataType: 'FieldRawJsonMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
   placeHolder: string;
+  settings?: null;
 };
 
 export type FieldRichTextMetadata = {
-  metadataType: 'FieldRichTextMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldPositionMetadata = {
-  metadataType: 'FieldPositionMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldRelationMetadata = {
-  metadataType: 'FieldRelationMetadata';
   fieldName: string;
   objectMetadataNameSingular?: string;
   relationFieldMetadataId: string;
@@ -153,46 +148,47 @@ export type FieldRelationMetadata = {
   relationType?: RelationDefinitionType;
   targetFieldMetadataName?: string;
   useEditButton?: boolean;
+  settings?: null;
 };
 
 export type FieldSelectMetadata = {
-  metadataType: 'FieldSelectMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
   options: { label: string; color: ThemeColor; value: string }[];
   isNullable: boolean;
+  settings?: null;
 };
 
 export type FieldMultiSelectMetadata = {
-  metadataType: 'FieldMultiSelectMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
   options: { label: string; color: ThemeColor; value: string }[];
+  settings?: null;
 };
 
 export type FieldActorMetadata = {
-  metadataType: 'FieldActorMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldArrayMetadata = {
-  metadataType: 'FieldArrayMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
   values: { label: string; value: string }[];
+  settings?: null;
 };
 
 export type FieldPhonesMetadata = {
-  metadataType: 'FieldPhonesMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldTsVectorMetadata = {
-  metadataType: 'FieldTsVectorMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
+  settings?: null;
 };
 
 export type FieldMetadata =
