@@ -1,16 +1,16 @@
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import {
   OutputSchema,
   StepOutputSchema,
 } from '@/workflow/search-variables/types/StepOutputSchema';
 import { isBaseOutputSchema } from '@/workflow/search-variables/utils/isBaseOutputSchema';
 import { isRecordOutputSchema } from '@/workflow/search-variables/utils/isRecordOutputSchema';
-import { useTheme } from '@emotion/react';
 
 import { useState } from 'react';
 import {
-  HorizontalSeparator,
   IconChevronLeft,
   MenuItemSelect,
   OverflowingTextWithTooltip,
@@ -28,7 +28,6 @@ export const SearchVariablesDropdownObjectItems = ({
   onSelect,
   onBack,
 }: SearchVariablesDropdownObjectItemsProps) => {
-  const theme = useTheme();
   const [currentPath, setCurrentPath] = useState<string[]>([]);
   const [searchInputValue, setSearchInputValue] = useState('');
   const { getIcon } = useIcons();
@@ -119,44 +118,39 @@ export const SearchVariablesDropdownObjectItems = ({
       <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={goBack}>
         <OverflowingTextWithTooltip text={headerLabel} />
       </DropdownMenuHeader>
-      <HorizontalSeparator
-        color={theme.background.transparent.primary}
-        noMargin
-      />
       <DropdownMenuSearchInput
         autoFocus
         value={searchInputValue}
         onChange={(event) => setSearchInputValue(event.target.value)}
       />
-      <HorizontalSeparator
-        color={theme.background.transparent.primary}
-        noMargin
-      />
-      {shouldDisplaySubStepObject && displayedSubStepObject?.label && (
-        <MenuItemSelect
-          selected={false}
-          hovered={false}
-          onClick={handleSelectObject}
-          text={displayedSubStepObject.label}
-          hasSubMenu={false}
-          LeftIcon={
-            displayedSubStepObject.icon
-              ? getIcon(displayedSubStepObject.icon)
-              : undefined
-          }
-        />
-      )}
-      {filteredOptions.map(([key, value]) => (
-        <MenuItemSelect
-          key={key}
-          selected={false}
-          hovered={false}
-          onClick={() => handleSelectField(key)}
-          text={value.label || key}
-          hasSubMenu={!value.isLeaf}
-          LeftIcon={value.icon ? getIcon(value.icon) : undefined}
-        />
-      ))}
+      <DropdownMenuSeparator />
+      <DropdownMenuItemsContainer>
+        {shouldDisplaySubStepObject && displayedSubStepObject?.label && (
+          <MenuItemSelect
+            selected={false}
+            hovered={false}
+            onClick={handleSelectObject}
+            text={displayedSubStepObject.label}
+            hasSubMenu={false}
+            LeftIcon={
+              displayedSubStepObject.icon
+                ? getIcon(displayedSubStepObject.icon)
+                : undefined
+            }
+          />
+        )}
+        {filteredOptions.map(([key, value]) => (
+          <MenuItemSelect
+            key={key}
+            selected={false}
+            hovered={false}
+            onClick={() => handleSelectField(key)}
+            text={value.label || key}
+            hasSubMenu={!value.isLeaf}
+            LeftIcon={value.icon ? getIcon(value.icon) : undefined}
+          />
+        ))}
+      </DropdownMenuItemsContainer>
     </>
   );
 };

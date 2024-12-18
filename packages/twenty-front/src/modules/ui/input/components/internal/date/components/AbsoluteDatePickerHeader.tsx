@@ -81,7 +81,6 @@ export const AbsoluteDatePickerHeader = ({
         <Select
           dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
           options={getMonthSelectOptions()}
-          disableBlur
           onChange={onChangeMonth}
           value={endOfDayInLocalTimezone.getMonth()}
           fullWidth
@@ -91,7 +90,6 @@ export const AbsoluteDatePickerHeader = ({
           onChange={onChangeYear}
           value={endOfDayInLocalTimezone.getFullYear()}
           options={years}
-          disableBlur
           fullWidth
         />
         <LightIconButton

@@ -33,6 +33,7 @@ import {
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -62,6 +63,7 @@ export class SignInUpService {
     private readonly httpService: HttpService,
     private readonly environmentService: EnvironmentService,
     private readonly domainManagerService: DomainManagerService,
+    private readonly userService: UserService,
   ) {}
 
   async signInUp({
@@ -175,6 +177,26 @@ export class SignInUpService {
         lastName,
         picture,
       });
+    }
+
+    if (targetWorkspaceSubdomain) {
+      const workspace = await this.workspaceRepository.findOne({
+        where: { subdomain: targetWorkspaceSubdomain },
+        select: ['id'],
+      });
+
+      workspaceValidator.assertIsExist(
+        workspace,
+        new AuthException(
+          'Workspace not found',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        ),
+      );
+
+      await this.userService.saveDefaultWorkspaceIfUserHasAccessOrThrow(
+        existingUser.id,
+        workspace.id,
+      );
     }
 
     return existingUser;

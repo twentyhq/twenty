@@ -3,12 +3,14 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '@/ui/layout/dropdown/hooks/useInternalHotkeyScopeManagement';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { dropdownMaxHeightComponentStateV2 } from '@/ui/layout/dropdown/states/dropdownMaxHeightComponentStateV2';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
-import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import styled from '@emotion/styled';
 import {
   FloatingPortal,
   Placement,
@@ -18,6 +20,11 @@ import { useEffect } from 'react';
 import { Keys } from 'react-hotkeys-hook';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
+
+export const StyledDropdownContentContainer = styled.div`
+  display: flex;
+  z-index: 30;
+`;
 
 export type DropdownContentProps = {
   className?: string;
@@ -32,7 +39,6 @@ export type DropdownContentProps = {
     scope: string;
   };
   onHotkeyTriggered?: () => void;
-  disableBlur?: boolean;
   dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownComponents: React.ReactNode;
   parentDropdownId?: string;
@@ -49,7 +55,6 @@ export const DropdownContent = ({
   floatingStyles,
   hotkey,
   onHotkeyTriggered,
-  disableBlur,
   dropdownMenuWidth,
   dropdownComponents,
   avoidPortal,
@@ -59,7 +64,7 @@ export const DropdownContent = ({
 
   const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
 
-  const [dropdownMaxHeight] = useRecoilComponentStateV2(
+  const dropdownMaxHeight = useRecoilComponentValueV2(
     dropdownMaxHeightComponentStateV2,
     dropdownId,
   );
@@ -114,28 +119,36 @@ export const DropdownContent = ({
         <HotkeyEffect hotkey={hotkey} onHotkeyTriggered={onHotkeyTriggered} />
       )}
       {avoidPortal ? (
-        <DropdownMenu
-          className={className}
-          disableBlur={disableBlur}
-          width={dropdownMenuWidth ?? dropdownWidth}
-          data-select-disable
+        <StyledDropdownContentContainer
           ref={floatingUiRefs.setFloating}
           style={dropdownMenuStyles}
         >
-          {dropdownComponents}
-        </DropdownMenu>
+          <OverlayContainer>
+            <DropdownMenu
+              className={className}
+              width={dropdownMenuWidth ?? dropdownWidth}
+              data-select-disable
+            >
+              {dropdownComponents}
+            </DropdownMenu>
+          </OverlayContainer>
+        </StyledDropdownContentContainer>
       ) : (
         <FloatingPortal>
-          <DropdownMenu
-            className={className}
-            disableBlur={disableBlur}
-            width={dropdownMenuWidth ?? dropdownWidth}
-            data-select-disable
+          <StyledDropdownContentContainer
             ref={floatingUiRefs.setFloating}
             style={dropdownMenuStyles}
           >
-            {dropdownComponents}
-          </DropdownMenu>
+            <OverlayContainer>
+              <DropdownMenu
+                className={className}
+                width={dropdownMenuWidth ?? dropdownWidth}
+                data-select-disable
+              >
+                {dropdownComponents}
+              </DropdownMenu>
+            </OverlayContainer>
+          </StyledDropdownContentContainer>
         </FloatingPortal>
       )}
     </>

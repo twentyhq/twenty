@@ -14,8 +14,6 @@ export const RecordShowPageHeader = ({
 }) => {
   const {
     viewName,
-    hasPreviousRecord,
-    hasNextRecord,
     navigateToPreviousRecord,
     navigateToNextRecord,
     navigateToIndexView,
@@ -29,9 +27,7 @@ export const RecordShowPageHeader = ({
       hasPaginationButtons
       hasClosePageButton
       onClosePage={navigateToIndexView}
-      hasPreviousRecord={hasPreviousRecord}
       navigateToPreviousRecord={navigateToPreviousRecord}
-      hasNextRecord={hasNextRecord}
       navigateToNextRecord={navigateToNextRecord}
       Icon={headerIcon}
     >

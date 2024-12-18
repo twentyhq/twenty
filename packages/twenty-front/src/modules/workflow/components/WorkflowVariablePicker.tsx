@@ -1,5 +1,5 @@
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import SearchVariablesDropdown from '@/workflow/search-variables/components/SearchVariablesDropdown';
+import { SearchVariablesDropdown } from '@/workflow/search-variables/components/SearchVariablesDropdown';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
