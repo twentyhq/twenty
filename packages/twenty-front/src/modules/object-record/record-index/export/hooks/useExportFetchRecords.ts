@@ -99,7 +99,9 @@ export const useExportFetchRecords = ({
 
   const getTableData = async () => {
     const result = await fetchAllRecords();
-    callback(result, finalColumns);
+    if (result.length > 0) {
+      callback(result, finalColumns);
+    }
   };
 
   return {
