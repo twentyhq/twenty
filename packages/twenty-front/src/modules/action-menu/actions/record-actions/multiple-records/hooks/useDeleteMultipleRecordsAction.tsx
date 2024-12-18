@@ -8,8 +8,6 @@ import { contextStoreFiltersComponentState } from '@/context-store/states/contex
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
-import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
-import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
@@ -38,9 +36,6 @@ export const useDeleteMultipleRecordsAction = ({
   const { deleteManyRecords } = useDeleteManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
   });
-
-  const { sortedFavorites: favorites } = useFavorites();
-  const { deleteFavorite } = useDeleteFavorite();
 
   const contextStoreNumberOfSelectedRecords = useRecoilComponentValueV2(
     contextStoreNumberOfSelectedRecordsComponentState,
@@ -72,26 +67,8 @@ export const useDeleteMultipleRecordsAction = ({
 
     resetTableRowSelection();
 
-    for (const recordIdToDelete of recordIdsToDelete) {
-      const foundFavorite = favorites?.find(
-        (favorite) => favorite.recordId === recordIdToDelete,
-      );
-
-      if (foundFavorite !== undefined) {
-        deleteFavorite(foundFavorite.id);
-      }
-    }
-
-    await deleteManyRecords(recordIdsToDelete, {
-      delayInMsBetweenRequests: 50,
-    });
-  }, [
-    deleteFavorite,
-    deleteManyRecords,
-    favorites,
-    fetchAllRecordIds,
-    resetTableRowSelection,
-  ]);
+    await deleteManyRecords(recordIdsToDelete);
+  }, [deleteManyRecords, fetchAllRecordIds, resetTableRowSelection]);
 
   const isRemoteObject = objectMetadataItem.isRemote;
 
