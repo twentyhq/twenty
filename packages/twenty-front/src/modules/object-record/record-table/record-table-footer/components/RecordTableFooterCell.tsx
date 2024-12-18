@@ -5,7 +5,6 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { RecordTableColumnFooterWithDropdown } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnFooterWithDropdown';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
@@ -86,19 +85,13 @@ export const RecordTableFooterCell = ({
         COLUMN_MIN_WIDTH,
       )}
     >
-      <ScrollWrapper
-        contextProviderName="aggregateFooterCell"
-        componentInstanceId="AggregateFooterCellScrollWrapperContext"
-        defaultEnableYScroll={false}
-      >
-        <StyledColumnFootContainer>
-          <RecordTableColumnFooterWithDropdown
-            column={column}
-            currentRecordGroupId={currentRecordGroupId}
-            isFirstCell={isFirstCell}
-          />
-        </StyledColumnFootContainer>
-      </ScrollWrapper>
+      <StyledColumnFootContainer>
+        <RecordTableColumnFooterWithDropdown
+          column={column}
+          currentRecordGroupId={currentRecordGroupId}
+          isFirstCell={isFirstCell}
+        />
+      </StyledColumnFootContainer>
     </StyledColumnFooterCell>
   );
 };
