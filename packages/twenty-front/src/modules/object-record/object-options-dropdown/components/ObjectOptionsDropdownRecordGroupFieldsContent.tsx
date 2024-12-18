@@ -36,6 +36,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     recordIndexId,
     objectMetadataItem,
     onContentChange,
+    resetContent,
     closeDropdown,
   } = useOptionsDropdown();
 
@@ -47,7 +48,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const recordGroupFieldMetadataItem = useRecoilComponentValueV2(
+  const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordGroupFieldMetadataComponentState,
   );
 
@@ -101,7 +102,11 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     <>
       <DropdownMenuHeader
         StartIcon={IconChevronLeft}
-        onClick={() => onContentChange('recordGroups')}
+        onClick={() =>
+          isDefined(recordGroupFieldMetadata)
+            ? onContentChange('recordGroups')
+            : resetContent()
+        }
       >
         Group by
       </DropdownMenuHeader>
@@ -114,13 +119,13 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       <DropdownMenuItemsContainer>
         <MenuItemSelect
           text="None"
-          selected={!isDefined(recordGroupFieldMetadataItem)}
+          selected={!isDefined(recordGroupFieldMetadata)}
           onClick={handleResetRecordGroupField}
         />
         {filteredRecordGroupFieldMetadataItems.map((fieldMetadataItem) => (
           <MenuItemSelect
             key={fieldMetadataItem.id}
-            selected={fieldMetadataItem.id === recordGroupFieldMetadataItem?.id}
+            selected={fieldMetadataItem.id === recordGroupFieldMetadata?.id}
             onClick={() => handleRecordGroupFieldChange(fieldMetadataItem)}
             LeftIcon={getIcon(fieldMetadataItem.icon)}
             text={fieldMetadataItem.label}
