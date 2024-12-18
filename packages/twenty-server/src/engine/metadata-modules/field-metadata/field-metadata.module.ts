@@ -84,6 +84,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
     IsFieldMetadataDefaultValue,
     IsFieldMetadataOptions,
     FieldMetadataService,
+    FieldMetadataRelatedRecordsService,
     FieldMetadataResolver,
   ],
   exports: [FieldMetadataService, FieldMetadataRelatedRecordsService],

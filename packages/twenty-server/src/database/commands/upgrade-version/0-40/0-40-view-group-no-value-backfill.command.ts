@@ -46,21 +46,17 @@ export class ViewGroupNoValueBackfillCommand extends ActiveWorkspacesCommandRunn
           'viewGroup',
         );
 
-      const views = await viewRepository.find();
+      const views = await viewRepository.find({
+        relations: ['viewGroups'],
+      });
 
       for (const view of views) {
-        const viewGroups = await viewGroupRepository.find({
-          where: {
-            viewId: view.id,
-          },
-        });
-
-        if (viewGroups.length === 0) {
+        if (view.viewGroups.length === 0) {
           continue;
         }
 
         // We're assuming for now that all viewGroups have the same fieldMetadataId
-        const viewGroup = viewGroups?.[0];
+        const viewGroup = view.viewGroups?.[0];
         const fieldMetadataId = viewGroup?.fieldMetadataId;
 
         if (!fieldMetadataId || !viewGroup) {
