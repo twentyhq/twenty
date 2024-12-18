@@ -63,24 +63,35 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
   }
 
-  private async updateDomain(workspace: Workspace, hostname: string) {
+  private async setCustomDomain(workspace: Workspace, hostname: string) {
+    const existingWorkspace = await this.workspaceRepository.findOne({
+      where: { hostname },
+    });
+
+    if (existingWorkspace && existingWorkspace.id !== workspace.id) {
+      throw new WorkspaceException(
+        'Domain already taken',
+        WorkspaceExceptionCode.DOMAIN_ALREADY_TAKEN,
+      );
+    }
+
     if (
       hostname &&
-      workspace.domain !== hostname &&
-      isDefined(workspace.domain)
+      workspace.hostname !== hostname &&
+      isDefined(workspace.hostname)
     ) {
-      await this.domainManagerService.updateCustomDomain(
-        { hostnameName: workspace.domain },
+      await this.domainManagerService.updateCustomHostname(
+        { hostnameName: workspace.hostname },
         hostname,
       );
     }
 
     if (
       hostname &&
-      workspace.domain !== hostname &&
-      !isDefined(workspace.domain)
+      workspace.hostname !== hostname &&
+      !isDefined(workspace.hostname)
     ) {
-      await this.domainManagerService.registerCustomDomain(hostname);
+      await this.domainManagerService.registerCustomHostname(hostname);
     }
   }
 
@@ -95,14 +106,25 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       await this.validateSubdomainUpdate(payload.subdomain);
     }
 
-    if (payload.domain && workspace.domain !== payload.domain) {
-      await this.updateDomain(workspace, payload.domain);
+    let customDomainRegistered = false;
+
+    if (payload.hostname && workspace.hostname !== payload.hostname) {
+      await this.setCustomDomain(workspace, payload.hostname);
+      customDomainRegistered = true;
     }
 
-    return this.workspaceRepository.save({
-      ...workspace,
-      ...payload,
-    });
+    try {
+      return this.workspaceRepository.save({
+        ...workspace,
+        ...payload,
+      });
+    } catch (e) {
+      if (payload.hostname && customDomainRegistered) {
+        await this.domainManagerService.deleteCustomHostnameByHostnameSilently(
+          payload.hostname,
+        );
+      }
+    }
   }
 
   async activateWorkspace(user: User, data: ActivateWorkspaceInput) {
@@ -234,14 +256,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   async isSubdomainAvailable(subdomain: string) {
     const existingWorkspace = await this.workspaceRepository.findOne({
       where: { subdomain: subdomain },
-    });
-
-    return !existingWorkspace;
-  }
-
-  async isDomainAvailable(domain: string) {
-    const existingWorkspace = await this.workspaceRepository.findOne({
-      where: { domain },
     });
 
     return !existingWorkspace;
