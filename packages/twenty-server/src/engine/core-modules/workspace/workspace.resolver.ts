@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -41,6 +41,7 @@ import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { GraphqlValidationExceptionFilter } from 'src/filters/validation-exception.filter';
 import { assert } from 'src/utils/assert';
 import { isDefined } from 'src/utils/is-defined';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -50,6 +51,7 @@ import { Workspace } from './workspace.entity';
 import { WorkspaceService } from './services/workspace.service';
 
 @Resolver(() => Workspace)
+@UseFilters(GraphqlValidationExceptionFilter)
 export class WorkspaceResolver {
   constructor(
     private readonly workspaceService: WorkspaceService,

@@ -91,7 +91,7 @@ export const RecordTableRecordGroupSection = () => {
           <IconChevronUp size={theme.icon.size.md} />
         </motion.span>
       </StyledChevronContainer>
-      <StyledRecordGroupSection colSpan={visibleColumns.length}>
+      <StyledRecordGroupSection>
         <Tag
           variant={
             recordGroup.type !== RecordGroupDefinitionType.NoValue
@@ -108,6 +108,7 @@ export const RecordTableRecordGroupSection = () => {
         />
         <StyledTotalRow>{recordIdsByGroup.length}</StyledTotalRow>
       </StyledRecordGroupSection>
+      <StyledEmptyTd colSpan={visibleColumns.length - 1} />
       <StyledEmptyTd />
       <StyledEmptyTd />
     </StyledTrContainer>
