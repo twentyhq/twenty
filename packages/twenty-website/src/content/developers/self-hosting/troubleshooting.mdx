@@ -86,13 +86,15 @@ If you can't log in after setup:
 1. Run the following commands:
     ```bash
     docker exec -it twenty-server-1 yarn
-    docker exec -it twenty-server-1 npx nx database:reset
+    docker exec -it twenty-server-1 npx nx database:reset  --configuration=no-seed
     ```
 2. Restart the Docker containers:
     ```bash
     docker-compose down
     docker-compose up -d
     ```
+
+Note the database:reset command will completely erase your database and recreate it from scratch. 
 
 #### Connection Issues Behind a Reverse Proxy
 

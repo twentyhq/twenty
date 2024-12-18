@@ -1,9 +1,12 @@
 import { MultipleRecordsActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/multiple-records/components/MultipleRecordsActionMenuEntrySetterEffect';
 import { NoSelectionActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/no-selection/components/NoSelectionActionMenuEntrySetterEffect';
+import { ShowPageSingleRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/single-record/components/ShowPageSingleRecordActionMenuEntrySetterEffect';
 import { SingleRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/single-record/components/SingleRecordActionMenuEntrySetterEffect';
 import { WorkflowRunRecordActionMenuEntrySetterEffect } from '@/action-menu/actions/record-actions/workflow-run-record-actions/components/WorkflowRunRecordActionMenuEntrySetter';
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -46,6 +49,10 @@ const ActionEffects = ({
     contextStoreTargetedRecordsRuleComponentState,
   );
 
+  const contextStoreCurrentViewType = useRecoilComponentValueV2(
+    contextStoreCurrentViewTypeComponentState,
+  );
+
   const isWorkflowEnabled = useIsFeatureEnabled('IS_WORKFLOW_ENABLED');
 
   return (
@@ -59,9 +66,17 @@ const ActionEffects = ({
       {contextStoreTargetedRecordsRule.mode === 'selection' &&
         contextStoreTargetedRecordsRule.selectedRecordIds.length === 1 && (
           <>
-            <SingleRecordActionMenuEntrySetterEffect
-              objectMetadataItem={objectMetadataItem}
-            />
+            {contextStoreCurrentViewType === ContextStoreViewType.ShowPage && (
+              <ShowPageSingleRecordActionMenuEntrySetterEffect
+                objectMetadataItem={objectMetadataItem}
+              />
+            )}
+            {(contextStoreCurrentViewType === ContextStoreViewType.Table ||
+              contextStoreCurrentViewType === ContextStoreViewType.Kanban) && (
+              <SingleRecordActionMenuEntrySetterEffect
+                objectMetadataItem={objectMetadataItem}
+              />
+            )}
             {isWorkflowEnabled && (
               <WorkflowRunRecordActionMenuEntrySetterEffect
                 objectMetadataItem={objectMetadataItem}

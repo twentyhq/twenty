@@ -136,8 +136,10 @@ export const useAuth = () => {
         await client.clearStore();
         sessionStorage.clear();
         localStorage.clear();
+        // We need to explicitly clear the state to trigger the cookie deletion which include the parent domain
+        setLastAuthenticateWorkspaceDomain(null);
       },
-    [client, goToRecoilSnapshot],
+    [client, goToRecoilSnapshot, setLastAuthenticateWorkspaceDomain],
   );
 
   const handleChallenge = useCallback(
