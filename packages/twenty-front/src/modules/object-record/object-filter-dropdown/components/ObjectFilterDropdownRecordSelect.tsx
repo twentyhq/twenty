@@ -87,25 +87,46 @@ export const ObjectFilterDropdownRecordSelect = ({
 
   const handleMultipleRecordSelectChange = (
     itemToSelect: SelectableItem,
-    newSelectedValue: boolean,
+    isNewSelectedValue: boolean,
   ) => {
     if (loading) {
       return;
     }
 
-    const newSelectedRecordIds = newSelectedValue
-      ? [...objectFilterDropdownSelectedRecordIds, itemToSelect.id]
-      : objectFilterDropdownSelectedRecordIds.filter(
-          (id) => id !== itemToSelect.id,
-        );
+    const isItemCurrentWorkspaceMember =
+      itemToSelect.id === CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID;
 
-    if (newSelectedRecordIds.length === 0) {
-      emptyFilterButKeepDefinition();
-      deleteCombinedViewFilter(fieldId);
-      return;
+    const selectedRecordIdsWithAddedRecord = [
+      ...objectFilterDropdownSelectedRecordIds,
+      itemToSelect.id,
+    ];
+    const selectedRecordIdsWithRemovedRecord =
+      objectFilterDropdownSelectedRecordIds.filter(
+        (id) => id !== itemToSelect.id,
+      );
+
+    const newSelectedRecordIds = isItemCurrentWorkspaceMember
+      ? objectFilterDropdownSelectedRecordIds
+      : isNewSelectedValue
+        ? selectedRecordIdsWithAddedRecord
+        : selectedRecordIdsWithRemovedRecord;
+
+    const newIsCurrentWorkspaceMemberSelected = isItemCurrentWorkspaceMember
+      ? isNewSelectedValue
+      : isCurrentWorkspaceMemberSelected;
+
+    if (!isItemCurrentWorkspaceMember) {
+      if (
+        newSelectedRecordIds.length === 0 &&
+        !newIsCurrentWorkspaceMemberSelected
+      ) {
+        emptyFilterButKeepDefinition();
+        deleteCombinedViewFilter(fieldId);
+        return;
+      }
+
+      setObjectFilterDropdownSelectedRecordIds(newSelectedRecordIds);
     }
-
-    setObjectFilterDropdownSelectedRecordIds(newSelectedRecordIds);
 
     const selectedRecordNames = [
       ...recordsToSelect,
@@ -128,14 +149,10 @@ export const ObjectFilterDropdownRecordSelect = ({
       isDefined(filterDefinitionUsedInDropdown) &&
       isDefined(selectedOperandInDropdown)
     ) {
-      const newFilterValue =
-        newSelectedRecordIds.length > 0
-          ? JSON.stringify({
-              isCurrentWorkspaceMemberSelected:
-                itemToSelect.id === CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
-              selectedRecordIds: newSelectedRecordIds,
-            } satisfies RelationFilterValue)
-          : EMPTY_FILTER_VALUE;
+      const newFilterValue = JSON.stringify({
+        isCurrentWorkspaceMemberSelected: newIsCurrentWorkspaceMemberSelected,
+        selectedRecordIds: newSelectedRecordIds,
+      } satisfies RelationFilterValue);
 
       const viewFilter =
         currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
