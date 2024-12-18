@@ -12,6 +12,9 @@ jobs:
   test:
     timeout-minutes: 15
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/twenty-e2e-testing
     steps:
       - uses: actions/checkout@v4
         with:
