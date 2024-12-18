@@ -103,7 +103,7 @@ export class PhoneCallingCodeCommand extends ActiveWorkspacesCommandRunner {
     // 4 - [IMO, not necessary] if we think it's important, update all additioanl phones to add a country code following the same logic
 
     console.log(
-      `   Note : other consequesnces to check : zapier @martin + REST api @martin
+      `   Note : other consequesnces to check : zapier @martin + REST api @martin ✅
           Note : other consequesnces to check : timeline activities @coco : ✅
           Note : test with cutom object (not cutom field)
     `,

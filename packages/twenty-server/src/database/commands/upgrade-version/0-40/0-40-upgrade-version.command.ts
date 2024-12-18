@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { ActiveWorkspacesCommandRunner } from 'src/database/commands/active-workspaces.command';
 import { BaseCommandOptions } from 'src/database/commands/base.command';
+import { PhoneCallingCodeCreateColumnCommand } from 'src/database/commands/upgrade-version/0-40/0-40-phone-calling-code-create-column.command';
 import { PhoneCallingCodeCommand } from 'src/database/commands/upgrade-version/0-40/0-40-phone-calling-code.command';
 import { RecordPositionBackfillCommand } from 'src/database/commands/upgrade-version/0-40/0-40-record-position-backfill.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -20,6 +21,8 @@ export class UpgradeTo0_40Command extends ActiveWorkspacesCommandRunner {
     protected readonly workspaceRepository: Repository<Workspace>,
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
     private readonly phoneCallingCodeCommand: PhoneCallingCodeCommand,
+    private readonly phoneCallingCodeCreateColumnCommand: PhoneCallingCodeCreateColumnCommand,
+
     private readonly recordPositionBackfillCommand: RecordPositionBackfillCommand,
   ) {
     super(workspaceRepository);
@@ -32,6 +35,12 @@ export class UpgradeTo0_40Command extends ActiveWorkspacesCommandRunner {
   ): Promise<void> {
     this.logger.log(
       'Running command to upgrade to 0.40: must start with phone calling code otherwise SyncMetadata will fail',
+    );
+
+    await this.phoneCallingCodeCreateColumnCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
     );
 
     await this.phoneCallingCodeCommand.executeActiveWorkspacesCommand(

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { PhoneCallingCodeCreateColumnCommand } from 'src/database/commands/upgrade-version/0-40/0-40-phone-calling-code-create-column.command';
 import { PhoneCallingCodeCommand } from 'src/database/commands/upgrade-version/0-40/0-40-phone-calling-code.command';
 import { RecordPositionBackfillCommand } from 'src/database/commands/upgrade-version/0-40/0-40-record-position-backfill.command';
 import { UpgradeTo0_40Command } from 'src/database/commands/upgrade-version/0-40/0-40-upgrade-version.command';
@@ -32,6 +33,7 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
   providers: [
     UpgradeTo0_40Command,
     PhoneCallingCodeCommand,
+    PhoneCallingCodeCreateColumnCommand,
     WorkspaceMigrationFactory,
     RecordPositionBackfillCommand,
   ],
