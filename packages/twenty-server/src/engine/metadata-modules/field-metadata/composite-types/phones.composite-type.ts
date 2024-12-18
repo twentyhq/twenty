@@ -18,12 +18,12 @@ export const phonesCompositeType: CompositeType = {
       hidden: false,
       isRequired: false,
     },
-    // {
-    //   name: 'primaryPhoneCallingCode',
-    //   type: FieldMetadataType.TEXT,
-    //   hidden: false,
-    //   isRequired: false,
-    // },
+    {
+      name: 'primaryPhoneCallingCode',
+      type: FieldMetadataType.TEXT,
+      hidden: false,
+      isRequired: false,
+    },
     {
       name: 'additionalPhones',
       type: FieldMetadataType.RAW_JSON,
