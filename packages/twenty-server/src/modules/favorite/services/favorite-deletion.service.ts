@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { In } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import {
+  FieldMetadataEntity,
+  FieldMetadataType,
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { FAVORITE_DELETION_BATCH_SIZE } from 'src/modules/favorite/constants/favorite-deletion-batch-size';
 import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
@@ -11,8 +15,12 @@ import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/f
 @Injectable()
 export class FavoriteDeletionService {
   constructor(
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+
+    @InjectRepository(FieldMetadataEntity, 'metadata')
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly twentyORMManager: TwentyORMManager,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async deleteFavoritesForDeletedRecords(
@@ -24,46 +32,37 @@ export class FavoriteDeletionService {
         'favorite',
       );
 
-    const isWorkflowEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IsWorkflowEnabled,
-      workspaceId,
-    );
+    const favoriteObjectMetadata = await this.objectMetadataRepository.findOne({
+      where: {
+        nameSingular: 'favorite',
+        workspaceId,
+      },
+    });
+
+    if (!favoriteObjectMetadata) {
+      throw new Error('Favorite object metadata not found');
+    }
+
+    const favoriteFields = await this.fieldMetadataRepository.find({
+      where: {
+        objectMetadataId: favoriteObjectMetadata.id,
+        type: FieldMetadataType.RELATION,
+      },
+    });
 
     const favoritesToDelete = await favoriteRepository.find({
       select: {
         id: true,
       },
-      where: [
-        {
-          companyId: In(deletedRecordIds),
-        },
-        {
-          personId: In(deletedRecordIds),
-        },
-        ...(isWorkflowEnabled
-          ? [
-              {
-                workflowId: In(deletedRecordIds),
-              },
-              {
-                workflowRunId: In(deletedRecordIds),
-              },
-              {
-                workflowVersionId: In(deletedRecordIds),
-              },
-            ]
-          : []),
-        {
-          viewId: In(deletedRecordIds),
-        },
-        {
-          taskId: In(deletedRecordIds),
-        },
-        {
-          noteId: In(deletedRecordIds),
-        },
-      ],
+      where: favoriteFields.map((field) => ({
+        [`${field.name}Id`]: In(deletedRecordIds),
+      })),
+      withDeleted: true,
     });
+
+    if (favoritesToDelete.length === 0) {
+      return;
+    }
 
     const favoriteIdsToDelete = favoritesToDelete.map(
       (favorite) => favorite.id,
