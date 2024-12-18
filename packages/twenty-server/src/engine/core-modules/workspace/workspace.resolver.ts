@@ -41,7 +41,7 @@ import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { GraphqlValidationExceptionFilter } from 'src/filters/validation-exception.filter';
+import { GraphqlValidationExceptionFilter } from 'src/filters/graphql-validation-exception.filter';
 import { assert } from 'src/utils/assert';
 import { isDefined } from 'src/utils/is-defined';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
