@@ -5,7 +5,6 @@ import { TextVariableEditor } from '@/object-record/record-field/form-types/comp
 import { useTextVariableEditor } from '@/object-record/record-field/form-types/hooks/useTextVariableEditor';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { CAPTURE_VARIABLE_TAG_REGEX } from '@/workflow/search-variables/utils/initializeEditorContent';
 import { useId } from 'react';
 import { isDefined } from 'twenty-ui';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
@@ -40,24 +39,6 @@ export const FormRawJsonFieldInput = ({
       if (text === '') {
         onPersist(null);
 
-        return;
-      }
-
-      const textWithReplacedVariables = text.replaceAll(
-        new RegExp(CAPTURE_VARIABLE_TAG_REGEX, 'g'),
-        '0',
-      );
-
-      let isValidJson;
-      try {
-        JSON.parse(textWithReplacedVariables);
-
-        isValidJson = true;
-      } catch {
-        isValidJson = false;
-      }
-
-      if (!isValidJson) {
         return;
       }
 

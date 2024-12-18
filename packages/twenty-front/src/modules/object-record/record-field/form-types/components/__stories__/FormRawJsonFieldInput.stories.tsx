@@ -58,17 +58,15 @@ export const SaveValidJson: Story = {
     const editor = canvasElement.querySelector('.ProseMirror > p');
     expect(editor).toBeVisible();
 
-    await Promise.all([
-      userEvent.type(editor, '{{ "a": {{ "b" :  "d" } }'),
+    await userEvent.type(editor, '{{ "a": {{ "b" :  "d" } }');
 
-      waitFor(() => {
-        expect(args.onPersist).toHaveBeenCalledWith('{ "a": { "b" :  "d" } }');
-      }),
-    ]);
+    await waitFor(() => {
+      expect(args.onPersist).toHaveBeenCalledWith('{ "a": { "b" :  "d" } }');
+    });
   },
 };
 
-export const IgnoreInvalidJson: Story = {
+export const DoesNotIgnoreInvalidJson: Story = {
   args: {
     placeholder: 'Enter valid json',
     onPersist: fn(),
@@ -81,7 +79,7 @@ export const IgnoreInvalidJson: Story = {
 
     await userEvent.click(canvasElement);
 
-    expect(args.onPersist).not.toHaveBeenCalled();
+    expect(args.onPersist).toHaveBeenCalledWith('lol');
   },
 };
 
@@ -211,7 +209,7 @@ export const ClearField: Story = {
  * Line breaks are not authorized in JSON strings. Users should instead put newlines characters themselves.
  * See https://stackoverflow.com/a/42073.
  */
-export const BreaksWhenUserInsertsNewlineInJsonString: Story = {
+export const DoesNotBreakWhenUserInsertsNewlineInJsonString: Story = {
   args: {
     placeholder: 'Enter valid json',
     onPersist: fn(),
@@ -224,7 +222,7 @@ export const BreaksWhenUserInsertsNewlineInJsonString: Story = {
 
     await userEvent.click(canvasElement);
 
-    expect(args.onPersist).not.toHaveBeenCalled();
+    expect(args.onPersist).toHaveBeenCalled();
   },
 };
 
