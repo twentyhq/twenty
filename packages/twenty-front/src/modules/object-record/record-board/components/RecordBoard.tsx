@@ -197,6 +197,7 @@ export const RecordBoard = () => {
         <ScrollWrapper
           contextProviderName="recordBoard"
           componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
+          fullHeight
         >
           <RecordBoardStickyHeaderEffect />
           <StyledContainerContainer>
