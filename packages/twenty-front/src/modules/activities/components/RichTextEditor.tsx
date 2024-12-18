@@ -24,7 +24,6 @@ import { isDefined } from '~/utils/isDefined';
 
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
-import { activityBodyFamilyState } from '@/activities/states/activityBodyFamilyState';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -75,18 +74,6 @@ export const RichTextEditor = ({
   const { upsertActivity } = useUpsertActivity({
     activityObjectNameSingular: activityObjectNameSingular,
   });
-
-  const [activityBody, setActivityBody] = useRecoilState(
-    activityBodyFamilyState({
-      activityId: activityId,
-    }),
-  );
-
-  // See https://github.com/twentyhq/twenty/issues/6724 for explanation
-  const setActivityBodyDebouncedToAvoidDragBug = useDebouncedCallback(
-    setActivityBody,
-    100,
-  );
 
   const persistBodyDebounced = useDebouncedCallback((newBody: string) => {
     if (isDefined(activity)) {
