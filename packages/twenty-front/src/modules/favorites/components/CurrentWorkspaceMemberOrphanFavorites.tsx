@@ -16,9 +16,11 @@ const StyledEmptyContainer = styled.div`
   height: ${({ theme }) => theme.spacing(2.5)};
   width: 100%;
 `;
+
 const StyledOrphanFavoritesContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.betweenSiblingsGap};
 `;
+
 export const CurrentWorkspaceMemberOrphanFavorites = () => {
   const { sortedFavorites: favorites } = useFavorites();
   const { deleteFavorite } = useDeleteFavorite();
