@@ -1,13 +1,12 @@
-import styled from '@emotion/styled';
-import * as React from 'react';
-import { IconComponent } from 'twenty-ui';
-
+import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
-
-import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import styled from '@emotion/styled';
+import * as React from 'react';
 import { useEffect } from 'react';
+import { IconComponent } from 'twenty-ui';
 import { Tab } from './Tab';
 
 export type SingleTabProps = {
@@ -25,32 +24,22 @@ type TabListProps = {
   tabListInstanceId: string;
   tabs: SingleTabProps[];
   loading?: boolean;
-  className?: string;
   behaveAsLinks?: boolean;
 };
 
-const StyledTabsContainer = styled.div`
+const StyledContainer = styled.div`
+  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   box-sizing: border-box;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: 40px;
   user-select: none;
-  margin-bottom: -1px;
-  overflow-y: scroll;
-  ::-webkit-scrollbar {
-    display: none;
-  }
-`;
-
-const StyledContainer = styled.div`
-  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
 `;
 
 export const TabList = ({
   tabs,
   tabListInstanceId,
   loading,
-  className,
   behaveAsLinks = true,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
@@ -68,13 +57,17 @@ export const TabList = ({
   }
 
   return (
-    <StyledContainer className={className}>
-      <TabListScope tabListScopeId={tabListInstanceId}>
-        <TabListFromUrlOptionalEffect
-          componentInstanceId={tabListInstanceId}
-          tabListIds={tabs.map((tab) => tab.id)}
-        />
-        <StyledTabsContainer>
+    <TabListScope tabListScopeId={tabListInstanceId}>
+      <TabListFromUrlOptionalEffect
+        componentInstanceId={tabListInstanceId}
+        tabListIds={tabs.map((tab) => tab.id)}
+      />
+      <ScrollWrapper
+        defaultEnableYScroll={false}
+        contextProviderName="tabList"
+        componentInstanceId={`scroll-wrapper-tab-list-${tabListInstanceId}`}
+      >
+        <StyledContainer>
           {visibleTabs.map((tab) => (
             <Tab
               id={tab.id}
@@ -93,8 +86,8 @@ export const TabList = ({
               }}
             />
           ))}
-        </StyledTabsContainer>
-      </TabListScope>
-    </StyledContainer>
+        </StyledContainer>
+      </ScrollWrapper>
+    </TabListScope>
   );
 };
