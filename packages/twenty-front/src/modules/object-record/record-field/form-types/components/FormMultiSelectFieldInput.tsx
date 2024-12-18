@@ -11,6 +11,7 @@ import { SelectOption } from '@/spreadsheet-import/types';
 import { MultiSelectDisplay } from '@/ui/field/display/components/MultiSelectDisplay';
 import { MultiSelectInput } from '@/ui/field/input/components/MultiSelectInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 import { useId, useState } from 'react';
@@ -20,9 +21,9 @@ import { isDefined } from '~/utils/isDefined';
 type FormMultiSelectFieldInputProps = {
   label?: string;
   defaultValue: FieldMultiSelectValue | string | undefined;
+  options: SelectOption[];
   onPersist: (value: FieldMultiSelectValue | string) => void;
   VariablePicker?: VariablePickerComponent;
-  options: SelectOption[];
 };
 
 const StyledDisplayModeContainer = styled.button`
@@ -50,9 +51,9 @@ const StyledSelectInputContainer = styled.div`
 export const FormMultiSelectFieldInput = ({
   label,
   defaultValue,
+  options,
   onPersist,
   VariablePicker,
-  options,
 }: FormMultiSelectFieldInputProps) => {
   const inputId = useId();
 
@@ -189,13 +190,15 @@ export const FormMultiSelectFieldInput = ({
         <StyledSelectInputContainer>
           {draftValue.type === 'static' &&
             draftValue.editingMode === 'edit' && (
-              <MultiSelectInput
-                hotkeyScope={hotkeyScope}
-                options={options}
-                onCancel={onCancel}
-                onOptionSelected={onOptionSelected}
-                values={draftValue.value}
-              />
+              <OverlayContainer>
+                <MultiSelectInput
+                  hotkeyScope={hotkeyScope}
+                  options={options}
+                  onCancel={onCancel}
+                  onOptionSelected={onOptionSelected}
+                  values={draftValue.value}
+                />
+              </OverlayContainer>
             )}
         </StyledSelectInputContainer>
 
