@@ -122,10 +122,11 @@ export const DropdownContent = ({
         <StyledDropdownContentContainer
           ref={floatingUiRefs.setFloating}
           style={dropdownMenuStyles}
+          role="listbox"
+          id={`${dropdownId}-"options"`}
         >
           <OverlayContainer>
             <DropdownMenu
-              id={dropdownId}
               className={className}
               width={dropdownMenuWidth ?? dropdownWidth}
               data-select-disable
@@ -139,6 +140,8 @@ export const DropdownContent = ({
           <StyledDropdownContentContainer
             ref={floatingUiRefs.setFloating}
             style={dropdownMenuStyles}
+            role="listbox"
+            id={`${dropdownId}-"options"`}
           >
             <OverlayContainer>
               <DropdownMenu
