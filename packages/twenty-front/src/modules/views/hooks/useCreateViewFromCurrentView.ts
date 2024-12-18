@@ -1,6 +1,6 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
@@ -18,7 +18,6 @@ import { GraphQLView } from '@/views/types/GraphQLView';
 import { View } from '@/views/types/View';
 import { ViewGroup } from '@/views/types/ViewGroup';
 import { ViewType } from '@/views/types/ViewType';
-import { useContext } from 'react';
 import { useRecoilCallback } from 'recoil';
 import { isDefined } from 'twenty-ui';
 import { v4 } from 'uuid';
@@ -57,7 +56,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
 
   const { createViewFilterGroupRecords } = usePersistViewFilterGroupRecords();
 
-  const { objectMetadataItem } = useContext(RecordIndexRootPropsContext);
+  const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const createViewFromCurrentView = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -74,7 +73,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
             'id' | 'name' | 'icon' | 'kanbanFieldMetadataId' | 'type'
           >
         >,
-        shouldCopyFiltersAndSorts?: boolean,
+        shouldCopyFiltersAndSortsAndAggregate?: boolean,
       ) => {
         const currentViewId = getSnapshotValue(
           snapshot,
@@ -101,6 +100,13 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           key: null,
           kanbanFieldMetadataId:
             kanbanFieldMetadataId ?? sourceView.kanbanFieldMetadataId,
+          kanbanAggregateOperation: shouldCopyFiltersAndSortsAndAggregate
+            ? sourceView.kanbanAggregateOperation
+            : undefined,
+          kanbanAggregateOperationFieldMetadataId:
+            shouldCopyFiltersAndSortsAndAggregate
+              ? sourceView.kanbanAggregateOperationFieldMetadataId
+              : undefined,
           type: type ?? sourceView.type,
           objectMetadataId: sourceView.objectMetadataId,
         });
@@ -143,7 +149,7 @@ export const useCreateViewFromCurrentView = (viewBarComponentId?: string) => {
           await createViewGroupRecords(viewGroupsToCreate, newView);
         }
 
-        if (shouldCopyFiltersAndSorts === true) {
+        if (shouldCopyFiltersAndSortsAndAggregate === true) {
           const sourceViewCombinedFilterGroups = getViewFilterGroupsCombined(
             sourceView.id,
           );

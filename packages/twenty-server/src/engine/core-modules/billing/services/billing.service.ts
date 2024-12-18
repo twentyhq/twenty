@@ -22,7 +22,10 @@ export class BillingService {
     return this.environmentService.get('IS_BILLING_ENABLED');
   }
 
-  async hasWorkspaceActiveSubscriptionOrFreeAccess(workspaceId: string) {
+  async hasWorkspaceActiveSubscriptionOrFreeAccessOrEntitlement(
+    workspaceId: string,
+    entitlementKey?: BillingEntitlementKey,
+  ) {
     const isBillingEnabled = this.isBillingEnabled();
 
     if (!isBillingEnabled) {
@@ -39,6 +42,13 @@ export class BillingService {
       return true;
     }
 
+    if (entitlementKey) {
+      return this.billingSubscriptionService.getWorkspaceEntitlementByKey(
+        workspaceId,
+        entitlementKey,
+      );
+    }
+
     const currentBillingSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId },
@@ -51,22 +61,6 @@ export class BillingService {
         SubscriptionStatus.Trialing,
         SubscriptionStatus.PastDue,
       ].includes(currentBillingSubscription.status)
-    );
-  }
-
-  async verifyWorkspaceEntitlement(
-    workspaceId: string,
-    entitlementKey: BillingEntitlementKey,
-  ) {
-    const isBillingEnabled = this.isBillingEnabled();
-
-    if (!isBillingEnabled) {
-      return true;
-    }
-
-    return this.billingSubscriptionService.getWorkspaceEntitlementByKey(
-      workspaceId,
-      entitlementKey,
     );
   }
 }

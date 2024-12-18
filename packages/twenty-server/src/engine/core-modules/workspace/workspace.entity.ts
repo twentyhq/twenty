@@ -13,6 +13,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -40,6 +41,9 @@ registerEnumType(WorkspaceActivationStatus, {
   nullable: true,
 })
 @UnPagedRelation('billingEntitlements', () => BillingEntitlement, {
+  nullable: true,
+})
+@UnPagedRelation('billingCustomers', () => BillingCustomer, {
   nullable: true,
 })
 export class Workspace {
@@ -116,18 +120,6 @@ export class Workspace {
   activationStatus: WorkspaceActivationStatus;
 
   @OneToMany(
-    () => BillingSubscription,
-    (billingSubscription) => billingSubscription.workspace,
-  )
-  billingSubscriptions: Relation<BillingSubscription[]>;
-
-  @OneToMany(
-    () => BillingEntitlement,
-    (billingEntitlement) => billingEntitlement.workspace,
-  )
-  billingEntitlements: Relation<BillingEntitlement[]>;
-
-  @OneToMany(
     () => PostgresCredentials,
     (postgresCredentials) => postgresCredentials.workspace,
   )
@@ -150,4 +142,20 @@ export class Workspace {
   @Field()
   @Column({ default: '' })
   databaseSchema: string;
+
+  @Field()
+  @Column()
+  subdomain: string;
+
+  @Field()
+  @Column({ default: true })
+  isGoogleAuthEnabled: boolean;
+
+  @Field()
+  @Column({ default: true })
+  isPasswordAuthEnabled: boolean;
+
+  @Field()
+  @Column({ default: false })
+  isMicrosoftAuthEnabled: boolean;
 }

@@ -4,15 +4,15 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 import fs from 'fs';
 
-import session from 'express-session';
 import bytes from 'bytes';
 import { useContainer } from 'class-validator';
+import session from 'express-session';
 import { graphqlUploadExpress } from 'graphql-upload';
 
-import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
-import { ApplyCorsToExceptions } from 'src/utils/apply-cors-to-exceptions';
-import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
+import { UnhandledExceptionFilter } from 'src/utils/apply-cors-to-exceptions';
 
 import { AppModule } from './app.module';
 import './instrument';
@@ -48,7 +48,7 @@ const bootstrap = async () => {
   // Use our logger
   app.useLogger(logger);
 
-  app.useGlobalFilters(new ApplyCorsToExceptions());
+  app.useGlobalFilters(new UnhandledExceptionFilter());
 
   // Apply validation pipes globally
   app.useGlobalPipes(

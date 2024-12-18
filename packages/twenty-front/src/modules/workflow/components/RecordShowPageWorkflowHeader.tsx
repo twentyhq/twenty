@@ -15,7 +15,6 @@ import {
   IconTrash,
   isDefined,
 } from 'twenty-ui';
-import { capitalize } from '~/utils/string/capitalize';
 import { assertWorkflowWithCurrentVersionIsDefined } from '../utils/assertWorkflowWithCurrentVersionIsDefined';
 
 export const RecordShowPageWorkflowHeader = ({
@@ -72,17 +71,6 @@ export const RecordShowPageWorkflowHeader = ({
           await runWorkflowVersion({
             workflowVersionId: workflowWithCurrentVersion.currentVersion.id,
             workflowName: workflowWithCurrentVersion.name,
-          });
-
-          enqueueSnackBar('', {
-            variant: SnackBarVariant.Success,
-            title: `${capitalize(workflowWithCurrentVersion.name)} starting...`,
-            icon: (
-              <IconSettingsAutomation
-                size={16}
-                color={theme.snackBar.success.color}
-              />
-            ),
           });
         }}
       />

@@ -3,17 +3,16 @@ import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleT
 import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
 import { FieldInputOverlay } from '@/ui/field/input/components/FieldInputOverlay';
 
+import { FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/meta-types/input/constants/FirstNamePlaceholder';
+import { LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS } from '@/object-record/record-field/meta-types/input/constants/LastNamePlaceholder';
 import { isDoubleTextFieldEmpty } from '@/object-record/record-field/meta-types/input/utils/isDoubleTextFieldEmpty';
-import { FieldInputEvent } from './DateTimeFieldInput';
-
-const FIRST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS =
-  'F‌‌irst name';
-
-const LAST_NAME_PLACEHOLDER_WITH_SPECIAL_CHARACTER_TO_AVOID_PASSWORD_MANAGERS =
-  'L‌‌ast name';
+import {
+  FieldInputClickOutsideEvent,
+  FieldInputEvent,
+} from './DateTimeFieldInput';
 
 type FullNameFieldInputProps = {
-  onClickOutside?: FieldInputEvent;
+  onClickOutside?: FieldInputClickOutsideEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
@@ -57,8 +56,9 @@ export const FullNameFieldInput = ({
     event: MouseEvent | TouchEvent,
     newDoubleText: FieldDoubleText,
   ) => {
-    onClickOutside?.(() =>
-      persistFullNameField(convertToFullName(newDoubleText)),
+    onClickOutside?.(
+      () => persistFullNameField(convertToFullName(newDoubleText)),
+      event,
     );
   };
 

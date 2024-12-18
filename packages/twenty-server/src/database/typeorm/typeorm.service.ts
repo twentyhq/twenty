@@ -3,7 +3,11 @@ import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { BillingCustomer } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlement } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingMeter } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
+import { BillingPrice } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingProduct } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
@@ -36,6 +40,10 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         FeatureFlagEntity,
         BillingSubscription,
         BillingSubscriptionItem,
+        BillingMeter,
+        BillingCustomer,
+        BillingProduct,
+        BillingPrice,
         BillingEntitlement,
         PostgresCredentials,
         WorkspaceSSOIdentityProvider,

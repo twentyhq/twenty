@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCallback } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { H2Title, Loader, MainButton } from 'twenty-ui';
 import { z } from 'zod';
@@ -22,6 +22,9 @@ import {
   useActivateWorkspaceMutation,
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { AppPath } from '@/types/AppPath';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 
 const StyledContentContainer = styled.div`
   width: 100%;
@@ -47,6 +50,8 @@ type Form = z.infer<typeof validationSchema>;
 export const CreateWorkspace = () => {
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
+  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   const [activateWorkspace] = useActivateWorkspaceMutation();
   const apolloMetadataClient = useApolloMetadataClient();
@@ -75,7 +80,18 @@ export const CreateWorkspace = () => {
             },
           },
         });
+
         setIsCurrentUserLoaded(false);
+
+        if (isDefined(result.data) && isMultiWorkspaceEnabled) {
+          return redirectToWorkspaceDomain(
+            result.data.activateWorkspace.workspace.subdomain,
+            AppPath.Verify,
+            {
+              loginToken: result.data.activateWorkspace.loginToken.token,
+            },
+          );
+        }
 
         await apolloMetadataClient?.refetchQueries({
           include: [FIND_MANY_OBJECT_METADATA_ITEMS],
@@ -93,7 +109,9 @@ export const CreateWorkspace = () => {
     [
       activateWorkspace,
       setIsCurrentUserLoaded,
+      isMultiWorkspaceEnabled,
       apolloMetadataClient,
+      redirectToWorkspaceDomain,
       enqueueSnackBar,
     ],
   );

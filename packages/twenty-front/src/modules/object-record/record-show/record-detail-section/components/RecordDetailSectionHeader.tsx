@@ -7,6 +7,7 @@ const StyledHeader = styled.header<{
   areRecordsAvailable?: boolean;
 }>`
   align-items: center;
+  justify-content: space-between;
   display: flex;
   height: 24px;
   margin-bottom: ${({ theme, areRecordsAvailable }) =>

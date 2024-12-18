@@ -1,4 +1,3 @@
-version: "3.9"
 name: twenty
 
 services:
@@ -14,9 +13,12 @@ services:
       && chown -R 1000:1000 /tmp/docker-data"
 
   server:
-    image: twentycrm/twenty:${TAG}
+    image: hexagone/twenty
     volumes:
       - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
+      - ${TWENTY_FRONT_SRC}:/app/packages/twenty-front
+      - ${TWENTY_UI_SRC}:/app/packages/twenty-ui
+#      - ${ROOT_NODE_MODULES}:/app/node_modules
       - docker-data:/app/docker-data
     ports:
       - "3000:3000"
@@ -24,12 +26,12 @@ services:
       PORT: 3000
       PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
       SERVER_URL: ${SERVER_URL}
-      FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
 
       ENABLE_DB_MIGRATIONS: "true"
 
       SIGN_IN_PREFILLED: ${SIGN_IN_PREFILLED}
+
       STORAGE_TYPE: ${STORAGE_TYPE}
       STORAGE_S3_REGION: ${STORAGE_S3_REGION}
       STORAGE_S3_NAME: ${STORAGE_S3_NAME}
@@ -57,14 +59,12 @@ services:
           memory: 1gb
 
   worker:
-    image: twentycrm/twenty:${TAG}
+    image: hexagone/twenty
     command: ["yarn", "worker:prod"]
     environment:
       PG_DATABASE_URL: postgres://${PGUSER_SUPERUSER:-postgres}:${PGPASSWORD_SUPERUSER:-postgres}@${PG_DATABASE_HOST:-db:5432}/default
       SERVER_URL: ${SERVER_URL}
-      FRONT_BASE_URL: ${FRONT_BASE_URL:-$SERVER_URL}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
-
       ENABLE_DB_MIGRATIONS: "false" # it already runs on the server
 
       STORAGE_TYPE: ${STORAGE_TYPE}
@@ -89,9 +89,11 @@ services:
           memory: 1gb
 
   db:
-    image: twentycrm/twenty-postgres-spilo:${TAG}
+    image: hexagone/twenty-postgres-spilo
     volumes:
       - db-data:/home/postgres/pgdata
+    ports:
+      - "5432:5432"
     environment:
       PGUSER_SUPERUSER: ${PGUSER_SUPERUSER:-postgres}
       PGPASSWORD_SUPERUSER: ${PGPASSWORD_SUPERUSER:-postgres}

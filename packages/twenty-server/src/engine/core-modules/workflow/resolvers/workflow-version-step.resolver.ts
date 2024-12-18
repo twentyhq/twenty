@@ -36,7 +36,8 @@ export class WorkflowVersionStepResolver {
   @Mutation(() => WorkflowActionDTO)
   async updateWorkflowVersionStep(
     @AuthWorkspace() { id: workspaceId }: Workspace,
-    @Args('input') { step, workflowVersionId }: UpdateWorkflowVersionStepInput,
+    @Args('input')
+    { step, workflowVersionId }: UpdateWorkflowVersionStepInput,
   ): Promise<WorkflowActionDTO> {
     return this.workflowVersionStepWorkspaceService.updateWorkflowVersionStep({
       workspaceId,

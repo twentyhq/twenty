@@ -157,9 +157,9 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Position',
     description: 'Person record Position',
     icon: 'IconHierarchy2',
+    defaultValue: 0,
   })
   @WorkspaceIsSystem()
-  @WorkspaceIsNullable()
   position: number;
 
   @WorkspaceField({

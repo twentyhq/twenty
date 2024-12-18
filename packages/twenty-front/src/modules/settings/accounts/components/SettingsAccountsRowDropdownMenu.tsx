@@ -19,12 +19,10 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
-  className?: string;
 };
 
 export const SettingsAccountsRowDropdownMenu = ({
   account,
-  className,
 }: SettingsAccountsRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;
 
@@ -39,7 +37,6 @@ export const SettingsAccountsRowDropdownMenu = ({
   return (
     <Dropdown
       dropdownId={dropdownId}
-      className={className}
       dropdownPlacement="right-start"
       dropdownHotkeyScope={{ scope: dropdownId }}
       clickableComponent={

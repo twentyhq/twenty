@@ -18,10 +18,8 @@ export const EditableFilterChip = ({
     <SortOrFilterChip
       key={viewFilter.id}
       testId={viewFilter.id}
-      labelKey={viewFilter.definition.label}
-      labelValue={`${getOperandLabelShort(viewFilter.operand)} ${
-        viewFilter.displayValue
-      }`}
+      labelKey={`${viewFilter.definition.label}${getOperandLabelShort(viewFilter.operand)}`}
+      labelValue={viewFilter.displayValue}
       Icon={getIcon(viewFilter.definition.iconName)}
       onRemove={onRemove}
     />

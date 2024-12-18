@@ -1,11 +1,12 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { Select, SelectOption } from '@/ui/input/components/Select';
-import { WorkflowEditGenericFormBase } from '@/workflow/components/WorkflowEditGenericFormBase';
+import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
 import { OBJECT_EVENT_TRIGGERS } from '@/workflow/constants/ObjectEventTriggers';
 import { WorkflowDatabaseEventTrigger } from '@/workflow/types/Workflow';
 import { splitWorkflowTriggerEventName } from '@/workflow/utils/splitWorkflowTriggerEventName';
 import { useTheme } from '@emotion/react';
 import { IconPlaylistAdd, isDefined } from 'twenty-ui';
+import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 
 type WorkflowEditTriggerDatabaseEventFormProps = {
   trigger: WorkflowDatabaseEventTrigger;
@@ -60,88 +61,91 @@ export const WorkflowEditTriggerDatabaseEventForm = ({
     : '-';
 
   return (
-    <WorkflowEditGenericFormBase
-      onTitleChange={(newName: string) => {
-        if (triggerOptions.readonly === true) {
-          return;
-        }
-
-        triggerOptions.onTriggerUpdate({
-          ...trigger,
-          name: newName,
-        });
-      }}
-      Icon={IconPlaylistAdd}
-      iconColor={theme.font.color.tertiary}
-      initialTitle={headerTitle}
-      headerType={headerType}
-    >
-      <Select
-        dropdownId="workflow-edit-trigger-record-type"
-        label="Record Type"
-        fullWidth
-        disabled={triggerOptions.readonly}
-        value={triggerEvent?.objectType}
-        emptyOption={{ label: 'Select an option', value: '' }}
-        options={availableMetadata}
-        onChange={(updatedRecordType) => {
+    <>
+      <WorkflowStepHeader
+        onTitleChange={(newName: string) => {
           if (triggerOptions.readonly === true) {
             return;
           }
 
-          triggerOptions.onTriggerUpdate(
-            isDefined(trigger) && isDefined(triggerEvent)
-              ? {
-                  ...trigger,
-                  settings: {
-                    ...trigger.settings,
-                    eventName: `${updatedRecordType}.${triggerEvent.event}`,
-                  },
-                }
-              : {
-                  name: headerTitle,
-                  type: 'DATABASE_EVENT',
-                  settings: {
-                    eventName: `${updatedRecordType}.${OBJECT_EVENT_TRIGGERS[0].value}`,
-                    outputSchema: {},
-                  },
-                },
-          );
+          triggerOptions.onTriggerUpdate({
+            ...trigger,
+            name: newName,
+          });
         }}
+        Icon={IconPlaylistAdd}
+        iconColor={theme.font.color.tertiary}
+        initialTitle={headerTitle}
+        headerType={headerType}
       />
-      <Select
-        dropdownId="workflow-edit-trigger-event-type"
-        label="Event type"
-        fullWidth
-        value={triggerEvent?.event}
-        emptyOption={{ label: 'Select an option', value: '' }}
-        options={OBJECT_EVENT_TRIGGERS}
-        disabled={triggerOptions.readonly}
-        onChange={(updatedEvent) => {
-          if (triggerOptions.readonly === true) {
-            return;
-          }
+      <WorkflowStepBody>
+        <Select
+          dropdownId="workflow-edit-trigger-record-type"
+          label="Record Type"
+          fullWidth
+          disabled={triggerOptions.readonly}
+          value={triggerEvent?.objectType}
+          emptyOption={{ label: 'Select an option', value: '' }}
+          options={availableMetadata}
+          onChange={(updatedRecordType) => {
+            if (triggerOptions.readonly === true) {
+              return;
+            }
 
-          triggerOptions.onTriggerUpdate(
-            isDefined(trigger) && isDefined(triggerEvent)
-              ? {
-                  ...trigger,
-                  settings: {
-                    ...trigger.settings,
-                    eventName: `${triggerEvent.objectType}.${updatedEvent}`,
+            triggerOptions.onTriggerUpdate(
+              isDefined(trigger) && isDefined(triggerEvent)
+                ? {
+                    ...trigger,
+                    settings: {
+                      ...trigger.settings,
+                      eventName: `${updatedRecordType}.${triggerEvent.event}`,
+                    },
+                  }
+                : {
+                    name: headerTitle,
+                    type: 'DATABASE_EVENT',
+                    settings: {
+                      eventName: `${updatedRecordType}.${OBJECT_EVENT_TRIGGERS[0].value}`,
+                      outputSchema: {},
+                    },
                   },
-                }
-              : {
-                  name: headerTitle,
-                  type: 'DATABASE_EVENT',
-                  settings: {
-                    eventName: `${availableMetadata[0].value}.${updatedEvent}`,
-                    outputSchema: {},
+            );
+          }}
+        />
+        <Select
+          dropdownId="workflow-edit-trigger-event-type"
+          label="Event type"
+          fullWidth
+          value={triggerEvent?.event}
+          emptyOption={{ label: 'Select an option', value: '' }}
+          options={OBJECT_EVENT_TRIGGERS}
+          disabled={triggerOptions.readonly}
+          onChange={(updatedEvent) => {
+            if (triggerOptions.readonly === true) {
+              return;
+            }
+
+            triggerOptions.onTriggerUpdate(
+              isDefined(trigger) && isDefined(triggerEvent)
+                ? {
+                    ...trigger,
+                    settings: {
+                      ...trigger.settings,
+                      eventName: `${triggerEvent.objectType}.${updatedEvent}`,
+                    },
+                  }
+                : {
+                    name: headerTitle,
+                    type: 'DATABASE_EVENT',
+                    settings: {
+                      eventName: `${availableMetadata?.[0].value}.${updatedEvent}`,
+                      outputSchema: {},
+                    },
                   },
-                },
-          );
-        }}
-      />
-    </WorkflowEditGenericFormBase>
+            );
+          }}
+        />
+      </WorkflowStepBody>
+    </>
   );
 };

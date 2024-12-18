@@ -24,8 +24,8 @@ import {
   IconCodeCircle,
   IconListDetails,
   IconPlus,
+  IconPoint,
   IconSettings,
-  IconTool,
   MAIN_COLORS,
   UndecoratedLink,
   isDefined,
@@ -78,10 +78,9 @@ export const SettingsObjectDetailPage = () => {
     findActiveObjectMetadataItemBySlug(objectSlug) ??
     findActiveObjectMetadataItemBySlug(updatedObjectSlug);
 
-  const { activeTabIdState } = useTabList(
+  const { activeTabId } = useTabList(
     SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
   );
-  const activeTabId = useRecoilValue(activeTabIdState);
 
   const isAdvancedModeEnabled = useRecoilValue(isAdvancedModeEnabledState);
   const isUniqueIndexesEnabled = useIsFeatureEnabled(
@@ -119,7 +118,13 @@ export const SettingsObjectDetailPage = () => {
       title: 'Indexes',
       Icon: IconCodeCircle,
       hide: !isAdvancedModeEnabled || !isUniqueIndexesEnabled,
-      pill: <IconTool size={12} color={MAIN_COLORS.yellow} />,
+      pill: (
+        <IconPoint
+          size={12}
+          color={MAIN_COLORS.yellow}
+          fill={MAIN_COLORS.yellow}
+        />
+      ),
     },
   ];
 

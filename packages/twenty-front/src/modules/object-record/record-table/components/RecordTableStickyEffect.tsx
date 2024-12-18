@@ -35,12 +35,18 @@ export const RecordTableStickyEffect = () => {
       document
         .getElementById('record-table-header')
         ?.classList.add('first-columns-sticky');
+      document
+        .getElementById('record-table-footer')
+        ?.classList.add('first-columns-sticky');
     } else {
       document
         .getElementById('record-table-body')
         ?.classList.remove('first-columns-sticky');
       document
         .getElementById('record-table-header')
+        ?.classList.remove('first-columns-sticky');
+      document
+        .getElementById('record-table-footer')
         ?.classList.remove('first-columns-sticky');
     }
   }, [scrollLeft, setIsRecordTableScrolledLeft]);

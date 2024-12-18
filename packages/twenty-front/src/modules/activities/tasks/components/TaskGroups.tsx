@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -43,8 +42,7 @@ export const TaskGroups = ({ targetableObjects }: TaskGroupsProps) => {
     activityObjectNameSingular: CoreObjectNameSingular.Task,
   });
 
-  const { activeTabIdState } = useTabList(TASKS_TAB_LIST_COMPONENT_ID);
-  const activeTabId = useRecoilValue(activeTabIdState);
+  const { activeTabId } = useTabList(TASKS_TAB_LIST_COMPONENT_ID);
 
   const isLoading =
     (activeTabId !== 'done' && tasksLoading) ||

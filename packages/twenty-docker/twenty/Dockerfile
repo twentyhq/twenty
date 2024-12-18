@@ -1,5 +1,5 @@
 # Base image for common dependencies
-FROM node:18.17.1-alpine as common-deps
+FROM node:18.17.1-alpine AS common-deps
 
 WORKDIR /app
 
@@ -18,7 +18,7 @@ RUN yarn && yarn cache clean && npx nx reset
 
 
 # Build the back
-FROM common-deps as twenty-server-build
+FROM common-deps AS twenty-server-build
 
 # Copy sourcecode after installing dependences to accelerate subsequents builds
 COPY ./packages/twenty-emails /app/packages/twenty-emails
@@ -35,7 +35,7 @@ RUN yarn workspaces focus --production twenty-emails twenty-server
 
 
 # Build the front
-FROM common-deps as twenty-front-build
+FROM common-deps AS twenty-front-build
 
 ARG REACT_APP_SERVER_BASE_URL
 
@@ -45,7 +45,7 @@ RUN npx nx build twenty-front
 
 
 # Final stage: Run the application
-FROM node:18.17.1-alpine as twenty
+FROM node:18.17.1-alpine AS twenty
 
 # Used to run healthcheck in docker
 RUN apk add --no-cache curl jq

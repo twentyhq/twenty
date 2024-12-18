@@ -5,11 +5,12 @@ import { DateInput } from '@/ui/field/input/components/DateInput';
 import { isDefined } from '~/utils/isDefined';
 
 import { usePersistField } from '../../../hooks/usePersistField';
+import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 
 type FieldInputEvent = (persist: () => void) => void;
 
 type DateFieldInputProps = {
-  onClickOutside?: FieldInputEvent;
+  onClickOutside?: FieldInputClickOutsideEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
   onClear?: FieldInputEvent;
@@ -50,10 +51,10 @@ export const DateFieldInput = ({
   };
 
   const handleClickOutside = (
-    _event: MouseEvent | TouchEvent,
+    event: MouseEvent | TouchEvent,
     newDate: Nullable<Date>,
   ) => {
-    onClickOutside?.(() => persistDate(newDate));
+    onClickOutside?.(() => persistDate(newDate), event);
   };
 
   const handleChange = (newDate: Nullable<Date>) => {

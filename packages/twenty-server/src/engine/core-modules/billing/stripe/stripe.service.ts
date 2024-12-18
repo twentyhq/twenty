@@ -5,6 +5,7 @@ import Stripe from 'stripe';
 import { ProductPriceEntity } from 'src/engine/core-modules/billing/dto/product-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
 
@@ -13,11 +14,13 @@ export class StripeService {
   protected readonly logger = new Logger(StripeService.name);
   private readonly stripe: Stripe;
 
-  constructor(private readonly environmentService: EnvironmentService) {
+  constructor(
+    private readonly environmentService: EnvironmentService,
+    private readonly domainManagerService: DomainManagerService,
+  ) {
     if (!this.environmentService.get('IS_BILLING_ENABLED')) {
       return;
     }
-
     this.stripe = new Stripe(
       this.environmentService.get('BILLING_STRIPE_API_KEY'),
       {},
@@ -74,7 +77,8 @@ export class StripeService {
   ): Promise<Stripe.BillingPortal.Session> {
     return await this.stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
-      return_url: returnUrl ?? this.environmentService.get('FRONT_BASE_URL'),
+      return_url:
+        returnUrl ?? this.domainManagerService.getBaseUrl().toString(),
     });
   }
 
@@ -110,7 +114,10 @@ export class StripeService {
       success_url: successUrl,
       cancel_url: cancelUrl,
     });
-  }
+  } // I prefered to not create a customer with metadat before the checkout, because it would break the tax calculation
+  // Indeed when the checkout session is created, the customer is created and the tax calculation is done
+  // If we create a customer before the checkout session, the tax calculation is not done and the checkout session will fail
+  // I think that it's not risk worth to create a customer before the checkout session, it would only complicate the code for no signigicant gain
 
   async collectLastInvoice(stripeSubscriptionId: string) {
     const subscription = await this.stripe.subscriptions.retrieve(
@@ -142,6 +149,19 @@ export class StripeService {
         quantity: stripeSubscriptionItem.quantity,
       },
     );
+  }
+
+  async updateCustomerMetadataWorkspaceId(
+    stripeCustomerId: string,
+    workspaceId: string,
+  ) {
+    await this.stripe.customers.update(stripeCustomerId, {
+      metadata: { workspaceId: workspaceId },
+    });
+  }
+
+  async getCustomer(stripeCustomerId: string) {
+    return await this.stripe.customers.retrieve(stripeCustomerId);
   }
 
   formatProductPrices(prices: Stripe.Price[]): ProductPriceEntity[] {

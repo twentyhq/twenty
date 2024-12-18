@@ -3,7 +3,7 @@ import {
   OnDragEndResponder,
   ResponderProvided,
 } from '@hello-pangea/dnd';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   AppTooltip,
@@ -20,7 +20,6 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownMenuSubheader } from '@/ui/layout/dropdown/components/StyledDropdownMenuSubheader';
-import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 import { isDefined } from '~/utils/isDefined';
 
@@ -80,15 +79,6 @@ export const ViewFieldsVisibilityDropdownSection = ({
     return iconButtons.length ? iconButtons : undefined;
   };
 
-  const ref = useRef<HTMLDivElement>(null);
-
-  useListenClickOutside({
-    refs: [ref],
-    callback: () => {
-      setOpenToolTipIndex(undefined);
-    },
-  });
-
   const { nonDraggableItems = [], draggableItems = [] } = isDraggable
     ? groupArrayItemsBy(fields, ({ isLabelIdentifier }) =>
         isLabelIdentifier ? 'nonDraggableItems' : 'draggableItems',
@@ -96,7 +86,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
     : { nonDraggableItems: fields, draggableItems: [] };
 
   return (
-    <div ref={ref}>
+    <>
       {showSubheader && (
         <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
       )}
@@ -158,6 +148,6 @@ export const ViewFieldsVisibilityDropdownSection = ({
           />,
           document.body,
         )}
-    </div>
+    </>
   );
 };

@@ -5,11 +5,12 @@ import { AuthProviders } from '~/generated/graphql';
 export const authProvidersState = createState<AuthProviders>({
   key: 'authProvidersState',
   defaultValue: {
-    google: false,
+    google: true,
     magicLink: false,
-    password: false,
+    password: true,
     microsoft: false,
     sso: false,
     auth0: false,
+    sso: [],
   },
 });

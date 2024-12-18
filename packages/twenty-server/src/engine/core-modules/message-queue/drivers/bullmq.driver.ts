@@ -2,6 +2,7 @@ import { OnModuleDestroy } from '@nestjs/common';
 
 import { JobsOptions, Queue, QueueOptions, Worker } from 'bullmq';
 import omitBy from 'lodash.omitby';
+import { v4 } from 'uuid';
 
 import {
   QueueCronJobOptions,
@@ -14,6 +15,8 @@ import { MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 export type BullMQDriverOptions = QueueOptions;
+
+const V4_LENGTH = 36;
 
 export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
   private queueMap: Record<MessageQueue, Queue> = {} as Record<
@@ -107,8 +110,22 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
+
+    // This ensures only one waiting job can be queued for a specific option.id
+    if (options?.id) {
+      const waitingJobs = await this.queueMap[queueName].getJobs(['waiting']);
+
+      const isJobAlreadyWaiting = waitingJobs.some(
+        (job) => job.id?.slice(0, -(V4_LENGTH + 1)) === options.id,
+      );
+
+      if (isJobAlreadyWaiting) {
+        return;
+      }
+    }
+
     const queueOptions: JobsOptions = {
-      jobId: options?.id,
+      jobId: options?.id ? `${options.id}-${v4()}` : undefined, // We add V4() to id to make sure ids are uniques so we can add a waiting job when a job related with the same option.id is running
       priority: options?.priority,
       attempts: 1 + (options?.retryLimit || 0),
       removeOnComplete: 100,
