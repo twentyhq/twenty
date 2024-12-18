@@ -1,4 +1,3 @@
-/* eslint-disable @nx/workspace-no-navigate-prefer-link */
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -11,6 +10,7 @@ import { useRecordIdsFromFindManyCacheRootQuery } from '@/object-record/record-s
 import { buildShowPageURL } from '@/object-record/record-show/utils/buildShowPageURL';
 import { buildIndexTablePageURL } from '@/object-record/record-table/utils/buildIndexTableURL';
 import { useQueryVariablesFromActiveFieldsOfViewOrDefaultView } from '@/views/hooks/useQueryVariablesFromActiveFieldsOfViewOrDefaultView';
+import { isDefined } from 'twenty-ui';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useRecordShowPagePagination = (
@@ -100,22 +100,43 @@ export const useRecordShowPagePagination = (
 
   const loading = loadingRecordAfter || loadingRecordBefore || loadingCursor;
 
-  const isThereARecordBefore = recordsBefore.length > 0;
-  const isThereARecordAfter = recordsAfter.length > 0;
-
   const recordBefore = recordsBefore[0];
   const recordAfter = recordsAfter[0];
 
+  const { recordIdsInCache } = useRecordIdsFromFindManyCacheRootQuery({
+    objectNamePlural: objectMetadataItem.namePlural,
+    fieldVariables: {
+      filter,
+      orderBy,
+    },
+  });
+
   const navigateToPreviousRecord = () => {
-    navigate(
-      buildShowPageURL(objectNameSingular, recordBefore.id, viewIdQueryParam),
-    );
+    if (isDefined(recordBefore)) {
+      navigate(
+        buildShowPageURL(objectNameSingular, recordBefore.id, viewIdQueryParam),
+      );
+    }
+    if (!loadingRecordBefore && !isDefined(recordBefore)) {
+      const firstRecordId = recordIdsInCache[recordIdsInCache.length - 1];
+      navigate(
+        buildShowPageURL(objectNameSingular, firstRecordId, viewIdQueryParam),
+      );
+    }
   };
 
   const navigateToNextRecord = () => {
-    navigate(
-      buildShowPageURL(objectNameSingular, recordAfter.id, viewIdQueryParam),
-    );
+    if (isDefined(recordAfter)) {
+      navigate(
+        buildShowPageURL(objectNameSingular, recordAfter.id, viewIdQueryParam),
+      );
+    }
+    if (!loadingRecordAfter && !isDefined(recordAfter)) {
+      const lastRecordId = recordIdsInCache[0];
+      navigate(
+        buildShowPageURL(objectNameSingular, lastRecordId, viewIdQueryParam),
+      );
+    }
   };
 
   const navigateToIndexView = () => {
@@ -129,31 +150,21 @@ export const useRecordShowPagePagination = (
     navigate(indexTableURL);
   };
 
-  const { recordIdsInCache } = useRecordIdsFromFindManyCacheRootQuery({
-    objectNamePlural: objectMetadataItem.namePlural,
-    fieldVariables: {
-      filter,
-      orderBy,
-    },
-  });
-
   const rankInView = recordIdsInCache.findIndex((id) => id === objectRecordId);
 
-  const rankFoundInFiew = rankInView > -1;
+  const rankFoundInView = rankInView > -1;
 
   const objectLabel = capitalize(objectMetadataItem.labelPlural);
 
   const totalCount = Math.max(1, totalCountBefore, totalCountAfter);
 
-  const viewNameWithCount = rankFoundInFiew
+  const viewNameWithCount = rankFoundInView
     ? `${rankInView + 1} of ${totalCount} in ${objectLabel}`
     : `${objectLabel} (${totalCount})`;
 
   return {
     viewName: viewNameWithCount,
-    hasPreviousRecord: isThereARecordBefore,
     isLoadingPagination: loading,
-    hasNextRecord: isThereARecordAfter,
     navigateToPreviousRecord,
     navigateToNextRecord,
     navigateToIndexView,

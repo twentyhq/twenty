@@ -37,7 +37,6 @@ type DropdownProps = {
   dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownOffset?: { x?: number; y?: number };
   dropdownStrategy?: 'fixed' | 'absolute';
-  disableBlur?: boolean;
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
@@ -55,7 +54,6 @@ export const Dropdown = ({
   dropdownPlacement = 'bottom-end',
   dropdownStrategy = 'absolute',
   dropdownOffset = { x: 0, y: 0 },
-  disableBlur = false,
   onClickOutside,
   onClose,
   onOpen,
@@ -123,7 +121,6 @@ export const Dropdown = ({
             <DropdownContent
               className={className}
               floatingStyles={floatingStyles}
-              disableBlur={disableBlur}
               dropdownMenuWidth={dropdownMenuWidth}
               dropdownComponents={dropdownComponents}
               dropdownId={dropdownId}

@@ -1,6 +1,7 @@
 import { useAddToFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useAddToFavoritesSingleRecordAction';
 import { useDeleteSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useDeleteSingleRecordAction';
 import { useRemoveFromFavoritesSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/hooks/useRemoveFromFavoritesSingleRecordAction';
+import { ActionAvailableOn } from '@/action-menu/actions/types/actionAvailableOn';
 import { SingleRecordActionHook } from '@/action-menu/actions/types/singleRecordActionHook';
 import {
   ActionMenuEntry,
@@ -22,6 +23,10 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1: Record<
     label: 'Add to favorites',
     position: 0,
     Icon: IconHeart,
+    availableOn: [
+      ActionAvailableOn.SHOW_PAGE,
+      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+    ],
     actionHook: useAddToFavoritesSingleRecordAction,
   },
   removeFromFavoritesSingleRecord: {
@@ -31,6 +36,10 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1: Record<
     label: 'Remove from favorites',
     position: 1,
     Icon: IconHeartOff,
+    availableOn: [
+      ActionAvailableOn.SHOW_PAGE,
+      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+    ],
     actionHook: useRemoveFromFavoritesSingleRecordAction,
   },
   deleteSingleRecord: {
@@ -42,6 +51,10 @@ export const DEFAULT_SINGLE_RECORD_ACTIONS_CONFIG_V1: Record<
     Icon: IconTrash,
     accent: 'danger',
     isPinned: true,
+    availableOn: [
+      ActionAvailableOn.SHOW_PAGE,
+      ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+    ],
     actionHook: useDeleteSingleRecordAction,
   },
 };

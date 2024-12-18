@@ -15,6 +15,7 @@ import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing/services/billing-webhook-entitlement.service';
+import { BillingWebhookPriceService } from 'src/engine/core-modules/billing/services/billing-webhook-price.service';
 import { BillingWebhookProductService } from 'src/engine/core-modules/billing/services/billing-webhook-product.service';
 import { BillingWebhookSubscriptionService } from 'src/engine/core-modules/billing/services/billing-webhook-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
@@ -56,6 +57,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
     BillingWorkspaceMemberListener,
     BillingService,
     BillingWebhookProductService,
+    BillingWebhookPriceService,
     BillingRestApiExceptionFilter,
   ],
   exports: [

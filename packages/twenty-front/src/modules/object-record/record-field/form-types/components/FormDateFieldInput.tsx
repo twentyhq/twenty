@@ -3,7 +3,6 @@ import { FormFieldInputInputContainer } from '@/object-record/record-field/form-
 import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { StyledCalendarContainer } from '@/ui/field/input/components/DateInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import {
   InternalDatePicker,
@@ -16,6 +15,7 @@ import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate'
 import { parseDateToString } from '@/ui/input/components/internal/date/utils/parseDateToString';
 import { parseStringToDate } from '@/ui/input/components/internal/date/utils/parseStringToDate';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { UserContext } from '@/users/contexts/UserContext';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
@@ -338,7 +338,7 @@ export const FormDateFieldInput = ({
               {draftValue.mode === 'edit' ? (
                 <StyledDateInputContainer>
                   <StyledDateInputAbsoluteContainer>
-                    <StyledCalendarContainer>
+                    <OverlayContainer>
                       <InternalDatePicker
                         date={pickerDate ?? new Date()}
                         isDateTimeInput={false}
@@ -349,7 +349,7 @@ export const FormDateFieldInput = ({
                         onClear={handlePickerClear}
                         hideHeaderInput
                       />
-                    </StyledCalendarContainer>
+                    </OverlayContainer>
                   </StyledDateInputAbsoluteContainer>
                 </StyledDateInputContainer>
               ) : null}

@@ -96,6 +96,7 @@ export const MultiRecordSelect = ({
     [setSearchFilter],
   );
 
+  // TODO: refactor this in a separate component
   const results = (
     <DropdownMenuItemsContainer hasMaxHeight>
       <SelectableList
@@ -139,7 +140,7 @@ export const MultiRecordSelect = ({
           onSubmit?.();
         }}
       />
-      <DropdownMenu ref={containerRef} data-select-disable>
+      <DropdownMenu ref={containerRef} data-select-disable width={200}>
         {dropdownPlacement?.includes('end') && (
           <>
             {isDefined(onCreate) && (

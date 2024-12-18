@@ -86,6 +86,7 @@ export const RecordIndexPage = () => {
                   <RecordIndexContainerContextStoreObjectMetadataEffect />
                   <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
                   <MainContextStoreComponentInstanceIdSetterEffect />
+
                   <RecordIndexContainer />
                 </StyledIndexContainer>
               </PageBody>

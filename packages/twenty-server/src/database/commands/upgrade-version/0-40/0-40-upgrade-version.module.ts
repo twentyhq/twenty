@@ -5,9 +5,11 @@ import { PhoneCallingCodeCreateColumnCommand } from 'src/database/commands/upgra
 import { PhoneCallingCodeCommand } from 'src/database/commands/upgrade-version/0-40/0-40-phone-calling-code.command';
 import { RecordPositionBackfillCommand } from 'src/database/commands/upgrade-version/0-40/0-40-record-position-backfill.command';
 import { UpgradeTo0_40Command } from 'src/database/commands/upgrade-version/0-40/0-40-upgrade-version.command';
+import { ViewGroupNoValueBackfillCommand } from 'src/database/commands/upgrade-version/0-40/0-40-view-group-no-value-backfill.command';
 import { RecordPositionBackfillModule } from 'src/engine/api/graphql/workspace-query-runner/services/record-position-backfill-module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SearchModule } from 'src/engine/metadata-modules/search/search.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
@@ -23,12 +25,14 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
       [ObjectMetadataEntity, FieldMetadataEntity],
       'metadata',
     ),
+    TypeOrmModule.forFeature([FieldMetadataEntity], 'metadata'),
     WorkspaceSyncMetadataCommandsModule,
     SearchModule,
     WorkspaceMigrationRunnerModule,
     WorkspaceMetadataVersionModule,
     WorkspaceMigrationModule,
     RecordPositionBackfillModule,
+    FieldMetadataModule,
   ],
   providers: [
     UpgradeTo0_40Command,
@@ -36,6 +40,7 @@ import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manage
     PhoneCallingCodeCreateColumnCommand,
     WorkspaceMigrationFactory,
     RecordPositionBackfillCommand,
+    ViewGroupNoValueBackfillCommand,
   ],
 })
 export class UpgradeTo0_40CommandModule {}

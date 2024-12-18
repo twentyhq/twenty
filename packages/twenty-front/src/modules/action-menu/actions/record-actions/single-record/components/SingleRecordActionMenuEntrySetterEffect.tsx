@@ -1,4 +1,5 @@
 import { getActionConfig } from '@/action-menu/actions/record-actions/single-record/utils/getActionConfig';
+import { ActionAvailableOn } from '@/action-menu/actions/types/actionAvailableOn';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -37,6 +38,11 @@ export const SingleRecordActionMenuEntrySetterEffect = ({
   }
 
   const actionMenuEntries = Object.values(actionConfig ?? {})
+    .filter((action) =>
+      action.availableOn?.includes(
+        ActionAvailableOn.INDEX_PAGE_SINGLE_RECORD_SELECTION,
+      ),
+    )
     .map((action) => {
       const { shouldBeRegistered, onClick, ConfirmationModal } =
         action.actionHook({

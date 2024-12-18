@@ -8,6 +8,7 @@ import { BaseCommandOptions } from 'src/database/commands/base.command';
 import { PhoneCallingCodeCreateColumnCommand } from 'src/database/commands/upgrade-version/0-40/0-40-phone-calling-code-create-column.command';
 import { PhoneCallingCodeCommand } from 'src/database/commands/upgrade-version/0-40/0-40-phone-calling-code.command';
 import { RecordPositionBackfillCommand } from 'src/database/commands/upgrade-version/0-40/0-40-record-position-backfill.command';
+import { ViewGroupNoValueBackfillCommand } from 'src/database/commands/upgrade-version/0-40/0-40-view-group-no-value-backfill.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { SyncWorkspaceMetadataCommand } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/sync-workspace-metadata.command';
 
@@ -19,10 +20,10 @@ export class UpgradeTo0_40Command extends ActiveWorkspacesCommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     protected readonly workspaceRepository: Repository<Workspace>,
+    private readonly viewGroupNoValueBackfillCommand: ViewGroupNoValueBackfillCommand,
     private readonly syncWorkspaceMetadataCommand: SyncWorkspaceMetadataCommand,
     private readonly phoneCallingCodeCommand: PhoneCallingCodeCommand,
     private readonly phoneCallingCodeCreateColumnCommand: PhoneCallingCodeCreateColumnCommand,
-
     private readonly recordPositionBackfillCommand: RecordPositionBackfillCommand,
   ) {
     super(workspaceRepository);
@@ -50,6 +51,12 @@ export class UpgradeTo0_40Command extends ActiveWorkspacesCommandRunner {
     );
 
     await this.recordPositionBackfillCommand.executeActiveWorkspacesCommand(
+      passedParam,
+      options,
+      workspaceIds,
+    );
+
+    await this.viewGroupNoValueBackfillCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
       workspaceIds,

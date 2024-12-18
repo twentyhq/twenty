@@ -1,7 +1,6 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
-import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -10,7 +9,6 @@ import {
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
-import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -223,9 +221,6 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     ],
     defaultValue: `'${AGGREGATE_OPERATIONS.count}'`,
   })
-  @WorkspaceGate({
-    featureFlag: FeatureFlagKey.IsAggregateQueryEnabled,
-  })
   @WorkspaceIsNullable()
   kanbanAggregateOperation?: AGGREGATE_OPERATIONS | null;
 
@@ -235,9 +230,6 @@ export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Field metadata used for aggregate operation',
     description: 'Field metadata used for aggregate operation',
     defaultValue: null,
-  })
-  @WorkspaceGate({
-    featureFlag: FeatureFlagKey.IsAggregateQueryEnabled,
   })
   @WorkspaceIsNullable()
   kanbanAggregateOperationFieldMetadataId?: string | null;
