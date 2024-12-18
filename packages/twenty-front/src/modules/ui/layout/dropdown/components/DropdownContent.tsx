@@ -125,6 +125,7 @@ export const DropdownContent = ({
         >
           <OverlayContainer>
             <DropdownMenu
+              id={dropdownId}
               className={className}
               width={dropdownMenuWidth ?? dropdownWidth}
               data-select-disable
@@ -141,6 +142,7 @@ export const DropdownContent = ({
           >
             <OverlayContainer>
               <DropdownMenu
+                id={dropdownId}
                 className={className}
                 width={dropdownMenuWidth ?? dropdownWidth}
                 data-select-disable

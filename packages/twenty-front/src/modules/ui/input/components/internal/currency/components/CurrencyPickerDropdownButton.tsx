@@ -8,7 +8,6 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 import { CurrencyPickerHotkeyScope } from '../types/CurrencyPickerHotkeyScope';
 
-import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
 
 const StyledDropdownButtonContainer = styled.div`
   align-items: center;
@@ -84,11 +83,13 @@ export const CurrencyPickerDropdownButton = ({
         </StyledDropdownButtonContainer>
       }
       dropdownComponents={
-        <CurrencyPickerDropdownSelect
-          currencies={currencies}
-          selectedCurrency={currency}
-          onChange={handleChange}
-        />
+        <></>
+        // <CurrencyPickerDropdownSelect
+        //   id="currency-picker-dropdown-options"
+        //   currencies={currencies}
+        //   selectedCurrency={currency}
+        //   onChange={handleChange}
+        // />
       }
       dropdownPlacement="bottom-start"
       dropdownOffset={{ x: 0, y: 4 }}

@@ -113,12 +113,14 @@ export const Dropdown = ({
             <div
               ref={refs.setReference}
               onClick={handleClickableComponentClick}
+              aria-controls={dropdownId}
             >
               {clickableComponent}
             </div>
           )}
           {isDropdownOpen && (
             <DropdownContent
+              id={"currency-picker-options"}
               className={className}
               floatingStyles={floatingStyles}
               dropdownMenuWidth={dropdownMenuWidth}
