@@ -54,9 +54,9 @@ const StyledContainer = styled.div`
 `;
 
 const StyledContainerWithPadding = styled.div`
-  height: calc(100% - 40px);
+  box-sizing: border-box;
+  height: calc(100% - ${({ theme }) => theme.spacing(10)});
   margin-left: ${({ theme }) => theme.spacing(2)};
-  width: 100%;
 `;
 
 export const RecordIndexContainer = () => {
