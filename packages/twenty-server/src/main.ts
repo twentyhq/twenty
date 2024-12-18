@@ -1,26 +1,23 @@
-import {
-  ValidationError as ValidationErrorType,
-  ValidationPipe,
-} from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 import fs from 'fs';
 
 import bytes from 'bytes';
-import { useContainer } from 'class-validator';
+import { useContainer, ValidationError } from 'class-validator';
 import session from 'express-session';
 import { graphqlUploadExpress } from 'graphql-upload';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
-import { UnhandledExceptionFilter } from 'src/utils/apply-cors-to-exceptions';
-import { ValidationError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 import { AppModule } from './app.module';
 import './instrument';
 
+import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
+
+import { ValidationPipe } from '@nestjs/common';
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
 
@@ -58,17 +55,15 @@ const bootstrap = async () => {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
-      exceptionFactory: (validationErrors: ValidationErrorType[] = []) => {
-        return new ValidationError(
-          validationErrors.reduce(
-            (acc, validationError) =>
-              Object.values(validationError.constraints ?? {}).reduce(
-                (accC, message) => `${accC}\n${message}`,
-                acc,
-              ),
-            '',
-          ),
+      exceptionFactory: (errors) => {
+        const error = new ValidationError();
+
+        error.constraints = Object.assign(
+          {},
+          ...errors.map((error) => error.constraints),
         );
+
+        return error;
       },
     }),
   );
