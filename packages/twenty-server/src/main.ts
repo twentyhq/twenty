@@ -5,14 +5,14 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import fs from 'fs';
 
 import bytes from 'bytes';
-import { useContainer } from 'class-validator';
+import { useContainer, ValidationError } from 'class-validator';
 import session from 'express-session';
 import { graphqlUploadExpress } from 'graphql-upload';
 
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
-import { UnhandledExceptionFilter } from 'src/utils/apply-cors-to-exceptions';
+import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
 
 import { AppModule } from './app.module';
 import './instrument';
@@ -54,6 +54,16 @@ const bootstrap = async () => {
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      exceptionFactory: (errors) => {
+        const error = new ValidationError();
+
+        error.constraints = Object.assign(
+          {},
+          ...errors.map((error) => error.constraints),
+        );
+
+        return error;
+      },
     }),
   );
   app.useBodyParser('json', { limit: settings.storage.maxFileSize });
