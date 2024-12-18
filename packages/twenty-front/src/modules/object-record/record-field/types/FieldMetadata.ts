@@ -8,16 +8,19 @@ import { RelationDefinitionType } from '~/generated-metadata/graphql';
 import { CurrencyCode } from './CurrencyCode';
 
 export type FieldUuidMetadata = {
+  metadataType: 'FieldUuidMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
 };
 
 export type FieldBooleanMetadata = {
+  metadataType: 'FieldBooleanMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
 };
 
 export type FieldTextMetadata = {
+  metadataType: 'FieldTextMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
@@ -27,6 +30,7 @@ export type FieldTextMetadata = {
 };
 
 export type FieldDateTimeMetadata = {
+  metadataType: 'FieldDateTimeMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
@@ -36,6 +40,7 @@ export type FieldDateTimeMetadata = {
 };
 
 export type FieldDateMetadata = {
+  metadataType: 'FieldDateMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
@@ -47,6 +52,7 @@ export type FieldDateMetadata = {
 export type FieldNumberVariant = 'number' | 'percentage';
 
 export type FieldNumberMetadata = {
+  metadataType: 'FieldNumberMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
   placeHolder: string;
@@ -58,17 +64,20 @@ export type FieldNumberMetadata = {
 };
 
 export type FieldLinkMetadata = {
+  metadataType: 'FieldLinkMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
 };
 
 export type FieldLinksMetadata = {
+  metadataType: 'FieldLinksMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
 };
 
 export type FieldCurrencyMetadata = {
+  metadataType: 'FieldCurrencyMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
   placeHolder: string;
@@ -76,56 +85,66 @@ export type FieldCurrencyMetadata = {
 };
 
 export type FieldFullNameMetadata = {
+  metadataType: 'FieldFullNameMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
 };
 
 export type FieldEmailMetadata = {
+  metadataType: 'FieldEmailMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
 };
 
 export type FieldEmailsMetadata = {
+  metadataType: 'FieldEmailsMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
 };
 
 export type FieldPhoneMetadata = {
+  metadataType: 'FieldPhoneMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
 };
 
 export type FieldRatingMetadata = {
+  metadataType: 'FieldRatingMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
 };
 
 export type FieldAddressMetadata = {
+  metadataType: 'FieldAddressMetadata';
   objectMetadataNameSingular?: string;
   placeHolder: string;
   fieldName: string;
 };
 
 export type FieldRawJsonMetadata = {
+  metadataType: 'FieldRawJsonMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
   placeHolder: string;
 };
 
 export type FieldRichTextMetadata = {
+  metadataType: 'FieldRichTextMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
 };
 
 export type FieldPositionMetadata = {
+  metadataType: 'FieldPositionMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
 };
 
 export type FieldRelationMetadata = {
+  metadataType: 'FieldRelationMetadata';
   fieldName: string;
   objectMetadataNameSingular?: string;
   relationFieldMetadataId: string;
@@ -137,6 +156,7 @@ export type FieldRelationMetadata = {
 };
 
 export type FieldSelectMetadata = {
+  metadataType: 'FieldSelectMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
   options: { label: string; color: ThemeColor; value: string }[];
@@ -144,28 +164,33 @@ export type FieldSelectMetadata = {
 };
 
 export type FieldMultiSelectMetadata = {
+  metadataType: 'FieldMultiSelectMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
   options: { label: string; color: ThemeColor; value: string }[];
 };
 
 export type FieldActorMetadata = {
+  metadataType: 'FieldActorMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
 };
 
 export type FieldArrayMetadata = {
+  metadataType: 'FieldArrayMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
   values: { label: string; value: string }[];
 };
 
 export type FieldPhonesMetadata = {
+  metadataType: 'FieldPhonesMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
 };
 
 export type FieldTsVectorMetadata = {
+  metadataType: 'FieldTsVectorMetadata';
   objectMetadataNameSingular?: string;
   fieldName: string;
 };

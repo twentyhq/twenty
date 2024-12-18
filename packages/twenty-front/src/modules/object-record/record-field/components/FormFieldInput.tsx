@@ -51,13 +51,6 @@ export const FormFieldInput = ({
       placeholder={field.label}
       VariablePicker={VariablePicker}
     />
-  ) : isFieldBoolean(field) ? (
-    <FormBooleanFieldInput
-      label={field.label}
-      defaultValue={defaultValue as string | boolean | undefined}
-      onPersist={onPersist}
-      VariablePicker={VariablePicker}
-    />
   ) : isFieldText(field) ? (
     <FormTextFieldInput
       label={field.label}
@@ -117,6 +110,13 @@ export const FormFieldInput = ({
       onPersist={onPersist}
       VariablePicker={VariablePicker}
       options={field.metadata.options}
+    />
+  ) : isFieldBoolean(field) ? (
+    <FormBooleanFieldInput
+      label={field.label}
+      defaultValue={defaultValue as string | boolean | undefined}
+      onPersist={onPersist}
+      VariablePicker={VariablePicker}
     />
   ) : null;
 };
