@@ -6,6 +6,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { FavoriteDeletionService } from 'src/modules/favorite/services/favorite-deletion.service';
 
 export type FavoriteDeletionJobData = {
+  workspaceId: string;
   deletedRecordIds: string[];
 };
 
@@ -22,6 +23,7 @@ export class FavoriteDeletionJob {
   async handle(data: FavoriteDeletionJobData): Promise<void> {
     await this.favoriteDeletionService.deleteFavoritesForDeletedRecords(
       data.deletedRecordIds,
+      data.workspaceId,
     );
   }
 }
