@@ -97,21 +97,22 @@ export const Tab = ({
     >
       <StyledHover>
         <StyledIconContainer>
-          {logo && (
+          {logo ? (
             <Avatar
               avatarUrl={logo}
               size="md"
-              placeholder=""
+              placeholder={title.charAt(0).toUpperCase()}
               iconColor={iconColor}
             />
-          )}
-          {Icon && (
-            <Avatar
-              Icon={Icon}
-              size="md"
-              placeholder=""
-              iconColor={iconColor}
-            />
+          ) : (
+            Icon && (
+              <Avatar
+                Icon={Icon}
+                size="md"
+                placeholder={title.charAt(0).toUpperCase()}
+                iconColor={iconColor}
+              />
+            )
           )}
         </StyledIconContainer>
         <EllipsisDisplay>{title}</EllipsisDisplay>
