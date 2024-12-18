@@ -62,6 +62,7 @@ export const useLazyFetchAllRecords = <T>({
     const recordsCount = firstQueryResult?.edges.length ?? 0;
 
     const records = firstQueryResult?.edges?.map((edge) => edge.node) ?? [];
+
     setProgress({
       exportedRecordCount: recordsCount,
       totalRecordCount: totalCount,
@@ -97,7 +98,6 @@ export const useLazyFetchAllRecords = <T>({
       const fetchMoreResult = rawResult?.data?.[objectMetadataItem.namePlural];
 
       for (const edge of fetchMoreResult.edges) {
-        console.log(edge.node);
         records.push(edge.node);
       }
 
