@@ -55,7 +55,7 @@ export class ViewGroupNoValueBackfillCommand extends ActiveWorkspacesCommandRunn
           continue;
         }
 
-        // We're assuming for now that all viewGroups have the same fieldMetadataId
+        // We're assuming for now that all viewGroups belonging to the same view have the same fieldMetadataId
         const viewGroup = view.viewGroups?.[0];
         const fieldMetadataId = viewGroup?.fieldMetadataId;
 
