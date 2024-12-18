@@ -16,7 +16,9 @@ const StyledEmptyContainer = styled.div`
   height: ${({ theme }) => theme.spacing(2.5)};
   width: 100%;
 `;
-
+const StyledOrphanFavoritesContainer = styled.div`
+  margin-bottom: ${({ theme }) => theme.betweenSiblingsGap};
+`;
 export const CurrentWorkspaceMemberOrphanFavorites = () => {
   const { sortedFavorites: favorites } = useFavorites();
   const { deleteFavorite } = useDeleteFavorite();
@@ -38,24 +40,26 @@ export const CurrentWorkspaceMemberOrphanFavorites = () => {
             index={index}
             isInsideScrollableContainer={true}
             itemComponent={
-              <NavigationDrawerItem
-                label={favorite.labelIdentifier}
-                Icon={() => <FavoriteIcon favorite={favorite} />}
-                active={isLocationMatchingFavorite(
-                  currentPath,
-                  currentViewPath,
-                  favorite,
-                )}
-                to={favorite.link}
-                rightOptions={
-                  <LightIconButton
-                    Icon={IconHeartOff}
-                    onClick={() => deleteFavorite(favorite.id)}
-                    accent="tertiary"
-                  />
-                }
-                isDragging={isDragging}
-              />
+              <StyledOrphanFavoritesContainer>
+                <NavigationDrawerItem
+                  label={favorite.labelIdentifier}
+                  Icon={() => <FavoriteIcon favorite={favorite} />}
+                  active={isLocationMatchingFavorite(
+                    currentPath,
+                    currentViewPath,
+                    favorite,
+                  )}
+                  to={favorite.link}
+                  rightOptions={
+                    <LightIconButton
+                      Icon={IconHeartOff}
+                      onClick={() => deleteFavorite(favorite.id)}
+                      accent="tertiary"
+                    />
+                  }
+                  isDragging={isDragging}
+                />
+              </StyledOrphanFavoritesContainer>
             }
           />
         ))
