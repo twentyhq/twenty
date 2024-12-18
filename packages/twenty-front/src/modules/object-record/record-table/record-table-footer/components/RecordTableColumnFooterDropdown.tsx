@@ -30,10 +30,6 @@ export const RecordTableColumnFooterDropdown = ({
       (viewField) => viewField.fieldMetadataId === column.fieldMetadataId,
     );
 
-  if (!currentViewField) {
-    throw new Error('ViewField not found');
-  }
-
   useScopedHotkeys(
     [Key.Escape],
     () => {
@@ -56,6 +52,9 @@ export const RecordTableColumnFooterDropdown = ({
   const handleAggregationChange = (
     aggregateOperation: AGGREGATE_OPERATIONS,
   ) => {
+    if (!currentViewField) {
+      throw new Error('ViewField not found');
+    }
     updateViewFieldRecords([
       { ...currentViewField, aggregateOperation: aggregateOperation },
     ]);
