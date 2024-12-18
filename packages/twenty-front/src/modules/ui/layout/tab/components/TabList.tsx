@@ -25,6 +25,7 @@ type TabListProps = {
   tabs: SingleTabProps[];
   loading?: boolean;
   behaveAsLinks?: boolean;
+  className?: string;
 };
 
 const StyledContainer = styled.div`
@@ -41,6 +42,7 @@ export const TabList = ({
   tabListInstanceId,
   loading,
   behaveAsLinks = true,
+  className,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
 
@@ -67,7 +69,7 @@ export const TabList = ({
         contextProviderName="tabList"
         componentInstanceId={`scroll-wrapper-tab-list-${tabListInstanceId}`}
       >
-        <StyledContainer>
+        <StyledContainer className={className}>
           {visibleTabs.map((tab) => (
             <Tab
               id={tab.id}
