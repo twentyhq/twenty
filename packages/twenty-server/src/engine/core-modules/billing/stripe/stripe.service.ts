@@ -194,4 +194,17 @@ export class StripeService {
 
     return productPrices.sort((a, b) => a.unitAmount - b.unitAmount);
   }
+
+  async getCustomerData(workspaceId: string) {
+    const subscription = await this.stripe.subscriptions.search({
+      query: `metadata['workspaceId']:'${workspaceId}'`,
+      limit: 1,
+    });
+    const stripeCustomerId = String(subscription.data[0].customer);
+
+    return {
+      stripeCustomerId,
+      workspaceId,
+    };
+  }
 }
