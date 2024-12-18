@@ -17,8 +17,7 @@ import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const ObjectOptionsDropdownRecordGroupSortContent = () => {
-  const { currentContentId, onContentChange, closeDropdown } =
-    useOptionsDropdown();
+  const { currentContentId, onContentChange } = useOptionsDropdown();
 
   const hiddenRecordGroupIds = useRecoilComponentValueV2(
     hiddenRecordGroupIdsComponentSelector,
@@ -30,7 +29,6 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
 
   const handleRecordGroupSortChange = (sort: RecordGroupSort) => {
     setRecordGroupSort(sort);
-    closeDropdown();
   };
 
   useEffect(() => {
