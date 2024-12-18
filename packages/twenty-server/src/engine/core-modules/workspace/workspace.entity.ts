@@ -51,10 +51,10 @@ export class Workspace {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // @deprecated. Use domain field
-  @Field({ nullable: true })
-  @Column({ nullable: true })
-  domainName?: string;
+  // @deprecated. Use hostname field
+  // @Field({ nullable: true })
+  // @Column({ nullable: true })
+  // domainName?: string;
 
   @Field({ nullable: true })
   @Column({ nullable: true })
@@ -150,7 +150,7 @@ export class Workspace {
 
   @Field()
   @Column({ unique: true })
-  domain: string;
+  hostname: string;
 
   @Field()
   @Column({ default: true })
