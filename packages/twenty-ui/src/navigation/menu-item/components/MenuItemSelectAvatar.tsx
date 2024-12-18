@@ -40,6 +40,7 @@ export const MenuItemSelectAvatar = ({
       disabled={disabled}
       hovered={hovered}
       data-testid={testId}
+      role="option"
     >
       <StyledMenuItemLeftContent>
         {avatar}
