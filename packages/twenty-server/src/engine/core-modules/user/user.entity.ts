@@ -6,7 +6,6 @@ import {
   CreateDateColumn,
   Entity,
   Index,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   Relation,
@@ -19,7 +18,6 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 registerEnumType(OnboardingStatus, {
   name: 'OnboardingStatus',
@@ -80,16 +78,6 @@ export class User {
   @Field({ nullable: true })
   @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date;
-
-  @Field(() => Workspace, { nullable: false })
-  @ManyToOne(() => Workspace, (workspace) => workspace.users, {
-    onDelete: 'RESTRICT',
-  })
-  defaultWorkspace: Relation<Workspace>;
-
-  @Field()
-  @Column()
-  defaultWorkspaceId: string;
 
   @OneToMany(() => AppToken, (appToken) => appToken.user, {
     cascade: true,

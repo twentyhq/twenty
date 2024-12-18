@@ -170,41 +170,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       userId,
       workspaceId,
     });
-    await this.reassignOrRemoveUserDefaultWorkspace(workspaceId, userId);
-  }
-
-  private async reassignOrRemoveUserDefaultWorkspace(
-    workspaceId: string,
-    userId: string,
-  ) {
-    const userWorkspaces = await this.userWorkspaceRepository.find({
-      where: { userId: userId },
-    });
-
-    if (userWorkspaces.length === 0) {
-      await this.userRepository.delete({ id: userId });
-
-      return;
-    }
-
-    const user = await this.userRepository.findOne({
-      where: {
-        id: userId,
-      },
-    });
-
-    if (!user) {
-      throw new Error(`User ${userId} not found in workspace ${workspaceId}`);
-    }
-
-    if (user.defaultWorkspaceId === workspaceId) {
-      await this.userRepository.update(
-        { id: userId },
-        {
-          defaultWorkspaceId: userWorkspaces[0].workspaceId,
-        },
-      );
-    }
   }
 
   async isSubdomainAvailable(subdomain: string) {
