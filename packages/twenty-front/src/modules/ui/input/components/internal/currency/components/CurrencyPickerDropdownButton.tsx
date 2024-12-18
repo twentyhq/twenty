@@ -6,6 +6,7 @@ import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
+import { CurrencyPickerDropdownSelect } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownSelect';
 import { CurrencyPickerHotkeyScope } from '../types/CurrencyPickerHotkeyScope';
 
 
@@ -83,13 +84,11 @@ export const CurrencyPickerDropdownButton = ({
         </StyledDropdownButtonContainer>
       }
       dropdownComponents={
-        <></>
-        // <CurrencyPickerDropdownSelect
-        //   id="currency-picker-dropdown-options"
-        //   currencies={currencies}
-        //   selectedCurrency={currency}
-        //   onChange={handleChange}
-        // />
+        <CurrencyPickerDropdownSelect
+          currencies={currencies}
+          selectedCurrency={currency}
+          onChange={handleChange}
+        />
       }
       dropdownPlacement="bottom-start"
       dropdownOffset={{ x: 0, y: 4 }}
