@@ -109,6 +109,7 @@ export const SettingsDataModelObjectAboutForm = ({
   watch('nameSingular');
   watch('namePlural');
   watch('description');
+  watch('icon');
   const apiNameTooltipText = isLabelSyncedWithName
     ? 'Deactivate "Synchronize Objects Labels and API Names" to set a custom API name'
     : 'Input must be in camel case and cannot start with a number';
@@ -152,7 +153,10 @@ export const SettingsDataModelObjectAboutForm = ({
               <IconPicker
                 disabled={disableEdition}
                 selectedIconKey={value}
-                onChange={({ iconKey }) => onChange(iconKey)}
+                onChange={({ iconKey }) => {
+                  onChange(iconKey);
+                  onBlur?.();
+                }}
               />
             )}
           />
@@ -219,36 +223,36 @@ export const SettingsDataModelObjectAboutForm = ({
         )}
       />
       <StyledAdvancedSettingsOuterContainer>
-        <AdvancedSettingsWrapper>
-          <StyledAdvancedSettingsContainer>
-            <StyledAdvancedSettingsSectionInputWrapper>
-              {[
-                {
-                  label: 'API Name (Singular)',
-                  fieldName: 'nameSingular' as const,
-                  placeholder: 'listing',
-                  defaultValue: objectMetadataItem?.nameSingular,
-                  disableEdition: disableEdition || isLabelSyncedWithName,
-                  tooltip: apiNameTooltipText,
-                },
-                {
-                  label: 'API Name (Plural)',
-                  fieldName: 'namePlural' as const,
-                  placeholder: 'listings',
-                  defaultValue: objectMetadataItem?.namePlural,
-                  disableEdition: disableEdition || isLabelSyncedWithName,
-                  tooltip: apiNameTooltipText,
-                },
-              ].map(
-                ({
-                  defaultValue,
-                  fieldName,
-                  label,
-                  placeholder,
-                  disableEdition,
-                  tooltip,
-                }) => (
-                  <StyledInputContainer key={`object-${fieldName}-text-input`}>
+        <StyledAdvancedSettingsContainer>
+          <StyledAdvancedSettingsSectionInputWrapper>
+            {[
+              {
+                label: 'API Name (Singular)',
+                fieldName: 'nameSingular' as const,
+                placeholder: 'listing',
+                defaultValue: objectMetadataItem?.nameSingular,
+                disableEdition: disableEdition || isLabelSyncedWithName,
+                tooltip: apiNameTooltipText,
+              },
+              {
+                label: 'API Name (Plural)',
+                fieldName: 'namePlural' as const,
+                placeholder: 'listings',
+                defaultValue: objectMetadataItem?.namePlural,
+                disableEdition: disableEdition || isLabelSyncedWithName,
+                tooltip: apiNameTooltipText,
+              },
+            ].map(
+              ({
+                defaultValue,
+                fieldName,
+                label,
+                placeholder,
+                disableEdition,
+                tooltip,
+              }) => (
+                <AdvancedSettingsWrapper key={`object-${fieldName}-text-input`}>
+                  <StyledInputContainer>
                     <Controller
                       name={fieldName}
                       control={control}
@@ -290,8 +294,10 @@ export const SettingsDataModelObjectAboutForm = ({
                       )}
                     />
                   </StyledInputContainer>
-                ),
-              )}
+                </AdvancedSettingsWrapper>
+              ),
+            )}
+            <AdvancedSettingsWrapper>
               <Controller
                 name={IS_LABEL_SYNCED_WITH_NAME_LABEL}
                 control={control}
@@ -320,9 +326,9 @@ export const SettingsDataModelObjectAboutForm = ({
                   </Card>
                 )}
               />
-            </StyledAdvancedSettingsSectionInputWrapper>
-          </StyledAdvancedSettingsContainer>
-        </AdvancedSettingsWrapper>
+            </AdvancedSettingsWrapper>
+          </StyledAdvancedSettingsSectionInputWrapper>
+        </StyledAdvancedSettingsContainer>
       </StyledAdvancedSettingsOuterContainer>
     </>
   );

@@ -4,30 +4,27 @@ import {
   IconHandMove,
   IconSortAZ,
   IconSortZA,
-  MenuItem,
+  MenuItemSelect,
 } from 'twenty-ui';
 
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
-import { useRecordGroups } from '@/object-record/record-group/hooks/useRecordGroups';
+import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { RecordGroupSort } from '@/object-record/record-group/types/RecordGroupSort';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
 export const ObjectOptionsDropdownRecordGroupSortContent = () => {
-  const {
-    currentContentId,
-    objectMetadataItem,
-    onContentChange,
-    closeDropdown,
-  } = useOptionsDropdown();
+  const { currentContentId, onContentChange, closeDropdown } =
+    useOptionsDropdown();
 
-  const { hiddenRecordGroups } = useRecordGroups({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
+  const hiddenRecordGroupIds = useRecoilComponentValueV2(
+    hiddenRecordGroupIdsComponentSelector,
+  );
 
-  const setRecordGroupSort = useSetRecoilComponentStateV2(
+  const [recordGroupSort, setRecordGroupSort] = useRecoilComponentStateV2(
     recordIndexRecordGroupSortComponentState,
   );
 
@@ -39,11 +36,11 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
   useEffect(() => {
     if (
       currentContentId === 'hiddenRecordGroups' &&
-      hiddenRecordGroups.length === 0
+      hiddenRecordGroupIds.length === 0
     ) {
       onContentChange('recordGroups');
     }
-  }, [hiddenRecordGroups, currentContentId, onContentChange]);
+  }, [hiddenRecordGroupIds, currentContentId, onContentChange]);
 
   return (
     <>
@@ -54,24 +51,27 @@ export const ObjectOptionsDropdownRecordGroupSortContent = () => {
         Sort
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
-        <MenuItem
+        <MenuItemSelect
           onClick={() => handleRecordGroupSortChange(RecordGroupSort.Manual)}
           LeftIcon={IconHandMove}
           text={RecordGroupSort.Manual}
+          selected={recordGroupSort === RecordGroupSort.Manual}
         />
-        <MenuItem
+        <MenuItemSelect
           onClick={() =>
             handleRecordGroupSortChange(RecordGroupSort.Alphabetical)
           }
           LeftIcon={IconSortAZ}
           text={RecordGroupSort.Alphabetical}
+          selected={recordGroupSort === RecordGroupSort.Alphabetical}
         />
-        <MenuItem
+        <MenuItemSelect
           onClick={() =>
             handleRecordGroupSortChange(RecordGroupSort.ReverseAlphabetical)
           }
           LeftIcon={IconSortZA}
           text={RecordGroupSort.ReverseAlphabetical}
+          selected={recordGroupSort === RecordGroupSort.ReverseAlphabetical}
         />
       </DropdownMenuItemsContainer>
     </>

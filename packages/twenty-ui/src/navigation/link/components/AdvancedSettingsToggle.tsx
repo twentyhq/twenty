@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { IconTool } from '@ui/display';
+import { IconPoint } from '@ui/display';
 import { Toggle } from '@ui/input';
 import { MAIN_COLORS } from '@ui/theme';
 import { useId } from 'react';
@@ -12,7 +12,7 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
-const StyledLabel = styled.label`
+const StyledText = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
@@ -20,21 +20,21 @@ const StyledLabel = styled.label`
 `;
 
 const StyledIconContainer = styled.div`
-  border-right: 1px solid ${MAIN_COLORS.yellow};
   height: 16px;
   position: absolute;
-  left: ${({ theme }) => theme.spacing(-5)};
+  left: ${({ theme }) => theme.spacing(-3)};
 `;
 
-const StyledToggleContainer = styled.div`
-  display: flex;
+const StyledToggleContainer = styled.label`
   align-items: center;
+  cursor: pointer;
+  display: flex;
   justify-content: space-between;
   width: 100%;
 `;
 
-const StyledIconTool = styled(IconTool)`
-  margin-right: ${({ theme }) => theme.spacing(0.5)};
+const StyledIconPoint = styled(IconPoint)`
+  margin-right: 0;
 `;
 
 type AdvancedSettingsToggleProps = {
@@ -54,10 +54,14 @@ export const AdvancedSettingsToggle = ({
   return (
     <StyledContainer>
       <StyledIconContainer>
-        <StyledIconTool size={12} color={MAIN_COLORS.yellow} />
+        <StyledIconPoint
+          size={12}
+          color={MAIN_COLORS.yellow}
+          fill={MAIN_COLORS.yellow}
+        />
       </StyledIconContainer>
-      <StyledToggleContainer>
-        <StyledLabel htmlFor={inputId}>Advanced:</StyledLabel>
+      <StyledToggleContainer htmlFor={inputId}>
+        <StyledText>Advanced:</StyledText>
 
         <Toggle
           id={inputId}

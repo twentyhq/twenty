@@ -48,6 +48,7 @@ export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconList',
     defaultValue: 0,
   })
+  @WorkspaceIsSystem()
   position: number;
 
   // Relations

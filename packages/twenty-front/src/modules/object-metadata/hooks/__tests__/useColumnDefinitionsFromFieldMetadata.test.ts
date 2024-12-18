@@ -15,10 +15,14 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
       id: '1',
       featureFlags: [],
       allowImpersonation: false,
+      subdomain: 'test',
       activationStatus: WorkspaceActivationStatus.Active,
       hasValidEntrepriseKey: false,
       metadataVersion: 1,
       isPublicInviteLinkEnabled: false,
+      isGoogleAuthEnabled: true,
+      isMicrosoftAuthEnabled: false,
+      isPasswordAuthEnabled: true,
     });
   },
 });
@@ -61,7 +65,7 @@ describe('useColumnDefinitionsFromFieldMetadata', () => {
       result.current;
 
     expect(columnDefinitions.length).toBe(21);
-    expect(filterDefinitions.length).toBe(15);
+    expect(filterDefinitions.length).toBe(17);
     expect(sortDefinitions.length).toBe(14);
   });
 });

@@ -9,6 +9,7 @@ const StyledInlineCellButtonContainer = styled.div`
   align-items: center;
   display: flex;
 `;
+
 export const RecordInlineCellButton = ({ Icon }: { Icon: IconComponent }) => {
   return (
     <AnimatedContainer>

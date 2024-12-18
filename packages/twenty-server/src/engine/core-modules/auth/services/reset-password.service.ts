@@ -21,6 +21,7 @@ import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-p
 import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import { PasswordResetToken } from 'src/engine/core-modules/auth/dto/token.entity';
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -29,6 +30,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 export class ResetPasswordService {
   constructor(
     private readonly environmentService: EnvironmentService,
+    private readonly domainManagerService: DomainManagerService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     @InjectRepository(AppToken, 'core')
@@ -116,11 +118,12 @@ export class ResetPasswordService {
       );
     }
 
-    const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
-    const resetLink = `${frontBaseURL}/reset-password/${resetToken.passwordResetToken}`;
+    const frontBaseURL = this.domainManagerService.getBaseUrl();
+
+    frontBaseURL.pathname = `/reset-password/${resetToken.passwordResetToken}`;
 
     const emailData = {
-      link: resetLink,
+      link: frontBaseURL.toString(),
       duration: ms(
         differenceInMilliseconds(
           resetToken.passwordResetTokenExpiresAt,

@@ -33,7 +33,7 @@ spec:
             - name: PGUSER_SUPERUSER
               value: "postgres"
             - name: PGPASSWORD_SUPERUSER
-              value: "twenty"
+              value: "postgres"
           ports:
             - containerPort: 5432
               name: tcp

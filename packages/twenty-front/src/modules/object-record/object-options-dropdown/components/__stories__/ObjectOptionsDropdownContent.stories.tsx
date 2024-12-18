@@ -4,9 +4,10 @@ import { ComponentDecorator } from 'twenty-ui';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
+import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
@@ -75,11 +76,10 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
       )!;
 
       return (
-        <RecordIndexRootPropsContext.Provider
+        <RecordIndexContextProvider
           value={{
             indexIdentifierUrl: () => '',
             onIndexRecordsLoaded: () => {},
-            onCreateRecord: () => {},
             objectNamePlural: 'companies',
             objectNameSingular: 'company',
             objectMetadataItem: companyObjectMetadataItem,
@@ -94,13 +94,14 @@ const createStory = (contentId: ObjectOptionsContentId | null): Story => ({
               currentContentId: contentId,
               onContentChange: () => {},
               resetContent: () => {},
+              dropdownId: OBJECT_OPTIONS_DROPDOWN_ID,
             }}
           >
             <DropdownMenu>
               <Story />
             </DropdownMenu>
           </ObjectOptionsDropdownContext.Provider>
-        </RecordIndexRootPropsContext.Provider>
+        </RecordIndexContextProvider>
       );
     },
   ],

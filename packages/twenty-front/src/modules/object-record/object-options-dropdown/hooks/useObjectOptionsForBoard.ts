@@ -4,10 +4,11 @@ import { useRecoilState } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
+import { isRecordBoardCompactModeActiveComponentState } from '@/object-record/record-board/states/isRecordBoardCompactModeActiveComponentState';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { GraphQLView } from '@/views/types/GraphQLView';
@@ -32,11 +33,12 @@ export const useObjectOptionsForBoard = ({
 
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
   const { updateCurrentView } = useUpdateCurrentView(viewBarId);
-  const { isCompactModeActiveState } = useRecordBoard(recordBoardId);
 
-  const [isCompactModeActive, setIsCompactModeActive] = useRecoilState(
-    isCompactModeActiveState,
-  );
+  const [isCompactModeActive, setIsCompactModeActive] =
+    useRecoilComponentStateV2(
+      isRecordBoardCompactModeActiveComponentState,
+      recordBoardId,
+    );
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,

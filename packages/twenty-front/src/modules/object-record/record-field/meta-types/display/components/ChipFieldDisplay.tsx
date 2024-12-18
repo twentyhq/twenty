@@ -4,8 +4,12 @@ import { RecordIdentifierChip } from '@/object-record/record-index/components/Re
 import { ChipSize } from 'twenty-ui';
 
 export const ChipFieldDisplay = () => {
-  const { recordValue, objectNameSingular, isLabelIdentifier } =
-    useChipFieldDisplay();
+  const {
+    recordValue,
+    objectNameSingular,
+    isLabelIdentifier,
+    labelIdentifierLink,
+  } = useChipFieldDisplay();
 
   if (!recordValue) {
     return null;
@@ -16,6 +20,7 @@ export const ChipFieldDisplay = () => {
       objectNameSingular={objectNameSingular}
       record={recordValue}
       size={ChipSize.Small}
+      to={labelIdentifierLink}
     />
   ) : (
     <RecordChip objectNameSingular={objectNameSingular} record={recordValue} />

@@ -1,26 +1,18 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
 import { MouseEvent, useCallback } from 'react';
-import {
-  IconLock,
-  IconPencil,
-  IconPlus,
-  LightIconButtonAccent,
-  MenuItem,
-  MenuItemDraggable,
-  useIcons,
-} from 'twenty-ui';
+import { IconPlus, MenuItem } from 'twenty-ui';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useUpdateView } from '@/views/hooks/useUpdateView';
-import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
+import { View } from '@/views/types/View';
+import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPickerOptionDropdown';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
@@ -39,13 +31,11 @@ export const ViewPickerListContent = () => {
 
   const { setViewPickerMode } = useViewPickerMode();
 
-  const { closeDropdown } = useDropdown(VIEW_PICKER_DROPDOWN_ID);
   const { updateView } = useUpdateView();
   const { changeView } = useChangeView();
 
   const handleViewSelect = (viewId: string) => {
     changeView(viewId);
-    closeDropdown();
   };
 
   const handleAddViewButtonClick = () => {
@@ -56,15 +46,13 @@ export const ViewPickerListContent = () => {
   };
 
   const handleEditViewButtonClick = (
-    event: MouseEvent<HTMLButtonElement>,
+    event: MouseEvent<HTMLElement>,
     viewId: string,
   ) => {
     event.stopPropagation();
     setViewPickerReferenceViewId(viewId);
     setViewPickerMode('edit');
   };
-
-  const { getIcon } = useIcons();
 
   const handleDragEnd = useCallback(
     (result: DropResult) => {
@@ -87,46 +75,25 @@ export const ViewPickerListContent = () => {
       <DropdownMenuItemsContainer>
         <DraggableList
           onDragEnd={handleDragEnd}
-          draggableItems={viewsOnCurrentObject.map((view, index) => (
-            <DraggableItem
-              key={view.id}
-              draggableId={view.id}
-              index={index}
-              isDragDisabled={viewsOnCurrentObject.length === 1}
-              itemComponent={
-                view.key === 'INDEX' ? (
-                  <MenuItemDraggable
-                    key={view.id}
-                    iconButtons={[
-                      {
-                        Icon: IconLock,
-                      },
-                    ].filter(isDefined)}
-                    isIconDisplayedOnHoverOnly={false}
-                    onClick={() => handleViewSelect(view.id)}
-                    LeftIcon={getIcon(view.icon)}
-                    text={view.name}
+          draggableItems={viewsOnCurrentObject.map((view, index) => {
+            const isIndexView = view.key === 'INDEX';
+            return (
+              <DraggableItem
+                key={view.id}
+                draggableId={view.id}
+                index={index}
+                isDragDisabled={viewsOnCurrentObject.length === 1}
+                itemComponent={
+                  <ViewPickerOptionDropdown
+                    view={view as View}
+                    handleViewSelect={handleViewSelect}
+                    isIndexView={isIndexView}
+                    onEdit={handleEditViewButtonClick}
                   />
-                ) : (
-                  <MenuItemDraggable
-                    key={view.id}
-                    iconButtons={[
-                      {
-                        Icon: IconPencil,
-                        onClick: (event: MouseEvent<HTMLButtonElement>) =>
-                          handleEditViewButtonClick(event, view.id),
-                        accent: 'tertiary' as LightIconButtonAccent,
-                      },
-                    ].filter(isDefined)}
-                    isIconDisplayedOnHoverOnly={true}
-                    onClick={() => handleViewSelect(view.id)}
-                    LeftIcon={getIcon(view.icon)}
-                    text={view.name}
-                  />
-                )
-              }
-            />
-          ))}
+                }
+              />
+            );
+          })}
         />
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />

@@ -23,6 +23,7 @@ import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/gen
 import { mockedTasks } from '~/testing/mock-data/tasks';
 import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
+import { GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataBySubdomain';
 
 const peopleMock = getPeopleMock();
 const companiesMock = getCompaniesMock();
@@ -41,6 +42,28 @@ export const graphqlMocks = {
         },
       });
     }),
+    graphql.query(
+      getOperationName(GET_PUBLIC_WORKSPACE_DATA_BY_SUBDOMAIN) ?? '',
+      () => {
+        return HttpResponse.json({
+          data: {
+            getPublicWorkspaceDataBySubdomain: {
+              id: 'id',
+              logo: 'logo',
+              displayName: 'displayName',
+              subdomain: 'subdomain',
+              authProviders: {
+                google: true,
+                microsoft: false,
+                password: true,
+                magicLink: false,
+                sso: [],
+              },
+            },
+          },
+        });
+      },
+    ),
     graphql.mutation(getOperationName(TRACK) ?? '', () => {
       return HttpResponse.json({
         data: {
@@ -716,6 +739,11 @@ export const graphqlMocks = {
                   },
                   deletedAt: null,
                   workflowId: '200c1508-f102-4bb9-af32-eda55239ae61',
+                  workflow: {
+                    __typename: 'Workflow',
+                    id: '200c1508-f102-4bb9-af32-eda55239ae61',
+                    name: '1231 qqerrt',
+                  },
                 },
               },
             ],

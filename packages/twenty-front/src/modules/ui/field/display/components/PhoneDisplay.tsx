@@ -4,28 +4,37 @@ import { ContactLink } from 'twenty-ui';
 
 import { isDefined } from '~/utils/isDefined';
 
-type PhoneDisplayProps = {
-  value: string | null | undefined;
+interface PhoneDisplayProps {
+  value: PhoneDisplayValueProps;
+}
+type PhoneDisplayValueProps = {
+  number: string | null | undefined;
+  callingCode: string | null | undefined;
 };
 
-// TODO: see if we can find a faster way to format the phone number
-export const PhoneDisplay = ({ value }: PhoneDisplayProps) => {
-  if (!isDefined(value)) {
-    return <ContactLink href="#">{value}</ContactLink>;
-  }
+export const PhoneDisplay = ({
+  value: { number, callingCode },
+}: PhoneDisplayProps) => {
+  if (!isDefined(number)) return <ContactLink href="#">{number}</ContactLink>;
+
+  const callingCodeSanitized = callingCode?.replace('+', '');
 
   let parsedPhoneNumber: PhoneNumber | null = null;
 
   try {
-    // TODO: parse according to locale not hard coded FR
-    parsedPhoneNumber = parsePhoneNumber(value, 'FR');
+    parsedPhoneNumber = parsePhoneNumber(number, {
+      defaultCallingCode: callingCodeSanitized || '1',
+    });
   } catch (error) {
-    return <ContactLink href="#">{value}</ContactLink>;
+    if (!(error instanceof Error))
+      return <ContactLink href="#">{number}</ContactLink>;
+    if (error.message === 'NOT_A_NUMBER')
+      return <ContactLink href="#">{`+${callingCodeSanitized}`}</ContactLink>;
+    return <ContactLink href="#">{number}</ContactLink>;
   }
 
   const URI = parsedPhoneNumber.getURI();
   const formatedPhoneNumber = parsedPhoneNumber.formatInternational();
-
   return (
     <ContactLink
       href={URI}
@@ -33,7 +42,7 @@ export const PhoneDisplay = ({ value }: PhoneDisplayProps) => {
         event.stopPropagation();
       }}
     >
-      {formatedPhoneNumber || value}
+      {formatedPhoneNumber || number}
     </ContactLink>
   );
 };

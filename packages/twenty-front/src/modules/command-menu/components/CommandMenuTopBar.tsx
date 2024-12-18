@@ -2,8 +2,10 @@ import { CommandMenuContextRecordChip } from '@/command-menu/components/CommandM
 import { COMMAND_MENU_SEARCH_BAR_HEIGHT } from '@/command-menu/constants/CommandMenuSearchBarHeight';
 import { COMMAND_MENU_SEARCH_BAR_PADDING } from '@/command-menu/constants/CommandMenuSearchBarPadding';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
+import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import styled from '@emotion/styled';
-import { IconX, LightIconButton, useIsMobile } from 'twenty-ui';
+import { IconX, LightIconButton, isDefined, useIsMobile } from 'twenty-ui';
 
 const StyledInputContainer = styled.div`
   align-items: center;
@@ -65,9 +67,17 @@ export const CommandMenuTopBar = ({
 
   const { closeCommandMenu } = useCommandMenu();
 
+  const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataIdComponentState,
+  );
+
   return (
     <StyledInputContainer>
-      <CommandMenuContextRecordChip />
+      {isDefined(contextStoreCurrentObjectMetadataId) && (
+        <CommandMenuContextRecordChip
+          objectMetadataItemId={contextStoreCurrentObjectMetadataId}
+        />
+      )}
       <StyledInput
         autoFocus
         value={commandMenuSearch}

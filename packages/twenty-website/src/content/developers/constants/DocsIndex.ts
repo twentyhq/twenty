@@ -3,10 +3,11 @@ export const DOCS_INDEX = {
     'Local Setup': [{ fileName: 'local-setup' }],
     'Self-Hosting': [
       { fileName: 'self-hosting' },
-      { fileName: 'self-hosting-var' },
       { fileName: 'docker-compose' },
-      { fileName: 'cloud-providers' },
       { fileName: 'upgrade-guide' },
+      { fileName: 'setup' },
+      { fileName: 'cloud-providers' },
+      { fileName: 'troubleshooting' },
     ],
   },
   Extending: {

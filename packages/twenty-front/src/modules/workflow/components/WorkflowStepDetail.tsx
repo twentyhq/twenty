@@ -1,6 +1,3 @@
-import { WorkflowEditActionFormRecordCreate } from '@/workflow/components/WorkflowEditActionFormRecordCreate';
-import { WorkflowEditActionFormSendEmail } from '@/workflow/components/WorkflowEditActionFormSendEmail';
-import { WorkflowEditActionFormServerlessFunction } from '@/workflow/components/WorkflowEditActionFormServerlessFunction';
 import { WorkflowEditTriggerDatabaseEventForm } from '@/workflow/components/WorkflowEditTriggerDatabaseEventForm';
 import { WorkflowEditTriggerManualForm } from '@/workflow/components/WorkflowEditTriggerManualForm';
 import {
@@ -10,8 +7,21 @@ import {
 } from '@/workflow/types/Workflow';
 import { assertUnreachable } from '@/workflow/utils/assertUnreachable';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
-import { isWorkflowRecordCreateAction } from '@/workflow/utils/isWorkflowRecordCreateAction';
+import { WorkflowEditActionFormCreateRecord } from '@/workflow/workflow-actions/components/WorkflowEditActionFormCreateRecord';
+import { WorkflowEditActionFormDeleteRecord } from '@/workflow/workflow-actions/components/WorkflowEditActionFormDeleteRecord';
+import { WorkflowEditActionFormSendEmail } from '@/workflow/workflow-actions/components/WorkflowEditActionFormSendEmail';
+import { Suspense, lazy } from 'react';
+import { WorkflowEditActionFormUpdateRecord } from '@/workflow/workflow-actions/components/WorkflowEditActionFormUpdateRecord';
 import { isDefined } from 'twenty-ui';
+import { RightDrawerSkeletonLoader } from '~/loading/components/RightDrawerSkeletonLoader';
+
+const WorkflowEditActionFormServerlessFunction = lazy(() =>
+  import(
+    '@/workflow/workflow-actions/components/WorkflowEditActionFormServerlessFunction'
+  ).then((module) => ({
+    default: module.WorkflowEditActionFormServerlessFunction,
+  })),
+);
 
 type WorkflowStepDetailProps =
   | {
@@ -78,10 +88,12 @@ export const WorkflowStepDetail = ({
       switch (stepDefinition.definition.type) {
         case 'CODE': {
           return (
-            <WorkflowEditActionFormServerlessFunction
-              action={stepDefinition.definition}
-              actionOptions={props}
-            />
+            <Suspense fallback={<RightDrawerSkeletonLoader />}>
+              <WorkflowEditActionFormServerlessFunction
+                action={stepDefinition.definition}
+                actionOptions={props}
+              />
+            </Suspense>
           );
         }
         case 'SEND_EMAIL': {
@@ -92,24 +104,35 @@ export const WorkflowStepDetail = ({
             />
           );
         }
-        case 'RECORD_CRUD': {
-          if (isWorkflowRecordCreateAction(stepDefinition.definition)) {
-            return (
-              <WorkflowEditActionFormRecordCreate
-                action={stepDefinition.definition}
-                actionOptions={props}
-              />
-            );
-          }
+        case 'CREATE_RECORD': {
+          return (
+            <WorkflowEditActionFormCreateRecord
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
 
-          return null;
+        case 'UPDATE_RECORD': {
+          return (
+            <WorkflowEditActionFormUpdateRecord
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
+        }
+
+        case 'DELETE_RECORD': {
+          return (
+            <WorkflowEditActionFormDeleteRecord
+              action={stepDefinition.definition}
+              actionOptions={props}
+            />
+          );
         }
       }
 
-      return assertUnreachable(
-        stepDefinition.definition,
-        `Expected the step to have an handler; ${JSON.stringify(stepDefinition)}`,
-      );
+      return null;
     }
   }
 

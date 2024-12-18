@@ -27,7 +27,7 @@ export class OnboardingService {
 
   private async isSubscriptionIncompleteOnboardingStatus(user: User) {
     const hasSubscription =
-      await this.billingService.hasWorkspaceActiveSubscriptionOrFreeAccess(
+      await this.billingService.hasWorkspaceActiveSubscriptionOrFreeAccessOrEntitlement(
         user.defaultWorkspaceId,
       );
 

@@ -44,7 +44,7 @@ const StyledItem = styled.div<{ isNavigationDrawerExpanded: boolean }>`
 
 const StyledItemElementsContainer = styled.span`
   align-items: center;
-
+  gap: ${({ theme }) => theme.spacing(2)};
   display: flex;
   width: 100%;
 `;
@@ -53,6 +53,7 @@ const StyledTextInput = styled.input`
   ${TEXT_INPUT_STYLE}
   margin: 0;
   width: 100%;
+  padding: 0;
 `;
 
 export const NavigationDrawerInput = ({
@@ -95,6 +96,7 @@ export const NavigationDrawerInput = ({
       event.stopImmediatePropagation();
       onClickOutside(event, value);
     },
+    listenerId: 'navigation-drawer-input',
   });
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -115,7 +117,9 @@ export const NavigationDrawerInput = ({
       <StyledItemElementsContainer>
         {Icon && (
           <Icon
-            style={{ minWidth: theme.icon.size.md }}
+            style={{
+              minWidth: theme.icon.size.md,
+            }}
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.md}
             color="currentColor"

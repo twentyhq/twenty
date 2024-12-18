@@ -6,7 +6,6 @@ import {
 import { expect, jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/testing-library';
-
 import { ComponentDecorator, IconCheckbox, IconTrash } from 'twenty-ui';
 
 const meta: Meta<typeof RecordIndexActionMenuBarEntry> = {
@@ -14,7 +13,6 @@ const meta: Meta<typeof RecordIndexActionMenuBarEntry> = {
   component: RecordIndexActionMenuBarEntry,
   decorators: [ComponentDecorator],
 };
-
 export default meta;
 
 type Story = StoryObj<typeof RecordIndexActionMenuBarEntry>;

@@ -50,40 +50,43 @@ export class SyncWorkspaceMetadataCommand extends ActiveWorkspacesCommandRunner 
         `Running workspace sync for workspace: ${workspaceId} (${count} out of ${workspaceIds.length})`,
       );
       count++;
-      try {
-        const issues =
-          await this.workspaceHealthService.healthCheck(workspaceId);
 
-        // Security: abort if there are issues.
-        if (issues.length > 0) {
+      if (!options.force) {
+        try {
+          const issues =
+            await this.workspaceHealthService.healthCheck(workspaceId);
+
+          // Security: abort if there are issues.
+          if (issues.length > 0) {
+            if (!options.force) {
+              this.logger.error(
+                `Workspace contains ${issues.length} issues, aborting.`,
+              );
+
+              this.logger.log(
+                'If you want to force the migration, use --force flag',
+              );
+              this.logger.log(
+                'Please use `workspace:health` command to check issues and fix them before running this command.',
+              );
+
+              continue;
+            }
+
+            this.logger.warn(
+              `Workspace contains ${issues.length} issues, sync has been forced.`,
+            );
+          }
+        } catch (error) {
           if (!options.force) {
-            this.logger.error(
-              `Workspace contains ${issues.length} issues, aborting.`,
-            );
-
-            this.logger.log(
-              'If you want to force the migration, use --force flag',
-            );
-            this.logger.log(
-              'Please use `workspace:health` command to check issues and fix them before running this command.',
-            );
-
-            continue;
+            throw error;
           }
 
           this.logger.warn(
-            `Workspace contains ${issues.length} issues, sync has been forced.`,
+            `Workspace health check failed with error, but sync has been forced.`,
+            error,
           );
         }
-      } catch (error) {
-        if (!options.force) {
-          throw error;
-        }
-
-        this.logger.warn(
-          `Workspace health check failed with error, but sync has been forced.`,
-          error,
-        );
       }
 
       try {

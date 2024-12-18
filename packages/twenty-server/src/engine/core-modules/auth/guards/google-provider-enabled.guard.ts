@@ -17,7 +17,7 @@ export class GoogleProviderEnabledGuard implements CanActivate {
     if (!this.environmentService.get('AUTH_GOOGLE_ENABLED')) {
       throw new AuthException(
         'Google auth is not enabled',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        AuthExceptionCode.GOOGLE_API_AUTH_DISABLED,
       );
     }
 

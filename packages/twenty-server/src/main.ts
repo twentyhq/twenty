@@ -2,15 +2,17 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-import session from 'express-session';
+import fs from 'fs';
+
 import bytes from 'bytes';
-import { useContainer } from 'class-validator';
+import { useContainer, ValidationError } from 'class-validator';
+import session from 'express-session';
 import { graphqlUploadExpress } from 'graphql-upload';
 
-import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
-import { ApplyCorsToExceptions } from 'src/utils/apply-cors-to-exceptions';
-import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
+import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
 
 import { AppModule } from './app.module';
 import './instrument';
@@ -24,11 +26,19 @@ const bootstrap = async () => {
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     rawBody: true,
     snapshot: process.env.DEBUG_MODE === 'true',
+    ...(process.env.SSL_KEY_PATH && process.env.SSL_CERT_PATH
+      ? {
+          httpsOptions: {
+            key: fs.readFileSync(process.env.SSL_KEY_PATH),
+            cert: fs.readFileSync(process.env.SSL_CERT_PATH),
+          },
+        }
+      : {}),
   });
   const logger = app.get(LoggerService);
   const environmentService = app.get(EnvironmentService);
 
-  // TODO: Double check this as it's not working for now, it's going to be heplful for durable trees in twenty "orm"
+  // TODO: Double check this as it's not working for now, it's going to be helpful for durable trees in twenty "orm"
   // // Apply context id strategy for durable trees
   // ContextIdFactory.apply(new AggregateByWorkspaceContextIdStrategy());
 
@@ -38,12 +48,22 @@ const bootstrap = async () => {
   // Use our logger
   app.useLogger(logger);
 
-  app.useGlobalFilters(new ApplyCorsToExceptions());
+  app.useGlobalFilters(new UnhandledExceptionFilter());
 
   // Apply validation pipes globally
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
+      exceptionFactory: (errors) => {
+        const error = new ValidationError();
+
+        error.constraints = Object.assign(
+          {},
+          ...errors.map((error) => error.constraints),
+        );
+
+        return error;
+      },
     }),
   );
   app.useBodyParser('json', { limit: settings.storage.maxFileSize });
@@ -68,7 +88,7 @@ const bootstrap = async () => {
     app.use(session(getSessionStorageOptions(environmentService)));
   }
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(environmentService.get('PORT'));
 };
 
 bootstrap();

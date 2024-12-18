@@ -16,9 +16,9 @@ class CookieStorage {
     Cookies.set(key, value, attributes);
   }
 
-  removeItem(key: string): void {
+  removeItem(key: string, attributes?: Cookies.CookieAttributes): void {
     this.keys.delete(key);
-    Cookies.remove(key);
+    Cookies.remove(key, attributes);
   }
 
   clear(): void {

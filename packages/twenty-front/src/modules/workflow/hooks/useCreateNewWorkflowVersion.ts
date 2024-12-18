@@ -8,13 +8,13 @@ export const useCreateNewWorkflowVersion = () => {
       objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     });
 
-  const createNewWorkflowVersion = (
+  const createNewWorkflowVersion = async (
     workflowVersionData: Pick<
       WorkflowVersion,
       'workflowId' | 'name' | 'status' | 'trigger' | 'steps'
     >,
   ) => {
-    return createOneWorkflowVersion(workflowVersionData);
+    return await createOneWorkflowVersion(workflowVersionData);
   };
 
   return {

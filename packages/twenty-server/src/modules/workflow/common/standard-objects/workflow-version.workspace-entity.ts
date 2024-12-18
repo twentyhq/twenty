@@ -117,10 +117,10 @@ export class WorkflowVersionWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Position',
     description: 'Workflow version position',
     icon: 'IconHierarchy2',
+    defaultValue: 0,
   })
   @WorkspaceIsSystem()
-  @WorkspaceIsNullable()
-  position: number | null;
+  position: number;
 
   // Relations
   @WorkspaceRelation({

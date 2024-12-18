@@ -83,8 +83,6 @@ export class GraphqlQueryCreateOneResolverService extends GraphqlQueryBaseResolv
     });
   }
 
-  async;
-
   async validate(
     args: CreateOneResolverArgs<Partial<ObjectRecord>>,
     options: WorkspaceQueryRunnerOptions,

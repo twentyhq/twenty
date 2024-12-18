@@ -1,35 +1,75 @@
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { RecordTableFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableFooter';
+import { RecordTablePendingRecordGroupRow } from '@/object-record/record-table/record-table-row/components/RecordTablePendingRecordGroupRow';
 import { RecordTableRow } from '@/object-record/record-table/record-table-row/components/RecordTableRow';
-import { tableAllRowIdsComponentState } from '@/object-record/record-table/states/tableAllRowIdsComponentState';
-import { tableRowIdsByGroupComponentFamilyState } from '@/object-record/record-table/states/tableRowIdsByGroupComponentFamilyState';
+import { RecordTableRecordGroupSectionAddNew } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionAddNew';
+import { RecordTableRecordGroupSectionLoadMore } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSectionLoadMore';
+import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useMemo } from 'react';
+import { isDefined } from '~/utils/isDefined';
 
 export const RecordTableRecordGroupRows = () => {
-  const recordGroupId = useCurrentRecordGroupId();
+  const isAggregateQueryEnabled = useIsFeatureEnabled(
+    'IS_AGGREGATE_QUERY_ENABLED',
+  );
+  const currentRecordGroupId = useCurrentRecordGroupId();
 
-  const allRowIds = useRecoilComponentValueV2(tableAllRowIdsComponentState);
+  const allRecordIds = useRecoilComponentValueV2(
+    recordIndexAllRecordIdsComponentSelector,
+  );
 
-  const recordGroupRowIds = useRecoilComponentFamilyValueV2(
-    tableRowIdsByGroupComponentFamilyState,
-    recordGroupId,
+  const recordIdsByGroup = useRecoilComponentFamilyValueV2(
+    recordIndexRecordIdsByGroupComponentFamilyState,
+    currentRecordGroupId,
+  );
+
+  const isRecordGroupTableSectionToggled = useRecoilComponentFamilyValueV2(
+    isRecordGroupTableSectionToggledComponentState,
+    currentRecordGroupId,
   );
 
   const rowIndexMap = useMemo(
-    () => new Map(allRowIds.map((id, index) => [id, index])),
-    [allRowIds],
+    () => new Map(allRecordIds.map((recordId, index) => [recordId, index])),
+    [allRecordIds],
   );
 
-  return recordGroupRowIds.map((recordId) => {
-    const rowIndex = rowIndexMap.get(recordId);
+  if (!isRecordGroupTableSectionToggled) {
+    return null;
+  }
 
-    if (!rowIndex) {
-      throw new Error(`Row index for record id ${recordId} not found`);
-    }
+  return (
+    <>
+      {recordIdsByGroup.map((recordId, rowIndexInGroup) => {
+        const rowIndex = rowIndexMap.get(recordId);
 
-    return (
-      <RecordTableRow key={recordId} recordId={recordId} rowIndex={rowIndex} />
-    );
-  });
+        if (!isDefined(rowIndex)) {
+          return null;
+        }
+
+        return (
+          <RecordTableRow
+            key={recordId}
+            recordId={recordId}
+            rowIndexForFocus={rowIndex}
+            rowIndexForDrag={rowIndexInGroup}
+            isPendingRow={!isRecordGroupTableSectionToggled}
+          />
+        );
+      })}
+      <RecordTablePendingRecordGroupRow />
+      <RecordTableRecordGroupSectionAddNew />
+      {isAggregateQueryEnabled && (
+        <RecordTableFooter
+          key={currentRecordGroupId}
+          currentRecordGroupId={currentRecordGroupId}
+        />
+      )}
+      <RecordTableRecordGroupSectionLoadMore />
+    </>
+  );
 };

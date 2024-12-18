@@ -1,3 +1,8 @@
+import { registerEnumType } from '@nestjs/graphql';
+
+import { Relation } from 'typeorm';
+
+import { AGGREGATE_OPERATIONS } from 'src/engine/api/graphql/graphql-query-runner/constants/aggregate-operations.constant';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -13,6 +18,10 @@ import { VIEW_FIELD_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/work
 import { STANDARD_OBJECT_ICONS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-icons';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
+
+registerEnumType(AGGREGATE_OPERATIONS, {
+  name: 'AggregateOperations',
+});
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewField,
@@ -66,6 +75,7 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconList',
     defaultValue: 0,
   })
+  @WorkspaceIsSystem()
   position: number;
 
   @WorkspaceRelation({
@@ -77,9 +87,51 @@ export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
     inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewFields',
   })
+  view: Relation<ViewWorkspaceEntity>;
+
+  @WorkspaceField({
+    standardId: VIEW_FIELD_STANDARD_FIELD_IDS.aggregateOperation,
+    type: FieldMetadataType.SELECT,
+    label: 'Aggregate operation',
+    description: 'Optional aggregate operation',
+    icon: 'IconCalculator',
+    options: [
+      {
+        value: AGGREGATE_OPERATIONS.avg,
+        label: 'Average',
+        position: 0,
+        color: 'red',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.count,
+        label: 'Count',
+        position: 1,
+        color: 'purple',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.max,
+        label: 'Maximum',
+        position: 2,
+        color: 'sky',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.min,
+        label: 'Minimum',
+        position: 3,
+        color: 'turquoise',
+      },
+      {
+        value: AGGREGATE_OPERATIONS.sum,
+        label: 'Sum',
+        position: 4,
+        color: 'yellow',
+      },
+    ],
+    defaultValue: null,
+  })
   @WorkspaceIsNullable()
-  view?: ViewWorkspaceEntity | null;
+  aggregateOperation?: AGGREGATE_OPERATIONS | null;
 
   @WorkspaceJoinColumn('view')
-  viewId: string | null;
+  viewId: string;
 }

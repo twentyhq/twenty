@@ -6,28 +6,14 @@ import {
   useExportFetchRecords,
 } from '../useExportFetchRecords';
 
-import { PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS } from '@/object-record/hooks/__mocks__/personFragments';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
-import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
-import { recordBoardKanbanFieldMetadataNameComponentState } from '@/object-record/record-board/states/recordBoardKanbanFieldMetadataNameComponentState';
-import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { ViewType } from '@/views/types/ViewType';
-import { MockedResponse } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
-import gql from 'graphql-tag';
-import { useRecoilValue } from 'recoil';
-import { getJestMetadataAndApolloMocksAndContextStoreWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
+import { getJestMetadataAndApolloMocksAndActionMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndContextStoreWrapper';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/generatedMockObjectMetadataItems';
-
-const defaultResponseData = {
-  pageInfo: {
-    hasNextPage: false,
-    hasPreviousPage: false,
-    startCursor: '',
-    endCursor: '',
-  },
-  totalCount: 1,
-};
+import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 
 const mockPerson = {
   __typename: 'Person',
@@ -78,108 +64,45 @@ const mockPerson = {
   workPreference: 'workPreference',
 };
 
-const mocks: MockedResponse[] = [
-  {
-    request: {
-      query: gql`
-        query FindManyPeople(
-          $filter: PersonFilterInput
-          $orderBy: [PersonOrderByInput]
-          $lastCursor: String
-          $limit: Int
-        ) {
-          people(
-            filter: $filter
-            orderBy: $orderBy
-            first: $limit
-            after: $lastCursor
-          ) {
-            edges {
-              node {
-                ${PERSON_FRAGMENT_WITH_DEPTH_ZERO_RELATIONS}
-              }
-              cursor
-            }
-            pageInfo {
-              hasNextPage
-              hasPreviousPage
-              startCursor
-              endCursor
-            }
-            totalCount
-          }
-        }
-      `,
-      variables: {
-        filter: {},
-        limit: 30,
-        orderBy: [{ position: 'AscNullsFirst' }],
-      },
-    },
-    result: jest.fn(() => ({
-      data: {
-        people: {
-          ...defaultResponseData,
-          edges: [
-            {
-              node: mockPerson,
-              cursor: '1',
-            },
-          ],
-        },
-      },
-    })),
+const Wrapper = getJestMetadataAndApolloMocksAndActionMenuWrapper({
+  apolloMocks: [],
+  componentInstanceId: 'recordIndexId',
+  contextStoreTargetedRecordsRule: {
+    mode: 'selection',
+    selectedRecordIds: [],
   },
-];
+  contextStoreCurrentObjectMetadataNameSingular: 'person',
+});
 
-const WrapperWithResponse = getJestMetadataAndApolloMocksAndContextStoreWrapper(
-  {
-    apolloMocks: mocks,
-    componentInstanceId: 'recordIndexId',
-    contextStoreTargetedRecordsRule: {
-      mode: 'selection',
-      selectedRecordIds: [],
-    },
-    contextStoreCurrentObjectMetadataNameSingular: 'person',
-  },
-);
-
-const graphqlEmptyResponse = [
-  {
-    ...mocks[0],
-    result: jest.fn(() => ({
-      data: {
-        people: {
-          ...defaultResponseData,
-          edges: [],
-        },
-      },
-    })),
-  },
-];
-
-const WrapperWithEmptyResponse =
-  getJestMetadataAndApolloMocksAndContextStoreWrapper({
-    apolloMocks: graphqlEmptyResponse,
-    componentInstanceId: 'recordIndexId',
-    contextStoreTargetedRecordsRule: {
-      mode: 'selection',
-      selectedRecordIds: [],
-    },
-    contextStoreCurrentObjectMetadataNameSingular: 'person',
-  });
+jest.mock('@/object-record/hooks/useLazyFetchAllRecords', () => ({
+  useLazyFetchAllRecords: jest.fn(),
+}));
 
 describe('useRecordData', () => {
   const recordIndexId = 'people';
   const objectMetadataItem = generatedMockObjectMetadataItems.find(
     (item) => item.nameSingular === 'person',
   );
+  let mockFetchAllRecords: jest.Mock;
+
+  beforeEach(() => {
+    // Mock the hook's implementation
+    mockFetchAllRecords = jest.fn();
+    (useLazyFetchAllRecords as jest.Mock).mockReturnValue({
+      progress: 100,
+      isDownloading: false,
+      fetchAllRecords: mockFetchAllRecords, // Mock the function
+    });
+  });
   if (!objectMetadataItem) {
     throw new Error('Object metadata item not found');
   }
+
   describe('data fetching', () => {
     it('should handle no records', async () => {
       const callback = jest.fn();
+
+      mockFetchAllRecords.mockReturnValue([]);
 
       const { result } = renderHook(
         () =>
@@ -192,7 +115,7 @@ describe('useRecordData', () => {
             viewType: ViewType.Kanban,
           }),
         {
-          wrapper: WrapperWithEmptyResponse,
+          wrapper: Wrapper,
         },
       );
 
@@ -207,6 +130,7 @@ describe('useRecordData', () => {
 
     it('should call the callback function with fetched data', async () => {
       const callback = jest.fn();
+      mockFetchAllRecords.mockReturnValue([mockPerson]);
       const { result } = renderHook(
         () =>
           useExportFetchRecords({
@@ -216,7 +140,7 @@ describe('useRecordData', () => {
             pageSize: 30,
             delayMs: 0,
           }),
-        { wrapper: WrapperWithResponse },
+        { wrapper: Wrapper },
       );
 
       await act(async () => {
@@ -230,12 +154,15 @@ describe('useRecordData', () => {
 
     it('should call the callback function with kanban field included as column if view type is kanban', async () => {
       const callback = jest.fn();
+      mockFetchAllRecords.mockReturnValue([mockPerson]);
       const { result } = renderHook(
         () => {
-          const kanbanFieldNameState = extractComponentState(
-            recordBoardKanbanFieldMetadataNameComponentState,
-            recordIndexId,
-          );
+          const [recordGroupFieldMetadata, setRecordGroupFieldMetadata] =
+            useRecoilComponentStateV2(
+              recordGroupFieldMetadataComponentState,
+              recordIndexId,
+            );
+
           return {
             tableData: useExportFetchRecords({
               recordIndexId,
@@ -246,8 +173,8 @@ describe('useRecordData', () => {
               delayMs: 0,
               viewType: ViewType.Kanban,
             }),
-            useRecordBoardHook: useRecordBoard(recordIndexId),
-            kanbanFieldName: useRecoilValue(kanbanFieldNameState),
+            kanbanFieldName: recordGroupFieldMetadata?.name,
+            setRecordGroupFieldMetadata,
             kanbanData: useObjectOptionsForBoard({
               objectNameSingular: objectMetadataItem.nameSingular,
               recordBoardId: recordIndexId,
@@ -256,7 +183,7 @@ describe('useRecordData', () => {
           };
         },
         {
-          wrapper: WrapperWithResponse,
+          wrapper: Wrapper,
         },
       );
 
@@ -269,9 +196,7 @@ describe('useRecordData', () => {
       );
 
       await act(async () => {
-        result.current.useRecordBoardHook.setKanbanFieldMetadataName(
-          updatedAtFieldMetadataItem?.name,
-        );
+        result.current.setRecordGroupFieldMetadata(updatedAtFieldMetadataItem);
       });
 
       await act(async () => {
@@ -320,12 +245,15 @@ describe('useRecordData', () => {
 
     it('should not call the callback function with kanban field included as column if view type is table', async () => {
       const callback = jest.fn();
+      mockFetchAllRecords.mockReturnValue([mockPerson]);
       const { result } = renderHook(
         () => {
-          const kanbanFieldNameState = extractComponentState(
-            recordBoardKanbanFieldMetadataNameComponentState,
-            recordIndexId,
-          );
+          const [recordGroupFieldMetadata, setRecordGroupFieldMetadata] =
+            useRecoilComponentStateV2(
+              recordGroupFieldMetadataComponentState,
+              recordIndexId,
+            );
+
           return {
             tableData: useExportFetchRecords({
               recordIndexId,
@@ -336,8 +264,9 @@ describe('useRecordData', () => {
               delayMs: 0,
               viewType: ViewType.Table,
             }),
-            setKanbanFieldName: useRecordBoard(recordIndexId),
-            kanbanFieldName: useRecoilValue(kanbanFieldNameState),
+            objectMetadataItem,
+            kanbanFieldName: recordGroupFieldMetadata?.name,
+            setRecordGroupFieldMetadata,
             kanbanData: useObjectOptionsForBoard({
               objectNameSingular: objectMetadataItem.nameSingular,
               recordBoardId: recordIndexId,
@@ -346,14 +275,19 @@ describe('useRecordData', () => {
           };
         },
         {
-          wrapper: WrapperWithResponse,
+          wrapper: Wrapper,
         },
       );
 
       await act(async () => {
-        result.current.setKanbanFieldName.setKanbanFieldMetadataName(
-          result.current.kanbanData.hiddenBoardFields[0].metadata.fieldName,
-        );
+        const fieldMetadataItem =
+          result.current.objectMetadataItem?.fields.find(
+            (fieldMetadata) =>
+              fieldMetadata.id ===
+              result.current.kanbanData.hiddenBoardFields[0].fieldMetadataId,
+          );
+
+        result.current.setRecordGroupFieldMetadata(fieldMetadataItem);
       });
 
       await act(async () => {

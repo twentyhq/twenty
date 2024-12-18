@@ -2,8 +2,8 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import react from '@vitejs/plugin-react-swc';
 import wyw from '@wyw-in-js/vite';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import { defineConfig, loadEnv, searchForWorkspaceRoot } from 'vite';
 import checker from 'vite-plugin-checker';
 import svgr from 'vite-plugin-svgr';
@@ -19,7 +19,9 @@ export default defineConfig(({ command, mode }) => {
     VITE_BUILD_SOURCEMAP,
     VITE_DISABLE_TYPESCRIPT_CHECKER,
     VITE_DISABLE_ESLINT_CHECKER,
-    VITE_ENABLE_SSL,
+    VITE_HOST,
+    SSL_CERT_PATH,
+    SSL_KEY_PATH,
     REACT_APP_PORT,
   } = env;
 
@@ -64,27 +66,24 @@ export default defineConfig(({ command, mode }) => {
     };
   }
 
-  if (VITE_ENABLE_SSL && (!env.SSL_KEY_PATH || !env.SSL_CERT_PATH)) {
-    throw new Error(
-      'to use https SSL_KEY_PATH and SSL_CERT_PATH must be both defined',
-    );
-  }
-
   return {
     root: __dirname,
     cacheDir: '../../node_modules/.vite/packages/twenty-front',
 
     server: {
       port: port,
-      protocol: VITE_ENABLE_SSL ? 'https' : 'http',
-      ...(VITE_ENABLE_SSL
+      ...(VITE_HOST ? { host: VITE_HOST } : {}),
+      ...(SSL_KEY_PATH && SSL_CERT_PATH
         ? {
+            protocol: 'https',
             https: {
               key: fs.readFileSync(env.SSL_KEY_PATH),
               cert: fs.readFileSync(env.SSL_CERT_PATH),
             },
           }
-        : {}),
+        : {
+            protocol: 'http',
+          }),
       fs: {
         allow: [
           searchForWorkspaceRoot(process.cwd()),
@@ -133,7 +132,7 @@ export default defineConfig(({ command, mode }) => {
     ],
 
     optimizeDeps: {
-      exclude: ['node_modules/.vite', 'node_modules/.cache'],
+      exclude: ['../../node_modules/.vite', '../../node_modules/.cache'],
     },
 
     build: {
@@ -144,6 +143,9 @@ export default defineConfig(({ command, mode }) => {
     envPrefix: 'REACT_APP_',
 
     define: {
+      _env_: {
+        REACT_APP_SERVER_BASE_URL,
+      },
       'process.env': {
         REACT_APP_SERVER_BASE_URL,
       },

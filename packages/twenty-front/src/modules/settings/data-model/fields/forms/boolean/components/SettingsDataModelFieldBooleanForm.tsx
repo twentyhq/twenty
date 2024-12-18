@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
-import { isDefined } from '~/utils/isDefined';
+import { Select } from '@/ui/input/components/Select';
 
 export const settingsDataModelFieldBooleanFormSchema = z.object({
   defaultValue: z.boolean(),
@@ -16,17 +16,14 @@ export type SettingsDataModelFieldBooleanFormValues = z.infer<
 >;
 
 type SettingsDataModelFieldBooleanFormProps = {
-  className?: string;
   fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue'>;
 };
 
 export const SettingsDataModelFieldBooleanForm = ({
-  className,
   fieldMetadataItem,
 }: SettingsDataModelFieldBooleanFormProps) => {
   const { control } = useFormContext<SettingsDataModelFieldBooleanFormValues>();
 
-  const isEditMode = isDefined(fieldMetadataItem?.defaultValue);
   const { initialDefaultValue } = useBooleanSettingsFormInitialValues({
     fieldMetadataItem,
   });
@@ -41,26 +38,27 @@ export const SettingsDataModelFieldBooleanForm = ({
           Icon={IconCheck}
           title="Default Value"
           description="Select the default value for this boolean field"
-          value={value}
-          onChange={onChange}
-          selectClassName={className}
-          // TODO: temporary fix - disabling edition because after editing the defaultValue,
-          // newly created records are not taking into account the updated defaultValue properly.
-          disabled={isEditMode}
-          dropdownId="object-field-default-value-select-boolean"
-          options={[
-            {
-              value: true,
-              label: 'True',
-              Icon: IconCheck,
-            },
-            {
-              value: false,
-              label: 'False',
-              Icon: IconX,
-            },
-          ]}
-        />
+        >
+          <Select<boolean>
+            value={value}
+            onChange={onChange}
+            dropdownId="object-field-default-value-select-boolean"
+            dropdownWidth={120}
+            options={[
+              {
+                value: true,
+                label: 'True',
+                Icon: IconCheck,
+              },
+              {
+                value: false,
+                label: 'False',
+                Icon: IconX,
+              },
+            ]}
+            selectSizeVariant="small"
+          />
+        </SettingsOptionCardContentSelect>
       )}
     />
   );

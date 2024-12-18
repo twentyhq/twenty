@@ -4,15 +4,14 @@ import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/
 export const useContextStoreCurrentObjectMetadataIdOrThrow = (
   instanceId?: string,
 ) => {
-  const contextStoreCurrentObjectMetadataIdComponent =
-    useRecoilComponentValueV2(
-      contextStoreCurrentObjectMetadataIdComponentState,
-      instanceId,
-    );
+  const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
+    contextStoreCurrentObjectMetadataIdComponentState,
+    instanceId,
+  );
 
-  if (!contextStoreCurrentObjectMetadataIdComponent) {
+  if (!contextStoreCurrentObjectMetadataId) {
     throw new Error('contextStoreCurrentObjectMetadataIdComponent is not set');
   }
 
-  return contextStoreCurrentObjectMetadataIdComponent;
+  return contextStoreCurrentObjectMetadataId;
 };

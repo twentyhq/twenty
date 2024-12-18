@@ -41,39 +41,26 @@ export const mapViewGroupsToRecordGroupDefinitions = ({
         (option) => option.value === viewGroup.fieldValue,
       );
 
-      if (!selectedOption) return null;
+      if (!selectedOption && selectFieldMetadataItem.isNullable === false) {
+        return null;
+      }
 
       return {
         id: viewGroup.id,
         fieldMetadataId: viewGroup.fieldMetadataId,
-        type: RecordGroupDefinitionType.Value,
-        title: selectedOption.label,
-        value: selectedOption.value,
-        color: selectedOption.color,
+        type: !isDefined(selectedOption)
+          ? RecordGroupDefinitionType.NoValue
+          : RecordGroupDefinitionType.Value,
+        title: selectedOption?.label ?? 'No Value',
+        value: selectedOption?.value ?? null,
+        color: selectedOption?.color ?? 'transparent',
         position: viewGroup.position,
         isVisible: viewGroup.isVisible,
       } as RecordGroupDefinition;
     })
-    .filter(isDefined)
-    .sort((a, b) => a.position - b.position);
+    .filter(isDefined);
 
-  if (selectFieldMetadataItem.isNullable === true) {
-    const noValueColumn = {
-      id: 'no-value',
-      title: 'No Value',
-      type: RecordGroupDefinitionType.NoValue,
-      value: null,
-      position:
-        recordGroupDefinitionsFromViewGroups
-          .map((option) => option.position)
-          .reduce((a, b) => Math.max(a, b), 0) + 1,
-      isVisible: true,
-      fieldMetadataId: selectFieldMetadataItem.id,
-      color: 'transparent',
-    } satisfies RecordGroupDefinition;
-
-    return [...recordGroupDefinitionsFromViewGroups, noValueColumn];
-  }
-
-  return recordGroupDefinitionsFromViewGroups;
+  return recordGroupDefinitionsFromViewGroups.sort(
+    (a, b) => a.position - b.position,
+  );
 };

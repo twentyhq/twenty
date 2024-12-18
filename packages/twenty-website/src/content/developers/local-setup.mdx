@@ -2,10 +2,8 @@
 title: Local Setup
 icon: TbDeviceDesktop
 image: /images/user-guide/fields/field.png
-info: Mostly for contributors or curious developers
+info: The guide for contributors (or curious developers) who want to run Twenty locally (on laptop, PC...)
 ---
-
-Follow this guide if you would like to setup the project locally to contribute.
 
 ## Prerequisites
 
@@ -105,14 +103,13 @@ cd twenty
 You should run all commands in the following steps from the root of the project.
 
 ## Step 3: Set up a PostgreSQL Database
-You can access the database at [localhost:5432](localhost:5432), with user `twenty` and password `twenty` .
 
 <ArticleTabs label1="Linux" label2="Mac OS" label3="Windows (WSL)">
   <ArticleTab>
-    <b>Option 1:</b> To provision your database locally:
+    <b>Option 1 (preferred):</b> To provision your database locally:
     Use the following link to install Postgresql on your Linux machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
     ```bash
-      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
     Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
 
@@ -122,12 +119,12 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     ```
   </ArticleTab>
   <ArticleTab>
-    <b>Option 1:</b> To provision your database locally with `brew`:
+    <b>Option 1 (preferred):</b> To provision your database locally with `brew`:
 
     ```bash
       brew install postgresql@16
       export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
-      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
 
     <b>Option 2:</b> If you have docker installed:
@@ -141,7 +138,7 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     <b>Option 1:</b> To provision your Postgresql locally:
     Use the following link to install Postgresql on your Linux virtual machine: [Postgresql Installation](https://www.postgresql.org/download/linux/)
     ```bash
-      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;" -c "CREATE USER twenty PASSWORD 'twenty';" -c "ALTER ROLE twenty superuser;"
+      psql postgres -c "CREATE DATABASE \"default\";" -c "CREATE DATABASE test;"
     ```
     Note: You might need to add `sudo -u postgres` to the command before `psql` to avoid permission errors.
 
@@ -154,8 +151,10 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
   </ArticleTab>
 </ArticleTabs>
 
+You can now access the database at [localhost:5432](localhost:5432), with user `twenty` and password `twenty` .
+
 ## Step 4: Set up a Redis Database (cache)
-Twenty requires a redis cache to provide the best performances
+Twenty requires a redis cache to provide the best performance
 
 <ArticleTabs label1="Linux" label2="Mac OS" label3="Windows (WSL)">
   <ArticleTab>
@@ -168,10 +167,12 @@ Twenty requires a redis cache to provide the best performances
     ```
   </ArticleTab>
   <ArticleTab>
-    <b>Option 1:</b> To provision your Redis locally with `brew`:
+    <b>Option 1 (preferred):</b> To provision your Redis locally with `brew`:
     ```bash
     brew install redis
     ```
+    Start your redis server:
+    ```brew services start redis```
 
     <b>Option 2:</b> If you have docker installed:
     ```bash
@@ -189,9 +190,11 @@ Twenty requires a redis cache to provide the best performances
   </ArticleTab>
 </ArticleTabs>
 
+If you need a Client GUI, we recommend [redis insight](https://redis.io/insight/) (free version available)
+
 ## Step 5: Setup environment variables
 
-Use environment variables or `.env` files to configure your project.
+Use environment variables or `.env` files to configure your project. More info [here](https://twenty.com/developers/section/self-hosting/setup)
 
 Copy the `.env.example` files in `/front` and `/server`:
 ```bash
@@ -204,16 +207,17 @@ To build Twenty server and seed some data into your database, run the following 
 ```bash
 yarn
 ```
+Note that `npm` or `pnpm` won't work
 
 ## Step 7: Running the project
 
-Start your redis server:
 <ArticleTabs label1="Linux" label2="Mac OS" label3="Windows (WSL)">
   <ArticleTab>
     Depending on your Linux distribution, Redis server might be started automatically.
     If not, check the [Redis installation guide](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) for your distro.
   </ArticleTab>
   <ArticleTab>
+  Redis should already be running. If not, run:
     ```bash
     brew services start redis
     ```
@@ -225,7 +229,7 @@ Start your redis server:
 </ArticleTabs>
 
 
-Setup your database with the following command:
+Set up your database with the following command:
 ```bash
 npx nx database:reset twenty-server
 ```
@@ -242,51 +246,23 @@ Alternatively, you can start all services at once:
 npx nx start
 ```
 
-Twenty's server will be up and running at [http://localhost:3000](http://localhost:3000). The GraphQL API can be accessed at [http://localhost:3000/graphql](http://localhost:3000/graphql), and the REST API can be reached at [http://localhost:3000/rest](http://localhost:3000/rest).
+## Step 8: Use Twenty
 
-Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001). Just log in using the seeded demo account: `tim@apple.dev` (password: `Applecar2025`) to start using Twenty.
+**Frontend**  
+
+Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001).  
+You can log in using the default demo account: `tim@apple.dev` (password: `Applecar2025`)
+
+**Backend**  
+
+- Twenty's server will be up and running at [http://localhost:3000](http://localhost:3000) 
+- The GraphQL API can be accessed at [http://localhost:3000/graphql](http://localhost:3000/graphql)
+- The REST API can be reached at [http://localhost:3000/rest](http://localhost:3000/rest)
+
 
 
 ## Troubleshooting
 
-#### CR line breaks found [Windows]
-
-This is due to the line break characters of Windows and the git configuration. Try running:
-
-```
-git config --global core.autocrlf false
-```
-
-Then delete the repository and clone it again.
-
-#### Missing metadata schema
-
-During Twenty installation, you need to provision your postgres database with the right schemas, extensions, and users.
-If you're successful in running this provisioning, you should have `default` and `metadata` schemas in your database.
-If you don't, make sure you don't have more than one postgres instance running on your computer.
-
-#### Cannot find module 'twenty-emails' or its corresponding type declarations.
-
-You have to build the package `twenty-emails` before running the initialization of the database with `npx nx run twenty-emails:build`
-
-#### Missing twenty-x package
-
-Make sure to run yarn in the root directory and then run `npx nx server:dev twenty-server`. If this still doesn't work try building the missing package manually.
-
-#### Lint on Save not working
-
-This should work out of the box with the eslint extension installed. If this doesn't work try adding this to your vscode setting (on the dev container scope):
-
-#### While running `npx nx start` or `npx nx start twenty-front`, Out of memory error is thrown
-
-In `packages/twenty-front/.env` uncomment `VITE_DISABLE_TYPESCRIPT_CHECKER=true` and `VITE_DISABLE_ESLINT_CHECKER=true` to disable background checks thus reducing amount of needed RAM.
-
-```
-"editor.codeActionsOnSave": {
-
-  "source.fixAll.eslint": "explicit"
-
-}
-```
+If you encounter any problem, check [Troubleshooting](https://twenty.com/developers/section/self-hosting/troubleshooting) for solutions.
 
 <ArticleEditContent></ArticleEditContent>

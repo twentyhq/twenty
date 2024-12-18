@@ -13,48 +13,40 @@ import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPic
 import { useRecoilCallback } from 'recoil';
 import { v4 } from 'uuid';
 
-export const useCreateViewFromCurrentState = (viewBarInstanceId?: string) => {
+export const useCreateViewFromCurrentState = () => {
   const { closeAndResetViewPicker } = useCloseAndResetViewPicker();
 
   const viewPickerInputNameCallbackState = useRecoilComponentCallbackStateV2(
     viewPickerInputNameComponentState,
-    viewBarInstanceId,
   );
 
   const viewPickerSelectedIconCallbackState = useRecoilComponentCallbackStateV2(
     viewPickerSelectedIconComponentState,
-    viewBarInstanceId,
   );
 
   const viewPickerTypeCallbackState = useRecoilComponentCallbackStateV2(
     viewPickerTypeComponentState,
-    viewBarInstanceId,
   );
 
   const viewPickerKanbanFieldMetadataIdCallbackState =
     useRecoilComponentCallbackStateV2(
       viewPickerKanbanFieldMetadataIdComponentState,
-      viewBarInstanceId,
     );
 
   const viewPickerIsPersistingCallbackState = useRecoilComponentCallbackStateV2(
     viewPickerIsPersistingComponentState,
-    viewBarInstanceId,
   );
 
   const viewPickerIsDirtyCallbackState = useRecoilComponentCallbackStateV2(
     viewPickerIsDirtyComponentState,
-    viewBarInstanceId,
   );
 
   const viewPickerModeCallbackState = useRecoilComponentCallbackStateV2(
     viewPickerModeComponentState,
-    viewBarInstanceId,
   );
 
-  const { createViewFromCurrentView } =
-    useCreateViewFromCurrentView(viewBarInstanceId);
-  const { changeView } = useChangeView(viewBarInstanceId);
+  const { createViewFromCurrentView } = useCreateViewFromCurrentView();
+  const { changeView } = useChangeView();
 
   const createViewFromCurrentState = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -78,7 +70,7 @@ export const useCreateViewFromCurrentState = (viewBarInstanceId?: string) => {
           viewPickerModeCallbackState,
         );
 
-        const shouldCopyFiltersAndSorts =
+        const shouldCopyFiltersAndSortsAndAggregate =
           viewPickerMode === 'create-from-current';
 
         const id = v4();
@@ -94,7 +86,7 @@ export const useCreateViewFromCurrentState = (viewBarInstanceId?: string) => {
             type,
             kanbanFieldMetadataId,
           },
-          shouldCopyFiltersAndSorts,
+          shouldCopyFiltersAndSortsAndAggregate,
         );
 
         closeAndResetViewPicker();

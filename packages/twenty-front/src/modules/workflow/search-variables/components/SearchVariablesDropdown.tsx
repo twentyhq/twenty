@@ -1,17 +1,16 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { SearchVariablesDropdownStepItem } from '@/workflow/search-variables/components/SearchVariablesDropdownStepItem';
-import SearchVariablesDropdownStepSubItem from '@/workflow/search-variables/components/SearchVariablesDropdownStepSubItem';
+import { SearchVariablesDropdownFieldItems } from '@/workflow/search-variables/components/SearchVariablesDropdownFieldItems';
+import { SearchVariablesDropdownObjectItems } from '@/workflow/search-variables/components/SearchVariablesDropdownObjectItems';
+import { SearchVariablesDropdownWorkflowStepItems } from '@/workflow/search-variables/components/SearchVariablesDropdownWorkflowStepItems';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/search-variables/constants/SearchVariablesDropdownId';
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/search-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Editor } from '@tiptap/react';
 import { useState } from 'react';
-import { IconVariablePlus } from 'twenty-ui';
+import { IconVariablePlus, isDefined } from 'twenty-ui';
 
 const StyledDropdownVariableButtonContainer = styled(
   StyledDropdownButtonContainer,
@@ -20,6 +19,7 @@ const StyledDropdownVariableButtonContainer = styled(
     transparentBackground
       ? 'transparent'
       : theme.background.transparent.lighter};
+
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: ${({ theme }) => theme.spacing(2)};
   :hover {
@@ -27,21 +27,24 @@ const StyledDropdownVariableButtonContainer = styled(
   }
 `;
 
-const SearchVariablesDropdown = ({
+export const SearchVariablesDropdown = ({
   inputId,
-  editor,
+  onVariableSelect,
   disabled,
+  objectNameSingularToSelect,
 }: {
   inputId: string;
-  editor: Editor;
+  onVariableSelect: (variableName: string) => void;
   disabled?: boolean;
+  objectNameSingularToSelect?: string;
 }) => {
   const theme = useTheme();
 
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${inputId}`;
-  const { isDropdownOpen } = useDropdown(dropdownId);
-  const availableVariablesInWorkflowStep =
-    useAvailableVariablesInWorkflowStep();
+  const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
+  const availableVariablesInWorkflowStep = useAvailableVariablesInWorkflowStep({
+    objectNameSingularToSelect,
+  });
 
   const initialStep =
     availableVariablesInWorkflowStep.length === 1
@@ -52,10 +55,6 @@ const SearchVariablesDropdown = ({
     StepOutputSchema | undefined
   >(initialStep);
 
-  const insertVariableTag = (variable: string) => {
-    editor.commands.insertVariableTag(variable);
-  };
-
   const handleStepSelect = (stepId: string) => {
     setSelectedStep(
       availableVariablesInWorkflowStep.find((step) => step.id === stepId),
@@ -63,7 +62,9 @@ const SearchVariablesDropdown = ({
   };
 
   const handleSubItemSelect = (subItem: string) => {
-    insertVariableTag(subItem);
+    onVariableSelect(subItem);
+    setSelectedStep(undefined);
+    closeDropdown();
   };
 
   const handleBack = () => {
@@ -102,25 +103,28 @@ const SearchVariablesDropdown = ({
         </StyledDropdownVariableButtonContainer>
       }
       dropdownComponents={
-        <DropdownMenuItemsContainer hasMaxHeight>
-          {selectedStep ? (
-            <SearchVariablesDropdownStepSubItem
-              step={selectedStep}
-              onSelect={handleSubItemSelect}
-              onBack={handleBack}
-            />
-          ) : (
-            <SearchVariablesDropdownStepItem
-              steps={availableVariablesInWorkflowStep}
-              onSelect={handleStepSelect}
-            />
-          )}
-        </DropdownMenuItemsContainer>
+        !isDefined(selectedStep) ? (
+          <SearchVariablesDropdownWorkflowStepItems
+            dropdownId={dropdownId}
+            steps={availableVariablesInWorkflowStep}
+            onSelect={handleStepSelect}
+          />
+        ) : isDefined(objectNameSingularToSelect) ? (
+          <SearchVariablesDropdownObjectItems
+            step={selectedStep}
+            onSelect={handleSubItemSelect}
+            onBack={handleBack}
+          />
+        ) : (
+          <SearchVariablesDropdownFieldItems
+            step={selectedStep}
+            onSelect={handleSubItemSelect}
+            onBack={handleBack}
+          />
+        )
       }
       dropdownPlacement="bottom-end"
-      dropdownOffset={{ x: 0, y: 4 }}
+      dropdownOffset={{ x: 2, y: 4 }}
     />
   );
 };
-
-export default SearchVariablesDropdown;

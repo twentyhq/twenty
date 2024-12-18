@@ -16,12 +16,12 @@ export default defineConfig({
   fullyParallel: true, // false only for specific tests, overwritten in specific projects or global setups of projects
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined, // undefined = amount of projects * amount of tests
+  workers: 1, // 1 worker = 1 test at the time, tests can't be parallelized
   timeout: 30 * 1000, // timeout can be changed
   use: {
     baseURL: process.env.CI
       ? process.env.CI_DEFAULT_BASE_URL
-      : (process.env.FRONTEND_BASE_URL ?? 'http://localhost:3001'),
+      : (process.env.FRONTEND_BASE_URL ?? 'http://app.localhost:3001'),
     trace: 'retain-on-failure', // trace takes EVERYTHING from page source, records every single step, should be used only when normal debugging won't work
     screenshot: 'on', // either 'on' here or in different method in modules, if 'on' all screenshots are overwritten each time the test is run
     headless: true, // instead of changing it to false, run 'yarn test:e2e:debug' or 'yarn test:e2e:ui'
@@ -34,11 +34,18 @@ export default defineConfig({
   expect: {
     timeout: 5000,
   },
-  reporter: [['html', { open: 'never' }]],
+  reporter: process.env.CI ? 'github' : 'list',
   projects: [
     {
       name: 'Login setup',
       testMatch: /login\.setup\.ts/, // finds all tests matching this regex, in this case only 1 test should be found
+    },
+    {
+      name: 'Demo check',
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+      testMatch: /demo\/demo_basic\.spec\.ts/,
     },
     {
       name: 'chromium',
@@ -47,6 +54,7 @@ export default defineConfig({
         storageState: path.resolve(__dirname, '.auth', 'user.json'), // takes saved cookies from directory
       },
       dependencies: ['Login setup'], // forces to run login setup before running tests from this project - CASE SENSITIVE
+      testMatch: /all\/.+\.spec\.ts/,
     },
     {
       name: 'firefox',
@@ -55,6 +63,11 @@ export default defineConfig({
         storageState: path.resolve(__dirname, '.auth', 'user.json'),
       },
       dependencies: ['Login setup'],
+      testMatch: /all\/.+\.spec\.ts/,
+    },
+    {
+      name: 'Authentication',
+      testMatch: /authentication\/.*\.spec\.ts/,
     },
 
     //{

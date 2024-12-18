@@ -2,6 +2,10 @@ import { useGetOneServerlessFunction } from '@/settings/serverless-functions/hoo
 import { useGetOneServerlessFunctionSourceCode } from '@/settings/serverless-functions/hooks/useGetOneServerlessFunctionSourceCode';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { FindOneServerlessFunctionSourceCodeQuery } from '~/generated-metadata/graphql';
+import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
+import { useSetRecoilState } from 'recoil';
+import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
+import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
 
 export type ServerlessFunctionNewFormValues = {
   name: string;
@@ -29,6 +33,10 @@ export const useServerlessFunctionUpdateFormState = (
     code: undefined,
   });
 
+  const setServerlessFunctionTestData = useSetRecoilState(
+    serverlessFunctionTestDataFamilyState(serverlessFunctionId),
+  );
+
   const { serverlessFunction } = useGetOneServerlessFunction({
     id: serverlessFunctionId,
   });
@@ -45,6 +53,12 @@ export const useServerlessFunctionUpdateFormState = (
       setFormValues((prevState) => ({
         ...prevState,
         ...newState,
+      }));
+      const sourceCode =
+        data?.getServerlessFunctionSourceCode?.[INDEX_FILE_PATH];
+      setServerlessFunctionTestData((prev) => ({
+        ...prev,
+        input: getFunctionInputFromSourceCode(sourceCode),
       }));
     },
   });

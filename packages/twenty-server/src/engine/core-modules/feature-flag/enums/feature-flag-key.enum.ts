@@ -18,4 +18,5 @@ export enum FeatureFlagKey {
   IsFavoriteFolderEnabled = 'IS_FAVORITE_FOLDER_ENABLED',
   IsFavoriteFolderEntityEnabled = 'IS_FAVORITE_FOLDER_ENTITY_ENABLED',
   IsViewGroupsEnabled = 'IS_VIEW_GROUPS_ENABLED',
+  IsPageHeaderV2Enabled = 'IS_PAGE_HEADER_V2_ENABLED',
 }

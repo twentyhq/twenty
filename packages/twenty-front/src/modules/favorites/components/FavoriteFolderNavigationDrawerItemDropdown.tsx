@@ -1,6 +1,7 @@
 import { FavoriteFolderHotkeyScope } from '@/favorites/constants/FavoriteFolderRightIconDropdownHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+
 import {
   IconDotsVertical,
   IconPencil,
@@ -38,13 +39,11 @@ export const FavoriteFolderNavigationDrawerItemDropdown = ({
       dropdownHotkeyScope={{
         scope: FavoriteFolderHotkeyScope.FavoriteFolderRightIconDropdown,
       }}
-      usePortal
       data-select-disable
       clickableComponent={
         <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
       }
-      dropdownPlacement="right"
-      dropdownOffset={{ y: -15 }}
+      dropdownPlacement="bottom-start"
       dropdownComponents={
         <DropdownMenuItemsContainer>
           <MenuItem

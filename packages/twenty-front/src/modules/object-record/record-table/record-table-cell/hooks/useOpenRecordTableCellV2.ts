@@ -20,10 +20,11 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
 import { isDefined } from '~/utils/isDefined';
 
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/RecordTableClickOutsideListenerId';
+import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropdownFocusIdForRecordField';
+import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { useClickOustideListenerStates } from '@/ui/utilities/pointer-event/hooks/useClickOustideListenerStates';
-import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
@@ -47,7 +48,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
   const { getClickOutsideListenerIsActivatedState } =
     useClickOustideListenerStates(RECORD_TABLE_CLICK_OUTSIDE_LISTENER_ID);
 
-  const { indexIdentifierUrl } = useContext(RecordIndexRootPropsContext);
+  const { indexIdentifierUrl } = useRecordIndexContextOrThrow();
   const moveEditModeToTableCellPosition =
     useMoveEditModeToTableCellPosition(tableScopeId);
 
@@ -68,6 +69,9 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
   );
 
   const navigate = useNavigate();
+
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
+    useSetActiveDropdownFocusIdAndMemorizePrevious();
 
   const openTableCell = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -142,6 +146,14 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
             DEFAULT_CELL_SCOPE.customScopes,
           );
         }
+
+        setActiveDropdownFocusIdAndMemorizePrevious(
+          getDropdownFocusIdForRecordField(
+            recordId,
+            fieldDefinition.fieldMetadataId,
+            'table-cell',
+          ),
+        );
       },
     [
       getClickOutsideListenerIsActivatedState,
@@ -156,6 +168,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
       setViewableRecordNameSingular,
       openRightDrawer,
       setHotkeyScope,
+      setActiveDropdownFocusIdAndMemorizePrevious,
     ],
   );
 

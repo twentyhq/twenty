@@ -3,13 +3,12 @@ import { useRecoilValue } from 'recoil';
 
 import { workspacesState } from '@/auth/states/workspaces';
 import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdownButton';
-import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
-import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { isNonEmptyString } from '@sniptt/guards';
+import { Avatar } from 'twenty-ui';
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 
 const StyledContainer = styled.div`
@@ -18,18 +17,10 @@ const StyledContainer = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
   user-select: none;
 `;
+
 const StyledSingleWorkspaceContainer = styled(StyledContainer)`
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledLogo = styled.div<{ logo: string }>`
-  background: url(${({ logo }) => logo});
-  background-position: center;
-  background-size: cover;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  height: 16px;
-  width: 16px;
 `;
 
 const StyledName = styled.div`
@@ -48,32 +39,33 @@ const StyledNavigationDrawerCollapseButton = styled(
 `;
 
 type NavigationDrawerHeaderProps = {
-  name?: string;
-  logo?: string;
+  name: string;
+  logo: string;
   showCollapseButton: boolean;
 };
 
 export const NavigationDrawerHeader = ({
-  name = DEFAULT_WORKSPACE_NAME,
-  logo = DEFAULT_WORKSPACE_LOGO,
+  name,
+  logo,
   showCollapseButton,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
   const workspaces = useRecoilValue(workspacesState);
-  const isMultiWorkspace = workspaces !== null && workspaces.length > 1;
+  const isMultiWorkspaceEnabled = useRecoilValue(isMultiWorkspaceEnabledState);
+
   const isNavigationDrawerExpanded = useRecoilValue(
     isNavigationDrawerExpandedState,
   );
 
   return (
     <StyledContainer>
-      {isMultiWorkspace ? (
+      {isMultiWorkspaceEnabled &&
+      workspaces !== null &&
+      workspaces.length > 1 ? (
         <MultiWorkspaceDropdownButton workspaces={workspaces} />
       ) : (
         <StyledSingleWorkspaceContainer>
-          <StyledLogo
-            logo={isNonEmptyString(logo) ? logo : DEFAULT_WORKSPACE_LOGO}
-          />
+          <Avatar placeholder={name} avatarUrl={logo} />
           <NavigationDrawerAnimatedCollapseWrapper>
             <StyledName>{name}</StyledName>
           </NavigationDrawerAnimatedCollapseWrapper>

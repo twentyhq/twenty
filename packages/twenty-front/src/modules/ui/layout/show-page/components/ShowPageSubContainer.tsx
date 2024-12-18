@@ -4,6 +4,7 @@ import { isNewViewableRecordLoadingState } from '@/object-record/record-right-dr
 import { CardComponents } from '@/object-record/record-show/components/CardComponents';
 import { FieldsCard } from '@/object-record/record-show/components/FieldsCard';
 import { SummaryCard } from '@/object-record/record-show/components/SummaryCard';
+import { RecordLayout } from '@/object-record/record-show/types/RecordLayout';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
@@ -12,6 +13,7 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
 
 const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
@@ -23,27 +25,14 @@ const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   overflow: auto;
 `;
 
-const StyledTabListContainer = styled.div`
+const StyledTabListContainer = styled.div<{ shouldDisplay: boolean }>`
   align-items: center;
   padding-left: ${({ theme }) => theme.spacing(2)};
   border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   box-sizing: border-box;
-  display: flex;
+  display: ${({ shouldDisplay }) => (shouldDisplay ? 'flex' : 'none')};
   gap: ${({ theme }) => theme.spacing(2)};
   height: 40px;
-`;
-
-const StyledButtonContainer = styled.div`
-  align-items: center;
-  background: ${({ theme }) => theme.background.secondary};
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
-  bottom: 0;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: flex-end;
-  padding: ${({ theme }) => theme.spacing(2)};
-  position: absolute;
-  width: 100%;
 `;
 
 const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
@@ -56,6 +45,7 @@ const StyledContentContainer = styled.div<{ isInRightDrawer: boolean }>`
 export const TAB_LIST_COMPONENT_ID = 'show-page-right-tab-list';
 
 type ShowPageSubContainerProps = {
+  layout?: RecordLayout;
   tabs: SingleTabProps[];
   targetableObject: Pick<
     ActivityTargetableObject,
@@ -68,15 +58,15 @@ type ShowPageSubContainerProps = {
 
 export const ShowPageSubContainer = ({
   tabs,
+  layout,
   targetableObject,
   loading,
   isInRightDrawer = false,
   isNewRightDrawerItemLoading = false,
 }: ShowPageSubContainerProps) => {
-  const { activeTabIdState } = useTabList(
+  const { activeTabId } = useTabList(
     `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`,
   );
-  const activeTabId = useRecoilValue(activeTabIdState);
 
   const isMobile = useIsMobile();
 
@@ -120,16 +110,21 @@ export const ShowPageSubContainer = ({
     recordStoreFamilyState(targetableObject.id),
   );
 
+  const visibleTabs = tabs.filter((tab) => !tab.hide);
+
+  const displaySummaryAndFields =
+    layout && !layout.hideSummaryAndFields && !isMobile && !isInRightDrawer;
+
   return (
     <>
-      {!isMobile && !isInRightDrawer && (
+      {displaySummaryAndFields && (
         <ShowPageLeftContainer forceMobile={isMobile}>
           {summaryCard}
           {fieldsCard}
         </ShowPageLeftContainer>
       )}
       <StyledShowPageRightContainer isMobile={isMobile}>
-        <StyledTabListContainer>
+        <StyledTabListContainer shouldDisplay={visibleTabs.length > 1}>
           <TabList
             behaveAsLinks={!isInRightDrawer}
             loading={loading || isNewViewableRecordLoading}
@@ -142,9 +137,7 @@ export const ShowPageSubContainer = ({
           {renderActiveTabContent()}
         </StyledContentContainer>
         {isInRightDrawer && recordFromStore && !recordFromStore.deletedAt && (
-          <StyledButtonContainer>
-            <RecordShowRightDrawerActionMenu />
-          </StyledButtonContainer>
+          <RightDrawerFooter actions={[<RecordShowRightDrawerActionMenu />]} />
         )}
       </StyledShowPageRightContainer>
     </>

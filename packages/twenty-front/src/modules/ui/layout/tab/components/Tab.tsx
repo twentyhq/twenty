@@ -1,9 +1,10 @@
+import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
-import { IconComponent, Pill } from 'twenty-ui';
+import { Avatar, IconComponent, Pill } from 'twenty-ui';
 
 type TabProps = {
   id: string;
@@ -15,6 +16,7 @@ type TabProps = {
   disabled?: boolean;
   pill?: string | ReactElement;
   to?: string;
+  logo?: string;
 };
 
 const StyledTab = styled('button', {
@@ -52,7 +54,7 @@ const StyledHover = styled.span`
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-
+  width: 100%;
   &:hover {
     background: ${({ theme }) => theme.background.tertiary};
     border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -60,6 +62,10 @@ const StyledHover = styled.span`
   &:active {
     background: ${({ theme }) => theme.background.quaternary};
   }
+`;
+
+const StyledIconContainer = styled.div`
+  flex-shrink: 0;
 `;
 
 export const Tab = ({
@@ -72,8 +78,13 @@ export const Tab = ({
   disabled,
   pill,
   to,
+  logo,
 }: TabProps) => {
   const theme = useTheme();
+  const iconColor = active
+    ? theme.font.color.primary
+    : theme.font.color.secondary;
+
   return (
     <StyledTab
       onClick={onClick}
@@ -85,8 +96,25 @@ export const Tab = ({
       to={to}
     >
       <StyledHover>
-        {Icon && <Icon size={theme.icon.size.md} />}
-        {title}
+        <StyledIconContainer>
+          {logo && (
+            <Avatar
+              avatarUrl={logo}
+              size="md"
+              placeholder={title}
+              iconColor={iconColor}
+            />
+          )}
+          {Icon && (
+            <Avatar
+              Icon={Icon}
+              size="md"
+              placeholder={title}
+              iconColor={iconColor}
+            />
+          )}
+        </StyledIconContainer>
+        <EllipsisDisplay>{title}</EllipsisDisplay>
         {pill && typeof pill === 'string' ? <Pill label={pill} /> : pill}
       </StyledHover>
     </StyledTab>

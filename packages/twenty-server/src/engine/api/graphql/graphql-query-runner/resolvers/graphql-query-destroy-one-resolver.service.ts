@@ -16,7 +16,6 @@ import {
 import { ObjectRecordsToGraphqlConnectionHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/object-records-to-graphql-connection.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-nested-relations.helper';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 
 @Injectable()
 export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResolverService<
@@ -33,17 +32,9 @@ export class GraphqlQueryDestroyOneResolverService extends GraphqlQueryBaseResol
       objectMetadataItemWithFieldMaps.nameSingular,
     );
 
-    const tableName = computeTableName(
-      objectMetadataItemWithFieldMaps.nameSingular,
-      objectMetadataItemWithFieldMaps.isCustom,
-    );
-
     const nonFormattedDeletedObjectRecords = await queryBuilder
-      .where(`"${tableName}".id = :id`, {
-        id: executionArgs.args.id,
-      })
-      .take(1)
       .delete()
+      .where({ id: executionArgs.args.id })
       .returning('*')
       .execute();
 

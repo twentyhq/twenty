@@ -1,13 +1,15 @@
+import { DROPDOWN_OFFSET_Y } from '@/dropdown/constants/DropdownOffsetY';
+import { DROPDOWN_WIDTH } from '@/dropdown/constants/DropdownWidth';
+import { useCurrentContentId } from '@/dropdown/hooks/useCurrentContentId';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { ObjectOptionsDropdownButton } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownButton';
 import { ObjectOptionsDropdownContent } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownContent';
 import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { ObjectOptionsContentId } from '@/object-record/object-options-dropdown/types/ObjectOptionsContentId';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { ViewType } from '@/views/types/ViewType';
-import { useCallback, useState } from 'react';
 
 type ObjectOptionsDropdownProps = {
   viewType: ViewType;
@@ -20,24 +22,18 @@ export const ObjectOptionsDropdown = ({
   objectMetadataItem,
   viewType,
 }: ObjectOptionsDropdownProps) => {
-  const [currentContentId, setCurrentContentId] =
-    useState<ObjectOptionsContentId | null>(null);
-
-  const handleContentChange = useCallback((key: ObjectOptionsContentId) => {
-    setCurrentContentId(key);
-  }, []);
-
-  const handleResetContent = useCallback(() => {
-    setCurrentContentId(null);
-  }, []);
+  const { currentContentId, handleContentChange, handleResetContent } =
+    useCurrentContentId<ObjectOptionsContentId>();
 
   return (
     <Dropdown
       dropdownId={OBJECT_OPTIONS_DROPDOWN_ID}
-      clickableComponent={<ObjectOptionsDropdownButton />}
-      dropdownMenuWidth={'200px'}
       dropdownHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
-      dropdownOffset={{ y: 8 }}
+      dropdownMenuWidth={DROPDOWN_WIDTH}
+      dropdownOffset={{ y: DROPDOWN_OFFSET_Y }}
+      clickableComponent={
+        <StyledHeaderDropdownButton>Options</StyledHeaderDropdownButton>
+      }
       dropdownComponents={
         <ObjectOptionsDropdownContext.Provider
           value={{
@@ -47,6 +43,7 @@ export const ObjectOptionsDropdown = ({
             currentContentId,
             onContentChange: handleContentChange,
             resetContent: handleResetContent,
+            dropdownId: OBJECT_OPTIONS_DROPDOWN_ID,
           }}
         >
           <ObjectOptionsDropdownContent />

@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
-import { useLocation, useNavigation } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useNavigation } from 'react-router-dom';
 
-import { overlayScrollbarsState } from '@/ui/utilities/scroll/states/overlayScrollbarsState';
-import { scrollPositionState } from '@/ui/utilities/scroll/states/scrollPositionState';
+import { scrollWrapperInstanceComponentState } from '@/ui/utilities/scroll/states/scrollWrapperInstanceComponentState';
+import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/states/scrollWrapperScrollTopComponentState';
+import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { isDefined } from '~/utils/isDefined';
 
 /**
@@ -13,23 +14,24 @@ import { isDefined } from '~/utils/isDefined';
  * not share the same scroll position.
  */
 export const useScrollRestoration = (viewportHeight?: number) => {
-  const key = `scroll-position-${useLocation().key}`;
   const { state } = useNavigation();
 
-  const [scrollPosition, setScrollPosition] = useRecoilState(
-    scrollPositionState(key),
+  const [scrollTop, setScrollTop] = useRecoilComponentStateV2(
+    scrollWrapperScrollTopComponentState,
   );
 
-  const overlayScrollbars = useRecoilValue(overlayScrollbarsState);
+  const overlayScrollbars = useRecoilComponentValueV2(
+    scrollWrapperInstanceComponentState,
+  );
 
   const scrollWrapper = overlayScrollbars?.elements().viewport;
-  const skip = isDefined(viewportHeight) && scrollPosition > viewportHeight;
+  const skip = isDefined(viewportHeight) && scrollTop > viewportHeight;
 
   useEffect(() => {
     if (state === 'loading') {
-      setScrollPosition(scrollWrapper?.scrollTop ?? 0);
+      setScrollTop(scrollWrapper?.scrollTop ?? 0);
     } else if (state === 'idle' && isDefined(scrollWrapper) && !skip) {
-      scrollWrapper.scrollTo({ top: scrollPosition });
+      scrollWrapper.scrollTo({ top: scrollTop });
     }
-  }, [key, state, scrollWrapper, skip, scrollPosition, setScrollPosition]);
+  }, [state, scrollWrapper, skip, scrollTop, setScrollTop]);
 };
