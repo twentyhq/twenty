@@ -9,6 +9,7 @@ import { FormNumberFieldInput } from '@/object-record/record-field/form-types/co
 import { FormRawJsonFieldInput } from '@/object-record/record-field/form-types/components/FormRawJsonFieldInput';
 import { FormSelectFieldInput } from '@/object-record/record-field/form-types/components/FormSelectFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
+import { FormUuidFieldInput } from '@/object-record/record-field/form-types/components/FormUuidFieldInput';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import {
@@ -30,6 +31,7 @@ import { isFieldNumber } from '@/object-record/record-field/types/guards/isField
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
+import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { JsonValue } from 'type-fest';
 
 type FormFieldInputProps = {
@@ -124,6 +126,14 @@ export const FormFieldInput = ({
     <FormRawJsonFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
+      onPersist={onPersist}
+      placeholder={field.label}
+      VariablePicker={VariablePicker}
+    />
+  ) : isFieldUuid(field) ? (
+    <FormUuidFieldInput
+      label={field.label}
+      defaultValue={defaultValue as string | null | undefined}
       onPersist={onPersist}
       placeholder={field.label}
       VariablePicker={VariablePicker}
