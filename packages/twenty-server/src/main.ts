@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
@@ -11,13 +12,11 @@ import { graphqlUploadExpress } from 'graphql-upload';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
+import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
 
 import { AppModule } from './app.module';
 import './instrument';
 
-import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
-
-import { ValidationPipe } from '@nestjs/common';
 import { settings } from './engine/constants/settings';
 import { generateFrontConfig } from './utils/generate-front-config';
 
