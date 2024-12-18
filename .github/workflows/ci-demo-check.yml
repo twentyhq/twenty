@@ -1,7 +1,8 @@
-name: CI demo check
+name: CI Demo check
 on:
   schedule:
     - cron: '30 7,19 * * *'
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -27,7 +28,7 @@ jobs:
 
       - name: Run Playwright tests
         id: test
-        run: yarn playwright test --grep @demo-only
+        run: yarn playwright test --grep "@demo-only"
 
       - name: Upload report after tests
         uses: actions/upload-artifact@v4
