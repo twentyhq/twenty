@@ -1,8 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsBoolean, IsOptional, IsString, Matches } from 'class-validator';
-
-import { NotIn } from 'src/engine/utils/custom-class-validator/NotIn';
+import {
+  IsBoolean,
+  IsOptional,
+  IsString,
+  Matches,
+  IsNotIn,
+} from 'class-validator';
 
 @InputType()
 export class UpdateWorkspaceInput {
@@ -15,7 +19,7 @@ export class UpdateWorkspaceInput {
   @IsString()
   @IsOptional()
   @Matches(/^(?!api-).*^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/)
-  @NotIn([
+  @IsNotIn([
     'demo',
     'api',
     't',
