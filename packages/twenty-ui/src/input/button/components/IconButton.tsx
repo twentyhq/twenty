@@ -117,7 +117,7 @@ const StyledButton = styled.button<
               border-color: ${variant === 'secondary'
                 ? !disabled && focus
                   ? theme.color.blue
-                  : theme.background.transparent.light
+                  : theme.background.transparent.medium
                 : focus
                   ? theme.color.blue
                   : 'transparent'};

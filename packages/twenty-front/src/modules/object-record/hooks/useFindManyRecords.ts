@@ -20,6 +20,7 @@ export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
     skip?: boolean;
     recordGqlFields?: RecordGqlOperationGqlRecordFields;
     fetchPolicy?: WatchQueryFetchPolicy;
+    withSoftDeleted?: boolean;
   };
 
 export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
@@ -33,6 +34,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   onError,
   onCompleted,
   cursorFilter,
+  withSoftDeleted = false,
 }: UseFindManyRecordsParams<T>) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -61,11 +63,18 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     onCompleted,
   });
 
+  const withSoftDeleterFilter = {
+    or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
+  };
+
   const { data, loading, error, fetchMore } =
     useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
       skip: skip || !objectMetadataItem,
       variables: {
-        filter,
+        filter: {
+          ...filter,
+          ...(withSoftDeleted ? withSoftDeleterFilter : {}),
+        },
         orderBy,
         lastCursor: cursorFilter?.cursor ?? undefined,
         limit: cursorFilter?.limit ?? limit,

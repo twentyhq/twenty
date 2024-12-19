@@ -11,16 +11,16 @@ import { computeContextStoreFilters } from '@/context-store/utils/computeContext
 import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 import { DELETE_MAX_COUNT } from '@/object-record/constants/DeleteMaxCount';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useCallback, useContext, useState } from 'react';
 import { IconTrash, isDefined } from 'twenty-ui';
-import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
-import { DEFAULT_QUERY_PAGE_SIZE } from '@/object-record/constants/DefaultQueryPageSize';
 
 export const useDeleteMultipleRecordsAction = ({
   objectMetadataItem,
@@ -118,7 +118,8 @@ export const useDeleteMultipleRecordsAction = ({
         type: ActionMenuEntryType.Standard,
         scope: ActionMenuEntryScope.RecordSelection,
         key: 'delete-multiple-records',
-        label: 'Delete',
+        label: 'Delete records',
+        shortLabel: 'Delete',
         position,
         Icon: IconTrash,
         accent: 'danger',

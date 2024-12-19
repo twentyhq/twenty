@@ -36,6 +36,7 @@ export const useExportMultipleRecordsAction = ({
       key: 'export-multiple-records',
       position,
       label: displayedExportProgress(progress),
+      shortLabel: 'Export',
       Icon: IconDatabaseExport,
       accent: 'default',
       onClick: () => download(),

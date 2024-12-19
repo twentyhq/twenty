@@ -1,56 +1,36 @@
 import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/singleRecordActionHook';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
-import { useDeleteFavorite } from '@/favorites/hooks/useDeleteFavorite';
-import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { isNull } from '@sniptt/guards';
 import { useCallback, useContext, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
-export const useDeleteSingleRecordAction: SingleRecordActionHookWithObjectMetadataItem =
+export const useDestroySingleRecordAction: SingleRecordActionHookWithObjectMetadataItem =
   ({ recordId, objectMetadataItem }) => {
-    const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
+    const [isDestroyRecordsModalOpen, setIsDestroyRecordsModalOpen] =
       useState(false);
 
     const { resetTableRowSelection } = useRecordTable({
       recordTableId: objectMetadataItem.namePlural,
     });
 
-    const { deleteOneRecord } = useDeleteOneRecord({
+    const { destroyOneRecord } = useDestroyOneRecord({
       objectNameSingular: objectMetadataItem.nameSingular,
     });
 
     const selectedRecord = useRecoilValue(recordStoreFamilyState(recordId));
-
-    const { sortedFavorites: favorites } = useFavorites();
-    const { deleteFavorite } = useDeleteFavorite();
 
     const { closeRightDrawer } = useRightDrawer();
 
     const handleDeleteClick = useCallback(async () => {
       resetTableRowSelection();
 
-      const foundFavorite = favorites?.find(
-        (favorite) => favorite.recordId === recordId,
-      );
-
-      if (isDefined(foundFavorite)) {
-        deleteFavorite(foundFavorite.id);
-      }
-
-      await deleteOneRecord(recordId);
-    }, [
-      deleteFavorite,
-      deleteOneRecord,
-      favorites,
-      resetTableRowSelection,
-      recordId,
-    ]);
+      await destroyOneRecord(recordId);
+    }, [resetTableRowSelection, destroyOneRecord, recordId]);
 
     const isRemoteObject = objectMetadataItem.isRemote;
 
@@ -58,14 +38,14 @@ export const useDeleteSingleRecordAction: SingleRecordActionHookWithObjectMetada
       useContext(ActionMenuContext);
 
     const shouldBeRegistered =
-      !isRemoteObject && isNull(selectedRecord?.deletedAt);
+      !isRemoteObject && isDefined(selectedRecord?.deletedAt);
 
     const onClick = () => {
       if (!shouldBeRegistered) {
         return;
       }
 
-      setIsDeleteRecordsModalOpen(true);
+      setIsDestroyRecordsModalOpen(true);
     };
 
     return {
@@ -73,20 +53,20 @@ export const useDeleteSingleRecordAction: SingleRecordActionHookWithObjectMetada
       onClick,
       ConfirmationModal: (
         <ConfirmationModal
-          isOpen={isDeleteRecordsModalOpen}
-          setIsOpen={setIsDeleteRecordsModalOpen}
-          title={'Delete Record'}
+          isOpen={isDestroyRecordsModalOpen}
+          setIsOpen={setIsDestroyRecordsModalOpen}
+          title={'Permanently Destroy Record'}
           subtitle={
-            'Are you sure you want to delete this record? It can be recovered from the Options menu.'
+            'Are you sure you want to destroy this record? It cannot be recovered anymore.'
           }
-          onConfirmClick={() => {
-            handleDeleteClick();
+          onConfirmClick={async () => {
+            await handleDeleteClick();
             onActionExecutedCallback?.();
             if (isInRightDrawer) {
               closeRightDrawer();
             }
           }}
-          deleteButtonText={'Delete Record'}
+          deleteButtonText={'Permanently Destroy Record'}
         />
       ),
     };
