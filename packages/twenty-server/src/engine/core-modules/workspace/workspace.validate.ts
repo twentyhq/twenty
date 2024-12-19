@@ -3,7 +3,10 @@ import {
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CustomException } from 'src/utils/custom-exception';
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import {
   WorkspaceException,
@@ -35,7 +38,10 @@ const assertIsActive = (
 const isAuthEnabledOrThrow = (
   provider: WorkspaceAuthProvider,
   workspace: Workspace,
-  exceptionToThrowCustom: AuthException,
+  exceptionToThrowCustom: AuthException = new AuthException(
+    `${provider} auth is not enabled for this workspace`,
+    AuthExceptionCode.OAUTH_ACCESS_DENIED,
+  ),
 ) => {
   if (provider === 'google' && workspace.isGoogleAuthEnabled) return true;
   if (provider === 'microsoft' && workspace.isMicrosoftAuthEnabled) return true;

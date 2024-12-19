@@ -6,11 +6,11 @@ import { ImpersonateInput } from 'src/engine/core-modules/admin-panel/dtos/imper
 import { UpdateWorkspaceFeatureFlagInput } from 'src/engine/core-modules/admin-panel/dtos/update-workspace-feature-flag.input';
 import { UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.entity';
 import { UserLookupInput } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.input';
-import { Verify } from 'src/engine/core-modules/auth/dto/verify.entity';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
+import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
@@ -18,10 +18,10 @@ export class AdminPanelResolver {
   constructor(private adminService: AdminPanelService) {}
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
-  @Mutation(() => Verify)
+  @Mutation(() => AuthTokens)
   async impersonate(
     @Args() { workspaceId, userId }: ImpersonateInput,
-  ): Promise<Verify> {
+  ): Promise<AuthTokens> {
     return await this.adminService.impersonate(userId, workspaceId);
   }
 

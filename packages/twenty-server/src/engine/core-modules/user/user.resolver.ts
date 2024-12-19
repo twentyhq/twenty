@@ -46,7 +46,6 @@ import {
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
-import { CurrentUserOutput } from 'src/engine/core-modules/user/dtos/current-user-output';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -72,11 +71,11 @@ export class UserResolver {
     private readonly domainManagerService: DomainManagerService,
   ) {}
 
-  @Query(() => CurrentUserOutput)
+  @Query(() => User)
   async currentUser(
     @AuthUser() { id: userId }: User,
     @OriginHeader() origin: string,
-  ): Promise<CurrentUserOutput> {
+  ): Promise<User> {
     const workspace =
       (await this.domainManagerService.getWorkspaceByOrigin(origin)) ??
       (await this.domainManagerService.getDefaultWorkspace());
@@ -131,6 +130,7 @@ export class UserResolver {
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<WorkspaceMember | null> {
+    console.log('>>>>>>>>>>>>>> workspaceMember', workspace);
     const workspaceMember = await this.userService.loadWorkspaceMember(
       user,
       workspace,
@@ -156,6 +156,7 @@ export class UserResolver {
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<WorkspaceMember[]> {
+    console.log('>>>>>>>>>>>>>> workspaceMembers', workspace);
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(workspace);
 

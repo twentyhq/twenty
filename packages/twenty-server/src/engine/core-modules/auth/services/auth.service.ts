@@ -33,7 +33,6 @@ import {
   UserExists,
   UserNotExists,
 } from 'src/engine/core-modules/auth/dto/user-exists.entity';
-import { Verify } from 'src/engine/core-modules/auth/dto/verify.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
@@ -48,6 +47,7 @@ import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -188,7 +188,7 @@ export class AuthService {
     });
   }
 
-  async verify(email: string, workspaceId: string): Promise<Verify> {
+  async verify(email: string, workspaceId: string): Promise<AuthTokens> {
     if (!email) {
       throw new AuthException(
         'Email is required',
@@ -218,7 +218,6 @@ export class AuthService {
     );
 
     return {
-      user,
       tokens: {
         accessToken,
         refreshToken,

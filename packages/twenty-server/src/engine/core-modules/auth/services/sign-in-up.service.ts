@@ -178,7 +178,47 @@ export class SignInUpService {
       });
     }
 
-    return existingUser;
+    return await this.signIn({
+      user: existingUser,
+      targetWorkspaceSubdomain,
+      authProvider,
+    });
+  }
+
+  private async signIn({
+    user,
+    targetWorkspaceSubdomain,
+    authProvider,
+  }: {
+    user: User;
+    targetWorkspaceSubdomain?: string;
+    authProvider: SignInUpServiceInput['authProvider'];
+  }) {
+    if (targetWorkspaceSubdomain) {
+      const workspace = await this.workspaceRepository.findOne({
+        where: { subdomain: targetWorkspaceSubdomain },
+        select: ['id'],
+      });
+
+      workspaceValidator.assertIsDefinedOrThrow(
+        workspace,
+        new AuthException(
+          'Workspace not found',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        ),
+      );
+
+      if (authProvider) {
+        workspaceValidator.isAuthEnabledOrThrow(authProvider, workspace);
+      }
+
+      await this.userService.hasUserAccessToWorkspaceOrThrow(
+        user.id,
+        workspace.id,
+      );
+    }
+
+    return user;
   }
 
   async signInUpOnExistingWorkspace({
@@ -220,14 +260,7 @@ export class SignInUpService {
     );
 
     if (authProvider) {
-      workspaceValidator.isAuthEnabledOrThrow(
-        authProvider,
-        workspace,
-        new AuthException(
-          `${authProvider} auth is not enabled for this workspace`,
-          AuthExceptionCode.OAUTH_ACCESS_DENIED,
-        ),
-      );
+      workspaceValidator.isAuthEnabledOrThrow(authProvider, workspace);
     }
 
     if (isNewUser) {

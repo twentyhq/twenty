@@ -44,7 +44,6 @@ import { SignUpInput } from './dto/sign-up.input';
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { UserExistsOutput } from './dto/user-exists.entity';
 import { CheckUserExistsInput } from './dto/user-exists.input';
-import { Verify } from './dto/verify.entity';
 import { VerifyInput } from './dto/verify.input';
 import { WorkspaceInviteHashValid } from './dto/workspace-invite-hash-valid.entity';
 import { WorkspaceInviteHashValidInput } from './dto/workspace-invite-hash.input';
@@ -169,11 +168,11 @@ export class AuthResolver {
     return { transientToken };
   }
 
-  @Mutation(() => Verify)
+  @Mutation(() => AuthTokens)
   async verify(
     @Args() verifyInput: VerifyInput,
     @OriginHeader() origin: string,
-  ): Promise<Verify> {
+  ): Promise<AuthTokens> {
     const workspace =
       (await this.domainManagerService.getWorkspaceByOrigin(origin)) ??
       (await this.domainManagerService.getDefaultWorkspace());
