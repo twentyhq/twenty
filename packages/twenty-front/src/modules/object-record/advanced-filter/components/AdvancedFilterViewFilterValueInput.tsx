@@ -39,7 +39,6 @@ export const AdvancedFilterViewFilterValueInput = ({
 
   return (
     <Dropdown
-      disableBlur
       dropdownId={dropdownId}
       clickableComponent={
         <SelectControl

@@ -43,6 +43,7 @@ export const useFindManyRecordsSelectedInContextStore = ({
   const { records, loading, totalCount } = useFindManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     filter: queryFilter,
+    withSoftDeleted: true,
     orderBy: [
       {
         position: 'AscNullsFirst',

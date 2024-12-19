@@ -1,3 +1,4 @@
+import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { ContextStoreTargetedRecordsRule } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { MockedResponse } from '@apollo/client/testing';
@@ -6,13 +7,7 @@ import { MutableSnapshot } from 'recoil';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { JestContextStoreSetter } from '~/testing/jest/JestContextStoreSetter';
 
-export const getJestMetadataAndApolloMocksAndContextStoreWrapper = ({
-  apolloMocks,
-  onInitializeRecoilSnapshot,
-  contextStoreTargetedRecordsRule,
-  contextStoreCurrentObjectMetadataNameSingular,
-  componentInstanceId,
-}: {
+export type GetJestMetadataAndApolloMocksAndActionMenuWrapperProps = {
   apolloMocks:
     | readonly MockedResponse<Record<string, any>, Record<string, any>>[]
     | undefined;
@@ -20,11 +15,20 @@ export const getJestMetadataAndApolloMocksAndContextStoreWrapper = ({
   contextStoreTargetedRecordsRule?: ContextStoreTargetedRecordsRule;
   contextStoreCurrentObjectMetadataNameSingular?: string;
   componentInstanceId: string;
-}) => {
+};
+
+export const getJestMetadataAndApolloMocksAndActionMenuWrapper = ({
+  apolloMocks,
+  onInitializeRecoilSnapshot,
+  contextStoreTargetedRecordsRule,
+  contextStoreCurrentObjectMetadataNameSingular,
+  componentInstanceId,
+}: GetJestMetadataAndApolloMocksAndActionMenuWrapperProps) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks,
     onInitializeRecoilSnapshot,
   });
+
   return ({ children }: { children: ReactNode }) => (
     <Wrapper>
       <ContextStoreComponentInstanceContext.Provider
@@ -32,14 +36,20 @@ export const getJestMetadataAndApolloMocksAndContextStoreWrapper = ({
           instanceId: componentInstanceId,
         }}
       >
-        <JestContextStoreSetter
-          contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}
-          contextStoreCurrentObjectMetadataNameSingular={
-            contextStoreCurrentObjectMetadataNameSingular
-          }
+        <ActionMenuComponentInstanceContext.Provider
+          value={{
+            instanceId: componentInstanceId,
+          }}
         >
-          {children}
-        </JestContextStoreSetter>
+          <JestContextStoreSetter
+            contextStoreTargetedRecordsRule={contextStoreTargetedRecordsRule}
+            contextStoreCurrentObjectMetadataNameSingular={
+              contextStoreCurrentObjectMetadataNameSingular
+            }
+          >
+            {children}
+          </JestContextStoreSetter>
+        </ActionMenuComponentInstanceContext.Provider>
       </ContextStoreComponentInstanceContext.Provider>
     </Wrapper>
   );

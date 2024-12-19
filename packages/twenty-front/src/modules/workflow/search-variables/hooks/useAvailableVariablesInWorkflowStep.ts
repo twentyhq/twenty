@@ -82,6 +82,7 @@ export const useAvailableVariablesInWorkflowStep = ({
         id: previousStep.id,
         name: previousStep.name,
         outputSchema: filteredOutputSchema,
+        ...(previousStep.type === 'CODE' ? { icon: 'IconCode' } : {}),
       });
     }
   });

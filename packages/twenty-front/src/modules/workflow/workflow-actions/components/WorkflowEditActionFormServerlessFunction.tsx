@@ -8,6 +8,22 @@ import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { setNestedValue } from '@/workflow/utils/setNestedValue';
 
+import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
+import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
+import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
+import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
+import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
+import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
+import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
+import { InputLabel } from '@/ui/input/components/InputLabel';
+import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
+import { TabList } from '@/ui/layout/tab/components/TabList';
+import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
+import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
+import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
+import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
+import { WorkflowEditActionFormServerlessFunctionFields } from '@/workflow/workflow-actions/components/WorkflowEditActionFormServerlessFunctionFields';
+import { WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-actions/constants/WorkflowServerlessFunctionTabListComponentId';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Monaco } from '@monaco-editor/react';
@@ -15,23 +31,8 @@ import { editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { CodeEditor, IconCode, isDefined, IconPlayerPlay } from 'twenty-ui';
+import { CodeEditor, IconCode, IconPlayerPlay, isDefined } from 'twenty-ui';
 import { useDebouncedCallback } from 'use-debounce';
-import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
-import { TabList } from '@/ui/layout/tab/components/TabList';
-import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
-import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
-import { serverlessFunctionTestDataFamilyState } from '@/workflow/states/serverlessFunctionTestDataFamilyState';
-import { ServerlessFunctionExecutionResult } from '@/serverless-functions/components/ServerlessFunctionExecutionResult';
-import { INDEX_FILE_PATH } from '@/serverless-functions/constants/IndexFilePath';
-import { InputLabel } from '@/ui/input/components/InputLabel';
-import { RightDrawerFooter } from '@/ui/layout/right-drawer/components/RightDrawerFooter';
-import { CmdEnterActionButton } from '@/action-menu/components/CmdEnterActionButton';
-import { useTestServerlessFunction } from '@/serverless-functions/hooks/useTestServerlessFunction';
-import { getFunctionOutputSchema } from '@/serverless-functions/utils/getFunctionOutputSchema';
-import { getFunctionInputFromSourceCode } from '@/serverless-functions/utils/getFunctionInputFromSourceCode';
-import { mergeDefaultFunctionInputAndFunctionInput } from '@/serverless-functions/utils/mergeDefaultFunctionInputAndFunctionInput';
-import { WorkflowEditActionFormServerlessFunctionFields } from '@/workflow/workflow-actions/components/WorkflowEditActionFormServerlessFunctionFields';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -44,10 +45,14 @@ const StyledCodeEditorContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledTabList = styled(TabList)`
-  background: ${({ theme }) => theme.background.secondary};
+const StyledTabListContainer = styled.div`
+  align-items: center;
   padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
+  border-bottom: ${({ theme }) => `1px solid ${theme.border.color.light}`};
+  box-sizing: border-box;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(10)};
 `;
 
 type WorkflowEditActionFormServerlessFunctionProps = {
@@ -66,17 +71,19 @@ type ServerlessFunctionInputFormData = {
   [field: string]: string | ServerlessFunctionInputFormData;
 };
 
-const TAB_LIST_COMPONENT_ID = 'serverless-function-code-step';
-
 export const WorkflowEditActionFormServerlessFunction = ({
   action,
   actionOptions,
 }: WorkflowEditActionFormServerlessFunctionProps) => {
-  const theme = useTheme();
-  const { activeTabId, setActiveTabId } = useTabList(TAB_LIST_COMPONENT_ID);
-  const { updateOneServerlessFunction } = useUpdateOneServerlessFunction();
-  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
   const serverlessFunctionId = action.settings.input.serverlessFunctionId;
+  const theme = useTheme();
+  const { activeTabId, setActiveTabId } = useTabList(
+    WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID,
+  );
+  const { updateOneServerlessFunction, isReady } =
+    useUpdateOneServerlessFunction(serverlessFunctionId);
+  const { getUpdatableWorkflowVersion } = useGetUpdatableWorkflowVersion();
+
   const workflowId = useRecoilValue(workflowIdState);
   const workflow = useWorkflowWithCurrentVersion(workflowId);
   const { availablePackages } = useGetAvailablePackages({
@@ -112,12 +119,11 @@ export const WorkflowEditActionFormServerlessFunction = ({
 
   const handleSave = useDebouncedCallback(async () => {
     await updateOneServerlessFunction({
-      id: serverlessFunctionId,
       name: formValues.name,
       description: formValues.description,
       code: formValues.code,
     });
-  }, 1_000);
+  }, 500);
 
   const onCodeChange = async (newCode: string) => {
     if (actionOptions.readonly === true) {
@@ -161,7 +167,15 @@ export const WorkflowEditActionFormServerlessFunction = ({
         ...action,
         settings: {
           ...action.settings,
-          outputSchema: {},
+          outputSchema: {
+            link: {
+              isLeaf: true,
+              icon: 'IconVariable',
+              tab: 'test',
+              label: 'Generate Function Input',
+            },
+            _outputSchemaType: 'LINK',
+          },
           input: {
             ...action.settings.input,
             serverlessFunctionInput: newMergedInput,
@@ -169,7 +183,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
         },
       });
     },
-    1_000,
+    500,
   );
 
   const handleInputChange = async (value: any, path: string[]) => {
@@ -253,11 +267,15 @@ export const WorkflowEditActionFormServerlessFunction = ({
   return (
     !loading && (
       <StyledContainer>
-        <StyledTabList
-          tabListInstanceId={TAB_LIST_COMPONENT_ID}
-          tabs={tabs}
-          behaveAsLinks={false}
-        />
+        <StyledTabListContainer>
+          <TabList
+            tabListInstanceId={
+              WORKFLOW_SERVERLESS_FUNCTION_TAB_LIST_COMPONENT_ID
+            }
+            tabs={tabs}
+            behaveAsLinks={false}
+          />
+        </StyledTabListContainer>
         <WorkflowStepHeader
           onTitleChange={(newName: string) => {
             updateAction({ name: newName });
@@ -277,7 +295,7 @@ export const WorkflowEditActionFormServerlessFunction = ({
                 readonly={actionOptions.readonly}
               />
               <StyledCodeEditorContainer>
-                <InputLabel>Code</InputLabel>
+                <InputLabel>Code {!isReady && <span>•</span>}</InputLabel>
                 <CodeEditor
                   height={343}
                   value={formValues.code?.[INDEX_FILE_PATH]}

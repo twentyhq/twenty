@@ -27,6 +27,7 @@ export type FieldDateTimeDraftValue = string;
 export type FieldPhonesDraftValue = {
   primaryPhoneNumber: string;
   primaryPhoneCountryCode: string;
+  primaryPhoneCallingCode: string;
   additionalPhones?: PhoneRecord[] | null;
 };
 export type FieldEmailsDraftValue = {

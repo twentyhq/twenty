@@ -48,6 +48,7 @@ describe('mapObjectMetadataToGraphQLQuery', () => {
     {
       primaryPhoneNumber
       primaryPhoneCountryCode
+      primaryPhoneCallingCode
     }
     createdAt
     avatarUrl

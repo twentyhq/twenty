@@ -31,6 +31,9 @@ describe('computeSchemaComponents', () => {
               primaryPhoneCountryCode: {
                 type: 'string',
               },
+              primaryPhoneCallingCode: {
+                type: 'string',
+              },
               primaryPhoneNumber: {
                 type: 'string',
               },
@@ -216,6 +219,9 @@ describe('computeSchemaComponents', () => {
               primaryPhoneCountryCode: {
                 type: 'string',
               },
+              primaryPhoneCallingCode: {
+                type: 'string',
+              },
               primaryPhoneNumber: {
                 type: 'string',
               },
@@ -398,6 +404,9 @@ describe('computeSchemaComponents', () => {
                 },
               },
               primaryPhoneCountryCode: {
+                type: 'string',
+              },
+              primaryPhoneCallingCode: {
                 type: 'string',
               },
               primaryPhoneNumber: {

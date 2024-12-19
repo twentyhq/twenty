@@ -3,6 +3,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/components/FormFieldInput';
 import { Select, SelectOption } from '@/ui/input/components/Select';
+import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
 import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
 import { WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
@@ -17,7 +18,6 @@ import {
 import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 import { FieldMetadataType } from '~/generated/graphql';
-import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 
 type WorkflowEditActionFormCreateRecordProps = {
   action: WorkflowCreateRecordAction;
@@ -98,13 +98,6 @@ export const WorkflowEditActionFormCreateRecord = ({
 
     saveAction(newFormData);
   };
-
-  useEffect(() => {
-    setFormData({
-      objectName: action.settings.input.objectName,
-      ...action.settings.input.objectRecord,
-    });
-  }, [action.settings.input]);
 
   const saveAction = useDebouncedCallback(
     async (formData: CreateRecordFormData) => {

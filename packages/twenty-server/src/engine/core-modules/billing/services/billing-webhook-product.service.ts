@@ -50,7 +50,7 @@ export class BillingWebhookProductService {
     return hasBillingPlanKey && hasPriceUsageBased;
   }
 
-  isValidBillingPlanKey(planKey: string | undefined) {
+  isValidBillingPlanKey(planKey?: string) {
     switch (planKey) {
       case BillingPlanKey.BASE_PLAN:
         return true;
@@ -61,7 +61,7 @@ export class BillingWebhookProductService {
     }
   }
 
-  isValidPriceUsageBased(priceUsageBased: string | undefined) {
+  isValidPriceUsageBased(priceUsageBased?: string) {
     switch (priceUsageBased) {
       case BillingUsageType.METERED:
         return true;

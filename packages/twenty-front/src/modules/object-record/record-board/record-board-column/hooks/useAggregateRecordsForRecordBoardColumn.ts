@@ -79,7 +79,7 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
     skip: !isAggregateQueryEnabled,
   });
 
-  const { value, label } = computeAggregateValueAndLabel({
+  const { value, labelWithFieldName } = computeAggregateValueAndLabel({
     data,
     objectMetadataItem,
     fieldMetadataId: recordIndexKanbanAggregateOperation?.fieldMetadataId,
@@ -89,6 +89,6 @@ export const useAggregateRecordsForRecordBoardColumn = () => {
 
   return {
     aggregateValue: isAggregateQueryEnabled ? value : recordCount,
-    aggregateLabel: isDefined(value) ? label : undefined,
+    aggregateLabel: isDefined(value) ? labelWithFieldName : undefined,
   };
 };

@@ -1,0 +1,63 @@
+name: CI Demo check
+on:
+  schedule:
+    - cron: '30 7,19 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/twenty-e2e-testing
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+
+      - name: Install Playwright Browsers
+        run: yarn playwright install --with-deps
+
+      - name: Run Playwright tests
+        id: test
+        run: yarn playwright test --grep "@demo-only"
+
+      - name: Upload report after tests
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 90
+
+      - name: Send Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@0.3.2
+        with:
+          args: 'Demo check ${{ steps.test.outcome }} - check ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+
+      - name: Send email if demo is not working
+        if: steps.test.outcome == 'failure'
+        uses: dawidd6/action-send-mail@v3.12.0
+        with:
+          connection_url: ${{ secrets.MAIL_CONNECTION }}
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.MAIL_USERNAME }}
+          subject: 'Demo is not working'
+          from: 'Github CI Demo check'
+          to: ${{ secrets.RECIPIENTS }}
+          body: '<a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Link</a>'
+          priority: high

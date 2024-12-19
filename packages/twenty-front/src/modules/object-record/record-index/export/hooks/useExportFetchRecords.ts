@@ -1,15 +1,11 @@
-import { useEffect, useState } from 'react';
-
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { isDefined } from '~/utils/isDefined';
 
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
@@ -18,6 +14,7 @@ import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { ViewType } from '@/views/types/ViewType';
+import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
 
 export const sleep = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -39,12 +36,6 @@ export type UseRecordDataOptions = {
   viewType?: ViewType;
 };
 
-type ExportProgress = {
-  exportedRecordCount?: number;
-  totalRecordCount?: number;
-  displayType: 'percentage' | 'number';
-};
-
 export const useExportFetchRecords = ({
   objectMetadataItem,
   delayMs,
@@ -54,14 +45,6 @@ export const useExportFetchRecords = ({
   callback,
   viewType = ViewType.Table,
 }: UseRecordDataOptions) => {
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [inflight, setInflight] = useState(false);
-  const [pageCount, setPageCount] = useState(0);
-  const [progress, setProgress] = useState<ExportProgress>({
-    displayType: 'number',
-  });
-  const [previousRecordCount, setPreviousRecordCount] = useState(0);
-
   const { hiddenBoardFields } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordBoardId: recordIndexId,
@@ -103,92 +86,31 @@ export const useExportFetchRecords = ({
     recordIndexId,
   );
 
-  const { findManyRecords, totalCount, records, fetchMoreRecords, loading } =
-    useLazyFindManyRecords({
-      ...findManyRecordsParams,
-      filter: queryFilter,
-      limit: pageSize,
-    });
+  const finalColumns = [
+    ...columns,
+    ...(hiddenKanbanFieldColumn && viewType === ViewType.Kanban
+      ? [hiddenKanbanFieldColumn]
+      : []),
+  ];
 
-  useEffect(() => {
-    const fetchNextPage = async () => {
-      setInflight(true);
-      setPreviousRecordCount(records.length);
-
-      await fetchMoreRecords();
-
-      setPageCount((state) => state + 1);
-      setProgress({
-        exportedRecordCount: records.length,
-        totalRecordCount: totalCount,
-        displayType: totalCount ? 'percentage' : 'number',
-      });
-      await sleep(delayMs);
-      setInflight(false);
-    };
-
-    if (!isDownloading || inflight || loading) {
-      return;
-    }
-
-    if (
-      pageCount >= maximumRequests ||
-      (isDefined(totalCount) && records.length >= totalCount)
-    ) {
-      setPageCount(0);
-
-      const complete = () => {
-        setPageCount(0);
-        setPreviousRecordCount(0);
-        setIsDownloading(false);
-        setProgress({
-          displayType: 'number',
-        });
-      };
-
-      const finalColumns = [
-        ...columns,
-        ...(hiddenKanbanFieldColumn && viewType === ViewType.Kanban
-          ? [hiddenKanbanFieldColumn]
-          : []),
-      ];
-
-      const res = callback(records, finalColumns);
-
-      if (res instanceof Promise) {
-        res.then(complete);
-      } else {
-        complete();
-      }
-    } else {
-      fetchNextPage();
-    }
-  }, [
+  const { progress, isDownloading, fetchAllRecords } = useLazyFetchAllRecords({
+    ...findManyRecordsParams,
+    filter: queryFilter,
+    limit: pageSize,
     delayMs,
-    fetchMoreRecords,
-    inflight,
-    isDownloading,
-    pageCount,
-    records,
-    totalCount,
-    columns,
     maximumRequests,
-    pageSize,
-    loading,
-    callback,
-    previousRecordCount,
-    hiddenKanbanFieldColumn,
-    viewType,
-  ]);
+  });
+
+  const getTableData = async () => {
+    const result = await fetchAllRecords();
+    if (result.length > 0) {
+      callback(result, finalColumns);
+    }
+  };
 
   return {
     progress,
     isDownloading,
-    getTableData: () => {
-      setPageCount(0);
-      setPreviousRecordCount(0);
-      setIsDownloading(true);
-      findManyRecords?.();
-    },
+    getTableData: getTableData,
   };
 };

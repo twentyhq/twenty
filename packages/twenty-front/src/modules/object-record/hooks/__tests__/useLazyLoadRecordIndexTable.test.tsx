@@ -178,6 +178,7 @@ const mocks: MockedResponse[] = [
                         phones {
                           primaryPhoneNumber
                           primaryPhoneCountryCode
+                          primaryPhoneCallingCode
                           additionalPhones
                         }
                         position
@@ -185,6 +186,7 @@ const mocks: MockedResponse[] = [
                         whatsapp {
                           primaryPhoneNumber
                           primaryPhoneCountryCode
+                          primaryPhoneCallingCode
                           additionalPhones
                         }
                         workPreference
@@ -332,6 +334,7 @@ const mocks: MockedResponse[] = [
                         phones {
                           primaryPhoneNumber
                           primaryPhoneCountryCode
+                          primaryPhoneCallingCode
                           additionalPhones
                         }
                         position
@@ -339,6 +342,7 @@ const mocks: MockedResponse[] = [
                         whatsapp {
                           primaryPhoneNumber
                           primaryPhoneCountryCode
+                          primaryPhoneCallingCode
                           additionalPhones
                         }
                         workPreference

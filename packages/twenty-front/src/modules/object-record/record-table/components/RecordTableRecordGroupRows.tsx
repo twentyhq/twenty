@@ -56,9 +56,9 @@ export const RecordTableRecordGroupRows = () => {
           />
         );
       })}
-      <RecordTableRecordGroupSectionLoadMore />
       <RecordTablePendingRecordGroupRow />
       <RecordTableRecordGroupSectionAddNew />
+      <RecordTableRecordGroupSectionLoadMore />
     </>
   );
 };

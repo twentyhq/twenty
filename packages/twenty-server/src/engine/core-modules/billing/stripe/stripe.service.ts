@@ -114,10 +114,7 @@ export class StripeService {
       success_url: successUrl,
       cancel_url: cancelUrl,
     });
-  } // I prefered to not create a customer with metadat before the checkout, because it would break the tax calculation
-  // Indeed when the checkout session is created, the customer is created and the tax calculation is done
-  // If we create a customer before the checkout session, the tax calculation is not done and the checkout session will fail
-  // I think that it's not risk worth to create a customer before the checkout session, it would only complicate the code for no signigicant gain
+  }
 
   async collectLastInvoice(stripeSubscriptionId: string) {
     const subscription = await this.stripe.subscriptions.retrieve(
@@ -146,7 +143,10 @@ export class StripeService {
       stripeSubscriptionItem.stripeSubscriptionItemId,
       {
         price: stripePriceId,
-        quantity: stripeSubscriptionItem.quantity,
+        quantity:
+          stripeSubscriptionItem.quantity === null
+            ? undefined
+            : stripeSubscriptionItem.quantity,
       },
     );
   }
@@ -162,6 +162,10 @@ export class StripeService {
 
   async getCustomer(stripeCustomerId: string) {
     return await this.stripe.customers.retrieve(stripeCustomerId);
+  }
+
+  async getMeter(stripeMeterId: string) {
+    return await this.stripe.billing.meters.retrieve(stripeMeterId);
   }
 
   formatProductPrices(prices: Stripe.Price[]): ProductPriceEntity[] {
@@ -189,5 +193,17 @@ export class StripeService {
     );
 
     return productPrices.sort((a, b) => a.unitAmount - b.unitAmount);
+  }
+
+  async getStripeCustomerIdFromWorkspaceId(workspaceId: string) {
+    const subscription = await this.stripe.subscriptions.search({
+      query: `metadata['workspaceId']:'${workspaceId}'`,
+      limit: 1,
+    });
+    const stripeCustomerId = subscription.data[0].customer
+      ? String(subscription.data[0].customer)
+      : undefined;
+
+    return stripeCustomerId;
   }
 }

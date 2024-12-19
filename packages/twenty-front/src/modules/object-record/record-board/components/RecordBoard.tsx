@@ -46,7 +46,6 @@ const StyledColumnContainer = styled.div`
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
 `;
 
 const StyledBoardContentContainer = styled.div`
@@ -194,7 +193,10 @@ export const RecordBoard = () => {
       <RecordBoardComponentInstanceContext.Provider
         value={{ instanceId: recordBoardId }}
       >
-        <ScrollWrapper contextProviderName="recordBoard">
+        <ScrollWrapper
+          contextProviderName="recordBoard"
+          componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
+        >
           <RecordBoardStickyHeaderEffect />
           <StyledContainerContainer>
             <RecordBoardHeader />
