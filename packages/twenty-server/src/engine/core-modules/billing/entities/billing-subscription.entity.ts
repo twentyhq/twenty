@@ -82,6 +82,7 @@ export class BillingSubscription {
     {
       nullable: false,
       onDelete: 'CASCADE',
+      createForeignKeyConstraints: false,
     },
   )
   @JoinColumn({

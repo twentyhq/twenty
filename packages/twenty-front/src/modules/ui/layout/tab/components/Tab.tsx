@@ -1,10 +1,10 @@
+import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { ReactElement } from 'react';
 import { Link } from 'react-router-dom';
-import { IconComponent, Pill } from 'twenty-ui';
-import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
+import { Avatar, IconComponent, Pill } from 'twenty-ui';
 
 type TabProps = {
   id: string;
@@ -54,7 +54,7 @@ const StyledHover = styled.span`
   padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-
+  width: 100%;
   &:hover {
     background: ${({ theme }) => theme.background.tertiary};
     border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -63,9 +63,9 @@ const StyledHover = styled.span`
     background: ${({ theme }) => theme.background.quaternary};
   }
 `;
-const StyledLogo = styled.img`
-  height: 14px;
-  width: 14px;
+
+const StyledIconContainer = styled.div`
+  flex-shrink: 0;
 `;
 
 export const Tab = ({
@@ -81,6 +81,10 @@ export const Tab = ({
   logo,
 }: TabProps) => {
   const theme = useTheme();
+  const iconColor = active
+    ? theme.font.color.primary
+    : theme.font.color.secondary;
+
   return (
     <StyledTab
       onClick={onClick}
@@ -92,8 +96,24 @@ export const Tab = ({
       to={to}
     >
       <StyledHover>
-        {logo && <StyledLogo src={logo} alt={`${title} logo`} />}
-        {Icon && <Icon size={theme.icon.size.md} />}
+        <StyledIconContainer>
+          {logo && (
+            <Avatar
+              avatarUrl={logo}
+              size="md"
+              placeholder={title}
+              iconColor={iconColor}
+            />
+          )}
+          {Icon && (
+            <Avatar
+              Icon={Icon}
+              size="md"
+              placeholder={title}
+              iconColor={iconColor}
+            />
+          )}
+        </StyledIconContainer>
         <EllipsisDisplay>{title}</EllipsisDisplay>
         {pill && typeof pill === 'string' ? <Pill label={pill} /> : pill}
       </StyledHover>
