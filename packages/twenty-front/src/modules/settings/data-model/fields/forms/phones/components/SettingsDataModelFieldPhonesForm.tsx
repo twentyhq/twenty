@@ -37,13 +37,15 @@ export const SettingsDataModelFieldPhonesForm = ({
 }: SettingsDataModelFieldPhonesFormProps) => {
   const { control } = useFormContext<SettingsDataModelFieldTextFormValues>();
 
-  const countries = useCountries()
-    .sort((a, b) => a.countryName.localeCompare(b.countryName))
-    .map((country) => ({
-      label: `${country.countryName} (+${country.callingCode})`,
-      value: country.countryCode as CountryCodeOrEmpty,
-    }));
-  countries.unshift({ label: 'No country', value: '' });
+  const countries = [
+    { label: 'No country', value: '' },
+    ...useCountries()
+      .sort((a, b) => a.countryName.localeCompare(b.countryName))
+      .map((country) => ({
+        label: `${country.countryName} (+${country.callingCode})`,
+        value: country.countryCode as CountryCodeOrEmpty,
+      })),
+  ];
   const defaultDefaultValue = {
     primaryPhoneNumber: "''",
     primaryPhoneCountryCode: "''",
@@ -79,9 +81,7 @@ export const SettingsDataModelFieldPhonesForm = ({
                   primaryPhoneCountryCode:
                     applySimpleQuotesToString(newPhoneCountryCode),
                   primaryPhoneCallingCode: applySimpleQuotesToString(
-                    countryCodeToCallingCode(
-                      newPhoneCountryCode as CountryCode,
-                    ),
+                    countryCodeToCallingCode(newPhoneCountryCode),
                   ),
                 })
               }

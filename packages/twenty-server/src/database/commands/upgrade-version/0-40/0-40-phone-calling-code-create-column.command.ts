@@ -57,18 +57,7 @@ export class PhoneCallingCodeCreateColumnCommand extends ActiveWorkspacesCommand
       'Running command to add calling code and change country code with default one',
     );
 
-    // Prerequisite : the field callingcode was creted in the codebase (PHONES type modification)
-    // Note : SyncMetadata will fail since composite field modification is not handled
-
-    // Migration to be applied, in this order :
-    // ---------------------------------Workspace-------------------------------------------------------------
-    // 1 - Add the calling code field in all the workspaces tables having the PHONES type
-    //      the column name should be `${nameSingular}PrimaryPhoneCallingCode`
-
     this.logger.log(`Part 1 - Workspace`);
-
-    // ------------------------------------------------------------------------------------------------------------------
-    // ------------------------------------------------------------------------------------------------------------------
     let workspaceIterator = 1;
 
     for (const workspaceId of workspaceIds) {
@@ -86,24 +75,18 @@ export class PhoneCallingCodeCreateColumnCommand extends ActiveWorkspacesCommand
             workspaceId,
             type: FieldMetadataType.PHONES,
           },
+          relations: ['object'],
         });
 
         for (const phoneFieldMetadata of phonesFieldMetadata) {
           if (
-            isDefined(phoneFieldMetadata) &&
-            isDefined(phoneFieldMetadata.name)
+            isDefined(phoneFieldMetadata?.name && phoneFieldMetadata.object)
           ) {
-            const [objectMetadata] = await this.objectMetadataRepository.find({
-              where: {
-                id: phoneFieldMetadata?.objectMetadataId,
-              },
-            });
-
             this.logger.log(
-              `P1 Step 1 - Let's find the "nameSingular" of this objectMetadata: ${objectMetadata.nameSingular || 'not found'}`,
+              `P1 Step 1 - Let's find the "nameSingular" of this objectMetadata: ${phoneFieldMetadata.object.nameSingular || 'not found'}`,
             );
 
-            if (!objectMetadata || !objectMetadata.nameSingular) continue;
+            if (!phoneFieldMetadata.object?.nameSingular) continue;
 
             this.logger.log(
               `P1 Step 1 - Create migration for field ${phoneFieldMetadata.name}`,
@@ -111,12 +94,12 @@ export class PhoneCallingCodeCreateColumnCommand extends ActiveWorkspacesCommand
 
             await this.workspaceMigrationService.createCustomMigration(
               generateMigrationName(
-                `create-${objectMetadata.nameSingular}PrimaryPhoneCallingCode-for-field-${phoneFieldMetadata.name}`,
+                `create-${phoneFieldMetadata.object.nameSingular}PrimaryPhoneCallingCode-for-field-${phoneFieldMetadata.name}`,
               ),
               workspaceId,
               [
                 {
-                  name: computeObjectTargetTable(objectMetadata),
+                  name: computeObjectTargetTable(phoneFieldMetadata.object),
                   action: WorkspaceMigrationTableActionType.ALTER,
                   columns: this.workspaceMigrationFactory.createColumnActions(
                     WorkspaceMigrationColumnActionType.CREATE,
@@ -125,11 +108,11 @@ export class PhoneCallingCodeCreateColumnCommand extends ActiveWorkspacesCommand
                       type: FieldMetadataType.TEXT,
                       name: `${phoneFieldMetadata.name}PrimaryPhoneCallingCode`,
                       label: `${phoneFieldMetadata.name}PrimaryPhoneCallingCode`,
-                      objectMetadataId: objectMetadata.id,
+                      objectMetadataId: phoneFieldMetadata.object.id,
                       workspaceId: workspaceId,
                       isNullable: true,
                       defaultValue: "''",
-                    },
+                    } satisfies Partial<FieldMetadataEntity>,
                   ),
                 } satisfies WorkspaceMigrationTableAction,
               ],
@@ -148,7 +131,7 @@ export class PhoneCallingCodeCreateColumnCommand extends ActiveWorkspacesCommand
           workspaceId,
         );
       } catch (error) {
-        throw new Error(`Error in workspace ${workspaceId} : ${error}`);
+        console.log(`Error in workspace ${workspaceId} : ${error}`);
       }
       workspaceIterator++;
     }

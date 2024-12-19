@@ -15,10 +15,12 @@ const isStrCountryCodeGuard = (str: string): str is CountryCode => {
 };
 
 export const countryCodeToCallingCode = (countryCode: string): string => {
-  if (!countryCode) return `+${DEFAULT_PHONE_CALLING_CODE}`;
-  if (!isStrCountryCodeGuard(countryCode))
+  if (!countryCode || !isStrCountryCodeGuard(countryCode)) {
     return `+${DEFAULT_PHONE_CALLING_CODE}`;
+  }
+
   const callingCode = getCountryCallingCode(countryCode);
+
   return callingCode ? `+${callingCode}` : `+${DEFAULT_PHONE_CALLING_CODE}`;
 };
 

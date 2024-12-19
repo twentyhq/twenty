@@ -59,10 +59,9 @@ export const PhonesFieldInput = ({
 
   const phones = createPhonesFromFieldValue(fieldValue);
 
-  const defaultCountry =
-    stripSimpleQuotesFromString(
-      fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
-    ) ?? DEFAULT_PHONE_CALLING_CODE;
+  const defaultCountry = stripSimpleQuotesFromString(
+    fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
+  );
 
   const handlePersistPhones = (
     updatedPhones: {
