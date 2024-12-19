@@ -45,6 +45,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
           __typename: 'Person',
           createdAt: '2024-08-02T09:52:46.814Z',
           city: 'ASd',
+          deletedAt: null,
           phones: {
             primaryPhoneNumber: '781234562',
             primaryPhoneCountryCode: 'FR',
