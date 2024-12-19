@@ -30,15 +30,9 @@ export class AddConstraintsOnBillingTables1734450749954
     await queryRunner.query(
       `ALTER TABLE "core"."billingEntitlement" ADD CONSTRAINT "FK_766a1918aa3dbe0d67d3df62356" FOREIGN KEY ("stripeCustomerId") REFERENCES "core"."billingCustomer"("stripeCustomerId") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscription" ADD CONSTRAINT "FK_9120b7586c3471463480b58d20a" FOREIGN KEY ("stripeCustomerId") REFERENCES "core"."billingCustomer"("stripeCustomerId") ON DELETE CASCADE ON UPDATE NO ACTION`,
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."billingSubscription" DROP CONSTRAINT "FK_9120b7586c3471463480b58d20a"`,
-    );
     await queryRunner.query(
       `ALTER TABLE "core"."billingEntitlement" DROP CONSTRAINT "FK_766a1918aa3dbe0d67d3df62356"`,
     );
