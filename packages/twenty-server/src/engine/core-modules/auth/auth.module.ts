@@ -39,6 +39,7 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { CompanyEnrichmentModule } from 'src/engine/core-modules/company-enrichment/company-enrichment.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
@@ -79,6 +80,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     WorkspaceSSOModule,
     FeatureFlagModule,
     WorkspaceInvitationModule,
+    CompanyEnrichmentModule,
   ],
   controllers: [
     GoogleAuthController,
