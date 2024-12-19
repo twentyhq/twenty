@@ -1,9 +1,12 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { freePassState } from '@/billing/states/freePassState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
+import { useLocation } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
@@ -13,6 +16,24 @@ export const usePageChangeEffectNavigateLocation = () => {
   const onboardingStatus = useOnboardingStatus();
   const subscriptionStatus = useSubscriptionStatus();
   const { defaultHomePagePath } = useDefaultHomePagePath();
+
+  const { search } = useLocation();
+
+  const [freePass, setFreePass] = useRecoilState(freePassState);
+
+  const hasFreePassParameter =
+    search.includes('freepass') ||
+    search.includes('freePass') ||
+    search.includes('free-pass') ||
+    search.includes('Free-pass') ||
+    search.includes('FreePass');
+
+  console.log('hasFreePassParameter', hasFreePassParameter);
+
+  if (hasFreePassParameter) {
+    console.log('setting free pass to true');
+    setFreePass(true);
+  }
 
   const isMatchingOpenRoute =
     isMatchingLocation(AppPath.Invite) ||
@@ -44,7 +65,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     onboardingStatus === OnboardingStatus.PlanRequired &&
     !isMatchingLocation(AppPath.PlanRequired)
   ) {
-    return AppPath.PlanRequired;
+    return freePass ? AppPath.FreePassCheckout : AppPath.PlanRequired;
   }
 
   if (

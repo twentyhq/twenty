@@ -127,6 +127,7 @@ export const ChooseYourPlan = () => {
       variables: {
         recurringInterval: planSelected,
         successUrlPath: AppPath.PlanRequiredSuccess,
+        requirePaymentMethod: true,
       },
     });
     setIsSubmitting(false);
