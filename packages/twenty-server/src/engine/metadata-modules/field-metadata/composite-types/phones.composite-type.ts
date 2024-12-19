@@ -19,6 +19,12 @@ export const phonesCompositeType: CompositeType = {
       isRequired: false,
     },
     {
+      name: 'primaryPhoneCallingCode',
+      type: FieldMetadataType.TEXT,
+      hidden: false,
+      isRequired: false,
+    },
+    {
       name: 'additionalPhones',
       type: FieldMetadataType.RAW_JSON,
       hidden: false,
@@ -30,5 +36,6 @@ export const phonesCompositeType: CompositeType = {
 export type PhonesMetadata = {
   primaryPhoneNumber: string;
   primaryPhoneCountryCode: string;
+  primaryPhoneCallingCode: string;
   additionalPhones: object | null;
 };

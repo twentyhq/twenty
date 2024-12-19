@@ -2,6 +2,7 @@ import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/acti
 import { useCreateFavorite } from '@/favorites/hooks/useCreateFavorite';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { isNull } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 import { isDefined } from 'twenty-ui';
 
@@ -23,7 +24,8 @@ export const useAddToFavoritesSingleRecordAction: SingleRecordActionHookWithObje
       isDefined(objectMetadataItem) &&
       isDefined(selectedRecord) &&
       !objectMetadataItem.isRemote &&
-      !isFavorite;
+      !isFavorite &&
+      isNull(selectedRecord.deletedAt);
 
     const onClick = () => {
       if (!shouldBeRegistered) {

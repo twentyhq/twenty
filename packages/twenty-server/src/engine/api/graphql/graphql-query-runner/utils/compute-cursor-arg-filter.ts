@@ -13,6 +13,42 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { FieldMetadataMap } from 'src/engine/metadata-modules/types/field-metadata-map';
 
+const computeOperator = (
+  isAscending: boolean,
+  isForwardPagination: boolean,
+  defaultOperator?: string,
+): string => {
+  if (defaultOperator) return defaultOperator;
+
+  return isAscending
+    ? isForwardPagination
+      ? 'gt'
+      : 'lt'
+    : isForwardPagination
+      ? 'lt'
+      : 'gt';
+};
+
+const validateAndGetOrderBy = (
+  key: string,
+  orderBy: ObjectRecordOrderBy,
+): Record<string, any> => {
+  const keyOrderBy = orderBy.find((order) => key in order);
+
+  if (!keyOrderBy) {
+    throw new GraphqlQueryRunnerException(
+      'Invalid cursor',
+      GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
+    );
+  }
+
+  return keyOrderBy;
+};
+
+const isAscendingOrder = (direction: OrderByDirection): boolean =>
+  direction === OrderByDirection.AscNullsFirst ||
+  direction === OrderByDirection.AscNullsLast;
+
 export const computeCursorArgFilter = (
   cursor: Record<string, any>,
   orderBy: ObjectRecordOrderBy,
@@ -40,35 +76,22 @@ export const computeCursorArgFilter = (
           cursorKeys[subConditionIndex],
           cursorValues[subConditionIndex],
           fieldMetadataMapByName,
+          orderBy,
+          isForwardPagination,
           'eq',
         ),
       };
     }
 
-    const keyOrderBy = orderBy.find((order) => key in order);
-
-    if (!keyOrderBy) {
-      throw new GraphqlQueryRunnerException(
-        'Invalid cursor',
-        GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
-      );
-    }
-
-    const isAscending =
-      keyOrderBy[key] === OrderByDirection.AscNullsFirst ||
-      keyOrderBy[key] === OrderByDirection.AscNullsLast;
-
-    const operator = isAscending
-      ? isForwardPagination
-        ? 'gt'
-        : 'lt'
-      : isForwardPagination
-        ? 'lt'
-        : 'gt';
-
     return {
       ...whereCondition,
-      ...buildWhereCondition(key, value, fieldMetadataMapByName, operator),
+      ...buildWhereCondition(
+        key,
+        value,
+        fieldMetadataMapByName,
+        orderBy,
+        isForwardPagination,
+      ),
     } as ObjectRecordFilter;
   });
 };
@@ -77,7 +100,9 @@ const buildWhereCondition = (
   key: string,
   value: any,
   fieldMetadataMapByName: FieldMetadataMap,
-  operator: string,
+  orderBy: ObjectRecordOrderBy,
+  isForwardPagination: boolean,
+  operator?: string,
 ): Record<string, any> => {
   const fieldMetadata = fieldMetadataMapByName[key];
 
@@ -93,18 +118,30 @@ const buildWhereCondition = (
       key,
       value,
       fieldMetadata.type,
+      orderBy,
+      isForwardPagination,
       operator,
     );
   }
 
-  return { [key]: { [operator]: value } };
+  const keyOrderBy = validateAndGetOrderBy(key, orderBy);
+  const isAscending = isAscendingOrder(keyOrderBy[key]);
+  const computedOperator = computeOperator(
+    isAscending,
+    isForwardPagination,
+    operator,
+  );
+
+  return { [key]: { [computedOperator]: value } };
 };
 
 const buildCompositeWhereCondition = (
   key: string,
   value: any,
   fieldType: FieldMetadataType,
-  operator: string,
+  orderBy: ObjectRecordOrderBy,
+  isForwardPagination: boolean,
+  operator?: string,
 ): Record<string, any> => {
   const compositeType = compositeTypeDefinitions.get(fieldType);
 
@@ -115,18 +152,30 @@ const buildCompositeWhereCondition = (
     );
   }
 
+  const keyOrderBy = validateAndGetOrderBy(key, orderBy);
   const result: Record<string, any> = {};
 
   compositeType.properties.forEach((property) => {
     if (
-      property.type !== FieldMetadataType.RAW_JSON &&
-      value[property.name] !== undefined
+      property.type === FieldMetadataType.RAW_JSON ||
+      value[property.name] === undefined
     ) {
-      result[key] = {
-        ...result[key],
-        [property.name]: { [operator]: value[property.name] },
-      };
+      return;
     }
+
+    const isAscending = isAscendingOrder(keyOrderBy[key][property.name]);
+    const computedOperator = computeOperator(
+      isAscending,
+      isForwardPagination,
+      operator,
+    );
+
+    result[key] = {
+      ...result[key],
+      [property.name]: {
+        [computedOperator]: value[property.name],
+      },
+    };
   });
 
   return result;

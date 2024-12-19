@@ -88,6 +88,7 @@ const mocks = [
                         phones {
                           primaryPhoneNumber
                           primaryPhoneCountryCode
+                          primaryPhoneCallingCode
                           additionalPhones
                         }
                         position
@@ -95,6 +96,7 @@ const mocks = [
                         whatsapp {
                           primaryPhoneNumber
                           primaryPhoneCountryCode
+                          primaryPhoneCallingCode
                           additionalPhones
                         }
                         workPreference
@@ -246,6 +248,7 @@ const mocks = [
                   phones {
                     primaryPhoneNumber
                     primaryPhoneCountryCode
+                    primaryPhoneCallingCode
                     additionalPhones
                   }
                   position
@@ -253,6 +256,7 @@ const mocks = [
                   whatsapp {
                     primaryPhoneNumber
                     primaryPhoneCountryCode
+                    primaryPhoneCallingCode
                     additionalPhones
                   }
                   workPreference
