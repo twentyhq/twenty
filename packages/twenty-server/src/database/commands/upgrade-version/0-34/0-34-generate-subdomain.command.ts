@@ -27,6 +27,7 @@ export class GenerateDefaultSubdomainCommand extends ActiveWorkspacesCommandRunn
   private generatePayloadForQuery({
     id,
     subdomain,
+    // @ts-expect-error - this property doesn't exist anymore
     domainName,
     displayName,
   }: Workspace) {
