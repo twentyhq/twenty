@@ -34,6 +34,7 @@ import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { CompanyEnrichmentService } from 'src/engine/core-modules/company-enrichment/company-enrichment.service';
 
 export type SignInUpServiceInput = {
   email: string;
@@ -64,6 +65,7 @@ export class SignInUpService {
     private readonly environmentService: EnvironmentService,
     private readonly domainManagerService: DomainManagerService,
     private readonly userService: UserService,
+    private readonly companyEnrichmentService: CompanyEnrichmentService,
   ) {}
 
   async signInUp({
@@ -333,11 +335,15 @@ export class SignInUpService {
       }
     }
 
+    const logoUrl =
+      await this.companyEnrichmentService.getCompanyLogoUrl(email);
+
     const workspaceToCreate = this.workspaceRepository.create({
       subdomain: await this.domainManagerService.generateSubdomain(),
       displayName: '',
       domainName: '',
       inviteHash: v4(),
+      logo: logoUrl,
       activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
     });
 
