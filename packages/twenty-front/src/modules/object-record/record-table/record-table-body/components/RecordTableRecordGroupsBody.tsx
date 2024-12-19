@@ -7,7 +7,6 @@ import { RecordTableBodyDroppable } from '@/object-record/record-table/record-ta
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTableBodyRecordGroupDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupDragDropContextProvider';
 import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
-import { RecordTableRecordGroupEmptyRow } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupEmptyRow';
 import { RecordTableRecordGroupSection } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSection';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -43,7 +42,6 @@ export const RecordTableRecordGroupsBody = () => {
           >
             <RecordGroupContext.Provider value={{ recordGroupId }}>
               <RecordTableBodyDroppable recordGroupId={recordGroupId}>
-                {index > 0 && <RecordTableRecordGroupEmptyRow />}
                 <RecordTableRecordGroupSection />
                 <RecordTableRecordGroupRows />
               </RecordTableBodyDroppable>
