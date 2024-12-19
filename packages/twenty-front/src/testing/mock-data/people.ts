@@ -22,6 +22,7 @@ export const mockedEmptyPersonData = {
   xUrl: null,
   _activityCount: null,
   company: null,
+  deletedAt: null,
   __typename: 'Person',
 };
 
@@ -43,9 +44,9 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzAsICJkYTNjMmM0Yi1kYTAxLTRiODEtOTczNC0yMjYwNjllYjRjZDAiXQ==',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:52:46.814Z',
           city: 'ASd',
-          deletedAt: null,
           phones: {
             primaryPhoneNumber: '781234562',
             primaryPhoneCountryCode: 'FR',
@@ -175,6 +176,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzEsICIyMDIwMjAyMC0xYzBlLTQ5NGMtYTFiNi04NWIxYzZmZWZhYTUiXQ==',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-01T09:50:00.000Z',
           city: 'Seattle',
           phones: {
@@ -306,6 +308,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzIsICIyMDIwMjAyMC1hYzczLTQ3OTctODI0ZS04N2ExZjVhZWE5ZTAiXQ==',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:48:36.193Z',
           city: 'Los Angeles',
           phones: {
@@ -406,6 +409,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzMsICIyMDIwMjAyMC1mNTE3LTQyZmQtODBhZS0xNDE3M2IzYjcwYWUiXQ==',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
@@ -506,6 +510,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzQsICIyMDIwMjAyMC1lZWUxLTQ2OTAtYWQyYy04NjE5ZTViNTZhMmUiXQ==',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:48:36.193Z',
           city: 'Los Angeles',
           phones: {
@@ -606,6 +611,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzUsICIyMDIwMjAyMC02Nzg0LTQ0NDktYWZkZi1kYzYyY2I4NzAyZjIiXQ==',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
@@ -706,6 +712,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzYsICIyMDIwMjAyMC00OTBmLTQ0NjYtODM5MS03MzNjZmQ2NmEwYzgiXQ==',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:48:36.193Z',
           city: 'New York',
           phones: {
@@ -806,6 +813,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzcsICIyMDIwMjAyMC04MGYxLTRkZmYtYjU3MC1hNzQ5NDI1MjhkZTMiXQ==',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
@@ -906,6 +914,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzgsICIyMDIwMjAyMC0zMzhiLTQ2ZGYtODgxMS1mYTA4YzdkMTlkMzUiXQ==',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:48:36.193Z',
           city: 'New York',
           phones: {
@@ -1006,6 +1015,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzksICIyMDIwMjAyMC02NGFkLTRiMGUtYmJmZC1lOWZkNzk1YjcwMTYiXQ==',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:48:36.193Z',
           city: 'San Francisco',
           phones: {
@@ -1106,6 +1116,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzEwLCAiMjAyMDIwMjAtNWQ1NC00MWI3LWJhMzYtZjBkMjBlMTQxN2FlIl0=',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:48:36.193Z',
           city: 'New York',
           phones: {
@@ -1206,6 +1217,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzExLCAiMjAyMDIwMjAtNjIzZC00MWZlLTkyZTctZGQ0NWI3YzU2OGUxIl0=',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:48:36.193Z',
           city: 'Los Angeles',
           phones: {
@@ -1306,6 +1318,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzEyLCAiMjAyMDIwMjAtMmQ0MC00ZTQ5LThkZjQtOWM2YTA0OTE5MGVmIl0=',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
@@ -1406,6 +1419,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzEzLCAiMjAyMDIwMjAtMmQ0MC00ZTQ5LThkZjQtOWM2YTA0OTE5MGRmIl0=',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
@@ -1506,6 +1520,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzE0LCAiMjAyMDIwMjAtMmQ0MC00ZTQ5LThkZjQtOWM2YTA0OTE5MWRlIl0=',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
@@ -1606,6 +1621,7 @@ export const peopleQueryResult: { people: RecordGqlConnection } = {
         cursor: 'WzE1LCAiMjAyMDIwMjAtMmQ0MC00ZTQ5LThkZjQtOWM2YTA0OTE5MWRmIl0=',
         node: {
           __typename: 'Person',
+          deletedAt: null,
           createdAt: '2024-08-02T09:48:36.193Z',
           city: 'Seattle',
           phones: {
