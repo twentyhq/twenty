@@ -9,6 +9,7 @@ import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/s
 import { RecordGroupDefinitionType } from '@/object-record/record-group/types/RecordGroupDefinition';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { RecordTableTd } from '@/object-record/record-table/record-table-cell/components/RecordTableTd';
+import { RecordTableRecordGroupStickyEffect } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupStickyEffect';
 import { isRecordGroupTableSectionToggledComponentState } from '@/object-record/record-table/record-table-section/states/isRecordGroupTableSectionToggledComponentState';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyStateV2';
@@ -107,6 +108,7 @@ export const RecordTableRecordGroupSection = () => {
           weight="medium"
         />
         <StyledTotalRow>{recordIdsByGroup.length}</StyledTotalRow>
+        <RecordTableRecordGroupStickyEffect />
       </StyledRecordGroupSection>
       <StyledEmptyTd colSpan={visibleColumns.length - 1} />
       <StyledEmptyTd />

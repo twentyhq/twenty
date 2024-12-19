@@ -25,8 +25,11 @@ describe('utils.handleQueryParams', () => {
       },
       phones: {
         primaryPhoneNumber: '322110011',
-        primaryPhoneCountryCode: '+33',
-        additionalPhones: ["{ phoneNumber: '322110012', countryCode: '+33' }"],
+        primaryPhoneCountryCode: 'FR',
+        primaryPhoneCallingCode: '+33',
+        additionalPhones: [
+          "{ phoneNumber: '322110012', countryCode: 'FR', callingCode: '+33' }",
+        ],
       },
       xUrl__url: '/x_url',
       xUrl__label: 'Test xUrl',
@@ -42,7 +45,7 @@ describe('utils.handleQueryParams', () => {
       'linkedinUrl: {url: "/linkedin_url", label: "Test linkedinUrl"}, ' +
       'whatsapp: {primaryLinkUrl: "/whatsapp_url", primaryLinkLabel: "Whatsapp Link", secondaryLinks: [{url: \'/secondary_whatsapp_url\',label: \'Secondary Whatsapp Link\'}]}, ' +
       'emails: {primaryEmail: "primary@email.com", additionalEmails: ["secondary@email.com"]}, ' +
-      'phones: {primaryPhoneNumber: "322110011", primaryPhoneCountryCode: "+33", additionalPhones: [{ phoneNumber: \'322110012\', countryCode: \'+33\' }]}, ' +
+      'phones: {primaryPhoneNumber: "322110011", primaryPhoneCountryCode: "FR", primaryPhoneCallingCode: "+33", additionalPhones: [{ phoneNumber: \'322110012\', countryCode: \'+33\' }]}, ' +
       'xUrl: {url: "/x_url", label: "Test xUrl"}, ' +
       'annualRecurringRevenue: 100000, ' +
       'idealCustomerProfile: true, ' +

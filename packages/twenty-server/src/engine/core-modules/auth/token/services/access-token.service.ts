@@ -99,6 +99,7 @@ export class AccessTokenService {
     return {
       token: this.jwtWrapperService.sign(jwtPayload, {
         secret: this.jwtWrapperService.generateAppSecret('ACCESS', workspaceId),
+        expiresIn,
       }),
       expiresAt,
     };

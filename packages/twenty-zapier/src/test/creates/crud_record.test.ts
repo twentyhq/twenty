@@ -60,8 +60,11 @@ describe('creates.create_company', () => {
       name: { firstName: 'John', lastName: 'Doe' },
       phones: {
         primaryPhoneNumber: '610203040',
-        primaryPhoneCountryCode: '+33',
-        additionalPhones: ['{number: "610203041", countryCode: "+33"}'],
+        primaryPhoneCountryCode: 'FR',
+        primaryPhoneCallingCode: '+33',
+        additionalPhones: [
+          '{number: "610203041", countryCode: "FR", callingCode: "+33"}',
+        ],
       },
       city: 'Paris',
     });
