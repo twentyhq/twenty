@@ -27,11 +27,8 @@ export const useRecordGroupVisibility = ({
         );
 
         saveViewGroup(recordGroupDefinitionToViewGroup(updatedRecordGroup));
-
-        // If visibility is manually toggled, we should reset the hideEmptyRecordGroup state
-        set(objectOptionsDropdownRecordGroupHideState, false);
       },
-    [saveViewGroup, objectOptionsDropdownRecordGroupHideState],
+    [saveViewGroup],
   );
 
   const handleHideEmptyRecordGroupChange = useRecoilCallback(
