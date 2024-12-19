@@ -5,9 +5,9 @@ import Stripe from 'stripe';
 import { ProductPriceEntity } from 'src/engine/core-modules/billing/dto/product-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 @Injectable()
 export class StripeService {
@@ -143,9 +143,29 @@ export class StripeService {
       stripeSubscriptionItem.stripeSubscriptionItemId,
       {
         price: stripePriceId,
-        quantity: stripeSubscriptionItem.quantity,
+        quantity:
+          stripeSubscriptionItem.quantity === null
+            ? undefined
+            : stripeSubscriptionItem.quantity,
       },
     );
+  }
+
+  async updateCustomerMetadataWorkspaceId(
+    stripeCustomerId: string,
+    workspaceId: string,
+  ) {
+    await this.stripe.customers.update(stripeCustomerId, {
+      metadata: { workspaceId: workspaceId },
+    });
+  }
+
+  async getCustomer(stripeCustomerId: string) {
+    return await this.stripe.customers.retrieve(stripeCustomerId);
+  }
+
+  async getMeter(stripeMeterId: string) {
+    return await this.stripe.billing.meters.retrieve(stripeMeterId);
   }
 
   formatProductPrices(prices: Stripe.Price[]): ProductPriceEntity[] {

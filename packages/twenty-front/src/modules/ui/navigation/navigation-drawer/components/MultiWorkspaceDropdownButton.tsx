@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Workspaces } from '@/auth/states/workspaces';
+import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -14,21 +15,11 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
+  Avatar,
   IconChevronDown,
   MenuItemSelectAvatar,
   UndecoratedLink,
 } from 'twenty-ui';
-import { getImageAbsoluteURI } from '~/utils/image/getImageAbsoluteURI';
-import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
-
-const StyledLogo = styled.div<{ logo: string }>`
-  background: url(${({ logo }) => logo});
-  background-position: center;
-  background-size: cover;
-  border-radius: ${({ theme }) => theme.border.radius.xs};
-  height: 16px;
-  width: 16px;
-`;
 
 const StyledContainer = styled.div<{ isNavigationDrawerExpanded: boolean }>`
   align-items: center;
@@ -101,10 +92,9 @@ export const MultiWorkspaceDropdownButton = ({
           data-testid="workspace-dropdown"
           isNavigationDrawerExpanded={isNavigationDrawerExpanded}
         >
-          <StyledLogo
-            logo={getImageAbsoluteURI(
-              currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
-            )}
+          <Avatar
+            placeholder={currentWorkspace?.displayName || ''}
+            avatarUrl={currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO}
           />
           <NavigationDrawerAnimatedCollapseWrapper>
             <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
@@ -129,12 +119,11 @@ export const MultiWorkspaceDropdownButton = ({
               }}
             >
               <MenuItemSelectAvatar
-                text={workspace.displayName ?? ''}
+                text={workspace.displayName ?? '(No name)'}
                 avatar={
-                  <StyledLogo
-                    logo={getImageAbsoluteURI(
-                      workspace.logo ?? DEFAULT_WORKSPACE_LOGO,
-                    )}
+                  <Avatar
+                    placeholder={workspace.displayName || ''}
+                    avatarUrl={workspace.logo ?? DEFAULT_WORKSPACE_LOGO}
                   />
                 }
                 selected={currentWorkspace?.id === workspace.id}

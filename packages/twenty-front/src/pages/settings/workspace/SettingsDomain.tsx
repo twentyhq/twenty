@@ -17,7 +17,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isDefined } from '~/utils/isDefined';
-import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 
 const validationSchema = z
   .object({
@@ -54,11 +54,27 @@ export const SettingsDomain = () => {
 
   const { enqueueSnackBar } = useSnackBar();
   const [updateWorkspace] = useUpdateWorkspaceMutation();
-  const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
   );
+
+  const {
+    control,
+    watch,
+    getValues,
+    formState: { isValid },
+  } = useForm<Form>({
+    mode: 'onChange',
+    delayError: 500,
+    defaultValues: {
+      subdomain: currentWorkspace?.subdomain ?? '',
+    },
+    resolver: zodResolver(validationSchema),
+  });
+
+  const subdomainValue = watch('subdomain');
 
   const handleSave = async () => {
     try {
@@ -81,26 +97,25 @@ export const SettingsDomain = () => {
         subdomain: values.subdomain,
       });
 
-      window.location.href = buildWorkspaceUrl(values.subdomain);
+      redirectToWorkspaceDomain(values.subdomain);
     } catch (error) {
+      if (
+        error instanceof Error &&
+        (error.message === 'Subdomain already taken' ||
+          error.message.endsWith('not allowed'))
+      ) {
+        control.setError('subdomain', {
+          type: 'manual',
+          message: (error as Error).message,
+        });
+        return;
+      }
+
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,
       });
     }
   };
-
-  const {
-    control,
-    getValues,
-    formState: { isValid },
-  } = useForm<Form>({
-    mode: 'onChange',
-    delayError: 500,
-    defaultValues: {
-      subdomain: currentWorkspace?.subdomain ?? '',
-    },
-    resolver: zodResolver(validationSchema),
-  });
 
   return (
     <SubMenuTopBarContainer
@@ -118,7 +133,9 @@ export const SettingsDomain = () => {
       ]}
       actionButton={
         <SaveAndCancelButtons
-          isSaveDisabled={!isValid}
+          isSaveDisabled={
+            !isValid || subdomainValue === currentWorkspace?.subdomain
+          }
           onCancel={() => navigate(getSettingsPagePath(SettingsPath.Workspace))}
           onSave={handleSave}
         />

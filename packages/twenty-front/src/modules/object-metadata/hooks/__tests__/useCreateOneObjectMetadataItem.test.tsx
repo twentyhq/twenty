@@ -10,6 +10,11 @@ import {
   variables,
 } from '../__mocks__/useCreateOneObjectMetadataItem';
 
+import {
+  query as findManyObjectMetadataItemsQuery,
+  responseData as findManyObjectMetadataItemsResponseData,
+} from '../__mocks__/useFindManyObjectMetadataItems';
+
 const mocks = [
   {
     request: {
@@ -20,6 +25,15 @@ const mocks = [
       data: {
         createOneObject: responseData,
       },
+    })),
+  },
+  {
+    request: {
+      query: findManyObjectMetadataItemsQuery,
+      variables: {},
+    },
+    result: jest.fn(() => ({
+      data: findManyObjectMetadataItemsResponseData,
     })),
   },
   {

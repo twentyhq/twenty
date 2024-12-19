@@ -1,16 +1,16 @@
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { StepOutputSchema } from '@/workflow/search-variables/types/StepOutputSchema';
-import { useTheme } from '@emotion/react';
 import { useState } from 'react';
 import {
-  HorizontalSeparator,
   IconX,
   MenuItem,
   MenuItemSelect,
   OverflowingTextWithTooltip,
+  useIcons,
 } from 'twenty-ui';
 
 type SearchVariablesDropdownWorkflowStepItemsProps = {
@@ -24,7 +24,7 @@ export const SearchVariablesDropdownWorkflowStepItems = ({
   steps,
   onSelect,
 }: SearchVariablesDropdownWorkflowStepItemsProps) => {
-  const theme = useTheme();
+  const { getIcon } = useIcons();
   const [searchInputValue, setSearchInputValue] = useState('');
 
   const { closeDropdown } = useDropdown(dropdownId);
@@ -36,44 +36,39 @@ export const SearchVariablesDropdownWorkflowStepItems = ({
   );
 
   return (
-    <DropdownMenuItemsContainer>
+    <>
       <DropdownMenuHeader StartIcon={IconX} onClick={closeDropdown}>
         <OverflowingTextWithTooltip text={'Select Step'} />
       </DropdownMenuHeader>
-      <HorizontalSeparator
-        color={theme.background.transparent.primary}
-        noMargin
-      />
       <DropdownMenuSearchInput
         autoFocus
         value={searchInputValue}
         onChange={(event) => setSearchInputValue(event.target.value)}
       />
-      <HorizontalSeparator
-        color={theme.background.transparent.primary}
-        noMargin
-      />
-      {availableSteps.length > 0 ? (
-        availableSteps.map((item, _index) => (
-          <MenuItemSelect
-            key={`step-${item.id}`}
-            selected={false}
-            hovered={false}
-            onClick={() => onSelect(item.id)}
-            text={item.name}
+      <DropdownMenuSeparator />
+      <DropdownMenuItemsContainer>
+        {availableSteps.length > 0 ? (
+          availableSteps.map((item, _index) => (
+            <MenuItemSelect
+              key={`step-${item.id}`}
+              selected={false}
+              hovered={false}
+              onClick={() => onSelect(item.id)}
+              text={item.name}
+              LeftIcon={item.icon ? getIcon(item.icon) : undefined}
+              hasSubMenu
+            />
+          ))
+        ) : (
+          <MenuItem
+            key="no-steps"
+            onClick={() => {}}
+            text="No variables available"
             LeftIcon={undefined}
-            hasSubMenu
+            hasSubMenu={false}
           />
-        ))
-      ) : (
-        <MenuItem
-          key="no-steps"
-          onClick={() => {}}
-          text="No variables available"
-          LeftIcon={undefined}
-          hasSubMenu={false}
-        />
-      )}
-    </DropdownMenuItemsContainer>
+        )}
+      </DropdownMenuItemsContainer>
+    </>
   );
 };

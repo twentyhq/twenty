@@ -1,4 +1,5 @@
-import { MouseEvent, ReactNode } from 'react';
+import { ActionAvailableOn } from '@/action-menu/actions/types/actionAvailableOn';
+import { MouseEvent, ReactElement } from 'react';
 import { IconComponent, MenuItemAccent } from 'twenty-ui';
 
 export enum ActionMenuEntryType {
@@ -16,10 +17,12 @@ export type ActionMenuEntry = {
   scope: ActionMenuEntryScope;
   key: string;
   label: string;
+  shortLabel?: string;
   position: number;
   Icon: IconComponent;
   isPinned?: boolean;
   accent?: MenuItemAccent;
+  availableOn?: ActionAvailableOn[];
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
-  ConfirmationModal?: ReactNode;
+  ConfirmationModal?: ReactElement;
 };

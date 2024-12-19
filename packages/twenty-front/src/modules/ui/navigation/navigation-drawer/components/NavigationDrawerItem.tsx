@@ -39,17 +39,17 @@ export type NavigationDrawerItemProps = {
   count?: number;
   keyboard?: string[];
   rightOptions?: ReactNode;
-  isDraggable?: boolean;
+  isDragging?: boolean;
 };
 
 type StyledItemProps = Pick<
   NavigationDrawerItemProps,
-  'active' | 'danger' | 'indentationLevel' | 'soon' | 'to' | 'isDraggable'
+  'active' | 'danger' | 'indentationLevel' | 'soon' | 'to' | 'isDragging'
 > & { isNavigationDrawerExpanded: boolean };
 
 const StyledItem = styled('button', {
   shouldForwardProp: (prop) =>
-    !['active', 'danger', 'soon', 'isDraggable'].includes(prop) &&
+    !['active', 'danger', 'soon', 'isDragging'].includes(prop) &&
     isPropValid(prop),
 })<StyledItemProps>`
   box-sizing: content-box;
@@ -79,7 +79,7 @@ const StyledItem = styled('button', {
 
   padding-bottom: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(0.5)};
   padding-top: ${({ theme }) => theme.spacing(1)};
 
   margin-top: ${({ indentationLevel }) =>
@@ -92,14 +92,10 @@ const StyledItem = styled('button', {
       ? `calc(${NAV_DRAWER_WIDTHS.menu.desktop.collapsed}px - ${props.theme.spacing(6)})`
       : `calc(100% - ${props.theme.spacing(2)})`};
 
-  ${({ isDraggable }) =>
-    isDraggable &&
+  ${({ isDragging }) =>
+    isDragging &&
     `
-    cursor: grab;
-    
-    &:active {
-      cursor: grabbing;
-    }
+    cursor: grabbing;
   `}
 
   :hover {
@@ -247,7 +243,7 @@ export const NavigationDrawerItem = ({
   keyboard,
   subItemState,
   rightOptions,
-  isDraggable,
+  isDragging,
 }: NavigationDrawerItemProps) => {
   const theme = useTheme();
   const isMobile = useIsMobile();
@@ -280,7 +276,7 @@ export const NavigationDrawerItem = ({
         to={to ? to : undefined}
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
-        isDraggable={isDraggable}
+        isDragging={isDragging}
       >
         <StyledItemElementsContainer>
           {showBreadcrumb && (

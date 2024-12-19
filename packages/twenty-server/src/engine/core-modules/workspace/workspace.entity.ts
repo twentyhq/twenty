@@ -120,24 +120,6 @@ export class Workspace {
   activationStatus: WorkspaceActivationStatus;
 
   @OneToMany(
-    () => BillingSubscription,
-    (billingSubscription) => billingSubscription.workspace,
-  )
-  billingSubscriptions: Relation<BillingSubscription[]>;
-
-  @OneToMany(
-    () => BillingCustomer,
-    (billingCustomer) => billingCustomer.workspace,
-  )
-  billingCustomers: Relation<BillingCustomer[]>;
-
-  @OneToMany(
-    () => BillingEntitlement,
-    (billingEntitlement) => billingEntitlement.workspace,
-  )
-  billingEntitlements: Relation<BillingEntitlement[]>;
-
-  @OneToMany(
     () => PostgresCredentials,
     (postgresCredentials) => postgresCredentials.workspace,
   )
@@ -162,7 +144,7 @@ export class Workspace {
   databaseSchema: string;
 
   @Field()
-  @Column()
+  @Column({ unique: true })
   subdomain: string;
 
   @Field()

@@ -1,20 +1,21 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
-  IconLink,
   Card,
   IconGoogle,
+  IconLink,
   IconMicrosoft,
   IconPassword,
 } from 'twenty-ui';
-import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { AuthProviders } from '~/generated-metadata/graphql';
+import { useUpdateWorkspaceMutation } from '~/generated/graphql';
 import { capitalize } from '~/utils/string/capitalize';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 
 const StyledSettingsSecurityOptionsList = styled.div`
   display: flex;
@@ -25,6 +26,7 @@ const StyledSettingsSecurityOptionsList = styled.div`
 export const SettingsSecurityOptionsList = () => {
   const { enqueueSnackBar } = useSnackBar();
   const SSOIdentitiesProviders = useRecoilValue(SSOIdentitiesProvidersState);
+  const authProviders = useRecoilValue(authProvidersState);
 
   const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
     currentWorkspaceState,
@@ -122,31 +124,39 @@ export const SettingsSecurityOptionsList = () => {
     <StyledSettingsSecurityOptionsList>
       {currentWorkspace && (
         <>
-          <Card>
-            <SettingsOptionCardContentToggle
-              Icon={IconGoogle}
-              title="Google"
-              description="Allow logins through Google's single sign-on functionality."
-              checked={currentWorkspace.isGoogleAuthEnabled}
-              advancedMode
-              onChange={() => toggleAuthMethod('google')}
-            />
-            <SettingsOptionCardContentToggle
-              Icon={IconMicrosoft}
-              title="Microsoft"
-              description="Allow logins through Microsoft's single sign-on functionality."
-              checked={currentWorkspace.isMicrosoftAuthEnabled}
-              advancedMode
-              onChange={() => toggleAuthMethod('microsoft')}
-            />
-            <SettingsOptionCardContentToggle
-              Icon={IconPassword}
-              title="Password"
-              description="Allow users to sign in with an email and password."
-              checked={currentWorkspace.isPasswordAuthEnabled}
-              advancedMode
-              onChange={() => toggleAuthMethod('password')}
-            />
+          <Card rounded>
+            {authProviders.google === true && (
+              <SettingsOptionCardContentToggle
+                Icon={IconGoogle}
+                title="Google"
+                description="Allow logins through Google's single sign-on functionality."
+                checked={currentWorkspace.isGoogleAuthEnabled}
+                advancedMode
+                divider
+                onChange={() => toggleAuthMethod('google')}
+              />
+            )}
+            {authProviders.microsoft === true && (
+              <SettingsOptionCardContentToggle
+                Icon={IconMicrosoft}
+                title="Microsoft"
+                description="Allow logins through Microsoft's single sign-on functionality."
+                checked={currentWorkspace.isMicrosoftAuthEnabled}
+                advancedMode
+                divider
+                onChange={() => toggleAuthMethod('microsoft')}
+              />
+            )}
+            {authProviders.password === true && (
+              <SettingsOptionCardContentToggle
+                Icon={IconPassword}
+                title="Password"
+                description="Allow users to sign in with an email and password."
+                checked={currentWorkspace.isPasswordAuthEnabled}
+                advancedMode
+                onChange={() => toggleAuthMethod('password')}
+              />
+            )}
           </Card>
           <Card rounded>
             <SettingsOptionCardContentToggle

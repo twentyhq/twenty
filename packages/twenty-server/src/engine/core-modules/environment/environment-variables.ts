@@ -129,7 +129,7 @@ export class EnvironmentVariables {
   // Frontend URL
   @IsString()
   @IsOptional()
-  FRONT_DOMAIN = 'localhost';
+  FRONT_DOMAIN?: string;
 
   @IsString()
   @ValidateIf((env) => env.IS_MULTIWORKSPACE_ENABLED)
@@ -137,12 +137,12 @@ export class EnvironmentVariables {
 
   @IsString()
   @IsOptional()
-  FRONT_PROTOCOL: 'http' | 'https' = 'http';
+  FRONT_PROTOCOL?: 'http' | 'https' = 'http';
 
   @CastToPositiveNumber()
   @IsNumber()
   @IsOptional()
-  FRONT_PORT = 3001;
+  FRONT_PORT?: number;
 
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()

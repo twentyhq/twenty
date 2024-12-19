@@ -1,9 +1,9 @@
-import { InputSchemaPropertyType } from 'src/modules/code-introspection/types/input-schema.type';
+import { InputSchemaPropertyType } from 'src/modules/workflow/workflow-builder/types/input-schema.type';
 
 export type Leaf = {
   isLeaf: true;
-  icon?: string;
   type?: InputSchemaPropertyType;
+  icon?: string;
   label?: string;
   value: any;
 };
@@ -15,6 +15,13 @@ export type Node = {
   value: OutputSchema;
 };
 
+type Link = {
+  isLeaf: true;
+  tab?: string;
+  icon?: string;
+  label?: string;
+};
+
 export type BaseOutputSchema = Record<string, Leaf | Node>;
 
 export type RecordOutputSchema = {
@@ -23,4 +30,12 @@ export type RecordOutputSchema = {
   _outputSchemaType: 'RECORD';
 };
 
-export type OutputSchema = BaseOutputSchema | RecordOutputSchema;
+export type LinkOutputSchema = {
+  link: Link;
+  _outputSchemaType: 'LINK';
+};
+
+export type OutputSchema =
+  | BaseOutputSchema
+  | RecordOutputSchema
+  | LinkOutputSchema;

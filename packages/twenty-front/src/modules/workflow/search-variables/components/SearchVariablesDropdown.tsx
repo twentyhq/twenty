@@ -19,6 +19,7 @@ const StyledDropdownVariableButtonContainer = styled(
     transparentBackground
       ? 'transparent'
       : theme.background.transparent.lighter};
+
   color: ${({ theme }) => theme.font.color.tertiary};
   padding: ${({ theme }) => theme.spacing(2)};
   :hover {
@@ -26,11 +27,7 @@ const StyledDropdownVariableButtonContainer = styled(
   }
 `;
 
-const StyledDropdownComponetsContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.transparent.light};
-`;
-
-const SearchVariablesDropdown = ({
+export const SearchVariablesDropdown = ({
   inputId,
   onVariableSelect,
   disabled,
@@ -74,36 +71,6 @@ const SearchVariablesDropdown = ({
     setSelectedStep(undefined);
   };
 
-  const renderSearchVariablesDropdownComponents = () => {
-    if (!isDefined(selectedStep)) {
-      return (
-        <SearchVariablesDropdownWorkflowStepItems
-          dropdownId={dropdownId}
-          steps={availableVariablesInWorkflowStep}
-          onSelect={handleStepSelect}
-        />
-      );
-    }
-
-    if (isDefined(objectNameSingularToSelect)) {
-      return (
-        <SearchVariablesDropdownObjectItems
-          step={selectedStep}
-          onSelect={handleSubItemSelect}
-          onBack={handleBack}
-        />
-      );
-    }
-
-    return (
-      <SearchVariablesDropdownFieldItems
-        step={selectedStep}
-        onSelect={handleSubItemSelect}
-        onBack={handleBack}
-      />
-    );
-  };
-
   if (disabled === true) {
     return (
       <StyledDropdownVariableButtonContainer
@@ -136,14 +103,28 @@ const SearchVariablesDropdown = ({
         </StyledDropdownVariableButtonContainer>
       }
       dropdownComponents={
-        <StyledDropdownComponetsContainer>
-          {renderSearchVariablesDropdownComponents()}
-        </StyledDropdownComponetsContainer>
+        !isDefined(selectedStep) ? (
+          <SearchVariablesDropdownWorkflowStepItems
+            dropdownId={dropdownId}
+            steps={availableVariablesInWorkflowStep}
+            onSelect={handleStepSelect}
+          />
+        ) : isDefined(objectNameSingularToSelect) ? (
+          <SearchVariablesDropdownObjectItems
+            step={selectedStep}
+            onSelect={handleSubItemSelect}
+            onBack={handleBack}
+          />
+        ) : (
+          <SearchVariablesDropdownFieldItems
+            step={selectedStep}
+            onSelect={handleSubItemSelect}
+            onBack={handleBack}
+          />
+        )
       }
       dropdownPlacement="bottom-end"
-      dropdownOffset={{ x: 0, y: 4 }}
+      dropdownOffset={{ x: 2, y: 4 }}
     />
   );
 };
-
-export default SearchVariablesDropdown;

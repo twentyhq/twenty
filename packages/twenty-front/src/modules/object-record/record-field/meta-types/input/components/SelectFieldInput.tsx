@@ -21,8 +21,6 @@ export const SelectFieldInput = ({
 }: SelectFieldInputProps) => {
   const { persistField, fieldDefinition, fieldValue, hotkeyScope } =
     useSelectField();
-  const [selectWrapperRef, setSelectWrapperRef] =
-    useState<HTMLDivElement | null>(null);
 
   const [filteredOptions, setFilteredOptions] = useState<SelectOption[]>([]);
 
@@ -62,31 +60,28 @@ export const SelectFieldInput = ({
   ];
 
   return (
-    <div ref={setSelectWrapperRef}>
-      <SelectInput
-        selectableListId={SINGLE_RECORD_SELECT_BASE_LIST}
-        selectableItemIdArray={optionIds}
-        hotkeyScope={hotkeyScope}
-        onEnter={(itemId) => {
-          const option = filteredOptions.find(
-            (option) => option.value === itemId,
-          );
-          if (isDefined(option)) {
-            onSubmit?.(() => persistField(option.value));
-            resetSelectedItem();
-          }
-        }}
-        selectWrapperRef={selectWrapperRef}
-        onOptionSelected={handleSubmit}
-        options={fieldDefinition.metadata.options}
-        onCancel={onCancel}
-        defaultOption={selectedOption}
-        onFilterChange={setFilteredOptions}
-        onClear={
-          fieldDefinition.metadata.isNullable ? handleClearField : undefined
+    <SelectInput
+      selectableListId={SINGLE_RECORD_SELECT_BASE_LIST}
+      selectableItemIdArray={optionIds}
+      hotkeyScope={hotkeyScope}
+      onEnter={(itemId) => {
+        const option = filteredOptions.find(
+          (option) => option.value === itemId,
+        );
+        if (isDefined(option)) {
+          onSubmit?.(() => persistField(option.value));
+          resetSelectedItem();
         }
-        clearLabel={fieldDefinition.label}
-      />
-    </div>
+      }}
+      onOptionSelected={handleSubmit}
+      options={fieldDefinition.metadata.options}
+      onCancel={onCancel}
+      defaultOption={selectedOption}
+      onFilterChange={setFilteredOptions}
+      onClear={
+        fieldDefinition.metadata.isNullable ? handleClearField : undefined
+      }
+      clearLabel={fieldDefinition.label}
+    />
   );
 };

@@ -22,7 +22,7 @@ import { recordStoreFamilyState } from '@/object-record/record-store/states/reco
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
@@ -46,7 +46,6 @@ const StyledColumnContainer = styled.div`
 const StyledContainerContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
 `;
 
 const StyledBoardContentContainer = styled.div`
@@ -81,7 +80,7 @@ export const RecordBoard = () => {
   const { resetRecordSelection, setRecordAsSelected } =
     useRecordBoardSelection(recordBoardId);
 
-  useListenClickOutsideV2({
+  useListenClickOutside({
     excludeClassNames: [
       'bottom-bar',
       'action-menu-dropdown',
@@ -194,7 +193,10 @@ export const RecordBoard = () => {
       <RecordBoardComponentInstanceContext.Provider
         value={{ instanceId: recordBoardId }}
       >
-        <ScrollWrapper contextProviderName="recordBoard">
+        <ScrollWrapper
+          contextProviderName="recordBoard"
+          componentInstanceId={`scroll-wrapper-record-board-${recordBoardId}`}
+        >
           <RecordBoardStickyHeaderEffect />
           <StyledContainerContainer>
             <RecordBoardHeader />

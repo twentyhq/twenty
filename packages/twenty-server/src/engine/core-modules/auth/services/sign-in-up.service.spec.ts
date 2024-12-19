@@ -19,6 +19,7 @@ import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 jest.mock('bcrypt');
 
@@ -34,6 +35,7 @@ const EnvironmentServiceGetMock = jest.fn();
 const WorkspaceCountMock = jest.fn();
 const WorkspaceCreateMock = jest.fn();
 const WorkspaceSaveMock = jest.fn();
+const WorkspaceFindOneMock = jest.fn();
 
 describe('SignInUpService', () => {
   let service: SignInUpService;
@@ -56,6 +58,7 @@ describe('SignInUpService', () => {
             count: WorkspaceCountMock,
             create: WorkspaceCreateMock,
             save: WorkspaceSaveMock,
+            findOne: WorkspaceFindOneMock,
           },
         },
         {
@@ -119,6 +122,12 @@ describe('SignInUpService', () => {
             generateSubdomain: jest.fn().mockReturnValue('testSubDomain'),
           },
         },
+        {
+          provide: UserService,
+          useValue: {
+            saveDefaultWorkspaceIfUserHasAccessOrThrow: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -170,6 +179,9 @@ describe('SignInUpService', () => {
     workspaceInvitationFindInvitationByWorkspaceSubdomainAndUserEmailMock.mockReturnValueOnce(
       undefined,
     );
+    WorkspaceFindOneMock.mockReturnValueOnce({
+      id: 'another-workspace',
+    });
 
     const result = await service.signInUp({
       email,
@@ -373,6 +385,10 @@ describe('SignInUpService', () => {
     UserFindOneMock.mockReturnValueOnce(existingUser);
 
     EnvironmentServiceGetMock.mockReturnValueOnce(false);
+
+    WorkspaceFindOneMock.mockReturnValueOnce({
+      id: 'another-workspace',
+    });
 
     (bcrypt.compare as jest.Mock).mockReturnValueOnce(true);
 

@@ -8,27 +8,18 @@ import { CountrySelect } from '@/ui/input/components/internal/country/components
 import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/country/constants/SelectCountryDropdownId';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
-import { MOBILE_VIEWPORT } from 'twenty-ui';
-import { isDefined } from '~/utils/isDefined';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useRecoilValue } from 'recoil';
+import { isDefined, MOBILE_VIEWPORT } from 'twenty-ui';
 
 const StyledAddressContainer = styled.div`
-  background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.light};
-  border-radius: ${({ theme }) => theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-
   padding: 4px 8px;
 
   width: 344px;
   > div {
     margin-bottom: 6px;
-  }
-
-  input {
-    background-color: ${({ theme }) => theme.background.transparent.secondary};
-    backdrop-filter: ${({ theme }) => theme.blur.medium};
   }
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -190,18 +181,22 @@ export const AddressInput = ({
     [onEscape, internalValue],
   );
 
-  const { useListenClickOutside } = useClickOutsideListener('addressInput');
+  const activeDropdownFocusId = useRecoilValue(activeDropdownFocusIdState);
 
   useListenClickOutside({
     refs: [wrapperRef],
     callback: (event) => {
+      if (activeDropdownFocusId === SELECT_COUNTRY_DROPDOWN_ID) {
+        return;
+      }
+
       event.stopImmediatePropagation();
 
       closeCountryDropdown();
-
       onClickOutside?.(event, internalValue);
     },
     enabled: isDefined(onClickOutside),
+    listenerId: 'address-input',
   });
 
   useEffect(() => {
@@ -255,6 +250,7 @@ export const AddressInput = ({
           onFocus={getFocusHandler('addressPostcode')}
         />
         <CountrySelect
+          label="COUNTRY"
           onChange={getChangeHandler('addressCountry')}
           selectedCountryName={internalValue.addressCountry ?? ''}
         />

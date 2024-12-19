@@ -7,6 +7,8 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -16,6 +18,11 @@ import {
   Workspace,
   WorkspaceActivationStatus,
 } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+} from 'src/engine/core-modules/workspace/workspace.exception';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-manager.service';
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/default-feature-flags';
 
@@ -32,9 +39,46 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,
+    private readonly environmentService: EnvironmentService,
   ) {
     super(workspaceRepository);
+  }
+
+  async updateWorkspaceById(payload: Partial<Workspace> & { id: string }) {
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: payload.id,
+    });
+
+    workspaceValidator.assertIsExist(
+      workspace,
+      new WorkspaceException(
+        'Workspace not found',
+        WorkspaceExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
+    if (payload.subdomain && workspace.subdomain !== payload.subdomain) {
+      const subdomainAvailable = await this.isSubdomainAvailable(
+        payload.subdomain,
+      );
+
+      if (
+        !subdomainAvailable ||
+        this.environmentService.get('DEFAULT_SUBDOMAIN') === payload.subdomain
+      ) {
+        throw new WorkspaceException(
+          'Subdomain already taken',
+          WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,
+        );
+      }
+    }
+
+    return this.workspaceRepository.save({
+      ...workspace,
+      ...payload,
+    });
   }
 
   async activateWorkspace(user: User, data: ActivateWorkspaceInput) {
@@ -95,7 +139,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     assert(workspace, 'Workspace not found');
 
     await this.userWorkspaceRepository.delete({ workspaceId: id });
-    await this.billingSubscriptionService.deleteSubscription(workspace.id);
+
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingSubscriptionService.deleteSubscription(workspace.id);
+    }
 
     await this.workspaceManagerService.delete(id);
 
@@ -158,5 +205,13 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         },
       );
     }
+  }
+
+  async isSubdomainAvailable(subdomain: string) {
+    const existingWorkspace = await this.workspaceRepository.findOne({
+      where: { subdomain: subdomain },
+    });
+
+    return !existingWorkspace;
   }
 }

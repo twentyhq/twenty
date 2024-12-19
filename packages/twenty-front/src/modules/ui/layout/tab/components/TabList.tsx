@@ -1,14 +1,12 @@
-import styled from '@emotion/styled';
-import * as React from 'react';
-import { useRecoilValue } from 'recoil';
-import { IconComponent } from 'twenty-ui';
-
+import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { TabListScope } from '@/ui/layout/tab/scopes/TabListScope';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-
-import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab/components/TabListFromUrlOptionalEffect';
 import { LayoutCard } from '@/ui/layout/tab/types/LayoutCard';
+import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import styled from '@emotion/styled';
+import * as React from 'react';
+import { useEffect } from 'react';
+import { IconComponent } from 'twenty-ui';
 import { Tab } from './Tab';
 
 export type SingleTabProps = {
@@ -26,8 +24,8 @@ type TabListProps = {
   tabListInstanceId: string;
   tabs: SingleTabProps[];
   loading?: boolean;
-  className?: string;
   behaveAsLinks?: boolean;
+  className?: string;
 };
 
 const StyledContainer = styled.div`
@@ -43,18 +41,16 @@ export const TabList = ({
   tabs,
   tabListInstanceId,
   loading,
-  className,
   behaveAsLinks = true,
+  className,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
 
-  const initialActiveTabId = visibleTabs[0]?.id || '';
+  const { activeTabId, setActiveTabId } = useTabList(tabListInstanceId);
 
-  const { activeTabIdState, setActiveTabId } = useTabList(tabListInstanceId);
+  const initialActiveTabId = activeTabId || visibleTabs[0]?.id || '';
 
-  const activeTabId = useRecoilValue(activeTabIdState);
-
-  React.useEffect(() => {
+  useEffect(() => {
     setActiveTabId(initialActiveTabId);
   }, [initialActiveTabId, setActiveTabId]);
 
@@ -68,7 +64,11 @@ export const TabList = ({
         componentInstanceId={tabListInstanceId}
         tabListIds={tabs.map((tab) => tab.id)}
       />
-      <ScrollWrapper enableYScroll={false} contextProviderName="tabList">
+      <ScrollWrapper
+        defaultEnableYScroll={false}
+        contextProviderName="tabList"
+        componentInstanceId={`scroll-wrapper-tab-list-${tabListInstanceId}`}
+      >
         <StyledContainer className={className}>
           {visibleTabs.map((tab) => (
             <Tab

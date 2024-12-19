@@ -1,6 +1,5 @@
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { UPDATE_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/mutations/updateOneServerlessFunction';
-import { FIND_MANY_SERVERLESS_FUNCTIONS } from '@/settings/serverless-functions/graphql/queries/findManyServerlessFunctions';
 import { FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE } from '@/settings/serverless-functions/graphql/queries/findOneServerlessFunctionSourceCode';
 import { useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
@@ -9,9 +8,15 @@ import {
   UpdateOneServerlessFunctionMutationVariables,
   UpdateServerlessFunctionInput,
 } from '~/generated-metadata/graphql';
+import { useEffect, useState } from 'react';
+import { FIND_ONE_SERVERLESS_FUNCTION } from '@/settings/serverless-functions/graphql/queries/findOneServerlessFunction';
+import { sleep } from '~/utils/sleep';
 
-export const useUpdateOneServerlessFunction = () => {
+export const useUpdateOneServerlessFunction = (
+  serverlessFunctionId: string,
+) => {
   const apolloMetadataClient = useApolloMetadataClient();
+  const [isReady, setIsReady] = useState(false);
   const [mutate] = useMutation<
     UpdateOneServerlessFunctionMutation,
     UpdateOneServerlessFunctionMutationVariables
@@ -20,19 +25,48 @@ export const useUpdateOneServerlessFunction = () => {
   });
 
   const updateOneServerlessFunction = async (
-    input: UpdateServerlessFunctionInput,
+    input: Omit<UpdateServerlessFunctionInput, 'id'>,
   ) => {
-    return await mutate({
+    const result = await mutate({
       variables: {
-        input,
+        input: { ...input, id: serverlessFunctionId },
       },
       awaitRefetchQueries: true,
       refetchQueries: [
-        getOperationName(FIND_MANY_SERVERLESS_FUNCTIONS) ?? '',
         getOperationName(FIND_ONE_SERVERLESS_FUNCTION_SOURCE_CODE) ?? '',
       ],
     });
+    setIsReady(false);
+    return result;
   };
 
-  return { updateOneServerlessFunction };
+  useEffect(() => {
+    let isMounted = true;
+
+    const pollFunctionStatus = async () => {
+      while (isMounted && !isReady) {
+        const { data } = await apolloMetadataClient.query({
+          query: FIND_ONE_SERVERLESS_FUNCTION,
+          variables: { input: { id: serverlessFunctionId } },
+          fetchPolicy: 'network-only', // Always fetch fresh data
+        });
+
+        const serverlessFunction = data?.findOneServerlessFunction;
+
+        if (serverlessFunction?.syncStatus === 'READY') {
+          setIsReady(true);
+          break;
+        }
+        await sleep(500);
+      }
+    };
+
+    pollFunctionStatus();
+
+    return () => {
+      isMounted = false; // Cleanup when the component unmounts
+    };
+  }, [serverlessFunctionId, apolloMetadataClient, isReady]);
+
+  return { updateOneServerlessFunction, isReady };
 };

@@ -169,6 +169,7 @@ export type ClientConfig = {
   __typename?: 'ClientConfig';
   analyticsEnabled: Scalars['Boolean'];
   api: ApiConfig;
+  authProviders: AuthProviders;
   billing: Billing;
   captcha: Captcha;
   chromeExtensionId?: Maybe<Scalars['String']>;
@@ -1279,8 +1280,6 @@ export type UpdateServerlessFunctionInput = {
 export type UpdateWorkflowVersionStepInput = {
   /** Step to update in JSON format */
   step: Scalars['JSON'];
-  /** Boolean to check if we need to update stepOutput */
-  shouldUpdateStepOutput?: InputMaybe<Scalars['Boolean']>;
   /** Workflow version ID */
   workflowVersionId: Scalars['String'];
 };
@@ -1334,6 +1333,7 @@ export type UserEdge = {
 export type UserExists = {
   __typename?: 'UserExists';
   availableWorkspaces: Array<AvailableWorkspaceOutput>;
+  defaultWorkspaceId: Scalars['String'];
   exists: Scalars['Boolean'];
 };
 
@@ -1405,6 +1405,7 @@ export type Workspace = {
   __typename?: 'Workspace';
   activationStatus: WorkspaceActivationStatus;
   allowImpersonation: Scalars['Boolean'];
+  billingCustomers?: Maybe<Array<BillingCustomer>>;
   billingEntitlements?: Maybe<Array<BillingEntitlement>>;
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime'];
@@ -1427,6 +1428,12 @@ export type Workspace = {
   subdomain: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   workspaceMembersCount?: Maybe<Scalars['Float']>;
+};
+
+
+export type WorkspaceBillingCustomersArgs = {
+  filter?: BillingCustomerFilter;
+  sorting?: Array<BillingCustomerSort>;
 };
 
 
@@ -1517,6 +1524,27 @@ export type WorkspaceNameAndId = {
   id: Scalars['String'];
 };
 
+export type BillingCustomer = {
+  __typename?: 'billingCustomer';
+  id: Scalars['UUID'];
+};
+
+export type BillingCustomerFilter = {
+  and?: InputMaybe<Array<BillingCustomerFilter>>;
+  id?: InputMaybe<UuidFilterComparison>;
+  or?: InputMaybe<Array<BillingCustomerFilter>>;
+};
+
+export type BillingCustomerSort = {
+  direction: SortDirection;
+  field: BillingCustomerSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum BillingCustomerSortFields {
+  Id = 'id'
+}
+
 export type BillingEntitlement = {
   __typename?: 'billingEntitlement';
   id: Scalars['UUID'];
@@ -1551,7 +1579,7 @@ export type Field = {
   id: Scalars['UUID'];
   isActive?: Maybe<Scalars['Boolean']>;
   isCustom?: Maybe<Scalars['Boolean']>;
-  isLabelSyncedWithName: Scalars['Boolean'];
+  isLabelSyncedWithName?: Maybe<Scalars['Boolean']>;
   isNullable?: Maybe<Scalars['Boolean']>;
   isSystem?: Maybe<Scalars['Boolean']>;
   isUnique?: Maybe<Scalars['Boolean']>;
@@ -1900,7 +1928,7 @@ export type CheckUserExistsQueryVariables = Exact<{
 }>;
 
 
-export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename: 'UserExists', exists: boolean, availableWorkspaces: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, subdomain: string, logo?: string | null, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } | { __typename: 'UserNotExists', exists: boolean } };
+export type CheckUserExistsQuery = { __typename?: 'Query', checkUserExists: { __typename: 'UserExists', exists: boolean, defaultWorkspaceId: string, availableWorkspaces: Array<{ __typename?: 'AvailableWorkspaceOutput', id: string, displayName?: string | null, subdomain: string, logo?: string | null, sso: Array<{ __typename?: 'SSOConnection', type: IdentityProviderType, id: string, issuer: string, name: string, status: SsoIdentityProviderStatus }> }> } | { __typename: 'UserNotExists', exists: boolean } };
 
 export type GetPublicWorkspaceDataBySubdomainQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1944,7 +1972,7 @@ export type UpdateBillingSubscriptionMutation = { __typename?: 'Mutation', updat
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isSSOEnabled: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, isMultiWorkspaceEnabled: boolean, isSSOEnabled: boolean, defaultSubdomain?: string | null, frontDomain: string, debugMode: boolean, analyticsEnabled: boolean, chromeExtensionId?: string | null, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean, sso: Array<{ __typename?: 'SSOIdentityProvider', id: string, name: string, type: IdentityProviderType, status: SsoIdentityProviderStatus, issuer: string }> }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null }, api: { __typename?: 'ApiConfig', mutationMaximumAffectedRecords: number } } };
 
 export type SkipSyncEmailOnboardingStepMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -3042,6 +3070,7 @@ export const CheckUserExistsDocument = gql`
     __typename
     ... on UserExists {
       exists
+      defaultWorkspaceId
       availableWorkspaces {
         id
         displayName
@@ -3328,6 +3357,18 @@ export const GetClientConfigDocument = gql`
       isBillingEnabled
       billingUrl
       billingFreeTrialDurationInDays
+    }
+    authProviders {
+      google
+      password
+      microsoft
+      sso {
+        id
+        name
+        type
+        status
+        issuer
+      }
     }
     signInPrefilled
     isMultiWorkspaceEnabled

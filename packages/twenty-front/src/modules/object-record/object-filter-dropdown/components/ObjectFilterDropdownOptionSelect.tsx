@@ -15,7 +15,6 @@ import { useSelectableListStates } from '@/ui/layout/selectable-list/hooks/inter
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { MenuItem, MenuItemMultiSelect } from 'twenty-ui';
 import { isDefined } from '~/utils/isDefined';
 
@@ -163,23 +162,21 @@ export const ObjectFilterDropdownOptionSelect = () => {
         }
       }}
     >
-      <ScrollWrapper contextProviderName="dropdownMenuItemsContainer">
-        <DropdownMenuItemsContainer hasMaxHeight>
-          {optionsInDropdown?.map((option) => (
-            <MenuItemMultiSelect
-              key={option.id}
-              selected={option.isSelected}
-              isKeySelected={option.id === selectedItemId}
-              onSelectChange={(selected) =>
-                handleMultipleOptionSelectChange(option, selected)
-              }
-              text={option.label}
-              color={option.color}
-              className=""
-            />
-          ))}
-        </DropdownMenuItemsContainer>
-      </ScrollWrapper>
+      <DropdownMenuItemsContainer hasMaxHeight>
+        {optionsInDropdown?.map((option) => (
+          <MenuItemMultiSelect
+            key={option.id}
+            selected={option.isSelected}
+            isKeySelected={option.id === selectedItemId}
+            onSelectChange={(selected) =>
+              handleMultipleOptionSelectChange(option, selected)
+            }
+            text={option.label}
+            color={option.color}
+            className=""
+          />
+        ))}
+      </DropdownMenuItemsContainer>
       {showNoResult && <MenuItem text="No result" />}
     </SelectableList>
   );

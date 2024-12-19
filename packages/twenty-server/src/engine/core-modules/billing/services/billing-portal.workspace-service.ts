@@ -6,12 +6,11 @@ import { Repository } from 'typeorm';
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
-import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { assert } from 'src/utils/assert';
-import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 @Injectable()
 export class BillingPortalWorkspaceService {
@@ -19,7 +18,6 @@ export class BillingPortalWorkspaceService {
   constructor(
     private readonly stripeService: StripeService,
     private readonly domainManagerService: DomainManagerService,
-    private readonly environmentService: EnvironmentService,
     @InjectRepository(BillingSubscription, 'core')
     private readonly billingSubscriptionRepository: Repository<BillingSubscription>,
     @InjectRepository(UserWorkspace, 'core')
@@ -33,10 +31,13 @@ export class BillingPortalWorkspaceService {
     priceId: string,
     successUrlPath?: string,
   ): Promise<string> {
-    const frontBaseUrl = this.domainManagerService.getBaseUrl().toString();
-    const successUrl = successUrlPath
-      ? frontBaseUrl + successUrlPath
-      : frontBaseUrl;
+    const frontBaseUrl = this.domainManagerService.getBaseUrl();
+    const cancelUrl = frontBaseUrl.toString();
+
+    if (successUrlPath) {
+      frontBaseUrl.pathname = successUrlPath;
+    }
+    const successUrl = frontBaseUrl.toString();
 
     const quantity = await this.userWorkspaceRepository.countBy({
       workspaceId: workspace.id,
@@ -53,7 +54,7 @@ export class BillingPortalWorkspaceService {
       priceId,
       quantity,
       successUrl,
-      frontBaseUrl,
+      cancelUrl,
       stripeCustomerId,
     );
 
@@ -83,10 +84,12 @@ export class BillingPortalWorkspaceService {
       throw new Error('Error: missing stripeCustomerId');
     }
 
-    const frontBaseUrl = this.domainManagerService.getBaseUrl().toString();
-    const returnUrl = returnUrlPath
-      ? frontBaseUrl + returnUrlPath
-      : frontBaseUrl;
+    const frontBaseUrl = this.domainManagerService.getBaseUrl();
+
+    if (returnUrlPath) {
+      frontBaseUrl.pathname = returnUrlPath;
+    }
+    const returnUrl = frontBaseUrl.toString();
 
     const session = await this.stripeService.createBillingPortalSession(
       stripeCustomerId,

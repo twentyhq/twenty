@@ -1,16 +1,15 @@
-import { StyledFormFieldInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputContainer';
-import { StyledFormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputInputContainer';
-import { StyledFormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/StyledFormFieldInputRowContainer';
+import { FormFieldInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputContainer';
+import { FormFieldInputInputContainer } from '@/object-record/record-field/form-types/components/FormFieldInputInputContainer';
+import { FormFieldInputRowContainer } from '@/object-record/record-field/form-types/components/FormFieldInputRowContainer';
 import { VariableChip } from '@/object-record/record-field/form-types/components/VariableChip';
 import { VariablePickerComponent } from '@/object-record/record-field/form-types/types/VariablePickerComponent';
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldSelectMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { SINGLE_RECORD_SELECT_BASE_LIST } from '@/object-record/relation-picker/constants/SingleRecordSelectBaseList';
 import { SelectOption } from '@/spreadsheet-import/types';
 import { SelectDisplay } from '@/ui/field/display/components/SelectDisplay';
 import { SelectInput } from '@/ui/field/input/components/SelectInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
+import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -21,11 +20,12 @@ import { Key } from 'ts-key-enum';
 import { isDefined, VisibilityHidden } from 'twenty-ui';
 
 type FormSelectFieldInputProps = {
-  field: FieldDefinition<FieldSelectMetadata>;
   label?: string;
   defaultValue: string | undefined;
-  onPersist: (value: number | null | string) => void;
+  onPersist: (value: string | null) => void;
   VariablePicker?: VariablePickerComponent;
+  options: SelectOption[];
+  clearLabel?: string;
 };
 
 const StyledDisplayModeContainer = styled.button`
@@ -44,12 +44,19 @@ const StyledDisplayModeContainer = styled.button`
   }
 `;
 
+const StyledSelectInputContainer = styled.div`
+  position: absolute;
+  z-index: 1;
+  top: ${({ theme }) => theme.spacing(8)};
+`;
+
 export const FormSelectFieldInput = ({
   label,
-  field,
   defaultValue,
   onPersist,
   VariablePicker,
+  options,
+  clearLabel,
 }: FormSelectFieldInputProps) => {
   const inputId = useId();
 
@@ -108,9 +115,6 @@ export const FormSelectFieldInput = ({
     goBackToPreviousHotkeyScope();
   };
 
-  const [selectWrapperRef, setSelectWrapperRef] =
-    useState<HTMLDivElement | null>(null);
-
   const [filteredOptions, setFilteredOptions] = useState<SelectOption[]>([]);
 
   const { resetSelectedItem } = useSelectableList(
@@ -127,7 +131,7 @@ export const FormSelectFieldInput = ({
     onPersist(null);
   };
 
-  const selectedOption = field.metadata.options.find(
+  const selectedOption = options.find(
     (option) => option.value === draftValue.value,
   );
 
@@ -196,17 +200,16 @@ export const FormSelectFieldInput = ({
   );
 
   const optionIds = [
-    `No ${field.label}`,
+    `No ${label}`,
     ...filteredOptions.map((option) => option.value),
   ];
 
   return (
-    <StyledFormFieldInputContainer>
+    <FormFieldInputContainer>
       {label ? <InputLabel>{label}</InputLabel> : null}
 
-      <StyledFormFieldInputRowContainer>
-        <StyledFormFieldInputInputContainer
-          ref={setSelectWrapperRef}
+      <FormFieldInputRowContainer>
+        <FormFieldInputInputContainer
           hasRightElement={isDefined(VariablePicker)}
         >
           {draftValue.type === 'static' ? (
@@ -219,30 +222,12 @@ export const FormSelectFieldInput = ({
 
                 {isDefined(selectedOption) ? (
                   <SelectDisplay
-                    color={selectedOption.color}
+                    color={selectedOption.color ?? 'transparent'}
                     label={selectedOption.label}
+                    Icon={selectedOption.icon ?? undefined}
                   />
                 ) : null}
               </StyledDisplayModeContainer>
-
-              {draftValue.editingMode === 'edit' ? (
-                <SelectInput
-                  selectableListId={SINGLE_RECORD_SELECT_BASE_LIST}
-                  selectableItemIdArray={optionIds}
-                  hotkeyScope={hotkeyScope}
-                  onEnter={handleSelectEnter}
-                  selectWrapperRef={selectWrapperRef}
-                  onOptionSelected={handleSubmit}
-                  options={field.metadata.options}
-                  onCancel={onCancel}
-                  defaultOption={selectedOption}
-                  onFilterChange={setFilteredOptions}
-                  onClear={
-                    field.metadata.isNullable ? handleClearField : undefined
-                  }
-                  clearLabel={field.label}
-                />
-              ) : null}
             </>
           ) : (
             <VariableChip
@@ -250,15 +235,35 @@ export const FormSelectFieldInput = ({
               onRemove={handleUnlinkVariable}
             />
           )}
-        </StyledFormFieldInputInputContainer>
+        </FormFieldInputInputContainer>
+        <StyledSelectInputContainer>
+          {draftValue.type === 'static' &&
+            draftValue.editingMode === 'edit' && (
+              <OverlayContainer>
+                <SelectInput
+                  selectableListId={SINGLE_RECORD_SELECT_BASE_LIST}
+                  selectableItemIdArray={optionIds}
+                  hotkeyScope={hotkeyScope}
+                  onEnter={handleSelectEnter}
+                  onOptionSelected={handleSubmit}
+                  options={options}
+                  onCancel={onCancel}
+                  defaultOption={selectedOption}
+                  onFilterChange={setFilteredOptions}
+                  onClear={handleClearField}
+                  clearLabel={clearLabel}
+                />
+              </OverlayContainer>
+            )}
+        </StyledSelectInputContainer>
 
-        {VariablePicker ? (
+        {VariablePicker && (
           <VariablePicker
             inputId={inputId}
             onVariableSelect={handleVariableTagInsert}
           />
-        ) : null}
-      </StyledFormFieldInputRowContainer>
-    </StyledFormFieldInputContainer>
+        )}
+      </FormFieldInputRowContainer>
+    </FormFieldInputContainer>
   );
 };

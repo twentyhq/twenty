@@ -13,11 +13,11 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { getImageAbsoluteURI } from 'twenty-shared';
 import {
   Button,
-  getImageAbsoluteURI,
   H1Title,
   H1TitleFontColor,
   H2Title,
@@ -26,6 +26,7 @@ import {
   Section,
   Toggle,
 } from 'twenty-ui';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
@@ -68,10 +69,9 @@ const StyledContentContainer = styled.div`
 export const SettingsAdminFeatureFlags = () => {
   const [userIdentifier, setUserIdentifier] = useState('');
 
-  const { activeTabIdState, setActiveTabId } = useTabList(
+  const { activeTabId, setActiveTabId } = useTabList(
     SETTINGS_ADMIN_FEATURE_FLAGS_TAB_ID,
   );
-  const activeTabId = useRecoilValue(activeTabIdState);
 
   const {
     userLookupResult,
@@ -106,9 +106,12 @@ export const SettingsAdminFeatureFlags = () => {
       id: workspace.id,
       title: workspace.name,
       logo:
-        getImageAbsoluteURI(
-          workspace.logo === null ? DEFAULT_WORKSPACE_LOGO : workspace.logo,
-        ) ?? '',
+        getImageAbsoluteURI({
+          imageUrl: isNonEmptyString(workspace.logo)
+            ? workspace.logo
+            : DEFAULT_WORKSPACE_LOGO,
+          baseUrl: REACT_APP_SERVER_BASE_URL,
+        }) ?? '',
     })) ?? [];
 
   const renderWorkspaceContent = () => {

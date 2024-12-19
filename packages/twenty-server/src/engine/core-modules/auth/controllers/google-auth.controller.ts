@@ -109,7 +109,9 @@ export class GoogleAuthController {
       if (err instanceof AuthException) {
         return res.redirect(
           this.domainManagerService.computeRedirectErrorUrl({
-            subdomain: this.environmentService.get('DEFAULT_SUBDOMAIN'),
+            subdomain:
+              req.user.targetWorkspaceSubdomain ??
+              this.environmentService.get('DEFAULT_SUBDOMAIN'),
             errorMessage: err.message,
           }),
         );

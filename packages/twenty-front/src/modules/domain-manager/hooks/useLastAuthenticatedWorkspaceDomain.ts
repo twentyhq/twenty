@@ -10,16 +10,12 @@ export const useLastAuthenticatedWorkspaceDomain = () => {
   const setLastAuthenticateWorkspaceDomainWithCookieAttributes = (
     params: { workspaceId: string; subdomain: string } | null,
   ) => {
-    setLastAuthenticatedWorkspaceDomain(
-      params
-        ? {
-            ...params,
-            cookieAttributes: {
-              domain: `.${domainConfiguration.frontDomain}`,
-            },
-          }
-        : null,
-    );
+    setLastAuthenticatedWorkspaceDomain({
+      ...(params ? params : {}),
+      cookieAttributes: {
+        domain: `.${domainConfiguration.frontDomain}`,
+      },
+    });
   };
 
   return {

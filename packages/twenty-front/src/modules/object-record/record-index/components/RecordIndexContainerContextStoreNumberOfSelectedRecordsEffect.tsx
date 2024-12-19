@@ -5,11 +5,11 @@ import { computeContextStoreFilters } from '@/context-store/utils/computeContext
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { RecordIndexRootPropsContext } from '@/object-record/record-index/contexts/RecordIndexRootPropsContext';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useFindManyRecordIndexTableParams } from '@/object-record/record-index/hooks/useFindManyRecordIndexTableParams';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
 export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
   () => {
@@ -21,7 +21,7 @@ export const RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect =
       contextStoreTargetedRecordsRuleComponentState,
     );
 
-    const { objectNamePlural } = useContext(RecordIndexRootPropsContext);
+    const { objectNamePlural } = useRecordIndexContextOrThrow();
 
     const { objectNameSingular } = useObjectNameSingularFromPlural({
       objectNamePlural,

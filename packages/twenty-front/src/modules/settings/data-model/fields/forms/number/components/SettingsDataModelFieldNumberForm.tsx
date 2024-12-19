@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { numberFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/numberFieldDefaultValueSchema';
+import { Separator } from '@/settings/components/Separator';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { Select } from '@/ui/input/components/Select';
@@ -72,6 +73,7 @@ export const SettingsDataModelFieldNumberForm = ({
                 ]}
               />
             </SettingsOptionCardContentSelect>
+            <Separator />
             <SettingsOptionCardContentCounter
               Icon={IconDecimal}
               title="Number of decimals"

@@ -16,6 +16,11 @@ import {
   variables,
 } from '../__mocks__/useFieldMetadataItem';
 
+import {
+  query as findManyObjectMetadataItemsQuery,
+  responseData as findManyObjectMetadataItemsResponseData,
+} from '../__mocks__/useFindManyObjectMetadataItems';
+
 const fieldMetadataItem: FieldMetadataItem = {
   id: FIELD_METADATA_ID,
   createdAt: '',
@@ -155,6 +160,15 @@ const mocks = [
     },
     result: jest.fn(() => ({
       data: responseData.getCurrentUser,
+    })),
+  },
+  {
+    request: {
+      query: findManyObjectMetadataItemsQuery,
+      variables: {},
+    },
+    result: jest.fn(() => ({
+      data: findManyObjectMetadataItemsResponseData,
     })),
   },
 ];

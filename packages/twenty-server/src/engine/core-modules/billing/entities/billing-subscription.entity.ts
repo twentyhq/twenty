@@ -6,6 +6,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToMany,
@@ -20,12 +21,15 @@ import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entitie
 import { BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
 registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
 
 @Entity({ name: 'billingSubscription', schema: 'core' })
+@Index('IndexOnActiveSubscriptionPerWorkspace', ['workspaceId'], {
+  unique: true,
+  where: `status IN ('trialing', 'active', 'past_due')`,
+})
 @ObjectType('BillingSubscription')
 export class BillingSubscription {
   @IDField(() => UUIDScalarType)
@@ -40,12 +44,6 @@ export class BillingSubscription {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
-
-  @ManyToOne(() => Workspace, (workspace) => workspace.billingSubscriptions, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn()
-  workspace: Relation<Workspace>;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
@@ -83,14 +81,14 @@ export class BillingSubscription {
     (billingCustomer) => billingCustomer.billingSubscriptions,
     {
       nullable: false,
-      createForeignKeyConstraints: false,
+      onDelete: 'CASCADE',
     },
   )
   @JoinColumn({
     referencedColumnName: 'stripeCustomerId',
     name: 'stripeCustomerId',
   })
-  billingCustomer: Relation<BillingCustomer>; //let's see if it works
+  billingCustomer: Relation<BillingCustomer>;
 
   @Column({ nullable: false, default: false })
   cancelAtPeriodEnd: boolean;

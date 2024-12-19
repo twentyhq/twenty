@@ -22,7 +22,6 @@ import { onColumnsChangeComponentState } from '@/object-record/record-table/stat
 import { onEntityCountChangeComponentState } from '@/object-record/record-table/states/onEntityCountChangeComponentState';
 import { onToggleColumnFilterComponentState } from '@/object-record/record-table/states/onToggleColumnFilterComponentState';
 import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
-import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { tableFiltersComponentState } from '@/object-record/record-table/states/tableFiltersComponentState';
 import { tableLastRowVisibleComponentState } from '@/object-record/record-table/states/tableLastRowVisibleComponentState';
@@ -54,6 +53,11 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     recordTableId,
   );
 
+  const tableColumnsState = useRecoilComponentCallbackStateV2(
+    tableColumnsComponentState,
+    recordTableId,
+  );
+
   const setAvailableTableColumns = useRecoilCallback(
     ({ snapshot, set }) =>
       (columns: ColumnDefinition<FieldMetadata>[]) => {
@@ -68,6 +72,19 @@ export const useRecordTable = (props?: useRecordTableProps) => {
         set(availableTableColumnsState, columns);
       },
     [availableTableColumnsState],
+  );
+
+  const setTableColumns = useRecoilCallback(
+    ({ snapshot, set }) =>
+      (columns: ColumnDefinition<FieldMetadata>[]) => {
+        const tableColumns = getSnapshotValue(snapshot, tableColumnsState);
+
+        if (isDeeplyEqual(tableColumns, columns)) {
+          return;
+        }
+        set(tableColumnsState, columns);
+      },
+    [tableColumnsState],
   );
 
   const setOnEntityCountChange = useSetRecoilComponentStateV2(
@@ -87,11 +104,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const setTableSorts = useSetRecoilComponentStateV2(
     tableSortsComponentState,
-    recordTableId,
-  );
-
-  const setTableColumns = useSetRecoilComponentStateV2(
-    tableColumnsComponentState,
     recordTableId,
   );
 
@@ -240,11 +252,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   const isSomeCellInEditModeState =
     useGetIsSomeCellInEditModeState(recordTableId);
 
-  const setPendingRecordId = useSetRecoilComponentStateV2(
-    recordTablePendingRecordIdComponentState,
-    recordTableId,
-  );
-
   return {
     onColumnsChange,
     setAvailableTableColumns,
@@ -272,6 +279,5 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setHasUserSelectedAllRows,
     setOnToggleColumnFilter,
     setOnToggleColumnSort,
-    setPendingRecordId,
   };
 };
