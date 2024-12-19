@@ -1,12 +1,10 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { freePassState } from '@/billing/states/freePassState';
+import { useFreePass } from '@/billing/hooks/useFreePass';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { useLocation } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
@@ -16,21 +14,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   const onboardingStatus = useOnboardingStatus();
   const subscriptionStatus = useSubscriptionStatus();
   const { defaultHomePagePath } = useDefaultHomePagePath();
-
-  const { search } = useLocation();
-
-  const [freePass, setFreePass] = useRecoilState(freePassState);
-
-  const hasFreePassParameter =
-    search.includes('freepass') ||
-    search.includes('freePass') ||
-    search.includes('free-pass') ||
-    search.includes('Free-pass') ||
-    search.includes('FreePass');
-
-  if (hasFreePassParameter) {
-    setFreePass(true);
-  }
+  const freePass = useFreePass();
 
   const isMatchingOpenRoute =
     isMatchingLocation(AppPath.Invite) ||
@@ -48,7 +32,8 @@ export const usePageChangeEffectNavigateLocation = () => {
     isMatchingLocation(AppPath.SyncEmails) ||
     isMatchingLocation(AppPath.InviteTeam) ||
     isMatchingLocation(AppPath.PlanRequired) ||
-    isMatchingLocation(AppPath.PlanRequiredSuccess);
+    isMatchingLocation(AppPath.PlanRequiredSuccess) ||
+    isMatchingLocation(AppPath.FreePassCheckout);
 
   if (isMatchingOpenRoute) {
     return;
@@ -60,7 +45,8 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.PlanRequired &&
-    !isMatchingLocation(AppPath.PlanRequired)
+    !isMatchingLocation(AppPath.PlanRequired) &&
+    !isMatchingLocation(AppPath.FreePassCheckout)
   ) {
     return freePass ? AppPath.FreePassCheckout : AppPath.PlanRequired;
   }
