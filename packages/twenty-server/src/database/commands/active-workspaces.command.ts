@@ -1,5 +1,3 @@
-import { Logger } from '@nestjs/common';
-
 import chalk from 'chalk';
 import { Option } from 'nest-commander';
 import { Repository } from 'typeorm';
@@ -20,11 +18,8 @@ export type ActiveWorkspacesCommandOptions = BaseCommandOptions & {
 export abstract class ActiveWorkspacesCommandRunner extends BaseCommandRunner {
   private workspaceIds: string[] = [];
 
-  protected readonly logger: Logger;
-
   constructor(protected readonly workspaceRepository: Repository<Workspace>) {
     super();
-    this.logger = new Logger(this.constructor.name);
   }
 
   @Option({
