@@ -26,6 +26,7 @@ import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMe
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useLocation } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
@@ -65,10 +66,13 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
     viewBarComponentId: recordIndexId,
   });
 
-  const newFieldSettingsUrl = getSettingsPagePath(
-    SettingsPath.ObjectNewFieldSelect,
+  const newSelectFieldSettingsUrl = getSettingsPagePath(
+    SettingsPath.ObjectNewFieldConfigure,
     {
       objectSlug: objectNamePlural,
+    },
+    {
+      fieldType: FieldMetadataType.Select,
     },
   );
 
@@ -135,7 +139,7 @@ export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
         <UndecoratedLink
-          to={newFieldSettingsUrl}
+          to={newSelectFieldSettingsUrl}
           onClick={() => {
             setNavigationMemorizedUrl(location.pathname + location.search);
             closeDropdown();
