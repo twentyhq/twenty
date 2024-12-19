@@ -15,14 +15,17 @@ import { scrollWrapperScrollTopComponentState } from '@/ui/utilities/scroll/stat
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import 'overlayscrollbars/overlayscrollbars.css';
 
-const StyledScrollWrapper = styled.div<{ scrollHide?: boolean }>`
+const StyledScrollWrapper = styled.div`
   display: flex;
   height: 100%;
   width: 100%;
 
   .os-scrollbar-handle {
-    background-color: ${({ theme, scrollHide }) =>
-      scrollHide ? 'transparent' : theme.border.color.medium};
+    background-color: ${({ theme }) => theme.border.color.medium};
+  }
+  .os-scrollbar {
+    padding: 0px;
+    --os-size: 6px;
   }
 `;
 
@@ -36,7 +39,6 @@ export type ScrollWrapperProps = {
   defaultEnableXScroll?: boolean;
   defaultEnableYScroll?: boolean;
   contextProviderName: ContextProviderName;
-  scrollHide?: boolean;
   componentInstanceId: string;
 };
 
@@ -47,7 +49,6 @@ export const ScrollWrapper = ({
   defaultEnableXScroll = true,
   defaultEnableYScroll = true,
   contextProviderName,
-  scrollHide = false,
 }: ScrollWrapperProps) => {
   const scrollableRef = useRef<HTMLDivElement>(null);
   const Context = getContextByProviderName(contextProviderName);
@@ -106,11 +107,7 @@ export const ScrollWrapper = ({
           id: contextProviderName,
         }}
       >
-        <StyledScrollWrapper
-          ref={scrollableRef}
-          className={className}
-          scrollHide={scrollHide}
-        >
+        <StyledScrollWrapper ref={scrollableRef} className={className}>
           <StyledInnerContainer>{children}</StyledInnerContainer>
         </StyledScrollWrapper>
       </Context.Provider>
