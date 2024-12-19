@@ -1,6 +1,6 @@
 import { FormAddressFieldInput } from '@/object-record/record-field/form-types/components/FormAddressFieldInput';
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
-import { FormDateFieldInput } from '@/object-record/record-field/form-types/components/FormDateFieldInput';
+import { FormDateTimeFieldInputBase } from '@/object-record/record-field/form-types/components/FormDateTimeFieldInputBase';
 import { FormEmailsFieldInput } from '@/object-record/record-field/form-types/components/FormEmailsFieldInput';
 import { FormFullNameFieldInput } from '@/object-record/record-field/form-types/components/FormFullNameFieldInput';
 import { FormLinksFieldInput } from '@/object-record/record-field/form-types/components/FormLinksFieldInput';
@@ -23,6 +23,7 @@ import {
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
+import { isFieldDateTime } from '@/object-record/record-field/types/guards/isFieldDateTime';
 import { isFieldEmails } from '@/object-record/record-field/types/guards/isFieldEmails';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
@@ -108,7 +109,16 @@ export const FormFieldInput = ({
       VariablePicker={VariablePicker}
     />
   ) : isFieldDate(field) ? (
-    <FormDateFieldInput
+    <FormDateTimeFieldInputBase
+      mode="date"
+      label={field.label}
+      defaultValue={defaultValue as string | undefined}
+      onPersist={onPersist}
+      VariablePicker={VariablePicker}
+    />
+  ) : isFieldDateTime(field) ? (
+    <FormDateTimeFieldInputBase
+      mode="datetime"
       label={field.label}
       defaultValue={defaultValue as string | undefined}
       onPersist={onPersist}
