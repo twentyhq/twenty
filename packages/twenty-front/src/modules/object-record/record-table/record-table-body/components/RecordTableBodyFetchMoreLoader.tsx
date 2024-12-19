@@ -23,11 +23,19 @@ const StyledText = styled.div`
 export const RecordTableBodyFetchMoreLoader = () => {
   const { setRecordTableLastRowVisible } = useRecordTable();
 
+  const isRecordTableLoadMoreLocked = useRecoilComponentValueV2(
+    isRecordTableLoadMoreLockedComponentState,
+  );
+
   const onLastRowVisible = useRecoilCallback(
     () => async (inView: boolean) => {
+      if (isRecordTableLoadMoreLocked) {
+        return;
+      }
+
       setRecordTableLastRowVisible(inView);
     },
-    [setRecordTableLastRowVisible],
+    [setRecordTableLastRowVisible, isRecordTableLoadMoreLocked],
   );
 
   const scrollWrapperRef = useContext(
@@ -36,10 +44,6 @@ export const RecordTableBodyFetchMoreLoader = () => {
 
   const hasRecordTableFetchedAllRecordsComponents = useRecoilComponentValueV2(
     hasRecordTableFetchedAllRecordsComponentStateV2,
-  );
-
-  const isRecordTableLoadMoreLocked = useRecoilComponentValueV2(
-    isRecordTableLoadMoreLockedComponentState,
   );
 
   const showLoadingMoreRow =
@@ -57,6 +61,8 @@ export const RecordTableBodyFetchMoreLoader = () => {
   if (!showLoadingMoreRow) {
     return <></>;
   }
+
+  console.log('isFetchingRecord');
 
   return (
     <tr ref={tbodyRef}>

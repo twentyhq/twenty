@@ -40,8 +40,12 @@ export const RecordBoardColumnFetchMoreLoader = () => {
   const { ref, inView } = useInView();
 
   useEffect(() => {
+    if (isLoadMoreLocked) {
+      return;
+    }
+
     setShouldFetchMore(inView);
-  }, [setShouldFetchMore, inView]);
+  }, [setShouldFetchMore, inView, isLoadMoreLocked]);
 
   if (isLoadMoreLocked) {
     return null;
