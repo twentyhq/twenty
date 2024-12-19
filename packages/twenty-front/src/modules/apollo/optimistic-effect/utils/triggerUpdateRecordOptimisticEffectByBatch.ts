@@ -14,7 +14,7 @@ import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
 // TODO: add extensive unit tests for this function
 // That will also serve as documentation
-export const triggerUpdateRecordOptimisticEffectV2 = ({
+export const triggerUpdateRecordOptimisticEffectByBatch = ({
   cache,
   objectMetadataItem,
   currentRecords,

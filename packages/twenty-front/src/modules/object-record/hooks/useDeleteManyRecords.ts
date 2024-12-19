@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
-import { triggerUpdateRecordOptimisticEffectV2 } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectV2';
+import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -128,7 +128,7 @@ export const useDeleteManyRecords = ({
           });
         });
 
-        triggerUpdateRecordOptimisticEffectV2({
+        triggerUpdateRecordOptimisticEffectByBatch({
           cache: apolloClient.cache,
           objectMetadataItem,
           currentRecords: cachedRecordsWithConnection,
