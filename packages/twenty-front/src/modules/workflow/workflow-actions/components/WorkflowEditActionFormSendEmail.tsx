@@ -5,17 +5,17 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { FormTextFieldInput } from '@/object-record/record-field/form-types/components/FormTextFieldInput';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { Select, SelectOption } from '@/ui/input/components/Select';
+import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 import { WorkflowStepHeader } from '@/workflow/components/WorkflowStepHeader';
 import { WorkflowVariablePicker } from '@/workflow/components/WorkflowVariablePicker';
 import { workflowIdState } from '@/workflow/states/workflowIdState';
 import { WorkflowSendEmailAction } from '@/workflow/types/Workflow';
 import { useTheme } from '@emotion/react';
-import { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { IconMail, IconPlus, isDefined } from 'twenty-ui';
+import { JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
-import { WorkflowStepBody } from '@/workflow/components/WorkflowStepBody';
 
 type WorkflowEditActionFormSendEmailProps = {
   action: WorkflowSendEmailAction;
@@ -47,14 +47,11 @@ export const WorkflowEditActionFormSendEmail = ({
   const workflowId = useRecoilValue(workflowIdState);
   const redirectUrl = `/object/workflow/${workflowId}`;
 
-  const form = useForm<SendEmailFormData>({
-    defaultValues: {
-      connectedAccountId: '',
-      email: '',
-      subject: '',
-      body: '',
-    },
-    disabled: actionOptions.readonly,
+  const [formData, setFormData] = useState<SendEmailFormData>({
+    connectedAccountId: action.settings.input.connectedAccountId,
+    email: action.settings.input.email,
+    subject: action.settings.input.subject ?? '',
+    body: action.settings.input.body ?? '',
   });
 
   const checkConnectedAccountScopes = async (
@@ -77,16 +74,6 @@ export const WorkflowEditActionFormSendEmail = ({
       });
     }
   };
-
-  useEffect(() => {
-    form.setValue(
-      'connectedAccountId',
-      action.settings.input.connectedAccountId ?? '',
-    );
-    form.setValue('email', action.settings.input.email ?? '');
-    form.setValue('subject', action.settings.input.subject ?? '');
-    form.setValue('body', action.settings.input.body ?? '');
-  }, [action.settings, form]);
 
   const saveAction = useDebouncedCallback(
     async (formData: SendEmailFormData, checkScopes = false) => {
@@ -120,10 +107,19 @@ export const WorkflowEditActionFormSendEmail = ({
     };
   }, [saveAction]);
 
-  const handleSave = (checkScopes = false) =>
-    form.handleSubmit((formData: SendEmailFormData) =>
-      saveAction(formData, checkScopes),
-    )();
+  const handleFieldChange = (
+    fieldName: keyof SendEmailFormData,
+    updatedValue: JsonValue,
+  ) => {
+    const newFormData: SendEmailFormData = {
+      ...formData,
+      [fieldName]: updatedValue,
+    };
+
+    setFormData(newFormData);
+
+    saveAction(newFormData);
+  };
 
   const filter: { or: object[] } = {
     or: [
@@ -190,83 +186,56 @@ export const WorkflowEditActionFormSendEmail = ({
           headerType="Email"
         />
         <WorkflowStepBody>
-          <Controller
-            name="connectedAccountId"
-            control={form.control}
-            render={({ field }) => (
-              <Select
-                dropdownId="select-connected-account-id"
-                label="Account"
-                fullWidth
-                emptyOption={emptyOption}
-                value={field.value}
-                options={connectedAccountOptions}
-                callToActionButton={{
-                  onClick: () =>
-                    triggerApisOAuth('google', {
-                      redirectLocation: redirectUrl,
-                    }),
-                  Icon: IconPlus,
-                  text: 'Add account',
-                }}
-                onChange={(connectedAccountId) => {
-                  field.onChange(connectedAccountId);
-                  handleSave(true);
-                }}
-                disabled={actionOptions.readonly}
-              />
-            )}
+          <Select
+            dropdownId="select-connected-account-id"
+            label="Account"
+            fullWidth
+            emptyOption={emptyOption}
+            value={formData.connectedAccountId}
+            options={connectedAccountOptions}
+            callToActionButton={{
+              onClick: () =>
+                triggerApisOAuth('google', {
+                  redirectLocation: redirectUrl,
+                }),
+              Icon: IconPlus,
+              text: 'Add account',
+            }}
+            onChange={(connectedAccountId) => {
+              handleFieldChange('connectedAccountId', connectedAccountId);
+            }}
+            disabled={actionOptions.readonly}
           />
-          <Controller
-            name="email"
-            control={form.control}
-            render={({ field }) => (
-              <FormTextFieldInput
-                label="Email"
-                placeholder="Enter receiver email"
-                readonly={actionOptions.readonly}
-                defaultValue={field.value}
-                onPersist={(value) => {
-                  field.onChange(value);
-                  handleSave();
-                }}
-                VariablePicker={WorkflowVariablePicker}
-              />
-            )}
+          <FormTextFieldInput
+            label="Email"
+            placeholder="Enter receiver email"
+            readonly={actionOptions.readonly}
+            defaultValue={formData.email}
+            onPersist={(email) => {
+              handleFieldChange('email', email);
+            }}
+            VariablePicker={WorkflowVariablePicker}
           />
-          <Controller
-            name="subject"
-            control={form.control}
-            render={({ field }) => (
-              <FormTextFieldInput
-                label="Subject"
-                placeholder="Enter email subject"
-                readonly={actionOptions.readonly}
-                defaultValue={field.value}
-                onPersist={(value) => {
-                  field.onChange(value);
-                  handleSave();
-                }}
-                VariablePicker={WorkflowVariablePicker}
-              />
-            )}
+          <FormTextFieldInput
+            label="Subject"
+            placeholder="Enter email subject"
+            readonly={actionOptions.readonly}
+            defaultValue={formData.subject}
+            onPersist={(subject) => {
+              handleFieldChange('subject', subject);
+            }}
+            VariablePicker={WorkflowVariablePicker}
           />
-          <Controller
-            name="body"
-            control={form.control}
-            render={({ field }) => (
-              <FormTextFieldInput
-                label="Body"
-                placeholder="Enter email body"
-                readonly={actionOptions.readonly}
-                defaultValue={field.value}
-                onPersist={(value) => {
-                  field.onChange(value);
-                  handleSave();
-                }}
-                VariablePicker={WorkflowVariablePicker}
-              />
-            )}
+          <FormTextFieldInput
+            label="Body"
+            placeholder="Enter email body"
+            readonly={actionOptions.readonly}
+            defaultValue={formData.body}
+            onPersist={(body) => {
+              handleFieldChange('body', body);
+            }}
+            VariablePicker={WorkflowVariablePicker}
+            multiline
           />
         </WorkflowStepBody>
       </>
