@@ -1,12 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useState } from 'react';
-import {
-  AppTooltip,
-  IconChevronDown,
-  isDefined,
-  TooltipDelay,
-} from 'twenty-ui';
+import { IconChevronDown, isDefined } from 'twenty-ui';
 
 const StyledCell = styled.div`
   align-items: center;
@@ -37,6 +32,27 @@ const StyledText = styled.span`
   z-index: 1;
 `;
 
+const StyledValueContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1 0 0;
+  gap: 4px;
+  height: 32px;
+  justify-content: flex-end;
+  padding: 8px;
+`;
+
+const StyledLabel = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 4px;
+`;
+
+const StyledValue = styled.div`
+  color: ${({ theme }) => theme.color.gray60};
+  flex: 1 0 0;
+`;
+
 const StyledIcon = styled(IconChevronDown)`
   align-items: center;
   display: flex;
@@ -46,7 +62,7 @@ const StyledIcon = styled(IconChevronDown)`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const RecordTableColumnFooterAggregateValue = ({
+export const RecordTableColumnAggregateFooterValue = ({
   dropdownId,
   aggregateValue,
   aggregateLabel,
@@ -70,20 +86,15 @@ export const RecordTableColumnFooterAggregateValue = ({
       <StyledCell>
         {isHovered || isDefined(aggregateValue) || isFirstCell ? (
           <>
-            <StyledText id={sanitizedId}>
-              {aggregateValue ?? 'Calculate'}
-            </StyledText>
-            <StyledIcon fontWeight={'light'} size={theme.icon.size.sm} />
-            {isDefined(aggregateValue) && isDefined(aggregateLabel) && (
-              <AppTooltip
-                anchorSelect={`#${sanitizedId}`}
-                content={aggregateLabel}
-                noArrow
-                place="top-start"
-                positionStrategy="fixed"
-                delay={TooltipDelay.shortDelay}
-              />
+            {isDefined(aggregateValue) ? (
+              <StyledValueContainer>
+                <StyledLabel>{aggregateLabel}</StyledLabel>
+                <StyledValue>{aggregateValue}</StyledValue>
+              </StyledValueContainer>
+            ) : (
+              <StyledText id={sanitizedId}>Calculate</StyledText>
             )}
+            <StyledIcon fontWeight={'light'} size={theme.icon.size.sm} />
           </>
         ) : (
           <></>
