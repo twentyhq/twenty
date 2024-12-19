@@ -12,6 +12,10 @@ import {
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 import { isDefined } from 'src/utils/is-defined';
 import { isWorkEmail } from 'src/utils/is-work-email';
+import {
+  SEED_ACME_WORKSPACE_ID,
+  SEED_APPLE_WORKSPACE_ID,
+} from 'src/database/typeorm-seeds/core/workspaces';
 
 @Injectable()
 export class DomainManagerService {
@@ -141,7 +145,7 @@ export class DomainManagerService {
     if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
       const workspaces = await this.workspaceRepository.find({
         order: {
-          createdAt: 'DESC',
+          createdAt: 'ASC',
         },
         relations: ['workspaceSSOIdentityProviders'],
       });
@@ -153,7 +157,14 @@ export class DomainManagerService {
         );
       }
 
-      return workspaces[0];
+      const nonSeedWorkspace = workspaces.find(
+        (workspace) =>
+          ![SEED_APPLE_WORKSPACE_ID, SEED_ACME_WORKSPACE_ID].includes(
+            workspace.id,
+          ),
+      );
+
+      return nonSeedWorkspace ?? workspaces[0];
     }
 
     throw new Error(
