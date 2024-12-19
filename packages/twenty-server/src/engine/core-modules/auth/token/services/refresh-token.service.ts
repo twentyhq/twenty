@@ -90,7 +90,6 @@ export class RefreshTokenService {
       );
     }
 
-    console.log('>>>>>>>>>>>>>>', token);
     // TODO: Delete this useless condition and error after March 31st 2025
     if (!token.workspaceId) {
       throw new AuthException(
