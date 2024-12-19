@@ -16,35 +16,43 @@ import { useRecordGroupReorderConfirmationModal } from '@/object-record/record-g
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
-import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
-import { recordIndexRecordGroupHideComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentState';
+import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
+import { recordIndexRecordGroupHideComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentFamilyState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const isViewGroupEnabled = useIsFeatureEnabled('IS_VIEW_GROUPS_ENABLED');
 
-  const { currentContentId, recordIndexId, onContentChange, resetContent } =
-    useOptionsDropdown();
+  const {
+    viewType,
+    currentContentId,
+    recordIndexId,
+    onContentChange,
+    resetContent,
+  } = useOptionsDropdown();
 
   const recordGroupFieldMetadata = useRecoilComponentValueV2(
     recordGroupFieldMetadataComponentState,
   );
 
-  const visibleRecordGroupIds = useRecoilComponentValueV2(
-    visibleRecordGroupIdsComponentSelector,
+  const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
+    visibleRecordGroupIdsComponentFamilySelector,
+    viewType,
   );
 
   const hiddenRecordGroupIds = useRecoilComponentValueV2(
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const hideEmptyRecordGroup = useRecoilComponentValueV2(
-    recordIndexRecordGroupHideComponentState,
+  const hideEmptyRecordGroup = useRecoilComponentFamilyValueV2(
+    recordIndexRecordGroupHideComponentFamilyState,
+    viewType,
   );
 
   const recordGroupSort = useRecoilComponentValueV2(
@@ -56,12 +64,16 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     handleHideEmptyRecordGroupChange,
   } = useRecordGroupVisibility({
     viewBarId: recordIndexId,
+    viewType,
   });
 
   const {
     handleRecordGroupOrderChangeWithModal,
     RecordGroupReorderConfirmationModal,
-  } = useRecordGroupReorderConfirmationModal(recordIndexId);
+  } = useRecordGroupReorderConfirmationModal({
+    recordIndexId,
+    viewType,
+  });
 
   useEffect(() => {
     if (
