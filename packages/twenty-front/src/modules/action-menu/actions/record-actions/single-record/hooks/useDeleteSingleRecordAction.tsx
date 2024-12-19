@@ -49,8 +49,7 @@ export const useDeleteSingleRecordAction: SingleRecordActionHookWithObjectMetada
 
     const isRemoteObject = objectMetadataItem.isRemote;
 
-    const { isInRightDrawer, onActionExecutedCallback } =
-      useContext(ActionMenuContext);
+    const { isInRightDrawer } = useContext(ActionMenuContext);
 
     const shouldBeRegistered = !isRemoteObject;
 
@@ -75,7 +74,6 @@ export const useDeleteSingleRecordAction: SingleRecordActionHookWithObjectMetada
           }
           onConfirmClick={() => {
             handleDeleteClick();
-            onActionExecutedCallback?.();
             if (isInRightDrawer) {
               closeRightDrawer();
             }

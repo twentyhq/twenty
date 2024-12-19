@@ -6,6 +6,7 @@ import { GRAY_SCALE } from 'twenty-ui';
 
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
+import { isRecordTableLoadMoreLockedComponentState } from '@/object-record/record-table/states/isRecordTableLoadMoreLockedComponentState';
 import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -22,11 +23,19 @@ const StyledText = styled.div`
 export const RecordTableBodyFetchMoreLoader = () => {
   const { setRecordTableLastRowVisible } = useRecordTable();
 
+  const isRecordTableLoadMoreLocked = useRecoilComponentValueV2(
+    isRecordTableLoadMoreLockedComponentState,
+  );
+
   const onLastRowVisible = useRecoilCallback(
     () => async (inView: boolean) => {
+      if (isRecordTableLoadMoreLocked) {
+        return;
+      }
+
       setRecordTableLastRowVisible(inView);
     },
-    [setRecordTableLastRowVisible],
+    [setRecordTableLastRowVisible, isRecordTableLoadMoreLocked],
   );
 
   const scrollWrapperRef = useContext(
@@ -37,7 +46,8 @@ export const RecordTableBodyFetchMoreLoader = () => {
     hasRecordTableFetchedAllRecordsComponentStateV2,
   );
 
-  const showLoadingMoreRow = !hasRecordTableFetchedAllRecordsComponents;
+  const showLoadingMoreRow =
+    !hasRecordTableFetchedAllRecordsComponents && !isRecordTableLoadMoreLocked;
 
   const { ref: tbodyRef } = useInView({
     onChange: onLastRowVisible,
