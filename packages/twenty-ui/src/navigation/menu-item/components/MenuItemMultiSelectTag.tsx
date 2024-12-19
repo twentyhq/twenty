@@ -1,4 +1,4 @@
-import { Tag } from '@ui/display';
+import { IconComponent, Tag } from '@ui/display';
 import { Checkbox, CheckboxShape, CheckboxSize } from '@ui/input';
 import { ThemeColor } from '@ui/theme';
 import {
@@ -13,6 +13,7 @@ type MenuItemMultiSelectTagProps = {
   onClick?: () => void;
   color: ThemeColor | 'transparent';
   text: string;
+  Icon?: IconComponent;
 };
 
 export const MenuItemMultiSelectTag = ({
@@ -22,6 +23,7 @@ export const MenuItemMultiSelectTag = ({
   onClick,
   isKeySelected,
   text,
+  Icon,
 }: MenuItemMultiSelectTagProps) => {
   return (
     <StyledMenuItemBase
@@ -35,7 +37,7 @@ export const MenuItemMultiSelectTag = ({
         checked={selected}
       />
       <StyledMenuItemLeftContent>
-        <Tag color={color} text={text} />
+        <Tag color={color} text={text} Icon={Icon} />
       </StyledMenuItemLeftContent>
     </StyledMenuItemBase>
   );

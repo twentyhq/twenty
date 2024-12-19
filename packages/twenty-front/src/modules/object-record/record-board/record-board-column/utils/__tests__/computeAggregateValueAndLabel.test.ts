@@ -47,8 +47,81 @@ describe('computeAggregateValueAndLabel', () => {
     });
 
     expect(result).toEqual({
-      value: 2,
-      label: 'Sum of amount',
+      value: '2',
+      label: 'Sum',
+      labelWithFieldName: 'Sum of amount',
+    });
+  });
+
+  it('should handle number field as percentage', () => {
+    const mockObjectMetadataWithPercentageField: ObjectMetadataItem = {
+      id: '123',
+      fields: [
+        {
+          id: MOCK_FIELD_ID,
+          name: 'percentage',
+          type: FieldMetadataType.Number,
+          settings: {
+            type: 'percentage',
+          },
+        } as FieldMetadataItem,
+      ],
+    } as ObjectMetadataItem;
+
+    const mockData = {
+      percentage: {
+        [AGGREGATE_OPERATIONS.avg]: 0.3,
+      },
+    };
+
+    const result = computeAggregateValueAndLabel({
+      data: mockData,
+      objectMetadataItem: mockObjectMetadataWithPercentageField,
+      fieldMetadataId: MOCK_FIELD_ID,
+      aggregateOperation: AGGREGATE_OPERATIONS.avg,
+      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
+    });
+
+    expect(result).toEqual({
+      value: '30%',
+      label: 'Average',
+      labelWithFieldName: 'Average of percentage',
+    });
+  });
+
+  it('should handle number field with decimals', () => {
+    const mockObjectMetadataWithDecimalsField: ObjectMetadataItem = {
+      id: '123',
+      fields: [
+        {
+          id: MOCK_FIELD_ID,
+          name: 'decimals',
+          type: FieldMetadataType.Number,
+          settings: {
+            decimals: 2,
+          },
+        } as FieldMetadataItem,
+      ],
+    } as ObjectMetadataItem;
+
+    const mockData = {
+      decimals: {
+        [AGGREGATE_OPERATIONS.sum]: 0.009,
+      },
+    };
+
+    const result = computeAggregateValueAndLabel({
+      data: mockData,
+      objectMetadataItem: mockObjectMetadataWithDecimalsField,
+      fieldMetadataId: MOCK_FIELD_ID,
+      aggregateOperation: AGGREGATE_OPERATIONS.sum,
+      fallbackFieldName: MOCK_KANBAN_FIELD_NAME,
+    });
+
+    expect(result).toEqual({
+      value: '0.01',
+      label: 'Sum',
+      labelWithFieldName: 'Sum of decimals',
     });
   });
 
@@ -86,8 +159,9 @@ describe('computeAggregateValueAndLabel', () => {
     });
 
     expect(result).toEqual({
-      value: undefined,
-      label: 'Sum of amount',
+      value: '-',
+      label: 'Sum',
+      labelWithFieldName: 'Sum of amount',
     });
   });
 });

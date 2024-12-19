@@ -8,6 +8,7 @@ import {
   SettingsDataModelFieldPreviewCard,
   SettingsDataModelFieldPreviewCardProps,
 } from '@/settings/data-model/fields/preview/components/SettingsDataModelFieldPreviewCard';
+import { useFormContext } from 'react-hook-form';
 
 type SettingsDataModelFieldTextSettingsFormCardProps = {
   disabled?: boolean;
@@ -26,11 +27,16 @@ export const SettingsDataModelFieldTextSettingsFormCard = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldTextSettingsFormCardProps) => {
+  const { watch } = useFormContext();
+
   return (
     <SettingsDataModelPreviewFormCard
       preview={
         <StyledFieldPreviewCard
-          fieldMetadataItem={fieldMetadataItem}
+          fieldMetadataItem={{
+            ...fieldMetadataItem,
+            settings: watch('settings'),
+          }}
           objectMetadataItem={objectMetadataItem}
         />
       }

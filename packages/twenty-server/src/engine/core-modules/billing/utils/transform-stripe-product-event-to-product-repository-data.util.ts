@@ -13,8 +13,9 @@ export const transformStripeProductEventToProductRepositoryData = (
     defaultStripePriceId: data.object.default_price
       ? String(data.object.default_price)
       : undefined,
-    unitLabel: data.object.unit_label ?? undefined,
-    url: data.object.url ?? undefined,
+    unitLabel:
+      data.object.unit_label === null ? undefined : data.object.unit_label,
+    url: data.object.url === null ? undefined : data.object.url,
     taxCode: data.object.tax_code ? String(data.object.tax_code) : undefined,
   };
 };

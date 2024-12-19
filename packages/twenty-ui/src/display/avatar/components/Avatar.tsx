@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { isNonEmptyString, isUndefined } from '@sniptt/guards';
+import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
 import { useContext } from 'react';
 import { useRecoilState } from 'recoil';
 
@@ -90,12 +90,10 @@ export const Avatar = ({
       })
     : null;
 
-  const noAvatarUrl = !isNonEmptyString(avatarImageURI);
-
   const placeholderChar = placeholder?.[0]?.toLocaleUpperCase();
 
   const showPlaceholder =
-    noAvatarUrl || invalidAvatarUrls.includes(avatarImageURI);
+    isNull(avatarImageURI) || invalidAvatarUrls.includes(avatarImageURI);
 
   const handleImageError = () => {
     if (isNonEmptyString(avatarImageURI)) {

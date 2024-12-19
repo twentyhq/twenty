@@ -7,11 +7,13 @@ import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/re
 import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
 import { RecordTableHeaderLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderLastColumn';
 
+export const FIRST_TH_WIDTH = '9px';
+
 const StyledTableHead = styled.thead`
   cursor: pointer;
 
   th:nth-of-type(1) {
-    width: 9px;
+    width: ${FIRST_TH_WIDTH};
     left: 0;
     border-right-color: ${({ theme }) => theme.background.primary};
   }

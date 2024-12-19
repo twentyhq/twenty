@@ -13,7 +13,7 @@ import { RecordTableNoRecordGroupBody } from '@/object-record/record-table/recor
 import { RecordTableNoRecordGroupBodyEffect } from '@/object-record/record-table/record-table-body/components/RecordTableNoRecordGroupBodyEffect';
 import { RecordTableRecordGroupBodyEffects } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupBodyEffects';
 import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record-table-body/components/RecordTableRecordGroupsBody';
-import { RecordTableFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableFooter';
+import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
@@ -88,7 +88,7 @@ export const RecordTable = () => {
         <RecordTableEmptyState />
       ) : (
         <>
-          <StyledTable className="entity-table-cell" ref={tableBodyRef}>
+          <StyledTable ref={tableBodyRef}>
             <RecordTableHeader />
             {!hasRecordGroups ? (
               <RecordTableNoRecordGroupBody />
@@ -97,7 +97,7 @@ export const RecordTable = () => {
             )}
             <RecordTableStickyEffect />
             {isAggregateQueryEnabled && !hasRecordGroups && (
-              <RecordTableFooter />
+              <RecordTableAggregateFooter endOfTableSticky />
             )}
           </StyledTable>
           <DragSelect

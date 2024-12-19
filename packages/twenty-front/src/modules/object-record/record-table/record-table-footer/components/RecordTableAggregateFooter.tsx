@@ -1,17 +1,16 @@
 import styled from '@emotion/styled';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
-import { TABLE_CELL_CHECKBOX_MIN_WIDTH } from '@/object-record/record-table/record-table-cell/components/RecordTableCellCheckbox';
-import { TABLE_CELL_GRIP_WIDTH } from '@/object-record/record-table/record-table-cell/components/RecordTableCellGrip';
-import { RecordTableFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableFooterCell';
+import { RecordTableAggregateFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooterCell';
+import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
-const StyledTableFoot = styled.thead`
+const StyledTableFoot = styled.thead<{ endOfTableSticky?: boolean }>`
   cursor: pointer;
 
   th:nth-of-type(1) {
-    width: 9px;
+    width: ${FIRST_TH_WIDTH};
     left: 0;
     border-right-color: ${({ theme }) => theme.background.primary};
   }
@@ -59,31 +58,23 @@ const StyledTableFoot = styled.thead`
     }
   }
 
-  &.header-sticky {
-    th {
-      position: sticky;
-      top: 0;
-      z-index: 5;
-    }
-  }
-
-  &.header-sticky.first-columns-sticky {
-    th:nth-of-type(1),
-    th:nth-of-type(2),
-    th:nth-of-type(3) {
-      z-index: 10;
-    }
+  tr {
+    position: sticky;
+    z-index: 5;
+    ${({ endOfTableSticky }) => endOfTableSticky && `bottom: 0;`}
   }
 `;
 
-const StyledDiv = styled.div`
-  width: calc(${TABLE_CELL_GRIP_WIDTH} + ${TABLE_CELL_CHECKBOX_MIN_WIDTH});
+const StyledTh = styled.th`
+  background-color: ${({ theme }) => theme.background.primary};
 `;
 
-export const RecordTableFooter = ({
+export const RecordTableAggregateFooter = ({
   currentRecordGroupId,
+  endOfTableSticky,
 }: {
   currentRecordGroupId?: string;
+  endOfTableSticky?: boolean;
 }) => {
   const visibleTableColumns = useRecoilComponentValueV2(
     visibleTableColumnsComponentSelector,
@@ -93,12 +84,13 @@ export const RecordTableFooter = ({
     <StyledTableFoot
       id={`record-table-footer${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
       data-select-disable
+      endOfTableSticky={endOfTableSticky}
     >
       <tr>
-        <th />
-        <StyledDiv />
+        <StyledTh />
+        <StyledTh />
         {visibleTableColumns.map((column, index) => (
-          <RecordTableFooterCell
+          <RecordTableAggregateFooterCell
             key={`${column.fieldMetadataId}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
             column={column}
             currentRecordGroupId={currentRecordGroupId}

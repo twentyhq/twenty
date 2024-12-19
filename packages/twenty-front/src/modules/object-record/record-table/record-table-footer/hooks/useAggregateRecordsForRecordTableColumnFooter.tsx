@@ -32,13 +32,10 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
     recordIndexViewFilterGroups,
   );
 
-  const viewFieldId = currentViewWithSavedFiltersAndSorts?.viewFields?.find(
-    (viewField) => viewField.fieldMetadataId === fieldMetadataId,
-  )?.id;
-
-  if (!viewFieldId) {
-    throw new Error('ViewField not found');
-  }
+  const viewFieldId =
+    currentViewWithSavedFiltersAndSorts?.viewFields?.find(
+      (viewField) => viewField.fieldMetadataId === fieldMetadataId,
+    )?.id ?? '';
 
   const aggregateOperationForViewField = useRecoilValue(
     aggregateOperationForViewFieldState({ viewFieldId: viewFieldId }),
