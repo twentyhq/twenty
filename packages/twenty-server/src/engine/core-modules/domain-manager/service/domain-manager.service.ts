@@ -145,7 +145,7 @@ export class DomainManagerService {
     if (!this.environmentService.get('IS_MULTIWORKSPACE_ENABLED')) {
       const workspaces = await this.workspaceRepository.find({
         order: {
-          createdAt: 'DESC',
+          createdAt: 'ASC',
         },
         relations: ['workspaceSSOIdentityProviders'],
       });
@@ -164,7 +164,7 @@ export class DomainManagerService {
           ),
       );
 
-      return nonSeedWorkspace ?? workspaces[workspaces.length - 1];
+      return nonSeedWorkspace ?? workspaces[0];
     }
 
     throw new Error(
