@@ -7,13 +7,20 @@ import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/drop
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentStateV2';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { ViewType } from '@/views/types/ViewType';
 import { OnDragEndResponder } from '@hello-pangea/dnd';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 
-export const useRecordGroupReorderConfirmationModal = (
-  recordIndexId: string,
-) => {
+type UseRecordGroupReorderConfirmationModalParams = {
+  recordIndexId: string;
+  viewType: ViewType;
+};
+
+export const useRecordGroupReorderConfirmationModal = ({
+  recordIndexId,
+  viewType,
+}: UseRecordGroupReorderConfirmationModalParams) => {
   const { setActiveDropdownFocusIdAndMemorizePrevious } =
     useSetActiveDropdownFocusIdAndMemorizePrevious();
   const { goBackToPreviousDropdownFocusId } =
@@ -28,6 +35,7 @@ export const useRecordGroupReorderConfirmationModal = (
   const { handleOrderChange: handleRecordGroupOrderChange } =
     useRecordGroupReorder({
       viewBarId: recordIndexId,
+      viewType,
     });
 
   const isDragableSortRecordGroup = useRecoilComponentValueV2(

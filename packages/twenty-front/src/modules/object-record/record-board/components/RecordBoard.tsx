@@ -15,7 +15,7 @@ import { RecordBoardScope } from '@/object-record/record-board/scopes/RecordBoar
 import { RecordBoardComponentInstanceContext } from '@/object-record/record-board/states/contexts/RecordBoardComponentInstanceContext';
 import { getDraggedRecordPosition } from '@/object-record/record-board/utils/getDraggedRecordPosition';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
-import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
+import { visibleRecordGroupIdsComponentFamilySelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentFamilySelector';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -26,8 +26,9 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useRecoilComponentCallbackStateV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentCallbackStateV2';
-import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
+import { useRecoilComponentFamilyValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentFamilyValueV2';
 import { getSnapshotValue } from '@/ui/utilities/state/utils/getSnapshotValue';
+import { ViewType } from '@/views/types/ViewType';
 import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 
 const StyledContainer = styled.div`
@@ -64,8 +65,9 @@ export const RecordBoard = () => {
     useContext(RecordBoardContext);
   const boardRef = useRef<HTMLDivElement>(null);
 
-  const visibleRecordGroupIds = useRecoilComponentValueV2(
-    visibleRecordGroupIdsComponentSelector,
+  const visibleRecordGroupIds = useRecoilComponentFamilyValueV2(
+    visibleRecordGroupIdsComponentFamilySelector,
+    ViewType.Kanban,
   );
 
   const recordIndexRecordIdsByGroupFamilyState =
