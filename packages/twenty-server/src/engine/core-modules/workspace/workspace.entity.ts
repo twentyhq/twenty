@@ -53,10 +53,6 @@ export class Workspace {
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  domainName?: string;
-
-  @Field({ nullable: true })
-  @Column({ nullable: true })
   displayName?: string;
 
   @Field({ nullable: true })
@@ -146,6 +142,10 @@ export class Workspace {
   @Field()
   @Column({ unique: true })
   subdomain: string;
+
+  @Field({ nullable: true })
+  @Column({ unique: true, nullable: true })
+  hostname: string;
 
   @Field()
   @Column({ default: true })
