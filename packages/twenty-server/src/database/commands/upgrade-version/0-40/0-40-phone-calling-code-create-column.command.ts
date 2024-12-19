@@ -50,7 +50,7 @@ export class PhoneCallingCodeCreateColumnCommand extends ActiveWorkspacesCommand
 
   async executeActiveWorkspacesCommand(
     _passedParam: string[],
-    _options: ActiveWorkspacesCommandOptions,
+    options: ActiveWorkspacesCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(
@@ -92,6 +92,9 @@ export class PhoneCallingCodeCreateColumnCommand extends ActiveWorkspacesCommand
               `P1 Step 1 - Create migration for field ${phoneFieldMetadata.name}`,
             );
 
+            if (options.dryRun === true) {
+              continue;
+            }
             await this.workspaceMigrationService.createCustomMigration(
               generateMigrationName(
                 `create-${phoneFieldMetadata.object.nameSingular}PrimaryPhoneCallingCode-for-field-${phoneFieldMetadata.name}`,

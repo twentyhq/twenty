@@ -75,7 +75,7 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
 
   async executeActiveWorkspacesCommand(
     _passedParam: string[],
-    _options: ActiveWorkspacesCommandOptions,
+    options: ActiveWorkspacesCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
     this.logger.log(
@@ -118,32 +118,33 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
             this.logger.log(
               `P1 Step 1 - Create migration for field ${phoneFieldMetadata.name}`,
             );
-
-            await this.workspaceMigrationService.createCustomMigration(
-              generateMigrationName(
-                `create-${phoneFieldMetadata.object.nameSingular}PrimaryPhoneCallingCode-for-field-${phoneFieldMetadata.name}`,
-              ),
-              workspaceId,
-              [
-                {
-                  name: computeObjectTargetTable(phoneFieldMetadata.object),
-                  action: WorkspaceMigrationTableActionType.ALTER,
-                  columns: this.workspaceMigrationFactory.createColumnActions(
-                    WorkspaceMigrationColumnActionType.CREATE,
-                    {
-                      id: v4(),
-                      type: FieldMetadataType.TEXT,
-                      name: `${phoneFieldMetadata.name}PrimaryPhoneCallingCode`,
-                      label: `${phoneFieldMetadata.name}PrimaryPhoneCallingCode`,
-                      objectMetadataId: phoneFieldMetadata.object.id,
-                      workspaceId: workspaceId,
-                      isNullable: true,
-                      defaultValue: "''",
-                    },
-                  ),
-                } satisfies WorkspaceMigrationTableAction,
-              ],
-            );
+            if (options.dryRun === false) {
+              await this.workspaceMigrationService.createCustomMigration(
+                generateMigrationName(
+                  `create-${phoneFieldMetadata.object.nameSingular}PrimaryPhoneCallingCode-for-field-${phoneFieldMetadata.name}`,
+                ),
+                workspaceId,
+                [
+                  {
+                    name: computeObjectTargetTable(phoneFieldMetadata.object),
+                    action: WorkspaceMigrationTableActionType.ALTER,
+                    columns: this.workspaceMigrationFactory.createColumnActions(
+                      WorkspaceMigrationColumnActionType.CREATE,
+                      {
+                        id: v4(),
+                        type: FieldMetadataType.TEXT,
+                        name: `${phoneFieldMetadata.name}PrimaryPhoneCallingCode`,
+                        label: `${phoneFieldMetadata.name}PrimaryPhoneCallingCode`,
+                        objectMetadataId: phoneFieldMetadata.object.id,
+                        workspaceId: workspaceId,
+                        isNullable: true,
+                        defaultValue: "''",
+                      },
+                    ),
+                  } satisfies WorkspaceMigrationTableAction,
+                ],
+              );
+            }
           }
         }
 
@@ -208,17 +209,18 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
                     };
                   });
                 }
-
-                await repository.update(record.id, {
-                  [`${phoneFieldMetadata.name}PrimaryPhoneCallingCode`]:
-                    record[phoneFieldMetadata.name].primaryPhoneCountryCode,
-                  [`${phoneFieldMetadata.name}PrimaryPhoneCountryCode`]:
-                    callingCodeToCountryCode(
+                if (options.dryRun === false) {
+                  await repository.update(record.id, {
+                    [`${phoneFieldMetadata.name}PrimaryPhoneCallingCode`]:
                       record[phoneFieldMetadata.name].primaryPhoneCountryCode,
-                    ),
-                  [`${phoneFieldMetadata.name}AdditionalPhones`]:
-                    additionalPhones,
-                });
+                    [`${phoneFieldMetadata.name}PrimaryPhoneCountryCode`]:
+                      callingCodeToCountryCode(
+                        record[phoneFieldMetadata.name].primaryPhoneCountryCode,
+                      ),
+                    [`${phoneFieldMetadata.name}AdditionalPhones`]:
+                      additionalPhones,
+                  });
+                }
               }
             }
           }
@@ -274,17 +276,21 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
             primaryPhoneCountryCode.replace(/["']/g, ''),
           );
 
-          await this.fieldMetadataRepository.update(phoneFieldMetadata.id, {
-            defaultValue: {
-              ...defaultValue,
-              primaryPhoneCountryCode: countryCode ? `'${countryCode}'` : "''",
-              primaryPhoneCallingCode: isCallingCode(
-                primaryPhoneCountryCode.replace(/["']/g, ''),
-              )
-                ? primaryPhoneCountryCode
-                : "''",
-            },
-          });
+          if (options.dryRun === false) {
+            await this.fieldMetadataRepository.update(phoneFieldMetadata.id, {
+              defaultValue: {
+                ...defaultValue,
+                primaryPhoneCountryCode: countryCode
+                  ? `'${countryCode}'`
+                  : "''",
+                primaryPhoneCallingCode: isCallingCode(
+                  primaryPhoneCountryCode.replace(/["']/g, ''),
+                )
+                  ? primaryPhoneCountryCode
+                  : "''",
+              },
+            });
+          }
         }
       } catch (error) {
         console.log(`Error in workspace ${workspaceId} : ${error}`);
