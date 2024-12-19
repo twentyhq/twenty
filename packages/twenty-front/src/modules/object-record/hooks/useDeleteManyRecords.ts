@@ -1,6 +1,7 @@
 import { useApolloClient } from '@apollo/client';
 
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
+import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -8,6 +9,7 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { DEFAULT_MUTATION_BATCH_SIZE } from '@/object-record/constants/DefaultMutationBatchSize';
+import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteManyRecordsMutation';
 import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggregateQueries';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -80,6 +82,9 @@ export const useDeleteManyRecords = ({
         .map((idToDelete) => getRecordFromCache(idToDelete, apolloClient.cache))
         .filter(isDefined);
 
+      const cachedRecordsWithConnection: RecordGqlNode[] = [];
+      const optimisticRecordsWithConnection: RecordGqlNode[] = [];
+
       if (!options?.skipOptimisticEffect) {
         cachedRecords.forEach((cachedRecord) => {
           if (!cachedRecord || !cachedRecord.id) {
@@ -112,20 +117,23 @@ export const useDeleteManyRecords = ({
             return null;
           }
 
+          cachedRecordsWithConnection.push(cachedRecordWithConnection);
+          optimisticRecordsWithConnection.push(optimisticRecordWithConnection);
+
           updateRecordFromCache({
             objectMetadataItems,
             objectMetadataItem,
             cache: apolloClient.cache,
             record: computedOptimisticRecord,
           });
+        });
 
-          triggerUpdateRecordOptimisticEffect({
-            cache: apolloClient.cache,
-            objectMetadataItem,
-            currentRecord: cachedRecordWithConnection,
-            updatedRecord: optimisticRecordWithConnection,
-            objectMetadataItems,
-          });
+        triggerUpdateRecordOptimisticEffectByBatch({
+          cache: apolloClient.cache,
+          objectMetadataItem,
+          currentRecords: cachedRecordsWithConnection,
+          updatedRecords: optimisticRecordsWithConnection,
+          objectMetadataItems,
         });
       }
 

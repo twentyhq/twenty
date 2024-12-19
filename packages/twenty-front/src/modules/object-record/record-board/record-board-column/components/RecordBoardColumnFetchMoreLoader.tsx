@@ -7,6 +7,8 @@ import { GRAY_SCALE } from 'twenty-ui';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { isRecordBoardFetchingRecordsByColumnFamilyState } from '@/object-record/record-board/states/isRecordBoardFetchingRecordsByColumnFamilyState';
 import { recordBoardShouldFetchMoreInColumnComponentFamilyState } from '@/object-record/record-board/states/recordBoardShouldFetchMoreInColumnComponentFamilyState';
+import { isRecordIndexLoadMoreLockedComponentState } from '@/object-record/record-index/states/isRecordIndexLoadMoreLockedComponentState';
+import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentFamilyStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentFamilyStateV2';
 
 const StyledText = styled.div`
@@ -31,11 +33,23 @@ export const RecordBoardColumnFetchMoreLoader = () => {
     columnDefinition.id,
   );
 
+  const isLoadMoreLocked = useRecoilComponentValueV2(
+    isRecordIndexLoadMoreLockedComponentState,
+  );
+
   const { ref, inView } = useInView();
 
   useEffect(() => {
+    if (isLoadMoreLocked) {
+      return;
+    }
+
     setShouldFetchMore(inView);
-  }, [setShouldFetchMore, inView]);
+  }, [setShouldFetchMore, inView, isLoadMoreLocked]);
+
+  if (isLoadMoreLocked) {
+    return null;
+  }
 
   return (
     <div ref={ref}>

@@ -29,6 +29,8 @@ export const RecordIndexPageHeader = () => {
 
   const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
 
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+
   const numberOfSelectedRecords = useRecoilComponentValueV2(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
@@ -64,7 +66,7 @@ export const RecordIndexPageHeader = () => {
 
       {isPageHeaderV2Enabled && (
         <>
-          <RecordIndexActionMenu />
+          <RecordIndexActionMenu indexId={recordIndexId} />
           <PageHeaderOpenCommandMenuButton />
         </>
       )}
