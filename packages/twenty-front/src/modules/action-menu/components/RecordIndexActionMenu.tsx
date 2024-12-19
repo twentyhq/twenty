@@ -8,18 +8,13 @@ import { RecordIndexActionMenuEffect } from '@/action-menu/components/RecordInde
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 
 import { contextStoreCurrentObjectMetadataIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataIdComponentState';
-import { isRecordBoardLoadMoreLockedComponentState } from '@/object-record/record-board/states/isRecordBoardLoadMoreLockedComponentState';
-import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { isRecordTableLoadMoreLockedComponentState } from '@/object-record/record-table/states/isRecordTableLoadMoreLockedComponentState';
+import { isRecordIndexLoadMoreLockedComponentState } from '@/object-record/record-index/states/isRecordIndexLoadMoreLockedComponentState';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { useSetRecoilComponentStateV2 } from '@/ui/utilities/state/component-state/hooks/useSetRecoilComponentStateV2';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useRecoilValue } from 'recoil';
 import { useIsMobile } from 'twenty-ui';
 
 export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
-  const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
-
   const contextStoreCurrentObjectMetadataId = useRecoilComponentValueV2(
     contextStoreCurrentObjectMetadataIdComponentState,
   );
@@ -33,9 +28,7 @@ export const RecordIndexActionMenu = ({ indexId }: { indexId: string }) => {
   const isMobile = useIsMobile();
 
   const setIsLoadMoreLocked = useSetRecoilComponentStateV2(
-    recordIndexViewType === 'table'
-      ? isRecordTableLoadMoreLockedComponentState
-      : isRecordBoardLoadMoreLockedComponentState,
+    isRecordIndexLoadMoreLockedComponentState,
     indexId,
   );
 
