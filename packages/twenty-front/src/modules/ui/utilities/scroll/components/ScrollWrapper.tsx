@@ -23,11 +23,7 @@ const StyledScrollWrapper = styled.div`
   .os-scrollbar-handle {
     background-color: ${({ theme }) => theme.border.color.medium};
   }
-  .os-scrollbar-vertical {
-    padding: 0px;
-    --os-size: 6px;
-  }
-  .os-scrollbar-horizontal {
+  .os-scrollbar {
     padding: 0px;
     --os-size: 6px;
   }
