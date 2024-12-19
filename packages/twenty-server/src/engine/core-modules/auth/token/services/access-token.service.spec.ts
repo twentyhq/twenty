@@ -99,8 +99,6 @@ describe('AccessTokenService', () => {
       const workspaceId = 'workspace-id';
       const mockUser = {
         id: userId,
-        defaultWorkspace: { id: workspaceId, activationStatus: 'ACTIVE' },
-        defaultWorkspaceId: workspaceId,
       };
       const mockWorkspaceMember = { id: 'workspace-member-id' };
       const mockToken = 'mock-token';

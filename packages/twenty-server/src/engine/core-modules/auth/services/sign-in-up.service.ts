@@ -103,7 +103,6 @@ export class SignInUpService {
 
     const existingUser = await this.userRepository.findOne({
       where: { email },
-      relations: ['defaultWorkspace'],
     });
 
     if (existingUser && !fromSSO) {
@@ -179,26 +178,6 @@ export class SignInUpService {
       });
     }
 
-    if (targetWorkspaceSubdomain) {
-      const workspace = await this.workspaceRepository.findOne({
-        where: { subdomain: targetWorkspaceSubdomain },
-        select: ['id'],
-      });
-
-      workspaceValidator.assertIsExist(
-        workspace,
-        new AuthException(
-          'Workspace not found',
-          AuthExceptionCode.FORBIDDEN_EXCEPTION,
-        ),
-      );
-
-      await this.userService.saveDefaultWorkspaceIfUserHasAccessOrThrow(
-        existingUser.id,
-        workspace.id,
-      );
-    }
-
     return existingUser;
   }
 
@@ -224,7 +203,7 @@ export class SignInUpService {
     const isNewUser = !isDefined(existingUser);
     let user = existingUser;
 
-    workspaceValidator.assertIsExist(
+    workspaceValidator.assertIsDefinedOrThrow(
       workspace,
       new AuthException(
         'Workspace not found',
@@ -261,7 +240,6 @@ export class SignInUpService {
         defaultAvatarUrl: imagePath,
         canImpersonate: false,
         passwordHash,
-        defaultWorkspace: workspace,
       });
 
       user = await this.userRepository.save(userToCreate);
@@ -352,7 +330,6 @@ export class SignInUpService {
       defaultAvatarUrl: imagePath,
       canImpersonate: false,
       passwordHash,
-      defaultWorkspace: workspace,
     });
 
     const user = await this.userRepository.save(userToCreate);

@@ -188,7 +188,7 @@ export class AuthService {
     });
   }
 
-  async verify(email: string, workspaceId?: string): Promise<Verify> {
+  async verify(email: string, workspaceId: string): Promise<Verify> {
     if (!email) {
       throw new AuthException(
         'Email is required',
@@ -196,31 +196,8 @@ export class AuthService {
       );
     }
 
-    const userWithIdAndDefaultWorkspaceId = await this.userRepository.findOne({
-      select: ['defaultWorkspaceId', 'id'],
-      where: { email },
-    });
-
-    userValidator.assertIsDefinedOrThrow(
-      userWithIdAndDefaultWorkspaceId,
-      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
-    );
-
-    if (
-      workspaceId &&
-      userWithIdAndDefaultWorkspaceId.defaultWorkspaceId !== workspaceId
-    ) {
-      await this.userService.saveDefaultWorkspaceIfUserHasAccessOrThrow(
-        userWithIdAndDefaultWorkspaceId.id,
-        workspaceId,
-      );
-    }
-
     const user = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
+      where: { email },
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -233,11 +210,11 @@ export class AuthService {
 
     const accessToken = await this.accessTokenService.generateAccessToken(
       user.id,
-      user.defaultWorkspaceId,
+      workspaceId,
     );
     const refreshToken = await this.refreshTokenService.generateRefreshToken(
       user.id,
-      user.defaultWorkspaceId,
+      workspaceId,
     );
 
     return {
@@ -257,7 +234,6 @@ export class AuthService {
     if (userValidator.isDefined(user)) {
       return {
         exists: true,
-        defaultWorkspaceId: user.defaultWorkspaceId,
         availableWorkspaces: await this.findAvailableWorkspacesByEmail(email),
       };
     }
@@ -278,6 +254,7 @@ export class AuthService {
   async generateAuthorizationCode(
     authorizeAppInput: AuthorizeAppInput,
     user: User,
+    workspace: Workspace,
   ): Promise<AuthorizeApp> {
     // TODO: replace with db call to - third party app table
     const apps = [
@@ -329,14 +306,14 @@ export class AuthService {
           value: codeChallenge,
           type: AppTokenType.CodeChallenge,
           userId: user.id,
-          workspaceId: user.defaultWorkspaceId,
+          workspaceId: workspace.id,
           expiresAt,
         },
         {
           value: authorizationCode,
           type: AppTokenType.AuthorizationCode,
           userId: user.id,
-          workspaceId: user.defaultWorkspaceId,
+          workspaceId: workspace.id,
           expiresAt,
         },
       ]);
@@ -347,7 +324,7 @@ export class AuthService {
         value: authorizationCode,
         type: AppTokenType.AuthorizationCode,
         userId: user.id,
-        workspaceId: user.defaultWorkspaceId,
+        workspaceId: workspace.id,
         expiresAt,
       });
 

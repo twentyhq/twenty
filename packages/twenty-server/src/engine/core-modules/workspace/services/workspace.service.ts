@@ -51,7 +51,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       id: payload.id,
     });
 
-    workspaceValidator.assertIsExist(
+    workspaceValidator.assertIsDefinedOrThrow(
       workspace,
       new WorkspaceException(
         'Workspace not found',
@@ -81,55 +81,46 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     });
   }
 
-  async activateWorkspace(user: User, data: ActivateWorkspaceInput) {
+  async activateWorkspace(
+    user: User,
+    workspace: Workspace,
+    data: ActivateWorkspaceInput,
+  ) {
     if (!data.displayName || !data.displayName.length) {
       throw new BadRequestException("'displayName' not provided");
     }
 
-    const existingWorkspace = await this.workspaceRepository.findOneBy({
-      id: user.defaultWorkspaceId,
-    });
-
-    if (!existingWorkspace) {
-      throw new Error('Workspace not found');
-    }
-
     if (
-      existingWorkspace.activationStatus ===
-      WorkspaceActivationStatus.ONGOING_CREATION
+      workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION
     ) {
       throw new Error('Workspace is already being created');
     }
 
     if (
-      existingWorkspace.activationStatus !==
-      WorkspaceActivationStatus.PENDING_CREATION
+      workspace.activationStatus !== WorkspaceActivationStatus.PENDING_CREATION
     ) {
       throw new Error('Workspace is not pending creation');
     }
 
-    await this.workspaceRepository.update(user.defaultWorkspaceId, {
+    await this.workspaceRepository.update(workspace.id, {
       activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
     });
 
     await this.featureFlagService.enableFeatureFlags(
       DEFAULT_FEATURE_FLAGS,
-      user.defaultWorkspaceId,
+      workspace.id,
     );
 
-    await this.workspaceManagerService.init(user.defaultWorkspaceId);
-    await this.userWorkspaceService.createWorkspaceMember(
-      user.defaultWorkspaceId,
-      user,
-    );
+    await this.workspaceManagerService.init(workspace.id);
+    await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
-    await this.workspaceRepository.update(user.defaultWorkspaceId, {
+    await this.workspaceRepository.update(workspace.id, {
       displayName: data.displayName,
       activationStatus: WorkspaceActivationStatus.ACTIVE,
     });
 
     return await this.workspaceRepository.findOneBy({
-      id: user.defaultWorkspaceId,
+      id: workspace.id,
     });
   }
 

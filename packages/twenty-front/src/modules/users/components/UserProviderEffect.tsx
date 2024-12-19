@@ -52,7 +52,6 @@ export const UserProviderEffect = () => {
     if (!isDefined(queryData?.currentUser)) return;
 
     setCurrentUser(queryData.currentUser);
-    setCurrentWorkspace(queryData.currentUser.defaultWorkspace);
 
     const {
       workspaceMember,

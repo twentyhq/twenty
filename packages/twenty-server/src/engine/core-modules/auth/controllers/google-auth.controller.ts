@@ -102,7 +102,7 @@ export class GoogleAuthController {
       return res.redirect(
         await this.authService.computeRedirectURI(
           loginToken.token,
-          user.defaultWorkspace.subdomain,
+          signInUpParams.targetWorkspaceSubdomain,
         ),
       );
     } catch (err) {
