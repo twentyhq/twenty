@@ -25,6 +25,7 @@ import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-o
 import { WorkflowEventListenerWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-event-listener.workspace-entity';
 import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 
 export enum WorkflowStatus {
   DRAFT = 'DRAFT',
@@ -32,7 +33,7 @@ export enum WorkflowStatus {
   DEACTIVATED = 'DEACTIVATED',
 }
 
-const WorkflowStatusOptions = [
+const WorkflowStatusOptions: FieldMetadataComplexOption[] = [
   {
     value: WorkflowStatus.DRAFT,
     label: 'Draft',
@@ -49,7 +50,7 @@ const WorkflowStatusOptions = [
     value: WorkflowStatus.DEACTIVATED,
     label: 'Deactivated',
     position: 2,
-    color: 'grey',
+    color: 'gray',
   },
 ];
 

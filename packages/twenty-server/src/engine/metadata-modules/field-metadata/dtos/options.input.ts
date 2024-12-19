@@ -1,6 +1,18 @@
-import { IsString, IsNumber, IsOptional, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 import { IsValidGraphQLEnumName } from 'src/engine/metadata-modules/field-metadata/validators/is-valid-graphql-enum-name.validator';
+
+export type TagColor =
+  | 'green'
+  | 'turquoise'
+  | 'sky'
+  | 'blue'
+  | 'purple'
+  | 'pink'
+  | 'red'
+  | 'orange'
+  | 'yellow'
+  | 'gray';
 
 export class FieldMetadataDefaultOption {
   @IsOptional()
@@ -22,5 +34,5 @@ export class FieldMetadataDefaultOption {
 export class FieldMetadataComplexOption extends FieldMetadataDefaultOption {
   @IsNotEmpty()
   @IsString()
-  color: string;
+  color: TagColor;
 }
