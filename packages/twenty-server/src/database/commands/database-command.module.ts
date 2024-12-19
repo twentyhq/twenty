@@ -52,8 +52,8 @@ import { WorkspaceSyncMetadataModule } from 'src/engine/workspace-manager/worksp
     UpgradeTo0_32CommandModule,
     UpgradeTo0_33CommandModule,
     UpgradeTo0_34CommandModule,
-    FeatureFlagModule,
     UpgradeTo0_40CommandModule,
+    FeatureFlagModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,

@@ -9,12 +9,11 @@ import { TEXT_INPUT_STYLE } from 'twenty-ui';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 import { createPhonesFromFieldValue } from '@/object-record/record-field/meta-types/input/utils/phonesUtils';
-import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
-export const DEFAULT_PHONE_COUNTRY_CODE = '1';
+export const DEFAULT_PHONE_CALLING_CODE = '1';
 
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
   font-family: ${({ theme }) => theme.font.family};
@@ -60,22 +59,22 @@ export const PhonesFieldInput = ({
 
   const phones = createPhonesFromFieldValue(fieldValue);
 
-  const defaultCallingCode =
-    stripSimpleQuotesFromString(
-      fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
-    ) ?? DEFAULT_PHONE_COUNTRY_CODE;
-  // TODO : improve once we store the real country code
-  const defaultCountry = useCountries().find(
-    (obj) => `+${obj.callingCode}` === defaultCallingCode,
-  )?.countryCode;
+  const defaultCountry = stripSimpleQuotesFromString(
+    fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
+  );
 
   const handlePersistPhones = (
-    updatedPhones: { number: string; callingCode: string }[],
+    updatedPhones: {
+      number: string;
+      countryCode: string;
+      callingCode: string;
+    }[],
   ) => {
     const [nextPrimaryPhone, ...nextAdditionalPhones] = updatedPhones;
     persistPhonesField({
       primaryPhoneNumber: nextPrimaryPhone?.number ?? '',
-      primaryPhoneCountryCode: nextPrimaryPhone?.callingCode ?? '',
+      primaryPhoneCountryCode: nextPrimaryPhone?.countryCode ?? '',
+      primaryPhoneCallingCode: nextPrimaryPhone?.callingCode ?? '',
       additionalPhones: nextAdditionalPhones,
     });
   };
@@ -96,11 +95,13 @@ export const PhonesFieldInput = ({
           return {
             number: phone.nationalNumber,
             callingCode: `+${phone.countryCallingCode}`,
+            countryCode: phone.country as string,
           };
         }
         return {
           number: '',
           callingCode: '',
+          countryCode: '',
         };
       }}
       renderItem={({

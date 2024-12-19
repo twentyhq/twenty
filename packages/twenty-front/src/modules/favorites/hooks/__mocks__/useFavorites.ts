@@ -246,6 +246,7 @@ mutation UpdateOneFavorite(
       phones {
         primaryPhoneNumber
         primaryPhoneCountryCode
+        primaryPhoneCallingCode
         additionalPhones
       }
       position
@@ -253,6 +254,7 @@ mutation UpdateOneFavorite(
       whatsapp {
         primaryPhoneNumber
         primaryPhoneCountryCode
+        primaryPhoneCallingCode
         additionalPhones
       }
       workPreference
@@ -532,6 +534,7 @@ export const mocks = [
               phones {
                 primaryPhoneNumber
                 primaryPhoneCountryCode
+                primaryPhoneCallingCode
                 additionalPhones
               }
               position
@@ -539,6 +542,7 @@ export const mocks = [
               whatsapp {
                 primaryPhoneNumber
                 primaryPhoneCountryCode
+                primaryPhoneCallingCode
                 additionalPhones
               }
               workPreference

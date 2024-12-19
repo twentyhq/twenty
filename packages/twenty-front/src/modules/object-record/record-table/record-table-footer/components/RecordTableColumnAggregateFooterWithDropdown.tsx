@@ -1,6 +1,6 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { RecordTableColumnFooterAggregateValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnFooterAggregateValue';
-import { RecordTableColumnFooterDropdown } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnFooterDropdown';
+import { RecordTableColumnAggregateFooterDropdown } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdown';
+import { RecordTableColumnAggregateFooterValue } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterValue';
 import { useAggregateRecordsForRecordTableColumnFooter } from '@/object-record/record-table/record-table-footer/hooks/useAggregateRecordsForRecordTableColumnFooter';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -44,7 +44,7 @@ export const RecordTableColumnFooterWithDropdown = ({
       onClose={handleDropdownClose}
       dropdownId={dropdownId}
       clickableComponent={
-        <RecordTableColumnFooterAggregateValue
+        <RecordTableColumnAggregateFooterValue
           aggregateLabel={aggregateLabel}
           aggregateValue={aggregateValue}
           dropdownId={dropdownId}
@@ -52,7 +52,7 @@ export const RecordTableColumnFooterWithDropdown = ({
         />
       }
       dropdownComponents={
-        <RecordTableColumnFooterDropdown
+        <RecordTableColumnAggregateFooterDropdown
           column={column}
           dropdownId={dropdownId}
         />
