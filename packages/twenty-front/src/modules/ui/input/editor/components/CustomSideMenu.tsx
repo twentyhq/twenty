@@ -1,6 +1,8 @@
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
 import { CustomAddBlockItem } from '@/ui/input/editor/components/CustomAddBlockItem';
 import { CustomSideMenuOptions } from '@/ui/input/editor/components/CustomSideMenuOptions';
+import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
+import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import {
   BlockColorsItem,
   DragHandleButton,
@@ -10,6 +12,7 @@ import {
   SideMenuController,
 } from '@blocknote/react';
 import styled from '@emotion/styled';
+import { useEffect } from 'react';
 import { IconColorSwatch, IconPlus, IconTrash } from 'twenty-ui';
 
 type CustomSideMenuProps = {
@@ -21,6 +24,22 @@ const StyledDivToCreateGap = styled.div`
 `;
 
 export const CustomSideMenu = ({ editor }: CustomSideMenuProps) => {
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
+    useSetActiveDropdownFocusIdAndMemorizePrevious();
+  const { goBackToPreviousDropdownFocusId } =
+    useGoBackToPreviousDropdownFocusId();
+
+  useEffect(() => {
+    setActiveDropdownFocusIdAndMemorizePrevious('custom-slash-menu');
+
+    return () => {
+      goBackToPreviousDropdownFocusId();
+    };
+  }, [
+    setActiveDropdownFocusIdAndMemorizePrevious,
+    goBackToPreviousDropdownFocusId,
+  ]);
+
   return (
     <SideMenuController
       sideMenu={(props) => (

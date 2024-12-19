@@ -4,8 +4,11 @@ import { IconComponent, MenuItemSuggestion } from 'twenty-ui';
 
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
+import { useSetActiveDropdownFocusIdAndMemorizePrevious } from '@/ui/layout/dropdown/hooks/useSetFocusedDropdownIdAndMemorizePrevious';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
 import { useFloating } from '@floating-ui/react';
+import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 export type SuggestionItem = {
@@ -31,6 +34,22 @@ export const CustomSlashMenu = (props: CustomSlashMenuProps) => {
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
   });
+
+  const { setActiveDropdownFocusIdAndMemorizePrevious } =
+    useSetActiveDropdownFocusIdAndMemorizePrevious();
+  const { goBackToPreviousDropdownFocusId } =
+    useGoBackToPreviousDropdownFocusId();
+
+  useEffect(() => {
+    setActiveDropdownFocusIdAndMemorizePrevious('custom-slash-menu');
+
+    return () => {
+      goBackToPreviousDropdownFocusId();
+    };
+  }, [
+    setActiveDropdownFocusIdAndMemorizePrevious,
+    goBackToPreviousDropdownFocusId,
+  ]);
 
   return (
     <StyledContainer ref={refs.setReference}>
