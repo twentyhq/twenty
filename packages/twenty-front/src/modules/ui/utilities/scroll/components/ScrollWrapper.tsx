@@ -23,6 +23,14 @@ const StyledScrollWrapper = styled.div`
   .os-scrollbar-handle {
     background-color: ${({ theme }) => theme.border.color.medium};
   }
+  .os-scrollbar-vertical {
+    padding: 0px;
+    --os-size: 6px;
+  }
+  .os-scrollbar-horizontal {
+    padding: 0px;
+    --os-size: 6px;
+  }
 `;
 
 const StyledInnerContainer = styled.div`
