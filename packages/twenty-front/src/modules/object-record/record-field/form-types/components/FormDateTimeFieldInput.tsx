@@ -18,7 +18,10 @@ export const FormDateTimeFieldInput = ({
     <FormDateishFieldInputBase
       mode="datetime"
       placeholder="mm/dd/yyyy hh:mm"
-      {...{ label, defaultValue, onPersist, VariablePicker }}
+      label={label}
+      defaultValue={defaultValue}
+      onPersist={onPersist}
+      VariablePicker={VariablePicker}
     />
   );
 };
