@@ -6,9 +6,9 @@ import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
-import { CurrencyPickerDropdownSelect } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownSelect';
 import { CurrencyPickerHotkeyScope } from '../types/CurrencyPickerHotkeyScope';
 
+import { CurrencyPickerDropdownSelect } from './CurrencyPickerDropdownSelect';
 
 const StyledDropdownButtonContainer = styled.div`
   align-items: center;
@@ -73,7 +73,7 @@ export const CurrencyPickerDropdownButton = ({
 
   return (
     <Dropdown
-      dropdownId={"currency-picker-dropdown-id"}
+      dropdownId="currency-picker-dropdown-id"
       dropdownHotkeyScope={{ scope: CurrencyPickerHotkeyScope.CurrencyPicker }}
       clickableComponent={
         <StyledDropdownButtonContainer>

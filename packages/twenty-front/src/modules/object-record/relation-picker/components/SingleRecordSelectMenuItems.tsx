@@ -117,7 +117,7 @@ export const SingleRecordSelectMenuItems = ({
           resetSelectedItem();
         }}
       >
-        <DropdownMenuItemsContainer hasMaxHeight >
+        <DropdownMenuItemsContainer hasMaxHeight>
           {loading && !isFiltered ? (
             <DropdownMenuSkeletonItem />
           ) : recordsInDropdown.length === 0 &&

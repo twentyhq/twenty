@@ -123,7 +123,7 @@ export const DropdownContent = ({
           ref={floatingUiRefs.setFloating}
           style={dropdownMenuStyles}
           role="listbox"
-          id={`${dropdownId}-"options"`}
+          id={`${dropdownId}-options`}
         >
           <OverlayContainer>
             <DropdownMenu
