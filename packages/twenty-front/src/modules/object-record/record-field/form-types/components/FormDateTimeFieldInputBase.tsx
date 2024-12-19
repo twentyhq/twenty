@@ -69,26 +69,26 @@ type DraftValue =
       value: string;
     };
 
-type FormDateishFieldInputBaseProps = {
+type FormDateTimeFieldInputBaseProps = {
   mode: 'date' | 'datetime';
   label?: string;
-  placeholder?: string;
   defaultValue: string | undefined;
   onPersist: (value: string | null) => void;
   VariablePicker?: VariablePickerComponent;
 };
 
-export const FormDateishFieldInputBase = ({
+export const FormDateTimeFieldInputBase = ({
   mode,
   label,
-  placeholder,
   defaultValue,
   onPersist,
   VariablePicker,
-}: FormDateishFieldInputBaseProps) => {
+}: FormDateTimeFieldInputBaseProps) => {
   const { timeZone } = useContext(UserContext);
 
   const inputId = useId();
+
+  const placeholder = mode === 'date' ? 'mm/dd/yyyy' : 'mm/dd/yyyy hh:mm';
 
   const [draftValue, setDraftValue] = useState<DraftValue>(
     isStandaloneVariableString(defaultValue)
@@ -145,7 +145,7 @@ export const FormDateishFieldInputBase = ({
 
   useListenClickOutside({
     refs: [datePickerWrapperRef],
-    listenerId: 'FormDateishFieldInputBase',
+    listenerId: 'FormDateTimeFieldInputBase',
     callback: (event) => {
       event.stopImmediatePropagation();
 

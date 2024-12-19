@@ -1,7 +1,6 @@
 import { FormAddressFieldInput } from '@/object-record/record-field/form-types/components/FormAddressFieldInput';
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
-import { FormDateFieldInput } from '@/object-record/record-field/form-types/components/FormDateFieldInput';
-import { FormDateTimeFieldInput } from '@/object-record/record-field/form-types/components/FormDateTimeFieldInput';
+import { FormDateTimeFieldInputBase } from '@/object-record/record-field/form-types/components/FormDateTimeFieldInputBase';
 import { FormEmailsFieldInput } from '@/object-record/record-field/form-types/components/FormEmailsFieldInput';
 import { FormFullNameFieldInput } from '@/object-record/record-field/form-types/components/FormFullNameFieldInput';
 import { FormLinksFieldInput } from '@/object-record/record-field/form-types/components/FormLinksFieldInput';
@@ -110,14 +109,16 @@ export const FormFieldInput = ({
       VariablePicker={VariablePicker}
     />
   ) : isFieldDate(field) ? (
-    <FormDateFieldInput
+    <FormDateTimeFieldInputBase
+      mode="date"
       label={field.label}
       defaultValue={defaultValue as string | undefined}
       onPersist={onPersist}
       VariablePicker={VariablePicker}
     />
   ) : isFieldDateTime(field) ? (
-    <FormDateTimeFieldInput
+    <FormDateTimeFieldInputBase
+      mode="datetime"
       label={field.label}
       defaultValue={defaultValue as string | undefined}
       onPersist={onPersist}
