@@ -211,12 +211,7 @@ export const SettingsObjectFieldEdit = () => {
                 />
               )}
               <SettingsDataModelFieldSettingsFormCard
-                fieldMetadataItem={{
-                  icon: formConfig.watch('icon'),
-                  label: formConfig.watch('label') || 'New Field',
-                  settings: formConfig.watch('settings') || null,
-                  type: fieldMetadataItem.type,
-                }}
+                fieldMetadataItem={fieldMetadataItem}
                 objectMetadataItem={objectMetadataItem}
               />
             </Section>
