@@ -20,11 +20,10 @@ import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
 import { CreateProfile } from '~/pages/onboarding/CreateProfile';
 import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
-import { FreePassCheckoutEffect } from '~/pages/onboarding/FreePassCheckoutEffect';
+import { FreePassCheckout } from '~/pages/onboarding/FreePassCheckout';
 import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
-
 export const useCreateAppRouter = (
   isBillingEnabled?: boolean,
   isCRMMigrationEnabled?: boolean,
@@ -52,7 +51,7 @@ export const useCreateAppRouter = (
           <Route path={AppPath.PlanRequired} element={<ChooseYourPlan />} />
           <Route
             path={AppPath.FreePassCheckout}
-            element={<FreePassCheckoutEffect />}
+            element={<FreePassCheckout />}
           />
           <Route
             path={AppPath.PlanRequiredSuccess}
