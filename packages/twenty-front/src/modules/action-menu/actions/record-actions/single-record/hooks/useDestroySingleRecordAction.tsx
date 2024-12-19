@@ -59,8 +59,8 @@ export const useDestroySingleRecordAction: SingleRecordActionHookWithObjectMetad
           subtitle={
             'Are you sure you want to destroy this record? It cannot be recovered anymore.'
           }
-          onConfirmClick={() => {
-            handleDeleteClick();
+          onConfirmClick={async () => {
+            await handleDeleteClick();
             onActionExecutedCallback?.();
             if (isInRightDrawer) {
               closeRightDrawer();
