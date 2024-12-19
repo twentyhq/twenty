@@ -115,7 +115,8 @@ export const Dropdown = ({
               onClick={handleClickableComponentClick}
               aria-controls={`${dropdownId}-options`}
               aria-expanded={isDropdownOpen}
-              role="combobox"
+              aria-haspopup={true}
+              role="button"
             >
               {clickableComponent}
             </div>
