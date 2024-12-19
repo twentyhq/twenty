@@ -92,7 +92,7 @@ export class PhoneCallingCodeCreateColumnCommand extends ActiveWorkspacesCommand
               `P1 Step 1 - Create migration for field ${phoneFieldMetadata.name}`,
             );
 
-            if (options.dryRun === true) {
+            if (options.dryRun) {
               continue;
             }
             await this.workspaceMigrationService.createCustomMigration(

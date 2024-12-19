@@ -118,7 +118,7 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
             this.logger.log(
               `P1 Step 1 - Create migration for field ${phoneFieldMetadata.name}`,
             );
-            if (options.dryRun === false) {
+            if (!options.dryRun) {
               await this.workspaceMigrationService.createCustomMigration(
                 generateMigrationName(
                   `create-${phoneFieldMetadata.object.nameSingular}PrimaryPhoneCallingCode-for-field-${phoneFieldMetadata.name}`,
@@ -209,7 +209,7 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
                     };
                   });
                 }
-                if (options.dryRun === false) {
+                if (!options.dryRun) {
                   await repository.update(record.id, {
                     [`${phoneFieldMetadata.name}PrimaryPhoneCallingCode`]:
                       record[phoneFieldMetadata.name].primaryPhoneCountryCode,
@@ -276,7 +276,7 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
             primaryPhoneCountryCode.replace(/["']/g, ''),
           );
 
-          if (options.dryRun === false) {
+          if (!options.dryRun) {
             await this.fieldMetadataRepository.update(phoneFieldMetadata.id, {
               defaultValue: {
                 ...defaultValue,
