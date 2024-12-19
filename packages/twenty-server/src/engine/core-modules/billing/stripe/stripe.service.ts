@@ -89,6 +89,7 @@ export class StripeService {
     successUrl?: string,
     cancelUrl?: string,
     stripeCustomerId?: string,
+    requirePaymentMethod?: boolean,
   ): Promise<Stripe.Checkout.Session> {
     return await this.stripe.checkout.sessions.create({
       line_items: [
@@ -106,13 +107,16 @@ export class StripeService {
           'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
         ),
       },
-      automatic_tax: { enabled: true },
-      tax_id_collection: { enabled: true },
+      automatic_tax: { enabled: !!requirePaymentMethod }, // For now we correlate collecting tax info with collecting the payment method
+      tax_id_collection: { enabled: !!requirePaymentMethod }, // TBC what we should do in the future.
       customer: stripeCustomerId,
       customer_update: stripeCustomerId ? { name: 'auto' } : undefined,
       customer_email: stripeCustomerId ? undefined : user.email,
       success_url: successUrl,
       cancel_url: cancelUrl,
+      payment_method_collection: requirePaymentMethod
+        ? 'always'
+        : 'if_required',
     });
   }
 

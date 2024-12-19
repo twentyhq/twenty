@@ -30,6 +30,7 @@ export class BillingPortalWorkspaceService {
     workspace: Workspace,
     priceId: string,
     successUrlPath?: string,
+    requirePaymentMethod?: boolean,
   ): Promise<string> {
     const frontBaseUrl = this.domainManagerService.getBaseUrl();
     const cancelUrl = frontBaseUrl.toString();
@@ -56,6 +57,7 @@ export class BillingPortalWorkspaceService {
       successUrl,
       cancelUrl,
       stripeCustomerId,
+      requirePaymentMethod,
     );
 
     assert(session.url, 'Error: missing checkout.session.url');
