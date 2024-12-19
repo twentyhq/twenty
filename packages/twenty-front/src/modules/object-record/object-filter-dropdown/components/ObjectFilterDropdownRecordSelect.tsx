@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
+import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { SelectableItem } from '@/object-record/select/types/SelectableItem';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDeleteCombinedViewFilters } from '@/views/hooks/useDeleteCombinedViewFilters';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { RelationFilterValue } from '@/views/view-filter-value/types/RelationFilterValue';
@@ -175,30 +177,45 @@ export const ObjectFilterDropdownRecordSelect = ({
     }
   };
 
-  const itemsToSelect: SelectableItem[] = [
-    ...(objectNameSingular === 'workspaceMember'
-      ? [
-          {
-            id: CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
-            name: 'Me',
-            isSelected: isCurrentWorkspaceMemberSelected,
-            AvatarIcon: IconUserCircle,
-          },
-        ]
-      : []),
-    ...recordsToSelect,
-  ];
+  const currentWorkspaceMemberSelectableItem: SelectableItem = {
+    id: CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
+    name: 'Me',
+    isSelected: isCurrentWorkspaceMemberSelected,
+    AvatarIcon: IconUserCircle,
+  };
+
+  const pinnedSelectableItems: SelectableItem[] =
+    objectNameSingular === 'workspaceMember'
+      ? [currentWorkspaceMemberSelectableItem]
+      : [];
+
+  const filteredPinnedSelectableItems = pinnedSelectableItems.filter((item) =>
+    item.name
+      .toLowerCase()
+      .includes(objectFilterDropdownSearchInput.toLowerCase()),
+  );
 
   return (
-    <MultipleSelectDropdown
-      selectableListId="object-filter-record-select-id"
-      hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
-      itemsToSelect={itemsToSelect}
-      filteredSelectedItems={filteredSelectedRecords}
-      selectedItems={selectedRecords}
-      onChange={handleMultipleRecordSelectChange}
-      searchFilter={objectFilterDropdownSearchInput}
-      loadingItems={loading}
-    />
+    <>
+      {filteredPinnedSelectableItems.length > 0 && (
+        <>
+          <ObjectFilterDropdownRecordPinnedItems
+            selectableItems={filteredPinnedSelectableItems}
+            onChange={handleMultipleRecordSelectChange}
+          />
+          <DropdownMenuSeparator />
+        </>
+      )}
+      <MultipleSelectDropdown
+        selectableListId="object-filter-record-select-id"
+        hotkeyScope={RelationPickerHotkeyScope.RelationPicker}
+        itemsToSelect={recordsToSelect}
+        filteredSelectedItems={filteredSelectedRecords}
+        selectedItems={selectedRecords}
+        onChange={handleMultipleRecordSelectChange}
+        searchFilter={objectFilterDropdownSearchInput}
+        loadingItems={loading}
+      />
+    </>
   );
 };
