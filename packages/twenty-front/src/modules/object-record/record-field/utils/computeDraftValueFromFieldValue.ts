@@ -71,6 +71,9 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
         primaryPhoneCountryCode: stripSimpleQuotesFromString(
           fieldDefinition?.defaultValue?.primaryPhoneCountryCode,
         ),
+        primaryPhoneCallingCode: stripSimpleQuotesFromString(
+          fieldDefinition?.defaultValue?.primaryPhoneCallingCode,
+        ),
       } as unknown as FieldInputDraftValue<FieldValue>;
     }
 
