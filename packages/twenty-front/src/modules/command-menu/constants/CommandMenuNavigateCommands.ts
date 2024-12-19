@@ -17,6 +17,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
     firstHotKey: 'G',
     secondHotKey: 'P',
     Icon: IconUser,
+    shouldCloseCommandMenuOnClick: true,
   },
   companies: {
     id: 'go-to-companies',
@@ -26,6 +27,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
     firstHotKey: 'G',
     secondHotKey: 'C',
     Icon: IconBuildingSkyscraper,
+    shouldCloseCommandMenuOnClick: true,
   },
   opportunities: {
     id: 'go-to-activities',
@@ -35,6 +37,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
     firstHotKey: 'G',
     secondHotKey: 'O',
     Icon: IconTargetArrow,
+    shouldCloseCommandMenuOnClick: true,
   },
   settings: {
     id: 'go-to-settings',
@@ -44,6 +47,7 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
     firstHotKey: 'G',
     secondHotKey: 'S',
     Icon: IconSettings,
+    shouldCloseCommandMenuOnClick: true,
   },
   tasks: {
     id: 'go-to-tasks',
@@ -53,5 +57,6 @@ export const COMMAND_MENU_NAVIGATE_COMMANDS: { [key: string]: Command } = {
     firstHotKey: 'G',
     secondHotKey: 'T',
     Icon: IconCheckbox,
+    shouldCloseCommandMenuOnClick: true,
   },
 };

@@ -14,6 +14,7 @@ export type CommandMenuItemProps = {
   Icon?: IconComponent;
   firstHotKey?: string;
   secondHotKey?: string;
+  shouldCloseCommandMenuOnClick?: boolean;
 };
 
 export const CommandMenuItem = ({
@@ -24,6 +25,7 @@ export const CommandMenuItem = ({
   Icon,
   firstHotKey,
   secondHotKey,
+  shouldCloseCommandMenuOnClick,
 }: CommandMenuItemProps) => {
   const { onItemClick } = useCommandMenu();
 
@@ -40,7 +42,13 @@ export const CommandMenuItem = ({
       text={label}
       firstHotKey={firstHotKey}
       secondHotKey={secondHotKey}
-      onClick={() => onItemClick(onClick, to)}
+      onClick={() =>
+        onItemClick({
+          shouldCloseCommandMenuOnClick,
+          onClick,
+          to,
+        })
+      }
       isSelected={isSelectedItemId}
     />
   );

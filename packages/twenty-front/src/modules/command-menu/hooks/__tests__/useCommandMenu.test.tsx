@@ -82,7 +82,11 @@ describe('useCommandMenu', () => {
     const onClickMock = jest.fn();
 
     act(() => {
-      result.current.commandMenu.onItemClick(onClickMock, '/test');
+      result.current.commandMenu.onItemClick({
+        shouldCloseCommandMenuOnClick: true,
+        onClick: onClickMock,
+        to: '/test',
+      });
     });
 
     expect(result.current.isCommandMenuOpened).toBe(true);

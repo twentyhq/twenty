@@ -21,4 +21,5 @@ export type Command = {
   firstHotKey?: string;
   secondHotKey?: string;
   onCommandClick?: () => void;
+  shouldCloseCommandMenuOnClick?: boolean;
 };
