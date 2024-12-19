@@ -91,7 +91,9 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     exampleValue: {
       primaryPhoneNumber: '234-567-890',
       primaryPhoneCountryCode: '+1',
-      additionalPhones: [{ number: '234-567-890', callingCode: '+1' }],
+      additionalPhones: [
+        { number: '234-567-890', callingCode: '+1', countryCode: 'US' },
+      ],
     },
     subFields: [
       'primaryPhoneNumber',
@@ -102,6 +104,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
     labelBySubField: {
       primaryPhoneNumber: 'Primary Phone Number',
       primaryPhoneCountryCode: 'Primary Phone Country Code',
+      primaryPhoneCallingCode: 'Primary Phone Calling Code',
       additionalPhones: 'Additional Phones',
     },
     category: 'Basic',
