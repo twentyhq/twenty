@@ -75,15 +75,6 @@ export const WorkflowEditActionFormSendEmail = ({
     }
   };
 
-  useEffect(() => {
-    setFormData({
-      connectedAccountId: action.settings.input.connectedAccountId,
-      email: action.settings.input.email,
-      subject: action.settings.input.subject ?? '',
-      body: action.settings.input.body ?? '',
-    });
-  }, [action.settings.input]);
-
   const saveAction = useDebouncedCallback(
     async (formData: SendEmailFormData, checkScopes = false) => {
       if (actionOptions.readonly === true) {
