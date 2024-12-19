@@ -11,6 +11,14 @@ export const useSetActiveDropdownFocusIdAndMemorizePrevious = () => {
           .getLoadable(activeDropdownFocusIdState)
           .getValue();
 
+        const activeDropdownFocusId = snapshot
+          .getLoadable(activeDropdownFocusIdState)
+          .getValue();
+
+        if (activeDropdownFocusId === dropdownId) {
+          return;
+        }
+
         set(previousDropdownFocusIdState, focusedDropdownId);
         set(activeDropdownFocusIdState, dropdownId);
       },

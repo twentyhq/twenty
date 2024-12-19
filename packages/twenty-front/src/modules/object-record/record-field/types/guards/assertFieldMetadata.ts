@@ -22,6 +22,7 @@ import {
   FieldRatingMetadata,
   FieldRawJsonMetadata,
   FieldRelationMetadata,
+  FieldRichTextMetadata,
   FieldSelectMetadata,
   FieldTextMetadata,
   FieldUuidMetadata,
@@ -68,7 +69,7 @@ type AssertFieldMetadataFunction = <
                                       : E extends 'RAW_JSON'
                                         ? FieldRawJsonMetadata
                                         : E extends 'RICH_TEXT'
-                                          ? FieldTextMetadata
+                                          ? FieldRichTextMetadata
                                           : E extends 'ACTOR'
                                             ? FieldActorMetadata
                                             : E extends 'ARRAY'
