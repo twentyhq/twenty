@@ -28,10 +28,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     search.includes('Free-pass') ||
     search.includes('FreePass');
 
-  console.log('hasFreePassParameter', hasFreePassParameter);
-
   if (hasFreePassParameter) {
-    console.log('setting free pass to true');
     setFreePass(true);
   }
 
