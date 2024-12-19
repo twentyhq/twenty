@@ -43,7 +43,11 @@ export const CommandMenuItem = ({
       firstHotKey={firstHotKey}
       secondHotKey={secondHotKey}
       onClick={() =>
-        onItemClick(shouldCloseCommandMenuOnClick ?? false, onClick, to)
+        onItemClick({
+          shouldCloseCommandMenuOnClick,
+          onClick,
+          to,
+        })
       }
       isSelected={isSelectedItemId}
     />

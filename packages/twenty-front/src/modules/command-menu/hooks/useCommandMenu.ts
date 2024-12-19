@@ -216,12 +216,19 @@ export const useCommandMenu = () => {
   );
 
   const onItemClick = useCallback(
-    (
-      shouldCloseCommandMenuOnClick: boolean,
-      onClick?: () => void,
-      to?: string,
-    ) => {
-      if (shouldCloseCommandMenuOnClick) {
+    ({
+      shouldCloseCommandMenuOnClick,
+      onClick,
+      to,
+    }: {
+      shouldCloseCommandMenuOnClick?: boolean;
+      onClick?: () => void;
+      to?: string;
+    }) => {
+      if (
+        isDefined(shouldCloseCommandMenuOnClick) &&
+        shouldCloseCommandMenuOnClick
+      ) {
         toggleCommandMenu();
       }
 

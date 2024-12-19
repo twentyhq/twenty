@@ -648,11 +648,11 @@ export const CommandMenu = () => {
                         shouldCloseCommandMenuOnClick,
                       } = command;
 
-                      onItemClick(
-                        shouldCloseCommandMenuOnClick ?? false,
-                        onCommandClick,
+                      onItemClick({
+                        shouldCloseCommandMenuOnClick,
+                        onClick: onCommandClick,
                         to,
-                      );
+                      });
                     }
                   }}
                 >
