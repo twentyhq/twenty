@@ -31,7 +31,13 @@ We felt the need for a CRM platform that empowers rather than constrains. We bel
 <br>
 
 # Demo 
-Go to <a href="https://app.twenty.com/?freepass=true">app.twenty.com?freepass=true</a> (the freepass parameter will allow you to signup without a credit card)
+Go to <a href="https://demo.twenty.com/">demo.twenty.com</a> and login with the following credentials:
+
+```
+email: tim@apple.dev
+password: Applecar2025
+```
+<!-- Go to app.twenty.com?freepass=true (the freepass parameter will allow you to signup without a credit card) -->
 
 See also:  
 🚀 [Self-hosting](https://twenty.com/developers/section/self-hosting)  
