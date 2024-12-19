@@ -78,7 +78,7 @@ export const useDeleteMultipleRecordsAction = ({
     contextStoreNumberOfSelectedRecords < DELETE_MAX_COUNT &&
     contextStoreNumberOfSelectedRecords > 0;
 
-  const { isInRightDrawer, onActionExecutedCallback } =
+  const { isInRightDrawer, onActionStartedCallback, onActionExecutedCallback } =
     useContext(ActionMenuContext);
 
   const registerDeleteMultipleRecordsAction = ({
@@ -105,9 +105,14 @@ export const useDeleteMultipleRecordsAction = ({
             setIsOpen={setIsDeleteRecordsModalOpen}
             title={'Delete Records'}
             subtitle={`Are you sure you want to delete these records? They can be recovered from the Options menu.`}
-            onConfirmClick={() => {
-              handleDeleteClick();
-              onActionExecutedCallback?.();
+            onConfirmClick={async () => {
+              onActionStartedCallback?.({
+                key: 'delete-multiple-records',
+              });
+              await handleDeleteClick();
+              onActionExecutedCallback?.({
+                key: 'delete-multiple-records',
+              });
               if (isInRightDrawer) {
                 closeRightDrawer();
               }

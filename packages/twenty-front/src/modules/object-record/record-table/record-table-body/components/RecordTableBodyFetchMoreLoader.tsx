@@ -6,6 +6,7 @@ import { GRAY_SCALE } from 'twenty-ui';
 
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { hasRecordTableFetchedAllRecordsComponentStateV2 } from '@/object-record/record-table/states/hasRecordTableFetchedAllRecordsComponentStateV2';
+import { isRecordTableLoadMoreLockedComponentState } from '@/object-record/record-table/states/isRecordTableLoadMoreLockedComponentState';
 import { RecordTableWithWrappersScrollWrapperContext } from '@/ui/utilities/scroll/contexts/ScrollWrapperContexts';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 
@@ -37,7 +38,12 @@ export const RecordTableBodyFetchMoreLoader = () => {
     hasRecordTableFetchedAllRecordsComponentStateV2,
   );
 
-  const showLoadingMoreRow = !hasRecordTableFetchedAllRecordsComponents;
+  const isRecordTableLoadMoreLocked = useRecoilComponentValueV2(
+    isRecordTableLoadMoreLockedComponentState,
+  );
+
+  const showLoadingMoreRow =
+    !hasRecordTableFetchedAllRecordsComponents && !isRecordTableLoadMoreLocked;
 
   const { ref: tbodyRef } = useInView({
     onChange: onLastRowVisible,

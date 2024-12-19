@@ -245,7 +245,9 @@ export const RecordIndexContainer = () => {
             <RecordIndexBoardDataLoaderEffect recordBoardId={recordIndexId} />
           </StyledContainerWithPadding>
         )}
-        {!isPageHeaderV2Enabled && <RecordIndexActionMenu />}
+        {!isPageHeaderV2Enabled && (
+          <RecordIndexActionMenu indexId={recordIndexId} />
+        )}
       </RecordFieldValueSelectorContextProvider>
     </StyledContainer>
   );
