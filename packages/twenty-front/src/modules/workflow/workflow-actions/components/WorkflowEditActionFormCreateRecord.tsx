@@ -99,13 +99,6 @@ export const WorkflowEditActionFormCreateRecord = ({
     saveAction(newFormData);
   };
 
-  useEffect(() => {
-    setFormData({
-      objectName: action.settings.input.objectName,
-      ...action.settings.input.objectRecord,
-    });
-  }, [action.settings.input]);
-
   const saveAction = useDebouncedCallback(
     async (formData: CreateRecordFormData) => {
       if (actionOptions.readonly === true) {
