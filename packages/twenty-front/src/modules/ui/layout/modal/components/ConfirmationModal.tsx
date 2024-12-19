@@ -93,6 +93,7 @@ export const ConfirmationModal = ({
   );
 
   const handleConfirmClick = () => {
+    console.log('handleConfirmClick');
     onConfirmClick();
 
     setIsOpen(false);
@@ -110,6 +111,7 @@ export const ConfirmationModal = ({
         {isOpen && (
           <StyledConfirmationModal
             onClose={() => {
+              console.log('onClose');
               if (isOpen) {
                 setIsOpen(false);
               }
@@ -142,7 +144,10 @@ export const ConfirmationModal = ({
               </Section>
             )}
             <StyledCenteredButton
-              onClick={() => setIsOpen(false)}
+              onClick={() => {
+                console.log('Cancel');
+                setIsOpen(false);
+              }}
               variant="secondary"
               title="Cancel"
               fullWidth

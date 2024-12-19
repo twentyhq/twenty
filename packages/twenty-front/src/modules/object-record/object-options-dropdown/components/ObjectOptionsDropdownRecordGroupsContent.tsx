@@ -12,14 +12,13 @@ import {
 
 import { useOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useOptionsDropdown';
 import { RecordGroupsVisibilityDropdownSection } from '@/object-record/record-group/components/RecordGroupsVisibilityDropdownSection';
-import { useRecordGroupReorder } from '@/object-record/record-group/hooks/useRecordGroupReorder';
+import { useRecordGroupReorderConfirmationModal } from '@/object-record/record-group/hooks/useRecordGroupReorderConfirmationModal';
 import { useRecordGroupVisibility } from '@/object-record/record-group/hooks/useRecordGroupVisibility';
 import { recordGroupFieldMetadataComponentState } from '@/object-record/record-group/states/recordGroupFieldMetadataComponentState';
 import { hiddenRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/hiddenRecordGroupIdsComponentSelector';
 import { visibleRecordGroupIdsComponentSelector } from '@/object-record/record-group/states/selectors/visibleRecordGroupIdsComponentSelector';
 import { recordIndexRecordGroupHideComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupHideComponentState';
 import { recordIndexRecordGroupSortComponentState } from '@/object-record/record-index/states/recordIndexRecordGroupSortComponentState';
-import { recordIndexRecordGroupIsDraggableSortComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexRecordGroupIsDraggableSortComponentSelector';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -44,10 +43,6 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     hiddenRecordGroupIdsComponentSelector,
   );
 
-  const isDragableSortRecordGroup = useRecoilComponentValueV2(
-    recordIndexRecordGroupIsDraggableSortComponentSelector,
-  );
-
   const hideEmptyRecordGroup = useRecoilComponentValueV2(
     recordIndexRecordGroupHideComponentState,
   );
@@ -63,10 +58,10 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
     viewBarId: recordIndexId,
   });
 
-  const { handleOrderChange: handleRecordGroupOrderChange } =
-    useRecordGroupReorder({
-      viewBarId: recordIndexId,
-    });
+  const {
+    handleRecordGroupOrderChangeWithModal,
+    RecordGroupReorderConfirmationModal,
+  } = useRecordGroupReorderConfirmationModal(recordIndexId);
 
   useEffect(() => {
     if (
@@ -115,9 +110,9 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           <RecordGroupsVisibilityDropdownSection
             title="Visible groups"
             recordGroupIds={visibleRecordGroupIds}
-            onDragEnd={handleRecordGroupOrderChange}
+            onDragEnd={handleRecordGroupOrderChangeWithModal}
             onVisibilityChange={handleRecordGroupVisibilityChange}
-            isDraggable={isDragableSortRecordGroup}
+            isDraggable={true}
             showDragGrip={true}
           />
         </>
@@ -134,6 +129,7 @@ export const ObjectOptionsDropdownRecordGroupsContent = () => {
           </DropdownMenuItemsContainer>
         </>
       )}
+      {RecordGroupReorderConfirmationModal}
     </>
   );
 };
