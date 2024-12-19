@@ -80,6 +80,8 @@ export class FavoriteDeletionService {
       );
     }
 
-    await Promise.all(batches.map((batch) => favoriteRepository.delete(batch)));
+    for (const batch of batches) {
+      await favoriteRepository.delete(batch);
+    }
   }
 }

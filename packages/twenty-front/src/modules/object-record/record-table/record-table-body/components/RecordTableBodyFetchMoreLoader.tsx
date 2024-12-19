@@ -62,8 +62,6 @@ export const RecordTableBodyFetchMoreLoader = () => {
     return <></>;
   }
 
-  console.log('isFetchingRecord');
-
   return (
     <tr ref={tbodyRef}>
       <td colSpan={7}>
