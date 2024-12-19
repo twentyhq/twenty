@@ -537,6 +537,7 @@ export type MutationChallengeArgs = {
 
 export type MutationCheckoutSessionArgs = {
   recurringInterval: SubscriptionInterval;
+  requirePaymentMethod?: InputMaybe<Scalars['Boolean']>;
   successUrlPath?: InputMaybe<Scalars['String']>;
 };
 
@@ -1952,6 +1953,7 @@ export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSes
 export type CheckoutSessionMutationVariables = Exact<{
   recurringInterval: SubscriptionInterval;
   successUrlPath?: InputMaybe<Scalars['String']>;
+  requirePaymentMethod?: InputMaybe<Scalars['Boolean']>;
 }>;
 
 
@@ -3242,10 +3244,11 @@ export type BillingPortalSessionQueryHookResult = ReturnType<typeof useBillingPo
 export type BillingPortalSessionLazyQueryHookResult = ReturnType<typeof useBillingPortalSessionLazyQuery>;
 export type BillingPortalSessionQueryResult = Apollo.QueryResult<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>;
 export const CheckoutSessionDocument = gql`
-    mutation CheckoutSession($recurringInterval: SubscriptionInterval!, $successUrlPath: String) {
+    mutation CheckoutSession($recurringInterval: SubscriptionInterval!, $successUrlPath: String, $requirePaymentMethod: Boolean) {
   checkoutSession(
     recurringInterval: $recurringInterval
     successUrlPath: $successUrlPath
+    requirePaymentMethod: $requirePaymentMethod
   ) {
     url
   }
@@ -3268,6 +3271,7 @@ export type CheckoutSessionMutationFn = Apollo.MutationFunction<CheckoutSessionM
  *   variables: {
  *      recurringInterval: // value for 'recurringInterval'
  *      successUrlPath: // value for 'successUrlPath'
+ *      requirePaymentMethod: // value for 'requirePaymentMethod'
  *   },
  * });
  */

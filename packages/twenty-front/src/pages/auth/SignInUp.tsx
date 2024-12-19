@@ -74,7 +74,7 @@ export const SignInUp = () => {
         <Logo secondaryLogo={workspacePublicData?.logo} />
       </AnimatedEaseIn>
       <Title animate>
-        {`Welcome to ${workspacePublicData?.displayName ?? DEFAULT_WORKSPACE_NAME}`}
+        {`Welcome to ${workspacePublicData?.displayName || DEFAULT_WORKSPACE_NAME}`}
       </Title>
       {signInUpForm}
       {signInUpStep !== SignInUpStep.Password && <FooterNote />}
