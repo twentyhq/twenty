@@ -1,13 +1,15 @@
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useRichTextField } from '@/object-record/record-field/meta-types/hooks/useRichTextField';
 import { FieldInputClickOutsideEvent } from '@/object-record/record-field/meta-types/input/components/DateTimeFieldInput';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
+import { BlockEditorComponentInstanceContext } from '@/ui/input/editor/contexts/BlockEditorCompoponeInstanceContext';
 import { PartialBlock } from '@blocknote/core';
 import { useCreateBlockNote } from '@blocknote/react';
 import styled from '@emotion/styled';
 
-import { useRef } from 'react';
+import { useContext, useRef } from 'react';
 
 const StyledRichTextContainer = styled.div`
   height: 400px;
@@ -24,38 +26,15 @@ export const RichTextFieldInput = ({
   onClickOutside,
 }: RichTextFieldInputProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { draftValue, hotkeyScope, persistRichTextField } = useRichTextField();
+  const { recordId } = useContext(FieldContext);
+  const { draftValue, hotkeyScope, persistRichTextField, fieldDefinition } =
+    useRichTextField();
 
   const editor = useCreateBlockNote({
     initialContent: draftValue,
     domAttributes: { editor: { class: 'editor' } },
     schema: BLOCK_SCHEMA,
   });
-
-  // const { refs, floatingStyles } = useFloating({
-  //   placement: 'bottom',
-  //   middleware: [
-  //     flip(),
-  //     size({
-  //       padding: 32,
-  //       apply: ({ availableHeight, elements }) => {
-  //         elements.floating.style.maxHeight =
-  //           availableHeight >= elements.floating.scrollHeight
-  //             ? ''
-  //             : `${availableHeight}px`;
-
-  //         elements.floating.style.height = 'auto';
-  //       },
-  //       boundary: document.querySelector('#root') ?? undefined,
-  //     }),
-  //     offset({
-  //       crossAxis: -6,
-  //       mainAxis: 8,
-  //     }),
-  //   ],
-  //   whileElementsMounted: autoUpdate,
-  //   strategy: 'absolute',
-  // });
 
   const handleClickOutside = (event: MouseEvent | TouchEvent) => {
     onClickOutside?.(() => persistRichTextField(editor.document), event);
@@ -70,7 +49,11 @@ export const RichTextFieldInput = ({
 
   return (
     <StyledRichTextContainer ref={containerRef}>
-      <BlockEditor editor={editor} />
+      <BlockEditorComponentInstanceContext.Provider
+        value={{ instanceId: `${recordId}-${fieldDefinition.fieldMetadataId}` }}
+      >
+        <BlockEditor editor={editor} />
+      </BlockEditorComponentInstanceContext.Provider>
     </StyledRichTextContainer>
   );
 };
