@@ -34,6 +34,7 @@ export const ObjectOptionsDropdown = ({
       clickableComponent={
         <StyledHeaderDropdownButton>Options</StyledHeaderDropdownButton>
       }
+      onClose={handleResetContent}
       dropdownComponents={
         <ObjectOptionsDropdownContext.Provider
           value={{
