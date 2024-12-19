@@ -35,12 +35,6 @@ export const BlockEditorDropdownFocusEffect = ({
 
         const shouldOpen = eventWantsToOpen && !isAlreadyOpen;
 
-        console.log({
-          eventWantsToOpen,
-          isAlreadyOpen,
-          shouldOpen,
-        });
-
         if (shouldOpen) {
           setActiveDropdownFocusIdAndMemorizePrevious('custom-slash-menu');
           set(isSlashMenuOpenState, true);
@@ -53,20 +47,11 @@ export const BlockEditorDropdownFocusEffect = ({
 
         const shouldClose = eventWantsToClose && !isAlreadyClosed;
 
-        console.log({
-          isAlreadyOpen,
-          eventWantsToClose,
-          isAlreadyClosed,
-          shouldClose,
-        });
-
         if (shouldClose) {
           goBackToPreviousDropdownFocusId();
           set(isSlashMenuOpenState, false);
           return;
         }
-
-        console.log('update /', { event });
       },
     [
       isSlashMenuOpenState,

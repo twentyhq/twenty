@@ -46,14 +46,12 @@ export const useRichTextField = () => {
   const persistField = usePersistField();
 
   const persistRichTextField = (nextValue: PartialBlock[]) => {
-    if (!nextValue) persistField(null);
+    if (!nextValue) {
+      persistField(null);
+    } else {
+      const parsedValueToPersist = JSON.stringify(nextValue);
 
-    const parsedValueToPersist = JSON.stringify(nextValue);
-
-    try {
       persistField(parsedValueToPersist);
-    } catch (error) {
-      console.error('Failed to persist rich text field', error);
     }
   };
 
