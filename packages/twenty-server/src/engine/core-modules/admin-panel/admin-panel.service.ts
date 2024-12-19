@@ -14,6 +14,8 @@ import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/featu
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
 
 @Injectable()
 export class AdminPanelService {
@@ -28,42 +30,40 @@ export class AdminPanelService {
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
-  async impersonate(userIdentifier: string, userImpersonating: User) {
-    if (!userImpersonating.canImpersonate) {
-      throw new AuthException(
-        'User cannot impersonate',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
-    const isEmail = userIdentifier.includes('@');
-
+  async impersonate(userId: string, workspaceId: string) {
     const user = await this.userRepository.findOne({
-      where: isEmail ? { email: userIdentifier } : { id: userIdentifier },
-      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
+      where: {
+        id: userId,
+        workspaces: {
+          workspaceId,
+          workspace: {
+            allowImpersonation: true,
+          },
+        },
+      },
+      relations: ['workspaces', 'workspaces.workspace'],
     });
 
-    if (!user) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
+    userValidator.assertIsDefinedOrThrow(
+      user,
+      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+    );
 
-    if (!user.defaultWorkspace.allowImpersonation) {
-      throw new AuthException(
+    workspaceValidator.assertIsDefinedOrThrow(
+      user.workspaces[0].workspace,
+      new AuthException(
         'Impersonation not allowed',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
+      ),
+    );
 
     const accessToken = await this.accessTokenService.generateAccessToken(
       user.id,
-      user.defaultWorkspaceId,
+      user.workspaces[0].workspace.id,
     );
     const refreshToken = await this.refreshTokenService.generateRefreshToken(
       user.id,
-      user.defaultWorkspaceId,
+      user.workspaces[0].workspace.id,
     );
 
     return {
@@ -75,17 +75,7 @@ export class AdminPanelService {
     };
   }
 
-  async userLookup(
-    userIdentifier: string,
-    userImpersonating: User,
-  ): Promise<UserLookup> {
-    if (!userImpersonating.canImpersonate) {
-      throw new AuthException(
-        'User cannot access user info',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
+  async userLookup(userIdentifier: string): Promise<UserLookup> {
     const isEmail = userIdentifier.includes('@');
 
     const targetUser = await this.userRepository.findOne({
@@ -99,12 +89,10 @@ export class AdminPanelService {
       ],
     });
 
-    if (!targetUser) {
-      throw new AuthException(
-        'User not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
+    userValidator.assertIsDefinedOrThrow(
+      targetUser,
+      new AuthException('User not found', AuthExceptionCode.INVALID_INPUT),
+    );
 
     const allFeatureFlagKeys = Object.values(FeatureFlagKey);
 
@@ -140,27 +128,17 @@ export class AdminPanelService {
   async updateWorkspaceFeatureFlags(
     workspaceId: string,
     featureFlag: FeatureFlagKey,
-    userImpersonating: User,
     value: boolean,
   ) {
-    if (!userImpersonating.canImpersonate) {
-      throw new AuthException(
-        'User cannot update feature flags',
-        AuthExceptionCode.FORBIDDEN_EXCEPTION,
-      );
-    }
-
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       relations: ['featureFlags'],
     });
 
-    if (!workspace) {
-      throw new AuthException(
-        'Workspace not found',
-        AuthExceptionCode.INVALID_INPUT,
-      );
-    }
+    workspaceValidator.assertIsDefinedOrThrow(
+      workspace,
+      new AuthException('Workspace not found', AuthExceptionCode.INVALID_INPUT),
+    );
 
     const existingFlag = workspace.featureFlags?.find(
       (flag) => flag.key === featureFlag,

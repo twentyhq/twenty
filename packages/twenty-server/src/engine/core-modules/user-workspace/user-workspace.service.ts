@@ -110,18 +110,12 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       await this.createWorkspaceMember(workspace.id, user);
     }
 
-    const savedUser = await this.userRepository.save({
-      id: user.id,
-      defaultWorkspace: workspace,
-      updatedAt: new Date().toISOString(),
-    });
-
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
       workspace.id,
       user.email,
     );
 
-    return savedUser;
+    return user;
   }
 
   async addUserToWorkspaceByInviteToken(inviteToken: string, user: User) {

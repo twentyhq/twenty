@@ -26,7 +26,7 @@ import { ActivateWorkspaceOutput } from 'src/engine/core-modules/workspace/dtos/
 import {
   AuthProviders,
   PublicWorkspaceDataOutput,
-} from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
+} from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
@@ -79,15 +79,19 @@ export class WorkspaceResolver {
   async activateWorkspace(
     @Args('data') data: ActivateWorkspaceInput,
     @AuthUser() user: User,
+    @OriginHeader() origin: string,
   ) {
-    const workspace = await this.workspaceService.activateWorkspace(user, data);
-    const loginToken = await this.loginTokenService.generateLoginToken(
-      user.email,
-    );
+    const workspace =
+      (await this.domainManagerService.getWorkspaceByOrigin(origin)) ??
+      (await this.domainManagerService.getDefaultWorkspace());
 
     return {
-      workspace,
-      loginToken,
+      workspace: await this.workspaceService.activateWorkspace(
+        user,
+        workspace,
+        data,
+      ),
+      loginToken: await this.loginTokenService.generateLoginToken(user.email),
     };
   }
 
@@ -190,7 +194,7 @@ export class WorkspaceResolver {
     const workspace =
       await this.domainManagerService.getWorkspaceByOrigin(origin);
 
-    workspaceValidator.assertIsExist(
+    workspaceValidator.assertIsDefinedOrThrow(
       workspace,
       new WorkspaceException(
         'Workspace not found',

@@ -29,7 +29,7 @@ export const useImpersonate = () => {
 
     try {
       const impersonateResult = await impersonate({
-        variables: { userId },
+        variables: { userId, workspaceId: '' },
       });
 
       if (isDefined(impersonateResult.errors)) {

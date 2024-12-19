@@ -23,6 +23,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   useChallengeMutation,
   useCheckUserExistsLazyQuery,
+  useGetCurrentUserLazyQuery,
   useSignUpMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
@@ -49,6 +50,10 @@ import { domainConfigurationState } from '@/domain-manager/states/domainConfigur
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useNavigate } from 'react-router-dom';
+import { AppPath } from '@/types/AppPath';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -67,10 +72,14 @@ export const useAuth = () => {
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
   const setWorkspaces = useSetRecoilState(workspacesState);
   const { redirect } = useRedirect();
+  const { enqueueSnackBar } = useSnackBar();
+  const navigate = useNavigate();
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
   const [verify] = useVerifyMutation();
+  const [getCurrentUser] = useGetCurrentUserLazyQuery();
+
   const { isOnAWorkspaceSubdomain } =
     useIsCurrentLocationOnAWorkspaceSubdomain();
   const { workspaceSubdomain } = useReadWorkspaceSubdomainFromCurrentLocation();
@@ -181,7 +190,13 @@ export const useAuth = () => {
 
       setTokenPair(verifyResult.data?.verify.tokens);
 
-      const user = verifyResult.data?.verify.user;
+      const currentUserResult = await getCurrentUser();
+
+      const user = currentUserResult.data?.currentUser;
+
+      if (!user) {
+        throw new Error('No current user result');
+      }
 
       let workspaceMember = null;
 
@@ -227,7 +242,7 @@ export const useAuth = () => {
         });
       }
 
-      const workspace = user.defaultWorkspace ?? null;
+      const workspace = user.currentWorkspace ?? null;
 
       setCurrentWorkspace(workspace);
 
@@ -238,8 +253,8 @@ export const useAuth = () => {
         });
       }
 
-      if (isDefined(verifyResult.data?.verify.user.workspaces)) {
-        const validWorkspaces = verifyResult.data?.verify.user.workspaces
+      if (isDefined(user.workspaces)) {
+        const validWorkspaces = user.workspaces
           .filter(
             ({ workspace }) => workspace !== null && workspace !== undefined,
           )
@@ -251,15 +266,16 @@ export const useAuth = () => {
       setIsAppWaitingForFreshObjectMetadataState(true);
 
       return {
-        user,
-        workspaceMember,
-        workspace,
+        user: user,
+        workspaceMember: user.workspaceMember,
+        workspace: user.currentWorkspace,
         tokens: verifyResult.data?.verify.tokens,
       };
     },
     [
       verify,
       setTokenPair,
+      getCurrentUser,
       setCurrentUser,
       setCurrentWorkspace,
       isOnAWorkspaceSubdomain,

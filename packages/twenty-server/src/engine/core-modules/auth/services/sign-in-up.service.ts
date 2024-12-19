@@ -103,7 +103,6 @@ export class SignInUpService {
 
     const existingUser = await this.userRepository.findOne({
       where: { email },
-      relations: ['defaultWorkspace'],
     });
 
     if (existingUser && !fromSSO) {
@@ -179,13 +178,29 @@ export class SignInUpService {
       });
     }
 
+    return await this.signIn({
+      user: existingUser,
+      targetWorkspaceSubdomain,
+      authProvider,
+    });
+  }
+
+  private async signIn({
+    user,
+    targetWorkspaceSubdomain,
+    authProvider,
+  }: {
+    user: User;
+    targetWorkspaceSubdomain?: string;
+    authProvider: SignInUpServiceInput['authProvider'];
+  }) {
     if (targetWorkspaceSubdomain) {
       const workspace = await this.workspaceRepository.findOne({
         where: { subdomain: targetWorkspaceSubdomain },
         select: ['id'],
       });
 
-      workspaceValidator.assertIsExist(
+      workspaceValidator.assertIsDefinedOrThrow(
         workspace,
         new AuthException(
           'Workspace not found',
@@ -193,13 +208,17 @@ export class SignInUpService {
         ),
       );
 
-      await this.userService.saveDefaultWorkspaceIfUserHasAccessOrThrow(
-        existingUser.id,
+      if (authProvider) {
+        workspaceValidator.isAuthEnabledOrThrow(authProvider, workspace);
+      }
+
+      await this.userService.hasUserAccessToWorkspaceOrThrow(
+        user.id,
         workspace.id,
       );
     }
 
-    return existingUser;
+    return user;
   }
 
   async signInUpOnExistingWorkspace({
@@ -224,7 +243,7 @@ export class SignInUpService {
     const isNewUser = !isDefined(existingUser);
     let user = existingUser;
 
-    workspaceValidator.assertIsExist(
+    workspaceValidator.assertIsDefinedOrThrow(
       workspace,
       new AuthException(
         'Workspace not found',
@@ -241,14 +260,7 @@ export class SignInUpService {
     );
 
     if (authProvider) {
-      workspaceValidator.isAuthEnabledOrThrow(
-        authProvider,
-        workspace,
-        new AuthException(
-          `${authProvider} auth is not enabled for this workspace`,
-          AuthExceptionCode.OAUTH_ACCESS_DENIED,
-        ),
-      );
+      workspaceValidator.isAuthEnabledOrThrow(authProvider, workspace);
     }
 
     if (isNewUser) {
@@ -261,7 +273,6 @@ export class SignInUpService {
         defaultAvatarUrl: imagePath,
         canImpersonate: false,
         passwordHash,
-        defaultWorkspace: workspace,
       });
 
       user = await this.userRepository.save(userToCreate);
@@ -352,7 +363,6 @@ export class SignInUpService {
       defaultAvatarUrl: imagePath,
       canImpersonate: false,
       passwordHash,
-      defaultWorkspace: workspace,
     });
 
     const user = await this.userRepository.save(userToCreate);

@@ -33,7 +33,6 @@ import {
   UserExists,
   UserNotExists,
 } from 'src/engine/core-modules/auth/dto/user-exists.entity';
-import { Verify } from 'src/engine/core-modules/auth/dto/verify.entity';
 import { WorkspaceInviteHashValid } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.entity';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
@@ -48,6 +47,7 @@ import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceAuthProvider } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
 
 @Injectable()
 // eslint-disable-next-line @nx/workspace-inject-workspace-repository
@@ -188,7 +188,7 @@ export class AuthService {
     });
   }
 
-  async verify(email: string, workspaceId?: string): Promise<Verify> {
+  async verify(email: string, workspaceId: string): Promise<AuthTokens> {
     if (!email) {
       throw new AuthException(
         'Email is required',
@@ -196,31 +196,8 @@ export class AuthService {
       );
     }
 
-    const userWithIdAndDefaultWorkspaceId = await this.userRepository.findOne({
-      select: ['defaultWorkspaceId', 'id'],
-      where: { email },
-    });
-
-    userValidator.assertIsDefinedOrThrow(
-      userWithIdAndDefaultWorkspaceId,
-      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
-    );
-
-    if (
-      workspaceId &&
-      userWithIdAndDefaultWorkspaceId.defaultWorkspaceId !== workspaceId
-    ) {
-      await this.userService.saveDefaultWorkspaceIfUserHasAccessOrThrow(
-        userWithIdAndDefaultWorkspaceId.id,
-        workspaceId,
-      );
-    }
-
     const user = await this.userRepository.findOne({
-      where: {
-        email,
-      },
-      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
+      where: { email },
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -233,15 +210,14 @@ export class AuthService {
 
     const accessToken = await this.accessTokenService.generateAccessToken(
       user.id,
-      user.defaultWorkspaceId,
+      workspaceId,
     );
     const refreshToken = await this.refreshTokenService.generateRefreshToken(
       user.id,
-      user.defaultWorkspaceId,
+      workspaceId,
     );
 
     return {
-      user,
       tokens: {
         accessToken,
         refreshToken,
@@ -257,7 +233,6 @@ export class AuthService {
     if (userValidator.isDefined(user)) {
       return {
         exists: true,
-        defaultWorkspaceId: user.defaultWorkspaceId,
         availableWorkspaces: await this.findAvailableWorkspacesByEmail(email),
       };
     }
@@ -278,6 +253,7 @@ export class AuthService {
   async generateAuthorizationCode(
     authorizeAppInput: AuthorizeAppInput,
     user: User,
+    workspace: Workspace,
   ): Promise<AuthorizeApp> {
     // TODO: replace with db call to - third party app table
     const apps = [
@@ -329,14 +305,14 @@ export class AuthService {
           value: codeChallenge,
           type: AppTokenType.CodeChallenge,
           userId: user.id,
-          workspaceId: user.defaultWorkspaceId,
+          workspaceId: workspace.id,
           expiresAt,
         },
         {
           value: authorizationCode,
           type: AppTokenType.AuthorizationCode,
           userId: user.id,
-          workspaceId: user.defaultWorkspaceId,
+          workspaceId: workspace.id,
           expiresAt,
         },
       ]);
@@ -347,7 +323,7 @@ export class AuthService {
         value: authorizationCode,
         type: AppTokenType.AuthorizationCode,
         userId: user.id,
-        workspaceId: user.defaultWorkspaceId,
+        workspaceId: workspace.id,
         expiresAt,
       });
 

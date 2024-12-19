@@ -45,12 +45,13 @@ export class BillingPortalWorkspaceService {
 
     const stripeCustomerId = (
       await this.billingSubscriptionRepository.findOneBy({
-        workspaceId: user.defaultWorkspaceId,
+        workspaceId: workspace.id,
       })
     )?.stripeCustomerId;
 
     const session = await this.stripeService.createCheckoutSession(
       user,
+      workspace.id,
       priceId,
       quantity,
       successUrl,

@@ -8,4 +8,9 @@ export class ImpersonateInput {
   @IsNotEmpty()
   @IsString()
   userId: string;
+
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
+  workspaceId: string;
 }

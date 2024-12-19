@@ -44,6 +44,8 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { OriginHeader } from 'src/engine/decorators/auth/origin-header.decorator';
+import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -66,28 +68,28 @@ export class UserResolver {
     private readonly userVarService: UserVarsService,
     private readonly fileService: FileService,
     private readonly analyticsService: AnalyticsService,
+    private readonly domainManagerService: DomainManagerService,
   ) {}
 
   @Query(() => User)
   async currentUser(
     @AuthUser() { id: userId }: User,
-    @AuthWorkspace() { id: workspaceId }: Workspace,
+    @OriginHeader() origin: string,
   ): Promise<User> {
-    if (
-      this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
-      workspaceId
-    ) {
-      await this.userService.saveDefaultWorkspaceIfUserHasAccessOrThrow(
-        userId,
-        workspaceId,
-      );
-    }
+    const workspace =
+      (await this.domainManagerService.getWorkspaceByOrigin(origin)) ??
+      (await this.domainManagerService.getDefaultWorkspace());
+
+    await this.userService.hasUserAccessToWorkspaceOrThrow(
+      userId,
+      workspace.id,
+    );
 
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
       },
-      relations: ['defaultWorkspace', 'workspaces', 'workspaces.workspace'],
+      relations: ['workspaces', 'workspaces.workspace'],
     });
 
     userValidator.assertIsDefinedOrThrow(
@@ -95,14 +97,17 @@ export class UserResolver {
       new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
     );
 
-    return user;
+    return { ...user, currentWorkspace: workspace };
   }
 
   @ResolveField(() => GraphQLJSONObject)
-  async userVars(@Parent() user: User): Promise<Record<string, any>> {
+  async userVars(
+    @Parent() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<Record<string, any>> {
     const userVars = await this.userVarService.getAll({
       userId: user.id,
-      workspaceId: user.defaultWorkspaceId,
+      workspaceId: workspace.id,
     });
 
     const userVarAllowList = [
@@ -125,15 +130,16 @@ export class UserResolver {
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<WorkspaceMember | null> {
+    console.log('>>>>>>>>>>>>>> workspaceMember', workspace);
     const workspaceMember = await this.userService.loadWorkspaceMember(
       user,
-      workspace ?? user.defaultWorkspace,
+      workspace,
     );
 
     if (workspaceMember && workspaceMember.avatarUrl) {
       const avatarUrlToken = await this.fileService.encodeFileToken({
         workspaceMemberId: workspaceMember.id,
-        workspaceId: user.defaultWorkspaceId,
+        workspaceId: workspace.id,
       });
 
       workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
@@ -146,16 +152,19 @@ export class UserResolver {
   @ResolveField(() => [WorkspaceMember], {
     nullable: true,
   })
-  async workspaceMembers(@Parent() user: User): Promise<WorkspaceMember[]> {
-    const workspaceMembers = await this.userService.loadWorkspaceMembers(
-      user.defaultWorkspace,
-    );
+  async workspaceMembers(
+    @Parent() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<WorkspaceMember[]> {
+    console.log('>>>>>>>>>>>>>> workspaceMembers', workspace);
+    const workspaceMembers =
+      await this.userService.loadWorkspaceMembers(workspace);
 
     for (const workspaceMember of workspaceMembers) {
       if (workspaceMember.avatarUrl) {
         const avatarUrlToken = await this.fileService.encodeFileToken({
           workspaceMemberId: workspaceMember.id,
-          workspaceId: user.defaultWorkspaceId,
+          workspaceId: workspace.id,
         });
 
         workspaceMember.avatarUrl = `${workspaceMember.avatarUrl}?token=${avatarUrlToken}`;
@@ -221,7 +230,14 @@ export class UserResolver {
   }
 
   @ResolveField(() => OnboardingStatus)
-  async onboardingStatus(@Parent() user: User): Promise<OnboardingStatus> {
-    return this.onboardingService.getOnboardingStatus(user);
+  async onboardingStatus(
+    @Parent() user: User,
+    @OriginHeader() origin: string,
+  ): Promise<OnboardingStatus> {
+    const workspace =
+      (await this.domainManagerService.getWorkspaceByOrigin(origin)) ??
+      (await this.domainManagerService.getDefaultWorkspace());
+
+    return this.onboardingService.getOnboardingStatus(user, workspace);
   }
 }

@@ -84,6 +84,7 @@ export class StripeService {
 
   async createCheckoutSession(
     user: User,
+    workspaceId: string,
     priceId: string,
     quantity: number,
     successUrl?: string,
@@ -100,7 +101,7 @@ export class StripeService {
       mode: 'subscription',
       subscription_data: {
         metadata: {
-          workspaceId: user.defaultWorkspaceId,
+          workspaceId,
         },
         trial_period_days: this.environmentService.get(
           'BILLING_FREE_TRIAL_DURATION_IN_DAYS',

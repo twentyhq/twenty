@@ -1,4 +1,4 @@
-import { AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.output';
+import { AuthProviders } from 'src/engine/core-modules/workspace/dtos/public-workspace-data-output';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export const getAuthProvidersByWorkspace = ({
