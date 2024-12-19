@@ -59,6 +59,7 @@ export const CurrentWorkspaceMemberOrphanFavorites = () => {
                       accent="tertiary"
                     />
                   }
+                  objectName={favorite.objectNameSingular}
                   isDragging={isDragging}
                 />
               </StyledOrphanFavoritesContainer>

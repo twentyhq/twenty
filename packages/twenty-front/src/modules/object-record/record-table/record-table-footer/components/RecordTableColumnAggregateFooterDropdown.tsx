@@ -14,7 +14,7 @@ import { useMemo } from 'react';
 import { Key } from 'ts-key-enum';
 import { MenuItem } from 'twenty-ui';
 
-export const RecordTableColumnFooterDropdown = ({
+export const RecordTableColumnAggregateFooterDropdown = ({
   column,
   dropdownId,
 }: {
@@ -29,10 +29,6 @@ export const RecordTableColumnFooterDropdown = ({
     currentViewWithSavedFiltersAndSorts?.viewFields?.find(
       (viewField) => viewField.fieldMetadataId === column.fieldMetadataId,
     );
-
-  if (!currentViewField) {
-    throw new Error('ViewField not found');
-  }
 
   useScopedHotkeys(
     [Key.Escape],
@@ -56,6 +52,9 @@ export const RecordTableColumnFooterDropdown = ({
   const handleAggregationChange = (
     aggregateOperation: AGGREGATE_OPERATIONS,
   ) => {
+    if (!currentViewField) {
+      throw new Error('ViewField not found');
+    }
     updateViewFieldRecords([
       { ...currentViewField, aggregateOperation: aggregateOperation },
     ]);
