@@ -62,7 +62,7 @@ const StyledIcon = styled(IconChevronDown)`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const RecordTableColumnFooterAggregateValue = ({
+export const RecordTableColumnAggregateFooterValue = ({
   dropdownId,
   aggregateValue,
   aggregateLabel,

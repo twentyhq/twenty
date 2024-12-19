@@ -47,7 +47,7 @@ describe('computeAggregateValueAndLabel', () => {
     });
 
     expect(result).toEqual({
-      value: 2,
+      value: '2',
       label: 'Sum',
       labelWithFieldName: 'Sum of amount',
     });
@@ -159,8 +159,9 @@ describe('computeAggregateValueAndLabel', () => {
     });
 
     expect(result).toEqual({
-      value: undefined,
+      value: '-',
       label: 'Sum',
+      labelWithFieldName: 'Sum of amount',
     });
   });
 });

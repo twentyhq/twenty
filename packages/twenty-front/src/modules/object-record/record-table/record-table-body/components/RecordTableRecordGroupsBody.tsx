@@ -6,7 +6,7 @@ import { RecordTableRecordGroupRows } from '@/object-record/record-table/compone
 import { RecordTableBodyDroppable } from '@/object-record/record-table/record-table-body/components/RecordTableBodyDroppable';
 import { RecordTableBodyLoading } from '@/object-record/record-table/record-table-body/components/RecordTableBodyLoading';
 import { RecordTableBodyRecordGroupDragDropContextProvider } from '@/object-record/record-table/record-table-body/components/RecordTableBodyRecordGroupDragDropContextProvider';
-import { RecordTableFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableFooter';
+import { RecordTableAggregateFooter } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooter';
 import { RecordTableRecordGroupEmptyRow } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupEmptyRow';
 import { RecordTableRecordGroupSection } from '@/object-record/record-table/record-table-section/components/RecordTableRecordGroupSection';
 import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
@@ -37,26 +37,24 @@ export const RecordTableRecordGroupsBody = () => {
     <>
       <RecordTableBodyRecordGroupDragDropContextProvider>
         {visibleRecordGroupIds.map((recordGroupId, index) => (
-          <>
-            <RecordTableRecordGroupBodyContextProvider
-              key={recordGroupId}
-              recordGroupId={recordGroupId}
-            >
-              <RecordGroupContext.Provider value={{ recordGroupId }}>
-                <RecordTableBodyDroppable recordGroupId={recordGroupId}>
-                  {index > 0 && <RecordTableRecordGroupEmptyRow />}
-                  <RecordTableRecordGroupSection />
-                  <RecordTableRecordGroupRows />
-                </RecordTableBodyDroppable>
-                {isAggregateQueryEnabled && (
-                  <RecordTableFooter
-                    key={recordGroupId}
-                    currentRecordGroupId={recordGroupId}
-                  />
-                )}
-              </RecordGroupContext.Provider>
-            </RecordTableRecordGroupBodyContextProvider>
-          </>
+          <RecordTableRecordGroupBodyContextProvider
+            key={recordGroupId}
+            recordGroupId={recordGroupId}
+          >
+            <RecordGroupContext.Provider value={{ recordGroupId }}>
+              <RecordTableBodyDroppable recordGroupId={recordGroupId}>
+                {index > 0 && <RecordTableRecordGroupEmptyRow />}
+                <RecordTableRecordGroupSection />
+                <RecordTableRecordGroupRows />
+              </RecordTableBodyDroppable>
+              {isAggregateQueryEnabled && (
+                <RecordTableAggregateFooter
+                  key={recordGroupId}
+                  currentRecordGroupId={recordGroupId}
+                />
+              )}
+            </RecordGroupContext.Provider>
+          </RecordTableRecordGroupBodyContextProvider>
         ))}
       </RecordTableBodyRecordGroupDragDropContextProvider>
     </>

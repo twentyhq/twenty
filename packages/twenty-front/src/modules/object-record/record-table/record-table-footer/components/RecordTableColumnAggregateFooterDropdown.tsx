@@ -14,7 +14,7 @@ import { useMemo } from 'react';
 import { Key } from 'ts-key-enum';
 import { MenuItem } from 'twenty-ui';
 
-export const RecordTableColumnFooterDropdown = ({
+export const RecordTableColumnAggregateFooterDropdown = ({
   column,
   dropdownId,
 }: {

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useMemo } from 'react';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { RecordTableColumnFooterWithDropdown } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnFooterWithDropdown';
+import { RecordTableColumnFooterWithDropdown } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterWithDropdown';
 import { tableColumnsComponentState } from '@/object-record/record-table/states/tableColumnsComponentState';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -61,7 +61,7 @@ const StyledColumnFootContainer = styled.div`
   width: 100%;
 `;
 
-export const RecordTableFooterCell = ({
+export const RecordTableAggregateFooterCell = ({
   column,
   isFirstCell = false,
   currentRecordGroupId,

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { MOBILE_VIEWPORT } from 'twenty-ui';
 
-import { RecordTableFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableFooterCell';
+import { RecordTableAggregateFooterCell } from '@/object-record/record-table/record-table-footer/components/RecordTableAggregateFooterCell';
 import { FIRST_TH_WIDTH } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { visibleTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/visibleTableColumnsComponentSelector';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
@@ -69,7 +69,7 @@ const StyledTh = styled.th`
   background-color: ${({ theme }) => theme.background.primary};
 `;
 
-export const RecordTableFooter = ({
+export const RecordTableAggregateFooter = ({
   currentRecordGroupId,
   endOfTableSticky,
 }: {
@@ -90,7 +90,7 @@ export const RecordTableFooter = ({
         <StyledTh />
         <StyledTh />
         {visibleTableColumns.map((column, index) => (
-          <RecordTableFooterCell
+          <RecordTableAggregateFooterCell
             key={`${column.fieldMetadataId}${currentRecordGroupId ? '-' + currentRecordGroupId : ''}`}
             column={column}
             currentRecordGroupId={currentRecordGroupId}
