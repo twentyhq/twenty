@@ -62,7 +62,10 @@ export const useRecordShowPagePagination = (
     useFindManyRecords({
       skip: loadingCursor,
       fetchPolicy: 'network-only',
-      filter,
+      filter: {
+        ...filter,
+        id: { neq: objectRecordId },
+      },
       orderBy,
       cursorFilter: isNonEmptyString(cursorFromRequest)
         ? {
@@ -81,7 +84,10 @@ export const useRecordShowPagePagination = (
   const { loading: loadingRecordAfter, records: recordsAfter } =
     useFindManyRecords({
       skip: loadingCursor,
-      filter,
+      filter: {
+        ...filter,
+        id: { neq: objectRecordId },
+      },
       fetchPolicy: 'network-only',
       orderBy,
       cursorFilter: cursorFromRequest

@@ -91,15 +91,6 @@ export const WorkflowEditActionFormUpdateRecord = ({
     saveAction(newFormData);
   };
 
-  useEffect(() => {
-    setFormData({
-      objectName: action.settings.input.objectName,
-      objectRecordId: action.settings.input.objectRecordId,
-      fieldsToUpdate: action.settings.input.fieldsToUpdate ?? [],
-      ...action.settings.input.objectRecord,
-    });
-  }, [action.settings.input]);
-
   const selectedObjectMetadataItemNameSingular = formData.objectName;
 
   const selectedObjectMetadataItem = activeObjectMetadataItems.find(
