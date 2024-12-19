@@ -2,6 +2,7 @@ import { getAggregateOperationLabel } from '@/object-record/record-board/record-
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { AGGREGATE_OPERATIONS } from '@/object-record/record-table/constants/AggregateOperations';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { aggregateOperationForViewFieldState } from '@/object-record/record-table/record-table-footer/states/aggregateOperationForViewFieldState';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
@@ -11,8 +12,9 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { usePersistViewFieldRecords } from '@/views/hooks/internal/usePersistViewFieldRecords';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useMemo } from 'react';
+import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { MenuItem } from 'twenty-ui';
+import { IconCheck, MenuItem } from 'twenty-ui';
 
 export const RecordTableColumnAggregateFooterDropdown = ({
   column,
@@ -50,7 +52,7 @@ export const RecordTableColumnAggregateFooterDropdown = ({
 
   const { updateViewFieldRecords } = usePersistViewFieldRecords();
   const handleAggregationChange = (
-    aggregateOperation: AGGREGATE_OPERATIONS,
+    aggregateOperation: AGGREGATE_OPERATIONS | null,
   ) => {
     if (!currentViewField) {
       throw new Error('ViewField not found');
@@ -59,6 +61,15 @@ export const RecordTableColumnAggregateFooterDropdown = ({
       { ...currentViewField, aggregateOperation: aggregateOperation },
     ]);
   };
+
+  const viewFieldId =
+    currentViewWithSavedFiltersAndSorts?.viewFields?.find(
+      (viewField) => viewField.fieldMetadataId === column.fieldMetadataId,
+    )?.id ?? '';
+
+  const aggregateOperationForViewField = useRecoilValue(
+    aggregateOperationForViewFieldState({ viewFieldId: viewFieldId }),
+  );
 
   return (
     <>
@@ -71,8 +82,21 @@ export const RecordTableColumnAggregateFooterDropdown = ({
               closeDropdown();
             }}
             text={getAggregateOperationLabel(aggregation)}
+            RightIcon={
+              aggregateOperationForViewField === aggregation
+                ? IconCheck
+                : undefined
+            }
           />
         ))}
+        <MenuItem
+          key={'none'}
+          onClick={() => {
+            handleAggregationChange(null);
+            closeDropdown();
+          }}
+          text={'None'}
+        />
       </DropdownMenuItemsContainer>
     </>
   );
