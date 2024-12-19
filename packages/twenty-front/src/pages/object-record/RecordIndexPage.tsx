@@ -12,7 +12,6 @@ import { RecordIndexContainer } from '@/object-record/record-index/components/Re
 import { RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect';
 import { RecordIndexContainerContextStoreObjectMetadataEffect } from '@/object-record/record-index/components/RecordIndexContainerContextStoreObjectMetadataEffect';
 import { RecordIndexPageHeader } from '@/object-record/record-index/components/RecordIndexPageHeader';
-import { RecordIndexResetSelectionEffect } from '@/object-record/record-index/components/RecordIndexResetSelectionEffect';
 import { RecordIndexContextProvider } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useHandleIndexIdentifierClick } from '@/object-record/record-index/hooks/useHandleIndexIdentifierClick';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
@@ -87,7 +86,6 @@ export const RecordIndexPage = () => {
                   <RecordIndexContainerContextStoreObjectMetadataEffect />
                   <RecordIndexContainerContextStoreNumberOfSelectedRecordsEffect />
                   <MainContextStoreComponentInstanceIdSetterEffect />
-                  <RecordIndexResetSelectionEffect />
                   <RecordIndexContainer />
                 </StyledIndexContainer>
               </PageBody>
