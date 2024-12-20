@@ -1,4 +1,4 @@
-import { RichTextEditor } from '@/activities/components/RichTextEditor';
+import { ActivityRichTextEditor } from '@/activities/components/ActivityRichTextEditor';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isNewViewableRecordLoadingState } from '@/object-record/record-right-drawer/states/isNewViewableRecordLoading';
@@ -28,9 +28,8 @@ export const ShowPageActivityContainer = ({
       componentInstanceId={`scroll-wrapper-tab-list-${targetableObject.id}`}
     >
       <StyledShowPageActivityContainer>
-        <RichTextEditor
+        <ActivityRichTextEditor
           activityId={targetableObject.id}
-          fillTitleFromBody={false}
           activityObjectNameSingular={
             targetableObject.targetObjectNameSingular as
               | CoreObjectNameSingular.Note
