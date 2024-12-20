@@ -5,6 +5,12 @@ interface CommandLoggerOptions {
   constructorName: string;
 }
 
+export const isCommandLogger = (
+  logger: Logger | CommandLogger,
+): logger is CommandLogger => {
+  return typeof logger['setVerbose'] === 'function';
+};
+
 export class CommandLogger {
   private logger: Logger;
   private verboseFlag: boolean;
@@ -34,5 +40,9 @@ export class CommandLogger {
     if (this.verboseFlag) {
       this.logger.log(message, ...optionalParams);
     }
+  }
+
+  setVerbose(flag: boolean) {
+    this.verboseFlag = flag;
   }
 }

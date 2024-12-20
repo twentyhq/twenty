@@ -9,6 +9,7 @@ import {
   ActiveWorkspacesCommandOptions,
   ActiveWorkspacesCommandRunner,
 } from 'src/database/commands/active-workspaces.command';
+import { isCommandLogger } from 'src/database/commands/logger';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   FieldMetadataEntity,
@@ -56,6 +57,9 @@ export class PhoneCallingCodeCreateColumnCommand extends ActiveWorkspacesCommand
     this.logger.log(
       'Running command to add calling code and change country code with default one',
     );
+    if (isCommandLogger(this.logger)) {
+      this.logger.setVerbose(options.verbose ?? false);
+    }
 
     this.logger.verbose(`Part 1 - Workspace`);
     let workspaceIterator = 1;
