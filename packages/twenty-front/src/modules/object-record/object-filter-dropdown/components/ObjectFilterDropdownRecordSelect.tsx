@@ -98,6 +98,24 @@ export const ObjectFilterDropdownRecordSelect = ({
       limit: 10,
     });
 
+  const currentWorkspaceMemberSelectableItem: SelectableItem = {
+    id: CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
+    name: 'Me',
+    isSelected: isCurrentWorkspaceMemberSelected,
+    AvatarIcon: IconUserCircle,
+  };
+
+  const pinnedSelectableItems: SelectableItem[] =
+    objectNameSingular === 'workspaceMember'
+      ? [currentWorkspaceMemberSelectableItem]
+      : [];
+
+  const filteredPinnedSelectableItems = pinnedSelectableItems.filter((item) =>
+    item.name
+      .toLowerCase()
+      .includes(objectFilterDropdownSearchInput.toLowerCase()),
+  );
+
   const handleMultipleRecordSelectChange = (
     itemToSelect: SelectableItem,
     isNewSelectedValue: boolean,
@@ -153,10 +171,19 @@ export const ObjectFilterDropdownRecordSelect = ({
       .filter((record) => newSelectedRecordIds.includes(record.id))
       .map((record) => record.name);
 
+    const selectedPinnedItemNames = newIsCurrentWorkspaceMemberSelected
+      ? [currentWorkspaceMemberSelectableItem.name]
+      : [];
+
+    const selectedItemNames = [
+      ...selectedPinnedItemNames,
+      ...selectedRecordNames,
+    ];
+
     const filterDisplayValue =
-      selectedRecordNames.length > MAX_RECORDS_TO_DISPLAY
-        ? `${selectedRecordNames.length} ${objectLabelPlural.toLowerCase()}`
-        : selectedRecordNames.join(', ');
+      selectedItemNames.length > MAX_RECORDS_TO_DISPLAY
+        ? `${selectedItemNames.length} ${objectLabelPlural.toLowerCase()}`
+        : selectedItemNames.join(', ');
 
     if (
       isDefined(filterDefinitionUsedInDropdown) &&
@@ -187,24 +214,6 @@ export const ObjectFilterDropdownRecordSelect = ({
       });
     }
   };
-
-  const currentWorkspaceMemberSelectableItem: SelectableItem = {
-    id: CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID,
-    name: 'Me',
-    isSelected: isCurrentWorkspaceMemberSelected,
-    AvatarIcon: IconUserCircle,
-  };
-
-  const pinnedSelectableItems: SelectableItem[] =
-    objectNameSingular === 'workspaceMember'
-      ? [currentWorkspaceMemberSelectableItem]
-      : [];
-
-  const filteredPinnedSelectableItems = pinnedSelectableItems.filter((item) =>
-    item.name
-      .toLowerCase()
-      .includes(objectFilterDropdownSearchInput.toLowerCase()),
-  );
 
   return (
     <>
