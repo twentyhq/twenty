@@ -138,10 +138,10 @@ export class AuthResolver {
 
     return {
       loginToken,
-      workspaceVerifyUrl: this.authService.computeRedirectURI(
-        loginToken.token,
-        workspace.subdomain,
-      ),
+      workspace: {
+        id: workspace.id,
+        subdomain: workspace.subdomain,
+      },
     };
   }
 

@@ -369,6 +369,12 @@ export enum IdentityProviderType {
   Saml = 'SAML'
 }
 
+export type ImpersonateOutput = {
+  __typename?: 'ImpersonateOutput';
+  loginToken: AuthToken;
+  workspace: WorkspaceSubdomainAndId;
+};
+
 export type IndexConnection = {
   __typename?: 'IndexConnection';
   /** Array of edges. */
@@ -461,7 +467,7 @@ export type Mutation = {
   generateApiKeyToken: ApiKeyToken;
   generateTransientToken: TransientToken;
   getAuthorizationUrl: GetAuthorizationUrlOutput;
-  impersonate: AuthTokens;
+  impersonate: ImpersonateOutput;
   publishServerlessFunction: ServerlessFunction;
   renewToken: AuthTokens;
   resendWorkspaceInvitation: SendInvitationsOutput;
@@ -1104,7 +1110,7 @@ export type SetupSsoOutput = {
 export type SignUpOutput = {
   __typename?: 'SignUpOutput';
   loginToken: AuthToken;
-  workspaceVerifyUrl: Scalars['String'];
+  workspace: WorkspaceSubdomainAndId;
 };
 
 /** Sort Directions */
@@ -1502,6 +1508,12 @@ export type WorkspaceNameAndId = {
   id: Scalars['String'];
 };
 
+export type WorkspaceSubdomainAndId = {
+  __typename?: 'WorkspaceSubdomainAndId';
+  id: Scalars['String'];
+  subdomain: Scalars['String'];
+};
+
 export type BillingCustomer = {
   __typename?: 'billingCustomer';
   id: Scalars['UUID'];
@@ -1859,7 +1871,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'AuthTokens', tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'ImpersonateOutput', workspace: { __typename?: 'WorkspaceSubdomainAndId', subdomain: string, id: string }, loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
 
 export type RenewTokenMutationVariables = Exact<{
   appToken: Scalars['String'];
@@ -1877,7 +1889,7 @@ export type SignUpMutationVariables = Exact<{
 }>;
 
 
-export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'SignUpOutput', workspaceVerifyUrl: string, loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } };
+export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: 'SignUpOutput', loginToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, workspace: { __typename?: 'WorkspaceSubdomainAndId', id: string, subdomain: string } } };
 
 export type SwitchWorkspaceMutationVariables = Exact<{
   workspaceId: Scalars['String'];
@@ -2804,12 +2816,16 @@ export type GetAuthorizationUrlMutationOptions = Apollo.BaseMutationOptions<GetA
 export const ImpersonateDocument = gql`
     mutation Impersonate($userId: String!, $workspaceId: String!) {
   impersonate(userId: $userId, workspaceId: $workspaceId) {
-    tokens {
-      ...AuthTokensFragment
+    workspace {
+      subdomain
+      id
+    }
+    loginToken {
+      ...AuthTokenFragment
     }
   }
 }
-    ${AuthTokensFragmentFragmentDoc}`;
+    ${AuthTokenFragmentFragmentDoc}`;
 export type ImpersonateMutationFn = Apollo.MutationFunction<ImpersonateMutation, ImpersonateMutationVariables>;
 
 /**
@@ -2884,7 +2900,10 @@ export const SignUpDocument = gql`
     loginToken {
       ...AuthTokenFragment
     }
-    workspaceVerifyUrl
+    workspace {
+      id
+      subdomain
+    }
   }
 }
     ${AuthTokenFragmentFragmentDoc}`;

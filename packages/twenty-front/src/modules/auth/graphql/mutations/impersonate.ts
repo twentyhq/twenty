@@ -4,11 +4,12 @@ import { gql } from '@apollo/client';
 export const IMPERSONATE = gql`
   mutation Impersonate($userId: String!, $workspaceId: String!) {
     impersonate(userId: $userId, workspaceId: $workspaceId) {
-      #      user {
-      #        ...UserQueryFragment
-      #      }
-      tokens {
-        ...AuthTokensFragment
+      workspace {
+        subdomain
+        id
+      }
+      loginToken {
+        ...AuthTokenFragment
       }
     }
   }

@@ -50,6 +50,8 @@ import { useReadWorkspaceSubdomainFromCurrentLocation } from '@/domain-manager/h
 import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
+import { AppPath } from '@/types/AppPath';
+import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 
 export const useAuth = () => {
@@ -70,6 +72,7 @@ export const useAuth = () => {
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
   const setWorkspaces = useSetRecoilState(workspacesState);
   const { redirect } = useRedirect();
+  const { redirectToWorkspaceDomain } = useRedirectToWorkspaceDomain();
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
@@ -170,75 +173,6 @@ export const useAuth = () => {
     [challenge],
   );
 
-  const handleVerify = useCallback(
-    async (loginToken: string) => {
-      const verifyResult = await verify({
-        variables: { loginToken },
-      });
-
-      if (isDefined(verifyResult.errors)) {
-        throw verifyResult.errors;
-      }
-
-      if (!verifyResult.data?.verify) {
-        throw new Error('No verify result');
-      }
-
-      setTokenPair(verifyResult.data?.verify.tokens);
-
-      const { user, workspaceMember, workspace } = await loadCurrentUser();
-
-      return {
-        user,
-        workspaceMember,
-        workspace,
-        tokens: verifyResult.data?.verify.tokens,
-      };
-    },
-    [
-      verify,
-      setTokenPair,
-      getCurrentUser,
-      setCurrentUser,
-      setCurrentWorkspace,
-      isOnAWorkspaceSubdomain,
-      setIsAppWaitingForFreshObjectMetadataState,
-      setCurrentWorkspaceMembers,
-      setCurrentWorkspaceMember,
-      setDateTimeFormat,
-      setLastAuthenticateWorkspaceDomain,
-      setWorkspaces,
-    ],
-  );
-
-  const handleCrendentialsSignIn = useCallback(
-    async (email: string, password: string, captchaToken?: string) => {
-      const { loginToken } = await handleChallenge(
-        email,
-        password,
-        captchaToken,
-      );
-      setIsVerifyPendingState(true);
-
-      const { user, workspaceMember, workspace } = await handleVerify(
-        loginToken.token,
-      );
-
-      setIsVerifyPendingState(false);
-
-      return {
-        user,
-        workspaceMember,
-        workspace,
-      };
-    },
-    [handleChallenge, handleVerify, setIsVerifyPendingState],
-  );
-
-  const handleSignOut = useCallback(async () => {
-    await clearSession();
-  }, [clearSession]);
-
   const loadCurrentUser = useCallback(async () => {
     const currentUserResult = await getCurrentUser();
 
@@ -331,6 +265,62 @@ export const useAuth = () => {
     setWorkspaces,
   ]);
 
+  const handleVerify = useCallback(
+    async (loginToken: string) => {
+      const verifyResult = await verify({
+        variables: { loginToken },
+      });
+
+      if (isDefined(verifyResult.errors)) {
+        throw verifyResult.errors;
+      }
+
+      if (!verifyResult.data?.verify) {
+        throw new Error('No verify result');
+      }
+
+      setTokenPair(verifyResult.data?.verify.tokens);
+
+      const { user, workspaceMember, workspace } = await loadCurrentUser();
+
+      return {
+        user,
+        workspaceMember,
+        workspace,
+        tokens: verifyResult.data?.verify.tokens,
+      };
+    },
+    [verify, setTokenPair, loadCurrentUser],
+  );
+
+  const handleCrendentialsSignIn = useCallback(
+    async (email: string, password: string, captchaToken?: string) => {
+      const { loginToken } = await handleChallenge(
+        email,
+        password,
+        captchaToken,
+      );
+      setIsVerifyPendingState(true);
+
+      const { user, workspaceMember, workspace } = await handleVerify(
+        loginToken.token,
+      );
+
+      setIsVerifyPendingState(false);
+
+      return {
+        user,
+        workspaceMember,
+        workspace,
+      };
+    },
+    [handleChallenge, handleVerify, setIsVerifyPendingState],
+  );
+
+  const handleSignOut = useCallback(async () => {
+    await clearSession();
+  }, [clearSession]);
+
   const handleCredentialsSignUp = useCallback(
     async (
       email: string,
@@ -360,7 +350,13 @@ export const useAuth = () => {
       }
 
       if (isMultiWorkspaceEnabled) {
-        return redirect(signUpResult.data?.signUp.workspaceVerifyUrl);
+        return redirectToWorkspaceDomain(
+          signUpResult.data.signUp.workspace.subdomain,
+          AppPath.Verify,
+          {
+            loginToken: signUpResult.data.signUp.loginToken.token,
+          },
+        );
       }
 
       const { user, workspace, workspaceMember } = await handleVerify(
@@ -376,7 +372,7 @@ export const useAuth = () => {
       signUp,
       isMultiWorkspaceEnabled,
       handleVerify,
-      redirect,
+      redirectToWorkspaceDomain,
     ],
   );
 

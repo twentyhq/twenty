@@ -255,9 +255,9 @@ const SettingsAdmin = lazy(() =>
 );
 
 const SettingsAdminFeatureFlags = lazy(() =>
-  import('~/pages/settings/admin-panel/SettingsAdminFeatureFlags').then(
+  import('~/pages/settings/admin-panel/SettingsAdminContent').then(
     (module) => ({
-      default: module.SettingsAdminFeatureFlags,
+      default: module.SettingsAdminContent,
     }),
   ),
 );

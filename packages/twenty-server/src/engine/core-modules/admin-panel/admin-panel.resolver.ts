@@ -10,7 +10,7 @@ import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filt
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ImpersonateGuard } from 'src/engine/guards/impersonate-guard';
-import { AuthTokens } from 'src/engine/core-modules/auth/dto/token.entity';
+import { ImpersonateOutput } from 'src/engine/core-modules/admin-panel/dtos/impersonate.output';
 
 @Resolver()
 @UseFilters(AuthGraphqlApiExceptionFilter)
@@ -18,10 +18,10 @@ export class AdminPanelResolver {
   constructor(private adminService: AdminPanelService) {}
 
   @UseGuards(WorkspaceAuthGuard, UserAuthGuard, ImpersonateGuard)
-  @Mutation(() => AuthTokens)
+  @Mutation(() => ImpersonateOutput)
   async impersonate(
     @Args() { workspaceId, userId }: ImpersonateInput,
-  ): Promise<AuthTokens> {
+  ): Promise<ImpersonateOutput> {
     return await this.adminService.impersonate(userId, workspaceId);
   }
 

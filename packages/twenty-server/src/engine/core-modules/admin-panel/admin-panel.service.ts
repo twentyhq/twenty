@@ -8,20 +8,18 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { FeatureFlagKey } from 'src/engine/core-modules/feature-flag/enums/feature-flag-key.enum';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { workspaceValidator } from 'src/engine/core-modules/workspace/workspace.validate';
+import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 
 @Injectable()
 export class AdminPanelService {
   constructor(
-    private readonly accessTokenService: AccessTokenService,
-    private readonly refreshTokenService: RefreshTokenService,
+    private readonly loginTokenService: LoginTokenService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
     @InjectRepository(Workspace, 'core')
@@ -57,21 +55,16 @@ export class AdminPanelService {
       ),
     );
 
-    const accessToken = await this.accessTokenService.generateAccessToken(
-      user.id,
-      user.workspaces[0].workspace.id,
-    );
-    const refreshToken = await this.refreshTokenService.generateRefreshToken(
-      user.id,
-      user.workspaces[0].workspace.id,
+    const loginToken = await this.loginTokenService.generateLoginToken(
+      user.email,
     );
 
     return {
-      user,
-      tokens: {
-        accessToken,
-        refreshToken,
+      workspace: {
+        id: user.workspaces[0].workspace.id,
+        subdomain: user.workspaces[0].workspace.subdomain,
       },
+      loginToken,
     };
   }
 
