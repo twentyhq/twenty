@@ -56,18 +56,6 @@ export class UpgradeTo0_40Command extends ActiveWorkspacesCommandRunner {
       workspaceIds,
     );
 
-    await this.phoneCallingCodeCreateColumnCommand.executeActiveWorkspacesCommand(
-      passedParam,
-      options,
-      workspaceIds,
-    );
-
-    await this.phoneCallingCodeMigrateDataCommand.executeActiveWorkspacesCommand(
-      passedParam,
-      options,
-      workspaceIds,
-    );
-
     await this.viewGroupNoValueBackfillCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
