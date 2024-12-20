@@ -10,6 +10,9 @@ export class ImpersonateGuard implements CanActivate {
     const ctx = GqlExecutionContext.create(context);
     const request = ctx.getContext().req;
 
-    return request.user.canImpersonate === true;
+    return (
+      request.user.canImpersonate === true &&
+      request.workspace.allowImpersonation === true
+    );
   }
 }

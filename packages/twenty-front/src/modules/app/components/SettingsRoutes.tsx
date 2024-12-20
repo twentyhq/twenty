@@ -254,7 +254,7 @@ const SettingsAdmin = lazy(() =>
   })),
 );
 
-const SettingsAdminFeatureFlags = lazy(() =>
+const SettingsAdminContent = lazy(() =>
   import('~/pages/settings/admin-panel/SettingsAdminContent').then(
     (module) => ({
       default: module.SettingsAdminContent,
@@ -402,7 +402,7 @@ export const SettingsRoutes = ({
           <Route path={SettingsPath.AdminPanel} element={<SettingsAdmin />} />
           <Route
             path={SettingsPath.FeatureFlags}
-            element={<SettingsAdminFeatureFlags />}
+            element={<SettingsAdminContent />}
           />
         </>
       )}

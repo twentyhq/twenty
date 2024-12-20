@@ -143,7 +143,10 @@ export const SettingsAdminContent = () => {
             accent="blue"
             title={'Impersonate'}
             onClick={() => handleImpersonate(userId, activeWorkspace.id)}
-            disabled={!userId.trim() || isImpersonateLoading}
+            disabled={
+              isImpersonateLoading ||
+              activeWorkspace.allowImpersonation === false
+            }
             dataTestId="impersonate-button"
           />
         )}
