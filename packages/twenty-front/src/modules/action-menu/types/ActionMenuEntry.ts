@@ -1,4 +1,4 @@
-import { ActionAvailableOn } from '@/action-menu/actions/types/Toto';
+import { ActionAvailableOn } from '@/action-menu/actions/types/ActionAvailableOn';
 import { ConfirmationModalProps } from '@/ui/layout/modal/components/ConfirmationModal';
 import { MouseEvent, ReactElement } from 'react';
 import { IconComponent, MenuItemAccent } from 'twenty-ui';

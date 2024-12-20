@@ -14,8 +14,8 @@ import { useSeeRunsWorkflowSingleRecordAction } from '@/action-menu/actions/reco
 import { useSeeVersionsWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useSeeVersionsWorkflowSingleRecordAction';
 import { useTestWorkflowSingleRecordAction } from '@/action-menu/actions/record-actions/single-record/workflow-actions/hooks/useTestWorkflowSingleRecordAction';
 import { WorkflowSingleRecordActionKeys } from '@/action-menu/actions/record-actions/single-record/workflow-actions/types/WorkflowSingleRecordActionsKeys';
-import { ActionAvailableOn } from '@/action-menu/actions/types/Toto';
-import { SingleRecordActionHook } from '@/action-menu/actions/types/Toto1';
+import { ActionAvailableOn } from '@/action-menu/actions/types/ActionAvailableOn';
+import { SingleRecordActionHook } from '@/action-menu/actions/types/SingleRecordActionHook';
 import {
   ActionMenuEntry,
   ActionMenuEntryScope,
