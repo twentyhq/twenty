@@ -15,7 +15,6 @@ import {
   FieldMetadataEntity,
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
@@ -30,7 +29,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 import { isDefined } from 'src/utils/is-defined';
 
 @Command({
-  name: 'upgrade-0.40:phone-calling-code-create-column',
+  name: 'upgrade-0.35:phone-calling-code-create-column',
   description: 'Create the callingCode column',
 })
 export class PhoneCallingCodeCreateColumnCommand extends ActiveWorkspacesCommandRunner {
@@ -39,8 +38,6 @@ export class PhoneCallingCodeCreateColumnCommand extends ActiveWorkspacesCommand
     protected readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(ObjectMetadataEntity, 'metadata')
-    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
