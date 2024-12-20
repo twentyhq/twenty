@@ -156,7 +156,7 @@ const testCases = [
   { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.Completed, res: false },
 
   { loc: AppPath.FreePassCheckout, isLogged: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PlanRequired, res: true },
-  { loc: AppPath.FreePassCheckout, isLogged: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.Completed, res: true },
+  { loc: AppPath.FreePassCheckout, isLogged: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.Completed, res: false },
   { loc: AppPath.FreePassCheckout, isLogged: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.Completed, res: false },
   { loc: AppPath.FreePassCheckout, isLogged: true, subscriptionStatus: SubscriptionStatus.PastDue, onboardingStatus: OnboardingStatus.Completed, res: false },
   { loc: AppPath.FreePassCheckout, isLogged: false, subscriptionStatus: undefined, onboardingStatus: undefined, res: true },
@@ -290,7 +290,7 @@ const testCases = [
 
 describe('useShowAuthModal', () => {
   testCases.forEach((testCase) => {
-    it(`testCase for location ${testCase.loc} with onboardingStatus ${testCase.onboardingStatus} should return ${testCase.res}`, () => {
+    it(`testCase for location ${testCase.loc} with onboardingStatus ${testCase.onboardingStatus} and subscriptionStatus ${testCase.subscriptionStatus} should return ${testCase.res}`, () => {
       setupMockOnboardingStatus(testCase.onboardingStatus);
       setupMockSubscriptionStatus(testCase.subscriptionStatus);
       setupMockIsMatchingLocation(testCase.loc);
