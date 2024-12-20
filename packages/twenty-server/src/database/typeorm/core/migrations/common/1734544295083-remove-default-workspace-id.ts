@@ -12,15 +12,9 @@ export class RemoveDefaultWorkspaceId1734544295083
     await queryRunner.query(
       `ALTER TABLE "core"."user" DROP COLUMN "defaultWorkspaceId"`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "core"."workspace" DROP CONSTRAINT "UQ_e6fa363bdaf45cbf8ce97bcebf0"`,
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD CONSTRAINT "UQ_e6fa363bdaf45cbf8ce97bcebf0" UNIQUE ("domainName")`,
-    );
     await queryRunner.query(
       `ALTER TABLE "core"."user" ADD "defaultWorkspaceId" uuid NOT NULL`,
     );
