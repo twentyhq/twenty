@@ -1,8 +1,3 @@
-import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
-
-import { PositionType } from '../types/PositionType';
-
 import { actionMenuEntriesComponentSelector } from '@/action-menu/states/actionMenuEntriesComponentSelector';
 import { ActionMenuComponentInstanceContext } from '@/action-menu/states/contexts/ActionMenuComponentInstanceContext';
 import { recordIndexActionMenuDropdownPositionComponentState } from '@/action-menu/states/recordIndexActionMenuDropdownPositionComponentState';
@@ -13,7 +8,10 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useRecoilComponentValueV2 } from '@/ui/utilities/state/component-state/hooks/useRecoilComponentValueV2';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import { MenuItem } from 'twenty-ui';
+import { PositionType } from '../types/PositionType';
 
 type StyledContainerProps = {
   position: PositionType;
