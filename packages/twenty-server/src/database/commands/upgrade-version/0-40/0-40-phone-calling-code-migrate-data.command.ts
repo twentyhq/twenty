@@ -281,19 +281,21 @@ export class PhoneCallingCodeMigrateDataCommand extends ActiveWorkspacesCommandR
           );
 
           if (!options.dryRun) {
-            await this.fieldMetadataRepository.update(phoneFieldMetadata.id, {
-              defaultValue: {
-                ...defaultValue,
-                primaryPhoneCountryCode: countryCode
-                  ? `'${countryCode}'`
-                  : "''",
-                primaryPhoneCallingCode: isCallingCode(
-                  primaryPhoneCountryCode.replace(/["']/g, ''),
-                )
-                  ? primaryPhoneCountryCode
-                  : "''",
-              },
-            });
+            if (!defaultValue.primaryPhoneCallingCode) {
+              await this.fieldMetadataRepository.update(phoneFieldMetadata.id, {
+                defaultValue: {
+                  ...defaultValue,
+                  primaryPhoneCountryCode: countryCode
+                    ? `'${countryCode}'`
+                    : "''",
+                  primaryPhoneCallingCode: isCallingCode(
+                    primaryPhoneCountryCode.replace(/["']/g, ''),
+                  )
+                    ? primaryPhoneCountryCode
+                    : "''",
+                },
+              });
+            }
           }
         }
       } catch (error) {
