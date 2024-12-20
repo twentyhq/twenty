@@ -53,8 +53,7 @@
     "tsconfig-paths": "^4.2.0",
     "typeorm": "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch",
     "unzipper": "^0.12.3",
-    "zod-to-json-schema": "^3.23.1",
-    "@twenty/twenty-shared": "0.40.0-canary"
+    "zod-to-json-schema": "^3.23.1"
   },
   "devDependencies": {
     "@nestjs/cli": "10.3.0",
