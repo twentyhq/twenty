@@ -6,7 +6,7 @@ import {
   useCheckoutSessionMutation,
 } from '~/generated/graphql';
 
-export const FreePassCheckout = () => {
+export const FreePassCheckoutEffect = () => {
   const { enqueueSnackBar } = useSnackBar();
   const [checkoutSession] = useCheckoutSessionMutation();
 
@@ -39,4 +39,6 @@ export const FreePassCheckout = () => {
   };
 
   createCheckoutSession();
+
+  return <></>;
 };

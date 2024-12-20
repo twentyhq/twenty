@@ -20,7 +20,7 @@ import { RecordShowPage } from '~/pages/object-record/RecordShowPage';
 import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
 import { CreateProfile } from '~/pages/onboarding/CreateProfile';
 import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
-import { FreePassCheckout } from '~/pages/onboarding/FreePassCheckout';
+import { FreePassCheckoutEffect } from '~/pages/onboarding/FreePassCheckoutEffect';
 import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import { SyncEmails } from '~/pages/onboarding/SyncEmails';
@@ -51,7 +51,7 @@ export const useCreateAppRouter = (
           <Route path={AppPath.PlanRequired} element={<ChooseYourPlan />} />
           <Route
             path={AppPath.FreePassCheckout}
-            element={<FreePassCheckout />}
+            element={<FreePassCheckoutEffect />}
           />
           <Route
             path={AppPath.PlanRequiredSuccess}
