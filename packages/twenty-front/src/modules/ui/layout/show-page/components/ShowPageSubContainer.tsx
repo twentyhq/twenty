@@ -65,7 +65,7 @@ export const ShowPageSubContainer = ({
   isNewRightDrawerItemLoading = false,
 }: ShowPageSubContainerProps) => {
   const { activeTabId } = useTabList(
-    `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`,
+    `${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}-${targetableObject.id}`,
   );
 
   const isMobile = useIsMobile();
@@ -128,7 +128,7 @@ export const ShowPageSubContainer = ({
           <TabList
             behaveAsLinks={!isInRightDrawer}
             loading={loading || isNewViewableRecordLoading}
-            tabListInstanceId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}`}
+            tabListInstanceId={`${TAB_LIST_COMPONENT_ID}-${isInRightDrawer}-${targetableObject.id}`}
             tabs={tabs}
           />
         </StyledTabListContainer>

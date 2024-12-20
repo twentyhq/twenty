@@ -163,8 +163,6 @@ export const ActivityRichTextEditor = ({
     ) {
       return JSON.parse(activity.body);
     }
-
-    return undefined;
   }, [activity]);
 
   const handleEditorBuiltInUploadFile = async (file: File) => {
