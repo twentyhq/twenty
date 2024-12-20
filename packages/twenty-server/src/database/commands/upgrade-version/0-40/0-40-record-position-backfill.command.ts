@@ -27,10 +27,16 @@ export class RecordPositionBackfillCommand extends ActiveWorkspacesCommandRunner
     workspaceIds: string[],
   ): Promise<void> {
     for (const workspaceId of workspaceIds) {
-      await this.recordPositionBackfillService.backfill(
-        workspaceId,
-        options.dryRun ?? false,
-      );
+      try {
+        await this.recordPositionBackfillService.backfill(
+          workspaceId,
+          options.dryRun ?? false,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Error backfilling record position for workspace ${workspaceId}: ${error}`,
+        );
+      }
     }
   }
 }

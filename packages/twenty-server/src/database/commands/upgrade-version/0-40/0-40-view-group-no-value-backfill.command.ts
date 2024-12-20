@@ -34,47 +34,53 @@ export class ViewGroupNoValueBackfillCommand extends ActiveWorkspacesCommandRunn
     workspaceIds: string[],
   ): Promise<void> {
     for (const workspaceId of workspaceIds) {
-      const viewRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
-          workspaceId,
-          'view',
-        );
+      try {
+        const viewRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewWorkspaceEntity>(
+            workspaceId,
+            'view',
+          );
 
-      const viewGroupRepository =
-        await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewGroupWorkspaceEntity>(
-          workspaceId,
-          'viewGroup',
-        );
+        const viewGroupRepository =
+          await this.twentyORMGlobalManager.getRepositoryForWorkspace<ViewGroupWorkspaceEntity>(
+            workspaceId,
+            'viewGroup',
+          );
 
-      const views = await viewRepository.find({
-        relations: ['viewGroups'],
-      });
-
-      for (const view of views) {
-        if (view.viewGroups.length === 0) {
-          continue;
-        }
-
-        // We're assuming for now that all viewGroups belonging to the same view have the same fieldMetadataId
-        const viewGroup = view.viewGroups?.[0];
-        const fieldMetadataId = viewGroup?.fieldMetadataId;
-
-        if (!fieldMetadataId || !viewGroup) {
-          continue;
-        }
-
-        const fieldMetadata = await this.fieldMetadataRepository.findOne({
-          where: { id: viewGroup.fieldMetadataId },
+        const views = await viewRepository.find({
+          relations: ['viewGroups'],
         });
 
-        if (!fieldMetadata) {
-          continue;
-        }
+        for (const view of views) {
+          if (view.viewGroups.length === 0) {
+            continue;
+          }
 
-        await this.fieldMetadataRelatedRecordsService.syncNoValueViewGroup(
-          fieldMetadata,
-          view,
-          viewGroupRepository,
+          // We're assuming for now that all viewGroups belonging to the same view have the same fieldMetadataId
+          const viewGroup = view.viewGroups?.[0];
+          const fieldMetadataId = viewGroup?.fieldMetadataId;
+
+          if (!fieldMetadataId || !viewGroup) {
+            continue;
+          }
+
+          const fieldMetadata = await this.fieldMetadataRepository.findOne({
+            where: { id: viewGroup.fieldMetadataId },
+          });
+
+          if (!fieldMetadata) {
+            continue;
+          }
+
+          await this.fieldMetadataRelatedRecordsService.syncNoValueViewGroup(
+            fieldMetadata,
+            view,
+            viewGroupRepository,
+          );
+        }
+      } catch (error) {
+        this.logger.error(
+          `Error backfilling view group no value for workspace ${workspaceId}: ${error}`,
         );
       }
     }
