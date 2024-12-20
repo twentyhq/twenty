@@ -49,7 +49,7 @@ const WorkflowStatusOptions = [
     value: WorkflowStatus.DEACTIVATED,
     label: 'Deactivated',
     position: 2,
-    color: 'grey',
+    color: 'gray',
   },
 ];
 

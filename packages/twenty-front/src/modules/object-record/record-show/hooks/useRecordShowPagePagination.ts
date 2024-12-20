@@ -174,5 +174,6 @@ export const useRecordShowPagePagination = (
     navigateToPreviousRecord,
     navigateToNextRecord,
     navigateToIndexView,
+    objectMetadataItem,
   };
 };
