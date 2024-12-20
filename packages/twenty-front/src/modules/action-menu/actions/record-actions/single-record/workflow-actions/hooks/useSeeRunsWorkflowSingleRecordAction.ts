@@ -1,4 +1,4 @@
-import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/Toto1';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';

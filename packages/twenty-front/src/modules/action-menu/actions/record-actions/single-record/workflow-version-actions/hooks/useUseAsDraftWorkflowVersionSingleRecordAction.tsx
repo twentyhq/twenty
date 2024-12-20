@@ -1,4 +1,4 @@
-import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { SingleRecordActionHookWithoutObjectMetadataItem } from '@/action-menu/actions/types/Toto1';
 import { OverrideWorkflowDraftConfirmationModal } from '@/workflow/components/OverrideWorkflowDraftConfirmationModal';
 import { useCreateNewWorkflowVersion } from '@/workflow/hooks/useCreateNewWorkflowVersion';
 import { useWorkflowVersion } from '@/workflow/hooks/useWorkflowVersion';

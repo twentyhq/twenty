@@ -1,4 +1,4 @@
-import { ActionHookResult } from '@/action-menu/actions/types/ActionHookResult';
+import { ActionHookResult } from '@/action-menu/actions/types/Toto2';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export type SingleRecordActionHook =

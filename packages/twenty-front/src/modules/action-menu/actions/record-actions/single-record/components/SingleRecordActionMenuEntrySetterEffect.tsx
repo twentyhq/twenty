@@ -1,5 +1,5 @@
 import { getActionConfig } from '@/action-menu/actions/record-actions/single-record/utils/getActionConfig';
-import { ActionAvailableOn } from '@/action-menu/actions/types/ActionAvailableOn';
+import { ActionAvailableOn } from '@/action-menu/actions/types/Toto';
 import { wrapActionInCallbacks } from '@/action-menu/actions/utils/wrapActionInCallbacks';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';

@@ -1,4 +1,4 @@
-import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/SingleRecordActionHook';
+import { SingleRecordActionHookWithObjectMetadataItem } from '@/action-menu/actions/types/Toto1';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
