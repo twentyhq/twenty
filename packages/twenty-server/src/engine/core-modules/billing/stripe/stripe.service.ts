@@ -160,10 +160,6 @@ export class StripeService {
     });
   }
 
-  async getCustomer(stripeCustomerId: string) {
-    return await this.stripe.customers.retrieve(stripeCustomerId);
-  }
-
   async getMeter(stripeMeterId: string) {
     return await this.stripe.billing.meters.retrieve(stripeMeterId);
   }
@@ -205,5 +201,25 @@ export class StripeService {
       : undefined;
 
     return stripeCustomerId;
+  }
+
+  async getAllProducts() {
+    const products = await this.stripe.products.list();
+
+    return products.data;
+  }
+
+  async getPricesByProductId(productId: string) {
+    const prices = await this.stripe.prices.search({
+      query: `product:'${productId}'`,
+    });
+
+    return prices.data;
+  }
+
+  async getAllMeters() {
+    const meters = await this.stripe.billing.meters.list();
+
+    return meters.data;
   }
 }
