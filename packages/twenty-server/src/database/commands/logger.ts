@@ -5,20 +5,6 @@ interface CommandLoggerOptions {
   constructorName: string;
 }
 
-/**
- * The CommandLogger class wraps the NEST Logger instance
- * and adds a verbose option for ready to debug messages.
- *
- * @param {string} options.constructorName - The name to be used by the Logger instance.
- * @param {boolean} [options.verbose=false] - A flag to enable or disable verbose logging.
- *
- * @method verbose
- * @param {string} message
- * @description Logs a message at the verbose level if verbose logging is enabled -v or --verbose
- *
- * also: log, error, warn, debug
- */
-
 export class CommandLogger {
   private logger: Logger;
   private verboseFlag: boolean;
