@@ -21,6 +21,10 @@ export const TabListFromUrlOptionalEffect = ({
       return;
     }
 
+    if (hash === '') {
+      setActiveTabId(tabListIds[0]);
+    }
+
     if (tabListIds.includes(hash)) {
       setActiveTabId(hash);
     }

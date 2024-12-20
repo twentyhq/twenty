@@ -13,7 +13,6 @@ import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotk
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -21,10 +20,12 @@ import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritin
 import { isDefined } from '~/utils/isDefined';
 
 import { BLOCK_SCHEMA } from '@/activities/blocks/constants/Schema';
+import { ActivityRichTextEditorChangeOnActivityIdEffect } from '@/activities/components/ActivityRichTextEditorChangeOnActivityIdEffect';
 import { useUploadAttachmentFile } from '@/activities/files/hooks/useUploadAttachmentFile';
 import { Note } from '@/activities/types/Note';
 import { Task } from '@/activities/types/Task';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { BlockEditor } from '@/ui/input/editor/components/BlockEditor';
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import '@blocknote/react/style.css';
@@ -264,11 +265,17 @@ export const ActivityRichTextEditor = ({
   };
 
   return (
-    <BlockEditor
-      onFocus={handleBlockEditorFocus}
-      onBlur={handlerBlockEditorBlur}
-      onChange={handleEditorChange}
-      editor={editor}
-    />
+    <>
+      <ActivityRichTextEditorChangeOnActivityIdEffect
+        editor={editor}
+        activityId={activityId}
+      />
+      <BlockEditor
+        onFocus={handleBlockEditorFocus}
+        onBlur={handlerBlockEditorBlur}
+        onChange={handleEditorChange}
+        editor={editor}
+      />
+    </>
   );
 };
