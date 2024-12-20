@@ -190,7 +190,7 @@ export const ViewPickerContentCreateMode = () => {
         )}
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer scrollable={false}>
         <ViewPickerSaveButtonContainer>
           <ViewPickerCreateButton />
         </ViewPickerSaveButtonContainer>
