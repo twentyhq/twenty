@@ -78,7 +78,11 @@ const StyledItem = styled('button', {
   font-family: ${({ theme }) => theme.font.family};
   font-size: ${({ theme }) => theme.font.size.md};
 
-  padding: ${({ theme }) => theme.spacing(1)};
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
+  padding-right: ${({ theme }) => theme.spacing(0.5)};
+  padding-top: ${({ theme }) => theme.spacing(1)};
+
   margin-top: ${({ indentationLevel }) =>
     indentationLevel === 2 ? '2px' : '0'};
 

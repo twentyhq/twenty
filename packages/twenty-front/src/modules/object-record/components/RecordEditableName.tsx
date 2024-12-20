@@ -15,13 +15,10 @@ const StyledEditableTitleContainer = styled.div`
 const StyledEditableTitlePrefix = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   line-height: 24px;
-  padding: 3px 0;
-`;
-
-const StyledEditableTitleSeparator = styled.div`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  line-height: 24px;
-  padding: 3px;
+  display: flex;
+  flex-direction: row;
+  padding: ${({ theme }) => theme.spacing(0.75)};
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const RecordEditableName = ({
@@ -78,8 +75,8 @@ export const RecordEditableName = ({
     <StyledEditableTitleContainer>
       <StyledEditableTitlePrefix>
         {capitalize(objectLabelPlural)}
+        <span>{' / '}</span>
       </StyledEditableTitlePrefix>
-      <StyledEditableTitleSeparator>{' / '}</StyledEditableTitleSeparator>
       {isRenaming ? (
         <NavigationDrawerInput
           value={recordName}

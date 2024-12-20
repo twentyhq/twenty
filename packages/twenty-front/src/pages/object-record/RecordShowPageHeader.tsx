@@ -1,9 +1,9 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { RecordEditableName } from '@/object-record/components/RecordEditableName';
 import { useRecordShowContainerTabs } from '@/object-record/record-show/hooks/useRecordShowContainerTabs';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
-import { RecordEditableName } from '~/pages/object-record/RecordEditableName';
 
 export const RecordShowPageHeader = ({
   objectNameSingular,
