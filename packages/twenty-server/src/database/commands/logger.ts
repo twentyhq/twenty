@@ -28,8 +28,8 @@ export class CommandLogger {
     this.verboseFlag = options.verbose ?? false;
   }
 
-  log(message: string, context?: string) {
-    this.logger.log(message, context);
+  log(message: string, ...optionalParams: [...any, string?]) {
+    this.logger.log(message, ...optionalParams);
   }
 
   error(message: string, stack?: string, context?: string) {
@@ -44,9 +44,9 @@ export class CommandLogger {
     this.logger.debug(message, context);
   }
 
-  verbose(message: string, context?: string) {
+  verbose(message: string, ...optionalParams: [...any, string?]) {
     if (this.verboseFlag) {
-      this.logger.log(message, context);
+      this.logger.log(message, ...optionalParams);
     }
   }
 }
