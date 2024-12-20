@@ -45,10 +45,14 @@ export const useExportMultipleRecordsAction = ({
       shortLabel: 'Export',
       Icon: IconDatabaseExport,
       accent: 'default',
-      onClick: () => {
-        onActionStartedCallback?.({ key: MultipleRecordsActionKeys.EXPORT });
-        download();
-        onActionExecutedCallback?.({ key: MultipleRecordsActionKeys.EXPORT });
+      onClick: async () => {
+        await onActionStartedCallback?.({
+          key: MultipleRecordsActionKeys.EXPORT,
+        });
+        await download();
+        await onActionExecutedCallback?.({
+          key: MultipleRecordsActionKeys.EXPORT,
+        });
       },
     });
   };
