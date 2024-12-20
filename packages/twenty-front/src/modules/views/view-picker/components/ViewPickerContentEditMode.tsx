@@ -89,7 +89,7 @@ export const ViewPickerContentEditMode = () => {
         </ViewPickerIconAndNameContainer>
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
-      <DropdownMenuItemsContainer>
+      <DropdownMenuItemsContainer scrollable={false}>
         <ViewPickerSaveButtonContainer>
           <ViewPickerEditButton />
         </ViewPickerSaveButtonContainer>
