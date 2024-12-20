@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
@@ -76,6 +77,16 @@ export const ObjectFilterDropdownRecordSelect = ({
     filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular;
 
   if (!isDefined(objectNameSingular)) {
+    throw new Error('relationObjectMetadataNameSingular is not defined');
+  }
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: objectNameSingular,
+  });
+
+  const objectLabelPlural = objectMetadataItem?.labelPlural;
+
+  if (!isDefined(objectNameSingular)) {
     throw new Error('objectNameSingular is not defined');
   }
 
@@ -144,7 +155,7 @@ export const ObjectFilterDropdownRecordSelect = ({
 
     const filterDisplayValue =
       selectedRecordNames.length > MAX_RECORDS_TO_DISPLAY
-        ? `${selectedRecordNames.length} companies`
+        ? `${selectedRecordNames.length} ${objectLabelPlural.toLowerCase()}`
         : selectedRecordNames.join(', ');
 
     if (
