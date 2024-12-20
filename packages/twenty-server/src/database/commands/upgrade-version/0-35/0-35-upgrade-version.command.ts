@@ -32,10 +32,6 @@ export class UpgradeTo0_35Command extends ActiveWorkspacesCommandRunner {
     options: BaseCommandOptions,
     workspaceIds: string[],
   ): Promise<void> {
-    this.logger.log(
-      'Running command to upgrade to 0.40: must start with phone calling code otherwise SyncMetadata will fail',
-    );
-
     await this.recordPositionBackfillCommand.executeActiveWorkspacesCommand(
       passedParam,
       options,
