@@ -255,7 +255,7 @@ const SettingsAdmin = lazy(() =>
 );
 
 const SettingsAdminContent = lazy(() =>
-  import('~/pages/settings/admin-panel/SettingsAdminContent').then(
+  import('@/settings/admin-panel/components/SettingsAdminContent').then(
     (module) => ({
       default: module.SettingsAdminContent,
     }),

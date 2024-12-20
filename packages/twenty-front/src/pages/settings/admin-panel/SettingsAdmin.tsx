@@ -2,7 +2,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { SettingsAdminContent } from '~/pages/settings/admin-panel/SettingsAdminContent';
+import { SettingsAdminContent } from '@/settings/admin-panel/components/SettingsAdminContent';
 
 export const SettingsAdmin = () => {
   return (
