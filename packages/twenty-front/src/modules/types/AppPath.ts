@@ -12,6 +12,7 @@ export enum AppPath {
   InviteTeam = '/invite-team',
   PlanRequired = '/plan-required',
   PlanRequiredSuccess = '/plan-required/payment-success',
+  PlanCheckout = '/plan-checkout',
 
   // Onboarded
   Index = '/',

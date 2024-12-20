@@ -1,4 +1,5 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
@@ -13,6 +14,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   const onboardingStatus = useOnboardingStatus();
   const subscriptionStatus = useSubscriptionStatus();
   const { defaultHomePagePath } = useDefaultHomePagePath();
+  const plan = useBillingPlan();
 
   const isMatchingOpenRoute =
     isMatchingLocation(AppPath.Invite) ||
@@ -30,7 +32,8 @@ export const usePageChangeEffectNavigateLocation = () => {
     isMatchingLocation(AppPath.SyncEmails) ||
     isMatchingLocation(AppPath.InviteTeam) ||
     isMatchingLocation(AppPath.PlanRequired) ||
-    isMatchingLocation(AppPath.PlanRequiredSuccess);
+    isMatchingLocation(AppPath.PlanRequiredSuccess) ||
+    isMatchingLocation(AppPath.PlanCheckout);
 
   if (isMatchingOpenRoute) {
     return;
@@ -42,9 +45,10 @@ export const usePageChangeEffectNavigateLocation = () => {
 
   if (
     onboardingStatus === OnboardingStatus.PlanRequired &&
-    !isMatchingLocation(AppPath.PlanRequired)
+    !isMatchingLocation(AppPath.PlanRequired) &&
+    !isMatchingLocation(AppPath.PlanCheckout)
   ) {
-    return AppPath.PlanRequired;
+    return plan ? AppPath.PlanCheckout : AppPath.PlanRequired;
   }
 
   if (

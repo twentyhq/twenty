@@ -155,6 +155,17 @@ const testCases = [
   { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.InviteTeam, res: true },
   { loc: AppPath.PlanRequired, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.Completed, res: false },
 
+  { loc: AppPath.PlanCheckout, isLogged: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PlanRequired, res: true },
+  { loc: AppPath.PlanCheckout, isLogged: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.Completed, res: true },
+  { loc: AppPath.PlanCheckout, isLogged: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.Completed, res: false },
+  { loc: AppPath.PlanCheckout, isLogged: true, subscriptionStatus: SubscriptionStatus.PastDue, onboardingStatus: OnboardingStatus.Completed, res: false },
+  { loc: AppPath.PlanCheckout, isLogged: false, subscriptionStatus: undefined, onboardingStatus: undefined, res: true },
+  { loc: AppPath.PlanCheckout, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.WorkspaceActivation, res: true },
+  { loc: AppPath.PlanCheckout, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.ProfileCreation, res: true },
+  { loc: AppPath.PlanCheckout, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.SyncEmail, res: true },
+  { loc: AppPath.PlanCheckout, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.InviteTeam, res: true },
+  { loc: AppPath.PlanCheckout, isLogged: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.Completed, res: false },
+
   { loc: AppPath.PlanRequiredSuccess, isLogged: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PlanRequired, res: true },
   { loc: AppPath.PlanRequiredSuccess, isLogged: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.Completed, res: false },
   { loc: AppPath.PlanRequiredSuccess, isLogged: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.Completed, res: false },
@@ -279,7 +290,7 @@ const testCases = [
 
 describe('useShowAuthModal', () => {
   testCases.forEach((testCase) => {
-    it(`testCase for location ${testCase.loc} with onboardingStatus ${testCase.onboardingStatus} should return ${testCase.res}`, () => {
+    it(`testCase for location ${testCase.loc} with onboardingStatus ${testCase.onboardingStatus} and subscriptionStatus ${testCase.subscriptionStatus} should return ${testCase.res}`, () => {
       setupMockOnboardingStatus(testCase.onboardingStatus);
       setupMockSubscriptionStatus(testCase.subscriptionStatus);
       setupMockIsMatchingLocation(testCase.loc);

@@ -5,6 +5,7 @@ import Stripe from 'stripe';
 import { ProductPriceEntity } from 'src/engine/core-modules/billing/dto/product-price.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { AvailableProduct } from 'src/engine/core-modules/billing/enums/billing-available-product.enum';
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
 import { EnvironmentService } from 'src/engine/core-modules/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
@@ -89,7 +90,10 @@ export class StripeService {
     successUrl?: string,
     cancelUrl?: string,
     stripeCustomerId?: string,
+    plan: BillingPlanKey = BillingPlanKey.FREE,
   ): Promise<Stripe.Checkout.Session> {
+    const requirePaymentMethod = plan !== BillingPlanKey.FREE;
+
     return await this.stripe.checkout.sessions.create({
       line_items: [
         {
@@ -101,18 +105,22 @@ export class StripeService {
       subscription_data: {
         metadata: {
           workspaceId: user.defaultWorkspaceId,
+          plan: plan,
         },
         trial_period_days: this.environmentService.get(
           'BILLING_FREE_TRIAL_DURATION_IN_DAYS',
         ),
       },
-      automatic_tax: { enabled: true },
-      tax_id_collection: { enabled: true },
+      automatic_tax: { enabled: requirePaymentMethod },
+      tax_id_collection: { enabled: requirePaymentMethod },
       customer: stripeCustomerId,
       customer_update: stripeCustomerId ? { name: 'auto' } : undefined,
       customer_email: stripeCustomerId ? undefined : user.email,
       success_url: successUrl,
       cancel_url: cancelUrl,
+      payment_method_collection: requirePaymentMethod
+        ? 'always'
+        : 'if_required',
     });
   }
 

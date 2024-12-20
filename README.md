@@ -37,6 +37,7 @@ Go to <a href="https://demo.twenty.com/">demo.twenty.com</a> and login with the 
 email: tim@apple.dev
 password: Applecar2025
 ```
+<!-- Go to app.twenty.com?freepass=true (the freepass parameter will allow you to signup without a credit card) -->
 
 See also:  
 🚀 [Self-hosting](https://twenty.com/developers/section/self-hosting)  
