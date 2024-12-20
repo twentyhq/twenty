@@ -1,5 +1,5 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { useFreePass } from '@/billing/hooks/useFreePass';
+import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
@@ -14,7 +14,7 @@ export const usePageChangeEffectNavigateLocation = () => {
   const onboardingStatus = useOnboardingStatus();
   const subscriptionStatus = useSubscriptionStatus();
   const { defaultHomePagePath } = useDefaultHomePagePath();
-  const freePass = useFreePass();
+  const plan = useBillingPlan();
 
   const isMatchingOpenRoute =
     isMatchingLocation(AppPath.Invite) ||
@@ -33,7 +33,7 @@ export const usePageChangeEffectNavigateLocation = () => {
     isMatchingLocation(AppPath.InviteTeam) ||
     isMatchingLocation(AppPath.PlanRequired) ||
     isMatchingLocation(AppPath.PlanRequiredSuccess) ||
-    isMatchingLocation(AppPath.FreePassCheckout);
+    isMatchingLocation(AppPath.PlanCheckout);
 
   if (isMatchingOpenRoute) {
     return;
@@ -46,9 +46,9 @@ export const usePageChangeEffectNavigateLocation = () => {
   if (
     onboardingStatus === OnboardingStatus.PlanRequired &&
     !isMatchingLocation(AppPath.PlanRequired) &&
-    !isMatchingLocation(AppPath.FreePassCheckout)
+    !isMatchingLocation(AppPath.PlanCheckout)
   ) {
-    return freePass ? AppPath.FreePassCheckout : AppPath.PlanRequired;
+    return plan ? AppPath.PlanCheckout : AppPath.PlanRequired;
   }
 
   if (

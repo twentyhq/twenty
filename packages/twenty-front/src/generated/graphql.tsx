@@ -121,6 +121,13 @@ export type Billing = {
   isBillingEnabled: Scalars['Boolean'];
 };
 
+/** The different billing plans available */
+export enum BillingPlanKey {
+  Enterprise = 'ENTERPRISE',
+  Free = 'FREE',
+  Pro = 'PRO'
+}
+
 export type BillingSubscription = {
   __typename?: 'BillingSubscription';
   id: Scalars['UUID'];
@@ -536,8 +543,8 @@ export type MutationChallengeArgs = {
 
 
 export type MutationCheckoutSessionArgs = {
+  plan?: BillingPlanKey;
   recurringInterval: SubscriptionInterval;
-  requirePaymentMethod?: InputMaybe<Scalars['Boolean']>;
   successUrlPath?: InputMaybe<Scalars['String']>;
 };
 
@@ -1953,7 +1960,7 @@ export type BillingPortalSessionQuery = { __typename?: 'Query', billingPortalSes
 export type CheckoutSessionMutationVariables = Exact<{
   recurringInterval: SubscriptionInterval;
   successUrlPath?: InputMaybe<Scalars['String']>;
-  requirePaymentMethod?: InputMaybe<Scalars['Boolean']>;
+  plan: BillingPlanKey;
 }>;
 
 
@@ -3244,11 +3251,11 @@ export type BillingPortalSessionQueryHookResult = ReturnType<typeof useBillingPo
 export type BillingPortalSessionLazyQueryHookResult = ReturnType<typeof useBillingPortalSessionLazyQuery>;
 export type BillingPortalSessionQueryResult = Apollo.QueryResult<BillingPortalSessionQuery, BillingPortalSessionQueryVariables>;
 export const CheckoutSessionDocument = gql`
-    mutation CheckoutSession($recurringInterval: SubscriptionInterval!, $successUrlPath: String, $requirePaymentMethod: Boolean) {
+    mutation CheckoutSession($recurringInterval: SubscriptionInterval!, $successUrlPath: String, $plan: BillingPlanKey!) {
   checkoutSession(
     recurringInterval: $recurringInterval
     successUrlPath: $successUrlPath
-    requirePaymentMethod: $requirePaymentMethod
+    plan: $plan
   ) {
     url
   }
@@ -3271,7 +3278,7 @@ export type CheckoutSessionMutationFn = Apollo.MutationFunction<CheckoutSessionM
  *   variables: {
  *      recurringInterval: // value for 'recurringInterval'
  *      successUrlPath: // value for 'successUrlPath'
- *      requirePaymentMethod: // value for 'requirePaymentMethod'
+ *      plan: // value for 'plan'
  *   },
  * });
  */

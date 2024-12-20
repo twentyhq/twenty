@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeService } from 'src/engine/core-modules/billing/stripe/stripe.service';
 import { DomainManagerService } from 'src/engine/core-modules/domain-manager/service/domain-manager.service';
@@ -30,34 +31,41 @@ export class BillingPortalWorkspaceService {
     workspace: Workspace,
     priceId: string,
     successUrlPath?: string,
-    requirePaymentMethod?: boolean,
+    plan?: BillingPlanKey,
+    cancelUrl?: string,
+    stripeCustomerId?: string,
   ): Promise<string> {
-    const frontBaseUrl = this.domainManagerService.getBaseUrl();
-    const cancelUrl = frontBaseUrl.toString();
+    if (!cancelUrl) {
+      cancelUrl = this.domainManagerService.getBaseUrl().toString();
+    }
 
     if (successUrlPath) {
+      const frontBaseUrl = this.domainManagerService.getBaseUrl();
+
       frontBaseUrl.pathname = successUrlPath;
+      successUrlPath = frontBaseUrl.toString();
     }
-    const successUrl = frontBaseUrl.toString();
 
     const quantity = await this.userWorkspaceRepository.countBy({
       workspaceId: workspace.id,
     });
 
-    const stripeCustomerId = (
-      await this.billingSubscriptionRepository.findOneBy({
-        workspaceId: user.defaultWorkspaceId,
-      })
-    )?.stripeCustomerId;
+    if (!stripeCustomerId) {
+      stripeCustomerId = (
+        await this.billingSubscriptionRepository.findOneBy({
+          workspaceId: user.defaultWorkspaceId,
+        })
+      )?.stripeCustomerId;
+    }
 
     const session = await this.stripeService.createCheckoutSession(
       user,
       priceId,
       quantity,
-      successUrl,
+      successUrlPath,
       cancelUrl,
       stripeCustomerId,
-      requirePaymentMethod,
+      plan,
     );
 
     assert(session.url, 'Error: missing checkout.session.url');

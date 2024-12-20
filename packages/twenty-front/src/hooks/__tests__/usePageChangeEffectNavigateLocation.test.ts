@@ -1,12 +1,11 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { useFreePass } from '@/billing/hooks/useFreePass';
+import { useBillingPlan } from '@/billing/hooks/useBillingPlan';
+import { BillingPlanKey } from '@/billing/types/billing';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { AppPath } from '@/types/AppPath';
-
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { OnboardingStatus, SubscriptionStatus } from '~/generated/graphql';
-
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { UNTESTED_APP_PATHS } from '~/testing/constants/UntestedAppPaths';
@@ -39,9 +38,9 @@ const setupMockIsLogged = (isLogged: boolean) => {
   jest.mocked(useIsLogged).mockReturnValueOnce(isLogged);
 };
 
-jest.mock('@/billing/hooks/useFreePass');
-const setupMockFreePass = (freePass: boolean) => {
-  jest.mocked(useFreePass).mockReturnValueOnce(freePass);
+jest.mock('@/billing/hooks/useBillingPlan');
+const setupMockBillingPlan = (plan: BillingPlanKey) => {
+  jest.mocked(useBillingPlan).mockReturnValueOnce(plan);
 };
 
 const defaultHomePagePath = '/objects/companies';
@@ -152,16 +151,16 @@ const testCases = [
   { loc: AppPath.PlanRequired, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.InviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.PlanRequired, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.Completed, res: defaultHomePagePath },
 
-  { loc: AppPath.FreePassCheckout, isLoggedIn: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PlanRequired, res: undefined },
-  { loc: AppPath.FreePassCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },
-  { loc: AppPath.FreePassCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },
-  { loc: AppPath.FreePassCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.PastDue, onboardingStatus: OnboardingStatus.Completed, res: defaultHomePagePath },
-  { loc: AppPath.FreePassCheckout, isLoggedIn: false, subscriptionStatus: undefined, onboardingStatus: undefined, res: AppPath.SignInUp },
-  { loc: AppPath.FreePassCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.WorkspaceActivation, res: AppPath.CreateWorkspace },
-  { loc: AppPath.FreePassCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.ProfileCreation, res: AppPath.CreateProfile },
-  { loc: AppPath.FreePassCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.SyncEmail, res: AppPath.SyncEmails },
-  { loc: AppPath.FreePassCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.InviteTeam, res: AppPath.InviteTeam },
-  { loc: AppPath.FreePassCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.Completed, res: defaultHomePagePath },
+  { loc: AppPath.PlanCheckout, isLoggedIn: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PlanRequired, res: undefined },
+  { loc: AppPath.PlanCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },
+  { loc: AppPath.PlanCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Unpaid, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },
+  { loc: AppPath.PlanCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.PastDue, onboardingStatus: OnboardingStatus.Completed, res: defaultHomePagePath },
+  { loc: AppPath.PlanCheckout, isLoggedIn: false, subscriptionStatus: undefined, onboardingStatus: undefined, res: AppPath.SignInUp },
+  { loc: AppPath.PlanCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.WorkspaceActivation, res: AppPath.CreateWorkspace },
+  { loc: AppPath.PlanCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.ProfileCreation, res: AppPath.CreateProfile },
+  { loc: AppPath.PlanCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.SyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.PlanCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.InviteTeam, res: AppPath.InviteTeam },
+  { loc: AppPath.PlanCheckout, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Active, onboardingStatus: OnboardingStatus.Completed, res: defaultHomePagePath },
 
   { loc: AppPath.PlanRequiredSuccess, isLoggedIn: true, subscriptionStatus: undefined, onboardingStatus: OnboardingStatus.PlanRequired, res: AppPath.PlanRequired },
   { loc: AppPath.PlanRequiredSuccess, isLoggedIn: true, subscriptionStatus: SubscriptionStatus.Canceled, onboardingStatus: OnboardingStatus.Completed, res: '/settings/billing' },
@@ -292,7 +291,7 @@ describe('usePageChangeEffectNavigateLocation', () => {
       setupMockOnboardingStatus(testCase.onboardingStatus);
       setupMockSubscriptionStatus(testCase.subscriptionStatus);
       setupMockIsLogged(testCase.isLoggedIn);
-      setupMockFreePass(false);
+      setupMockBillingPlan(BillingPlanKey.PRO);
       expect(usePageChangeEffectNavigateLocation()).toEqual(testCase.res);
     });
   });

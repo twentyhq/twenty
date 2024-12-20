@@ -51,14 +51,7 @@ export class BillingWebhookProductService {
   }
 
   isValidBillingPlanKey(planKey?: string) {
-    switch (planKey) {
-      case BillingPlanKey.BASE_PLAN:
-        return true;
-      case BillingPlanKey.PRO_PLAN:
-        return true;
-      default:
-        return false;
-    }
+    return Object.values(BillingPlanKey).includes(planKey as BillingPlanKey);
   }
 
   isValidPriceUsageBased(priceUsageBased?: string) {
