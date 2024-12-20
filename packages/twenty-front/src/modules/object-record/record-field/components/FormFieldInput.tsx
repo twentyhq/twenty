@@ -1,6 +1,6 @@
 import { FormAddressFieldInput } from '@/object-record/record-field/form-types/components/FormAddressFieldInput';
 import { FormBooleanFieldInput } from '@/object-record/record-field/form-types/components/FormBooleanFieldInput';
-import { FormDateTimeFieldInputBase } from '@/object-record/record-field/form-types/components/FormDateTimeFieldInputBase';
+import { FormDateFieldInput } from '@/object-record/record-field/form-types/components/FormDateFieldInput';
 import { FormEmailsFieldInput } from '@/object-record/record-field/form-types/components/FormEmailsFieldInput';
 import { FormFullNameFieldInput } from '@/object-record/record-field/form-types/components/FormFullNameFieldInput';
 import { FormLinksFieldInput } from '@/object-record/record-field/form-types/components/FormLinksFieldInput';
@@ -34,6 +34,7 @@ import { isFieldSelect } from '@/object-record/record-field/types/guards/isField
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { JsonValue } from 'type-fest';
+import { FormDateTimeFieldInput } from '@/object-record/record-field/form-types/components/FormDateTimeFieldInput';
 
 type FormFieldInputProps = {
   field: FieldDefinition<FieldMetadata>;
@@ -109,16 +110,14 @@ export const FormFieldInput = ({
       VariablePicker={VariablePicker}
     />
   ) : isFieldDate(field) ? (
-    <FormDateTimeFieldInputBase
-      mode="date"
+    <FormDateFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
       onPersist={onPersist}
       VariablePicker={VariablePicker}
     />
   ) : isFieldDateTime(field) ? (
-    <FormDateTimeFieldInputBase
-      mode="datetime"
+    <FormDateTimeFieldInput
       label={field.label}
       defaultValue={defaultValue as string | undefined}
       onPersist={onPersist}
