@@ -34,8 +34,7 @@ export const useDestroySingleRecordAction: SingleRecordActionHookWithObjectMetad
 
     const isRemoteObject = objectMetadataItem.isRemote;
 
-    const { isInRightDrawer, onActionExecutedCallback } =
-      useContext(ActionMenuContext);
+    const { isInRightDrawer } = useContext(ActionMenuContext);
 
     const shouldBeRegistered =
       !isRemoteObject && isDefined(selectedRecord?.deletedAt);
