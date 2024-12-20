@@ -3,13 +3,13 @@ import { DataSource, EntityManager } from 'typeorm';
 import { seedWorkspaceFavorites } from 'src/database/typeorm-seeds/workspace/favorites';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { shouldSeedWorkspaceFavorite } from 'src/engine/utils/should-seed-workspace-favorite';
-import { companyPrefillDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/company';
-import { opportunityPrefillDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/opportunity';
-import { personPrefillDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/person';
-import { workspaceMemberPrefillData } from 'src/engine/workspace-manager/demo-objects-prefill-data/workspace-member';
-import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
+import { seedCompanyWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-company-with-demo-data';
+import { seedOpportunityWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-opportunity-with-demo-data';
+import { seedPersonWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-person-with-demo-data';
+import { seedWorkspaceMemberWithDemoData } from 'src/engine/workspace-manager/demo-objects-prefill-data/seed-workspace-member-with-demo-data';
+import { seedViewWithDemoData } from 'src/engine/workspace-manager/standard-objects-prefill-data/seed-view-with-demo-data';
 
-export const demoObjectsPrefillData = async (
+export const seedWorkspaceWithDemoData = async (
   workspaceDataSource: DataSource,
   schemaName: string,
   objectMetadata: ObjectMetadataEntity[],
@@ -30,11 +30,11 @@ export const demoObjectsPrefillData = async (
 
   await workspaceDataSource.transaction(
     async (entityManager: EntityManager) => {
-      await companyPrefillDemoData(entityManager, schemaName);
-      await personPrefillDemoData(entityManager, schemaName);
-      await opportunityPrefillDemoData(entityManager, schemaName);
+      await seedCompanyWithDemoData(entityManager, schemaName);
+      await seedPersonWithDemoData(entityManager, schemaName);
+      await seedOpportunityWithDemoData(entityManager, schemaName);
 
-      const viewDefinitionsWithId = await viewPrefillData(
+      const viewDefinitionsWithId = await seedViewWithDemoData(
         entityManager,
         schemaName,
         objectMetadataMap,
@@ -48,7 +48,7 @@ export const demoObjectsPrefillData = async (
         entityManager,
         schemaName,
       );
-      await workspaceMemberPrefillData(entityManager, schemaName);
+      await seedWorkspaceMemberWithDemoData(entityManager, schemaName);
     },
   );
 };
