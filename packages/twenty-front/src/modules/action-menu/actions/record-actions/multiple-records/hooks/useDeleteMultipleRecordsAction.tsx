@@ -1,3 +1,4 @@
+import { MultipleRecordsActionKeys } from '@/action-menu/actions/record-actions/multiple-records/types/MultipleRecordsActionKeys';
 import { ActionMenuContext } from '@/action-menu/contexts/ActionMenuContext';
 import { useActionMenuEntries } from '@/action-menu/hooks/useActionMenuEntries';
 import {
@@ -94,7 +95,7 @@ export const useDeleteMultipleRecordsAction = ({
       addActionMenuEntry({
         type: ActionMenuEntryType.Standard,
         scope: ActionMenuEntryScope.RecordSelection,
-        key: 'delete-multiple-records',
+        key: MultipleRecordsActionKeys.DELETE,
         label: 'Delete records',
         shortLabel: 'Delete',
         position,

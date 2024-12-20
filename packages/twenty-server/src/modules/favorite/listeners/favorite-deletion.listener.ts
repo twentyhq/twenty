@@ -15,7 +15,7 @@ import {
 @Injectable()
 export class FavoriteDeletionListener {
   constructor(
-    @InjectMessageQueue(MessageQueue.favoriteQueue)
+    @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
