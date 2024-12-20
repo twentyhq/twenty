@@ -146,19 +146,6 @@ export const ObjectFilterDropdownRecordSelect = ({
       ? isNewSelectedValue
       : isCurrentWorkspaceMemberSelected;
 
-    if (!isItemCurrentWorkspaceMember) {
-      if (
-        newSelectedRecordIds.length === 0 &&
-        !newIsCurrentWorkspaceMemberSelected
-      ) {
-        emptyFilterButKeepDefinition();
-        deleteCombinedViewFilter(fieldId);
-        return;
-      }
-
-      setObjectFilterDropdownSelectedRecordIds(newSelectedRecordIds);
-    }
-
     const selectedRecordNames = [
       ...recordsToSelect,
       ...selectedRecords,
@@ -189,10 +176,14 @@ export const ObjectFilterDropdownRecordSelect = ({
       isDefined(filterDefinitionUsedInDropdown) &&
       isDefined(selectedOperandInDropdown)
     ) {
-      const newFilterValue = JSON.stringify({
-        isCurrentWorkspaceMemberSelected: newIsCurrentWorkspaceMemberSelected,
-        selectedRecordIds: newSelectedRecordIds,
-      } satisfies RelationFilterValue);
+      const newFilterValue =
+        newSelectedRecordIds.length > 0 || newIsCurrentWorkspaceMemberSelected
+          ? JSON.stringify({
+              isCurrentWorkspaceMemberSelected:
+                newIsCurrentWorkspaceMemberSelected,
+              selectedRecordIds: newSelectedRecordIds,
+            } satisfies RelationFilterValue)
+          : '';
 
       const viewFilter =
         currentViewWithCombinedFiltersAndSorts?.viewFilters.find(
