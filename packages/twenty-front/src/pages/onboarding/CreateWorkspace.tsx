@@ -23,7 +23,6 @@ import {
 } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { AppPath } from '@/types/AppPath';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
 
 const StyledContentContainer = styled.div`
@@ -83,15 +82,15 @@ export const CreateWorkspace = () => {
 
         setIsCurrentUserLoaded(false);
 
-        if (isDefined(result.data) && isMultiWorkspaceEnabled) {
-          return redirectToWorkspaceDomain(
-            result.data.activateWorkspace.workspace.subdomain,
-            AppPath.Verify,
-            {
-              loginToken: result.data.activateWorkspace.loginToken.token,
-            },
-          );
-        }
+        // if (isDefined(result.data) && isMultiWorkspaceEnabled) {
+        //   return redirectToWorkspaceDomain(
+        //     result.data.activateWorkspace.workspace.subdomain,
+        //     AppPath.Verify,
+        //     {
+        //       loginToken: result.data.activateWorkspace.loginToken.token,
+        //     },
+        //   );
+        // }
 
         await apolloMetadataClient?.refetchQueries({
           include: [FIND_MANY_OBJECT_METADATA_ITEMS],

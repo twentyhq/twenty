@@ -15,15 +15,9 @@ export class RemoveDefaultWorkspaceId1734544295083
     await queryRunner.query(
       `ALTER TABLE "core"."workspace" DROP CONSTRAINT "UQ_e6fa363bdaf45cbf8ce97bcebf0"`,
     );
-    await queryRunner.query(
-      `ALTER TABLE "core"."workspace" ADD CONSTRAINT "UQ_cba6255a24deb1fff07dd7351b8" UNIQUE ("subdomain")`,
-    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."workspace" DROP CONSTRAINT "UQ_cba6255a24deb1fff07dd7351b8"`,
-    );
     await queryRunner.query(
       `ALTER TABLE "core"."workspace" ADD CONSTRAINT "UQ_e6fa363bdaf45cbf8ce97bcebf0" UNIQUE ("domainName")`,
     );

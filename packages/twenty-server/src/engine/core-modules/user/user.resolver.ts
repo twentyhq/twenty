@@ -130,7 +130,6 @@ export class UserResolver {
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<WorkspaceMember | null> {
-    console.log('>>>>>>>>>>>>>> workspaceMember', workspace);
     const workspaceMember = await this.userService.loadWorkspaceMember(
       user,
       workspace,
@@ -156,7 +155,6 @@ export class UserResolver {
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<WorkspaceMember[]> {
-    console.log('>>>>>>>>>>>>>> workspaceMembers', workspace);
     const workspaceMembers =
       await this.userService.loadWorkspaceMembers(workspace);
 

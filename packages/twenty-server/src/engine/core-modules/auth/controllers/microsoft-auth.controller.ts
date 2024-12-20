@@ -52,8 +52,9 @@ export class MicrosoftAuthController {
 
       if (
         this.environmentService.get('IS_MULTIWORKSPACE_ENABLED') &&
-        signInUpParams.targetWorkspaceSubdomain ===
-          this.environmentService.get('DEFAULT_SUBDOMAIN')
+        (signInUpParams.targetWorkspaceSubdomain ===
+          this.environmentService.get('DEFAULT_SUBDOMAIN') ||
+          !signInUpParams.targetWorkspaceSubdomain)
       ) {
         const workspaceWithGoogleAuthActive =
           await this.workspaceRepository.findOne({
@@ -74,7 +75,7 @@ export class MicrosoftAuthController {
         }
       }
 
-      const user = await this.authService.signInUp({
+      const { user, workspace } = await this.authService.signInUp({
         ...signInUpParams,
         fromSSO: true,
         authProvider: 'microsoft',
@@ -87,7 +88,7 @@ export class MicrosoftAuthController {
       return res.redirect(
         await this.authService.computeRedirectURI(
           loginToken.token,
-          signInUpParams.targetWorkspaceSubdomain,
+          workspace.subdomain,
         ),
       );
     } catch (err) {

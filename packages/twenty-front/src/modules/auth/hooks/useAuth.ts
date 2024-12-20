@@ -50,10 +50,6 @@ import { domainConfigurationState } from '@/domain-manager/states/domainConfigur
 import { isAppWaitingForFreshObjectMetadataState } from '@/object-metadata/states/isAppWaitingForFreshObjectMetadataState';
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useNavigate } from 'react-router-dom';
-import { AppPath } from '@/types/AppPath';
 
 export const useAuth = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
@@ -72,8 +68,6 @@ export const useAuth = () => {
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
   const setWorkspaces = useSetRecoilState(workspacesState);
   const { redirect } = useRedirect();
-  const { enqueueSnackBar } = useSnackBar();
-  const navigate = useNavigate();
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
@@ -373,6 +367,7 @@ export const useAuth = () => {
           params.workspacePersonalInviteToken,
         );
       }
+      console.log('>>>>>>>>>>>>>>', workspaceSubdomain);
       if (isDefined(workspaceSubdomain)) {
         url.searchParams.set('workspaceSubdomain', workspaceSubdomain);
       }

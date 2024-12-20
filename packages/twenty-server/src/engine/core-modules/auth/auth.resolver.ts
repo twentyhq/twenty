@@ -120,7 +120,7 @@ export class AuthResolver {
     @Args() signUpInput: SignUpInput,
     @OriginHeader() origin: string,
   ): Promise<LoginToken> {
-    const user = await this.authService.signInUp({
+    const { user } = await this.authService.signInUp({
       ...signUpInput,
       targetWorkspaceSubdomain:
         this.domainManagerService.getWorkspaceSubdomainByOrigin(origin),
