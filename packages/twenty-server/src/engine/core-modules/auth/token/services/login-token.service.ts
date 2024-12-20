@@ -18,7 +18,10 @@ export class LoginTokenService {
     email: string,
     workspaceId: string,
   ): Promise<AuthToken> {
-    const secret = this.jwtWrapperService.generateAppSecret('LOGIN');
+    const secret = this.jwtWrapperService.generateAppSecret(
+      'LOGIN',
+      workspaceId,
+    );
 
     const expiresIn = this.environmentService.get('LOGIN_TOKEN_EXPIRES_IN');
 
