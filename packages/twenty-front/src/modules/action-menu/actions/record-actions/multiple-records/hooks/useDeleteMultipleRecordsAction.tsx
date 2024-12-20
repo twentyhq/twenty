@@ -57,6 +57,17 @@ export const useDeleteMultipleRecordsAction = ({
     objectMetadataItem,
   );
 
+  const deletedAtFieldMetadata = objectMetadataItem.fields.find(
+    (field) => field.name === 'deletedAt',
+  );
+
+  const isDeletedFilterActive =
+    isDefined(deletedAtFieldMetadata) &&
+    isDefined(graphqlFilter) &&
+    contextStoreFilters.some(
+      (filter) => filter.fieldMetadataId === deletedAtFieldMetadata.id,
+    );
+
   const { fetchAllRecords: fetchAllRecordIds } = useLazyFetchAllRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     filter: graphqlFilter,
@@ -79,6 +90,7 @@ export const useDeleteMultipleRecordsAction = ({
 
   const canDelete =
     !isRemoteObject &&
+    !isDeletedFilterActive &&
     isDefined(contextStoreNumberOfSelectedRecords) &&
     contextStoreNumberOfSelectedRecords < DELETE_MAX_COUNT &&
     contextStoreNumberOfSelectedRecords > 0;
