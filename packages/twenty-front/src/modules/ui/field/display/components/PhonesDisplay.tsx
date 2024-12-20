@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { RoundedLink, THEME_COMMON } from 'twenty-ui';
 
 import { FieldPhonesValue } from '@/object-record/record-field/types/FieldMetadata';
@@ -12,6 +12,7 @@ import { logError } from '~/utils/logError';
 type PhonesDisplayProps = {
   value?: FieldPhonesValue;
   isFocused?: boolean;
+  onPhoneNumberClick?: (phoneNumber: string,event : React.MouseEvent<HTMLElement>) => void;
 };
 
 const themeSpacing = THEME_COMMON.spacingMultiplicator;
@@ -29,7 +30,7 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
+export const PhonesDisplay = ({ value, isFocused, onPhoneNumberClick }: PhonesDisplayProps) => {
   const phones = useMemo(
     () =>
       [
@@ -62,7 +63,11 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
       return { invalidPhone: number };
     }
   };
-
+  const handleClick = (number: string,event :React.MouseEvent<HTMLElement>) => {
+    if (onPhoneNumberClick) {
+      onPhoneNumberClick(number,event);
+    }
+  };
   return isFocused ? (
     <ExpandableList isChipCountDisplayed>
       {phones.map(({ number, callingCode }, index) => {
@@ -76,6 +81,7 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
             label={
               parsedPhone ? parsedPhone.formatInternational() : invalidPhone
             }
+            onClick={(event) => handleClick(callingCode + number,event)}
           />
         );
       })}
@@ -93,6 +99,7 @@ export const PhonesDisplay = ({ value, isFocused }: PhonesDisplayProps) => {
             label={
               parsedPhone ? parsedPhone.formatInternational() : invalidPhone
             }
+            onClick={(event) => handleClick(callingCode + number,event)}
           />
         );
       })}
