@@ -1,6 +1,5 @@
 import { useApolloClient } from '@apollo/client';
 
-import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -145,6 +144,9 @@ export const useDeleteManyRecords = ({
           },
         })
         .catch((error: Error) => {
+          const cachedRecordsWithConnection: RecordGqlNode[] = [];
+          const optimisticRecordsWithConnection: RecordGqlNode[] = [];
+
           cachedRecords.forEach((cachedRecord) => {
             if (isUndefinedOrNull(cachedRecord?.id)) {
               return;
@@ -183,16 +185,21 @@ export const useDeleteManyRecords = ({
               !optimisticRecordWithConnection ||
               !cachedRecordWithConnection
             ) {
-              return null;
+              return;
             }
 
-            triggerUpdateRecordOptimisticEffect({
-              cache: apolloClient.cache,
-              objectMetadataItem,
-              currentRecord: optimisticRecordWithConnection,
-              updatedRecord: cachedRecordWithConnection,
-              objectMetadataItems,
-            });
+            cachedRecordsWithConnection.push(cachedRecordWithConnection);
+            optimisticRecordsWithConnection.push(
+              optimisticRecordWithConnection,
+            );
+          });
+
+          triggerUpdateRecordOptimisticEffectByBatch({
+            cache: apolloClient.cache,
+            objectMetadataItem,
+            currentRecords: optimisticRecordsWithConnection,
+            updatedRecords: cachedRecordsWithConnection,
+            objectMetadataItems,
           });
 
           throw error;
